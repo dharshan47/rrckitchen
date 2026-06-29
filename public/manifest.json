@@ -1,0 +1,17 @@
+{
+  "name": "RrcKitchen",
+  "short_name": "RrcKitchen",
+  "description": "Thanjavur-first home food delivery PWA built with Next.js and shadcn UI.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "icons": [
+    {
+      "src": "/next.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

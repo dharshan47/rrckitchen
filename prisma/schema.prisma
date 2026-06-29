@@ -1,0 +1,702 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+
+
+// ============ IDENTITY & ACCESS ============
+
+
+model User {
+  id                   String        @id @default(cuid())
+  phoneNumber          String?       @unique
+  phoneNumberVerified  Boolean       @default(false)
+  roles                String        @default("user")
+  banned               Boolean       @default(false)
+  banReason            String?
+  banExpires           DateTime?
+  name                 String?
+  fullName             String?
+  email                String?       @unique
+  emailVerified        Boolean       @default(false)
+  image                String?
+  isActive             Boolean       @default(true)
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  deletedAt            DateTime?
+
+  userRoles       UserRole[]
+  sessions        Session[]
+  accounts        Account[]
+  otpCodes        OtpCode[]
+  addresses       Address[]
+  orders          Order[]
+  reviews         Review[]
+  complaints      Complaint[]
+  kitchenPartner  KitchenPartner?
+  supplier        Supplier?
+  auditLogs       AuditLog[]
+
+  @@index([phoneNumber])
+  @@map("user")
+}
+
+model Role {
+  id          String      @id @default(cuid())
+  name        RoleName    @unique
+  userRoles   UserRole[]
+}
+
+enum RoleName {
+  CUSTOMER
+  KITCHENPARTNER
+  SUPPLIER
+  ADMIN
+  SUPPORTAGENT
+}
+
+model UserRole {
+  id        String   @id @default(cuid())
+  userId    String
+  roleId    String
+  user      User     @relation(fields: [userId], references: [id])
+  role      Role     @relation(fields: [roleId], references: [id])
+
+  @@unique([userId, roleId])
+  @@index([userId])
+}
+
+model Session {
+  id            String    @id @default(cuid())
+  userId        String
+  token         String    @unique
+  expiresAt     DateTime
+  ipAddress     String?
+  impersonatedBy String?
+  userAgent     String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
+
+model OtpCode {
+  id            String    @id @default(cuid())
+  userId        String?
+  mobileNumber  String
+  code          String
+  expiresAt     DateTime
+  attempts      Int       @default(0)
+  consumedAt    DateTime?
+  createdAt     DateTime  @default(now())
+  user          User?     @relation(fields: [userId], references: [id])
+
+  @@index([mobileNumber])
+}
+
+model Address {
+  id              String        @id @default(cuid())
+  userId          String
+  label           String?
+  lineOne         String
+  lineTwo         String?
+  pincode         String
+  serviceZoneId   String
+  latitude        Float?
+  longitude       Float?
+  isDefault       Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+
+  user            User          @relation(fields: [userId], references: [id])
+  serviceZone     ServiceZone   @relation(fields: [serviceZoneId], references: [id])
+  orders          Order[]
+
+  @@index([userId])
+  @@index([serviceZoneId])
+}
+
+// ============ KITCHEN PARTNER DOMAIN ============
+
+model KitchenPartner {
+  id              String          @id @default(cuid())
+  userId          String          @unique
+  status          PartnerStatus   @default(PENDINGAPPROVAL)
+  approvedAt      DateTime?
+  rejectedReason  String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  deletedAt       DateTime?
+
+  user                User                        @relation(fields: [userId], references: [id])
+  kitchenAlias        KitchenAlias?
+  kitchenKyc          KitchenPartnerKyc?
+  kitchenCategories   KitchenCategory[]
+  kitchenAvailability KitchenAvailability[]
+  menus               Menu[]
+  bankAccount         BankAccount?
+  upiAccount          UpiAccount?
+  commission          Commission?
+  withdrawals         Withdrawal[]
+  supplierAssignments SupplierKitchenAssignment[]
+  orderItems          OrderItem[]
+  reviews             Review[]
+
+  @@index([status])
+}
+
+enum PartnerStatus {
+  PENDINGAPPROVAL
+  APPROVED
+  ACTIVE
+  SUSPENDED
+  REJECTED
+}
+
+model KitchenPartnerKyc {
+  id                  String          @id @default(cuid())
+  kitchenPartnerId    String          @unique
+  aadhaarVerified     Boolean         @default(false)
+  aadhaarDocumentUrl  String?
+  fssaiNumber         String?
+  addressProofUrl     String?
+  reviewedByAdminId   String?
+  reviewedAt          DateTime?
+
+  kitchenPartner      KitchenPartner  @relation(fields: [kitchenPartnerId], references: [id])
+}
+
+model KitchenAlias {
+  id                String          @id @default(cuid())
+  kitchenPartnerId  String          @unique
+  displayName       String          @unique
+  sequenceNumber    Int             @unique
+  createdAt         DateTime        @default(now())
+
+  kitchenPartner    KitchenPartner  @relation(fields: [kitchenPartnerId], references: [id])
+}
+
+model KitchenCategory {
+  id                String          @id @default(cuid())
+  kitchenPartnerId  String
+  categoryId        String
+
+  kitchenPartner    KitchenPartner  @relation(fields: [kitchenPartnerId], references: [id])
+  category          Category        @relation(fields: [categoryId], references: [id])
+
+  @@unique([kitchenPartnerId, categoryId])
+  @@index([categoryId])
+}
+
+model KitchenAvailability {
+  id                String          @id @default(cuid())
+  kitchenPartnerId  String
+  serviceDate       DateTime
+  isAvailable       Boolean
+  respondedAt       DateTime        @default(now())
+
+  kitchenPartner    KitchenPartner  @relation(fields: [kitchenPartnerId], references: [id])
+
+  @@unique([kitchenPartnerId, serviceDate])
+  @@index([serviceDate, isAvailable])
+}
+
+model Menu {
+  id                String          @id @default(cuid())
+  kitchenPartnerId  String
+  name              String
+  isActive          Boolean         @default(true)
+  createdAt         DateTime        @default(now())
+
+  kitchenPartner    KitchenPartner  @relation(fields: [kitchenPartnerId], references: [id])
+  menuItems         MenuItem[]
+
+  @@index([kitchenPartnerId])
+}
+
+model MenuItem {
+  id            String          @id @default(cuid())
+  menuId        String
+  name          String
+  description   String?
+  price         Decimal
+  foodType      FoodType
+  timeSlot      TimeSlot
+  isAvailable   Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  deletedAt     DateTime?
+
+  menu          Menu               @relation(fields: [menuId], references: [id])
+  photos        MenuItemPhoto[]
+  orderItems    OrderItem[]
+
+  @@index([menuId, timeSlot, foodType])
+}
+
+enum FoodType {
+  VEG
+  NONVEG
+}
+
+enum TimeSlot {
+  MORNING
+  LUNCH
+  EVENINGSNACKS
+  DINNER
+}
+
+model MenuItemPhoto {
+  id            String      @id @default(cuid())
+  menuItemId    String
+  imageUrl      String
+  sortOrder     Int         @default(0)
+
+  menuItem      MenuItem    @relation(fields: [menuItemId], references: [id])
+
+  @@index([menuItemId])
+}
+
+// ============ SUPPLIER DOMAIN ============
+
+model Supplier {
+  id              String          @id @default(cuid())
+  userId          String          @unique
+  status          PartnerStatus   @default(PENDINGAPPROVAL)
+  approvedAt      DateTime?
+  createdAt       DateTime        @default(now())
+  deletedAt       DateTime?
+
+  user                  User                          @relation(fields: [userId], references: [id])
+  supplierKyc           SupplierKyc?
+  catalogueItems        SupplierCatalogueItem[]
+  kitchenAssignments    SupplierKitchenAssignment[]
+  bankAccount           BankAccount?
+  upiAccount            UpiAccount?
+  withdrawals           Withdrawal[]
+
+  @@index([status])
+}
+
+model SupplierKyc {
+  id            String      @id @default(cuid())
+  supplierId    String      @unique
+  documentUrl   String?
+  verifiedAt    DateTime?
+
+  supplier      Supplier    @relation(fields: [supplierId], references: [id])
+}
+
+model SupplierCatalogueItem {
+  id            String      @id @default(cuid())
+  supplierId    String
+  itemName      String
+  unit          String
+  ratePerUnit   Decimal
+
+  supplier      Supplier    @relation(fields: [supplierId], references: [id])
+
+  @@index([supplierId])
+}
+
+model SupplierKitchenAssignment {
+  id                  String            @id @default(cuid())
+  supplierId          String
+  kitchenPartnerId    String
+  assignedByAdminId   String
+  status              AssignmentStatus  @default(PENDING)
+  createdAt           DateTime          @default(now())
+
+  supplier            Supplier          @relation(fields: [supplierId], references: [id])
+  kitchenPartner      KitchenPartner    @relation(fields: [kitchenPartnerId], references: [id])
+
+  @@index([supplierId])
+  @@index([kitchenPartnerId])
+}
+
+enum AssignmentStatus {
+  PENDING
+  DELIVERED
+  CANCELLED
+}
+
+// ============ CATALOGUE / REFERENCE ============
+
+model Category {
+  id                  String              @id @default(cuid())
+  name                String              @unique
+  description         String?
+  isActive            Boolean             @default(true)
+
+  kitchenCategories   KitchenCategory[]
+}
+
+model ServiceZone {
+  id            String      @id @default(cuid())
+  name          String      @unique
+  pincodes      String[]
+  isActive      Boolean     @default(true)
+
+  addresses     Address[]
+}
+
+// ============ COMMERCE ============
+
+model Order {
+  id                String          @id @default(cuid())
+  userId            String
+  addressId         String?
+  serviceDate       DateTime
+  timeSlot          TimeSlot
+  status            OrderStatus     @default(CONFIRMED)
+  totalAmount       Decimal
+  commissionAmount  Decimal
+  source            OrderSource     @default(APP)
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  user              User                  @relation(fields: [userId], references: [id])
+  address           Address?              @relation(fields: [addressId], references: [id])
+  orderItems        OrderItem[]
+  statusHistory     OrderStatusHistory[]
+  payment           Payment?
+  review            Review?
+
+  @@index([userId])
+  @@index([serviceDate, timeSlot])
+  @@index([status])
+}
+
+enum OrderStatus {
+  CONFIRMED
+  PREPARING
+  READYFORPICKUP
+  COMPLETED
+  CANCELLED
+  REFUNDED
+}
+
+enum OrderSource {
+  APP
+  PHONECALL
+}
+
+model OrderItem {
+  id                  String          @id @default(cuid())
+  orderId             String
+  menuItemId          String
+  kitchenPartnerId    String
+  quantity            Int
+  unitPrice           Decimal
+
+  order               Order           @relation(fields: [orderId], references: [id])
+  menuItem            MenuItem        @relation(fields: [menuItemId], references: [id])
+  kitchenPartner      KitchenPartner  @relation(fields: [kitchenPartnerId], references: [id])
+
+  @@index([orderId])
+  @@index([kitchenPartnerId])
+}
+
+model OrderStatusHistory {
+  id          String      @id @default(cuid())
+  orderId     String
+  status      OrderStatus
+  changedAt   DateTime    @default(now())
+  note        String?
+
+  order       Order       @relation(fields: [orderId], references: [id])
+
+  @@index([orderId])
+}
+
+model Review {
+  id                String          @id @default(cuid())
+  orderId           String          @unique
+  userId            String
+  kitchenPartnerId  String
+  rating            Int
+  comment           String?
+  createdAt         DateTime        @default(now())
+
+  order             Order           @relation(fields: [orderId], references: [id])
+  user              User            @relation(fields: [userId], references: [id])
+  kitchenPartner    KitchenPartner  @relation(fields: [kitchenPartnerId], references: [id])
+
+  @@index([kitchenPartnerId])
+}
+
+// ============ FINANCE ============
+
+model Payment {
+  id                String          @id @default(cuid())
+  orderId           String          @unique
+  provider          PaymentProvider
+  providerOrderId   String?
+  providerPaymentId String?
+  amount            Decimal
+  status            PaymentStatus   @default(PENDING)
+  paidAt            DateTime?
+  createdAt         DateTime        @default(now())
+
+  order             Order           @relation(fields: [orderId], references: [id])
+  transactions      Transaction[]
+
+  @@index([status])
+}
+
+enum PaymentProvider {
+  RAZORPAY
+  CASHONPICKUP
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+}
+
+model Transaction {
+  id            String                @id @default(cuid())
+  paymentId     String?
+  type          TransactionType
+  amount        Decimal
+  direction     TransactionDirection
+  createdAt     DateTime              @default(now())
+
+  payment       Payment?              @relation(fields: [paymentId], references: [id])
+
+  @@index([type])
+}
+
+enum TransactionType {
+  ORDERPAYMENT
+  KITCHENPAYOUT
+  SUPPLIERPAYOUT
+  REFUND
+}
+
+enum TransactionDirection {
+  CREDIT
+  DEBIT
+}
+
+model BankAccount {
+  id                  String          @id @default(cuid())
+  kitchenPartnerId    String?         @unique
+  supplierId          String?         @unique
+  accountHolderName   String
+  accountNumberHash   String
+  ifscCode            String
+  verifiedAt          DateTime?
+
+  kitchenPartner      KitchenPartner? @relation(fields: [kitchenPartnerId], references: [id])
+  supplier            Supplier?       @relation(fields: [supplierId], references: [id])
+}
+
+model UpiAccount {
+  id                  String          @id @default(cuid())
+  kitchenPartnerId    String?         @unique
+  supplierId          String?         @unique
+  upiId               String
+
+  kitchenPartner      KitchenPartner? @relation(fields: [kitchenPartnerId], references: [id])
+  supplier            Supplier?       @relation(fields: [supplierId], references: [id])
+}
+
+model Commission {
+  id                  String          @id @default(cuid())
+  kitchenPartnerId    String          @unique
+  percentage          Decimal
+  effectiveFrom       DateTime        @default(now())
+
+  kitchenPartner      KitchenPartner  @relation(fields: [kitchenPartnerId], references: [id])
+}
+
+model Withdrawal {
+  id                  String            @id @default(cuid())
+  kitchenPartnerId    String?
+  supplierId          String?
+  amount              Decimal
+  status              WithdrawalStatus  @default(PENDING)
+  payoutCycleId       String
+  processedAt         DateTime?
+
+  kitchenPartner      KitchenPartner?   @relation(fields: [kitchenPartnerId], references: [id])
+  supplier            Supplier?         @relation(fields: [supplierId], references: [id])
+  payoutCycle         PayoutCycle       @relation(fields: [payoutCycleId], references: [id])
+
+  @@index([status])
+}
+
+enum WithdrawalStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+model PayoutCycle {
+  id            String        @id @default(cuid())
+  startDate     DateTime
+  endDate       DateTime
+  status        CycleStatus   @default(OPEN)
+
+  withdrawals   Withdrawal[]
+}
+
+enum CycleStatus {
+  OPEN
+  PROCESSING
+  CLOSED
+}
+
+// ============ PLATFORM / OPS ============
+
+model Notification {
+  id            String                @id @default(cuid())
+  userId        String?
+  templateId    String
+  channel       NotificationChannel
+  status        NotificationStatus    @default(QUEUED)
+  sentAt        DateTime?
+  createdAt     DateTime              @default(now())
+
+  template      NotificationTemplate  @relation(fields: [templateId], references: [id])
+
+  @@index([status])
+}
+
+enum NotificationChannel {
+  SMS
+  WHATSAPP
+  EMAIL
+  PUSH
+}
+
+enum NotificationStatus {
+  QUEUED
+  SENT
+  FAILED
+}
+
+model NotificationTemplate {
+  id            String          @id @default(cuid())
+  eventKey      String          @unique
+  channel       NotificationChannel
+  body          String
+
+  notifications Notification[]
+}
+
+model Banner {
+  id            String      @id @default(cuid())
+  title         String
+  imageUrl      String
+  linkUrl       String?
+  sortOrder     Int         @default(0)
+  isActive      Boolean     @default(true)
+}
+
+model Setting {
+  id            String      @id @default(cuid())
+  key           String      @unique
+  value         String
+  updatedAt     DateTime    @updatedAt
+}
+
+model Complaint {
+  id            String          @id @default(cuid())
+  userId        String
+  orderId       String?
+  subject       String
+  description   String
+  status        ComplaintStatus @default(OPEN)
+  createdAt     DateTime        @default(now())
+  resolvedAt    DateTime?
+
+  user          User            @relation(fields: [userId], references: [id])
+
+  @@index([status])
+}
+
+enum ComplaintStatus {
+  OPEN
+  INPROGRESS
+  RESOLVED
+  CLOSED
+}
+
+model AuditLog {
+  id            String      @id @default(cuid())
+  actorUserId   String
+  action        String
+  entityType    String
+  entityId      String
+  beforeData    Json?
+  afterData     Json?
+  createdAt     DateTime    @default(now())
+
+  actorUser     User        @relation(fields: [actorUserId], references: [id])
+
+  @@index([entityType, entityId])
+  @@index([actorUserId])
+}
+
+model ReportCache {
+  id            String      @id @default(cuid())
+  reportKey     String      @unique
+  payload       Json
+  generatedAt   DateTime    @default(now())
+}
+
+model DeliverySlot {
+  id            String      @id @default(cuid())
+  name          String
+  startTime     String
+  endTime       String
+  isActive      Boolean     @default(true)
+}
+
