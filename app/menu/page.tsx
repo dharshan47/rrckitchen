@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Badge, Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui";
 import { MenuControls, MenuGrid } from "@/components/menu";
 import { useMenuStore } from "@/stores";
 
-export default function MenuPage() {
+function MenuContent() {
   const searchParams = useSearchParams();
   const setSelectedTimeSlot = useMenuStore((s) => s.setSelectedTimeSlot);
 
@@ -61,5 +61,13 @@ export default function MenuPage() {
         </section>
       </div>
     </main>
+  );
+}
+
+export default function MenuPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background text-foreground" />}>
+      <MenuContent />
+    </Suspense>
   );
 }
