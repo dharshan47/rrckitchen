@@ -74,7 +74,7 @@ export async function getTomorrowMenu({ query, foodType, timeSlot }: MenuFilterO
 
 export async function getMenuItemById(id: string) {
   const tomorrow = startOfDay(addDays(new Date(), 1));
-  return prisma.menuItem.findFirst({
+  const item = await prisma.menuItem.findFirst({
     where: {
       id,
       isAvailable: true,
@@ -105,4 +105,8 @@ export async function getMenuItemById(id: string) {
       },
     },
   });
+
+  if (!item) return null;
+
+  return { ...item, price: Number(item.price) } as typeof item & { price: number };
 }
