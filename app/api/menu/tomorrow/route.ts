@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { getTomorrowMenu } from "@/actions/menu";
 
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
@@ -13,6 +16,9 @@ export async function GET(request: Request) {
     return NextResponse.json(menuItems, {
       headers: {
         "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+        "CDN-Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+        "Vercel-CDN-Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+        "Surrogate-Control": "public, max-age=30",
       },
     });
   } catch (error) {

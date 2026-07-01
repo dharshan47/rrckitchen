@@ -67,16 +67,17 @@ export const ModelName = {
   Menu: 'Menu',
   MenuItem: 'MenuItem',
   MenuItemPhoto: 'MenuItemPhoto',
-  Supplier: 'Supplier',
-  SupplierKyc: 'SupplierKyc',
-  SupplierCatalogueItem: 'SupplierCatalogueItem',
-  SupplierKitchenAssignment: 'SupplierKitchenAssignment',
+  DeliveryPartner: 'DeliveryPartner',
+  DeliveryPartnerKyc: 'DeliveryPartnerKyc',
+  DeliveryPartnerCatalogueItem: 'DeliveryPartnerCatalogueItem',
+  DeliveryPartnerKitchenAssignment: 'DeliveryPartnerKitchenAssignment',
   Category: 'Category',
   ServiceZone: 'ServiceZone',
   Order: 'Order',
   OrderItem: 'OrderItem',
   OrderStatusHistory: 'OrderStatusHistory',
   Review: 'Review',
+  Subscription: 'Subscription',
   Payment: 'Payment',
   Transaction: 'Transaction',
   BankAccount: 'BankAccount',
@@ -124,6 +125,7 @@ export const UserScalarFieldEnum = {
   emailVerified: 'emailVerified',
   image: 'image',
   isActive: 'isActive',
+  razorpayCustomerId: 'razorpayCustomerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -323,7 +325,7 @@ export const MenuItemPhotoScalarFieldEnum = {
 export type MenuItemPhotoScalarFieldEnum = (typeof MenuItemPhotoScalarFieldEnum)[keyof typeof MenuItemPhotoScalarFieldEnum]
 
 
-export const SupplierScalarFieldEnum = {
+export const DeliveryPartnerScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   status: 'status',
@@ -332,40 +334,40 @@ export const SupplierScalarFieldEnum = {
   deletedAt: 'deletedAt'
 } as const
 
-export type SupplierScalarFieldEnum = (typeof SupplierScalarFieldEnum)[keyof typeof SupplierScalarFieldEnum]
+export type DeliveryPartnerScalarFieldEnum = (typeof DeliveryPartnerScalarFieldEnum)[keyof typeof DeliveryPartnerScalarFieldEnum]
 
 
-export const SupplierKycScalarFieldEnum = {
+export const DeliveryPartnerKycScalarFieldEnum = {
   id: 'id',
-  supplierId: 'supplierId',
+  deliveryPartnerId: 'deliveryPartnerId',
   documentUrl: 'documentUrl',
   verifiedAt: 'verifiedAt'
 } as const
 
-export type SupplierKycScalarFieldEnum = (typeof SupplierKycScalarFieldEnum)[keyof typeof SupplierKycScalarFieldEnum]
+export type DeliveryPartnerKycScalarFieldEnum = (typeof DeliveryPartnerKycScalarFieldEnum)[keyof typeof DeliveryPartnerKycScalarFieldEnum]
 
 
-export const SupplierCatalogueItemScalarFieldEnum = {
+export const DeliveryPartnerCatalogueItemScalarFieldEnum = {
   id: 'id',
-  supplierId: 'supplierId',
+  deliveryPartnerId: 'deliveryPartnerId',
   itemName: 'itemName',
   unit: 'unit',
   ratePerUnit: 'ratePerUnit'
 } as const
 
-export type SupplierCatalogueItemScalarFieldEnum = (typeof SupplierCatalogueItemScalarFieldEnum)[keyof typeof SupplierCatalogueItemScalarFieldEnum]
+export type DeliveryPartnerCatalogueItemScalarFieldEnum = (typeof DeliveryPartnerCatalogueItemScalarFieldEnum)[keyof typeof DeliveryPartnerCatalogueItemScalarFieldEnum]
 
 
-export const SupplierKitchenAssignmentScalarFieldEnum = {
+export const DeliveryPartnerKitchenAssignmentScalarFieldEnum = {
   id: 'id',
-  supplierId: 'supplierId',
+  deliveryPartnerId: 'deliveryPartnerId',
   kitchenPartnerId: 'kitchenPartnerId',
   assignedByAdminId: 'assignedByAdminId',
   status: 'status',
   createdAt: 'createdAt'
 } as const
 
-export type SupplierKitchenAssignmentScalarFieldEnum = (typeof SupplierKitchenAssignmentScalarFieldEnum)[keyof typeof SupplierKitchenAssignmentScalarFieldEnum]
+export type DeliveryPartnerKitchenAssignmentScalarFieldEnum = (typeof DeliveryPartnerKitchenAssignmentScalarFieldEnum)[keyof typeof DeliveryPartnerKitchenAssignmentScalarFieldEnum]
 
 
 export const CategoryScalarFieldEnum = {
@@ -441,6 +443,37 @@ export const ReviewScalarFieldEnum = {
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  plan: 'plan',
+  referenceId: 'referenceId',
+  razorpayCustomerId: 'razorpayCustomerId',
+  razorpaySubscriptionId: 'razorpaySubscriptionId',
+  razorpayPlanId: 'razorpayPlanId',
+  status: 'status',
+  currentStart: 'currentStart',
+  currentEnd: 'currentEnd',
+  endedAt: 'endedAt',
+  quantity: 'quantity',
+  totalCount: 'totalCount',
+  paidCount: 'paidCount',
+  remainingCount: 'remainingCount',
+  cancelledAt: 'cancelledAt',
+  pausedAt: 'pausedAt',
+  shortUrl: 'shortUrl',
+  cancelAtCycleEnd: 'cancelAtCycleEnd',
+  billingPeriod: 'billingPeriod',
+  trialStart: 'trialStart',
+  trialEnd: 'trialEnd',
+  metadata: 'metadata',
+  renewedAt: 'renewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
 export const PaymentScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
@@ -471,7 +504,7 @@ export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[key
 export const BankAccountScalarFieldEnum = {
   id: 'id',
   kitchenPartnerId: 'kitchenPartnerId',
-  supplierId: 'supplierId',
+  deliveryPartnerId: 'deliveryPartnerId',
   accountHolderName: 'accountHolderName',
   accountNumberHash: 'accountNumberHash',
   ifscCode: 'ifscCode',
@@ -484,7 +517,7 @@ export type BankAccountScalarFieldEnum = (typeof BankAccountScalarFieldEnum)[key
 export const UpiAccountScalarFieldEnum = {
   id: 'id',
   kitchenPartnerId: 'kitchenPartnerId',
-  supplierId: 'supplierId',
+  deliveryPartnerId: 'deliveryPartnerId',
   upiId: 'upiId'
 } as const
 
@@ -504,7 +537,7 @@ export type CommissionScalarFieldEnum = (typeof CommissionScalarFieldEnum)[keyof
 export const WithdrawalScalarFieldEnum = {
   id: 'id',
   kitchenPartnerId: 'kitchenPartnerId',
-  supplierId: 'supplierId',
+  deliveryPartnerId: 'deliveryPartnerId',
   amount: 'amount',
   status: 'status',
   payoutCycleId: 'payoutCycleId',

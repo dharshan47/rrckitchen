@@ -2,13 +2,15 @@
 
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useDebouncedValue } from "./useDebouncedValue";
-import { useMenuStore } from "@/stores";
+import { menuStore } from "@/stores";
+import { useRequestDedupe } from "./useRequestDedupe";
 
 export function useTomorrowMenu() {
-  const searchQuery = useMenuStore((state) => state.searchQuery);
-  const selectedFoodType = useMenuStore((state) => state.selectedFoodType);
-  const selectedTimeSlot = useMenuStore((state) => state.selectedTimeSlot);
+  const searchQuery = menuStore((state) => state.searchQuery);
+  const selectedFoodType = menuStore((state) => state.selectedFoodType);
+  const selectedTimeSlot = menuStore((state) => state.selectedTimeSlot);
   const debouncedSearch = useDebouncedValue(searchQuery, 350);
+  const { dedupe } = useRequestDedupe(5000);
 
   return useQuery({
     queryKey: [
@@ -21,15 +23,12 @@ export function useTomorrowMenu() {
       if (selectedFoodType !== "ALL") params.set("foodType", selectedFoodType);
       if (selectedTimeSlot !== "ALL") params.set("timeSlot", selectedTimeSlot);
 
-      const res = await fetch(`/api/menu/tomorrow?${params.toString()}`, {
-        cache: "no-store",
+      const key = `/api/menu/tomorrow?${params.toString()}`;
+      return dedupe(key, async () => {
+        const res = await fetch(key, { cache: "no-store" });
+        if (!res.ok) throw new Error("Unable to load menu items.");
+        return res.json();
       });
-
-      if (!res.ok) {
-        throw new Error("Unable to load menu items.");
-      }
-
-      return res.json();
     },
     staleTime: 30_000,
     placeholderData: keepPreviousData,

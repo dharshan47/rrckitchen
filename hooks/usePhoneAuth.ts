@@ -20,9 +20,6 @@ export function usePhoneAuth(role: UserRole) {
   useEffect(() => {
     setRole(role);
     resetAuthState();
-    setStep("phone");
-    setStatusMessage(null);
-    setErrorMessage(null);
   }, [role, resetAuthState, setRole]);
 
   const normalizePhoneNumber = useMemo(
@@ -88,8 +85,8 @@ export function usePhoneAuth(role: UserRole) {
   const login = () => {
     const redirectMap: Record<string, string> = {
       customer: "/",
-      supplier: "/supplier",
-      kitchen: "/kitchen",
+      "delivery-partner": "/delivery-partner/dashboard",
+      kitchen: "/kitchen/dashboard",
       admin: "/admin",
     };
     window.location.href = redirectMap[role] ?? "/";

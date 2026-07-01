@@ -18,13 +18,13 @@ const geistMono = Geist_Mono({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#ffffff",
+  themeColor: "#f97316",
 };
 
 export const metadata: Metadata = {
   title: "RrcKitchen — Thanjavur home meals",
   description:
-    "Secure OTP login for customers, suppliers, and kitchen partners. Pre-order hot meals for tomorrow with a focused phone-first experience.",
+    "Order fresh home-cooked meals from local kitchens in Thanjavur for next-day delivery. Browse menus by time slot, filter by Veg/Non-Veg, and pay securely.",
   icons: {
     icon: "/next.svg",
     apple: "/next.svg",

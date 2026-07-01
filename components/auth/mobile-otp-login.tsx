@@ -1,42 +1,16 @@
 "use client";
 
+import { memo } from "react";
 import { usePhoneAuth } from "@/hooks/usePhoneAuth";
-import { useAuthStore } from "@/stores/authStore";
-import { Button, Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle, Input, InputOTP, Label } from "@/components/ui";
+import { Button, Card, CardContent, CardHeader, CardTitle, Input, InputOTP, Label } from "@/components/ui";
 
-const normalizePhoneNumber = (value: string) => {
-  const digits = value.replace(/\D/g, "");
-  if (digits.length === 10) return `+91${digits}`;
-  if (digits.length >= 11 && digits.length <= 15) return `+${digits}`;
-  return "";
-};
-
-export type UserRole = "customer" | "supplier" | "kitchen";
+export type UserRole = "customer" | "delivery-partner" | "kitchen";
 
 interface MobileOtpLoginProps {
   role?: UserRole;
 }
 
-const roleMeta: Record<UserRole, { title: string; description: string; button: string }> = {
-  customer: {
-    title: "Customer login",
-    description: "Use your mobile number to order meals for tomorrow.",
-    button: "Continue as customer",
-  },
-  supplier: {
-    title: "Supplier login",
-    description: "Login with OTP to view supplier assignments and update status.",
-    button: "Continue as supplier",
-  },
-  kitchen: {
-    title: "Kitchen partner login",
-    description: "Verify your mobile number and manage tomorrow's kitchen menu.",
-    button: "Continue as kitchen partner",
-  },
-};
-
-export default function MobileOtpLogin({ role = "customer" }: MobileOtpLoginProps) {
-  const setRole = useAuthStore((state) => state.setRole);
+function MobileOtpLoginInner({ role = "customer" }: MobileOtpLoginProps) {
   const {
     phoneNumber,
     code,
@@ -55,8 +29,7 @@ export default function MobileOtpLogin({ role = "customer" }: MobileOtpLoginProp
   return (
     <Card className="mx-auto w-full max-w-lg border border-border bg-white">
       <CardHeader className="px-6 py-6">
-        <CardTitle>{roleMeta[role].title}</CardTitle>
-        <CardDescription>{roleMeta[role].description}</CardDescription>
+        <CardTitle>Login</CardTitle>
       </CardHeader>
       <CardContent className="grid gap-4 px-6 py-2">
         <form onSubmit={step === "phone" ? sendOtp : verifyOtp} className="grid gap-4">
@@ -106,7 +79,7 @@ export default function MobileOtpLogin({ role = "customer" }: MobileOtpLoginProp
             </Button>
           ) : (
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {step === "phone" ? roleMeta[role].button : "Verify OTP"}
+              {step === "phone" ? "Continue" : "Verify OTP"}
             </Button>
           )}
         </form>
@@ -120,11 +93,12 @@ export default function MobileOtpLogin({ role = "customer" }: MobileOtpLoginProp
           </div>
         ) : null}
       </CardContent>
-      <CardFooter className="flex flex-col gap-3 px-6 py-6">
-        <p className="text-sm text-muted-foreground">
-          First-time sign-ins are created automatically with your mobile number.
-        </p>
-      </CardFooter>
     </Card>
   );
 }
+
+const MobileOtpLogin = memo(function MobileOtpLogin({ role = "customer" }: MobileOtpLoginProps) {
+  return <MobileOtpLoginInner key={role} role={role} />;
+});
+
+export default MobileOtpLogin;

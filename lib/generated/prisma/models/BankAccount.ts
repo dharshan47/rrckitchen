@@ -27,7 +27,7 @@ export type AggregateBankAccount = {
 export type BankAccountMinAggregateOutputType = {
   id: string | null
   kitchenPartnerId: string | null
-  supplierId: string | null
+  deliveryPartnerId: string | null
   accountHolderName: string | null
   accountNumberHash: string | null
   ifscCode: string | null
@@ -37,7 +37,7 @@ export type BankAccountMinAggregateOutputType = {
 export type BankAccountMaxAggregateOutputType = {
   id: string | null
   kitchenPartnerId: string | null
-  supplierId: string | null
+  deliveryPartnerId: string | null
   accountHolderName: string | null
   accountNumberHash: string | null
   ifscCode: string | null
@@ -47,7 +47,7 @@ export type BankAccountMaxAggregateOutputType = {
 export type BankAccountCountAggregateOutputType = {
   id: number
   kitchenPartnerId: number
-  supplierId: number
+  deliveryPartnerId: number
   accountHolderName: number
   accountNumberHash: number
   ifscCode: number
@@ -59,7 +59,7 @@ export type BankAccountCountAggregateOutputType = {
 export type BankAccountMinAggregateInputType = {
   id?: true
   kitchenPartnerId?: true
-  supplierId?: true
+  deliveryPartnerId?: true
   accountHolderName?: true
   accountNumberHash?: true
   ifscCode?: true
@@ -69,7 +69,7 @@ export type BankAccountMinAggregateInputType = {
 export type BankAccountMaxAggregateInputType = {
   id?: true
   kitchenPartnerId?: true
-  supplierId?: true
+  deliveryPartnerId?: true
   accountHolderName?: true
   accountNumberHash?: true
   ifscCode?: true
@@ -79,7 +79,7 @@ export type BankAccountMaxAggregateInputType = {
 export type BankAccountCountAggregateInputType = {
   id?: true
   kitchenPartnerId?: true
-  supplierId?: true
+  deliveryPartnerId?: true
   accountHolderName?: true
   accountNumberHash?: true
   ifscCode?: true
@@ -162,7 +162,7 @@ export type BankAccountGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 export type BankAccountGroupByOutputType = {
   id: string
   kitchenPartnerId: string | null
-  supplierId: string | null
+  deliveryPartnerId: string | null
   accountHolderName: string
   accountNumberHash: string
   ifscCode: string
@@ -193,31 +193,31 @@ export type BankAccountWhereInput = {
   NOT?: Prisma.BankAccountWhereInput | Prisma.BankAccountWhereInput[]
   id?: Prisma.StringFilter<"BankAccount"> | string
   kitchenPartnerId?: Prisma.StringNullableFilter<"BankAccount"> | string | null
-  supplierId?: Prisma.StringNullableFilter<"BankAccount"> | string | null
+  deliveryPartnerId?: Prisma.StringNullableFilter<"BankAccount"> | string | null
   accountHolderName?: Prisma.StringFilter<"BankAccount"> | string
   accountNumberHash?: Prisma.StringFilter<"BankAccount"> | string
   ifscCode?: Prisma.StringFilter<"BankAccount"> | string
   verifiedAt?: Prisma.DateTimeNullableFilter<"BankAccount"> | Date | string | null
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerNullableScalarRelationFilter, Prisma.KitchenPartnerWhereInput> | null
-  supplier?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
+  deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
 }
 
 export type BankAccountOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrderInput | Prisma.SortOrder
-  supplierId?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   accountHolderName?: Prisma.SortOrder
   accountNumberHash?: Prisma.SortOrder
   ifscCode?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   kitchenPartner?: Prisma.KitchenPartnerOrderByWithRelationInput
-  supplier?: Prisma.SupplierOrderByWithRelationInput
+  deliveryPartner?: Prisma.DeliveryPartnerOrderByWithRelationInput
 }
 
 export type BankAccountWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   kitchenPartnerId?: string
-  supplierId?: string
+  deliveryPartnerId?: string
   AND?: Prisma.BankAccountWhereInput | Prisma.BankAccountWhereInput[]
   OR?: Prisma.BankAccountWhereInput[]
   NOT?: Prisma.BankAccountWhereInput | Prisma.BankAccountWhereInput[]
@@ -226,13 +226,13 @@ export type BankAccountWhereUniqueInput = Prisma.AtLeast<{
   ifscCode?: Prisma.StringFilter<"BankAccount"> | string
   verifiedAt?: Prisma.DateTimeNullableFilter<"BankAccount"> | Date | string | null
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerNullableScalarRelationFilter, Prisma.KitchenPartnerWhereInput> | null
-  supplier?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
-}, "id" | "kitchenPartnerId" | "supplierId">
+  deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
+}, "id" | "kitchenPartnerId" | "deliveryPartnerId">
 
 export type BankAccountOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrderInput | Prisma.SortOrder
-  supplierId?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   accountHolderName?: Prisma.SortOrder
   accountNumberHash?: Prisma.SortOrder
   ifscCode?: Prisma.SortOrder
@@ -248,7 +248,7 @@ export type BankAccountScalarWhereWithAggregatesInput = {
   NOT?: Prisma.BankAccountScalarWhereWithAggregatesInput | Prisma.BankAccountScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"BankAccount"> | string
   kitchenPartnerId?: Prisma.StringNullableWithAggregatesFilter<"BankAccount"> | string | null
-  supplierId?: Prisma.StringNullableWithAggregatesFilter<"BankAccount"> | string | null
+  deliveryPartnerId?: Prisma.StringNullableWithAggregatesFilter<"BankAccount"> | string | null
   accountHolderName?: Prisma.StringWithAggregatesFilter<"BankAccount"> | string
   accountNumberHash?: Prisma.StringWithAggregatesFilter<"BankAccount"> | string
   ifscCode?: Prisma.StringWithAggregatesFilter<"BankAccount"> | string
@@ -262,13 +262,13 @@ export type BankAccountCreateInput = {
   ifscCode: string
   verifiedAt?: Date | string | null
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutBankAccountInput
-  supplier?: Prisma.SupplierCreateNestedOneWithoutBankAccountInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutBankAccountInput
 }
 
 export type BankAccountUncheckedCreateInput = {
   id?: string
   kitchenPartnerId?: string | null
-  supplierId?: string | null
+  deliveryPartnerId?: string | null
   accountHolderName: string
   accountNumberHash: string
   ifscCode: string
@@ -282,13 +282,13 @@ export type BankAccountUpdateInput = {
   ifscCode?: Prisma.StringFieldUpdateOperationsInput | string
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutBankAccountNestedInput
-  supplier?: Prisma.SupplierUpdateOneWithoutBankAccountNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutBankAccountNestedInput
 }
 
 export type BankAccountUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  supplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accountHolderName?: Prisma.StringFieldUpdateOperationsInput | string
   accountNumberHash?: Prisma.StringFieldUpdateOperationsInput | string
   ifscCode?: Prisma.StringFieldUpdateOperationsInput | string
@@ -298,7 +298,7 @@ export type BankAccountUncheckedUpdateInput = {
 export type BankAccountCreateManyInput = {
   id?: string
   kitchenPartnerId?: string | null
-  supplierId?: string | null
+  deliveryPartnerId?: string | null
   accountHolderName: string
   accountNumberHash: string
   ifscCode: string
@@ -316,7 +316,7 @@ export type BankAccountUpdateManyMutationInput = {
 export type BankAccountUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  supplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accountHolderName?: Prisma.StringFieldUpdateOperationsInput | string
   accountNumberHash?: Prisma.StringFieldUpdateOperationsInput | string
   ifscCode?: Prisma.StringFieldUpdateOperationsInput | string
@@ -331,7 +331,7 @@ export type BankAccountNullableScalarRelationFilter = {
 export type BankAccountCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
-  supplierId?: Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrder
   accountHolderName?: Prisma.SortOrder
   accountNumberHash?: Prisma.SortOrder
   ifscCode?: Prisma.SortOrder
@@ -341,7 +341,7 @@ export type BankAccountCountOrderByAggregateInput = {
 export type BankAccountMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
-  supplierId?: Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrder
   accountHolderName?: Prisma.SortOrder
   accountNumberHash?: Prisma.SortOrder
   ifscCode?: Prisma.SortOrder
@@ -351,7 +351,7 @@ export type BankAccountMaxOrderByAggregateInput = {
 export type BankAccountMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
-  supplierId?: Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrder
   accountHolderName?: Prisma.SortOrder
   accountNumberHash?: Prisma.SortOrder
   ifscCode?: Prisma.SortOrder
@@ -390,36 +390,36 @@ export type BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BankAccountUpdateToOneWithWhereWithoutKitchenPartnerInput, Prisma.BankAccountUpdateWithoutKitchenPartnerInput>, Prisma.BankAccountUncheckedUpdateWithoutKitchenPartnerInput>
 }
 
-export type BankAccountCreateNestedOneWithoutSupplierInput = {
-  create?: Prisma.XOR<Prisma.BankAccountCreateWithoutSupplierInput, Prisma.BankAccountUncheckedCreateWithoutSupplierInput>
-  connectOrCreate?: Prisma.BankAccountCreateOrConnectWithoutSupplierInput
+export type BankAccountCreateNestedOneWithoutDeliveryPartnerInput = {
+  create?: Prisma.XOR<Prisma.BankAccountCreateWithoutDeliveryPartnerInput, Prisma.BankAccountUncheckedCreateWithoutDeliveryPartnerInput>
+  connectOrCreate?: Prisma.BankAccountCreateOrConnectWithoutDeliveryPartnerInput
   connect?: Prisma.BankAccountWhereUniqueInput
 }
 
-export type BankAccountUncheckedCreateNestedOneWithoutSupplierInput = {
-  create?: Prisma.XOR<Prisma.BankAccountCreateWithoutSupplierInput, Prisma.BankAccountUncheckedCreateWithoutSupplierInput>
-  connectOrCreate?: Prisma.BankAccountCreateOrConnectWithoutSupplierInput
+export type BankAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput = {
+  create?: Prisma.XOR<Prisma.BankAccountCreateWithoutDeliveryPartnerInput, Prisma.BankAccountUncheckedCreateWithoutDeliveryPartnerInput>
+  connectOrCreate?: Prisma.BankAccountCreateOrConnectWithoutDeliveryPartnerInput
   connect?: Prisma.BankAccountWhereUniqueInput
 }
 
-export type BankAccountUpdateOneWithoutSupplierNestedInput = {
-  create?: Prisma.XOR<Prisma.BankAccountCreateWithoutSupplierInput, Prisma.BankAccountUncheckedCreateWithoutSupplierInput>
-  connectOrCreate?: Prisma.BankAccountCreateOrConnectWithoutSupplierInput
-  upsert?: Prisma.BankAccountUpsertWithoutSupplierInput
+export type BankAccountUpdateOneWithoutDeliveryPartnerNestedInput = {
+  create?: Prisma.XOR<Prisma.BankAccountCreateWithoutDeliveryPartnerInput, Prisma.BankAccountUncheckedCreateWithoutDeliveryPartnerInput>
+  connectOrCreate?: Prisma.BankAccountCreateOrConnectWithoutDeliveryPartnerInput
+  upsert?: Prisma.BankAccountUpsertWithoutDeliveryPartnerInput
   disconnect?: Prisma.BankAccountWhereInput | boolean
   delete?: Prisma.BankAccountWhereInput | boolean
   connect?: Prisma.BankAccountWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.BankAccountUpdateToOneWithWhereWithoutSupplierInput, Prisma.BankAccountUpdateWithoutSupplierInput>, Prisma.BankAccountUncheckedUpdateWithoutSupplierInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BankAccountUpdateToOneWithWhereWithoutDeliveryPartnerInput, Prisma.BankAccountUpdateWithoutDeliveryPartnerInput>, Prisma.BankAccountUncheckedUpdateWithoutDeliveryPartnerInput>
 }
 
-export type BankAccountUncheckedUpdateOneWithoutSupplierNestedInput = {
-  create?: Prisma.XOR<Prisma.BankAccountCreateWithoutSupplierInput, Prisma.BankAccountUncheckedCreateWithoutSupplierInput>
-  connectOrCreate?: Prisma.BankAccountCreateOrConnectWithoutSupplierInput
-  upsert?: Prisma.BankAccountUpsertWithoutSupplierInput
+export type BankAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput = {
+  create?: Prisma.XOR<Prisma.BankAccountCreateWithoutDeliveryPartnerInput, Prisma.BankAccountUncheckedCreateWithoutDeliveryPartnerInput>
+  connectOrCreate?: Prisma.BankAccountCreateOrConnectWithoutDeliveryPartnerInput
+  upsert?: Prisma.BankAccountUpsertWithoutDeliveryPartnerInput
   disconnect?: Prisma.BankAccountWhereInput | boolean
   delete?: Prisma.BankAccountWhereInput | boolean
   connect?: Prisma.BankAccountWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.BankAccountUpdateToOneWithWhereWithoutSupplierInput, Prisma.BankAccountUpdateWithoutSupplierInput>, Prisma.BankAccountUncheckedUpdateWithoutSupplierInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.BankAccountUpdateToOneWithWhereWithoutDeliveryPartnerInput, Prisma.BankAccountUpdateWithoutDeliveryPartnerInput>, Prisma.BankAccountUncheckedUpdateWithoutDeliveryPartnerInput>
 }
 
 export type BankAccountCreateWithoutKitchenPartnerInput = {
@@ -428,12 +428,12 @@ export type BankAccountCreateWithoutKitchenPartnerInput = {
   accountNumberHash: string
   ifscCode: string
   verifiedAt?: Date | string | null
-  supplier?: Prisma.SupplierCreateNestedOneWithoutBankAccountInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutBankAccountInput
 }
 
 export type BankAccountUncheckedCreateWithoutKitchenPartnerInput = {
   id?: string
-  supplierId?: string | null
+  deliveryPartnerId?: string | null
   accountHolderName: string
   accountNumberHash: string
   ifscCode: string
@@ -462,19 +462,19 @@ export type BankAccountUpdateWithoutKitchenPartnerInput = {
   accountNumberHash?: Prisma.StringFieldUpdateOperationsInput | string
   ifscCode?: Prisma.StringFieldUpdateOperationsInput | string
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  supplier?: Prisma.SupplierUpdateOneWithoutBankAccountNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutBankAccountNestedInput
 }
 
 export type BankAccountUncheckedUpdateWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  supplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accountHolderName?: Prisma.StringFieldUpdateOperationsInput | string
   accountNumberHash?: Prisma.StringFieldUpdateOperationsInput | string
   ifscCode?: Prisma.StringFieldUpdateOperationsInput | string
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
-export type BankAccountCreateWithoutSupplierInput = {
+export type BankAccountCreateWithoutDeliveryPartnerInput = {
   id?: string
   accountHolderName: string
   accountNumberHash: string
@@ -483,7 +483,7 @@ export type BankAccountCreateWithoutSupplierInput = {
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutBankAccountInput
 }
 
-export type BankAccountUncheckedCreateWithoutSupplierInput = {
+export type BankAccountUncheckedCreateWithoutDeliveryPartnerInput = {
   id?: string
   kitchenPartnerId?: string | null
   accountHolderName: string
@@ -492,23 +492,23 @@ export type BankAccountUncheckedCreateWithoutSupplierInput = {
   verifiedAt?: Date | string | null
 }
 
-export type BankAccountCreateOrConnectWithoutSupplierInput = {
+export type BankAccountCreateOrConnectWithoutDeliveryPartnerInput = {
   where: Prisma.BankAccountWhereUniqueInput
-  create: Prisma.XOR<Prisma.BankAccountCreateWithoutSupplierInput, Prisma.BankAccountUncheckedCreateWithoutSupplierInput>
+  create: Prisma.XOR<Prisma.BankAccountCreateWithoutDeliveryPartnerInput, Prisma.BankAccountUncheckedCreateWithoutDeliveryPartnerInput>
 }
 
-export type BankAccountUpsertWithoutSupplierInput = {
-  update: Prisma.XOR<Prisma.BankAccountUpdateWithoutSupplierInput, Prisma.BankAccountUncheckedUpdateWithoutSupplierInput>
-  create: Prisma.XOR<Prisma.BankAccountCreateWithoutSupplierInput, Prisma.BankAccountUncheckedCreateWithoutSupplierInput>
+export type BankAccountUpsertWithoutDeliveryPartnerInput = {
+  update: Prisma.XOR<Prisma.BankAccountUpdateWithoutDeliveryPartnerInput, Prisma.BankAccountUncheckedUpdateWithoutDeliveryPartnerInput>
+  create: Prisma.XOR<Prisma.BankAccountCreateWithoutDeliveryPartnerInput, Prisma.BankAccountUncheckedCreateWithoutDeliveryPartnerInput>
   where?: Prisma.BankAccountWhereInput
 }
 
-export type BankAccountUpdateToOneWithWhereWithoutSupplierInput = {
+export type BankAccountUpdateToOneWithWhereWithoutDeliveryPartnerInput = {
   where?: Prisma.BankAccountWhereInput
-  data: Prisma.XOR<Prisma.BankAccountUpdateWithoutSupplierInput, Prisma.BankAccountUncheckedUpdateWithoutSupplierInput>
+  data: Prisma.XOR<Prisma.BankAccountUpdateWithoutDeliveryPartnerInput, Prisma.BankAccountUncheckedUpdateWithoutDeliveryPartnerInput>
 }
 
-export type BankAccountUpdateWithoutSupplierInput = {
+export type BankAccountUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   accountHolderName?: Prisma.StringFieldUpdateOperationsInput | string
   accountNumberHash?: Prisma.StringFieldUpdateOperationsInput | string
@@ -517,7 +517,7 @@ export type BankAccountUpdateWithoutSupplierInput = {
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutBankAccountNestedInput
 }
 
-export type BankAccountUncheckedUpdateWithoutSupplierInput = {
+export type BankAccountUncheckedUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   accountHolderName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -531,73 +531,73 @@ export type BankAccountUncheckedUpdateWithoutSupplierInput = {
 export type BankAccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   kitchenPartnerId?: boolean
-  supplierId?: boolean
+  deliveryPartnerId?: boolean
   accountHolderName?: boolean
   accountNumberHash?: boolean
   ifscCode?: boolean
   verifiedAt?: boolean
   kitchenPartner?: boolean | Prisma.BankAccount$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.BankAccount$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.BankAccount$deliveryPartnerArgs<ExtArgs>
 }, ExtArgs["result"]["bankAccount"]>
 
 export type BankAccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   kitchenPartnerId?: boolean
-  supplierId?: boolean
+  deliveryPartnerId?: boolean
   accountHolderName?: boolean
   accountNumberHash?: boolean
   ifscCode?: boolean
   verifiedAt?: boolean
   kitchenPartner?: boolean | Prisma.BankAccount$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.BankAccount$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.BankAccount$deliveryPartnerArgs<ExtArgs>
 }, ExtArgs["result"]["bankAccount"]>
 
 export type BankAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   kitchenPartnerId?: boolean
-  supplierId?: boolean
+  deliveryPartnerId?: boolean
   accountHolderName?: boolean
   accountNumberHash?: boolean
   ifscCode?: boolean
   verifiedAt?: boolean
   kitchenPartner?: boolean | Prisma.BankAccount$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.BankAccount$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.BankAccount$deliveryPartnerArgs<ExtArgs>
 }, ExtArgs["result"]["bankAccount"]>
 
 export type BankAccountSelectScalar = {
   id?: boolean
   kitchenPartnerId?: boolean
-  supplierId?: boolean
+  deliveryPartnerId?: boolean
   accountHolderName?: boolean
   accountNumberHash?: boolean
   ifscCode?: boolean
   verifiedAt?: boolean
 }
 
-export type BankAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kitchenPartnerId" | "supplierId" | "accountHolderName" | "accountNumberHash" | "ifscCode" | "verifiedAt", ExtArgs["result"]["bankAccount"]>
+export type BankAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kitchenPartnerId" | "deliveryPartnerId" | "accountHolderName" | "accountNumberHash" | "ifscCode" | "verifiedAt", ExtArgs["result"]["bankAccount"]>
 export type BankAccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   kitchenPartner?: boolean | Prisma.BankAccount$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.BankAccount$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.BankAccount$deliveryPartnerArgs<ExtArgs>
 }
 export type BankAccountIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   kitchenPartner?: boolean | Prisma.BankAccount$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.BankAccount$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.BankAccount$deliveryPartnerArgs<ExtArgs>
 }
 export type BankAccountIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   kitchenPartner?: boolean | Prisma.BankAccount$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.BankAccount$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.BankAccount$deliveryPartnerArgs<ExtArgs>
 }
 
 export type $BankAccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "BankAccount"
   objects: {
     kitchenPartner: Prisma.$KitchenPartnerPayload<ExtArgs> | null
-    supplier: Prisma.$SupplierPayload<ExtArgs> | null
+    deliveryPartner: Prisma.$DeliveryPartnerPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     kitchenPartnerId: string | null
-    supplierId: string | null
+    deliveryPartnerId: string | null
     accountHolderName: string
     accountNumberHash: string
     ifscCode: string
@@ -997,7 +997,7 @@ readonly fields: BankAccountFieldRefs;
 export interface Prisma__BankAccountClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   kitchenPartner<T extends Prisma.BankAccount$kitchenPartnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BankAccount$kitchenPartnerArgs<ExtArgs>>): Prisma.Prisma__KitchenPartnerClient<runtime.Types.Result.GetResult<Prisma.$KitchenPartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  supplier<T extends Prisma.BankAccount$supplierArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BankAccount$supplierArgs<ExtArgs>>): Prisma.Prisma__SupplierClient<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  deliveryPartner<T extends Prisma.BankAccount$deliveryPartnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BankAccount$deliveryPartnerArgs<ExtArgs>>): Prisma.Prisma__DeliveryPartnerClient<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1029,7 +1029,7 @@ export interface Prisma__BankAccountClient<T, Null = never, ExtArgs extends runt
 export interface BankAccountFieldRefs {
   readonly id: Prisma.FieldRef<"BankAccount", 'String'>
   readonly kitchenPartnerId: Prisma.FieldRef<"BankAccount", 'String'>
-  readonly supplierId: Prisma.FieldRef<"BankAccount", 'String'>
+  readonly deliveryPartnerId: Prisma.FieldRef<"BankAccount", 'String'>
   readonly accountHolderName: Prisma.FieldRef<"BankAccount", 'String'>
   readonly accountNumberHash: Prisma.FieldRef<"BankAccount", 'String'>
   readonly ifscCode: Prisma.FieldRef<"BankAccount", 'String'>
@@ -1454,22 +1454,22 @@ export type BankAccount$kitchenPartnerArgs<ExtArgs extends runtime.Types.Extensi
 }
 
 /**
- * BankAccount.supplier
+ * BankAccount.deliveryPartner
  */
-export type BankAccount$supplierArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type BankAccount$deliveryPartnerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Supplier
+   * Select specific fields to fetch from the DeliveryPartner
    */
-  select?: Prisma.SupplierSelect<ExtArgs> | null
+  select?: Prisma.DeliveryPartnerSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Supplier
+   * Omit specific fields from the DeliveryPartner
    */
-  omit?: Prisma.SupplierOmit<ExtArgs> | null
+  omit?: Prisma.DeliveryPartnerOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.SupplierInclude<ExtArgs> | null
-  where?: Prisma.SupplierWhereInput
+  include?: Prisma.DeliveryPartnerInclude<ExtArgs> | null
+  where?: Prisma.DeliveryPartnerWhereInput
 }
 
 /**
