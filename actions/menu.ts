@@ -71,3 +71,38 @@ export async function getTomorrowMenu({ query, foodType, timeSlot }: MenuFilterO
     ],
   });
 }
+
+export async function getMenuItemById(id: string) {
+  const tomorrow = startOfDay(addDays(new Date(), 1));
+  return prisma.menuItem.findFirst({
+    where: {
+      id,
+      isAvailable: true,
+      menu: {
+        isActive: true,
+        kitchenPartner: {
+          kitchenAvailability: {
+            some: {
+              serviceDate: tomorrow,
+              isAvailable: true,
+            },
+          },
+        },
+      },
+    },
+    include: {
+      menu: {
+        include: {
+          kitchenPartner: {
+            include: {
+              kitchenAlias: true,
+            },
+          },
+        },
+      },
+      photos: {
+        orderBy: { sortOrder: "asc" },
+      },
+    },
+  });
+}

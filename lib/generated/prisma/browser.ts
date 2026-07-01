@@ -98,25 +98,25 @@ export type MenuItem = Prisma.MenuItemModel
  */
 export type MenuItemPhoto = Prisma.MenuItemPhotoModel
 /**
- * Model Supplier
+ * Model DeliveryPartner
  * 
  */
-export type Supplier = Prisma.SupplierModel
+export type DeliveryPartner = Prisma.DeliveryPartnerModel
 /**
- * Model SupplierKyc
+ * Model DeliveryPartnerKyc
  * 
  */
-export type SupplierKyc = Prisma.SupplierKycModel
+export type DeliveryPartnerKyc = Prisma.DeliveryPartnerKycModel
 /**
- * Model SupplierCatalogueItem
+ * Model DeliveryPartnerCatalogueItem
  * 
  */
-export type SupplierCatalogueItem = Prisma.SupplierCatalogueItemModel
+export type DeliveryPartnerCatalogueItem = Prisma.DeliveryPartnerCatalogueItemModel
 /**
- * Model SupplierKitchenAssignment
+ * Model DeliveryPartnerKitchenAssignment
  * 
  */
-export type SupplierKitchenAssignment = Prisma.SupplierKitchenAssignmentModel
+export type DeliveryPartnerKitchenAssignment = Prisma.DeliveryPartnerKitchenAssignmentModel
 /**
  * Model Category
  * 
@@ -147,6 +147,11 @@ export type OrderStatusHistory = Prisma.OrderStatusHistoryModel
  * 
  */
 export type Review = Prisma.ReviewModel
+/**
+ * Model Subscription
+ * 
+ */
+export type Subscription = Prisma.SubscriptionModel
 /**
  * Model Payment
  * 

@@ -31,6 +31,7 @@ model User {
   emailVerified        Boolean       @default(false)
   image                String?
   isActive             Boolean       @default(true)
+  razorpayCustomerId   String?
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
   deletedAt            DateTime?
@@ -43,8 +44,8 @@ model User {
   orders          Order[]
   reviews         Review[]
   complaints      Complaint[]
-  kitchenPartner  KitchenPartner?
-  supplier        Supplier?
+  kitchenPartner    KitchenPartner?
+  deliveryPartner   DeliveryPartner?
   auditLogs       AuditLog[]
 
   @@index([phoneNumber])
@@ -60,7 +61,7 @@ model Role {
 enum RoleName {
   CUSTOMER
   KITCHENPARTNER
-  SUPPLIER
+  DELIVERYPARTNER
   ADMIN
   SUPPORTAGENT
 }
@@ -181,7 +182,7 @@ model KitchenPartner {
   upiAccount          UpiAccount?
   commission          Commission?
   withdrawals         Withdrawal[]
-  supplierAssignments SupplierKitchenAssignment[]
+  deliveryPartnerAssignments DeliveryPartnerKitchenAssignment[]
   orderItems          OrderItem[]
   reviews             Review[]
 
@@ -300,9 +301,9 @@ model MenuItemPhoto {
   @@index([menuItemId])
 }
 
-// ============ SUPPLIER DOMAIN ============
+// ============ DELIVERY PARTNER DOMAIN ============
 
-model Supplier {
+model DeliveryPartner {
   id              String          @id @default(cuid())
   userId          String          @unique
   status          PartnerStatus   @default(PENDINGAPPROVAL)
@@ -311,9 +312,9 @@ model Supplier {
   deletedAt       DateTime?
 
   user                  User                          @relation(fields: [userId], references: [id])
-  supplierKyc           SupplierKyc?
-  catalogueItems        SupplierCatalogueItem[]
-  kitchenAssignments    SupplierKitchenAssignment[]
+  kyc                   DeliveryPartnerKyc?
+  catalogueItems        DeliveryPartnerCatalogueItem[]
+  kitchenAssignments    DeliveryPartnerKitchenAssignment[]
   bankAccount           BankAccount?
   upiAccount            UpiAccount?
   withdrawals           Withdrawal[]
@@ -321,39 +322,39 @@ model Supplier {
   @@index([status])
 }
 
-model SupplierKyc {
-  id            String      @id @default(cuid())
-  supplierId    String      @unique
-  documentUrl   String?
-  verifiedAt    DateTime?
+model DeliveryPartnerKyc {
+  id                  String      @id @default(cuid())
+  deliveryPartnerId   String      @unique
+  documentUrl         String?
+  verifiedAt          DateTime?
 
-  supplier      Supplier    @relation(fields: [supplierId], references: [id])
+  deliveryPartner     DeliveryPartner    @relation(fields: [deliveryPartnerId], references: [id])
 }
 
-model SupplierCatalogueItem {
-  id            String      @id @default(cuid())
-  supplierId    String
-  itemName      String
-  unit          String
-  ratePerUnit   Decimal
+model DeliveryPartnerCatalogueItem {
+  id                  String      @id @default(cuid())
+  deliveryPartnerId   String
+  itemName            String
+  unit                String
+  ratePerUnit         Decimal
 
-  supplier      Supplier    @relation(fields: [supplierId], references: [id])
+  deliveryPartner     DeliveryPartner    @relation(fields: [deliveryPartnerId], references: [id])
 
-  @@index([supplierId])
+  @@index([deliveryPartnerId])
 }
 
-model SupplierKitchenAssignment {
+model DeliveryPartnerKitchenAssignment {
   id                  String            @id @default(cuid())
-  supplierId          String
+  deliveryPartnerId   String
   kitchenPartnerId    String
   assignedByAdminId   String
   status              AssignmentStatus  @default(PENDING)
   createdAt           DateTime          @default(now())
 
-  supplier            Supplier          @relation(fields: [supplierId], references: [id])
+  deliveryPartner     DeliveryPartner   @relation(fields: [deliveryPartnerId], references: [id])
   kitchenPartner      KitchenPartner    @relation(fields: [kitchenPartnerId], references: [id])
 
-  @@index([supplierId])
+  @@index([deliveryPartnerId])
   @@index([kitchenPartnerId])
 }
 
@@ -470,6 +471,37 @@ model Review {
 
 // ============ FINANCE ============
 
+model Subscription {
+  id                      String    @id @default(cuid())
+  plan                    String
+  referenceId             String
+  razorpayCustomerId      String?
+  razorpaySubscriptionId  String?
+  razorpayPlanId          String?
+  status                  String    @default("created")
+  currentStart            DateTime?
+  currentEnd              DateTime?
+  endedAt                 DateTime?
+  quantity                Int?      @default(1)
+  totalCount              Int?
+  paidCount               Int?      @default(0)
+  remainingCount          Int?
+  cancelledAt             DateTime?
+  pausedAt                DateTime?
+  shortUrl                String?
+  cancelAtCycleEnd        Boolean?
+  billingPeriod           String?
+  trialStart              DateTime?
+  trialEnd                DateTime?
+  metadata                String?
+  renewedAt               DateTime?
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  @@index([referenceId])
+  @@map("subscription")
+}
+
 model Payment {
   id                String          @id @default(cuid())
   orderId           String          @unique
@@ -515,7 +547,7 @@ model Transaction {
 enum TransactionType {
   ORDERPAYMENT
   KITCHENPAYOUT
-  SUPPLIERPAYOUT
+  DELIVERYPARTNERPAYOUT
   REFUND
 }
 
@@ -527,24 +559,24 @@ enum TransactionDirection {
 model BankAccount {
   id                  String          @id @default(cuid())
   kitchenPartnerId    String?         @unique
-  supplierId          String?         @unique
+  deliveryPartnerId   String?         @unique
   accountHolderName   String
   accountNumberHash   String
   ifscCode            String
   verifiedAt          DateTime?
 
-  kitchenPartner      KitchenPartner? @relation(fields: [kitchenPartnerId], references: [id])
-  supplier            Supplier?       @relation(fields: [supplierId], references: [id])
+  kitchenPartner      KitchenPartner?     @relation(fields: [kitchenPartnerId], references: [id])
+  deliveryPartner     DeliveryPartner?    @relation(fields: [deliveryPartnerId], references: [id])
 }
 
 model UpiAccount {
   id                  String          @id @default(cuid())
   kitchenPartnerId    String?         @unique
-  supplierId          String?         @unique
+  deliveryPartnerId   String?         @unique
   upiId               String
 
-  kitchenPartner      KitchenPartner? @relation(fields: [kitchenPartnerId], references: [id])
-  supplier            Supplier?       @relation(fields: [supplierId], references: [id])
+  kitchenPartner      KitchenPartner?     @relation(fields: [kitchenPartnerId], references: [id])
+  deliveryPartner     DeliveryPartner?    @relation(fields: [deliveryPartnerId], references: [id])
 }
 
 model Commission {
@@ -559,14 +591,14 @@ model Commission {
 model Withdrawal {
   id                  String            @id @default(cuid())
   kitchenPartnerId    String?
-  supplierId          String?
+  deliveryPartnerId   String?
   amount              Decimal
   status              WithdrawalStatus  @default(PENDING)
   payoutCycleId       String
   processedAt         DateTime?
 
-  kitchenPartner      KitchenPartner?   @relation(fields: [kitchenPartnerId], references: [id])
-  supplier            Supplier?         @relation(fields: [supplierId], references: [id])
+  kitchenPartner      KitchenPartner?      @relation(fields: [kitchenPartnerId], references: [id])
+  deliveryPartner     DeliveryPartner?     @relation(fields: [deliveryPartnerId], references: [id])
   payoutCycle         PayoutCycle       @relation(fields: [payoutCycleId], references: [id])
 
   @@index([status])

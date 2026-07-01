@@ -1,44 +1,130 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { KitchenNavbar, KitchenFooter, KitchenFAQ } from "@/components/kitchen-hub";
+import { ChefHat, Clock, DollarSign, TrendingUp, Users, ShieldCheck } from "lucide-react";
 
-import { Badge, Button, Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui";
+const benefits = [
+  {
+    icon: DollarSign,
+    title: "Extra Income",
+    desc: "Earn from your cooking skills. Set your own prices and serve what you love to make.",
+  },
+  {
+    icon: Clock,
+    title: "Flexible Schedule",
+    desc: "Choose your available time slots. Cook only when it suits you.",
+  },
+  {
+    icon: TrendingUp,
+    title: "Grow Your Reach",
+    desc: "Get discovered by customers in your area. Build a loyal following.",
+  },
+  {
+    icon: Users,
+    title: "Community",
+    desc: "Join a network of local home chefs. Share tips and grow together.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Verified Platform",
+    desc: "Secure payments, order management, and customer support handled for you.",
+  },
+  {
+    icon: ChefHat,
+    title: "No Investment Needed",
+    desc: "Start with your home kitchen. No rental or equipment costs required.",
+  },
+];
+
+const steps = [
+  { num: "1", title: "Register", desc: "Sign up with your mobile number and basic details." },
+  { num: "2", title: "Set Your Menu", desc: "Add dishes with prices, photos, and time slots." },
+  { num: "3", title: "Mark Availability", desc: "Set which slots you'll serve for tomorrow." },
+  { num: "4", title: "Receive Orders", desc: "Get notified when customers place orders." },
+  { num: "5", title: "Cook & Deliver", desc: "Prepare fresh meals and hand them over." },
+  { num: "6", title: "Get Paid", desc: "Receive weekly settlements directly to your account." },
+];
 
 export default function KitchenPage() {
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-10 lg:px-10">
-        <section className="grid gap-6 lg:grid-cols-[1fr_320px]">
-          <div className="space-y-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <Badge variant="secondary">Kitchen Partner</Badge>
-              <span className="text-sm text-muted-foreground">Manage tomorrow’s availability, menus, and orders.</span>
-            </div>
-            <h1 className="text-4xl font-semibold tracking-tight">Kitchen Partner Portal</h1>
-            <p className="max-w-2xl text-base leading-7 text-muted-foreground">
-              Self-register, upload your menu, set tomorrow availability, and see confirmed orders in one place.
+    <>
+      <KitchenNavbar />
+      <main>
+        {/* Hero */}
+        <section className="bg-gradient-to-b from-primary/5 to-white py-20">
+          <div className="mx-auto max-w-4xl px-6 text-center space-y-8">
+            <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+              Turn Your Home Kitchen Into a Business
+            </h1>
+            <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-7">
+              Join RrcKitchen&apos;s network of home chefs in Thanjavur. Cook what you love, set your own schedule, and earn from your passion.
             </p>
-          </div>
-          <Card className="rounded-[2rem] border border-border bg-slate-50 p-6">
-            <CardHeader className="px-0 pb-4">
-              <CardTitle>Kitchen actions</CardTitle>
-            </CardHeader>
-            <CardContent className="grid gap-4 px-0">
-              <div className="rounded-3xl border border-border bg-white p-4">
-                <p className="text-sm font-semibold text-foreground">Availability toggle</p>
-                <p className="mt-2 text-sm text-muted-foreground">Mark your next-day availability before the cutoff time.</p>
-              </div>
-              <div className="rounded-3xl border border-border bg-white p-4">
-                <p className="text-sm font-semibold text-foreground">Menu builder</p>
-                <p className="mt-2 text-sm text-muted-foreground">Create Veg and Non-Veg slots for all four time windows.</p>
-              </div>
-            </CardContent>
-            <CardFooter className="px-0 pt-4">
-              <Button asChild className="w-full">
-                <Link href="/login">Register or manage kitchen</Link>
+            <div className="flex gap-4 justify-center">
+              <Button asChild size="lg" className="rounded-full">
+                <Link href="/login/kitchen">Register Your Kitchen</Link>
               </Button>
-            </CardFooter>
-          </Card>
+              <Button asChild variant="outline" size="lg" className="rounded-full">
+                <Link href="#how-it-works">How It Works</Link>
+              </Button>
+            </div>
+          </div>
         </section>
-      </div>
-    </main>
+
+        {/* How It Works */}
+        <section id="how-it-works" className="py-16">
+          <div className="mx-auto max-w-5xl px-6">
+            <h2 className="text-3xl font-bold tracking-tight text-center mb-12">How It Works</h2>
+            <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+              {steps.map((step) => (
+                <div key={step.num} className="text-center space-y-3 p-6">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary font-bold text-sm mx-auto">
+                    {step.num}
+                  </div>
+                  <h3 className="font-semibold">{step.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-6">{step.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Benefits */}
+        <section id="benefits" className="bg-muted/30 py-16">
+          <div className="mx-auto max-w-5xl px-6">
+            <h2 className="text-3xl font-bold tracking-tight text-center mb-12">
+              Why Partner With Us
+            </h2>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {benefits.map((b) => (
+                <div key={b.title} className="rounded-2xl border border-border bg-white p-6 space-y-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                    <b.icon className="h-5 w-5 text-primary" />
+                  </div>
+                  <h3 className="font-semibold">{b.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-6">{b.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <KitchenFAQ />
+
+        {/* CTA */}
+        <section className="bg-primary/5 py-16">
+          <div className="mx-auto max-w-2xl px-6 text-center space-y-6">
+            <h2 className="text-3xl font-bold tracking-tight">Ready to Get Started?</h2>
+            <p className="text-muted-foreground">
+              Join hundreds of home chefs already earning on RrcKitchen.
+            </p>
+            <Button asChild size="lg" className="rounded-full">
+              <Link href="/login/kitchen">Register Your Kitchen</Link>
+            </Button>
+          </div>
+        </section>
+      </main>
+      <KitchenFooter />
+    </>
   );
 }

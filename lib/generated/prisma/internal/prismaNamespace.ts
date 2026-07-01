@@ -400,16 +400,17 @@ export const ModelName = {
   Menu: 'Menu',
   MenuItem: 'MenuItem',
   MenuItemPhoto: 'MenuItemPhoto',
-  Supplier: 'Supplier',
-  SupplierKyc: 'SupplierKyc',
-  SupplierCatalogueItem: 'SupplierCatalogueItem',
-  SupplierKitchenAssignment: 'SupplierKitchenAssignment',
+  DeliveryPartner: 'DeliveryPartner',
+  DeliveryPartnerKyc: 'DeliveryPartnerKyc',
+  DeliveryPartnerCatalogueItem: 'DeliveryPartnerCatalogueItem',
+  DeliveryPartnerKitchenAssignment: 'DeliveryPartnerKitchenAssignment',
   Category: 'Category',
   ServiceZone: 'ServiceZone',
   Order: 'Order',
   OrderItem: 'OrderItem',
   OrderStatusHistory: 'OrderStatusHistory',
   Review: 'Review',
+  Subscription: 'Subscription',
   Payment: 'Payment',
   Transaction: 'Transaction',
   BankAccount: 'BankAccount',
@@ -440,7 +441,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "supplier" | "supplierKyc" | "supplierCatalogueItem" | "supplierKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "payment" | "transaction" | "bankAccount" | "upiAccount" | "commission" | "withdrawal" | "payoutCycle" | "notification" | "notificationTemplate" | "banner" | "setting" | "complaint" | "auditLog" | "reportCache" | "deliverySlot"
+    modelProps: "user" | "role" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "subscription" | "payment" | "transaction" | "bankAccount" | "upiAccount" | "commission" | "withdrawal" | "payoutCycle" | "notification" | "notificationTemplate" | "banner" | "setting" | "complaint" | "auditLog" | "reportCache" | "deliverySlot"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1628,299 +1629,299 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    Supplier: {
-      payload: Prisma.$SupplierPayload<ExtArgs>
-      fields: Prisma.SupplierFieldRefs
+    DeliveryPartner: {
+      payload: Prisma.$DeliveryPartnerPayload<ExtArgs>
+      fields: Prisma.DeliveryPartnerFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.SupplierFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierPayload> | null
+          args: Prisma.DeliveryPartnerFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.SupplierFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierPayload>
+          args: Prisma.DeliveryPartnerFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerPayload>
         }
         findFirst: {
-          args: Prisma.SupplierFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierPayload> | null
+          args: Prisma.DeliveryPartnerFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.SupplierFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierPayload>
+          args: Prisma.DeliveryPartnerFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerPayload>
         }
         findMany: {
-          args: Prisma.SupplierFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierPayload>[]
+          args: Prisma.DeliveryPartnerFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerPayload>[]
         }
         create: {
-          args: Prisma.SupplierCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierPayload>
+          args: Prisma.DeliveryPartnerCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerPayload>
         }
         createMany: {
-          args: Prisma.SupplierCreateManyArgs<ExtArgs>
+          args: Prisma.DeliveryPartnerCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.SupplierCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierPayload>[]
+          args: Prisma.DeliveryPartnerCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerPayload>[]
         }
         delete: {
-          args: Prisma.SupplierDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierPayload>
+          args: Prisma.DeliveryPartnerDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerPayload>
         }
         update: {
-          args: Prisma.SupplierUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierPayload>
+          args: Prisma.DeliveryPartnerUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerPayload>
         }
         deleteMany: {
-          args: Prisma.SupplierDeleteManyArgs<ExtArgs>
+          args: Prisma.DeliveryPartnerDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.SupplierUpdateManyArgs<ExtArgs>
+          args: Prisma.DeliveryPartnerUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.SupplierUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierPayload>[]
+          args: Prisma.DeliveryPartnerUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerPayload>[]
         }
         upsert: {
-          args: Prisma.SupplierUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierPayload>
+          args: Prisma.DeliveryPartnerUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerPayload>
         }
         aggregate: {
-          args: Prisma.SupplierAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateSupplier>
+          args: Prisma.DeliveryPartnerAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDeliveryPartner>
         }
         groupBy: {
-          args: Prisma.SupplierGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SupplierGroupByOutputType>[]
+          args: Prisma.DeliveryPartnerGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeliveryPartnerGroupByOutputType>[]
         }
         count: {
-          args: Prisma.SupplierCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SupplierCountAggregateOutputType> | number
+          args: Prisma.DeliveryPartnerCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeliveryPartnerCountAggregateOutputType> | number
         }
       }
     }
-    SupplierKyc: {
-      payload: Prisma.$SupplierKycPayload<ExtArgs>
-      fields: Prisma.SupplierKycFieldRefs
+    DeliveryPartnerKyc: {
+      payload: Prisma.$DeliveryPartnerKycPayload<ExtArgs>
+      fields: Prisma.DeliveryPartnerKycFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.SupplierKycFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKycPayload> | null
+          args: Prisma.DeliveryPartnerKycFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKycPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.SupplierKycFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKycPayload>
+          args: Prisma.DeliveryPartnerKycFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKycPayload>
         }
         findFirst: {
-          args: Prisma.SupplierKycFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKycPayload> | null
+          args: Prisma.DeliveryPartnerKycFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKycPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.SupplierKycFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKycPayload>
+          args: Prisma.DeliveryPartnerKycFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKycPayload>
         }
         findMany: {
-          args: Prisma.SupplierKycFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKycPayload>[]
+          args: Prisma.DeliveryPartnerKycFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKycPayload>[]
         }
         create: {
-          args: Prisma.SupplierKycCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKycPayload>
+          args: Prisma.DeliveryPartnerKycCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKycPayload>
         }
         createMany: {
-          args: Prisma.SupplierKycCreateManyArgs<ExtArgs>
+          args: Prisma.DeliveryPartnerKycCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.SupplierKycCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKycPayload>[]
+          args: Prisma.DeliveryPartnerKycCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKycPayload>[]
         }
         delete: {
-          args: Prisma.SupplierKycDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKycPayload>
+          args: Prisma.DeliveryPartnerKycDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKycPayload>
         }
         update: {
-          args: Prisma.SupplierKycUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKycPayload>
+          args: Prisma.DeliveryPartnerKycUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKycPayload>
         }
         deleteMany: {
-          args: Prisma.SupplierKycDeleteManyArgs<ExtArgs>
+          args: Prisma.DeliveryPartnerKycDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.SupplierKycUpdateManyArgs<ExtArgs>
+          args: Prisma.DeliveryPartnerKycUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.SupplierKycUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKycPayload>[]
+          args: Prisma.DeliveryPartnerKycUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKycPayload>[]
         }
         upsert: {
-          args: Prisma.SupplierKycUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKycPayload>
+          args: Prisma.DeliveryPartnerKycUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKycPayload>
         }
         aggregate: {
-          args: Prisma.SupplierKycAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateSupplierKyc>
+          args: Prisma.DeliveryPartnerKycAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDeliveryPartnerKyc>
         }
         groupBy: {
-          args: Prisma.SupplierKycGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SupplierKycGroupByOutputType>[]
+          args: Prisma.DeliveryPartnerKycGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeliveryPartnerKycGroupByOutputType>[]
         }
         count: {
-          args: Prisma.SupplierKycCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SupplierKycCountAggregateOutputType> | number
+          args: Prisma.DeliveryPartnerKycCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeliveryPartnerKycCountAggregateOutputType> | number
         }
       }
     }
-    SupplierCatalogueItem: {
-      payload: Prisma.$SupplierCatalogueItemPayload<ExtArgs>
-      fields: Prisma.SupplierCatalogueItemFieldRefs
+    DeliveryPartnerCatalogueItem: {
+      payload: Prisma.$DeliveryPartnerCatalogueItemPayload<ExtArgs>
+      fields: Prisma.DeliveryPartnerCatalogueItemFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.SupplierCatalogueItemFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierCatalogueItemPayload> | null
+          args: Prisma.DeliveryPartnerCatalogueItemFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerCatalogueItemPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.SupplierCatalogueItemFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierCatalogueItemPayload>
+          args: Prisma.DeliveryPartnerCatalogueItemFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerCatalogueItemPayload>
         }
         findFirst: {
-          args: Prisma.SupplierCatalogueItemFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierCatalogueItemPayload> | null
+          args: Prisma.DeliveryPartnerCatalogueItemFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerCatalogueItemPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.SupplierCatalogueItemFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierCatalogueItemPayload>
+          args: Prisma.DeliveryPartnerCatalogueItemFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerCatalogueItemPayload>
         }
         findMany: {
-          args: Prisma.SupplierCatalogueItemFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierCatalogueItemPayload>[]
+          args: Prisma.DeliveryPartnerCatalogueItemFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerCatalogueItemPayload>[]
         }
         create: {
-          args: Prisma.SupplierCatalogueItemCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierCatalogueItemPayload>
+          args: Prisma.DeliveryPartnerCatalogueItemCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerCatalogueItemPayload>
         }
         createMany: {
-          args: Prisma.SupplierCatalogueItemCreateManyArgs<ExtArgs>
+          args: Prisma.DeliveryPartnerCatalogueItemCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.SupplierCatalogueItemCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierCatalogueItemPayload>[]
+          args: Prisma.DeliveryPartnerCatalogueItemCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerCatalogueItemPayload>[]
         }
         delete: {
-          args: Prisma.SupplierCatalogueItemDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierCatalogueItemPayload>
+          args: Prisma.DeliveryPartnerCatalogueItemDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerCatalogueItemPayload>
         }
         update: {
-          args: Prisma.SupplierCatalogueItemUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierCatalogueItemPayload>
+          args: Prisma.DeliveryPartnerCatalogueItemUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerCatalogueItemPayload>
         }
         deleteMany: {
-          args: Prisma.SupplierCatalogueItemDeleteManyArgs<ExtArgs>
+          args: Prisma.DeliveryPartnerCatalogueItemDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.SupplierCatalogueItemUpdateManyArgs<ExtArgs>
+          args: Prisma.DeliveryPartnerCatalogueItemUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.SupplierCatalogueItemUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierCatalogueItemPayload>[]
+          args: Prisma.DeliveryPartnerCatalogueItemUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerCatalogueItemPayload>[]
         }
         upsert: {
-          args: Prisma.SupplierCatalogueItemUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierCatalogueItemPayload>
+          args: Prisma.DeliveryPartnerCatalogueItemUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerCatalogueItemPayload>
         }
         aggregate: {
-          args: Prisma.SupplierCatalogueItemAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateSupplierCatalogueItem>
+          args: Prisma.DeliveryPartnerCatalogueItemAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDeliveryPartnerCatalogueItem>
         }
         groupBy: {
-          args: Prisma.SupplierCatalogueItemGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SupplierCatalogueItemGroupByOutputType>[]
+          args: Prisma.DeliveryPartnerCatalogueItemGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeliveryPartnerCatalogueItemGroupByOutputType>[]
         }
         count: {
-          args: Prisma.SupplierCatalogueItemCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SupplierCatalogueItemCountAggregateOutputType> | number
+          args: Prisma.DeliveryPartnerCatalogueItemCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeliveryPartnerCatalogueItemCountAggregateOutputType> | number
         }
       }
     }
-    SupplierKitchenAssignment: {
-      payload: Prisma.$SupplierKitchenAssignmentPayload<ExtArgs>
-      fields: Prisma.SupplierKitchenAssignmentFieldRefs
+    DeliveryPartnerKitchenAssignment: {
+      payload: Prisma.$DeliveryPartnerKitchenAssignmentPayload<ExtArgs>
+      fields: Prisma.DeliveryPartnerKitchenAssignmentFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.SupplierKitchenAssignmentFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKitchenAssignmentPayload> | null
+          args: Prisma.DeliveryPartnerKitchenAssignmentFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.SupplierKitchenAssignmentFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKitchenAssignmentPayload>
+          args: Prisma.DeliveryPartnerKitchenAssignmentFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload>
         }
         findFirst: {
-          args: Prisma.SupplierKitchenAssignmentFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKitchenAssignmentPayload> | null
+          args: Prisma.DeliveryPartnerKitchenAssignmentFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.SupplierKitchenAssignmentFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKitchenAssignmentPayload>
+          args: Prisma.DeliveryPartnerKitchenAssignmentFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload>
         }
         findMany: {
-          args: Prisma.SupplierKitchenAssignmentFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKitchenAssignmentPayload>[]
+          args: Prisma.DeliveryPartnerKitchenAssignmentFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload>[]
         }
         create: {
-          args: Prisma.SupplierKitchenAssignmentCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKitchenAssignmentPayload>
+          args: Prisma.DeliveryPartnerKitchenAssignmentCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload>
         }
         createMany: {
-          args: Prisma.SupplierKitchenAssignmentCreateManyArgs<ExtArgs>
+          args: Prisma.DeliveryPartnerKitchenAssignmentCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.SupplierKitchenAssignmentCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKitchenAssignmentPayload>[]
+          args: Prisma.DeliveryPartnerKitchenAssignmentCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload>[]
         }
         delete: {
-          args: Prisma.SupplierKitchenAssignmentDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKitchenAssignmentPayload>
+          args: Prisma.DeliveryPartnerKitchenAssignmentDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload>
         }
         update: {
-          args: Prisma.SupplierKitchenAssignmentUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKitchenAssignmentPayload>
+          args: Prisma.DeliveryPartnerKitchenAssignmentUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload>
         }
         deleteMany: {
-          args: Prisma.SupplierKitchenAssignmentDeleteManyArgs<ExtArgs>
+          args: Prisma.DeliveryPartnerKitchenAssignmentDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.SupplierKitchenAssignmentUpdateManyArgs<ExtArgs>
+          args: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.SupplierKitchenAssignmentUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKitchenAssignmentPayload>[]
+          args: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload>[]
         }
         upsert: {
-          args: Prisma.SupplierKitchenAssignmentUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$SupplierKitchenAssignmentPayload>
+          args: Prisma.DeliveryPartnerKitchenAssignmentUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload>
         }
         aggregate: {
-          args: Prisma.SupplierKitchenAssignmentAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateSupplierKitchenAssignment>
+          args: Prisma.DeliveryPartnerKitchenAssignmentAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDeliveryPartnerKitchenAssignment>
         }
         groupBy: {
-          args: Prisma.SupplierKitchenAssignmentGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SupplierKitchenAssignmentGroupByOutputType>[]
+          args: Prisma.DeliveryPartnerKitchenAssignmentGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeliveryPartnerKitchenAssignmentGroupByOutputType>[]
         }
         count: {
-          args: Prisma.SupplierKitchenAssignmentCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.SupplierKitchenAssignmentCountAggregateOutputType> | number
+          args: Prisma.DeliveryPartnerKitchenAssignmentCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeliveryPartnerKitchenAssignmentCountAggregateOutputType> | number
         }
       }
     }
@@ -2365,6 +2366,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.ReviewCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.ReviewCountAggregateOutputType> | number
+        }
+      }
+    }
+    Subscription: {
+      payload: Prisma.$SubscriptionPayload<ExtArgs>
+      fields: Prisma.SubscriptionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SubscriptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SubscriptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        findFirst: {
+          args: Prisma.SubscriptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SubscriptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        findMany: {
+          args: Prisma.SubscriptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
+        }
+        create: {
+          args: Prisma.SubscriptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        createMany: {
+          args: Prisma.SubscriptionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SubscriptionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
+        }
+        delete: {
+          args: Prisma.SubscriptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        update: {
+          args: Prisma.SubscriptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        deleteMany: {
+          args: Prisma.SubscriptionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SubscriptionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SubscriptionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>[]
+        }
+        upsert: {
+          args: Prisma.SubscriptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SubscriptionPayload>
+        }
+        aggregate: {
+          args: Prisma.SubscriptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSubscription>
+        }
+        groupBy: {
+          args: Prisma.SubscriptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubscriptionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SubscriptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SubscriptionCountAggregateOutputType> | number
         }
       }
     }
@@ -3531,6 +3606,7 @@ export const UserScalarFieldEnum = {
   emailVerified: 'emailVerified',
   image: 'image',
   isActive: 'isActive',
+  razorpayCustomerId: 'razorpayCustomerId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -3730,7 +3806,7 @@ export const MenuItemPhotoScalarFieldEnum = {
 export type MenuItemPhotoScalarFieldEnum = (typeof MenuItemPhotoScalarFieldEnum)[keyof typeof MenuItemPhotoScalarFieldEnum]
 
 
-export const SupplierScalarFieldEnum = {
+export const DeliveryPartnerScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
   status: 'status',
@@ -3739,40 +3815,40 @@ export const SupplierScalarFieldEnum = {
   deletedAt: 'deletedAt'
 } as const
 
-export type SupplierScalarFieldEnum = (typeof SupplierScalarFieldEnum)[keyof typeof SupplierScalarFieldEnum]
+export type DeliveryPartnerScalarFieldEnum = (typeof DeliveryPartnerScalarFieldEnum)[keyof typeof DeliveryPartnerScalarFieldEnum]
 
 
-export const SupplierKycScalarFieldEnum = {
+export const DeliveryPartnerKycScalarFieldEnum = {
   id: 'id',
-  supplierId: 'supplierId',
+  deliveryPartnerId: 'deliveryPartnerId',
   documentUrl: 'documentUrl',
   verifiedAt: 'verifiedAt'
 } as const
 
-export type SupplierKycScalarFieldEnum = (typeof SupplierKycScalarFieldEnum)[keyof typeof SupplierKycScalarFieldEnum]
+export type DeliveryPartnerKycScalarFieldEnum = (typeof DeliveryPartnerKycScalarFieldEnum)[keyof typeof DeliveryPartnerKycScalarFieldEnum]
 
 
-export const SupplierCatalogueItemScalarFieldEnum = {
+export const DeliveryPartnerCatalogueItemScalarFieldEnum = {
   id: 'id',
-  supplierId: 'supplierId',
+  deliveryPartnerId: 'deliveryPartnerId',
   itemName: 'itemName',
   unit: 'unit',
   ratePerUnit: 'ratePerUnit'
 } as const
 
-export type SupplierCatalogueItemScalarFieldEnum = (typeof SupplierCatalogueItemScalarFieldEnum)[keyof typeof SupplierCatalogueItemScalarFieldEnum]
+export type DeliveryPartnerCatalogueItemScalarFieldEnum = (typeof DeliveryPartnerCatalogueItemScalarFieldEnum)[keyof typeof DeliveryPartnerCatalogueItemScalarFieldEnum]
 
 
-export const SupplierKitchenAssignmentScalarFieldEnum = {
+export const DeliveryPartnerKitchenAssignmentScalarFieldEnum = {
   id: 'id',
-  supplierId: 'supplierId',
+  deliveryPartnerId: 'deliveryPartnerId',
   kitchenPartnerId: 'kitchenPartnerId',
   assignedByAdminId: 'assignedByAdminId',
   status: 'status',
   createdAt: 'createdAt'
 } as const
 
-export type SupplierKitchenAssignmentScalarFieldEnum = (typeof SupplierKitchenAssignmentScalarFieldEnum)[keyof typeof SupplierKitchenAssignmentScalarFieldEnum]
+export type DeliveryPartnerKitchenAssignmentScalarFieldEnum = (typeof DeliveryPartnerKitchenAssignmentScalarFieldEnum)[keyof typeof DeliveryPartnerKitchenAssignmentScalarFieldEnum]
 
 
 export const CategoryScalarFieldEnum = {
@@ -3848,6 +3924,37 @@ export const ReviewScalarFieldEnum = {
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
+export const SubscriptionScalarFieldEnum = {
+  id: 'id',
+  plan: 'plan',
+  referenceId: 'referenceId',
+  razorpayCustomerId: 'razorpayCustomerId',
+  razorpaySubscriptionId: 'razorpaySubscriptionId',
+  razorpayPlanId: 'razorpayPlanId',
+  status: 'status',
+  currentStart: 'currentStart',
+  currentEnd: 'currentEnd',
+  endedAt: 'endedAt',
+  quantity: 'quantity',
+  totalCount: 'totalCount',
+  paidCount: 'paidCount',
+  remainingCount: 'remainingCount',
+  cancelledAt: 'cancelledAt',
+  pausedAt: 'pausedAt',
+  shortUrl: 'shortUrl',
+  cancelAtCycleEnd: 'cancelAtCycleEnd',
+  billingPeriod: 'billingPeriod',
+  trialStart: 'trialStart',
+  trialEnd: 'trialEnd',
+  metadata: 'metadata',
+  renewedAt: 'renewedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
+
+
 export const PaymentScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
@@ -3878,7 +3985,7 @@ export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[key
 export const BankAccountScalarFieldEnum = {
   id: 'id',
   kitchenPartnerId: 'kitchenPartnerId',
-  supplierId: 'supplierId',
+  deliveryPartnerId: 'deliveryPartnerId',
   accountHolderName: 'accountHolderName',
   accountNumberHash: 'accountNumberHash',
   ifscCode: 'ifscCode',
@@ -3891,7 +3998,7 @@ export type BankAccountScalarFieldEnum = (typeof BankAccountScalarFieldEnum)[key
 export const UpiAccountScalarFieldEnum = {
   id: 'id',
   kitchenPartnerId: 'kitchenPartnerId',
-  supplierId: 'supplierId',
+  deliveryPartnerId: 'deliveryPartnerId',
   upiId: 'upiId'
 } as const
 
@@ -3911,7 +4018,7 @@ export type CommissionScalarFieldEnum = (typeof CommissionScalarFieldEnum)[keyof
 export const WithdrawalScalarFieldEnum = {
   id: 'id',
   kitchenPartnerId: 'kitchenPartnerId',
-  supplierId: 'supplierId',
+  deliveryPartnerId: 'deliveryPartnerId',
   amount: 'amount',
   status: 'status',
   payoutCycleId: 'payoutCycleId',
@@ -4519,16 +4626,17 @@ export type GlobalOmitConfig = {
   menu?: Prisma.MenuOmit
   menuItem?: Prisma.MenuItemOmit
   menuItemPhoto?: Prisma.MenuItemPhotoOmit
-  supplier?: Prisma.SupplierOmit
-  supplierKyc?: Prisma.SupplierKycOmit
-  supplierCatalogueItem?: Prisma.SupplierCatalogueItemOmit
-  supplierKitchenAssignment?: Prisma.SupplierKitchenAssignmentOmit
+  deliveryPartner?: Prisma.DeliveryPartnerOmit
+  deliveryPartnerKyc?: Prisma.DeliveryPartnerKycOmit
+  deliveryPartnerCatalogueItem?: Prisma.DeliveryPartnerCatalogueItemOmit
+  deliveryPartnerKitchenAssignment?: Prisma.DeliveryPartnerKitchenAssignmentOmit
   category?: Prisma.CategoryOmit
   serviceZone?: Prisma.ServiceZoneOmit
   order?: Prisma.OrderOmit
   orderItem?: Prisma.OrderItemOmit
   orderStatusHistory?: Prisma.OrderStatusHistoryOmit
   review?: Prisma.ReviewOmit
+  subscription?: Prisma.SubscriptionOmit
   payment?: Prisma.PaymentOmit
   transaction?: Prisma.TransactionOmit
   bankAccount?: Prisma.BankAccountOmit

@@ -27,21 +27,21 @@ export type AggregateUpiAccount = {
 export type UpiAccountMinAggregateOutputType = {
   id: string | null
   kitchenPartnerId: string | null
-  supplierId: string | null
+  deliveryPartnerId: string | null
   upiId: string | null
 }
 
 export type UpiAccountMaxAggregateOutputType = {
   id: string | null
   kitchenPartnerId: string | null
-  supplierId: string | null
+  deliveryPartnerId: string | null
   upiId: string | null
 }
 
 export type UpiAccountCountAggregateOutputType = {
   id: number
   kitchenPartnerId: number
-  supplierId: number
+  deliveryPartnerId: number
   upiId: number
   _all: number
 }
@@ -50,21 +50,21 @@ export type UpiAccountCountAggregateOutputType = {
 export type UpiAccountMinAggregateInputType = {
   id?: true
   kitchenPartnerId?: true
-  supplierId?: true
+  deliveryPartnerId?: true
   upiId?: true
 }
 
 export type UpiAccountMaxAggregateInputType = {
   id?: true
   kitchenPartnerId?: true
-  supplierId?: true
+  deliveryPartnerId?: true
   upiId?: true
 }
 
 export type UpiAccountCountAggregateInputType = {
   id?: true
   kitchenPartnerId?: true
-  supplierId?: true
+  deliveryPartnerId?: true
   upiId?: true
   _all?: true
 }
@@ -144,7 +144,7 @@ export type UpiAccountGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 export type UpiAccountGroupByOutputType = {
   id: string
   kitchenPartnerId: string | null
-  supplierId: string | null
+  deliveryPartnerId: string | null
   upiId: string
   _count: UpiAccountCountAggregateOutputType | null
   _min: UpiAccountMinAggregateOutputType | null
@@ -172,37 +172,37 @@ export type UpiAccountWhereInput = {
   NOT?: Prisma.UpiAccountWhereInput | Prisma.UpiAccountWhereInput[]
   id?: Prisma.StringFilter<"UpiAccount"> | string
   kitchenPartnerId?: Prisma.StringNullableFilter<"UpiAccount"> | string | null
-  supplierId?: Prisma.StringNullableFilter<"UpiAccount"> | string | null
+  deliveryPartnerId?: Prisma.StringNullableFilter<"UpiAccount"> | string | null
   upiId?: Prisma.StringFilter<"UpiAccount"> | string
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerNullableScalarRelationFilter, Prisma.KitchenPartnerWhereInput> | null
-  supplier?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
+  deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
 }
 
 export type UpiAccountOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrderInput | Prisma.SortOrder
-  supplierId?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   upiId?: Prisma.SortOrder
   kitchenPartner?: Prisma.KitchenPartnerOrderByWithRelationInput
-  supplier?: Prisma.SupplierOrderByWithRelationInput
+  deliveryPartner?: Prisma.DeliveryPartnerOrderByWithRelationInput
 }
 
 export type UpiAccountWhereUniqueInput = Prisma.AtLeast<{
   id?: string
   kitchenPartnerId?: string
-  supplierId?: string
+  deliveryPartnerId?: string
   AND?: Prisma.UpiAccountWhereInput | Prisma.UpiAccountWhereInput[]
   OR?: Prisma.UpiAccountWhereInput[]
   NOT?: Prisma.UpiAccountWhereInput | Prisma.UpiAccountWhereInput[]
   upiId?: Prisma.StringFilter<"UpiAccount"> | string
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerNullableScalarRelationFilter, Prisma.KitchenPartnerWhereInput> | null
-  supplier?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
-}, "id" | "kitchenPartnerId" | "supplierId">
+  deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
+}, "id" | "kitchenPartnerId" | "deliveryPartnerId">
 
 export type UpiAccountOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrderInput | Prisma.SortOrder
-  supplierId?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   upiId?: Prisma.SortOrder
   _count?: Prisma.UpiAccountCountOrderByAggregateInput
   _max?: Prisma.UpiAccountMaxOrderByAggregateInput
@@ -215,7 +215,7 @@ export type UpiAccountScalarWhereWithAggregatesInput = {
   NOT?: Prisma.UpiAccountScalarWhereWithAggregatesInput | Prisma.UpiAccountScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"UpiAccount"> | string
   kitchenPartnerId?: Prisma.StringNullableWithAggregatesFilter<"UpiAccount"> | string | null
-  supplierId?: Prisma.StringNullableWithAggregatesFilter<"UpiAccount"> | string | null
+  deliveryPartnerId?: Prisma.StringNullableWithAggregatesFilter<"UpiAccount"> | string | null
   upiId?: Prisma.StringWithAggregatesFilter<"UpiAccount"> | string
 }
 
@@ -223,13 +223,13 @@ export type UpiAccountCreateInput = {
   id?: string
   upiId: string
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUpiAccountInput
-  supplier?: Prisma.SupplierCreateNestedOneWithoutUpiAccountInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUpiAccountInput
 }
 
 export type UpiAccountUncheckedCreateInput = {
   id?: string
   kitchenPartnerId?: string | null
-  supplierId?: string | null
+  deliveryPartnerId?: string | null
   upiId: string
 }
 
@@ -237,20 +237,20 @@ export type UpiAccountUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   upiId?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUpiAccountNestedInput
-  supplier?: Prisma.SupplierUpdateOneWithoutUpiAccountNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUpiAccountNestedInput
 }
 
 export type UpiAccountUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  supplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upiId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type UpiAccountCreateManyInput = {
   id?: string
   kitchenPartnerId?: string | null
-  supplierId?: string | null
+  deliveryPartnerId?: string | null
   upiId: string
 }
 
@@ -262,7 +262,7 @@ export type UpiAccountUpdateManyMutationInput = {
 export type UpiAccountUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  supplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upiId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
@@ -274,21 +274,21 @@ export type UpiAccountNullableScalarRelationFilter = {
 export type UpiAccountCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
-  supplierId?: Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrder
   upiId?: Prisma.SortOrder
 }
 
 export type UpiAccountMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
-  supplierId?: Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrder
   upiId?: Prisma.SortOrder
 }
 
 export type UpiAccountMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
-  supplierId?: Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrder
   upiId?: Prisma.SortOrder
 }
 
@@ -324,47 +324,47 @@ export type UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UpiAccountUpdateToOneWithWhereWithoutKitchenPartnerInput, Prisma.UpiAccountUpdateWithoutKitchenPartnerInput>, Prisma.UpiAccountUncheckedUpdateWithoutKitchenPartnerInput>
 }
 
-export type UpiAccountCreateNestedOneWithoutSupplierInput = {
-  create?: Prisma.XOR<Prisma.UpiAccountCreateWithoutSupplierInput, Prisma.UpiAccountUncheckedCreateWithoutSupplierInput>
-  connectOrCreate?: Prisma.UpiAccountCreateOrConnectWithoutSupplierInput
+export type UpiAccountCreateNestedOneWithoutDeliveryPartnerInput = {
+  create?: Prisma.XOR<Prisma.UpiAccountCreateWithoutDeliveryPartnerInput, Prisma.UpiAccountUncheckedCreateWithoutDeliveryPartnerInput>
+  connectOrCreate?: Prisma.UpiAccountCreateOrConnectWithoutDeliveryPartnerInput
   connect?: Prisma.UpiAccountWhereUniqueInput
 }
 
-export type UpiAccountUncheckedCreateNestedOneWithoutSupplierInput = {
-  create?: Prisma.XOR<Prisma.UpiAccountCreateWithoutSupplierInput, Prisma.UpiAccountUncheckedCreateWithoutSupplierInput>
-  connectOrCreate?: Prisma.UpiAccountCreateOrConnectWithoutSupplierInput
+export type UpiAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput = {
+  create?: Prisma.XOR<Prisma.UpiAccountCreateWithoutDeliveryPartnerInput, Prisma.UpiAccountUncheckedCreateWithoutDeliveryPartnerInput>
+  connectOrCreate?: Prisma.UpiAccountCreateOrConnectWithoutDeliveryPartnerInput
   connect?: Prisma.UpiAccountWhereUniqueInput
 }
 
-export type UpiAccountUpdateOneWithoutSupplierNestedInput = {
-  create?: Prisma.XOR<Prisma.UpiAccountCreateWithoutSupplierInput, Prisma.UpiAccountUncheckedCreateWithoutSupplierInput>
-  connectOrCreate?: Prisma.UpiAccountCreateOrConnectWithoutSupplierInput
-  upsert?: Prisma.UpiAccountUpsertWithoutSupplierInput
+export type UpiAccountUpdateOneWithoutDeliveryPartnerNestedInput = {
+  create?: Prisma.XOR<Prisma.UpiAccountCreateWithoutDeliveryPartnerInput, Prisma.UpiAccountUncheckedCreateWithoutDeliveryPartnerInput>
+  connectOrCreate?: Prisma.UpiAccountCreateOrConnectWithoutDeliveryPartnerInput
+  upsert?: Prisma.UpiAccountUpsertWithoutDeliveryPartnerInput
   disconnect?: Prisma.UpiAccountWhereInput | boolean
   delete?: Prisma.UpiAccountWhereInput | boolean
   connect?: Prisma.UpiAccountWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UpiAccountUpdateToOneWithWhereWithoutSupplierInput, Prisma.UpiAccountUpdateWithoutSupplierInput>, Prisma.UpiAccountUncheckedUpdateWithoutSupplierInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UpiAccountUpdateToOneWithWhereWithoutDeliveryPartnerInput, Prisma.UpiAccountUpdateWithoutDeliveryPartnerInput>, Prisma.UpiAccountUncheckedUpdateWithoutDeliveryPartnerInput>
 }
 
-export type UpiAccountUncheckedUpdateOneWithoutSupplierNestedInput = {
-  create?: Prisma.XOR<Prisma.UpiAccountCreateWithoutSupplierInput, Prisma.UpiAccountUncheckedCreateWithoutSupplierInput>
-  connectOrCreate?: Prisma.UpiAccountCreateOrConnectWithoutSupplierInput
-  upsert?: Prisma.UpiAccountUpsertWithoutSupplierInput
+export type UpiAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput = {
+  create?: Prisma.XOR<Prisma.UpiAccountCreateWithoutDeliveryPartnerInput, Prisma.UpiAccountUncheckedCreateWithoutDeliveryPartnerInput>
+  connectOrCreate?: Prisma.UpiAccountCreateOrConnectWithoutDeliveryPartnerInput
+  upsert?: Prisma.UpiAccountUpsertWithoutDeliveryPartnerInput
   disconnect?: Prisma.UpiAccountWhereInput | boolean
   delete?: Prisma.UpiAccountWhereInput | boolean
   connect?: Prisma.UpiAccountWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UpiAccountUpdateToOneWithWhereWithoutSupplierInput, Prisma.UpiAccountUpdateWithoutSupplierInput>, Prisma.UpiAccountUncheckedUpdateWithoutSupplierInput>
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UpiAccountUpdateToOneWithWhereWithoutDeliveryPartnerInput, Prisma.UpiAccountUpdateWithoutDeliveryPartnerInput>, Prisma.UpiAccountUncheckedUpdateWithoutDeliveryPartnerInput>
 }
 
 export type UpiAccountCreateWithoutKitchenPartnerInput = {
   id?: string
   upiId: string
-  supplier?: Prisma.SupplierCreateNestedOneWithoutUpiAccountInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUpiAccountInput
 }
 
 export type UpiAccountUncheckedCreateWithoutKitchenPartnerInput = {
   id?: string
-  supplierId?: string | null
+  deliveryPartnerId?: string | null
   upiId: string
 }
 
@@ -387,50 +387,50 @@ export type UpiAccountUpdateToOneWithWhereWithoutKitchenPartnerInput = {
 export type UpiAccountUpdateWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   upiId?: Prisma.StringFieldUpdateOperationsInput | string
-  supplier?: Prisma.SupplierUpdateOneWithoutUpiAccountNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUpiAccountNestedInput
 }
 
 export type UpiAccountUncheckedUpdateWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  supplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upiId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
-export type UpiAccountCreateWithoutSupplierInput = {
+export type UpiAccountCreateWithoutDeliveryPartnerInput = {
   id?: string
   upiId: string
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUpiAccountInput
 }
 
-export type UpiAccountUncheckedCreateWithoutSupplierInput = {
+export type UpiAccountUncheckedCreateWithoutDeliveryPartnerInput = {
   id?: string
   kitchenPartnerId?: string | null
   upiId: string
 }
 
-export type UpiAccountCreateOrConnectWithoutSupplierInput = {
+export type UpiAccountCreateOrConnectWithoutDeliveryPartnerInput = {
   where: Prisma.UpiAccountWhereUniqueInput
-  create: Prisma.XOR<Prisma.UpiAccountCreateWithoutSupplierInput, Prisma.UpiAccountUncheckedCreateWithoutSupplierInput>
+  create: Prisma.XOR<Prisma.UpiAccountCreateWithoutDeliveryPartnerInput, Prisma.UpiAccountUncheckedCreateWithoutDeliveryPartnerInput>
 }
 
-export type UpiAccountUpsertWithoutSupplierInput = {
-  update: Prisma.XOR<Prisma.UpiAccountUpdateWithoutSupplierInput, Prisma.UpiAccountUncheckedUpdateWithoutSupplierInput>
-  create: Prisma.XOR<Prisma.UpiAccountCreateWithoutSupplierInput, Prisma.UpiAccountUncheckedCreateWithoutSupplierInput>
+export type UpiAccountUpsertWithoutDeliveryPartnerInput = {
+  update: Prisma.XOR<Prisma.UpiAccountUpdateWithoutDeliveryPartnerInput, Prisma.UpiAccountUncheckedUpdateWithoutDeliveryPartnerInput>
+  create: Prisma.XOR<Prisma.UpiAccountCreateWithoutDeliveryPartnerInput, Prisma.UpiAccountUncheckedCreateWithoutDeliveryPartnerInput>
   where?: Prisma.UpiAccountWhereInput
 }
 
-export type UpiAccountUpdateToOneWithWhereWithoutSupplierInput = {
+export type UpiAccountUpdateToOneWithWhereWithoutDeliveryPartnerInput = {
   where?: Prisma.UpiAccountWhereInput
-  data: Prisma.XOR<Prisma.UpiAccountUpdateWithoutSupplierInput, Prisma.UpiAccountUncheckedUpdateWithoutSupplierInput>
+  data: Prisma.XOR<Prisma.UpiAccountUpdateWithoutDeliveryPartnerInput, Prisma.UpiAccountUncheckedUpdateWithoutDeliveryPartnerInput>
 }
 
-export type UpiAccountUpdateWithoutSupplierInput = {
+export type UpiAccountUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   upiId?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUpiAccountNestedInput
 }
 
-export type UpiAccountUncheckedUpdateWithoutSupplierInput = {
+export type UpiAccountUncheckedUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   upiId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -441,61 +441,61 @@ export type UpiAccountUncheckedUpdateWithoutSupplierInput = {
 export type UpiAccountSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   kitchenPartnerId?: boolean
-  supplierId?: boolean
+  deliveryPartnerId?: boolean
   upiId?: boolean
   kitchenPartner?: boolean | Prisma.UpiAccount$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.UpiAccount$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.UpiAccount$deliveryPartnerArgs<ExtArgs>
 }, ExtArgs["result"]["upiAccount"]>
 
 export type UpiAccountSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   kitchenPartnerId?: boolean
-  supplierId?: boolean
+  deliveryPartnerId?: boolean
   upiId?: boolean
   kitchenPartner?: boolean | Prisma.UpiAccount$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.UpiAccount$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.UpiAccount$deliveryPartnerArgs<ExtArgs>
 }, ExtArgs["result"]["upiAccount"]>
 
 export type UpiAccountSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   kitchenPartnerId?: boolean
-  supplierId?: boolean
+  deliveryPartnerId?: boolean
   upiId?: boolean
   kitchenPartner?: boolean | Prisma.UpiAccount$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.UpiAccount$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.UpiAccount$deliveryPartnerArgs<ExtArgs>
 }, ExtArgs["result"]["upiAccount"]>
 
 export type UpiAccountSelectScalar = {
   id?: boolean
   kitchenPartnerId?: boolean
-  supplierId?: boolean
+  deliveryPartnerId?: boolean
   upiId?: boolean
 }
 
-export type UpiAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kitchenPartnerId" | "supplierId" | "upiId", ExtArgs["result"]["upiAccount"]>
+export type UpiAccountOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kitchenPartnerId" | "deliveryPartnerId" | "upiId", ExtArgs["result"]["upiAccount"]>
 export type UpiAccountInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   kitchenPartner?: boolean | Prisma.UpiAccount$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.UpiAccount$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.UpiAccount$deliveryPartnerArgs<ExtArgs>
 }
 export type UpiAccountIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   kitchenPartner?: boolean | Prisma.UpiAccount$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.UpiAccount$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.UpiAccount$deliveryPartnerArgs<ExtArgs>
 }
 export type UpiAccountIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   kitchenPartner?: boolean | Prisma.UpiAccount$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.UpiAccount$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.UpiAccount$deliveryPartnerArgs<ExtArgs>
 }
 
 export type $UpiAccountPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "UpiAccount"
   objects: {
     kitchenPartner: Prisma.$KitchenPartnerPayload<ExtArgs> | null
-    supplier: Prisma.$SupplierPayload<ExtArgs> | null
+    deliveryPartner: Prisma.$DeliveryPartnerPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     kitchenPartnerId: string | null
-    supplierId: string | null
+    deliveryPartnerId: string | null
     upiId: string
   }, ExtArgs["result"]["upiAccount"]>
   composites: {}
@@ -892,7 +892,7 @@ readonly fields: UpiAccountFieldRefs;
 export interface Prisma__UpiAccountClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   kitchenPartner<T extends Prisma.UpiAccount$kitchenPartnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UpiAccount$kitchenPartnerArgs<ExtArgs>>): Prisma.Prisma__KitchenPartnerClient<runtime.Types.Result.GetResult<Prisma.$KitchenPartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  supplier<T extends Prisma.UpiAccount$supplierArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UpiAccount$supplierArgs<ExtArgs>>): Prisma.Prisma__SupplierClient<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  deliveryPartner<T extends Prisma.UpiAccount$deliveryPartnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UpiAccount$deliveryPartnerArgs<ExtArgs>>): Prisma.Prisma__DeliveryPartnerClient<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -924,7 +924,7 @@ export interface Prisma__UpiAccountClient<T, Null = never, ExtArgs extends runti
 export interface UpiAccountFieldRefs {
   readonly id: Prisma.FieldRef<"UpiAccount", 'String'>
   readonly kitchenPartnerId: Prisma.FieldRef<"UpiAccount", 'String'>
-  readonly supplierId: Prisma.FieldRef<"UpiAccount", 'String'>
+  readonly deliveryPartnerId: Prisma.FieldRef<"UpiAccount", 'String'>
   readonly upiId: Prisma.FieldRef<"UpiAccount", 'String'>
 }
     
@@ -1346,22 +1346,22 @@ export type UpiAccount$kitchenPartnerArgs<ExtArgs extends runtime.Types.Extensio
 }
 
 /**
- * UpiAccount.supplier
+ * UpiAccount.deliveryPartner
  */
-export type UpiAccount$supplierArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type UpiAccount$deliveryPartnerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Supplier
+   * Select specific fields to fetch from the DeliveryPartner
    */
-  select?: Prisma.SupplierSelect<ExtArgs> | null
+  select?: Prisma.DeliveryPartnerSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Supplier
+   * Omit specific fields from the DeliveryPartner
    */
-  omit?: Prisma.SupplierOmit<ExtArgs> | null
+  omit?: Prisma.DeliveryPartnerOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.SupplierInclude<ExtArgs> | null
-  where?: Prisma.SupplierWhereInput
+  include?: Prisma.DeliveryPartnerInclude<ExtArgs> | null
+  where?: Prisma.DeliveryPartnerWhereInput
 }
 
 /**

@@ -37,7 +37,7 @@ export type WithdrawalSumAggregateOutputType = {
 export type WithdrawalMinAggregateOutputType = {
   id: string | null
   kitchenPartnerId: string | null
-  supplierId: string | null
+  deliveryPartnerId: string | null
   amount: runtime.Decimal | null
   status: $Enums.WithdrawalStatus | null
   payoutCycleId: string | null
@@ -47,7 +47,7 @@ export type WithdrawalMinAggregateOutputType = {
 export type WithdrawalMaxAggregateOutputType = {
   id: string | null
   kitchenPartnerId: string | null
-  supplierId: string | null
+  deliveryPartnerId: string | null
   amount: runtime.Decimal | null
   status: $Enums.WithdrawalStatus | null
   payoutCycleId: string | null
@@ -57,7 +57,7 @@ export type WithdrawalMaxAggregateOutputType = {
 export type WithdrawalCountAggregateOutputType = {
   id: number
   kitchenPartnerId: number
-  supplierId: number
+  deliveryPartnerId: number
   amount: number
   status: number
   payoutCycleId: number
@@ -77,7 +77,7 @@ export type WithdrawalSumAggregateInputType = {
 export type WithdrawalMinAggregateInputType = {
   id?: true
   kitchenPartnerId?: true
-  supplierId?: true
+  deliveryPartnerId?: true
   amount?: true
   status?: true
   payoutCycleId?: true
@@ -87,7 +87,7 @@ export type WithdrawalMinAggregateInputType = {
 export type WithdrawalMaxAggregateInputType = {
   id?: true
   kitchenPartnerId?: true
-  supplierId?: true
+  deliveryPartnerId?: true
   amount?: true
   status?: true
   payoutCycleId?: true
@@ -97,7 +97,7 @@ export type WithdrawalMaxAggregateInputType = {
 export type WithdrawalCountAggregateInputType = {
   id?: true
   kitchenPartnerId?: true
-  supplierId?: true
+  deliveryPartnerId?: true
   amount?: true
   status?: true
   payoutCycleId?: true
@@ -194,7 +194,7 @@ export type WithdrawalGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inter
 export type WithdrawalGroupByOutputType = {
   id: string
   kitchenPartnerId: string | null
-  supplierId: string | null
+  deliveryPartnerId: string | null
   amount: runtime.Decimal
   status: $Enums.WithdrawalStatus
   payoutCycleId: string
@@ -227,26 +227,26 @@ export type WithdrawalWhereInput = {
   NOT?: Prisma.WithdrawalWhereInput | Prisma.WithdrawalWhereInput[]
   id?: Prisma.StringFilter<"Withdrawal"> | string
   kitchenPartnerId?: Prisma.StringNullableFilter<"Withdrawal"> | string | null
-  supplierId?: Prisma.StringNullableFilter<"Withdrawal"> | string | null
+  deliveryPartnerId?: Prisma.StringNullableFilter<"Withdrawal"> | string | null
   amount?: Prisma.DecimalFilter<"Withdrawal"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumWithdrawalStatusFilter<"Withdrawal"> | $Enums.WithdrawalStatus
   payoutCycleId?: Prisma.StringFilter<"Withdrawal"> | string
   processedAt?: Prisma.DateTimeNullableFilter<"Withdrawal"> | Date | string | null
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerNullableScalarRelationFilter, Prisma.KitchenPartnerWhereInput> | null
-  supplier?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
+  deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
   payoutCycle?: Prisma.XOR<Prisma.PayoutCycleScalarRelationFilter, Prisma.PayoutCycleWhereInput>
 }
 
 export type WithdrawalOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrderInput | Prisma.SortOrder
-  supplierId?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   amount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   payoutCycleId?: Prisma.SortOrder
   processedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   kitchenPartner?: Prisma.KitchenPartnerOrderByWithRelationInput
-  supplier?: Prisma.SupplierOrderByWithRelationInput
+  deliveryPartner?: Prisma.DeliveryPartnerOrderByWithRelationInput
   payoutCycle?: Prisma.PayoutCycleOrderByWithRelationInput
 }
 
@@ -256,20 +256,20 @@ export type WithdrawalWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.WithdrawalWhereInput[]
   NOT?: Prisma.WithdrawalWhereInput | Prisma.WithdrawalWhereInput[]
   kitchenPartnerId?: Prisma.StringNullableFilter<"Withdrawal"> | string | null
-  supplierId?: Prisma.StringNullableFilter<"Withdrawal"> | string | null
+  deliveryPartnerId?: Prisma.StringNullableFilter<"Withdrawal"> | string | null
   amount?: Prisma.DecimalFilter<"Withdrawal"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumWithdrawalStatusFilter<"Withdrawal"> | $Enums.WithdrawalStatus
   payoutCycleId?: Prisma.StringFilter<"Withdrawal"> | string
   processedAt?: Prisma.DateTimeNullableFilter<"Withdrawal"> | Date | string | null
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerNullableScalarRelationFilter, Prisma.KitchenPartnerWhereInput> | null
-  supplier?: Prisma.XOR<Prisma.SupplierNullableScalarRelationFilter, Prisma.SupplierWhereInput> | null
+  deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
   payoutCycle?: Prisma.XOR<Prisma.PayoutCycleScalarRelationFilter, Prisma.PayoutCycleWhereInput>
 }, "id">
 
 export type WithdrawalOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrderInput | Prisma.SortOrder
-  supplierId?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrderInput | Prisma.SortOrder
   amount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   payoutCycleId?: Prisma.SortOrder
@@ -287,7 +287,7 @@ export type WithdrawalScalarWhereWithAggregatesInput = {
   NOT?: Prisma.WithdrawalScalarWhereWithAggregatesInput | Prisma.WithdrawalScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Withdrawal"> | string
   kitchenPartnerId?: Prisma.StringNullableWithAggregatesFilter<"Withdrawal"> | string | null
-  supplierId?: Prisma.StringNullableWithAggregatesFilter<"Withdrawal"> | string | null
+  deliveryPartnerId?: Prisma.StringNullableWithAggregatesFilter<"Withdrawal"> | string | null
   amount?: Prisma.DecimalWithAggregatesFilter<"Withdrawal"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumWithdrawalStatusWithAggregatesFilter<"Withdrawal"> | $Enums.WithdrawalStatus
   payoutCycleId?: Prisma.StringWithAggregatesFilter<"Withdrawal"> | string
@@ -300,14 +300,14 @@ export type WithdrawalCreateInput = {
   status?: $Enums.WithdrawalStatus
   processedAt?: Date | string | null
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutWithdrawalsInput
-  supplier?: Prisma.SupplierCreateNestedOneWithoutWithdrawalsInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutWithdrawalsInput
   payoutCycle: Prisma.PayoutCycleCreateNestedOneWithoutWithdrawalsInput
 }
 
 export type WithdrawalUncheckedCreateInput = {
   id?: string
   kitchenPartnerId?: string | null
-  supplierId?: string | null
+  deliveryPartnerId?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.WithdrawalStatus
   payoutCycleId: string
@@ -320,14 +320,14 @@ export type WithdrawalUpdateInput = {
   status?: Prisma.EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutWithdrawalsNestedInput
-  supplier?: Prisma.SupplierUpdateOneWithoutWithdrawalsNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutWithdrawalsNestedInput
   payoutCycle?: Prisma.PayoutCycleUpdateOneRequiredWithoutWithdrawalsNestedInput
 }
 
 export type WithdrawalUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  supplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
   payoutCycleId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -337,7 +337,7 @@ export type WithdrawalUncheckedUpdateInput = {
 export type WithdrawalCreateManyInput = {
   id?: string
   kitchenPartnerId?: string | null
-  supplierId?: string | null
+  deliveryPartnerId?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.WithdrawalStatus
   payoutCycleId: string
@@ -354,7 +354,7 @@ export type WithdrawalUpdateManyMutationInput = {
 export type WithdrawalUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  supplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
   payoutCycleId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -374,7 +374,7 @@ export type WithdrawalOrderByRelationAggregateInput = {
 export type WithdrawalCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
-  supplierId?: Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   payoutCycleId?: Prisma.SortOrder
@@ -388,7 +388,7 @@ export type WithdrawalAvgOrderByAggregateInput = {
 export type WithdrawalMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
-  supplierId?: Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   payoutCycleId?: Prisma.SortOrder
@@ -398,7 +398,7 @@ export type WithdrawalMaxOrderByAggregateInput = {
 export type WithdrawalMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
-  supplierId?: Prisma.SortOrder
+  deliveryPartnerId?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   payoutCycleId?: Prisma.SortOrder
@@ -451,45 +451,45 @@ export type WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput = {
   deleteMany?: Prisma.WithdrawalScalarWhereInput | Prisma.WithdrawalScalarWhereInput[]
 }
 
-export type WithdrawalCreateNestedManyWithoutSupplierInput = {
-  create?: Prisma.XOR<Prisma.WithdrawalCreateWithoutSupplierInput, Prisma.WithdrawalUncheckedCreateWithoutSupplierInput> | Prisma.WithdrawalCreateWithoutSupplierInput[] | Prisma.WithdrawalUncheckedCreateWithoutSupplierInput[]
-  connectOrCreate?: Prisma.WithdrawalCreateOrConnectWithoutSupplierInput | Prisma.WithdrawalCreateOrConnectWithoutSupplierInput[]
-  createMany?: Prisma.WithdrawalCreateManySupplierInputEnvelope
+export type WithdrawalCreateNestedManyWithoutDeliveryPartnerInput = {
+  create?: Prisma.XOR<Prisma.WithdrawalCreateWithoutDeliveryPartnerInput, Prisma.WithdrawalUncheckedCreateWithoutDeliveryPartnerInput> | Prisma.WithdrawalCreateWithoutDeliveryPartnerInput[] | Prisma.WithdrawalUncheckedCreateWithoutDeliveryPartnerInput[]
+  connectOrCreate?: Prisma.WithdrawalCreateOrConnectWithoutDeliveryPartnerInput | Prisma.WithdrawalCreateOrConnectWithoutDeliveryPartnerInput[]
+  createMany?: Prisma.WithdrawalCreateManyDeliveryPartnerInputEnvelope
   connect?: Prisma.WithdrawalWhereUniqueInput | Prisma.WithdrawalWhereUniqueInput[]
 }
 
-export type WithdrawalUncheckedCreateNestedManyWithoutSupplierInput = {
-  create?: Prisma.XOR<Prisma.WithdrawalCreateWithoutSupplierInput, Prisma.WithdrawalUncheckedCreateWithoutSupplierInput> | Prisma.WithdrawalCreateWithoutSupplierInput[] | Prisma.WithdrawalUncheckedCreateWithoutSupplierInput[]
-  connectOrCreate?: Prisma.WithdrawalCreateOrConnectWithoutSupplierInput | Prisma.WithdrawalCreateOrConnectWithoutSupplierInput[]
-  createMany?: Prisma.WithdrawalCreateManySupplierInputEnvelope
+export type WithdrawalUncheckedCreateNestedManyWithoutDeliveryPartnerInput = {
+  create?: Prisma.XOR<Prisma.WithdrawalCreateWithoutDeliveryPartnerInput, Prisma.WithdrawalUncheckedCreateWithoutDeliveryPartnerInput> | Prisma.WithdrawalCreateWithoutDeliveryPartnerInput[] | Prisma.WithdrawalUncheckedCreateWithoutDeliveryPartnerInput[]
+  connectOrCreate?: Prisma.WithdrawalCreateOrConnectWithoutDeliveryPartnerInput | Prisma.WithdrawalCreateOrConnectWithoutDeliveryPartnerInput[]
+  createMany?: Prisma.WithdrawalCreateManyDeliveryPartnerInputEnvelope
   connect?: Prisma.WithdrawalWhereUniqueInput | Prisma.WithdrawalWhereUniqueInput[]
 }
 
-export type WithdrawalUpdateManyWithoutSupplierNestedInput = {
-  create?: Prisma.XOR<Prisma.WithdrawalCreateWithoutSupplierInput, Prisma.WithdrawalUncheckedCreateWithoutSupplierInput> | Prisma.WithdrawalCreateWithoutSupplierInput[] | Prisma.WithdrawalUncheckedCreateWithoutSupplierInput[]
-  connectOrCreate?: Prisma.WithdrawalCreateOrConnectWithoutSupplierInput | Prisma.WithdrawalCreateOrConnectWithoutSupplierInput[]
-  upsert?: Prisma.WithdrawalUpsertWithWhereUniqueWithoutSupplierInput | Prisma.WithdrawalUpsertWithWhereUniqueWithoutSupplierInput[]
-  createMany?: Prisma.WithdrawalCreateManySupplierInputEnvelope
+export type WithdrawalUpdateManyWithoutDeliveryPartnerNestedInput = {
+  create?: Prisma.XOR<Prisma.WithdrawalCreateWithoutDeliveryPartnerInput, Prisma.WithdrawalUncheckedCreateWithoutDeliveryPartnerInput> | Prisma.WithdrawalCreateWithoutDeliveryPartnerInput[] | Prisma.WithdrawalUncheckedCreateWithoutDeliveryPartnerInput[]
+  connectOrCreate?: Prisma.WithdrawalCreateOrConnectWithoutDeliveryPartnerInput | Prisma.WithdrawalCreateOrConnectWithoutDeliveryPartnerInput[]
+  upsert?: Prisma.WithdrawalUpsertWithWhereUniqueWithoutDeliveryPartnerInput | Prisma.WithdrawalUpsertWithWhereUniqueWithoutDeliveryPartnerInput[]
+  createMany?: Prisma.WithdrawalCreateManyDeliveryPartnerInputEnvelope
   set?: Prisma.WithdrawalWhereUniqueInput | Prisma.WithdrawalWhereUniqueInput[]
   disconnect?: Prisma.WithdrawalWhereUniqueInput | Prisma.WithdrawalWhereUniqueInput[]
   delete?: Prisma.WithdrawalWhereUniqueInput | Prisma.WithdrawalWhereUniqueInput[]
   connect?: Prisma.WithdrawalWhereUniqueInput | Prisma.WithdrawalWhereUniqueInput[]
-  update?: Prisma.WithdrawalUpdateWithWhereUniqueWithoutSupplierInput | Prisma.WithdrawalUpdateWithWhereUniqueWithoutSupplierInput[]
-  updateMany?: Prisma.WithdrawalUpdateManyWithWhereWithoutSupplierInput | Prisma.WithdrawalUpdateManyWithWhereWithoutSupplierInput[]
+  update?: Prisma.WithdrawalUpdateWithWhereUniqueWithoutDeliveryPartnerInput | Prisma.WithdrawalUpdateWithWhereUniqueWithoutDeliveryPartnerInput[]
+  updateMany?: Prisma.WithdrawalUpdateManyWithWhereWithoutDeliveryPartnerInput | Prisma.WithdrawalUpdateManyWithWhereWithoutDeliveryPartnerInput[]
   deleteMany?: Prisma.WithdrawalScalarWhereInput | Prisma.WithdrawalScalarWhereInput[]
 }
 
-export type WithdrawalUncheckedUpdateManyWithoutSupplierNestedInput = {
-  create?: Prisma.XOR<Prisma.WithdrawalCreateWithoutSupplierInput, Prisma.WithdrawalUncheckedCreateWithoutSupplierInput> | Prisma.WithdrawalCreateWithoutSupplierInput[] | Prisma.WithdrawalUncheckedCreateWithoutSupplierInput[]
-  connectOrCreate?: Prisma.WithdrawalCreateOrConnectWithoutSupplierInput | Prisma.WithdrawalCreateOrConnectWithoutSupplierInput[]
-  upsert?: Prisma.WithdrawalUpsertWithWhereUniqueWithoutSupplierInput | Prisma.WithdrawalUpsertWithWhereUniqueWithoutSupplierInput[]
-  createMany?: Prisma.WithdrawalCreateManySupplierInputEnvelope
+export type WithdrawalUncheckedUpdateManyWithoutDeliveryPartnerNestedInput = {
+  create?: Prisma.XOR<Prisma.WithdrawalCreateWithoutDeliveryPartnerInput, Prisma.WithdrawalUncheckedCreateWithoutDeliveryPartnerInput> | Prisma.WithdrawalCreateWithoutDeliveryPartnerInput[] | Prisma.WithdrawalUncheckedCreateWithoutDeliveryPartnerInput[]
+  connectOrCreate?: Prisma.WithdrawalCreateOrConnectWithoutDeliveryPartnerInput | Prisma.WithdrawalCreateOrConnectWithoutDeliveryPartnerInput[]
+  upsert?: Prisma.WithdrawalUpsertWithWhereUniqueWithoutDeliveryPartnerInput | Prisma.WithdrawalUpsertWithWhereUniqueWithoutDeliveryPartnerInput[]
+  createMany?: Prisma.WithdrawalCreateManyDeliveryPartnerInputEnvelope
   set?: Prisma.WithdrawalWhereUniqueInput | Prisma.WithdrawalWhereUniqueInput[]
   disconnect?: Prisma.WithdrawalWhereUniqueInput | Prisma.WithdrawalWhereUniqueInput[]
   delete?: Prisma.WithdrawalWhereUniqueInput | Prisma.WithdrawalWhereUniqueInput[]
   connect?: Prisma.WithdrawalWhereUniqueInput | Prisma.WithdrawalWhereUniqueInput[]
-  update?: Prisma.WithdrawalUpdateWithWhereUniqueWithoutSupplierInput | Prisma.WithdrawalUpdateWithWhereUniqueWithoutSupplierInput[]
-  updateMany?: Prisma.WithdrawalUpdateManyWithWhereWithoutSupplierInput | Prisma.WithdrawalUpdateManyWithWhereWithoutSupplierInput[]
+  update?: Prisma.WithdrawalUpdateWithWhereUniqueWithoutDeliveryPartnerInput | Prisma.WithdrawalUpdateWithWhereUniqueWithoutDeliveryPartnerInput[]
+  updateMany?: Prisma.WithdrawalUpdateManyWithWhereWithoutDeliveryPartnerInput | Prisma.WithdrawalUpdateManyWithWhereWithoutDeliveryPartnerInput[]
   deleteMany?: Prisma.WithdrawalScalarWhereInput | Prisma.WithdrawalScalarWhereInput[]
 }
 
@@ -544,13 +544,13 @@ export type WithdrawalCreateWithoutKitchenPartnerInput = {
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.WithdrawalStatus
   processedAt?: Date | string | null
-  supplier?: Prisma.SupplierCreateNestedOneWithoutWithdrawalsInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutWithdrawalsInput
   payoutCycle: Prisma.PayoutCycleCreateNestedOneWithoutWithdrawalsInput
 }
 
 export type WithdrawalUncheckedCreateWithoutKitchenPartnerInput = {
   id?: string
-  supplierId?: string | null
+  deliveryPartnerId?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.WithdrawalStatus
   payoutCycleId: string
@@ -589,14 +589,14 @@ export type WithdrawalScalarWhereInput = {
   NOT?: Prisma.WithdrawalScalarWhereInput | Prisma.WithdrawalScalarWhereInput[]
   id?: Prisma.StringFilter<"Withdrawal"> | string
   kitchenPartnerId?: Prisma.StringNullableFilter<"Withdrawal"> | string | null
-  supplierId?: Prisma.StringNullableFilter<"Withdrawal"> | string | null
+  deliveryPartnerId?: Prisma.StringNullableFilter<"Withdrawal"> | string | null
   amount?: Prisma.DecimalFilter<"Withdrawal"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumWithdrawalStatusFilter<"Withdrawal"> | $Enums.WithdrawalStatus
   payoutCycleId?: Prisma.StringFilter<"Withdrawal"> | string
   processedAt?: Prisma.DateTimeNullableFilter<"Withdrawal"> | Date | string | null
 }
 
-export type WithdrawalCreateWithoutSupplierInput = {
+export type WithdrawalCreateWithoutDeliveryPartnerInput = {
   id?: string
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.WithdrawalStatus
@@ -605,7 +605,7 @@ export type WithdrawalCreateWithoutSupplierInput = {
   payoutCycle: Prisma.PayoutCycleCreateNestedOneWithoutWithdrawalsInput
 }
 
-export type WithdrawalUncheckedCreateWithoutSupplierInput = {
+export type WithdrawalUncheckedCreateWithoutDeliveryPartnerInput = {
   id?: string
   kitchenPartnerId?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -614,30 +614,30 @@ export type WithdrawalUncheckedCreateWithoutSupplierInput = {
   processedAt?: Date | string | null
 }
 
-export type WithdrawalCreateOrConnectWithoutSupplierInput = {
+export type WithdrawalCreateOrConnectWithoutDeliveryPartnerInput = {
   where: Prisma.WithdrawalWhereUniqueInput
-  create: Prisma.XOR<Prisma.WithdrawalCreateWithoutSupplierInput, Prisma.WithdrawalUncheckedCreateWithoutSupplierInput>
+  create: Prisma.XOR<Prisma.WithdrawalCreateWithoutDeliveryPartnerInput, Prisma.WithdrawalUncheckedCreateWithoutDeliveryPartnerInput>
 }
 
-export type WithdrawalCreateManySupplierInputEnvelope = {
-  data: Prisma.WithdrawalCreateManySupplierInput | Prisma.WithdrawalCreateManySupplierInput[]
+export type WithdrawalCreateManyDeliveryPartnerInputEnvelope = {
+  data: Prisma.WithdrawalCreateManyDeliveryPartnerInput | Prisma.WithdrawalCreateManyDeliveryPartnerInput[]
   skipDuplicates?: boolean
 }
 
-export type WithdrawalUpsertWithWhereUniqueWithoutSupplierInput = {
+export type WithdrawalUpsertWithWhereUniqueWithoutDeliveryPartnerInput = {
   where: Prisma.WithdrawalWhereUniqueInput
-  update: Prisma.XOR<Prisma.WithdrawalUpdateWithoutSupplierInput, Prisma.WithdrawalUncheckedUpdateWithoutSupplierInput>
-  create: Prisma.XOR<Prisma.WithdrawalCreateWithoutSupplierInput, Prisma.WithdrawalUncheckedCreateWithoutSupplierInput>
+  update: Prisma.XOR<Prisma.WithdrawalUpdateWithoutDeliveryPartnerInput, Prisma.WithdrawalUncheckedUpdateWithoutDeliveryPartnerInput>
+  create: Prisma.XOR<Prisma.WithdrawalCreateWithoutDeliveryPartnerInput, Prisma.WithdrawalUncheckedCreateWithoutDeliveryPartnerInput>
 }
 
-export type WithdrawalUpdateWithWhereUniqueWithoutSupplierInput = {
+export type WithdrawalUpdateWithWhereUniqueWithoutDeliveryPartnerInput = {
   where: Prisma.WithdrawalWhereUniqueInput
-  data: Prisma.XOR<Prisma.WithdrawalUpdateWithoutSupplierInput, Prisma.WithdrawalUncheckedUpdateWithoutSupplierInput>
+  data: Prisma.XOR<Prisma.WithdrawalUpdateWithoutDeliveryPartnerInput, Prisma.WithdrawalUncheckedUpdateWithoutDeliveryPartnerInput>
 }
 
-export type WithdrawalUpdateManyWithWhereWithoutSupplierInput = {
+export type WithdrawalUpdateManyWithWhereWithoutDeliveryPartnerInput = {
   where: Prisma.WithdrawalScalarWhereInput
-  data: Prisma.XOR<Prisma.WithdrawalUpdateManyMutationInput, Prisma.WithdrawalUncheckedUpdateManyWithoutSupplierInput>
+  data: Prisma.XOR<Prisma.WithdrawalUpdateManyMutationInput, Prisma.WithdrawalUncheckedUpdateManyWithoutDeliveryPartnerInput>
 }
 
 export type WithdrawalCreateWithoutPayoutCycleInput = {
@@ -646,13 +646,13 @@ export type WithdrawalCreateWithoutPayoutCycleInput = {
   status?: $Enums.WithdrawalStatus
   processedAt?: Date | string | null
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutWithdrawalsInput
-  supplier?: Prisma.SupplierCreateNestedOneWithoutWithdrawalsInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutWithdrawalsInput
 }
 
 export type WithdrawalUncheckedCreateWithoutPayoutCycleInput = {
   id?: string
   kitchenPartnerId?: string | null
-  supplierId?: string | null
+  deliveryPartnerId?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.WithdrawalStatus
   processedAt?: Date | string | null
@@ -686,7 +686,7 @@ export type WithdrawalUpdateManyWithWhereWithoutPayoutCycleInput = {
 
 export type WithdrawalCreateManyKitchenPartnerInput = {
   id?: string
-  supplierId?: string | null
+  deliveryPartnerId?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.WithdrawalStatus
   payoutCycleId: string
@@ -698,13 +698,13 @@ export type WithdrawalUpdateWithoutKitchenPartnerInput = {
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  supplier?: Prisma.SupplierUpdateOneWithoutWithdrawalsNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutWithdrawalsNestedInput
   payoutCycle?: Prisma.PayoutCycleUpdateOneRequiredWithoutWithdrawalsNestedInput
 }
 
 export type WithdrawalUncheckedUpdateWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  supplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
   payoutCycleId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -713,14 +713,14 @@ export type WithdrawalUncheckedUpdateWithoutKitchenPartnerInput = {
 
 export type WithdrawalUncheckedUpdateManyWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  supplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
   payoutCycleId?: Prisma.StringFieldUpdateOperationsInput | string
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
-export type WithdrawalCreateManySupplierInput = {
+export type WithdrawalCreateManyDeliveryPartnerInput = {
   id?: string
   kitchenPartnerId?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -729,7 +729,7 @@ export type WithdrawalCreateManySupplierInput = {
   processedAt?: Date | string | null
 }
 
-export type WithdrawalUpdateWithoutSupplierInput = {
+export type WithdrawalUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
@@ -738,7 +738,7 @@ export type WithdrawalUpdateWithoutSupplierInput = {
   payoutCycle?: Prisma.PayoutCycleUpdateOneRequiredWithoutWithdrawalsNestedInput
 }
 
-export type WithdrawalUncheckedUpdateWithoutSupplierInput = {
+export type WithdrawalUncheckedUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -747,7 +747,7 @@ export type WithdrawalUncheckedUpdateWithoutSupplierInput = {
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
-export type WithdrawalUncheckedUpdateManyWithoutSupplierInput = {
+export type WithdrawalUncheckedUpdateManyWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -759,7 +759,7 @@ export type WithdrawalUncheckedUpdateManyWithoutSupplierInput = {
 export type WithdrawalCreateManyPayoutCycleInput = {
   id?: string
   kitchenPartnerId?: string | null
-  supplierId?: string | null
+  deliveryPartnerId?: string | null
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.WithdrawalStatus
   processedAt?: Date | string | null
@@ -771,13 +771,13 @@ export type WithdrawalUpdateWithoutPayoutCycleInput = {
   status?: Prisma.EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutWithdrawalsNestedInput
-  supplier?: Prisma.SupplierUpdateOneWithoutWithdrawalsNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutWithdrawalsNestedInput
 }
 
 export type WithdrawalUncheckedUpdateWithoutPayoutCycleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  supplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -786,7 +786,7 @@ export type WithdrawalUncheckedUpdateWithoutPayoutCycleInput = {
 export type WithdrawalUncheckedUpdateManyWithoutPayoutCycleInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  supplierId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumWithdrawalStatusFieldUpdateOperationsInput | $Enums.WithdrawalStatus
   processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -797,66 +797,66 @@ export type WithdrawalUncheckedUpdateManyWithoutPayoutCycleInput = {
 export type WithdrawalSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   kitchenPartnerId?: boolean
-  supplierId?: boolean
+  deliveryPartnerId?: boolean
   amount?: boolean
   status?: boolean
   payoutCycleId?: boolean
   processedAt?: boolean
   kitchenPartner?: boolean | Prisma.Withdrawal$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.Withdrawal$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.Withdrawal$deliveryPartnerArgs<ExtArgs>
   payoutCycle?: boolean | Prisma.PayoutCycleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["withdrawal"]>
 
 export type WithdrawalSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   kitchenPartnerId?: boolean
-  supplierId?: boolean
+  deliveryPartnerId?: boolean
   amount?: boolean
   status?: boolean
   payoutCycleId?: boolean
   processedAt?: boolean
   kitchenPartner?: boolean | Prisma.Withdrawal$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.Withdrawal$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.Withdrawal$deliveryPartnerArgs<ExtArgs>
   payoutCycle?: boolean | Prisma.PayoutCycleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["withdrawal"]>
 
 export type WithdrawalSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   kitchenPartnerId?: boolean
-  supplierId?: boolean
+  deliveryPartnerId?: boolean
   amount?: boolean
   status?: boolean
   payoutCycleId?: boolean
   processedAt?: boolean
   kitchenPartner?: boolean | Prisma.Withdrawal$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.Withdrawal$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.Withdrawal$deliveryPartnerArgs<ExtArgs>
   payoutCycle?: boolean | Prisma.PayoutCycleDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["withdrawal"]>
 
 export type WithdrawalSelectScalar = {
   id?: boolean
   kitchenPartnerId?: boolean
-  supplierId?: boolean
+  deliveryPartnerId?: boolean
   amount?: boolean
   status?: boolean
   payoutCycleId?: boolean
   processedAt?: boolean
 }
 
-export type WithdrawalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kitchenPartnerId" | "supplierId" | "amount" | "status" | "payoutCycleId" | "processedAt", ExtArgs["result"]["withdrawal"]>
+export type WithdrawalOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kitchenPartnerId" | "deliveryPartnerId" | "amount" | "status" | "payoutCycleId" | "processedAt", ExtArgs["result"]["withdrawal"]>
 export type WithdrawalInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   kitchenPartner?: boolean | Prisma.Withdrawal$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.Withdrawal$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.Withdrawal$deliveryPartnerArgs<ExtArgs>
   payoutCycle?: boolean | Prisma.PayoutCycleDefaultArgs<ExtArgs>
 }
 export type WithdrawalIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   kitchenPartner?: boolean | Prisma.Withdrawal$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.Withdrawal$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.Withdrawal$deliveryPartnerArgs<ExtArgs>
   payoutCycle?: boolean | Prisma.PayoutCycleDefaultArgs<ExtArgs>
 }
 export type WithdrawalIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   kitchenPartner?: boolean | Prisma.Withdrawal$kitchenPartnerArgs<ExtArgs>
-  supplier?: boolean | Prisma.Withdrawal$supplierArgs<ExtArgs>
+  deliveryPartner?: boolean | Prisma.Withdrawal$deliveryPartnerArgs<ExtArgs>
   payoutCycle?: boolean | Prisma.PayoutCycleDefaultArgs<ExtArgs>
 }
 
@@ -864,13 +864,13 @@ export type $WithdrawalPayload<ExtArgs extends runtime.Types.Extensions.Internal
   name: "Withdrawal"
   objects: {
     kitchenPartner: Prisma.$KitchenPartnerPayload<ExtArgs> | null
-    supplier: Prisma.$SupplierPayload<ExtArgs> | null
+    deliveryPartner: Prisma.$DeliveryPartnerPayload<ExtArgs> | null
     payoutCycle: Prisma.$PayoutCyclePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     kitchenPartnerId: string | null
-    supplierId: string | null
+    deliveryPartnerId: string | null
     amount: runtime.Decimal
     status: $Enums.WithdrawalStatus
     payoutCycleId: string
@@ -1270,7 +1270,7 @@ readonly fields: WithdrawalFieldRefs;
 export interface Prisma__WithdrawalClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   kitchenPartner<T extends Prisma.Withdrawal$kitchenPartnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Withdrawal$kitchenPartnerArgs<ExtArgs>>): Prisma.Prisma__KitchenPartnerClient<runtime.Types.Result.GetResult<Prisma.$KitchenPartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  supplier<T extends Prisma.Withdrawal$supplierArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Withdrawal$supplierArgs<ExtArgs>>): Prisma.Prisma__SupplierClient<runtime.Types.Result.GetResult<Prisma.$SupplierPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  deliveryPartner<T extends Prisma.Withdrawal$deliveryPartnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Withdrawal$deliveryPartnerArgs<ExtArgs>>): Prisma.Prisma__DeliveryPartnerClient<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   payoutCycle<T extends Prisma.PayoutCycleDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.PayoutCycleDefaultArgs<ExtArgs>>): Prisma.Prisma__PayoutCycleClient<runtime.Types.Result.GetResult<Prisma.$PayoutCyclePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1303,7 +1303,7 @@ export interface Prisma__WithdrawalClient<T, Null = never, ExtArgs extends runti
 export interface WithdrawalFieldRefs {
   readonly id: Prisma.FieldRef<"Withdrawal", 'String'>
   readonly kitchenPartnerId: Prisma.FieldRef<"Withdrawal", 'String'>
-  readonly supplierId: Prisma.FieldRef<"Withdrawal", 'String'>
+  readonly deliveryPartnerId: Prisma.FieldRef<"Withdrawal", 'String'>
   readonly amount: Prisma.FieldRef<"Withdrawal", 'Decimal'>
   readonly status: Prisma.FieldRef<"Withdrawal", 'WithdrawalStatus'>
   readonly payoutCycleId: Prisma.FieldRef<"Withdrawal", 'String'>
@@ -1728,22 +1728,22 @@ export type Withdrawal$kitchenPartnerArgs<ExtArgs extends runtime.Types.Extensio
 }
 
 /**
- * Withdrawal.supplier
+ * Withdrawal.deliveryPartner
  */
-export type Withdrawal$supplierArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Withdrawal$deliveryPartnerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the Supplier
+   * Select specific fields to fetch from the DeliveryPartner
    */
-  select?: Prisma.SupplierSelect<ExtArgs> | null
+  select?: Prisma.DeliveryPartnerSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the Supplier
+   * Omit specific fields from the DeliveryPartner
    */
-  omit?: Prisma.SupplierOmit<ExtArgs> | null
+  omit?: Prisma.DeliveryPartnerOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.SupplierInclude<ExtArgs> | null
-  where?: Prisma.SupplierWhereInput
+  include?: Prisma.DeliveryPartnerInclude<ExtArgs> | null
+  where?: Prisma.DeliveryPartnerWhereInput
 }
 
 /**
