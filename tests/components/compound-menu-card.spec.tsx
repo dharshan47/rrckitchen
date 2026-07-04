@@ -6,7 +6,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 import { CompoundMenuCard } from "@/components/patterns/compound-menu-card";
 
-const { Root, Header, Content, Footer } = CompoundMenuCard;
+const { Root, Header, Footer } = CompoundMenuCard;
 
 const baseItem = {
   id: "1",
@@ -19,42 +19,22 @@ const baseItem = {
 };
 
 describe("CompoundMenuCard", () => {
-  it("renders header with item name", () => {
+  it("renders header with item name and price", () => {
     render(
       <Root item={baseItem} onAddToCart={() => {}}>
         <Header />
       </Root>
     );
     expect(screen.getByText("Masala Dosa")).toBeInTheDocument();
-    expect(screen.getByText("Thanjavur Kitchen")).toBeInTheDocument();
     expect(screen.getByText("VEG")).toBeInTheDocument();
   });
 
-  it("shows content when expanded", () => {
-    render(
-      <Root item={baseItem} onAddToCart={() => {}} defaultExpanded>
-        <Content />
-      </Root>
-    );
-    expect(screen.getByText("Crispy masala dosa with chutney")).toBeInTheDocument();
-  });
-
-  it("hides content when not expanded", () => {
-    render(
-      <Root item={baseItem} onAddToCart={() => {}}>
-        <Content />
-      </Root>
-    );
-    expect(screen.queryByText("Crispy masala dosa with chutney")).not.toBeInTheDocument();
-  });
-
-  it("renders footer with price and time slot", () => {
+  it("renders footer with time slot", () => {
     render(
       <Root item={baseItem} onAddToCart={() => {}}>
         <Footer />
       </Root>
     );
-    expect(screen.getByText("₹70")).toBeInTheDocument();
     expect(screen.getByText(/Morning/i)).toBeInTheDocument();
   });
 
@@ -76,15 +56,5 @@ describe("CompoundMenuCard", () => {
     );
     await userEvent.click(screen.getByRole("button", { name: "Add" }));
     expect(onAdd).toHaveBeenCalledWith("1");
-  });
-
-  it("uses item without description and no Details button", () => {
-    const noDesc = { ...baseItem, description: null };
-    render(
-      <Root item={noDesc} onAddToCart={() => {}}>
-        <Footer />
-      </Root>
-    );
-    expect(screen.queryByRole("button", { name: "Details" })).not.toBeInTheDocument();
   });
 });

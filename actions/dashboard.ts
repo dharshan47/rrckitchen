@@ -71,7 +71,7 @@ export async function getAdminDashboardData() {
     prisma.order.count({ where: { status: "COMPLETED" } }),
     prisma.order.count({ where: { status: "CONFIRMED" } }),
     prisma.order.count({ where: { status: "CANCELLED" } }),
-    prisma.user.count({ where: { roles: { contains: "customer" } } }),
+    prisma.user.count({ where: { role: "customer" } }),
     prisma.kitchenPartner.count({ where: { status: { in: ["APPROVED", "ACTIVE"] } } }),
     prisma.deliveryPartner.count({ where: { status: { in: ["APPROVED", "ACTIVE"] } } }),
     prisma.menuItem.count({ where: { deletedAt: null } }),
@@ -298,7 +298,7 @@ export async function getKitchenDashboardData() {
     return null
   }
 
-  const kitchenPartner = await prisma.kitchenPartner.findUnique({
+  let kitchenPartner = await prisma.kitchenPartner.findUnique({
     where: { userId: session.user.id },
     include: {
       kitchenAlias: true,
@@ -307,7 +307,10 @@ export async function getKitchenDashboardData() {
   })
 
   if (!kitchenPartner) {
-    return null
+    kitchenPartner = await prisma.kitchenPartner.create({
+      data: { userId: session.user.id },
+      include: { kitchenAlias: true, kitchenKyc: true },
+    })
   }
 
   const now = new Date()
@@ -315,6 +318,7 @@ export async function getKitchenDashboardData() {
   const todayEnd = new Date(todayStart.getTime() + 86400000)
   const sixMonthsAgo = subMonths(now, 5)
   const monthStart = startOfDay(new Date(now.getFullYear(), now.getMonth(), 1))
+  const tomorrowStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1))
 
   const [
     todayOrdersCount,
@@ -328,6 +332,7 @@ export async function getKitchenDashboardData() {
     popularItemsData,
     vegCount,
     nonVegCount,
+    tomorrowAvailability,
   ] = await Promise.all([
     prisma.orderItem.count({
       where: { kitchenPartnerId: kitchenPartner.id, order: { createdAt: { gte: todayStart, lt: todayEnd } } },
@@ -367,7 +372,11 @@ export async function getKitchenDashboardData() {
       orderBy: { order: { createdAt: "desc" } },
       include: {
         order: {
-          include: { payment: { select: { status: true } } },
+          include: {
+            payment: { select: { status: true } },
+            user: { select: { name: true, phoneNumber: true } },
+            address: true,
+          },
         },
         menuItem: { select: { name: true, timeSlot: true } },
       },
@@ -384,6 +393,14 @@ export async function getKitchenDashboardData() {
     }),
     prisma.menuItem.count({
       where: { foodType: "NONVEG", menu: { kitchenPartnerId: kitchenPartner.id }, deletedAt: null },
+    }),
+    prisma.kitchenAvailability.findUnique({
+      where: {
+        kitchenPartnerId_serviceDate: {
+          kitchenPartnerId: kitchenPartner.id,
+          serviceDate: tomorrowStart,
+        },
+      },
     }),
   ])
 
@@ -422,6 +439,11 @@ export async function getKitchenDashboardData() {
     amount: Number(oi.unitPrice) * oi.quantity,
     status: formatOrderStatus(oi.order.status),
     time: format(oi.order.createdAt, "hh:mm a"),
+    customerName: oi.order.user?.name ?? "Unknown",
+    customerPhone: oi.order.user?.phoneNumber ?? "-",
+    customerAddress: oi.order.address
+      ? `${oi.order.address.lineOne}${oi.order.address.lineTwo ? ", " + oi.order.address.lineTwo : ""}, ${oi.order.address.pincode}`
+      : "Address not set",
   }))
 
   const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -453,6 +475,13 @@ export async function getKitchenDashboardData() {
       displayName: kitchenPartner.kitchenAlias?.displayName ?? "My Kitchen",
       status: kitchenPartner.status,
       fssaiNumber: kitchenPartner.kitchenKyc?.fssaiNumber ?? null,
+      bankName: kitchenPartner.kitchenKyc?.bankName ?? null,
+      bankAccountNumber: kitchenPartner.kitchenKyc?.bankAccountNumber ?? null,
+      ifscCode: kitchenPartner.kitchenKyc?.ifscCode ?? null,
+      accountHolderName: kitchenPartner.kitchenKyc?.accountHolderName ?? null,
+      upiId: kitchenPartner.kitchenKyc?.upiId ?? null,
+      gpayNumber: kitchenPartner.kitchenKyc?.gpayNumber ?? null,
+      phoneNumber: kitchenPartner.kitchenKyc?.phoneNumber ?? null,
     },
     stats: {
       todayOrders: todayOrdersCount,
@@ -465,6 +494,7 @@ export async function getKitchenDashboardData() {
     },
     menuItems: allMenuItems,
     orders: orderList,
+    tomorrowAvailability,
     monthlyRevenue,
     weeklySales,
     popularFood,
@@ -472,6 +502,203 @@ export async function getKitchenDashboardData() {
     nonVegCount,
     settlements: [] as Array<{ period: string; gross: number; commission: number; net: number; status: string }>,
   }
+}
+
+export async function updateKitchenBankDetails(data: {
+  bankName: string
+  bankAccountNumber: string
+  ifscCode: string
+  accountHolderName: string
+  upiId: string
+  gpayNumber: string
+  phoneNumber: string
+}) {
+  const session = await getSession()
+  if (!session?.user) return { success: false, error: "Unauthorized" }
+
+  const kitchenPartner = await prisma.kitchenPartner.findUnique({
+    where: { userId: session.user.id },
+  })
+  if (!kitchenPartner) return { success: false, error: "Kitchen partner not found" }
+
+  await prisma.kitchenPartnerKyc.upsert({
+    where: { kitchenPartnerId: kitchenPartner.id },
+    update: {
+      bankName: data.bankName || null,
+      bankAccountNumber: data.bankAccountNumber || null,
+      ifscCode: data.ifscCode || null,
+      accountHolderName: data.accountHolderName || null,
+      upiId: data.upiId || null,
+      gpayNumber: data.gpayNumber || null,
+      phoneNumber: data.phoneNumber || null,
+    },
+    create: {
+      kitchenPartnerId: kitchenPartner.id,
+      bankName: data.bankName || null,
+      bankAccountNumber: data.bankAccountNumber || null,
+      ifscCode: data.ifscCode || null,
+      accountHolderName: data.accountHolderName || null,
+      upiId: data.upiId || null,
+      gpayNumber: data.gpayNumber || null,
+      phoneNumber: data.phoneNumber || null,
+    },
+  })
+
+  return { success: true }
+}
+
+// ============ DELIVERY PARTNER BANK DETAILS ============
+
+export async function updateDeliveryPartnerBankDetails(data: {
+  bankName: string
+  bankAccountNumber: string
+  ifscCode: string
+  accountHolderName: string
+  upiId: string
+  googlePayNumber: string
+  phonePeNumber: string
+}) {
+  const session = await getSession()
+  if (!session?.user) return { success: false, error: "Unauthorized" }
+
+  const deliveryPartner = await prisma.deliveryPartner.findUnique({
+    where: { userId: session.user.id },
+  })
+  if (!deliveryPartner) return { success: false, error: "Delivery partner not found" }
+
+  await prisma.deliveryPartnerKyc.upsert({
+    where: { deliveryPartnerId: deliveryPartner.id },
+    update: {
+      bankName: data.bankName || null,
+      bankAccountNumber: data.bankAccountNumber || null,
+      ifscCode: data.ifscCode || null,
+      accountHolderName: data.accountHolderName || null,
+      upiId: data.upiId || null,
+      googlePayNumber: data.googlePayNumber || null,
+      phonePeNumber: data.phonePeNumber || null,
+    },
+    create: {
+      deliveryPartnerId: deliveryPartner.id,
+      bankName: data.bankName || null,
+      bankAccountNumber: data.bankAccountNumber || null,
+      ifscCode: data.ifscCode || null,
+      accountHolderName: data.accountHolderName || null,
+      upiId: data.upiId || null,
+      googlePayNumber: data.googlePayNumber || null,
+      phonePeNumber: data.phonePeNumber || null,
+    },
+  })
+
+  return { success: true }
+}
+
+// ============ MENU MANAGEMENT ============
+
+export async function addKitchenMenuItem(formData: FormData) {
+  const session = await getSession()
+  if (!session?.user) return { success: false, error: "Unauthorized" }
+
+  const kitchenPartner = await prisma.kitchenPartner.findUnique({
+    where: { userId: session.user.id },
+  })
+  if (!kitchenPartner) return { success: false, error: "Kitchen partner not found" }
+
+  const name = formData.get("name") as string
+  const category = formData.get("category") as string
+  const foodType = formData.get("foodType") as string
+  const timeSlot = formData.get("timeSlot") as string
+  const price = parseFloat(formData.get("price") as string)
+  const description = (formData.get("description") as string) || ""
+  const isAvailable = formData.get("isAvailable") === "true"
+  const imagesRaw = (formData.get("images") as string) || "[]"
+
+  if (!name || !category || !foodType || !timeSlot || !price) {
+    return { success: false, error: "Missing required fields" }
+  }
+
+  let menu = await prisma.menu.findFirst({
+    where: { kitchenPartnerId: kitchenPartner.id, name: category },
+  })
+
+  if (!menu) {
+    menu = await prisma.menu.create({
+      data: { kitchenPartnerId: kitchenPartner.id, name: category },
+    })
+  }
+
+  const menuItem = await prisma.menuItem.create({
+    data: {
+      menuId: menu.id,
+      name,
+      description,
+      price,
+      foodType: foodType.toUpperCase() as "VEG" | "NONVEG",
+      timeSlot: timeSlot.toUpperCase() as "MORNING" | "LUNCH" | "EVENINGSNACKS" | "DINNER",
+      isAvailable,
+    },
+  })
+
+  let images: { secure_url: string; public_id: string }[] = []
+  try {
+    images = JSON.parse(imagesRaw)
+  } catch {
+    // ignore invalid JSON
+  }
+
+  if (images.length > 0) {
+    await prisma.menuItemPhoto.createMany({
+      data: images.map((img, idx) => ({
+        menuItemId: menuItem.id,
+        imageUrl: img.secure_url,
+        cloudinaryPublicId: img.public_id,
+        sortOrder: idx,
+      })),
+    })
+  }
+
+  return { success: true }
+}
+
+export async function toggleMenuItemAvailability(itemId: string, isAvailable: boolean) {
+  const session = await getSession()
+  if (!session?.user) return { success: false, error: "Unauthorized" }
+
+  await prisma.menuItem.update({
+    where: { id: itemId },
+    data: { isAvailable },
+  })
+
+  return { success: true }
+}
+
+export async function setKitchenAvailability(isAvailable: boolean) {
+  const session = await getSession()
+  if (!session?.user) return { success: false, error: "Unauthorized" }
+
+  const kitchenPartner = await prisma.kitchenPartner.findUnique({
+    where: { userId: session.user.id },
+  })
+  if (!kitchenPartner) return { success: false, error: "Kitchen partner not found" }
+
+  const now = new Date()
+  const tomorrow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1))
+
+  await prisma.kitchenAvailability.upsert({
+    where: {
+      kitchenPartnerId_serviceDate: {
+        kitchenPartnerId: kitchenPartner.id,
+        serviceDate: tomorrow,
+      },
+    },
+    update: { isAvailable },
+    create: {
+      kitchenPartnerId: kitchenPartner.id,
+      serviceDate: tomorrow,
+      isAvailable,
+    },
+  })
+
+  return { success: true }
 }
 
 // ============ DELIVERY PARTNER DASHBOARD ============
@@ -482,12 +709,11 @@ export async function getDeliveryDashboardData() {
     return null
   }
 
-  const deliveryPartner = await prisma.deliveryPartner.findUnique({
+  let deliveryPartner = await prisma.deliveryPartner.findUnique({
     where: { userId: session.user.id },
     include: {
       user: { select: { name: true, phoneNumber: true } },
-      bankAccount: { select: { accountHolderName: true, ifscCode: true } },
-      upiAccount: { select: { upiId: true } },
+      kyc: true,
       kitchenAssignments: {
         include: {
           kitchenPartner: { include: { kitchenAlias: true } },
@@ -498,7 +724,19 @@ export async function getDeliveryDashboardData() {
   })
 
   if (!deliveryPartner) {
-    return null
+    deliveryPartner = await prisma.deliveryPartner.create({
+      data: { userId: session.user.id },
+      include: {
+        user: { select: { name: true, phoneNumber: true } },
+        kyc: true,
+        kitchenAssignments: {
+          include: {
+            kitchenPartner: { include: { kitchenAlias: true } },
+          },
+          orderBy: { createdAt: "desc" },
+        },
+      },
+    })
   }
 
   const totalAssignments = deliveryPartner.kitchenAssignments.length
@@ -527,32 +765,56 @@ export async function getDeliveryDashboardData() {
         include: {
           menuItem: { select: { name: true, timeSlot: true } },
           order: {
-            include: { address: true },
+            include: {
+              address: true,
+              user: { select: { name: true, phoneNumber: true } },
+            },
           },
-          kitchenPartner: { include: { kitchenAlias: true } },
+          kitchenPartner: {
+            include: {
+              kitchenAlias: true,
+              user: {
+                select: { name: true, phoneNumber: true, addresses: { take: 1, orderBy: { isDefault: "desc" } } },
+              },
+            },
+          },
         },
       })
     : []
 
-  const deliveryOrderList = deliveryOrders.map((oi) => ({
-    id: oi.order.id,
-    kitchenHub: oi.kitchenPartner?.kitchenAlias?.displayName ?? "Unknown",
-    itemName: oi.menuItem.name,
-    timeSlot: formatTimeSlot(oi.menuItem.timeSlot),
-    quantity: oi.quantity,
-    address: oi.order.address
-      ? `${oi.order.address.lineOne}${oi.order.address.lineTwo ? ", " + oi.order.address.lineTwo : ""}, ${oi.order.address.pincode}`
-      : "Address not set",
-  }))
+  const deliveryOrderList = deliveryOrders.map((oi) => {
+    const kitchenAddress = oi.kitchenPartner?.user?.addresses?.[0]
+    return {
+      id: oi.order.id,
+      itemName: oi.menuItem.name,
+      timeSlot: formatTimeSlot(oi.menuItem.timeSlot),
+      quantity: oi.quantity,
+      customerName: oi.order.user?.name ?? "Unknown",
+      customerPhone: oi.order.user?.phoneNumber ?? "-",
+      customerAddress: oi.order.address
+        ? `${oi.order.address.lineOne}${oi.order.address.lineTwo ? ", " + oi.order.address.lineTwo : ""}, ${oi.order.address.pincode}`
+        : "Address not set",
+      kitchenName: oi.kitchenPartner?.kitchenAlias?.displayName ?? "Unknown",
+      kitchenPhone: oi.kitchenPartner?.user?.phoneNumber ?? "-",
+      kitchenAddress: kitchenAddress
+        ? `${kitchenAddress.lineOne}${kitchenAddress.lineTwo ? ", " + kitchenAddress.lineTwo : ""}, ${kitchenAddress.pincode}`
+        : "Address not set",
+    }
+  })
+
+  const kyc = deliveryPartner.kyc
 
   return {
     profile: {
       name: deliveryPartner.user?.name ?? "Delivery Person",
       phone: deliveryPartner.user?.phoneNumber ?? "-",
-      bankAccount: deliveryPartner.bankAccount?.accountHolderName
-        ? `${deliveryPartner.bankAccount.accountHolderName} • ${deliveryPartner.bankAccount.ifscCode}`
-        : null,
-      upi: deliveryPartner.upiAccount?.upiId ?? null,
+      bankName: kyc?.bankName ?? null,
+      bankAccount: kyc?.bankAccountNumber ?? null,
+      bankIfsc: kyc?.ifscCode ?? null,
+      accountHolderName: kyc?.accountHolderName ?? null,
+      upi: kyc?.upiId ?? null,
+      googlePayNumber: kyc?.googlePayNumber ?? null,
+      phonePeNumber: kyc?.phonePeNumber ?? null,
     },
     stats: {
       totalAssignments,

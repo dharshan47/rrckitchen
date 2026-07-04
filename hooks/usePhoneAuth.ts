@@ -1,26 +1,33 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useAuthStore, UserRole } from "@/stores";
+import { checkPhoneRegistered } from "@/actions/auth";
 
 export function usePhoneAuth(role: UserRole) {
-  const phoneNumber = useAuthStore((state) => state.phoneNumber);
-  const code = useAuthStore((state) => state.code);
   const setRole = useAuthStore((state) => state.setRole);
-  const setPhoneNumber = useAuthStore((state) => state.setPhoneNumber);
-  const setCode = useAuthStore((state) => state.setCode);
   const resetAuthState = useAuthStore((state) => state.resetAuthState);
 
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [step, setStep] = useState<"phone" | "otp" | "login">("phone");
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [resendCooldown, setResendCooldown] = useState(0);
 
   useEffect(() => {
     setRole(role);
     resetAuthState();
   }, [role, resetAuthState, setRole]);
+
+  useEffect(() => {
+    if (resendCooldown <= 0) return;
+    const timer = setInterval(() => {
+      setResendCooldown((prev) => prev - 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [resendCooldown]);
 
   const normalizePhoneNumber = useMemo(
     () => (value: string) => {
@@ -32,12 +39,11 @@ export function usePhoneAuth(role: UserRole) {
     []
   );
 
-  const sendOtp = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const sendOtp = useCallback(async (formPhone: string) => {
     setErrorMessage(null);
     setStatusMessage(null);
 
-    const normalized = normalizePhoneNumber(phoneNumber);
+    const normalized = normalizePhoneNumber(formPhone);
     if (!normalized) {
       setErrorMessage("Enter a valid mobile number including country code or 10-digit number.");
       return;
@@ -45,19 +51,25 @@ export function usePhoneAuth(role: UserRole) {
 
     setIsLoading(true);
     try {
+      const registered = await checkPhoneRegistered(normalized);
+      if (!registered) {
+        setErrorMessage("Phone number not registered. Please sign up.");
+        return;
+      }
+
       await authClient.phoneNumber.sendOtp({ phoneNumber: normalized });
       setPhoneNumber(normalized);
       setStep("otp");
+      setResendCooldown(30);
       setStatusMessage("OTP sent. Check your SMS for the code.");
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unable to send OTP. Try again.");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [normalizePhoneNumber]);
 
-  const verifyOtp = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const verifyOtp = useCallback(async (code: string) => {
     setErrorMessage(null);
     setStatusMessage(null);
 
@@ -80,9 +92,9 @@ export function usePhoneAuth(role: UserRole) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [phoneNumber]);
 
-  const login = () => {
+  const login = useCallback(() => {
     const redirectMap: Record<string, string> = {
       customer: "/",
       "delivery-partner": "/delivery-partner/dashboard",
@@ -90,9 +102,11 @@ export function usePhoneAuth(role: UserRole) {
       admin: "/admin",
     };
     window.location.href = redirectMap[role] ?? "/";
-  };
+  }, [role]);
 
-  const resendOtp = async () => {
+  const resendOtp = useCallback(async () => {
+    if (resendCooldown > 0) return;
+
     setErrorMessage(null);
     setStatusMessage(null);
 
@@ -105,23 +119,21 @@ export function usePhoneAuth(role: UserRole) {
     setIsLoading(true);
     try {
       await authClient.phoneNumber.sendOtp({ phoneNumber: normalized });
+      setResendCooldown(30);
       setStatusMessage("OTP resent. Check your SMS for the code.");
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unable to resend OTP. Try again.");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [phoneNumber, resendCooldown, normalizePhoneNumber]);
 
   return {
-    phoneNumber,
-    code,
     step,
     statusMessage,
     errorMessage,
     isLoading,
-    setPhoneNumber,
-    setCode,
+    resendCooldown,
     sendOtp,
     verifyOtp,
     login,

@@ -6,10 +6,10 @@ export function SiteFooter() {
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-16">
         <div className="flex flex-col gap-8">
           <Link href="/" className="text-4xl font-extrabold tracking-tighter text-foreground">
-            RrcKitchen
+            RRC Kitchen
           </Link>
           <div className="text-muted-foreground text-sm space-y-1">
-            <p>&copy; RrcKitchen Marketplace Private Limited</p>
+            <p>&copy; RRC Kitchen Marketplace Private Limited</p>
             <p>fssai lic no : 11224999000872</p>
           </div>
         </div>
@@ -17,8 +17,8 @@ export function SiteFooter() {
         <div className="grid grid-cols-1 gap-4">
           <FooterLink href="/">Home</FooterLink>
           <FooterLink href="/menu">Tomorrow&rsquo;s Menu</FooterLink>
-          <FooterLink href="/login/kitchen">Kitchen Partner Login</FooterLink>
-          <FooterLink href="/login/delivery-partner">Delivery Partner Login</FooterLink>
+          <FooterLink href="/kitchen/login">Kitchen Partner Login</FooterLink>
+          <FooterLink href="/delivery-partner/login">Delivery Partner Login</FooterLink>
           <FooterLink href="/admin/login">Admin Login</FooterLink>
         </div>
 

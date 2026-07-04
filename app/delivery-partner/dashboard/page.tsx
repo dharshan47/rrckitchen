@@ -1,9 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useDeliveryData } from "./layout"
 import { Bike, DollarSign, MapPin, Star, TrendingUp, Trophy, Users } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Spinner } from "@/components/ui/spinner"
 import {
   Table,
   TableBody,
@@ -12,43 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { getDeliveryDashboardData } from "@/actions/dashboard"
-
-type DeliveryData = Awaited<ReturnType<typeof getDeliveryDashboardData>>
 
 export default function DeliveryPartnerDashboard() {
-  const [data, setData] = useState<DeliveryData>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    getDeliveryDashboardData().then((result) => {
-      setData(result)
-      setLoading(false)
-    })
-  }, [])
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Spinner className="size-8 text-muted-foreground" />
-      </div>
-    )
-  }
-
-  if (!data) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card>
-          <CardContent className="p-6 text-center">
-            <p className="text-muted-foreground">Unauthorized or no delivery partner profile found.</p>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
+  const data = useDeliveryData()
   const s = data.stats
-  const profile = data.profile
 
   const stats = [
     { title: "Total Deliveries", value: s.totalAssignments.toString(), icon: Bike, color: "text-blue-600" },
@@ -63,29 +29,16 @@ export default function DeliveryPartnerDashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="border-b bg-white">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-3">
-            <Bike className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-bold">Delivery Partner Dashboard</h1>
-          </div>
-          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-            <span>Welcome, {profile.name}</span>
-            <span className="rounded-full bg-primary/10 px-3 py-1 text-primary">Online</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="mx-auto max-w-7xl px-4 md:px-6 py-4 md:py-6 space-y-4 md:space-y-6">
+    <div className="space-y-4 md:space-y-6">
+      <section aria-label="Delivery statistics">
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {stats.map((stat) => (
-            <Card key={stat.title}>
+            <Card key={stat.title} role="group" aria-label={`${stat.title}: ${stat.value}`}>
               <CardHeader className="flex flex-row items-center justify-between pb-2">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   {stat.title}
                 </CardTitle>
-                <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                <stat.icon className={`h-4 w-4 ${stat.color}`} aria-hidden="true" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stat.value}</div>
@@ -93,7 +46,9 @@ export default function DeliveryPartnerDashboard() {
             </Card>
           ))}
         </div>
+      </section>
 
+      <section aria-label="Delivery orders with customer and kitchen details">
         <Card>
           <CardHeader>
             <CardTitle>Deliveries</CardTitle>
@@ -102,32 +57,52 @@ export default function DeliveryPartnerDashboard() {
             {data.deliveryOrders.length === 0 ? (
               <p className="py-8 text-center text-muted-foreground">No deliveries assigned yet</p>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Menu Item</TableHead>
-                    <TableHead>Qty</TableHead>
-                    <TableHead>Time Slot</TableHead>
-                    <TableHead>Delivery Hub</TableHead>
-                    <TableHead>Delivery Address</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {data.deliveryOrders.map((d, i) => (
-                    <TableRow key={`${d.id}-${i}`}>
-                      <TableCell className="font-medium">{d.itemName}</TableCell>
-                      <TableCell>{d.quantity}</TableCell>
-                      <TableCell>{d.timeSlot}</TableCell>
-                      <TableCell>{d.kitchenHub}</TableCell>
-                      <TableCell className="max-w-xs truncate">{d.address}</TableCell>
+              <div className="overflow-x-auto">
+                <Table aria-label="Delivery orders table">
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead scope="col">Menu Item</TableHead>
+                      <TableHead scope="col">Qty</TableHead>
+                      <TableHead scope="col">Time Slot</TableHead>
+                      <TableHead scope="col">Customer Name</TableHead>
+                      <TableHead scope="col">Customer Phone</TableHead>
+                      <TableHead scope="col">Delivery Address</TableHead>
+                      <TableHead scope="col">Kitchen Name</TableHead>
+                      <TableHead scope="col">Kitchen Phone</TableHead>
+                      <TableHead scope="col">Kitchen Address</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {data.deliveryOrders.map((d, i) => (
+                      <TableRow key={`${d.id}-${i}`}>
+                        <TableCell className="font-medium">{d.itemName}</TableCell>
+                        <TableCell>{d.quantity}</TableCell>
+                        <TableCell>{d.timeSlot}</TableCell>
+                        <TableCell>{d.customerName}</TableCell>
+                        <TableCell>
+                          <a href={`tel:${d.customerPhone}`} className="text-primary hover:underline">
+                            {d.customerPhone}
+                          </a>
+                        </TableCell>
+                        <TableCell className="max-w-xs truncate">{d.customerAddress}</TableCell>
+                        <TableCell>{d.kitchenName}</TableCell>
+                        <TableCell>
+                          <a href={`tel:${d.kitchenPhone}`} className="text-primary hover:underline">
+                            {d.kitchenPhone}
+                          </a>
+                        </TableCell>
+                        <TableCell className="max-w-xs truncate">{d.kitchenAddress}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
             )}
           </CardContent>
         </Card>
+      </section>
 
+      <section aria-label="Kitchen assignments">
         <Card>
           <CardHeader>
             <CardTitle>Kitchen Assignments</CardTitle>
@@ -136,13 +111,13 @@ export default function DeliveryPartnerDashboard() {
             {data.assignments.length === 0 ? (
               <p className="py-8 text-center text-muted-foreground">No assignments yet</p>
             ) : (
-              <Table>
+              <Table aria-label="Kitchen assignments table">
                 <TableHeader>
                   <TableRow>
-                    <TableHead>ID</TableHead>
-                    <TableHead>Delivery Hub</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Date</TableHead>
+                    <TableHead scope="col">ID</TableHead>
+                    <TableHead scope="col">Delivery Hub</TableHead>
+                    <TableHead scope="col">Status</TableHead>
+                    <TableHead scope="col">Date</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -165,33 +140,7 @@ export default function DeliveryPartnerDashboard() {
             )}
           </CardContent>
         </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Profile</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              <div>
-                <p className="text-sm text-muted-foreground">Name</p>
-                <p className="font-medium">{profile.name}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Phone</p>
-                <p className="font-medium">{profile.phone}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Bank Details</p>
-                <p className="font-medium">{profile.bankAccount ?? "Not set"}</p>
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">UPI</p>
-                <p className="font-medium">{profile.upi ?? "Not set"}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      </section>
     </div>
   )
 }

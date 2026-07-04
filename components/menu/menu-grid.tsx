@@ -1,17 +1,18 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useCartActions } from "@/stores";
 import { useTomorrowMenu } from "@/hooks/useTomorrowMenu";
 import { CompoundMenuCard } from "@/components/patterns/compound-menu-card";
-import { SkeletonCard } from "@/components/patterns/skeleton-card";
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
 
+/** Shape of a menu item returned from the API. */
 interface MenuGridItem {
   id: string;
   name: string;
   description: string | null;
   price: number;
+  compareAtPrice: number | null;
   foodType: string;
   timeSlot: string;
   menu: {
@@ -22,22 +23,32 @@ interface MenuGridItem {
   photos: { imageUrl: string; sortOrder: number }[];
 }
 
-interface MenuGridProps {
-  onItemClick?: (item: {
-    id: string;
-    name: string;
-    price: number;
-    foodType: string;
-    timeSlot: string;
-    kitchenName: string;
-    description?: string | null;
-  }) => void;
+/** Callback payload when a menu item is clicked. */
+interface ItemClickPayload {
+  id: string;
+  name: string;
+  price: number;
+  compareAtPrice?: number | null;
+  foodType: string;
+  timeSlot: string;
+  kitchenName: string;
+  description?: string | null;
 }
 
-export default function MenuGrid({ onItemClick }: MenuGridProps) {
-  const { data, isLoading, isError } = useTomorrowMenu();
+interface MenuGridProps {
+  items?: MenuGridItem[];
+  onItemClick?: (item: ItemClickPayload) => void;
+}
+
+/**
+ * Renders the menu grid with suspense-based data fetching.
+ * Loading/error states are handled by parent Suspense boundaries.
+ * If `items` is provided, renders those instead of fetching internally.
+ */
+export default function MenuGrid({ items: propItems, onItemClick }: MenuGridProps) {
+  const { data } = useTomorrowMenu();
   const { addToCart } = useCartActions();
-  const items = (data ?? []) as MenuGridItem[];
+  const items = useMemo(() => (propItems ?? data ?? []) as MenuGridItem[], [propItems, data]);
 
   const handleAddToCart = useCallback(
     (id: string) => {
@@ -56,19 +67,15 @@ export default function MenuGrid({ onItemClick }: MenuGridProps) {
     [items, addToCart]
   );
 
-  if (isLoading) {
-    return <SkeletonCard variant="menu-item" count={6} />;
-  }
-
-  if (isError) {
-    return <p className="text-center text-sm text-destructive">Unable to load menu items right now.</p>;
-  }
-
   if (!items.length) {
     return (
-      <p className="rounded-3xl border border-border bg-white p-8 text-center text-sm text-muted-foreground">
-        No matching meals found.
-      </p>
+      <div className="grid min-h-[384px] gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+        <div className="col-span-full flex items-center justify-center">
+          <p className="rounded-3xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
+            No matching meals found.
+          </p>
+        </div>
+      </div>
     );
   }
 
@@ -82,6 +89,7 @@ export default function MenuGrid({ onItemClick }: MenuGridProps) {
               id: item.id,
               name: item.name,
               price: Number(item.price),
+              compareAtPrice: item.compareAtPrice ? Number(item.compareAtPrice) : null,
               foodType: item.foodType,
               timeSlot: item.timeSlot,
               kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
@@ -91,7 +99,10 @@ export default function MenuGrid({ onItemClick }: MenuGridProps) {
             onAddToCart={handleAddToCart}
             onItemClick={onItemClick}
           >
-            <CompoundMenuCard.ImageSection />
+            <CompoundMenuCard.ImageSection>
+              <CompoundMenuCard.BadgeRibbon />
+              <CompoundMenuCard.AddButtonOverlay />
+            </CompoundMenuCard.ImageSection>
             <CompoundMenuCard.Header />
             <CompoundMenuCard.Footer />
           </CompoundMenuCard.Root>

@@ -27,7 +27,11 @@ export class MenuFacade {
     if (params.foodType && params.foodType !== "ALL") urlParams.set("foodType", params.foodType);
     if (params.timeSlot && params.timeSlot !== "ALL") urlParams.set("timeSlot", params.timeSlot);
 
-    const res = await fetch(`/api/menu/tomorrow?${urlParams.toString()}`);
+    const baseUrl = typeof window !== "undefined"
+      ? window.location.origin
+      : "http://localhost:3000";
+    const qs = urlParams.toString();
+    const res = await fetch(`${baseUrl}/api/menu/tomorrow${qs ? `?${qs}` : ""}`);
     if (!res.ok) throw new Error("Failed to fetch menu items");
     return res.json();
   }

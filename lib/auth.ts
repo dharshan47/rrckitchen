@@ -19,8 +19,33 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  baseURL: {
+    allowedHosts: [
+      "localhost:3000",
+      "*.vercel.app",
+    ],
+    protocol: process.env.NODE_ENV === "development" ? "http" : "https",
+  },
   emailAndPassword: {
     enabled: true,
+  },
+  rateLimit: {
+    window: 60,
+    max: 100,
+    customRules: {
+      "/sign-in/email": {
+        window: 10,
+        max: 3,
+      },
+      "/phone-number/send-otp": {
+        window: 60,
+        max: 3,
+      },
+      "/phone-number/verify": {
+        window: 60,
+        max: 5,
+      },
+    },
   },
   plugins: [
     phoneNumber({

@@ -6,6 +6,7 @@ export type FoodTypeFilter = "ALL" | "VEG" | "NONVEG";
 export type TimeSlotFilter = "ALL" | "MORNING" | "LUNCH" | "EVENINGSNACKS" | "DINNER";
 type MenuTab = "menu" | "cart";
 
+/** State shape for the menu store. */
 interface MenuState {
   searchQuery: string;
   selectedFoodType: FoodTypeFilter;
@@ -19,12 +20,17 @@ interface MenuState {
   setDeliveryAddress: (value: string) => void;
 }
 
-// Fine-grained selectors for stable references
+/** Selector returning the current search query. */
 export const selectSearchQuery = (s: MenuState) => s.searchQuery;
+/** Selector returning the current food type filter. */
 export const selectFoodType = (s: MenuState) => s.selectedFoodType;
+/** Selector returning the current time slot filter. */
 export const selectTimeSlot = (s: MenuState) => s.selectedTimeSlot;
+/** Selector returning the current active tab. */
 export const selectMenuTab = (s: MenuState) => s.selectedTab;
+/** Selector returning the delivery address. */
 export const selectDeliveryAddress = (s: MenuState) => s.deliveryAddress;
+/** Selector returning all menu actions in a single object (stable reference via shallow). */
 export const selectMenuActions = (s: MenuState) => ({
   setSearchQuery: s.setSearchQuery,
   setSelectedFoodType: s.setSelectedFoodType,
@@ -33,6 +39,10 @@ export const selectMenuActions = (s: MenuState) => ({
   setDeliveryAddress: s.setDeliveryAddress,
 });
 
+/**
+ * Zustand store for menu search/filter state.
+ * Emits events on the global event bus when filters change.
+ */
 export const menuStore = create<MenuState>((set) => ({
   searchQuery: "",
   selectedFoodType: "ALL",
@@ -55,21 +65,27 @@ export const menuStore = create<MenuState>((set) => ({
   setDeliveryAddress: (value: string) => set({ deliveryAddress: value }),
 }));
 
+/** Hook returning the current search query value. */
 export function useMenuSearchQuery() {
   return menuStore(selectSearchQuery);
 }
+/** Hook returning the current food type filter. */
 export function useMenuFoodType() {
   return menuStore(selectFoodType);
 }
+/** Hook returning the current time slot filter. */
 export function useMenuTimeSlot() {
   return menuStore(selectTimeSlot);
 }
+/** Hook returning the current active tab. */
 export function useMenuTab() {
   return menuStore(selectMenuTab);
 }
+/** Hook returning the delivery address. */
 export function useMenuDeliveryAddress() {
   return menuStore(selectDeliveryAddress);
 }
+/** Hook returning all menu actions (stable reference). */
 export function useMenuActions() {
   return menuStore(useShallow(selectMenuActions));
 }

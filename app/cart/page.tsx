@@ -16,10 +16,10 @@ import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft, Undo2, CreditCard, Loader2
 function CartContent() {
   const { cart, updateQuantity, removeFromCart, clearCart, total, itemCount } = useOptimisticCart();
   const { initiateCheckout, isProcessing, paymentResult, resetPayment } = useRazorpay();
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
 
   const handleCheckout = useCallback(async () => {
-    const phone = session?.user?.phoneNumber ?? "+919876543210";
+    const phone = session?.user?.phoneNumber ?? "";
     await initiateCheckout(cart, total, phone);
   }, [cart, total, initiateCheckout, session]);
 
@@ -41,6 +41,36 @@ function CartContent() {
           </div>
           <Button asChild onClick={resetPayment}>
             <Link href="/menu">Browse More</Link>
+          </Button>
+        </div>
+      </main>
+    );
+  }
+
+  if (isPending) {
+    return (
+      <main className="min-h-screen bg-background text-foreground">
+        <div className="mx-auto flex max-w-2xl flex-col items-center justify-center gap-6 px-4 py-24 text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-muted-foreground/40" />
+          
+        </div>
+      </main>
+    );
+  }
+
+  if (!session?.user) {
+    return (
+      <main className="min-h-screen bg-background text-foreground">
+        <div className="mx-auto flex max-w-2xl flex-col items-center justify-center gap-6 px-4 py-24 text-center">
+          <ShoppingBag className="h-16 w-16 text-muted-foreground/40" />
+          <div>
+            <h1 className="text-2xl font-bold">Login to view cart</h1>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Please log in to see your cart and place orders.
+            </p>
+          </div>
+          <Button asChild>
+            <Link href="/login">Login</Link>
           </Button>
         </div>
       </main>
@@ -166,6 +196,11 @@ function CartContent() {
               )}
             </Button>
           </div>
+          {paymentResult && !paymentResult.success && (
+            <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive text-center">
+              Payment failed. Please try again.
+            </div>
+          )}
           <p className="text-xs text-muted-foreground text-center">
             Secure payment via Razorpay. Pricing is being finalized.
           </p>

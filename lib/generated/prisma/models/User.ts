@@ -28,7 +28,7 @@ export type UserMinAggregateOutputType = {
   id: string | null
   phoneNumber: string | null
   phoneNumberVerified: boolean | null
-  roles: string | null
+  role: string | null
   banned: boolean | null
   banReason: string | null
   banExpires: Date | null
@@ -48,7 +48,7 @@ export type UserMaxAggregateOutputType = {
   id: string | null
   phoneNumber: string | null
   phoneNumberVerified: boolean | null
-  roles: string | null
+  role: string | null
   banned: boolean | null
   banReason: string | null
   banExpires: Date | null
@@ -68,7 +68,7 @@ export type UserCountAggregateOutputType = {
   id: number
   phoneNumber: number
   phoneNumberVerified: number
-  roles: number
+  role: number
   banned: number
   banReason: number
   banExpires: number
@@ -90,7 +90,7 @@ export type UserMinAggregateInputType = {
   id?: true
   phoneNumber?: true
   phoneNumberVerified?: true
-  roles?: true
+  role?: true
   banned?: true
   banReason?: true
   banExpires?: true
@@ -110,7 +110,7 @@ export type UserMaxAggregateInputType = {
   id?: true
   phoneNumber?: true
   phoneNumberVerified?: true
-  roles?: true
+  role?: true
   banned?: true
   banReason?: true
   banExpires?: true
@@ -130,7 +130,7 @@ export type UserCountAggregateInputType = {
   id?: true
   phoneNumber?: true
   phoneNumberVerified?: true
-  roles?: true
+  role?: true
   banned?: true
   banReason?: true
   banExpires?: true
@@ -223,7 +223,7 @@ export type UserGroupByOutputType = {
   id: string
   phoneNumber: string | null
   phoneNumberVerified: boolean
-  roles: string
+  role: string
   banned: boolean
   banReason: string | null
   banExpires: Date | null
@@ -264,7 +264,7 @@ export type UserWhereInput = {
   id?: Prisma.StringFilter<"User"> | string
   phoneNumber?: Prisma.StringNullableFilter<"User"> | string | null
   phoneNumberVerified?: Prisma.BoolFilter<"User"> | boolean
-  roles?: Prisma.StringFilter<"User"> | string
+  role?: Prisma.StringFilter<"User"> | string
   banned?: Prisma.BoolFilter<"User"> | boolean
   banReason?: Prisma.StringNullableFilter<"User"> | string | null
   banExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
@@ -285,17 +285,15 @@ export type UserWhereInput = {
   addresses?: Prisma.AddressListRelationFilter
   orders?: Prisma.OrderListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
-  complaints?: Prisma.ComplaintListRelationFilter
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerNullableScalarRelationFilter, Prisma.KitchenPartnerWhereInput> | null
   deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
-  auditLogs?: Prisma.AuditLogListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumberVerified?: Prisma.SortOrder
-  roles?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   banned?: Prisma.SortOrder
   banReason?: Prisma.SortOrderInput | Prisma.SortOrder
   banExpires?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -316,10 +314,8 @@ export type UserOrderByWithRelationInput = {
   addresses?: Prisma.AddressOrderByRelationAggregateInput
   orders?: Prisma.OrderOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
-  complaints?: Prisma.ComplaintOrderByRelationAggregateInput
   kitchenPartner?: Prisma.KitchenPartnerOrderByWithRelationInput
   deliveryPartner?: Prisma.DeliveryPartnerOrderByWithRelationInput
-  auditLogs?: Prisma.AuditLogOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -330,7 +326,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   phoneNumberVerified?: Prisma.BoolFilter<"User"> | boolean
-  roles?: Prisma.StringFilter<"User"> | string
+  role?: Prisma.StringFilter<"User"> | string
   banned?: Prisma.BoolFilter<"User"> | boolean
   banReason?: Prisma.StringNullableFilter<"User"> | string | null
   banExpires?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
@@ -350,17 +346,15 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   addresses?: Prisma.AddressListRelationFilter
   orders?: Prisma.OrderListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
-  complaints?: Prisma.ComplaintListRelationFilter
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerNullableScalarRelationFilter, Prisma.KitchenPartnerWhereInput> | null
   deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
-  auditLogs?: Prisma.AuditLogListRelationFilter
 }, "id" | "phoneNumber" | "email">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumberVerified?: Prisma.SortOrder
-  roles?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   banned?: Prisma.SortOrder
   banReason?: Prisma.SortOrderInput | Prisma.SortOrder
   banExpires?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -386,7 +380,7 @@ export type UserScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"User"> | string
   phoneNumber?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   phoneNumberVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
-  roles?: Prisma.StringWithAggregatesFilter<"User"> | string
+  role?: Prisma.StringWithAggregatesFilter<"User"> | string
   banned?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   banReason?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   banExpires?: Prisma.DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
@@ -406,7 +400,7 @@ export type UserCreateInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -427,17 +421,15 @@ export type UserCreateInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
 }
 
 export type UserUncheckedCreateInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -458,17 +450,15 @@ export type UserUncheckedCreateInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
 }
 
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -489,17 +479,15 @@ export type UserUpdateInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -520,17 +508,15 @@ export type UserUncheckedUpdateInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserCreateManyInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -550,7 +536,7 @@ export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -570,7 +556,7 @@ export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -590,7 +576,7 @@ export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   phoneNumberVerified?: Prisma.SortOrder
-  roles?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   banned?: Prisma.SortOrder
   banReason?: Prisma.SortOrder
   banExpires?: Prisma.SortOrder
@@ -610,7 +596,7 @@ export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   phoneNumberVerified?: Prisma.SortOrder
-  roles?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   banned?: Prisma.SortOrder
   banReason?: Prisma.SortOrder
   banExpires?: Prisma.SortOrder
@@ -630,7 +616,7 @@ export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   phoneNumberVerified?: Prisma.SortOrder
-  roles?: Prisma.SortOrder
+  role?: Prisma.SortOrder
   banned?: Prisma.SortOrder
   banReason?: Prisma.SortOrder
   banExpires?: Prisma.SortOrder
@@ -804,39 +790,11 @@ export type UserUpdateOneRequiredWithoutReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutReviewsInput, Prisma.UserUpdateWithoutReviewsInput>, Prisma.UserUncheckedUpdateWithoutReviewsInput>
 }
 
-export type UserCreateNestedOneWithoutComplaintsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutComplaintsInput, Prisma.UserUncheckedCreateWithoutComplaintsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutComplaintsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutComplaintsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutComplaintsInput, Prisma.UserUncheckedCreateWithoutComplaintsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutComplaintsInput
-  upsert?: Prisma.UserUpsertWithoutComplaintsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutComplaintsInput, Prisma.UserUpdateWithoutComplaintsInput>, Prisma.UserUncheckedUpdateWithoutComplaintsInput>
-}
-
-export type UserCreateNestedOneWithoutAuditLogsInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuditLogsInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutAuditLogsNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutAuditLogsInput
-  upsert?: Prisma.UserUpsertWithoutAuditLogsInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutAuditLogsInput, Prisma.UserUpdateWithoutAuditLogsInput>, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
-}
-
 export type UserCreateWithoutUserRolesInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -856,17 +814,15 @@ export type UserCreateWithoutUserRolesInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
 }
 
 export type UserUncheckedCreateWithoutUserRolesInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -886,10 +842,8 @@ export type UserUncheckedCreateWithoutUserRolesInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
 }
 
 export type UserCreateOrConnectWithoutUserRolesInput = {
@@ -912,7 +866,7 @@ export type UserUpdateWithoutUserRolesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -932,17 +886,15 @@ export type UserUpdateWithoutUserRolesInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserRolesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -962,17 +914,15 @@ export type UserUncheckedUpdateWithoutUserRolesInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -992,17 +942,15 @@ export type UserCreateWithoutSessionsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1022,10 +970,8 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1048,7 +994,7 @@ export type UserUpdateWithoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1068,17 +1014,15 @@ export type UserUpdateWithoutSessionsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1098,17 +1042,15 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1128,17 +1070,15 @@ export type UserCreateWithoutAccountsInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1158,10 +1098,8 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1184,7 +1122,7 @@ export type UserUpdateWithoutAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1204,17 +1142,15 @@ export type UserUpdateWithoutAccountsInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1234,17 +1170,15 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserCreateWithoutOtpCodesInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1264,17 +1198,15 @@ export type UserCreateWithoutOtpCodesInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
 }
 
 export type UserUncheckedCreateWithoutOtpCodesInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1294,10 +1226,8 @@ export type UserUncheckedCreateWithoutOtpCodesInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
 }
 
 export type UserCreateOrConnectWithoutOtpCodesInput = {
@@ -1320,7 +1250,7 @@ export type UserUpdateWithoutOtpCodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1340,17 +1270,15 @@ export type UserUpdateWithoutOtpCodesInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOtpCodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1370,17 +1298,15 @@ export type UserUncheckedUpdateWithoutOtpCodesInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserCreateWithoutAddressesInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1400,17 +1326,15 @@ export type UserCreateWithoutAddressesInput = {
   otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
 }
 
 export type UserUncheckedCreateWithoutAddressesInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1430,10 +1354,8 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
 }
 
 export type UserCreateOrConnectWithoutAddressesInput = {
@@ -1456,7 +1378,7 @@ export type UserUpdateWithoutAddressesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1476,17 +1398,15 @@ export type UserUpdateWithoutAddressesInput = {
   otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1506,17 +1426,15 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserCreateWithoutKitchenPartnerInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1537,16 +1455,14 @@ export type UserCreateWithoutKitchenPartnerInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintCreateNestedManyWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
 }
 
 export type UserUncheckedCreateWithoutKitchenPartnerInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1567,9 +1483,7 @@ export type UserUncheckedCreateWithoutKitchenPartnerInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintUncheckedCreateNestedManyWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
 }
 
 export type UserCreateOrConnectWithoutKitchenPartnerInput = {
@@ -1592,7 +1506,7 @@ export type UserUpdateWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1613,16 +1527,14 @@ export type UserUpdateWithoutKitchenPartnerInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUpdateManyWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1643,16 +1555,14 @@ export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUncheckedUpdateManyWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserCreateWithoutDeliveryPartnerInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1673,16 +1583,14 @@ export type UserCreateWithoutDeliveryPartnerInput = {
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
 }
 
 export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1703,9 +1611,7 @@ export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
 }
 
 export type UserCreateOrConnectWithoutDeliveryPartnerInput = {
@@ -1728,7 +1634,7 @@ export type UserUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1749,16 +1655,14 @@ export type UserUpdateWithoutDeliveryPartnerInput = {
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1779,16 +1683,14 @@ export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1808,17 +1710,15 @@ export type UserCreateWithoutOrdersInput = {
   otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1838,10 +1738,8 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -1864,7 +1762,7 @@ export type UserUpdateWithoutOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1884,17 +1782,15 @@ export type UserUpdateWithoutOrdersInput = {
   otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1914,17 +1810,15 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1944,17 +1838,15 @@ export type UserCreateWithoutReviewsInput = {
   otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
   addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
   id?: string
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
-  roles?: string
+  role?: string
   banned?: boolean
   banReason?: string | null
   banExpires?: Date | string | null
@@ -1974,10 +1866,8 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -2000,7 +1890,7 @@ export type UserUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2020,17 +1910,15 @@ export type UserUpdateWithoutReviewsInput = {
   otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
   addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
+  role?: Prisma.StringFieldUpdateOperationsInput | string
   banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
   banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2050,280 +1938,6 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
   orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUncheckedUpdateManyWithoutUserNestedInput
-  kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
-  deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
-}
-
-export type UserCreateWithoutComplaintsInput = {
-  id?: string
-  phoneNumber?: string | null
-  phoneNumberVerified?: boolean
-  roles?: string
-  banned?: boolean
-  banReason?: string | null
-  banExpires?: Date | string | null
-  name?: string | null
-  fullName?: string | null
-  email?: string | null
-  emailVerified?: boolean
-  image?: string | null
-  isActive?: boolean
-  razorpayCustomerId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
-  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
-  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
-  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogCreateNestedManyWithoutActorUserInput
-}
-
-export type UserUncheckedCreateWithoutComplaintsInput = {
-  id?: string
-  phoneNumber?: string | null
-  phoneNumberVerified?: boolean
-  roles?: string
-  banned?: boolean
-  banReason?: string | null
-  banExpires?: Date | string | null
-  name?: string | null
-  fullName?: string | null
-  email?: string | null
-  emailVerified?: boolean
-  image?: string | null
-  isActive?: boolean
-  razorpayCustomerId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
-  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
-  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
-  deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
-  auditLogs?: Prisma.AuditLogUncheckedCreateNestedManyWithoutActorUserInput
-}
-
-export type UserCreateOrConnectWithoutComplaintsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutComplaintsInput, Prisma.UserUncheckedCreateWithoutComplaintsInput>
-}
-
-export type UserUpsertWithoutComplaintsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutComplaintsInput, Prisma.UserUncheckedUpdateWithoutComplaintsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutComplaintsInput, Prisma.UserUncheckedCreateWithoutComplaintsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutComplaintsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutComplaintsInput, Prisma.UserUncheckedUpdateWithoutComplaintsInput>
-}
-
-export type UserUpdateWithoutComplaintsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
-  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
-  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
-  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
-  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUpdateManyWithoutActorUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutComplaintsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
-  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
-  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
-  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
-  deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
-  auditLogs?: Prisma.AuditLogUncheckedUpdateManyWithoutActorUserNestedInput
-}
-
-export type UserCreateWithoutAuditLogsInput = {
-  id?: string
-  phoneNumber?: string | null
-  phoneNumberVerified?: boolean
-  roles?: string
-  banned?: boolean
-  banReason?: string | null
-  banExpires?: Date | string | null
-  name?: string | null
-  fullName?: string | null
-  email?: string | null
-  emailVerified?: boolean
-  image?: string | null
-  isActive?: boolean
-  razorpayCustomerId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
-  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
-  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintCreateNestedManyWithoutUserInput
-  kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
-  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutAuditLogsInput = {
-  id?: string
-  phoneNumber?: string | null
-  phoneNumberVerified?: boolean
-  roles?: string
-  banned?: boolean
-  banReason?: string | null
-  banExpires?: Date | string | null
-  name?: string | null
-  fullName?: string | null
-  email?: string | null
-  emailVerified?: boolean
-  image?: string | null
-  isActive?: boolean
-  razorpayCustomerId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
-  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
-  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  complaints?: Prisma.ComplaintUncheckedCreateNestedManyWithoutUserInput
-  kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
-  deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutAuditLogsInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
-}
-
-export type UserUpsertWithoutAuditLogsInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutAuditLogsInput, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutAuditLogsInput, Prisma.UserUncheckedCreateWithoutAuditLogsInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutAuditLogsInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutAuditLogsInput, Prisma.UserUncheckedUpdateWithoutAuditLogsInput>
-}
-
-export type UserUpdateWithoutAuditLogsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
-  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
-  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
-  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUpdateManyWithoutUserNestedInput
-  kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
-  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutAuditLogsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  roles?: Prisma.StringFieldUpdateOperationsInput | string
-  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
-  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
-  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  complaints?: Prisma.ComplaintUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
 }
@@ -2341,8 +1955,6 @@ export type UserCountOutputType = {
   addresses: number
   orders: number
   reviews: number
-  complaints: number
-  auditLogs: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2353,8 +1965,6 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   addresses?: boolean | UserCountOutputTypeCountAddressesArgs
   orders?: boolean | UserCountOutputTypeCountOrdersArgs
   reviews?: boolean | UserCountOutputTypeCountReviewsArgs
-  complaints?: boolean | UserCountOutputTypeCountComplaintsArgs
-  auditLogs?: boolean | UserCountOutputTypeCountAuditLogsArgs
 }
 
 /**
@@ -2416,26 +2026,12 @@ export type UserCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Ex
   where?: Prisma.ReviewWhereInput
 }
 
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountComplaintsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.ComplaintWhereInput
-}
-
-/**
- * UserCountOutputType without action
- */
-export type UserCountOutputTypeCountAuditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.AuditLogWhereInput
-}
-
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   phoneNumber?: boolean
   phoneNumberVerified?: boolean
-  roles?: boolean
+  role?: boolean
   banned?: boolean
   banReason?: boolean
   banExpires?: boolean
@@ -2456,10 +2052,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   addresses?: boolean | Prisma.User$addressesArgs<ExtArgs>
   orders?: boolean | Prisma.User$ordersArgs<ExtArgs>
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
-  complaints?: boolean | Prisma.User$complaintsArgs<ExtArgs>
   kitchenPartner?: boolean | Prisma.User$kitchenPartnerArgs<ExtArgs>
   deliveryPartner?: boolean | Prisma.User$deliveryPartnerArgs<ExtArgs>
-  auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2467,7 +2061,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   phoneNumber?: boolean
   phoneNumberVerified?: boolean
-  roles?: boolean
+  role?: boolean
   banned?: boolean
   banReason?: boolean
   banExpires?: boolean
@@ -2487,7 +2081,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   id?: boolean
   phoneNumber?: boolean
   phoneNumberVerified?: boolean
-  roles?: boolean
+  role?: boolean
   banned?: boolean
   banReason?: boolean
   banExpires?: boolean
@@ -2507,7 +2101,7 @@ export type UserSelectScalar = {
   id?: boolean
   phoneNumber?: boolean
   phoneNumberVerified?: boolean
-  roles?: boolean
+  role?: boolean
   banned?: boolean
   banReason?: boolean
   banExpires?: boolean
@@ -2523,7 +2117,7 @@ export type UserSelectScalar = {
   deletedAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "phoneNumber" | "phoneNumberVerified" | "roles" | "banned" | "banReason" | "banExpires" | "name" | "fullName" | "email" | "emailVerified" | "image" | "isActive" | "razorpayCustomerId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "phoneNumber" | "phoneNumberVerified" | "role" | "banned" | "banReason" | "banExpires" | "name" | "fullName" | "email" | "emailVerified" | "image" | "isActive" | "razorpayCustomerId" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   userRoles?: boolean | Prisma.User$userRolesArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
@@ -2532,10 +2126,8 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   addresses?: boolean | Prisma.User$addressesArgs<ExtArgs>
   orders?: boolean | Prisma.User$ordersArgs<ExtArgs>
   reviews?: boolean | Prisma.User$reviewsArgs<ExtArgs>
-  complaints?: boolean | Prisma.User$complaintsArgs<ExtArgs>
   kitchenPartner?: boolean | Prisma.User$kitchenPartnerArgs<ExtArgs>
   deliveryPartner?: boolean | Prisma.User$deliveryPartnerArgs<ExtArgs>
-  auditLogs?: boolean | Prisma.User$auditLogsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2551,16 +2143,14 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     addresses: Prisma.$AddressPayload<ExtArgs>[]
     orders: Prisma.$OrderPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
-    complaints: Prisma.$ComplaintPayload<ExtArgs>[]
     kitchenPartner: Prisma.$KitchenPartnerPayload<ExtArgs> | null
     deliveryPartner: Prisma.$DeliveryPartnerPayload<ExtArgs> | null
-    auditLogs: Prisma.$AuditLogPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     phoneNumber: string | null
     phoneNumberVerified: boolean
-    roles: string
+    role: string
     banned: boolean
     banReason: string | null
     banExpires: Date | null
@@ -2975,10 +2565,8 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   addresses<T extends Prisma.User$addressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orders<T extends Prisma.User$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.User$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  complaints<T extends Prisma.User$complaintsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$complaintsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ComplaintPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitchenPartner<T extends Prisma.User$kitchenPartnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$kitchenPartnerArgs<ExtArgs>>): Prisma.Prisma__KitchenPartnerClient<runtime.Types.Result.GetResult<Prisma.$KitchenPartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   deliveryPartner<T extends Prisma.User$deliveryPartnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deliveryPartnerArgs<ExtArgs>>): Prisma.Prisma__DeliveryPartnerClient<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  auditLogs<T extends Prisma.User$auditLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$auditLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AuditLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3011,7 +2599,7 @@ export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
   readonly phoneNumber: Prisma.FieldRef<"User", 'String'>
   readonly phoneNumberVerified: Prisma.FieldRef<"User", 'Boolean'>
-  readonly roles: Prisma.FieldRef<"User", 'String'>
+  readonly role: Prisma.FieldRef<"User", 'String'>
   readonly banned: Prisma.FieldRef<"User", 'Boolean'>
   readonly banReason: Prisma.FieldRef<"User", 'String'>
   readonly banExpires: Prisma.FieldRef<"User", 'DateTime'>
@@ -3586,30 +3174,6 @@ export type User$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 }
 
 /**
- * User.complaints
- */
-export type User$complaintsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Complaint
-   */
-  select?: Prisma.ComplaintSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Complaint
-   */
-  omit?: Prisma.ComplaintOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ComplaintInclude<ExtArgs> | null
-  where?: Prisma.ComplaintWhereInput
-  orderBy?: Prisma.ComplaintOrderByWithRelationInput | Prisma.ComplaintOrderByWithRelationInput[]
-  cursor?: Prisma.ComplaintWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.ComplaintScalarFieldEnum | Prisma.ComplaintScalarFieldEnum[]
-}
-
-/**
  * User.kitchenPartner
  */
 export type User$kitchenPartnerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3645,30 +3209,6 @@ export type User$deliveryPartnerArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   include?: Prisma.DeliveryPartnerInclude<ExtArgs> | null
   where?: Prisma.DeliveryPartnerWhereInput
-}
-
-/**
- * User.auditLogs
- */
-export type User$auditLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the AuditLog
-   */
-  select?: Prisma.AuditLogSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the AuditLog
-   */
-  omit?: Prisma.AuditLogOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.AuditLogInclude<ExtArgs> | null
-  where?: Prisma.AuditLogWhereInput
-  orderBy?: Prisma.AuditLogOrderByWithRelationInput | Prisma.AuditLogOrderByWithRelationInput[]
-  cursor?: Prisma.AuditLogWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.AuditLogScalarFieldEnum | Prisma.AuditLogScalarFieldEnum[]
 }
 
 /**

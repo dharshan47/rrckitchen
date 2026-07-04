@@ -7,11 +7,12 @@ import { InstallPrompt } from "@/components/patterns/install-prompt";
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isLoginPage = pathname.startsWith("/login");
+  const isSignupPage = pathname.startsWith("/signup");
   const isAdminPage = pathname.startsWith("/admin");
   const isKitchenPage = pathname.startsWith("/kitchen");
   const isDeliveryPartnerPage = pathname.startsWith("/delivery-partner");
 
-  if (isLoginPage || isAdminPage || isKitchenPage || isDeliveryPartnerPage) {
+  if (isLoginPage || isSignupPage || isAdminPage || isKitchenPage || isDeliveryPartnerPage) {
     return <>{children}</>;
   }
 

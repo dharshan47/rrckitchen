@@ -18,7 +18,9 @@ export function useIntersectionObserver<T extends HTMLElement = HTMLDivElement>(
   const ref = useRef<T | null>(null);
   const [isIntersecting, setIsIntersecting] = useState(false);
   const onIntersectRef = useRef(onIntersect);
-  onIntersectRef.current = onIntersect;
+  useEffect(() => {
+    onIntersectRef.current = onIntersect;
+  });
 
   useEffect(() => {
     if (!enabled || !ref.current) return;

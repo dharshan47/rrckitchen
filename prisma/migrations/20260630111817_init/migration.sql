@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "RoleName" AS ENUM ('CUSTOMER', 'KITCHENPARTNER', 'SUPPLIER', 'ADMIN', 'SUPPORTAGENT');
+CREATE TYPE "RoleName" AS ENUM ('CUSTOMER', 'KITCHENPARTNER', 'DELIVERYPARTNER', 'ADMIN', 'SUPPORTAGENT');
 
 -- CreateEnum
 CREATE TYPE "PartnerStatus" AS ENUM ('PENDINGAPPROVAL', 'APPROVED', 'ACTIVE', 'SUSPENDED', 'REJECTED');
@@ -24,27 +24,6 @@ CREATE TYPE "PaymentProvider" AS ENUM ('RAZORPAY', 'CASHONPICKUP');
 
 -- CreateEnum
 CREATE TYPE "PaymentStatus" AS ENUM ('PENDING', 'SUCCESS', 'FAILED', 'REFUNDED');
-
--- CreateEnum
-CREATE TYPE "TransactionType" AS ENUM ('ORDERPAYMENT', 'KITCHENPAYOUT', 'SUPPLIERPAYOUT', 'REFUND');
-
--- CreateEnum
-CREATE TYPE "TransactionDirection" AS ENUM ('CREDIT', 'DEBIT');
-
--- CreateEnum
-CREATE TYPE "WithdrawalStatus" AS ENUM ('PENDING', 'PAID', 'FAILED');
-
--- CreateEnum
-CREATE TYPE "CycleStatus" AS ENUM ('OPEN', 'PROCESSING', 'CLOSED');
-
--- CreateEnum
-CREATE TYPE "NotificationChannel" AS ENUM ('SMS', 'WHATSAPP', 'EMAIL', 'PUSH');
-
--- CreateEnum
-CREATE TYPE "NotificationStatus" AS ENUM ('QUEUED', 'SENT', 'FAILED');
-
--- CreateEnum
-CREATE TYPE "ComplaintStatus" AS ENUM ('OPEN', 'INPROGRESS', 'RESOLVED', 'CLOSED');
 
 -- CreateTable
 CREATE TABLE "user" (
@@ -260,7 +239,7 @@ CREATE TABLE "MenuItemPhoto" (
 );
 
 -- CreateTable
-CREATE TABLE "Supplier" (
+CREATE TABLE "DeliveryPartner" (
     "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "status" "PartnerStatus" NOT NULL DEFAULT 'PENDINGAPPROVAL',
@@ -268,40 +247,40 @@ CREATE TABLE "Supplier" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "deletedAt" TIMESTAMP(3),
 
-    CONSTRAINT "Supplier_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "DeliveryPartner_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "SupplierKyc" (
+CREATE TABLE "DeliveryPartnerKyc" (
     "id" TEXT NOT NULL,
-    "supplierId" TEXT NOT NULL,
+    "deliveryPartnerId" TEXT NOT NULL,
     "documentUrl" TEXT,
     "verifiedAt" TIMESTAMP(3),
 
-    CONSTRAINT "SupplierKyc_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "DeliveryPartnerKyc_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "SupplierCatalogueItem" (
+CREATE TABLE "DeliveryPartnerCatalogueItem" (
     "id" TEXT NOT NULL,
-    "supplierId" TEXT NOT NULL,
+    "deliveryPartnerId" TEXT NOT NULL,
     "itemName" TEXT NOT NULL,
     "unit" TEXT NOT NULL,
     "ratePerUnit" DECIMAL(65,30) NOT NULL,
 
-    CONSTRAINT "SupplierCatalogueItem_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "DeliveryPartnerCatalogueItem_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "SupplierKitchenAssignment" (
+CREATE TABLE "DeliveryPartnerKitchenAssignment" (
     "id" TEXT NOT NULL,
-    "supplierId" TEXT NOT NULL,
+    "deliveryPartnerId" TEXT NOT NULL,
     "kitchenPartnerId" TEXT NOT NULL,
     "assignedByAdminId" TEXT NOT NULL,
     "status" "AssignmentStatus" NOT NULL DEFAULT 'PENDING',
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    CONSTRAINT "SupplierKitchenAssignment_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "DeliveryPartnerKitchenAssignment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -390,157 +369,6 @@ CREATE TABLE "Payment" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Payment_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Transaction" (
-    "id" TEXT NOT NULL,
-    "paymentId" TEXT,
-    "type" "TransactionType" NOT NULL,
-    "amount" DECIMAL(65,30) NOT NULL,
-    "direction" "TransactionDirection" NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "BankAccount" (
-    "id" TEXT NOT NULL,
-    "kitchenPartnerId" TEXT,
-    "supplierId" TEXT,
-    "accountHolderName" TEXT NOT NULL,
-    "accountNumberHash" TEXT NOT NULL,
-    "ifscCode" TEXT NOT NULL,
-    "verifiedAt" TIMESTAMP(3),
-
-    CONSTRAINT "BankAccount_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "UpiAccount" (
-    "id" TEXT NOT NULL,
-    "kitchenPartnerId" TEXT,
-    "supplierId" TEXT,
-    "upiId" TEXT NOT NULL,
-
-    CONSTRAINT "UpiAccount_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Commission" (
-    "id" TEXT NOT NULL,
-    "kitchenPartnerId" TEXT NOT NULL,
-    "percentage" DECIMAL(65,30) NOT NULL,
-    "effectiveFrom" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Commission_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Withdrawal" (
-    "id" TEXT NOT NULL,
-    "kitchenPartnerId" TEXT,
-    "supplierId" TEXT,
-    "amount" DECIMAL(65,30) NOT NULL,
-    "status" "WithdrawalStatus" NOT NULL DEFAULT 'PENDING',
-    "payoutCycleId" TEXT NOT NULL,
-    "processedAt" TIMESTAMP(3),
-
-    CONSTRAINT "Withdrawal_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "PayoutCycle" (
-    "id" TEXT NOT NULL,
-    "startDate" TIMESTAMP(3) NOT NULL,
-    "endDate" TIMESTAMP(3) NOT NULL,
-    "status" "CycleStatus" NOT NULL DEFAULT 'OPEN',
-
-    CONSTRAINT "PayoutCycle_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Notification" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT,
-    "templateId" TEXT NOT NULL,
-    "channel" "NotificationChannel" NOT NULL,
-    "status" "NotificationStatus" NOT NULL DEFAULT 'QUEUED',
-    "sentAt" TIMESTAMP(3),
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "Notification_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "NotificationTemplate" (
-    "id" TEXT NOT NULL,
-    "eventKey" TEXT NOT NULL,
-    "channel" "NotificationChannel" NOT NULL,
-    "body" TEXT NOT NULL,
-
-    CONSTRAINT "NotificationTemplate_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Banner" (
-    "id" TEXT NOT NULL,
-    "title" TEXT NOT NULL,
-    "imageUrl" TEXT NOT NULL,
-    "linkUrl" TEXT,
-    "sortOrder" INTEGER NOT NULL DEFAULT 0,
-    "isActive" BOOLEAN NOT NULL DEFAULT true,
-
-    CONSTRAINT "Banner_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Setting" (
-    "id" TEXT NOT NULL,
-    "key" TEXT NOT NULL,
-    "value" TEXT NOT NULL,
-    "updatedAt" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "Setting_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "Complaint" (
-    "id" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "orderId" TEXT,
-    "subject" TEXT NOT NULL,
-    "description" TEXT NOT NULL,
-    "status" "ComplaintStatus" NOT NULL DEFAULT 'OPEN',
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "resolvedAt" TIMESTAMP(3),
-
-    CONSTRAINT "Complaint_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "AuditLog" (
-    "id" TEXT NOT NULL,
-    "actorUserId" TEXT NOT NULL,
-    "action" TEXT NOT NULL,
-    "entityType" TEXT NOT NULL,
-    "entityId" TEXT NOT NULL,
-    "beforeData" JSONB,
-    "afterData" JSONB,
-    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "AuditLog_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "ReportCache" (
-    "id" TEXT NOT NULL,
-    "reportKey" TEXT NOT NULL,
-    "payload" JSONB NOT NULL,
-    "generatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "ReportCache_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -633,22 +461,22 @@ CREATE INDEX "MenuItem_menuId_timeSlot_foodType_idx" ON "MenuItem"("menuId", "ti
 CREATE INDEX "MenuItemPhoto_menuItemId_idx" ON "MenuItemPhoto"("menuItemId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Supplier_userId_key" ON "Supplier"("userId");
+CREATE UNIQUE INDEX "DeliveryPartner_userId_key" ON "DeliveryPartner"("userId");
 
 -- CreateIndex
-CREATE INDEX "Supplier_status_idx" ON "Supplier"("status");
+CREATE INDEX "DeliveryPartner_status_idx" ON "DeliveryPartner"("status");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "SupplierKyc_supplierId_key" ON "SupplierKyc"("supplierId");
+CREATE UNIQUE INDEX "DeliveryPartnerKyc_deliveryPartnerId_key" ON "DeliveryPartnerKyc"("deliveryPartnerId");
 
 -- CreateIndex
-CREATE INDEX "SupplierCatalogueItem_supplierId_idx" ON "SupplierCatalogueItem"("supplierId");
+CREATE INDEX "DeliveryPartnerCatalogueItem_deliveryPartnerId_idx" ON "DeliveryPartnerCatalogueItem"("deliveryPartnerId");
 
 -- CreateIndex
-CREATE INDEX "SupplierKitchenAssignment_supplierId_idx" ON "SupplierKitchenAssignment"("supplierId");
+CREATE INDEX "DeliveryPartnerKitchenAssignment_deliveryPartnerId_idx" ON "DeliveryPartnerKitchenAssignment"("deliveryPartnerId");
 
 -- CreateIndex
-CREATE INDEX "SupplierKitchenAssignment_kitchenPartnerId_idx" ON "SupplierKitchenAssignment"("kitchenPartnerId");
+CREATE INDEX "DeliveryPartnerKitchenAssignment_kitchenPartnerId_idx" ON "DeliveryPartnerKitchenAssignment"("kitchenPartnerId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Category_name_key" ON "Category"("name");
@@ -685,48 +513,6 @@ CREATE UNIQUE INDEX "Payment_orderId_key" ON "Payment"("orderId");
 
 -- CreateIndex
 CREATE INDEX "Payment_status_idx" ON "Payment"("status");
-
--- CreateIndex
-CREATE INDEX "Transaction_type_idx" ON "Transaction"("type");
-
--- CreateIndex
-CREATE UNIQUE INDEX "BankAccount_kitchenPartnerId_key" ON "BankAccount"("kitchenPartnerId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "BankAccount_supplierId_key" ON "BankAccount"("supplierId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "UpiAccount_kitchenPartnerId_key" ON "UpiAccount"("kitchenPartnerId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "UpiAccount_supplierId_key" ON "UpiAccount"("supplierId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Commission_kitchenPartnerId_key" ON "Commission"("kitchenPartnerId");
-
--- CreateIndex
-CREATE INDEX "Withdrawal_status_idx" ON "Withdrawal"("status");
-
--- CreateIndex
-CREATE INDEX "Notification_status_idx" ON "Notification"("status");
-
--- CreateIndex
-CREATE UNIQUE INDEX "NotificationTemplate_eventKey_key" ON "NotificationTemplate"("eventKey");
-
--- CreateIndex
-CREATE UNIQUE INDEX "Setting_key_key" ON "Setting"("key");
-
--- CreateIndex
-CREATE INDEX "Complaint_status_idx" ON "Complaint"("status");
-
--- CreateIndex
-CREATE INDEX "AuditLog_entityType_entityId_idx" ON "AuditLog"("entityType", "entityId");
-
--- CreateIndex
-CREATE INDEX "AuditLog_actorUserId_idx" ON "AuditLog"("actorUserId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "ReportCache_reportKey_key" ON "ReportCache"("reportKey");
 
 -- AddForeignKey
 ALTER TABLE "UserRole" ADD CONSTRAINT "UserRole_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -777,19 +563,19 @@ ALTER TABLE "MenuItem" ADD CONSTRAINT "MenuItem_menuId_fkey" FOREIGN KEY ("menuI
 ALTER TABLE "MenuItemPhoto" ADD CONSTRAINT "MenuItemPhoto_menuItemId_fkey" FOREIGN KEY ("menuItemId") REFERENCES "MenuItem"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Supplier" ADD CONSTRAINT "Supplier_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "DeliveryPartner" ADD CONSTRAINT "DeliveryPartner_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SupplierKyc" ADD CONSTRAINT "SupplierKyc_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "DeliveryPartnerKyc" ADD CONSTRAINT "DeliveryPartnerKyc_deliveryPartnerId_fkey" FOREIGN KEY ("deliveryPartnerId") REFERENCES "DeliveryPartner"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SupplierCatalogueItem" ADD CONSTRAINT "SupplierCatalogueItem_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "DeliveryPartnerCatalogueItem" ADD CONSTRAINT "DeliveryPartnerCatalogueItem_deliveryPartnerId_fkey" FOREIGN KEY ("deliveryPartnerId") REFERENCES "DeliveryPartner"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SupplierKitchenAssignment" ADD CONSTRAINT "SupplierKitchenAssignment_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "DeliveryPartnerKitchenAssignment" ADD CONSTRAINT "DeliveryPartnerKitchenAssignment_deliveryPartnerId_fkey" FOREIGN KEY ("deliveryPartnerId") REFERENCES "DeliveryPartner"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "SupplierKitchenAssignment" ADD CONSTRAINT "SupplierKitchenAssignment_kitchenPartnerId_fkey" FOREIGN KEY ("kitchenPartnerId") REFERENCES "KitchenPartner"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "DeliveryPartnerKitchenAssignment" ADD CONSTRAINT "DeliveryPartnerKitchenAssignment_kitchenPartnerId_fkey" FOREIGN KEY ("kitchenPartnerId") REFERENCES "KitchenPartner"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Order" ADD CONSTRAINT "Order_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -820,39 +606,3 @@ ALTER TABLE "Review" ADD CONSTRAINT "Review_kitchenPartnerId_fkey" FOREIGN KEY (
 
 -- AddForeignKey
 ALTER TABLE "Payment" ADD CONSTRAINT "Payment_orderId_fkey" FOREIGN KEY ("orderId") REFERENCES "Order"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_paymentId_fkey" FOREIGN KEY ("paymentId") REFERENCES "Payment"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "BankAccount" ADD CONSTRAINT "BankAccount_kitchenPartnerId_fkey" FOREIGN KEY ("kitchenPartnerId") REFERENCES "KitchenPartner"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "BankAccount" ADD CONSTRAINT "BankAccount_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "UpiAccount" ADD CONSTRAINT "UpiAccount_kitchenPartnerId_fkey" FOREIGN KEY ("kitchenPartnerId") REFERENCES "KitchenPartner"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "UpiAccount" ADD CONSTRAINT "UpiAccount_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Commission" ADD CONSTRAINT "Commission_kitchenPartnerId_fkey" FOREIGN KEY ("kitchenPartnerId") REFERENCES "KitchenPartner"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Withdrawal" ADD CONSTRAINT "Withdrawal_kitchenPartnerId_fkey" FOREIGN KEY ("kitchenPartnerId") REFERENCES "KitchenPartner"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Withdrawal" ADD CONSTRAINT "Withdrawal_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier"("id") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Withdrawal" ADD CONSTRAINT "Withdrawal_payoutCycleId_fkey" FOREIGN KEY ("payoutCycleId") REFERENCES "PayoutCycle"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Notification" ADD CONSTRAINT "Notification_templateId_fkey" FOREIGN KEY ("templateId") REFERENCES "NotificationTemplate"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Complaint" ADD CONSTRAINT "Complaint_userId_fkey" FOREIGN KEY ("userId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "AuditLog" ADD CONSTRAINT "AuditLog_actorUserId_fkey" FOREIGN KEY ("actorUserId") REFERENCES "user"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

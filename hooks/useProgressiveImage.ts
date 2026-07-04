@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { cacheImage } from "@/lib/cache";
 
 interface UseProgressiveImageOptions {
@@ -10,39 +10,15 @@ interface UseProgressiveImageOptions {
 }
 
 export function useProgressiveImage({ lowResUrl, highResUrl, placeholder }: UseProgressiveImageOptions) {
-  const [src, setSrc] = useState(placeholder ?? lowResUrl ?? "");
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [isError, setIsError] = useState(false);
-  const mountedRef = useRef(true);
+  const { data: cachedUrl, isLoading, isError } = useQuery({
+    queryKey: ["progressive-image", highResUrl],
+    queryFn: () => cacheImage(highResUrl),
+    enabled: !!highResUrl,
+    staleTime: Infinity,
+    gcTime: 24 * 60 * 60 * 1000,
+  });
 
-  useEffect(() => {
-    mountedRef.current = true;
-    let cancelled = false;
+  const src = cachedUrl ?? lowResUrl ?? placeholder ?? "";
 
-    async function load() {
-      try {
-        const cached = await cacheImage(highResUrl);
-        if (!mountedRef.current || cancelled) return;
-        setSrc(cached);
-        setIsLoaded(true);
-      } catch {
-        if (!mountedRef.current || cancelled) return;
-        setIsError(true);
-      }
-    }
-
-    // Show low-res first if available
-    if (lowResUrl) {
-      setSrc(lowResUrl);
-    }
-
-    load();
-
-    return () => {
-      cancelled = true;
-      mountedRef.current = false;
-    };
-  }, [lowResUrl, highResUrl, placeholder]);
-
-  return { src, isLoaded, isError };
+  return { src, isLoaded: !isLoading, isError };
 }

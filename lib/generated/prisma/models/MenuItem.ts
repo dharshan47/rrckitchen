@@ -28,10 +28,12 @@ export type AggregateMenuItem = {
 
 export type MenuItemAvgAggregateOutputType = {
   price: runtime.Decimal | null
+  compareAtPrice: runtime.Decimal | null
 }
 
 export type MenuItemSumAggregateOutputType = {
   price: runtime.Decimal | null
+  compareAtPrice: runtime.Decimal | null
 }
 
 export type MenuItemMinAggregateOutputType = {
@@ -40,6 +42,7 @@ export type MenuItemMinAggregateOutputType = {
   name: string | null
   description: string | null
   price: runtime.Decimal | null
+  compareAtPrice: runtime.Decimal | null
   foodType: $Enums.FoodType | null
   timeSlot: $Enums.TimeSlot | null
   isAvailable: boolean | null
@@ -54,6 +57,7 @@ export type MenuItemMaxAggregateOutputType = {
   name: string | null
   description: string | null
   price: runtime.Decimal | null
+  compareAtPrice: runtime.Decimal | null
   foodType: $Enums.FoodType | null
   timeSlot: $Enums.TimeSlot | null
   isAvailable: boolean | null
@@ -68,6 +72,7 @@ export type MenuItemCountAggregateOutputType = {
   name: number
   description: number
   price: number
+  compareAtPrice: number
   foodType: number
   timeSlot: number
   isAvailable: number
@@ -80,10 +85,12 @@ export type MenuItemCountAggregateOutputType = {
 
 export type MenuItemAvgAggregateInputType = {
   price?: true
+  compareAtPrice?: true
 }
 
 export type MenuItemSumAggregateInputType = {
   price?: true
+  compareAtPrice?: true
 }
 
 export type MenuItemMinAggregateInputType = {
@@ -92,6 +99,7 @@ export type MenuItemMinAggregateInputType = {
   name?: true
   description?: true
   price?: true
+  compareAtPrice?: true
   foodType?: true
   timeSlot?: true
   isAvailable?: true
@@ -106,6 +114,7 @@ export type MenuItemMaxAggregateInputType = {
   name?: true
   description?: true
   price?: true
+  compareAtPrice?: true
   foodType?: true
   timeSlot?: true
   isAvailable?: true
@@ -120,6 +129,7 @@ export type MenuItemCountAggregateInputType = {
   name?: true
   description?: true
   price?: true
+  compareAtPrice?: true
   foodType?: true
   timeSlot?: true
   isAvailable?: true
@@ -221,6 +231,7 @@ export type MenuItemGroupByOutputType = {
   name: string
   description: string | null
   price: runtime.Decimal
+  compareAtPrice: runtime.Decimal | null
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable: boolean
@@ -258,6 +269,7 @@ export type MenuItemWhereInput = {
   name?: Prisma.StringFilter<"MenuItem"> | string
   description?: Prisma.StringNullableFilter<"MenuItem"> | string | null
   price?: Prisma.DecimalFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.DecimalNullableFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFilter<"MenuItem"> | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFilter<"MenuItem"> | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFilter<"MenuItem"> | boolean
@@ -275,6 +287,7 @@ export type MenuItemOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   price?: Prisma.SortOrder
+  compareAtPrice?: Prisma.SortOrderInput | Prisma.SortOrder
   foodType?: Prisma.SortOrder
   timeSlot?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
@@ -295,6 +308,7 @@ export type MenuItemWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"MenuItem"> | string
   description?: Prisma.StringNullableFilter<"MenuItem"> | string | null
   price?: Prisma.DecimalFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.DecimalNullableFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFilter<"MenuItem"> | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFilter<"MenuItem"> | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFilter<"MenuItem"> | boolean
@@ -312,6 +326,7 @@ export type MenuItemOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
   price?: Prisma.SortOrder
+  compareAtPrice?: Prisma.SortOrderInput | Prisma.SortOrder
   foodType?: Prisma.SortOrder
   timeSlot?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
@@ -334,6 +349,7 @@ export type MenuItemScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"MenuItem"> | string
   description?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
   price?: Prisma.DecimalWithAggregatesFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.DecimalNullableWithAggregatesFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeWithAggregatesFilter<"MenuItem"> | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotWithAggregatesFilter<"MenuItem"> | $Enums.TimeSlot
   isAvailable?: Prisma.BoolWithAggregatesFilter<"MenuItem"> | boolean
@@ -347,6 +363,7 @@ export type MenuItemCreateInput = {
   name: string
   description?: string | null
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
@@ -364,6 +381,7 @@ export type MenuItemUncheckedCreateInput = {
   name: string
   description?: string | null
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
@@ -379,6 +397,7 @@ export type MenuItemUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -396,6 +415,7 @@ export type MenuItemUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -412,6 +432,7 @@ export type MenuItemCreateManyInput = {
   name: string
   description?: string | null
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
@@ -425,6 +446,7 @@ export type MenuItemUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -439,6 +461,7 @@ export type MenuItemUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -463,6 +486,7 @@ export type MenuItemCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  compareAtPrice?: Prisma.SortOrder
   foodType?: Prisma.SortOrder
   timeSlot?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
@@ -473,6 +497,7 @@ export type MenuItemCountOrderByAggregateInput = {
 
 export type MenuItemAvgOrderByAggregateInput = {
   price?: Prisma.SortOrder
+  compareAtPrice?: Prisma.SortOrder
 }
 
 export type MenuItemMaxOrderByAggregateInput = {
@@ -481,6 +506,7 @@ export type MenuItemMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  compareAtPrice?: Prisma.SortOrder
   foodType?: Prisma.SortOrder
   timeSlot?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
@@ -495,6 +521,7 @@ export type MenuItemMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
   price?: Prisma.SortOrder
+  compareAtPrice?: Prisma.SortOrder
   foodType?: Prisma.SortOrder
   timeSlot?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
@@ -505,6 +532,7 @@ export type MenuItemMinOrderByAggregateInput = {
 
 export type MenuItemSumOrderByAggregateInput = {
   price?: Prisma.SortOrder
+  compareAtPrice?: Prisma.SortOrder
 }
 
 export type MenuItemScalarRelationFilter = {
@@ -562,6 +590,14 @@ export type DecimalFieldUpdateOperationsInput = {
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
 }
 
+export type NullableDecimalFieldUpdateOperationsInput = {
+  set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
 export type EnumFoodTypeFieldUpdateOperationsInput = {
   set?: $Enums.FoodType
 }
@@ -603,6 +639,7 @@ export type MenuItemCreateWithoutMenuInput = {
   name: string
   description?: string | null
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
@@ -618,6 +655,7 @@ export type MenuItemUncheckedCreateWithoutMenuInput = {
   name: string
   description?: string | null
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
@@ -663,6 +701,7 @@ export type MenuItemScalarWhereInput = {
   name?: Prisma.StringFilter<"MenuItem"> | string
   description?: Prisma.StringNullableFilter<"MenuItem"> | string | null
   price?: Prisma.DecimalFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.DecimalNullableFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFilter<"MenuItem"> | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFilter<"MenuItem"> | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFilter<"MenuItem"> | boolean
@@ -676,6 +715,7 @@ export type MenuItemCreateWithoutPhotosInput = {
   name: string
   description?: string | null
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
@@ -692,6 +732,7 @@ export type MenuItemUncheckedCreateWithoutPhotosInput = {
   name: string
   description?: string | null
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
@@ -722,6 +763,7 @@ export type MenuItemUpdateWithoutPhotosInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -738,6 +780,7 @@ export type MenuItemUncheckedUpdateWithoutPhotosInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -752,6 +795,7 @@ export type MenuItemCreateWithoutOrderItemsInput = {
   name: string
   description?: string | null
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
@@ -768,6 +812,7 @@ export type MenuItemUncheckedCreateWithoutOrderItemsInput = {
   name: string
   description?: string | null
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
@@ -798,6 +843,7 @@ export type MenuItemUpdateWithoutOrderItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -814,6 +860,7 @@ export type MenuItemUncheckedUpdateWithoutOrderItemsInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -828,6 +875,7 @@ export type MenuItemCreateManyMenuInput = {
   name: string
   description?: string | null
   price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
@@ -841,6 +889,7 @@ export type MenuItemUpdateWithoutMenuInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -856,6 +905,7 @@ export type MenuItemUncheckedUpdateWithoutMenuInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -871,6 +921,7 @@ export type MenuItemUncheckedUpdateManyWithoutMenuInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
@@ -925,6 +976,7 @@ export type MenuItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   name?: boolean
   description?: boolean
   price?: boolean
+  compareAtPrice?: boolean
   foodType?: boolean
   timeSlot?: boolean
   isAvailable?: boolean
@@ -943,6 +995,7 @@ export type MenuItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   name?: boolean
   description?: boolean
   price?: boolean
+  compareAtPrice?: boolean
   foodType?: boolean
   timeSlot?: boolean
   isAvailable?: boolean
@@ -958,6 +1011,7 @@ export type MenuItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   name?: boolean
   description?: boolean
   price?: boolean
+  compareAtPrice?: boolean
   foodType?: boolean
   timeSlot?: boolean
   isAvailable?: boolean
@@ -973,6 +1027,7 @@ export type MenuItemSelectScalar = {
   name?: boolean
   description?: boolean
   price?: boolean
+  compareAtPrice?: boolean
   foodType?: boolean
   timeSlot?: boolean
   isAvailable?: boolean
@@ -981,7 +1036,7 @@ export type MenuItemSelectScalar = {
   deletedAt?: boolean
 }
 
-export type MenuItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "menuId" | "name" | "description" | "price" | "foodType" | "timeSlot" | "isAvailable" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["menuItem"]>
+export type MenuItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "menuId" | "name" | "description" | "price" | "compareAtPrice" | "foodType" | "timeSlot" | "isAvailable" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["menuItem"]>
 export type MenuItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   menu?: boolean | Prisma.MenuDefaultArgs<ExtArgs>
   photos?: boolean | Prisma.MenuItem$photosArgs<ExtArgs>
@@ -1008,6 +1063,7 @@ export type $MenuItemPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     name: string
     description: string | null
     price: runtime.Decimal
+    compareAtPrice: runtime.Decimal | null
     foodType: $Enums.FoodType
     timeSlot: $Enums.TimeSlot
     isAvailable: boolean
@@ -1445,6 +1501,7 @@ export interface MenuItemFieldRefs {
   readonly name: Prisma.FieldRef<"MenuItem", 'String'>
   readonly description: Prisma.FieldRef<"MenuItem", 'String'>
   readonly price: Prisma.FieldRef<"MenuItem", 'Decimal'>
+  readonly compareAtPrice: Prisma.FieldRef<"MenuItem", 'Decimal'>
   readonly foodType: Prisma.FieldRef<"MenuItem", 'FoodType'>
   readonly timeSlot: Prisma.FieldRef<"MenuItem", 'TimeSlot'>
   readonly isAvailable: Prisma.FieldRef<"MenuItem", 'Boolean'>

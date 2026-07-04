@@ -1,9 +1,6 @@
 import { Suspense } from "react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { SkeletonCard } from "@/components/patterns/skeleton-card";
 import { HomeClient } from "@/components/home/home-client";
-
-export const revalidate = 30;
-export const dynamic = "force-dynamic";
 
 export default function HomePage() {
   return (
@@ -16,11 +13,9 @@ export default function HomePage() {
 function HomeFallback() {
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-7xl px-4 lg:px-8">
-        <div className="py-8 space-y-4">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-28 w-full rounded-xl" />
-          ))}
+      <div className="mx-auto max-w-7xl px-4 lg:px-8 py-8">
+        <div className="flex gap-4 overflow-hidden">
+          <SkeletonCard variant="menu-item" count={6} />
         </div>
       </div>
     </main>

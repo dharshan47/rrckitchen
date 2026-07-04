@@ -8,13 +8,19 @@ vi.mock("next/navigation", () => ({
 }));
 
 const mockSignInEmail = vi.fn();
-vi.mock("@/lib/auth-client", () => ({
-  authClient: {
-    signIn: {
-      email: (...args: unknown[]) => mockSignInEmail(...args),
+vi.mock("@/lib/auth-client", () => {
+  const mockSignInObj = { email: (...args: unknown[]) => mockSignInEmail(...args) };
+  return {
+    signIn: mockSignInObj,
+    signUp: { email: (...args: unknown[]) => Promise.resolve({ error: null }) },
+    signOut: vi.fn(),
+    useSession: () => ({ data: null, isPending: false }),
+    authClient: {
+      signIn: mockSignInObj,
+      signUp: { email: (...args: unknown[]) => Promise.resolve({ error: null }) },
     },
-  },
-}));
+  };
+});
 
 import AdminLoginPage from "@/app/admin/login/page";
 
@@ -110,7 +116,7 @@ describe("AdminLoginPage", () => {
     await user.type(screen.getByLabelText(/password/i), "password123");
     await user.click(screen.getByRole("button", { name: /sign in/i }));
 
-    expect(screen.getByRole("button", { name: /signing in/i })).toBeDisabled();
+    expect(await screen.findByRole("button", { name: /signing in/i })).toBeDisabled();
   });
 
   it("shows generic error on exception", async () => {

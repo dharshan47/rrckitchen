@@ -148,80 +148,10 @@ export type OrderStatusHistory = Prisma.OrderStatusHistoryModel
  */
 export type Review = Prisma.ReviewModel
 /**
- * Model Subscription
- * 
- */
-export type Subscription = Prisma.SubscriptionModel
-/**
  * Model Payment
  * 
  */
 export type Payment = Prisma.PaymentModel
-/**
- * Model Transaction
- * 
- */
-export type Transaction = Prisma.TransactionModel
-/**
- * Model BankAccount
- * 
- */
-export type BankAccount = Prisma.BankAccountModel
-/**
- * Model UpiAccount
- * 
- */
-export type UpiAccount = Prisma.UpiAccountModel
-/**
- * Model Commission
- * 
- */
-export type Commission = Prisma.CommissionModel
-/**
- * Model Withdrawal
- * 
- */
-export type Withdrawal = Prisma.WithdrawalModel
-/**
- * Model PayoutCycle
- * 
- */
-export type PayoutCycle = Prisma.PayoutCycleModel
-/**
- * Model Notification
- * 
- */
-export type Notification = Prisma.NotificationModel
-/**
- * Model NotificationTemplate
- * 
- */
-export type NotificationTemplate = Prisma.NotificationTemplateModel
-/**
- * Model Banner
- * 
- */
-export type Banner = Prisma.BannerModel
-/**
- * Model Setting
- * 
- */
-export type Setting = Prisma.SettingModel
-/**
- * Model Complaint
- * 
- */
-export type Complaint = Prisma.ComplaintModel
-/**
- * Model AuditLog
- * 
- */
-export type AuditLog = Prisma.AuditLogModel
-/**
- * Model ReportCache
- * 
- */
-export type ReportCache = Prisma.ReportCacheModel
 /**
  * Model DeliverySlot
  * 

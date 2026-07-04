@@ -7,6 +7,7 @@ import { Search, User, ShoppingCart, Home, LayoutDashboard, MapPin, ChevronDown 
 import { Button, Badge, Input } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { useMenuStore, FoodTypeFilter, useCartStore, useMenuDeliveryAddress, useMenuSearchQuery, useMenuActions } from "@/stores";
+import { useSession } from "@/lib/auth-client";
 import { LocationDialog } from "@/components/location";
 
 const foodTypeOptions: { value: FoodTypeFilter; label: string }[] = [
@@ -30,7 +31,13 @@ export function SiteHeader() {
     [setSearchQuery]
   );
 
+  const { data: session } = useSession();
+  const isLoggedIn = !!session?.user;
+  const cartHref = isLoggedIn ? "/cart" : "/login";
+
   const isCartPage = pathname === "/cart";
+  const isAccountPage = pathname.startsWith("/account/");
+  const isMenuDetailPage = pathname.startsWith("/menu/") && pathname !== "/menu";
 
   return (
     <>
@@ -39,7 +46,7 @@ export function SiteHeader() {
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 h-20">
           <div className="flex items-center gap-10">
             <Link href="/" className="text-2xl font-extrabold tracking-tight text-foreground">
-              RrcKitchen
+              RRC Kitchen
             </Link>
             <button
               onClick={() => setLocationOpen(true)}
@@ -59,18 +66,27 @@ export function SiteHeader() {
                 <Search className="h-5 w-5 text-muted-foreground" />
               </div>
               <Input
-                placeholder="Search for meals, kitchens..."
+                placeholder="Search for meals.."
+                value={searchQuery}
+                onChange={handleMobileSearchChange}
                 className="w-full h-12 pl-12 pr-4 bg-secondary border-none rounded-xl text-sm focus-visible:ring-2 focus-visible:ring-primary placeholder:text-muted-foreground"
               />
             </div>
           </div>
 
           <div className="flex items-center gap-8">
-            <Link href="/login" className="flex flex-col items-center gap-0.5 group">
-              <User className="h-6 w-6 text-foreground group-hover:text-primary transition-colors" />
-              <span className="text-[11px] font-semibold uppercase tracking-wider">Login</span>
-            </Link>
-            <Link href="/cart" className="flex flex-col items-center gap-0.5 group relative">
+            {isLoggedIn ? (
+              <Link href="/account/profile" className="flex flex-col items-center gap-0.5 group" aria-label="Profile">
+                <User className="h-6 w-6 text-foreground group-hover:text-primary transition-colors" />
+                <span className="text-[11px] font-semibold uppercase tracking-wider">Profile</span>
+              </Link>
+            ) : (
+              <Link href="/login" className="flex flex-col items-center gap-0.5 group" aria-label="Login">
+                <User className="h-6 w-6 text-foreground group-hover:text-primary transition-colors" />
+                <span className="text-[11px] font-semibold uppercase tracking-wider">Login</span>
+              </Link>
+            )}
+            <Link href={cartHref} className="flex flex-col items-center gap-0.5 group relative" aria-label="Shopping cart">
               <ShoppingCart className="h-6 w-6 text-foreground group-hover:text-primary transition-colors" />
               <span className="text-[11px] font-semibold uppercase tracking-wider">Cart</span>
               {cartCount > 0 && (
@@ -82,7 +98,7 @@ export function SiteHeader() {
           </div>
         </div>
 
-        {!isCartPage && (
+        {!isCartPage && !isAccountPage && !isMenuDetailPage && (
           <div className="border-t border-border">
             <div className="mx-auto max-w-7xl px-6 h-14 flex items-center gap-8 overflow-x-auto scrollbar-none">
               {foodTypeOptions.map((opt) => (
@@ -111,7 +127,7 @@ export function SiteHeader() {
             RrcKitchen
           </Link>
           <div className="flex items-center gap-3">
-            <Link href="/cart" className="relative">
+            <Link href={cartHref} className="relative" aria-label="Shopping cart">
               <ShoppingCart className="h-5 w-5 text-foreground" />
               {cartCount > 0 && (
                 <Badge className="absolute -top-2 -right-2 h-4 min-w-4 flex items-center justify-center rounded-full p-0 text-[9px] font-bold">
@@ -119,13 +135,19 @@ export function SiteHeader() {
                 </Badge>
               )}
             </Link>
-            <Button asChild size="sm" className="h-8 px-4 rounded-sm font-semibold">
-              <Link href="/login">Login</Link>
-            </Button>
+            {isLoggedIn ? (
+              <Button asChild size="sm" className="h-8 px-4 rounded-sm font-semibold">
+                <Link href="/account/profile">Profile</Link>
+              </Button>
+            ) : (
+              <Button asChild size="sm" className="h-8 px-4 rounded-sm font-semibold">
+                <Link href="/login">Login</Link>
+              </Button>
+            )}
           </div>
         </div>
 
-        {!isCartPage && (
+        {!isCartPage && !isAccountPage && !isMenuDetailPage && (
           <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
             {foodTypeOptions.map((opt) => (
               <button
@@ -133,9 +155,9 @@ export function SiteHeader() {
                 onClick={() => setSelectedFoodType(opt.value)}
                 className={cn(
                   "flex items-center gap-1 whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all",
-                  selectedFoodType === opt.value
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-muted-foreground"
+                    selectedFoodType === opt.value
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-muted text-foreground/70"
                 )}
               >
                 {opt.label}
@@ -167,8 +189,8 @@ export function SiteHeader() {
           <MapPin className="h-6 w-6" />
           <span className="text-[10px] font-semibold uppercase tracking-wider">Location</span>
         </button>
-        <MobileNavItem href="/login" icon={<User className="h-6 w-6" />} label="Account" />
-        <MobileNavItem href="/cart" icon={<ShoppingCart className="h-6 w-6" />} label="Cart" badge={cartCount} />
+        <MobileNavItem href={isLoggedIn ? "/account/profile" : "/login"} icon={<User className="h-6 w-6" />} label="Account" />
+        <MobileNavItem href={cartHref} icon={<ShoppingCart className="h-6 w-6" />} label="Cart" badge={cartCount} />
       </nav>
       <div className="h-16 md:hidden" />
 

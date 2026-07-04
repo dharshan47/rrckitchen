@@ -7,21 +7,17 @@ interface SkeletonCardProps {
 
 function MenuItemSkeleton() {
   return (
-    <div className="rounded-3xl border border-border bg-white p-6">
-      <div className="flex items-center justify-between gap-3">
-        <div className="space-y-2">
-          <Skeleton className="h-5 w-32" />
-          <Skeleton className="h-4 w-24" />
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <Skeleton className="aspect-[4/3] w-full rounded-none" />
+      <div className="p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-5 w-16" />
+          <Skeleton className="h-5 w-12 rounded-full" />
         </div>
-        <Skeleton className="h-6 w-14 rounded-full" />
-      </div>
-      <div className="mt-4 space-y-2">
-        <Skeleton className="h-4 w-full" />
         <Skeleton className="h-4 w-3/4" />
-      </div>
-      <div className="mt-4 flex items-center justify-between">
-        <Skeleton className="h-6 w-16" />
-        <Skeleton className="h-9 w-20 rounded-full" />
+        <div className="pt-1">
+          <Skeleton className="h-4 w-20" />
+        </div>
       </div>
     </div>
   );
@@ -56,8 +52,12 @@ export function SkeletonCard({ variant = "menu-item", count = 1 }: SkeletonCardP
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-      {items.map((_, i) => <MenuItemSkeleton key={i} />)}
-    </div>
+    <>
+      {items.map((_, i) => (
+        <div key={i} className="snap-start shrink-0 w-[220px] lg:w-[240px]">
+          <MenuItemSkeleton />
+        </div>
+      ))}
+    </>
   );
 }

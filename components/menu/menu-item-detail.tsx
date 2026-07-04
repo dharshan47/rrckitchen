@@ -1,18 +1,24 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProgressiveImage } from "@/components/patterns/progressive-image";
-import { useCartActions } from "@/stores";
+import { useCartActions, useMenuDeliveryAddress } from "@/stores";
 import { formatTimeSlot, createBadgeVariant } from "@/lib/patterns";
+import { LocationDialog } from "@/components/location";
 import {
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Star,
   RefreshCw,
   Truck,
-  ArrowLeft,
+  MapPin,
+  ShoppingCart,
+  Package,
+  Search,
+  TruckIcon,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -27,6 +33,7 @@ interface MenuItem {
   name: string;
   description: string | null;
   price: number;
+  compareAtPrice?: number | null;
   foodType: string;
   timeSlot: string;
   isAvailable: boolean;
@@ -39,22 +46,35 @@ interface MenuItemDetailProps {
 }
 
 export function MenuItemDetail({ item }: MenuItemDetailProps) {
-  const [detailImageIndex, setDetailImageIndex] = useState(0);
+  const [imageIndex, setImageIndex] = useState(0);
+  const [locationOpen, setLocationOpen] = useState(false);
+  const [showMobileSticky, setShowMobileSticky] = useState(false);
+  const [passedContent, setPassedContent] = useState(false);
+  const [atBottom, setAtBottom] = useState(false);
   const addToCart = useCartActions().addToCart;
+  const deliveryAddress = useMenuDeliveryAddress();
+  const imageSectionRef = useRef<HTMLDivElement>(null);
+  const pageTopRef = useRef<HTMLDivElement>(null);
+  const howToOrderRef = useRef<HTMLDivElement>(null);
+  const pageBottomRef = useRef<HTMLDivElement>(null);
 
-  const handlePrevImage = useCallback(() => {
-    setDetailImageIndex((i) => (i > 0 ? i - 1 : item.photos.length - 1));
-  }, [item.photos.length]);
-
-  const handleNextImage = useCallback(() => {
-    setDetailImageIndex((i) => (i < item.photos.length - 1 ? i + 1 : 0));
-  }, [item.photos.length]);
+  const showDesktopCompact = passedContent && !atBottom;
 
   const kitchenName = item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen";
   const hasMultiplePhotos = item.photos?.length > 1;
   const price = Number(item.price);
-  const mrp = Math.round(price * 1.35);
+  const mrp = item.compareAtPrice ?? Math.round(price * 1.35);
   const offAmount = mrp - price;
+
+  const sortedPhotos = [...(item.photos ?? [])].sort((a, b) => a.sortOrder - b.sortOrder);
+
+  const handlePrevImage = useCallback(() => {
+    setImageIndex((i) => (i > 0 ? i - 1 : sortedPhotos.length - 1));
+  }, [sortedPhotos.length]);
+
+  const handleNextImage = useCallback(() => {
+    setImageIndex((i) => (i < sortedPhotos.length - 1 ? i + 1 : 0));
+  }, [sortedPhotos.length]);
 
   const handleAddToCart = useCallback(() => {
     addToCart({
@@ -68,197 +88,478 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
     });
   }, [addToCart, item, price, kitchenName]);
 
+  // Mobile: show sticky top bar when image section scrolls past
+  useEffect(() => {
+    const el = imageSectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowMobileSticky(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Desktop: show bar only when How to Order section enters viewport
+  useEffect(() => {
+    const el = howToOrderRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setPassedContent(true);
+      },
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Desktop: hide bar when back at top
+  useEffect(() => {
+    const el = pageTopRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) setPassedContent(false);
+      },
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  // Desktop: hide bar when near footer
+  useEffect(() => {
+    const el = pageBottomRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setAtBottom(entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-lg">
-        {/* Header with back button */}
-        <div className="sticky top-0 z-10 bg-background border-b border-border px-4 py-3 flex items-center gap-3">
-          <Link href="/menu" className="h-9 w-9 rounded-full flex items-center justify-center hover:bg-muted transition-colors">
-            <ArrowLeft className="h-5 w-5" />
-          </Link>
-          <h1 className="text-lg font-semibold truncate">{item.name}</h1>
-        </div>
-
-        {/* Image Gallery */}
-        <div className="relative h-80 bg-slate-100">
-          {item.photos?.length > 0 ? (
-            <>
-              <ProgressiveImage
-                src={item.photos[detailImageIndex]?.imageUrl}
-                alt={item.name}
-                fill
-              />
-              {hasMultiplePhotos && (
-                <>
-                  <button
-                    onClick={handlePrevImage}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/80 text-foreground flex items-center justify-center shadow-md hover:bg-white transition-colors"
-                  >
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <button
-                    onClick={handleNextImage}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 h-9 w-9 rounded-full bg-white/80 text-foreground flex items-center justify-center shadow-md hover:bg-white transition-colors"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-                    {item.photos.map((_, i) => (
-                      <span
-                        key={i}
-                        className={`h-2 w-2 rounded-full ${i === detailImageIndex ? "bg-white shadow-sm" : "bg-white/50"}`}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
-            </>
-          ) : (
-            <div className="h-full flex items-center justify-center">
-              <span className="text-7xl font-bold text-muted-foreground/15">{item.name.charAt(0)}</span>
-            </div>
-          )}
-        </div>
-
-        {/* Thumbnail strip */}
-        {hasMultiplePhotos && (
-          <div className="flex gap-2 px-5 py-3 border-b border-border overflow-x-auto">
-            {item.photos.map((photo, i) => (
-              <button
-                key={photo.id ?? `thumb-${i}`}
-                onClick={() => setDetailImageIndex(i)}
-                className={`h-14 w-14 rounded-lg overflow-hidden border-2 shrink-0 relative transition-all ${
-                  i === detailImageIndex ? "border-primary" : "border-transparent opacity-60 hover:opacity-100"
-                }`}
-              >
-                <ProgressiveImage src={photo.imageUrl} alt="" fill />
-              </button>
-            ))}
+    <>
+      <div className="min-h-screen bg-background text-foreground">
+        {/* Mobile: Location Prompt */}
+        {!deliveryAddress && (
+          <div className="md:hidden">
+            <LocationPrompt onClick={() => setLocationOpen(true)} />
           </div>
         )}
 
-        <div className="px-5 pt-5 pb-6 space-y-5">
-          {/* Product Name & Badge */}
-          <div className="flex items-start justify-between gap-3">
-            <h2 className="text-xl font-bold text-foreground">{item.name}</h2>
-            <Badge variant={createBadgeVariant(item.foodType)} className="shrink-0 mt-1">
-              {item.foodType}
-            </Badge>
-          </div>
-
-          {/* Price Section */}
-          <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-2xl font-bold text-foreground">₹{price}</span>
-            <span className="text-base text-muted-foreground line-through">₹{mrp}</span>
-            <span className="text-xs font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
-              ₹{offAmount} OFF
-            </span>
-            <span className="text-xs text-muted-foreground ml-1">(incl. of all taxes)</span>
-          </div>
-
-          {/* Net Qty & Rating */}
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <span>Net Qty: 1 Serving</span>
-            <span className="text-muted-foreground/40">•</span>
-            <span className="flex items-center gap-1">
-              <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-              <span className="text-foreground font-medium">4.6</span>
-              (120+)
-            </span>
-          </div>
-
-          {/* Delivery Info Badges */}
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex items-center gap-3 rounded-xl bg-green-50 border border-green-200 p-3">
-              <RefreshCw className="h-5 w-5 text-green-600 shrink-0" />
-              <p className="text-sm font-medium text-green-700">Same Day Exchange</p>
-            </div>
-            <div className="flex items-center gap-3 rounded-xl bg-orange-50 border border-orange-200 p-3">
-              <Truck className="h-5 w-5 text-orange-600 shrink-0" />
-              <p className="text-sm font-medium text-orange-700">Fast Delivery</p>
-            </div>
-          </div>
-
-          {/* Highlights */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Highlights
-            </h3>
-            <div className="rounded-xl border border-border divide-y divide-border text-sm">
-              <div className="flex items-start justify-between px-4 py-3">
-                <span className="text-muted-foreground">brand</span>
-                <span className="font-medium text-foreground text-right max-w-[60%]">{kitchenName}</span>
+        <div className="mx-auto max-w-7xl px-4 lg:px-10 py-6 lg:py-10">
+          {/* Top sentinel (non-sticky, before flex container) */}
+          <div ref={pageTopRef} className="h-1" />
+          {/* Top Section: Side by side on desktop */}
+          <div className="flex flex-col lg:flex-row lg:gap-10">
+            {/* Left Column - Image Gallery + Price + Add to Cart */}
+            <div
+              ref={imageSectionRef}
+              className="lg:w-[55%] lg:sticky lg:top-28 lg:self-start"
+            >
+              {/* Main Image - BIG if single, MEDIUM if multiple */}
+              <div className={`relative rounded-2xl overflow-hidden bg-slate-100 ${hasMultiplePhotos ? "aspect-[4/3]" : "aspect-square"}`}>
+                {sortedPhotos.length > 0 ? (
+                  <>
+                    <ProgressiveImage
+                      src={sortedPhotos[imageIndex]?.imageUrl}
+                      alt={item.name}
+                      fill
+                      priority
+                    />
+                    {hasMultiplePhotos && (
+                      <>
+                        <button
+                          onClick={handlePrevImage}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/90 text-foreground flex items-center justify-center shadow-md hover:bg-white transition-colors"
+                        >
+                          <ChevronLeft className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={handleNextImage}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/90 text-foreground flex items-center justify-center shadow-md hover:bg-white transition-colors"
+                        >
+                          <ChevronRight className="h-5 w-5" />
+                        </button>
+                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                          {sortedPhotos.map((_, i) => (
+                            <span
+                              key={i}
+                              className={`h-2 w-2 rounded-full transition-all ${
+                                i === imageIndex
+                                  ? "bg-white shadow-md w-4"
+                                  : "bg-white/60"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </>
+                ) : (
+                  <div className="h-full flex items-center justify-center">
+                    <span className="text-8xl font-bold text-muted-foreground/15">
+                      {item.name.charAt(0)}
+                    </span>
+                  </div>
+                )}
               </div>
-              <div className="flex items-start justify-between px-4 py-3">
-                <span className="text-muted-foreground">dietary preference</span>
-                <span className="font-medium text-foreground text-right">{item.foodType === "VEG" ? "Veg" : "Non Veg"}</span>
-              </div>
-              <div className="px-4 py-3">
-                <span className="text-muted-foreground block mb-1">allergen information</span>
-                <span className="text-foreground">Contains: Home-cooked ingredients. Please consult the kitchen for specific allergen details.</span>
-              </div>
-              {item.description && (
-                <div className="px-4 py-3">
-                  <span className="text-muted-foreground block mb-1">About</span>
-                  <span className="text-foreground leading-6">{item.description}</span>
+
+              {/* Carousel of all images below (only when multiple photos) */}
+              {hasMultiplePhotos && (
+                <div className="flex gap-3 mt-4 overflow-x-auto scrollbar-none pb-2 snap-x snap-mandatory">
+                  {sortedPhotos.map((photo, i) => (
+                    <button
+                      key={photo.id ?? `thumb-${i}`}
+                      onClick={() => setImageIndex(i)}
+                      className={`snap-start shrink-0 relative rounded-xl overflow-hidden border-2 transition-all ${
+                        i === imageIndex
+                          ? "border-primary ring-1 ring-primary"
+                          : "border-transparent opacity-70 hover:opacity-100"
+                      } ${sortedPhotos.length <= 3 ? "h-28 w-28 lg:h-32 lg:w-32" : "h-24 w-24 lg:h-28 lg:w-28"}`}
+                    >
+                      <ProgressiveImage src={photo.imageUrl} alt="" fill />
+                    </button>
+                  ))}
                 </div>
               )}
-              <div className="flex items-start justify-between px-4 py-3">
-                <span className="text-muted-foreground">time slot</span>
-                <span className="font-medium text-foreground text-right">{formatTimeSlot(item.timeSlot)}</span>
+
+              {/* Price + Add to Cart row below image section */}
+              <div className="mt-4 lg:mt-6 flex items-center justify-between">
+                <div>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl lg:text-3xl font-bold text-foreground">₹{price}</span>
+                    <span className="text-sm lg:text-base text-muted-foreground line-through">₹{mrp}</span>
+                    <span className="text-xs font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
+                      ₹{offAmount} OFF
+                    </span>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">(incl. of all taxes)</p>
+                </div>
+                <Button
+                  size="default"
+                  className="rounded-full px-6 h-11"
+                  onClick={handleAddToCart}
+                >
+                  <ShoppingCart className="h-4 w-4 mr-1.5" />
+                  Add to Cart
+                </Button>
+              </div>
+            </div>
+
+            {/* Right Column - Info Only */}
+            <div className="lg:w-[45%] mt-8 lg:mt-0">
+              {/* Breadcrumb */}
+              <nav className="hidden lg:flex items-center gap-2 text-sm text-muted-foreground mb-6">
+                <Link href="/menu" className="hover:text-foreground transition-colors">
+                  Menu
+                </Link>
+                <span>/</span>
+                <span className="text-foreground font-medium truncate max-w-[200px]">
+                  {item.name}
+                </span>
+              </nav>
+
+              <div className="space-y-6">
+                {/* Product Name & Badge */}
+                <div className="flex items-start justify-between gap-3">
+                  <h1 className="text-2xl lg:text-3xl font-bold text-foreground leading-tight">
+                    {item.name}
+                  </h1>
+                  <Badge variant={createBadgeVariant(item.foodType)} className="shrink-0 mt-1">
+                    {item.foodType}
+                  </Badge>
+                </div>
+
+                {/* Net Qty & Rating */}
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1">
+                    <Package className="h-4 w-4" />
+                    Net Qty: 1 Serving
+                  </span>
+                  <span className="text-muted-foreground/40">•</span>
+                  <span className="flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                    <span className="text-foreground font-medium">4.6</span>
+                    (120+)
+                  </span>
+                </div>
+
+                {/* Delivery Info Badges */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex items-center gap-3 rounded-xl bg-green-50 border border-green-200 p-3">
+                    <RefreshCw className="h-5 w-5 text-green-600 shrink-0" />
+                    <p className="text-sm font-medium text-green-700">Same Day Exchange</p>
+                  </div>
+                  <div className="flex items-center gap-3 rounded-xl bg-orange-50 border border-orange-200 p-3">
+                    <Truck className="h-5 w-5 text-orange-600 shrink-0" />
+                    <p className="text-sm font-medium text-orange-700">Fast Delivery</p>
+                  </div>
+                </div>
+
+                {/* Highlights */}
+                <div className="space-y-3">
+                  <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                    Highlights
+                  </h3>
+                  <div className="rounded-xl border border-border divide-y divide-border text-sm">
+                    <div className="flex items-start justify-between px-4 py-3">
+                      <span className="text-muted-foreground">Brand</span>
+                      <span className="font-medium text-foreground text-right max-w-[60%]">{kitchenName}</span>
+                    </div>
+                    <div className="flex items-start justify-between px-4 py-3">
+                      <span className="text-muted-foreground">Dietary Preference</span>
+                      <span className="font-medium text-foreground text-right">{item.foodType === "VEG" ? "Veg" : "Non Veg"}</span>
+                    </div>
+                    <div className="px-4 py-3">
+                      <span className="text-muted-foreground block mb-1">Allergen Information</span>
+                      <span className="text-foreground">Contains: Home-cooked ingredients. Please consult the kitchen for specific allergen details.</span>
+                    </div>
+                    {item.description && (
+                      <div className="px-4 py-3">
+                        <span className="text-muted-foreground block mb-1">About</span>
+                        <span className="text-foreground leading-6">{item.description}</span>
+                      </div>
+                    )}
+                    <div className="flex items-start justify-between px-4 py-3">
+                      <span className="text-muted-foreground">Time Slot</span>
+                      <span className="font-medium text-foreground text-right">{formatTimeSlot(item.timeSlot)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Information */}
+                <div className="space-y-3">
+                  <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+                    Information
+                  </h3>
+                  <div className="rounded-xl border border-border divide-y divide-border text-sm">
+                    <div className="px-4 py-3">
+                      <span className="text-muted-foreground block mb-1">Disclaimer</span>
+                      <span className="text-foreground text-xs leading-5">
+                        All images are for representational purposes only. It is advised that you read the batch and manufacturing details, directions for use, allergen information, health and nutritional claims (wherever applicable), and other details mentioned on the label before consuming the product. For combo items, individual prices can be viewed on the page.
+                      </span>
+                    </div>
+                    <div className="px-4 py-3">
+                      <span className="text-muted-foreground block mb-1">Customer Care Details</span>
+                      <span className="text-foreground text-xs leading-5">
+                        In case of any issue, contact us
+                        <br />
+                        E-mail address: support@rrckitchen.com
+                      </span>
+                    </div>
+                    <div className="flex items-start justify-between px-4 py-3">
+                      <span className="text-muted-foreground">Seller Name</span>
+                      <span className="font-medium text-foreground text-right max-w-[55%]">{kitchenName}</span>
+                    </div>
+                    <div className="px-4 py-3">
+                      <span className="text-muted-foreground block mb-1">Seller Address</span>
+                      <span className="text-foreground text-xs leading-5">Prepared fresh in a home kitchen. Contact the kitchen for location details.</span>
+                    </div>
+                    <div className="flex items-start justify-between px-4 py-3">
+                      <span className="text-muted-foreground">Country of Origin</span>
+                      <span className="font-medium text-foreground text-right">India</span>
+                    </div>
+                    <div className="flex items-start justify-between px-4 py-3">
+                      <span className="text-muted-foreground">Shelf Life</span>
+                      <span className="font-medium text-foreground text-right">Consume within 24 hours</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Information */}
-          <div className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              Information
-            </h3>
-            <div className="rounded-xl border border-border divide-y divide-border text-sm">
-              <div className="px-4 py-3">
-                <span className="text-muted-foreground block mb-1">Disclaimer</span>
-                <span className="text-foreground text-xs leading-5">
-                  All images are for representational purposes only. It is advised that you read the batch and manufacturing details, directions for use, allergen information, health and nutritional claims (wherever applicable), and other details mentioned on the label before consuming the product. For combo items, individual prices can be viewed on the page.
-                </span>
-              </div>
-              <div className="px-4 py-3">
-                <span className="text-muted-foreground block mb-1">Customer Care Details</span>
-                <span className="text-foreground text-xs leading-5">
-                  In case of any issue, contact us
-                  <br />
-                  E-mail address: support@rrckitchen.com
-                </span>
-              </div>
-              <div className="flex items-start justify-between px-4 py-3">
-                <span className="text-muted-foreground">Seller Name</span>
-                <span className="font-medium text-foreground text-right max-w-[55%]">{kitchenName}</span>
-              </div>
-              <div className="px-4 py-3">
-                <span className="text-muted-foreground block mb-1">Seller Address</span>
-                <span className="text-foreground text-xs leading-5">Prepared fresh in a home kitchen. Contact the kitchen for location details.</span>
-              </div>
-              <div className="flex items-start justify-between px-4 py-3">
-                <span className="text-muted-foreground">Country of Origin</span>
-                <span className="font-medium text-foreground text-right">India</span>
-              </div>
-              <div className="flex items-start justify-between px-4 py-3">
-                <span className="text-muted-foreground">Shelf Life</span>
-                <span className="font-medium text-foreground text-right">Consume within 24 hours</span>
+          {/* Full Width How to Order */}
+          <div ref={howToOrderRef} className="mt-10 lg:mt-16">
+            <HowToBuySection itemName={item.name} />
+          </div>
+        </div>
+
+        {/* Mobile bottom spacing for fixed bars */}
+        <div className="md:hidden h-24" />
+
+        {/* Bottom sentinel at end of component (bar hides when footer is near) */}
+        <div ref={pageBottomRef} className="h-1" />
+      </div>
+
+      {/* Mobile: Sticky Top Bar (appears when image section scrolls past) */}
+      {showMobileSticky && (
+        <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-background border-b border-border shadow-sm animate-in slide-in-from-top duration-200">
+          <div className="flex items-center gap-3 px-4 h-14">
+            <button
+              onClick={() => setLocationOpen(true)}
+              className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors shrink-0 max-w-[120px]"
+            >
+              <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
+              <span className="truncate">{deliveryAddress || "Select location"}</span>
+              <ChevronDown className="h-3 w-3 shrink-0" />
+            </button>
+            <div className="flex-1 flex items-center gap-2 min-w-0">
+              {sortedPhotos[0] && (
+                <div className="h-8 w-8 rounded-md overflow-hidden bg-slate-100 shrink-0">
+                  <ProgressiveImage src={sortedPhotos[0].imageUrl} alt="" fill />
+                </div>
+              )}
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-foreground truncate">{item.name}</p>
+                <p className="text-xs font-medium text-primary">₹{price}</p>
               </div>
             </div>
+            <Button
+              size="sm"
+              className="rounded-full px-5 shrink-0 h-8 text-xs"
+              onClick={handleAddToCart}
+            >
+              Add
+            </Button>
           </div>
+        </div>
+      )}
 
-          {/* Add to Cart */}
+      {/* Desktop: Compact Top Bar (attached to navbar, appears when scrolled past) */}
+      {showDesktopCompact && (
+        <div className="hidden lg:flex fixed top-20 left-0 right-0 z-40 bg-background border-b border-border shadow-sm animate-in slide-in-from-top duration-200">
+          <div className="mx-auto max-w-7xl w-full px-10 h-16 flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              {sortedPhotos[0] && (
+                <div className="h-10 w-10 rounded-lg overflow-hidden bg-slate-100 shrink-0">
+                  <ProgressiveImage src={sortedPhotos[0].imageUrl} alt="" fill />
+                </div>
+              )}
+              <div>
+                <p className="text-sm font-bold text-foreground">{item.name}</p>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-base font-bold text-primary">₹{price}</span>
+                  <span className="text-xs text-muted-foreground line-through">₹{mrp}</span>
+                  <span className="text-[10px] font-semibold text-green-600 bg-green-50 px-1 py-0.5 rounded">
+                    ₹{offAmount} OFF
+                  </span>
+                </div>
+              </div>
+            </div>
+            <Button
+              size="default"
+              className="rounded-full px-6 h-10"
+              onClick={handleAddToCart}
+            >
+              <ShoppingCart className="h-4 w-4 mr-1.5" />
+              Add to Cart
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile: Fixed Bottom Add to Cart */}
+      <div className="md:hidden fixed bottom-16 left-0 right-0 z-40 bg-background border-t border-border px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-foreground truncate">{item.name}</p>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-base font-bold text-primary">₹{price}</span>
+              <span className="text-xs text-muted-foreground line-through">₹{mrp}</span>
+              <span className="text-[10px] font-semibold text-green-600">₹{offAmount} OFF</span>
+            </div>
+          </div>
           <Button
-            size="lg"
-            className="w-full rounded-full text-base"
+            size="default"
+            className="rounded-full px-8 h-11 shrink-0"
             onClick={handleAddToCart}
           >
+            <ShoppingCart className="h-4 w-4 mr-2" />
             Add to Cart
           </Button>
         </div>
       </div>
-    </main>
+
+      <LocationDialog open={locationOpen} onClose={() => setLocationOpen(false)} />
+    </>
   );
 }
+
+function LocationPrompt({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center gap-3 bg-blue-50 border-b border-blue-200 px-4 py-3 text-left"
+    >
+      <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+        <MapPin className="h-4 w-4 text-blue-600" />
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-blue-800">Select your delivery location</p>
+        <p className="text-xs text-blue-600">Enter an address to see availability</p>
+      </div>
+      <ChevronRight className="h-4 w-4 text-blue-400 shrink-0" />
+    </button>
+  );
+}
+
+function HowToBuySection({ itemName }: { itemName: string }) {
+  const steps = [
+    {
+      icon: Search,
+      title: "Search for the item",
+      description: `Search for "${itemName}" in the RrcKitchen app or browse through the menu section to find it.`,
+    },
+    {
+      icon: Star,
+      title: "View details & ratings",
+      description: "Check the price, available time slots, kitchen information, and customer ratings to make your choice.",
+    },
+    {
+      icon: ShoppingCart,
+      title: "Add to cart & checkout",
+      description: "Add the item to your cart and proceed to checkout with secure payment options including Razorpay.",
+    },
+    {
+      icon: TruckIcon,
+      title: "Get fresh delivery",
+      description: "Your order will be prepared fresh by the kitchen and delivered to your doorstep by the next meal time.",
+    },
+  ];
+
+  return (
+    <div className="space-y-5 pt-4">
+      <div className="flex items-center gap-3">
+        <div className="h-8 w-1 bg-primary rounded-full" />
+        <h2 className="text-lg font-bold text-foreground">
+          How to Buy <span className="text-primary">{itemName}</span>
+        </h2>
+      </div>
+      <p className="text-sm text-muted-foreground -mt-2 ml-4">
+        Step-by-step guide to order online
+      </p>
+      <div className="space-y-0">
+        {steps.map((step, i) => {
+          const Icon = step.icon;
+          return (
+            <div key={i} className="flex gap-4">
+              <div className="flex flex-col items-center">
+                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Icon className="h-5 w-5 text-primary" />
+                </div>
+                {i < steps.length - 1 && (
+                  <div className="w-px flex-1 bg-border my-1" />
+                )}
+              </div>
+              <div className="pb-6 flex-1">
+                <h3 className="text-sm font-semibold text-foreground">
+                  Step {i + 1}: {step.title}
+                </h3>
+                <p className="text-sm text-muted-foreground mt-1 leading-6">
+                  {step.description}
+                </p>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+

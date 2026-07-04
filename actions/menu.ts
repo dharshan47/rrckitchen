@@ -1,4 +1,3 @@
-import { addDays, startOfDay } from "date-fns";
 import prisma from "@/lib/prisma";
 import { FoodType, TimeSlot } from "@/lib/generated/prisma/enums";
 
@@ -9,44 +8,31 @@ interface MenuFilterOptions {
 }
 
 export async function getTomorrowMenu({ query, foodType, timeSlot }: MenuFilterOptions = {}) {
-  const tomorrow = startOfDay(addDays(new Date(), 1));
   const search = query?.trim().toLowerCase();
 
   return prisma.menuItem.findMany({
     where: {
       isAvailable: true,
-      AND: [
-        {
-          menu: {
-            isActive: true,
-            kitchenPartner: {
-              kitchenAvailability: {
-                some: {
-                  serviceDate: tomorrow,
-                  isAvailable: true,
-                },
-              },
-            },
-          },
-        },
-        search
-          ? {
-              OR: [
-                { name: { contains: search, mode: "insensitive" } },
-                { description: { contains: search, mode: "insensitive" } },
-                {
-                  menu: {
-                    kitchenPartner: {
-                      kitchenAlias: {
-                        displayName: { contains: search, mode: "insensitive" },
-                      },
+      menu: {
+        isActive: true,
+      },
+      ...(search
+        ? {
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { description: { contains: search, mode: "insensitive" } },
+              {
+                menu: {
+                  kitchenPartner: {
+                    kitchenAlias: {
+                      displayName: { contains: search, mode: "insensitive" },
                     },
                   },
                 },
-              ],
-            }
-          : {},
-      ],
+              },
+            ],
+          }
+        : {}),
       foodType: foodType && foodType !== "ALL" ? foodType as FoodType : undefined,
       timeSlot: timeSlot && timeSlot !== "ALL" ? timeSlot as TimeSlot : undefined,
     },
@@ -73,21 +59,12 @@ export async function getTomorrowMenu({ query, foodType, timeSlot }: MenuFilterO
 }
 
 export async function getMenuItemById(id: string) {
-  const tomorrow = startOfDay(addDays(new Date(), 1));
   const item = await prisma.menuItem.findFirst({
     where: {
       id,
       isAvailable: true,
       menu: {
         isActive: true,
-        kitchenPartner: {
-          kitchenAvailability: {
-            some: {
-              serviceDate: tomorrow,
-              isAvailable: true,
-            },
-          },
-        },
       },
     },
     include: {
@@ -108,5 +85,30 @@ export async function getMenuItemById(id: string) {
 
   if (!item) return null;
 
-  return { ...item, price: Number(item.price) } as typeof item & { price: number };
+  return {
+    id: item.id,
+    name: item.name,
+    description: item.description,
+    price: Number(item.price),
+    compareAtPrice: item.compareAtPrice ? Number(item.compareAtPrice) : null,
+    foodType: item.foodType,
+    timeSlot: item.timeSlot,
+    isAvailable: item.isAvailable,
+    menu: item.menu
+      ? {
+          kitchenPartner: item.menu.kitchenPartner
+            ? {
+                kitchenAlias: item.menu.kitchenPartner.kitchenAlias
+                  ? { displayName: item.menu.kitchenPartner.kitchenAlias.displayName }
+                  : null,
+              }
+            : null,
+        }
+      : null,
+    photos: item.photos.map((p) => ({
+      id: p.id,
+      imageUrl: p.imageUrl,
+      sortOrder: p.sortOrder,
+    })),
+  };
 }

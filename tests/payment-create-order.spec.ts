@@ -47,6 +47,7 @@ describe("createPaymentOrder", () => {
     const mockMenuItem = {
       id: "m1",
       timeSlot: "MORNING",
+      price: 80,
       menu: { kitchenPartnerId: "kp_1" },
     };
     mockFindMany.mockResolvedValue([mockMenuItem]);

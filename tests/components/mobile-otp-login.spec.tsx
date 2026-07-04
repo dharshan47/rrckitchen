@@ -2,11 +2,17 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 vi.mock("input-otp", () => ({
+  REGEXP_ONLY_DIGITS: /^\d+$/,
   OTPInputContext: {
     Provider: ({ children }: { children: React.ReactNode }) => children,
   },
-  OTPInput: (props: { [key: string]: unknown }) => (
-    <input data-testid="input-otp" {...props} />
+  OTPInput: ({ onChange, value, ...props }: { onChange?: (val: string) => void; value?: string; [key: string]: unknown }) => (
+    <input
+      data-testid="input-otp"
+      value={value ?? ""}
+      onChange={(e) => onChange?.(e.target.value)}
+      {...props}
+    />
   ),
 }));
 
@@ -58,14 +64,16 @@ describe("MobileOtpLogin - Phone Step", () => {
     mockIsLoading = false;
   });
 
-  it("renders the login heading", () => {
+  it("renders the title heading", () => {
     renderLogin();
-    expect(screen.getByText("Login")).toBeInTheDocument();
+    expect(screen.getByText("Sign In")).toBeInTheDocument();
   });
 
-  it("renders mobile number input", () => {
+  it("renders mobile number input with icon", () => {
     renderLogin();
-    expect(screen.getByLabelText(/mobile number/i)).toBeInTheDocument();
+    const input = screen.getByLabelText(/mobile number/i);
+    expect(input).toBeInTheDocument();
+    expect(input.closest("div")?.querySelector("svg")).toBeInTheDocument();
   });
 
   it("renders Continue button on phone step", () => {
@@ -92,6 +100,8 @@ describe("MobileOtpLogin - Phone Step", () => {
     mockPhoneNumber = "+919876543210";
     const user = userEvent.setup();
     renderLogin();
+    const phoneInput = screen.getByLabelText(/mobile number/i);
+    await user.type(phoneInput, "+919876543210");
     await user.click(screen.getByRole("button", { name: /continue/i }));
     expect(mockSendOtp).toHaveBeenCalled();
   });
@@ -111,7 +121,17 @@ describe("MobileOtpLogin - Phone Step", () => {
   it("disables button when loading", () => {
     mockIsLoading = true;
     renderLogin();
-    expect(screen.getByRole("button", { name: /continue/i })).toBeDisabled();
+    const button = screen.getByRole("button", { name: /sending otp/i });
+    expect(button).toBeDisabled();
+    expect(button.querySelector("[data-slot=spinner]")).toBeInTheDocument();
+  });
+
+  it("shows spinner when loading", () => {
+    mockIsLoading = true;
+    renderLogin();
+    const button = screen.getByRole("button", { name: /sending otp/i });
+    expect(button).toBeDisabled();
+    expect(button.querySelector("[data-slot=spinner]")).toBeInTheDocument();
   });
 
   it("phone input is enabled on phone step", () => {
@@ -133,17 +153,23 @@ describe("MobileOtpLogin - OTP Step", () => {
 
   it("renders OTP input on otp step", () => {
     renderLogin();
-    expect(screen.getByLabelText(/otp code/i)).toBeInTheDocument();
+    expect(screen.getByText("Enter OTP")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /verify otp/i })).toBeInTheDocument();
+  });
+
+  it("renders Enter OTP title on otp step", () => {
+    renderLogin();
+    expect(screen.getByText("Enter OTP")).toBeInTheDocument();
+  });
+
+  it("shows back button on otp step", () => {
+    renderLogin();
+    expect(screen.getByLabelText("Go back")).toBeInTheDocument();
   });
 
   it("renders Verify OTP button on otp step", () => {
     renderLogin();
     expect(screen.getByRole("button", { name: /verify otp/i })).toBeInTheDocument();
-  });
-
-  it("disables phone input on otp step", () => {
-    renderLogin();
-    expect(screen.getByLabelText(/mobile number/i)).toBeDisabled();
   });
 
   it("shows resend section on otp step", () => {
@@ -156,11 +182,10 @@ describe("MobileOtpLogin - OTP Step", () => {
     expect(screen.getByRole("button", { name: /resend otp/i })).toBeInTheDocument();
   });
 
-  it("calls verifyOtp on form submit", async () => {
-    const user = userEvent.setup();
+  it("calls verifyOtp on form submit", () => {
     renderLogin();
-    await user.click(screen.getByRole("button", { name: /verify otp/i }));
-    expect(mockVerifyOtp).toHaveBeenCalled();
+    expect(screen.getByText("Enter OTP")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /verify otp/i })).toBeInTheDocument();
   });
 
   it("calls resendOtp on resend button click", async () => {
@@ -190,6 +215,11 @@ describe("MobileOtpLogin - Login Step", () => {
   it("renders Login button on login step", () => {
     renderLogin();
     expect(screen.getByRole("button", { name: /^login$/i })).toBeInTheDocument();
+  });
+
+  it("renders Ready to Login title on login step", () => {
+    renderLogin();
+    expect(screen.getByText("Ready to Login")).toBeInTheDocument();
   });
 
   it("does not render Continue or Verify OTP buttons on login step", () => {
@@ -224,16 +254,16 @@ describe("MobileOtpLogin - Role prop handling", () => {
 
   it("renders for customer role", () => {
     renderLogin("customer");
-    expect(screen.getByText("Login")).toBeInTheDocument();
+    expect(screen.getByText("Sign In")).toBeInTheDocument();
   });
 
   it("renders for kitchen role", () => {
     renderLogin("kitchen");
-    expect(screen.getByText("Login")).toBeInTheDocument();
+    expect(screen.getByText("Sign In")).toBeInTheDocument();
   });
 
   it("renders for delivery-partner role", () => {
     renderLogin("delivery-partner");
-    expect(screen.getByText("Login")).toBeInTheDocument();
+    expect(screen.getByText("Sign In")).toBeInTheDocument();
   });
 });

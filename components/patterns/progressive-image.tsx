@@ -64,17 +64,15 @@ export function ProgressiveImage({
       style={{
         backgroundColor: placeholderColor,
         position: fill ? "relative" : undefined,
-        width: fill ? undefined : width,
-        height: fill ? undefined : height,
+        width: fill ? "100%" : width,
+        height: fill ? "100%" : height,
       }}
     >
       {shouldLoad && (
         <Image
           src={src}
           alt={alt}
-          width={fill ? undefined : width}
-          height={fill ? undefined : height}
-          fill={fill}
+          {...(fill ? { fill: true } : { width, height })}
           className={`object-cover transition-opacity duration-500 ${
             isLoaded ? "opacity-100" : "opacity-0"
           }`}

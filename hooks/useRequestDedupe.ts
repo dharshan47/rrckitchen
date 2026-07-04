@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useEffect } from "react";
 
 interface PendingRequest {
   promise: Promise<unknown>;
@@ -11,7 +11,9 @@ const pendingRequests = new Map<string, PendingRequest>();
 
 export function useRequestDedupe(dedupeMs = 5000) {
   const dedupeRef = useRef(dedupeMs);
-  dedupeRef.current = dedupeMs;
+  useEffect(() => {
+    dedupeRef.current = dedupeMs;
+  });
 
   const dedupe = useCallback(async <T>(key: string, fetcher: () => Promise<T>): Promise<T> => {
     const existing = pendingRequests.get(key);

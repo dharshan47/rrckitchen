@@ -38,6 +38,7 @@ export type MenuItemPhotoMinAggregateOutputType = {
   id: string | null
   menuItemId: string | null
   imageUrl: string | null
+  cloudinaryPublicId: string | null
   sortOrder: number | null
 }
 
@@ -45,6 +46,7 @@ export type MenuItemPhotoMaxAggregateOutputType = {
   id: string | null
   menuItemId: string | null
   imageUrl: string | null
+  cloudinaryPublicId: string | null
   sortOrder: number | null
 }
 
@@ -52,6 +54,7 @@ export type MenuItemPhotoCountAggregateOutputType = {
   id: number
   menuItemId: number
   imageUrl: number
+  cloudinaryPublicId: number
   sortOrder: number
   _all: number
 }
@@ -69,6 +72,7 @@ export type MenuItemPhotoMinAggregateInputType = {
   id?: true
   menuItemId?: true
   imageUrl?: true
+  cloudinaryPublicId?: true
   sortOrder?: true
 }
 
@@ -76,6 +80,7 @@ export type MenuItemPhotoMaxAggregateInputType = {
   id?: true
   menuItemId?: true
   imageUrl?: true
+  cloudinaryPublicId?: true
   sortOrder?: true
 }
 
@@ -83,6 +88,7 @@ export type MenuItemPhotoCountAggregateInputType = {
   id?: true
   menuItemId?: true
   imageUrl?: true
+  cloudinaryPublicId?: true
   sortOrder?: true
   _all?: true
 }
@@ -177,6 +183,7 @@ export type MenuItemPhotoGroupByOutputType = {
   id: string
   menuItemId: string
   imageUrl: string
+  cloudinaryPublicId: string | null
   sortOrder: number
   _count: MenuItemPhotoCountAggregateOutputType | null
   _avg: MenuItemPhotoAvgAggregateOutputType | null
@@ -207,6 +214,7 @@ export type MenuItemPhotoWhereInput = {
   id?: Prisma.StringFilter<"MenuItemPhoto"> | string
   menuItemId?: Prisma.StringFilter<"MenuItemPhoto"> | string
   imageUrl?: Prisma.StringFilter<"MenuItemPhoto"> | string
+  cloudinaryPublicId?: Prisma.StringNullableFilter<"MenuItemPhoto"> | string | null
   sortOrder?: Prisma.IntFilter<"MenuItemPhoto"> | number
   menuItem?: Prisma.XOR<Prisma.MenuItemScalarRelationFilter, Prisma.MenuItemWhereInput>
 }
@@ -215,6 +223,7 @@ export type MenuItemPhotoOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   menuItemId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  cloudinaryPublicId?: Prisma.SortOrderInput | Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   menuItem?: Prisma.MenuItemOrderByWithRelationInput
 }
@@ -226,6 +235,7 @@ export type MenuItemPhotoWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.MenuItemPhotoWhereInput | Prisma.MenuItemPhotoWhereInput[]
   menuItemId?: Prisma.StringFilter<"MenuItemPhoto"> | string
   imageUrl?: Prisma.StringFilter<"MenuItemPhoto"> | string
+  cloudinaryPublicId?: Prisma.StringNullableFilter<"MenuItemPhoto"> | string | null
   sortOrder?: Prisma.IntFilter<"MenuItemPhoto"> | number
   menuItem?: Prisma.XOR<Prisma.MenuItemScalarRelationFilter, Prisma.MenuItemWhereInput>
 }, "id">
@@ -234,6 +244,7 @@ export type MenuItemPhotoOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   menuItemId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  cloudinaryPublicId?: Prisma.SortOrderInput | Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
   _count?: Prisma.MenuItemPhotoCountOrderByAggregateInput
   _avg?: Prisma.MenuItemPhotoAvgOrderByAggregateInput
@@ -249,12 +260,14 @@ export type MenuItemPhotoScalarWhereWithAggregatesInput = {
   id?: Prisma.StringWithAggregatesFilter<"MenuItemPhoto"> | string
   menuItemId?: Prisma.StringWithAggregatesFilter<"MenuItemPhoto"> | string
   imageUrl?: Prisma.StringWithAggregatesFilter<"MenuItemPhoto"> | string
+  cloudinaryPublicId?: Prisma.StringNullableWithAggregatesFilter<"MenuItemPhoto"> | string | null
   sortOrder?: Prisma.IntWithAggregatesFilter<"MenuItemPhoto"> | number
 }
 
 export type MenuItemPhotoCreateInput = {
   id?: string
   imageUrl: string
+  cloudinaryPublicId?: string | null
   sortOrder?: number
   menuItem: Prisma.MenuItemCreateNestedOneWithoutPhotosInput
 }
@@ -263,12 +276,14 @@ export type MenuItemPhotoUncheckedCreateInput = {
   id?: string
   menuItemId: string
   imageUrl: string
+  cloudinaryPublicId?: string | null
   sortOrder?: number
 }
 
 export type MenuItemPhotoUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudinaryPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   menuItem?: Prisma.MenuItemUpdateOneRequiredWithoutPhotosNestedInput
 }
@@ -277,6 +292,7 @@ export type MenuItemPhotoUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   menuItemId?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudinaryPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -284,12 +300,14 @@ export type MenuItemPhotoCreateManyInput = {
   id?: string
   menuItemId: string
   imageUrl: string
+  cloudinaryPublicId?: string | null
   sortOrder?: number
 }
 
 export type MenuItemPhotoUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudinaryPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -297,6 +315,7 @@ export type MenuItemPhotoUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   menuItemId?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudinaryPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -314,6 +333,7 @@ export type MenuItemPhotoCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   menuItemId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  cloudinaryPublicId?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
 }
 
@@ -325,6 +345,7 @@ export type MenuItemPhotoMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   menuItemId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  cloudinaryPublicId?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
 }
 
@@ -332,6 +353,7 @@ export type MenuItemPhotoMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   menuItemId?: Prisma.SortOrder
   imageUrl?: Prisma.SortOrder
+  cloudinaryPublicId?: Prisma.SortOrder
   sortOrder?: Prisma.SortOrder
 }
 
@@ -384,12 +406,14 @@ export type MenuItemPhotoUncheckedUpdateManyWithoutMenuItemNestedInput = {
 export type MenuItemPhotoCreateWithoutMenuItemInput = {
   id?: string
   imageUrl: string
+  cloudinaryPublicId?: string | null
   sortOrder?: number
 }
 
 export type MenuItemPhotoUncheckedCreateWithoutMenuItemInput = {
   id?: string
   imageUrl: string
+  cloudinaryPublicId?: string | null
   sortOrder?: number
 }
 
@@ -426,30 +450,35 @@ export type MenuItemPhotoScalarWhereInput = {
   id?: Prisma.StringFilter<"MenuItemPhoto"> | string
   menuItemId?: Prisma.StringFilter<"MenuItemPhoto"> | string
   imageUrl?: Prisma.StringFilter<"MenuItemPhoto"> | string
+  cloudinaryPublicId?: Prisma.StringNullableFilter<"MenuItemPhoto"> | string | null
   sortOrder?: Prisma.IntFilter<"MenuItemPhoto"> | number
 }
 
 export type MenuItemPhotoCreateManyMenuItemInput = {
   id?: string
   imageUrl: string
+  cloudinaryPublicId?: string | null
   sortOrder?: number
 }
 
 export type MenuItemPhotoUpdateWithoutMenuItemInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudinaryPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type MenuItemPhotoUncheckedUpdateWithoutMenuItemInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudinaryPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type MenuItemPhotoUncheckedUpdateManyWithoutMenuItemInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   imageUrl?: Prisma.StringFieldUpdateOperationsInput | string
+  cloudinaryPublicId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -459,6 +488,7 @@ export type MenuItemPhotoSelect<ExtArgs extends runtime.Types.Extensions.Interna
   id?: boolean
   menuItemId?: boolean
   imageUrl?: boolean
+  cloudinaryPublicId?: boolean
   sortOrder?: boolean
   menuItem?: boolean | Prisma.MenuItemDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["menuItemPhoto"]>
@@ -467,6 +497,7 @@ export type MenuItemPhotoSelectCreateManyAndReturn<ExtArgs extends runtime.Types
   id?: boolean
   menuItemId?: boolean
   imageUrl?: boolean
+  cloudinaryPublicId?: boolean
   sortOrder?: boolean
   menuItem?: boolean | Prisma.MenuItemDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["menuItemPhoto"]>
@@ -475,6 +506,7 @@ export type MenuItemPhotoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types
   id?: boolean
   menuItemId?: boolean
   imageUrl?: boolean
+  cloudinaryPublicId?: boolean
   sortOrder?: boolean
   menuItem?: boolean | Prisma.MenuItemDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["menuItemPhoto"]>
@@ -483,10 +515,11 @@ export type MenuItemPhotoSelectScalar = {
   id?: boolean
   menuItemId?: boolean
   imageUrl?: boolean
+  cloudinaryPublicId?: boolean
   sortOrder?: boolean
 }
 
-export type MenuItemPhotoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "menuItemId" | "imageUrl" | "sortOrder", ExtArgs["result"]["menuItemPhoto"]>
+export type MenuItemPhotoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "menuItemId" | "imageUrl" | "cloudinaryPublicId" | "sortOrder", ExtArgs["result"]["menuItemPhoto"]>
 export type MenuItemPhotoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   menuItem?: boolean | Prisma.MenuItemDefaultArgs<ExtArgs>
 }
@@ -506,6 +539,7 @@ export type $MenuItemPhotoPayload<ExtArgs extends runtime.Types.Extensions.Inter
     id: string
     menuItemId: string
     imageUrl: string
+    cloudinaryPublicId: string | null
     sortOrder: number
   }, ExtArgs["result"]["menuItemPhoto"]>
   composites: {}
@@ -934,6 +968,7 @@ export interface MenuItemPhotoFieldRefs {
   readonly id: Prisma.FieldRef<"MenuItemPhoto", 'String'>
   readonly menuItemId: Prisma.FieldRef<"MenuItemPhoto", 'String'>
   readonly imageUrl: Prisma.FieldRef<"MenuItemPhoto", 'String'>
+  readonly cloudinaryPublicId: Prisma.FieldRef<"MenuItemPhoto", 'String'>
   readonly sortOrder: Prisma.FieldRef<"MenuItemPhoto", 'Int'>
 }
     

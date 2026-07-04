@@ -6,6 +6,9 @@ import { usePWA } from "@/hooks/usePWA";
 import { useEventBus } from "@/hooks/useEventBus";
 import { AppEvents } from "@/lib/patterns/event-bus";
 
+/**
+ * Registers the PWA service worker on mount.
+ */
 function PWARegistrar({ children }: { children: React.ReactNode }) {
   const { registerServiceWorker } = usePWA();
 
@@ -16,6 +19,7 @@ function PWARegistrar({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+/** Logs important events in development mode for debugging. */
 function EventBusLogger() {
   useEventBus(AppEvents.CART_UPDATED, (payload) => {
     if (process.env.NODE_ENV === "development") {
@@ -32,6 +36,12 @@ function EventBusLogger() {
   return null;
 }
 
+/**
+ * Global providers wrapping the entire app.
+ * - TanStack Query client for server-state management
+ * - PWA service worker registration
+ * - Event bus logging (dev only)
+ */
 export function Providers({ children }: { children: React.ReactNode }) {
   const [queryClient] = useState(
     () =>

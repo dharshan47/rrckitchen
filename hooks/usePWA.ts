@@ -3,16 +3,21 @@
 import { useState, useEffect, useCallback } from "react";
 
 export function usePWA() {
-  const [isOnline, setIsOnline] = useState(true);
-  const [isStandalone, setIsStandalone] = useState(false);
-  const [isIOS, setIsIOS] = useState(false);
+  const [isOnline, setIsOnline] = useState(() => {
+    if (typeof navigator === "undefined") return true;
+    return navigator.onLine;
+  });
+  const [isStandalone, setIsStandalone] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.matchMedia("(display-mode: standalone)").matches;
+  });
+  const [isIOS, setIsIOS] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as unknown as Record<string, boolean>).MSStream;
+  });
   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
 
   useEffect(() => {
-    setIsOnline(navigator.onLine);
-    setIsStandalone(window.matchMedia("(display-mode: standalone)").matches);
-    setIsIOS(/iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as unknown as Record<string, boolean>).MSStream);
-
     const handleOnline = () => setIsOnline(true);
     const handleOffline = () => setIsOnline(false);
 

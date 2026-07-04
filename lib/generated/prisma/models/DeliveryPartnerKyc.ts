@@ -29,6 +29,13 @@ export type DeliveryPartnerKycMinAggregateOutputType = {
   deliveryPartnerId: string | null
   documentUrl: string | null
   verifiedAt: Date | null
+  bankName: string | null
+  bankAccountNumber: string | null
+  ifscCode: string | null
+  accountHolderName: string | null
+  upiId: string | null
+  googlePayNumber: string | null
+  phonePeNumber: string | null
 }
 
 export type DeliveryPartnerKycMaxAggregateOutputType = {
@@ -36,6 +43,13 @@ export type DeliveryPartnerKycMaxAggregateOutputType = {
   deliveryPartnerId: string | null
   documentUrl: string | null
   verifiedAt: Date | null
+  bankName: string | null
+  bankAccountNumber: string | null
+  ifscCode: string | null
+  accountHolderName: string | null
+  upiId: string | null
+  googlePayNumber: string | null
+  phonePeNumber: string | null
 }
 
 export type DeliveryPartnerKycCountAggregateOutputType = {
@@ -43,6 +57,13 @@ export type DeliveryPartnerKycCountAggregateOutputType = {
   deliveryPartnerId: number
   documentUrl: number
   verifiedAt: number
+  bankName: number
+  bankAccountNumber: number
+  ifscCode: number
+  accountHolderName: number
+  upiId: number
+  googlePayNumber: number
+  phonePeNumber: number
   _all: number
 }
 
@@ -52,6 +73,13 @@ export type DeliveryPartnerKycMinAggregateInputType = {
   deliveryPartnerId?: true
   documentUrl?: true
   verifiedAt?: true
+  bankName?: true
+  bankAccountNumber?: true
+  ifscCode?: true
+  accountHolderName?: true
+  upiId?: true
+  googlePayNumber?: true
+  phonePeNumber?: true
 }
 
 export type DeliveryPartnerKycMaxAggregateInputType = {
@@ -59,6 +87,13 @@ export type DeliveryPartnerKycMaxAggregateInputType = {
   deliveryPartnerId?: true
   documentUrl?: true
   verifiedAt?: true
+  bankName?: true
+  bankAccountNumber?: true
+  ifscCode?: true
+  accountHolderName?: true
+  upiId?: true
+  googlePayNumber?: true
+  phonePeNumber?: true
 }
 
 export type DeliveryPartnerKycCountAggregateInputType = {
@@ -66,6 +101,13 @@ export type DeliveryPartnerKycCountAggregateInputType = {
   deliveryPartnerId?: true
   documentUrl?: true
   verifiedAt?: true
+  bankName?: true
+  bankAccountNumber?: true
+  ifscCode?: true
+  accountHolderName?: true
+  upiId?: true
+  googlePayNumber?: true
+  phonePeNumber?: true
   _all?: true
 }
 
@@ -146,6 +188,13 @@ export type DeliveryPartnerKycGroupByOutputType = {
   deliveryPartnerId: string
   documentUrl: string | null
   verifiedAt: Date | null
+  bankName: string | null
+  bankAccountNumber: string | null
+  ifscCode: string | null
+  accountHolderName: string | null
+  upiId: string | null
+  googlePayNumber: string | null
+  phonePeNumber: string | null
   _count: DeliveryPartnerKycCountAggregateOutputType | null
   _min: DeliveryPartnerKycMinAggregateOutputType | null
   _max: DeliveryPartnerKycMaxAggregateOutputType | null
@@ -174,6 +223,13 @@ export type DeliveryPartnerKycWhereInput = {
   deliveryPartnerId?: Prisma.StringFilter<"DeliveryPartnerKyc"> | string
   documentUrl?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
   verifiedAt?: Prisma.DateTimeNullableFilter<"DeliveryPartnerKyc"> | Date | string | null
+  bankName?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
+  bankAccountNumber?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
+  ifscCode?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
+  accountHolderName?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
+  upiId?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
+  googlePayNumber?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
+  phonePeNumber?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
   deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerScalarRelationFilter, Prisma.DeliveryPartnerWhereInput>
 }
 
@@ -182,6 +238,13 @@ export type DeliveryPartnerKycOrderByWithRelationInput = {
   deliveryPartnerId?: Prisma.SortOrder
   documentUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   verifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  bankName?: Prisma.SortOrderInput | Prisma.SortOrder
+  bankAccountNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  ifscCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  accountHolderName?: Prisma.SortOrderInput | Prisma.SortOrder
+  upiId?: Prisma.SortOrderInput | Prisma.SortOrder
+  googlePayNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  phonePeNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   deliveryPartner?: Prisma.DeliveryPartnerOrderByWithRelationInput
 }
 
@@ -193,6 +256,13 @@ export type DeliveryPartnerKycWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.DeliveryPartnerKycWhereInput | Prisma.DeliveryPartnerKycWhereInput[]
   documentUrl?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
   verifiedAt?: Prisma.DateTimeNullableFilter<"DeliveryPartnerKyc"> | Date | string | null
+  bankName?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
+  bankAccountNumber?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
+  ifscCode?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
+  accountHolderName?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
+  upiId?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
+  googlePayNumber?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
+  phonePeNumber?: Prisma.StringNullableFilter<"DeliveryPartnerKyc"> | string | null
   deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerScalarRelationFilter, Prisma.DeliveryPartnerWhereInput>
 }, "id" | "deliveryPartnerId">
 
@@ -201,6 +271,13 @@ export type DeliveryPartnerKycOrderByWithAggregationInput = {
   deliveryPartnerId?: Prisma.SortOrder
   documentUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   verifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  bankName?: Prisma.SortOrderInput | Prisma.SortOrder
+  bankAccountNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  ifscCode?: Prisma.SortOrderInput | Prisma.SortOrder
+  accountHolderName?: Prisma.SortOrderInput | Prisma.SortOrder
+  upiId?: Prisma.SortOrderInput | Prisma.SortOrder
+  googlePayNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  phonePeNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.DeliveryPartnerKycCountOrderByAggregateInput
   _max?: Prisma.DeliveryPartnerKycMaxOrderByAggregateInput
   _min?: Prisma.DeliveryPartnerKycMinOrderByAggregateInput
@@ -214,12 +291,26 @@ export type DeliveryPartnerKycScalarWhereWithAggregatesInput = {
   deliveryPartnerId?: Prisma.StringWithAggregatesFilter<"DeliveryPartnerKyc"> | string
   documentUrl?: Prisma.StringNullableWithAggregatesFilter<"DeliveryPartnerKyc"> | string | null
   verifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"DeliveryPartnerKyc"> | Date | string | null
+  bankName?: Prisma.StringNullableWithAggregatesFilter<"DeliveryPartnerKyc"> | string | null
+  bankAccountNumber?: Prisma.StringNullableWithAggregatesFilter<"DeliveryPartnerKyc"> | string | null
+  ifscCode?: Prisma.StringNullableWithAggregatesFilter<"DeliveryPartnerKyc"> | string | null
+  accountHolderName?: Prisma.StringNullableWithAggregatesFilter<"DeliveryPartnerKyc"> | string | null
+  upiId?: Prisma.StringNullableWithAggregatesFilter<"DeliveryPartnerKyc"> | string | null
+  googlePayNumber?: Prisma.StringNullableWithAggregatesFilter<"DeliveryPartnerKyc"> | string | null
+  phonePeNumber?: Prisma.StringNullableWithAggregatesFilter<"DeliveryPartnerKyc"> | string | null
 }
 
 export type DeliveryPartnerKycCreateInput = {
   id?: string
   documentUrl?: string | null
   verifiedAt?: Date | string | null
+  bankName?: string | null
+  bankAccountNumber?: string | null
+  ifscCode?: string | null
+  accountHolderName?: string | null
+  upiId?: string | null
+  googlePayNumber?: string | null
+  phonePeNumber?: string | null
   deliveryPartner: Prisma.DeliveryPartnerCreateNestedOneWithoutKycInput
 }
 
@@ -228,12 +319,26 @@ export type DeliveryPartnerKycUncheckedCreateInput = {
   deliveryPartnerId: string
   documentUrl?: string | null
   verifiedAt?: Date | string | null
+  bankName?: string | null
+  bankAccountNumber?: string | null
+  ifscCode?: string | null
+  accountHolderName?: string | null
+  upiId?: string | null
+  googlePayNumber?: string | null
+  phonePeNumber?: string | null
 }
 
 export type DeliveryPartnerKycUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   documentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccountNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ifscCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accountHolderName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googlePayNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phonePeNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneRequiredWithoutKycNestedInput
 }
 
@@ -242,6 +347,13 @@ export type DeliveryPartnerKycUncheckedUpdateInput = {
   deliveryPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   documentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccountNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ifscCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accountHolderName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googlePayNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phonePeNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DeliveryPartnerKycCreateManyInput = {
@@ -249,12 +361,26 @@ export type DeliveryPartnerKycCreateManyInput = {
   deliveryPartnerId: string
   documentUrl?: string | null
   verifiedAt?: Date | string | null
+  bankName?: string | null
+  bankAccountNumber?: string | null
+  ifscCode?: string | null
+  accountHolderName?: string | null
+  upiId?: string | null
+  googlePayNumber?: string | null
+  phonePeNumber?: string | null
 }
 
 export type DeliveryPartnerKycUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   documentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccountNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ifscCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accountHolderName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googlePayNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phonePeNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DeliveryPartnerKycUncheckedUpdateManyInput = {
@@ -262,6 +388,13 @@ export type DeliveryPartnerKycUncheckedUpdateManyInput = {
   deliveryPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   documentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccountNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ifscCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accountHolderName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googlePayNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phonePeNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DeliveryPartnerKycNullableScalarRelationFilter = {
@@ -274,6 +407,13 @@ export type DeliveryPartnerKycCountOrderByAggregateInput = {
   deliveryPartnerId?: Prisma.SortOrder
   documentUrl?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrder
+  bankName?: Prisma.SortOrder
+  bankAccountNumber?: Prisma.SortOrder
+  ifscCode?: Prisma.SortOrder
+  accountHolderName?: Prisma.SortOrder
+  upiId?: Prisma.SortOrder
+  googlePayNumber?: Prisma.SortOrder
+  phonePeNumber?: Prisma.SortOrder
 }
 
 export type DeliveryPartnerKycMaxOrderByAggregateInput = {
@@ -281,6 +421,13 @@ export type DeliveryPartnerKycMaxOrderByAggregateInput = {
   deliveryPartnerId?: Prisma.SortOrder
   documentUrl?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrder
+  bankName?: Prisma.SortOrder
+  bankAccountNumber?: Prisma.SortOrder
+  ifscCode?: Prisma.SortOrder
+  accountHolderName?: Prisma.SortOrder
+  upiId?: Prisma.SortOrder
+  googlePayNumber?: Prisma.SortOrder
+  phonePeNumber?: Prisma.SortOrder
 }
 
 export type DeliveryPartnerKycMinOrderByAggregateInput = {
@@ -288,6 +435,13 @@ export type DeliveryPartnerKycMinOrderByAggregateInput = {
   deliveryPartnerId?: Prisma.SortOrder
   documentUrl?: Prisma.SortOrder
   verifiedAt?: Prisma.SortOrder
+  bankName?: Prisma.SortOrder
+  bankAccountNumber?: Prisma.SortOrder
+  ifscCode?: Prisma.SortOrder
+  accountHolderName?: Prisma.SortOrder
+  upiId?: Prisma.SortOrder
+  googlePayNumber?: Prisma.SortOrder
+  phonePeNumber?: Prisma.SortOrder
 }
 
 export type DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput = {
@@ -326,12 +480,26 @@ export type DeliveryPartnerKycCreateWithoutDeliveryPartnerInput = {
   id?: string
   documentUrl?: string | null
   verifiedAt?: Date | string | null
+  bankName?: string | null
+  bankAccountNumber?: string | null
+  ifscCode?: string | null
+  accountHolderName?: string | null
+  upiId?: string | null
+  googlePayNumber?: string | null
+  phonePeNumber?: string | null
 }
 
 export type DeliveryPartnerKycUncheckedCreateWithoutDeliveryPartnerInput = {
   id?: string
   documentUrl?: string | null
   verifiedAt?: Date | string | null
+  bankName?: string | null
+  bankAccountNumber?: string | null
+  ifscCode?: string | null
+  accountHolderName?: string | null
+  upiId?: string | null
+  googlePayNumber?: string | null
+  phonePeNumber?: string | null
 }
 
 export type DeliveryPartnerKycCreateOrConnectWithoutDeliveryPartnerInput = {
@@ -354,12 +522,26 @@ export type DeliveryPartnerKycUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   documentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccountNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ifscCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accountHolderName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googlePayNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phonePeNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type DeliveryPartnerKycUncheckedUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   documentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   verifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  bankName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bankAccountNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  ifscCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  accountHolderName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  googlePayNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phonePeNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -369,6 +551,13 @@ export type DeliveryPartnerKycSelect<ExtArgs extends runtime.Types.Extensions.In
   deliveryPartnerId?: boolean
   documentUrl?: boolean
   verifiedAt?: boolean
+  bankName?: boolean
+  bankAccountNumber?: boolean
+  ifscCode?: boolean
+  accountHolderName?: boolean
+  upiId?: boolean
+  googlePayNumber?: boolean
+  phonePeNumber?: boolean
   deliveryPartner?: boolean | Prisma.DeliveryPartnerDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["deliveryPartnerKyc"]>
 
@@ -377,6 +566,13 @@ export type DeliveryPartnerKycSelectCreateManyAndReturn<ExtArgs extends runtime.
   deliveryPartnerId?: boolean
   documentUrl?: boolean
   verifiedAt?: boolean
+  bankName?: boolean
+  bankAccountNumber?: boolean
+  ifscCode?: boolean
+  accountHolderName?: boolean
+  upiId?: boolean
+  googlePayNumber?: boolean
+  phonePeNumber?: boolean
   deliveryPartner?: boolean | Prisma.DeliveryPartnerDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["deliveryPartnerKyc"]>
 
@@ -385,6 +581,13 @@ export type DeliveryPartnerKycSelectUpdateManyAndReturn<ExtArgs extends runtime.
   deliveryPartnerId?: boolean
   documentUrl?: boolean
   verifiedAt?: boolean
+  bankName?: boolean
+  bankAccountNumber?: boolean
+  ifscCode?: boolean
+  accountHolderName?: boolean
+  upiId?: boolean
+  googlePayNumber?: boolean
+  phonePeNumber?: boolean
   deliveryPartner?: boolean | Prisma.DeliveryPartnerDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["deliveryPartnerKyc"]>
 
@@ -393,9 +596,16 @@ export type DeliveryPartnerKycSelectScalar = {
   deliveryPartnerId?: boolean
   documentUrl?: boolean
   verifiedAt?: boolean
+  bankName?: boolean
+  bankAccountNumber?: boolean
+  ifscCode?: boolean
+  accountHolderName?: boolean
+  upiId?: boolean
+  googlePayNumber?: boolean
+  phonePeNumber?: boolean
 }
 
-export type DeliveryPartnerKycOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "deliveryPartnerId" | "documentUrl" | "verifiedAt", ExtArgs["result"]["deliveryPartnerKyc"]>
+export type DeliveryPartnerKycOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "deliveryPartnerId" | "documentUrl" | "verifiedAt" | "bankName" | "bankAccountNumber" | "ifscCode" | "accountHolderName" | "upiId" | "googlePayNumber" | "phonePeNumber", ExtArgs["result"]["deliveryPartnerKyc"]>
 export type DeliveryPartnerKycInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   deliveryPartner?: boolean | Prisma.DeliveryPartnerDefaultArgs<ExtArgs>
 }
@@ -416,6 +626,13 @@ export type $DeliveryPartnerKycPayload<ExtArgs extends runtime.Types.Extensions.
     deliveryPartnerId: string
     documentUrl: string | null
     verifiedAt: Date | null
+    bankName: string | null
+    bankAccountNumber: string | null
+    ifscCode: string | null
+    accountHolderName: string | null
+    upiId: string | null
+    googlePayNumber: string | null
+    phonePeNumber: string | null
   }, ExtArgs["result"]["deliveryPartnerKyc"]>
   composites: {}
 }
@@ -844,6 +1061,13 @@ export interface DeliveryPartnerKycFieldRefs {
   readonly deliveryPartnerId: Prisma.FieldRef<"DeliveryPartnerKyc", 'String'>
   readonly documentUrl: Prisma.FieldRef<"DeliveryPartnerKyc", 'String'>
   readonly verifiedAt: Prisma.FieldRef<"DeliveryPartnerKyc", 'DateTime'>
+  readonly bankName: Prisma.FieldRef<"DeliveryPartnerKyc", 'String'>
+  readonly bankAccountNumber: Prisma.FieldRef<"DeliveryPartnerKyc", 'String'>
+  readonly ifscCode: Prisma.FieldRef<"DeliveryPartnerKyc", 'String'>
+  readonly accountHolderName: Prisma.FieldRef<"DeliveryPartnerKyc", 'String'>
+  readonly upiId: Prisma.FieldRef<"DeliveryPartnerKyc", 'String'>
+  readonly googlePayNumber: Prisma.FieldRef<"DeliveryPartnerKyc", 'String'>
+  readonly phonePeNumber: Prisma.FieldRef<"DeliveryPartnerKyc", 'String'>
 }
     
 

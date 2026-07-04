@@ -194,9 +194,6 @@ export type DeliveryPartnerWhereInput = {
   kyc?: Prisma.XOR<Prisma.DeliveryPartnerKycNullableScalarRelationFilter, Prisma.DeliveryPartnerKycWhereInput> | null
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemListRelationFilter
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentListRelationFilter
-  bankAccount?: Prisma.XOR<Prisma.BankAccountNullableScalarRelationFilter, Prisma.BankAccountWhereInput> | null
-  upiAccount?: Prisma.XOR<Prisma.UpiAccountNullableScalarRelationFilter, Prisma.UpiAccountWhereInput> | null
-  withdrawals?: Prisma.WithdrawalListRelationFilter
 }
 
 export type DeliveryPartnerOrderByWithRelationInput = {
@@ -210,9 +207,6 @@ export type DeliveryPartnerOrderByWithRelationInput = {
   kyc?: Prisma.DeliveryPartnerKycOrderByWithRelationInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemOrderByRelationAggregateInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentOrderByRelationAggregateInput
-  bankAccount?: Prisma.BankAccountOrderByWithRelationInput
-  upiAccount?: Prisma.UpiAccountOrderByWithRelationInput
-  withdrawals?: Prisma.WithdrawalOrderByRelationAggregateInput
 }
 
 export type DeliveryPartnerWhereUniqueInput = Prisma.AtLeast<{
@@ -229,9 +223,6 @@ export type DeliveryPartnerWhereUniqueInput = Prisma.AtLeast<{
   kyc?: Prisma.XOR<Prisma.DeliveryPartnerKycNullableScalarRelationFilter, Prisma.DeliveryPartnerKycWhereInput> | null
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemListRelationFilter
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentListRelationFilter
-  bankAccount?: Prisma.XOR<Prisma.BankAccountNullableScalarRelationFilter, Prisma.BankAccountWhereInput> | null
-  upiAccount?: Prisma.XOR<Prisma.UpiAccountNullableScalarRelationFilter, Prisma.UpiAccountWhereInput> | null
-  withdrawals?: Prisma.WithdrawalListRelationFilter
 }, "id" | "userId">
 
 export type DeliveryPartnerOrderByWithAggregationInput = {
@@ -268,9 +259,6 @@ export type DeliveryPartnerCreateInput = {
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateInput = {
@@ -283,9 +271,6 @@ export type DeliveryPartnerUncheckedCreateInput = {
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUpdateInput = {
@@ -298,9 +283,6 @@ export type DeliveryPartnerUpdateInput = {
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateInput = {
@@ -313,9 +295,6 @@ export type DeliveryPartnerUncheckedUpdateInput = {
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateManyInput = {
@@ -455,54 +434,6 @@ export type DeliveryPartnerUpdateOneRequiredWithoutKitchenAssignmentsNestedInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutKitchenAssignmentsInput, Prisma.DeliveryPartnerUpdateWithoutKitchenAssignmentsInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutKitchenAssignmentsInput>
 }
 
-export type DeliveryPartnerCreateNestedOneWithoutBankAccountInput = {
-  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutBankAccountInput, Prisma.DeliveryPartnerUncheckedCreateWithoutBankAccountInput>
-  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutBankAccountInput
-  connect?: Prisma.DeliveryPartnerWhereUniqueInput
-}
-
-export type DeliveryPartnerUpdateOneWithoutBankAccountNestedInput = {
-  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutBankAccountInput, Prisma.DeliveryPartnerUncheckedCreateWithoutBankAccountInput>
-  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutBankAccountInput
-  upsert?: Prisma.DeliveryPartnerUpsertWithoutBankAccountInput
-  disconnect?: Prisma.DeliveryPartnerWhereInput | boolean
-  delete?: Prisma.DeliveryPartnerWhereInput | boolean
-  connect?: Prisma.DeliveryPartnerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutBankAccountInput, Prisma.DeliveryPartnerUpdateWithoutBankAccountInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutBankAccountInput>
-}
-
-export type DeliveryPartnerCreateNestedOneWithoutUpiAccountInput = {
-  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutUpiAccountInput, Prisma.DeliveryPartnerUncheckedCreateWithoutUpiAccountInput>
-  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutUpiAccountInput
-  connect?: Prisma.DeliveryPartnerWhereUniqueInput
-}
-
-export type DeliveryPartnerUpdateOneWithoutUpiAccountNestedInput = {
-  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutUpiAccountInput, Prisma.DeliveryPartnerUncheckedCreateWithoutUpiAccountInput>
-  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutUpiAccountInput
-  upsert?: Prisma.DeliveryPartnerUpsertWithoutUpiAccountInput
-  disconnect?: Prisma.DeliveryPartnerWhereInput | boolean
-  delete?: Prisma.DeliveryPartnerWhereInput | boolean
-  connect?: Prisma.DeliveryPartnerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutUpiAccountInput, Prisma.DeliveryPartnerUpdateWithoutUpiAccountInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutUpiAccountInput>
-}
-
-export type DeliveryPartnerCreateNestedOneWithoutWithdrawalsInput = {
-  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutWithdrawalsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutWithdrawalsInput>
-  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutWithdrawalsInput
-  connect?: Prisma.DeliveryPartnerWhereUniqueInput
-}
-
-export type DeliveryPartnerUpdateOneWithoutWithdrawalsNestedInput = {
-  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutWithdrawalsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutWithdrawalsInput>
-  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutWithdrawalsInput
-  upsert?: Prisma.DeliveryPartnerUpsertWithoutWithdrawalsInput
-  disconnect?: Prisma.DeliveryPartnerWhereInput | boolean
-  delete?: Prisma.DeliveryPartnerWhereInput | boolean
-  connect?: Prisma.DeliveryPartnerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutWithdrawalsInput, Prisma.DeliveryPartnerUpdateWithoutWithdrawalsInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutWithdrawalsInput>
-}
-
 export type DeliveryPartnerCreateWithoutUserInput = {
   id?: string
   status?: $Enums.PartnerStatus
@@ -512,9 +443,6 @@ export type DeliveryPartnerCreateWithoutUserInput = {
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutUserInput = {
@@ -526,9 +454,6 @@ export type DeliveryPartnerUncheckedCreateWithoutUserInput = {
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutUserInput = {
@@ -556,9 +481,6 @@ export type DeliveryPartnerUpdateWithoutUserInput = {
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutUserInput = {
@@ -570,9 +492,6 @@ export type DeliveryPartnerUncheckedUpdateWithoutUserInput = {
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutKycInput = {
@@ -584,9 +503,6 @@ export type DeliveryPartnerCreateWithoutKycInput = {
   user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutKycInput = {
@@ -598,9 +514,6 @@ export type DeliveryPartnerUncheckedCreateWithoutKycInput = {
   deletedAt?: Date | string | null
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutKycInput = {
@@ -628,9 +541,6 @@ export type DeliveryPartnerUpdateWithoutKycInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutKycInput = {
@@ -642,9 +552,6 @@ export type DeliveryPartnerUncheckedUpdateWithoutKycInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutCatalogueItemsInput = {
@@ -656,9 +563,6 @@ export type DeliveryPartnerCreateWithoutCatalogueItemsInput = {
   user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutCatalogueItemsInput = {
@@ -670,9 +574,6 @@ export type DeliveryPartnerUncheckedCreateWithoutCatalogueItemsInput = {
   deletedAt?: Date | string | null
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutCatalogueItemsInput = {
@@ -700,9 +601,6 @@ export type DeliveryPartnerUpdateWithoutCatalogueItemsInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutCatalogueItemsInput = {
@@ -714,9 +612,6 @@ export type DeliveryPartnerUncheckedUpdateWithoutCatalogueItemsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutKitchenAssignmentsInput = {
@@ -728,9 +623,6 @@ export type DeliveryPartnerCreateWithoutKitchenAssignmentsInput = {
   user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutKitchenAssignmentsInput = {
@@ -742,9 +634,6 @@ export type DeliveryPartnerUncheckedCreateWithoutKitchenAssignmentsInput = {
   deletedAt?: Date | string | null
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutKitchenAssignmentsInput = {
@@ -772,9 +661,6 @@ export type DeliveryPartnerUpdateWithoutKitchenAssignmentsInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutKitchenAssignmentsInput = {
@@ -786,225 +672,6 @@ export type DeliveryPartnerUncheckedUpdateWithoutKitchenAssignmentsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-}
-
-export type DeliveryPartnerCreateWithoutBankAccountInput = {
-  id?: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  createdAt?: Date | string
-  deletedAt?: Date | string | null
-  user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
-  kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
-  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
-  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutDeliveryPartnerInput
-}
-
-export type DeliveryPartnerUncheckedCreateWithoutBankAccountInput = {
-  id?: string
-  userId: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  createdAt?: Date | string
-  deletedAt?: Date | string | null
-  kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-}
-
-export type DeliveryPartnerCreateOrConnectWithoutBankAccountInput = {
-  where: Prisma.DeliveryPartnerWhereUniqueInput
-  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutBankAccountInput, Prisma.DeliveryPartnerUncheckedCreateWithoutBankAccountInput>
-}
-
-export type DeliveryPartnerUpsertWithoutBankAccountInput = {
-  update: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutBankAccountInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutBankAccountInput>
-  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutBankAccountInput, Prisma.DeliveryPartnerUncheckedCreateWithoutBankAccountInput>
-  where?: Prisma.DeliveryPartnerWhereInput
-}
-
-export type DeliveryPartnerUpdateToOneWithWhereWithoutBankAccountInput = {
-  where?: Prisma.DeliveryPartnerWhereInput
-  data: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutBankAccountInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutBankAccountInput>
-}
-
-export type DeliveryPartnerUpdateWithoutBankAccountInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
-  kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
-  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
-  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutDeliveryPartnerNestedInput
-}
-
-export type DeliveryPartnerUncheckedUpdateWithoutBankAccountInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-}
-
-export type DeliveryPartnerCreateWithoutUpiAccountInput = {
-  id?: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  createdAt?: Date | string
-  deletedAt?: Date | string | null
-  user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
-  kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
-  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
-  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutDeliveryPartnerInput
-}
-
-export type DeliveryPartnerUncheckedCreateWithoutUpiAccountInput = {
-  id?: string
-  userId: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  createdAt?: Date | string
-  deletedAt?: Date | string | null
-  kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-}
-
-export type DeliveryPartnerCreateOrConnectWithoutUpiAccountInput = {
-  where: Prisma.DeliveryPartnerWhereUniqueInput
-  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutUpiAccountInput, Prisma.DeliveryPartnerUncheckedCreateWithoutUpiAccountInput>
-}
-
-export type DeliveryPartnerUpsertWithoutUpiAccountInput = {
-  update: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutUpiAccountInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutUpiAccountInput>
-  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutUpiAccountInput, Prisma.DeliveryPartnerUncheckedCreateWithoutUpiAccountInput>
-  where?: Prisma.DeliveryPartnerWhereInput
-}
-
-export type DeliveryPartnerUpdateToOneWithWhereWithoutUpiAccountInput = {
-  where?: Prisma.DeliveryPartnerWhereInput
-  data: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutUpiAccountInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutUpiAccountInput>
-}
-
-export type DeliveryPartnerUpdateWithoutUpiAccountInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
-  kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
-  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
-  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutDeliveryPartnerNestedInput
-}
-
-export type DeliveryPartnerUncheckedUpdateWithoutUpiAccountInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-}
-
-export type DeliveryPartnerCreateWithoutWithdrawalsInput = {
-  id?: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  createdAt?: Date | string
-  deletedAt?: Date | string | null
-  user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
-  kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
-  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
-  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutDeliveryPartnerInput
-}
-
-export type DeliveryPartnerUncheckedCreateWithoutWithdrawalsInput = {
-  id?: string
-  userId: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  createdAt?: Date | string
-  deletedAt?: Date | string | null
-  kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutDeliveryPartnerInput
-}
-
-export type DeliveryPartnerCreateOrConnectWithoutWithdrawalsInput = {
-  where: Prisma.DeliveryPartnerWhereUniqueInput
-  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutWithdrawalsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutWithdrawalsInput>
-}
-
-export type DeliveryPartnerUpsertWithoutWithdrawalsInput = {
-  update: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutWithdrawalsInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutWithdrawalsInput>
-  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutWithdrawalsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutWithdrawalsInput>
-  where?: Prisma.DeliveryPartnerWhereInput
-}
-
-export type DeliveryPartnerUpdateToOneWithWhereWithoutWithdrawalsInput = {
-  where?: Prisma.DeliveryPartnerWhereInput
-  data: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutWithdrawalsInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutWithdrawalsInput>
-}
-
-export type DeliveryPartnerUpdateWithoutWithdrawalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
-  kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
-  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
-  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutDeliveryPartnerNestedInput
-}
-
-export type DeliveryPartnerUncheckedUpdateWithoutWithdrawalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
 }
 
 
@@ -1015,13 +682,11 @@ export type DeliveryPartnerUncheckedUpdateWithoutWithdrawalsInput = {
 export type DeliveryPartnerCountOutputType = {
   catalogueItems: number
   kitchenAssignments: number
-  withdrawals: number
 }
 
 export type DeliveryPartnerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   catalogueItems?: boolean | DeliveryPartnerCountOutputTypeCountCatalogueItemsArgs
   kitchenAssignments?: boolean | DeliveryPartnerCountOutputTypeCountKitchenAssignmentsArgs
-  withdrawals?: boolean | DeliveryPartnerCountOutputTypeCountWithdrawalsArgs
 }
 
 /**
@@ -1048,13 +713,6 @@ export type DeliveryPartnerCountOutputTypeCountKitchenAssignmentsArgs<ExtArgs ex
   where?: Prisma.DeliveryPartnerKitchenAssignmentWhereInput
 }
 
-/**
- * DeliveryPartnerCountOutputType without action
- */
-export type DeliveryPartnerCountOutputTypeCountWithdrawalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.WithdrawalWhereInput
-}
-
 
 export type DeliveryPartnerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1067,9 +725,6 @@ export type DeliveryPartnerSelect<ExtArgs extends runtime.Types.Extensions.Inter
   kyc?: boolean | Prisma.DeliveryPartner$kycArgs<ExtArgs>
   catalogueItems?: boolean | Prisma.DeliveryPartner$catalogueItemsArgs<ExtArgs>
   kitchenAssignments?: boolean | Prisma.DeliveryPartner$kitchenAssignmentsArgs<ExtArgs>
-  bankAccount?: boolean | Prisma.DeliveryPartner$bankAccountArgs<ExtArgs>
-  upiAccount?: boolean | Prisma.DeliveryPartner$upiAccountArgs<ExtArgs>
-  withdrawals?: boolean | Prisma.DeliveryPartner$withdrawalsArgs<ExtArgs>
   _count?: boolean | Prisma.DeliveryPartnerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["deliveryPartner"]>
 
@@ -1108,9 +763,6 @@ export type DeliveryPartnerInclude<ExtArgs extends runtime.Types.Extensions.Inte
   kyc?: boolean | Prisma.DeliveryPartner$kycArgs<ExtArgs>
   catalogueItems?: boolean | Prisma.DeliveryPartner$catalogueItemsArgs<ExtArgs>
   kitchenAssignments?: boolean | Prisma.DeliveryPartner$kitchenAssignmentsArgs<ExtArgs>
-  bankAccount?: boolean | Prisma.DeliveryPartner$bankAccountArgs<ExtArgs>
-  upiAccount?: boolean | Prisma.DeliveryPartner$upiAccountArgs<ExtArgs>
-  withdrawals?: boolean | Prisma.DeliveryPartner$withdrawalsArgs<ExtArgs>
   _count?: boolean | Prisma.DeliveryPartnerCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DeliveryPartnerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1127,9 +779,6 @@ export type $DeliveryPartnerPayload<ExtArgs extends runtime.Types.Extensions.Int
     kyc: Prisma.$DeliveryPartnerKycPayload<ExtArgs> | null
     catalogueItems: Prisma.$DeliveryPartnerCatalogueItemPayload<ExtArgs>[]
     kitchenAssignments: Prisma.$DeliveryPartnerKitchenAssignmentPayload<ExtArgs>[]
-    bankAccount: Prisma.$BankAccountPayload<ExtArgs> | null
-    upiAccount: Prisma.$UpiAccountPayload<ExtArgs> | null
-    withdrawals: Prisma.$WithdrawalPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1536,9 +1185,6 @@ export interface Prisma__DeliveryPartnerClient<T, Null = never, ExtArgs extends 
   kyc<T extends Prisma.DeliveryPartner$kycArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$kycArgs<ExtArgs>>): Prisma.Prisma__DeliveryPartnerKycClient<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerKycPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   catalogueItems<T extends Prisma.DeliveryPartner$catalogueItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$catalogueItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerCatalogueItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitchenAssignments<T extends Prisma.DeliveryPartner$kitchenAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$kitchenAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  bankAccount<T extends Prisma.DeliveryPartner$bankAccountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$bankAccountArgs<ExtArgs>>): Prisma.Prisma__BankAccountClient<runtime.Types.Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  upiAccount<T extends Prisma.DeliveryPartner$upiAccountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$upiAccountArgs<ExtArgs>>): Prisma.Prisma__UpiAccountClient<runtime.Types.Result.GetResult<Prisma.$UpiAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  withdrawals<T extends Prisma.DeliveryPartner$withdrawalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WithdrawalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2039,68 +1685,6 @@ export type DeliveryPartner$kitchenAssignmentsArgs<ExtArgs extends runtime.Types
   take?: number
   skip?: number
   distinct?: Prisma.DeliveryPartnerKitchenAssignmentScalarFieldEnum | Prisma.DeliveryPartnerKitchenAssignmentScalarFieldEnum[]
-}
-
-/**
- * DeliveryPartner.bankAccount
- */
-export type DeliveryPartner$bankAccountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the BankAccount
-   */
-  select?: Prisma.BankAccountSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the BankAccount
-   */
-  omit?: Prisma.BankAccountOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BankAccountInclude<ExtArgs> | null
-  where?: Prisma.BankAccountWhereInput
-}
-
-/**
- * DeliveryPartner.upiAccount
- */
-export type DeliveryPartner$upiAccountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the UpiAccount
-   */
-  select?: Prisma.UpiAccountSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the UpiAccount
-   */
-  omit?: Prisma.UpiAccountOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UpiAccountInclude<ExtArgs> | null
-  where?: Prisma.UpiAccountWhereInput
-}
-
-/**
- * DeliveryPartner.withdrawals
- */
-export type DeliveryPartner$withdrawalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Withdrawal
-   */
-  select?: Prisma.WithdrawalSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Withdrawal
-   */
-  omit?: Prisma.WithdrawalOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.WithdrawalInclude<ExtArgs> | null
-  where?: Prisma.WithdrawalWhereInput
-  orderBy?: Prisma.WithdrawalOrderByWithRelationInput | Prisma.WithdrawalOrderByWithRelationInput[]
-  cursor?: Prisma.WithdrawalWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.WithdrawalScalarFieldEnum | Prisma.WithdrawalScalarFieldEnum[]
 }
 
 /**

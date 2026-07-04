@@ -30,9 +30,10 @@ export async function POST(req: NextRequest) {
         const payload = event.payload.payment.entity;
         const razorpayOrderId = payload.order_id as string;
         const razorpayPaymentId = payload.id as string;
+        const paymentMethod = payload.method as string | undefined;
 
         try {
-          await confirmPayment(razorpayOrderId, razorpayPaymentId);
+          await confirmPayment(razorpayOrderId, razorpayPaymentId, paymentMethod);
         } catch (e) {
           if (e instanceof Error && e.message === "Payment record not found") {
             console.warn(`[Webhook] Payment not found for order: ${razorpayOrderId}`);

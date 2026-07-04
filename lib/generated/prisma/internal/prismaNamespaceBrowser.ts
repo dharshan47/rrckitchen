@@ -77,21 +77,7 @@ export const ModelName = {
   OrderItem: 'OrderItem',
   OrderStatusHistory: 'OrderStatusHistory',
   Review: 'Review',
-  Subscription: 'Subscription',
   Payment: 'Payment',
-  Transaction: 'Transaction',
-  BankAccount: 'BankAccount',
-  UpiAccount: 'UpiAccount',
-  Commission: 'Commission',
-  Withdrawal: 'Withdrawal',
-  PayoutCycle: 'PayoutCycle',
-  Notification: 'Notification',
-  NotificationTemplate: 'NotificationTemplate',
-  Banner: 'Banner',
-  Setting: 'Setting',
-  Complaint: 'Complaint',
-  AuditLog: 'AuditLog',
-  ReportCache: 'ReportCache',
   DeliverySlot: 'DeliverySlot'
 } as const
 
@@ -115,7 +101,7 @@ export const UserScalarFieldEnum = {
   id: 'id',
   phoneNumber: 'phoneNumber',
   phoneNumberVerified: 'phoneNumberVerified',
-  roles: 'roles',
+  role: 'role',
   banned: 'banned',
   banReason: 'banReason',
   banExpires: 'banExpires',
@@ -250,7 +236,14 @@ export const KitchenPartnerKycScalarFieldEnum = {
   fssaiNumber: 'fssaiNumber',
   addressProofUrl: 'addressProofUrl',
   reviewedByAdminId: 'reviewedByAdminId',
-  reviewedAt: 'reviewedAt'
+  reviewedAt: 'reviewedAt',
+  bankName: 'bankName',
+  bankAccountNumber: 'bankAccountNumber',
+  ifscCode: 'ifscCode',
+  accountHolderName: 'accountHolderName',
+  upiId: 'upiId',
+  gpayNumber: 'gpayNumber',
+  phoneNumber: 'phoneNumber'
 } as const
 
 export type KitchenPartnerKycScalarFieldEnum = (typeof KitchenPartnerKycScalarFieldEnum)[keyof typeof KitchenPartnerKycScalarFieldEnum]
@@ -304,6 +297,7 @@ export const MenuItemScalarFieldEnum = {
   name: 'name',
   description: 'description',
   price: 'price',
+  compareAtPrice: 'compareAtPrice',
   foodType: 'foodType',
   timeSlot: 'timeSlot',
   isAvailable: 'isAvailable',
@@ -319,6 +313,7 @@ export const MenuItemPhotoScalarFieldEnum = {
   id: 'id',
   menuItemId: 'menuItemId',
   imageUrl: 'imageUrl',
+  cloudinaryPublicId: 'cloudinaryPublicId',
   sortOrder: 'sortOrder'
 } as const
 
@@ -341,7 +336,14 @@ export const DeliveryPartnerKycScalarFieldEnum = {
   id: 'id',
   deliveryPartnerId: 'deliveryPartnerId',
   documentUrl: 'documentUrl',
-  verifiedAt: 'verifiedAt'
+  verifiedAt: 'verifiedAt',
+  bankName: 'bankName',
+  bankAccountNumber: 'bankAccountNumber',
+  ifscCode: 'ifscCode',
+  accountHolderName: 'accountHolderName',
+  upiId: 'upiId',
+  googlePayNumber: 'googlePayNumber',
+  phonePeNumber: 'phonePeNumber'
 } as const
 
 export type DeliveryPartnerKycScalarFieldEnum = (typeof DeliveryPartnerKycScalarFieldEnum)[keyof typeof DeliveryPartnerKycScalarFieldEnum]
@@ -443,43 +445,13 @@ export const ReviewScalarFieldEnum = {
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
-export const SubscriptionScalarFieldEnum = {
-  id: 'id',
-  plan: 'plan',
-  referenceId: 'referenceId',
-  razorpayCustomerId: 'razorpayCustomerId',
-  razorpaySubscriptionId: 'razorpaySubscriptionId',
-  razorpayPlanId: 'razorpayPlanId',
-  status: 'status',
-  currentStart: 'currentStart',
-  currentEnd: 'currentEnd',
-  endedAt: 'endedAt',
-  quantity: 'quantity',
-  totalCount: 'totalCount',
-  paidCount: 'paidCount',
-  remainingCount: 'remainingCount',
-  cancelledAt: 'cancelledAt',
-  pausedAt: 'pausedAt',
-  shortUrl: 'shortUrl',
-  cancelAtCycleEnd: 'cancelAtCycleEnd',
-  billingPeriod: 'billingPeriod',
-  trialStart: 'trialStart',
-  trialEnd: 'trialEnd',
-  metadata: 'metadata',
-  renewedAt: 'renewedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-} as const
-
-export type SubscriptionScalarFieldEnum = (typeof SubscriptionScalarFieldEnum)[keyof typeof SubscriptionScalarFieldEnum]
-
-
 export const PaymentScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
   provider: 'provider',
   providerOrderId: 'providerOrderId',
   providerPaymentId: 'providerPaymentId',
+  paymentMethod: 'paymentMethod',
   amount: 'amount',
   status: 'status',
   paidAt: 'paidAt',
@@ -487,157 +459,6 @@ export const PaymentScalarFieldEnum = {
 } as const
 
 export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
-
-
-export const TransactionScalarFieldEnum = {
-  id: 'id',
-  paymentId: 'paymentId',
-  type: 'type',
-  amount: 'amount',
-  direction: 'direction',
-  createdAt: 'createdAt'
-} as const
-
-export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
-
-
-export const BankAccountScalarFieldEnum = {
-  id: 'id',
-  kitchenPartnerId: 'kitchenPartnerId',
-  deliveryPartnerId: 'deliveryPartnerId',
-  accountHolderName: 'accountHolderName',
-  accountNumberHash: 'accountNumberHash',
-  ifscCode: 'ifscCode',
-  verifiedAt: 'verifiedAt'
-} as const
-
-export type BankAccountScalarFieldEnum = (typeof BankAccountScalarFieldEnum)[keyof typeof BankAccountScalarFieldEnum]
-
-
-export const UpiAccountScalarFieldEnum = {
-  id: 'id',
-  kitchenPartnerId: 'kitchenPartnerId',
-  deliveryPartnerId: 'deliveryPartnerId',
-  upiId: 'upiId'
-} as const
-
-export type UpiAccountScalarFieldEnum = (typeof UpiAccountScalarFieldEnum)[keyof typeof UpiAccountScalarFieldEnum]
-
-
-export const CommissionScalarFieldEnum = {
-  id: 'id',
-  kitchenPartnerId: 'kitchenPartnerId',
-  percentage: 'percentage',
-  effectiveFrom: 'effectiveFrom'
-} as const
-
-export type CommissionScalarFieldEnum = (typeof CommissionScalarFieldEnum)[keyof typeof CommissionScalarFieldEnum]
-
-
-export const WithdrawalScalarFieldEnum = {
-  id: 'id',
-  kitchenPartnerId: 'kitchenPartnerId',
-  deliveryPartnerId: 'deliveryPartnerId',
-  amount: 'amount',
-  status: 'status',
-  payoutCycleId: 'payoutCycleId',
-  processedAt: 'processedAt'
-} as const
-
-export type WithdrawalScalarFieldEnum = (typeof WithdrawalScalarFieldEnum)[keyof typeof WithdrawalScalarFieldEnum]
-
-
-export const PayoutCycleScalarFieldEnum = {
-  id: 'id',
-  startDate: 'startDate',
-  endDate: 'endDate',
-  status: 'status'
-} as const
-
-export type PayoutCycleScalarFieldEnum = (typeof PayoutCycleScalarFieldEnum)[keyof typeof PayoutCycleScalarFieldEnum]
-
-
-export const NotificationScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  templateId: 'templateId',
-  channel: 'channel',
-  status: 'status',
-  sentAt: 'sentAt',
-  createdAt: 'createdAt'
-} as const
-
-export type NotificationScalarFieldEnum = (typeof NotificationScalarFieldEnum)[keyof typeof NotificationScalarFieldEnum]
-
-
-export const NotificationTemplateScalarFieldEnum = {
-  id: 'id',
-  eventKey: 'eventKey',
-  channel: 'channel',
-  body: 'body'
-} as const
-
-export type NotificationTemplateScalarFieldEnum = (typeof NotificationTemplateScalarFieldEnum)[keyof typeof NotificationTemplateScalarFieldEnum]
-
-
-export const BannerScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  imageUrl: 'imageUrl',
-  linkUrl: 'linkUrl',
-  sortOrder: 'sortOrder',
-  isActive: 'isActive'
-} as const
-
-export type BannerScalarFieldEnum = (typeof BannerScalarFieldEnum)[keyof typeof BannerScalarFieldEnum]
-
-
-export const SettingScalarFieldEnum = {
-  id: 'id',
-  key: 'key',
-  value: 'value',
-  updatedAt: 'updatedAt'
-} as const
-
-export type SettingScalarFieldEnum = (typeof SettingScalarFieldEnum)[keyof typeof SettingScalarFieldEnum]
-
-
-export const ComplaintScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  orderId: 'orderId',
-  subject: 'subject',
-  description: 'description',
-  status: 'status',
-  createdAt: 'createdAt',
-  resolvedAt: 'resolvedAt'
-} as const
-
-export type ComplaintScalarFieldEnum = (typeof ComplaintScalarFieldEnum)[keyof typeof ComplaintScalarFieldEnum]
-
-
-export const AuditLogScalarFieldEnum = {
-  id: 'id',
-  actorUserId: 'actorUserId',
-  action: 'action',
-  entityType: 'entityType',
-  entityId: 'entityId',
-  beforeData: 'beforeData',
-  afterData: 'afterData',
-  createdAt: 'createdAt'
-} as const
-
-export type AuditLogScalarFieldEnum = (typeof AuditLogScalarFieldEnum)[keyof typeof AuditLogScalarFieldEnum]
-
-
-export const ReportCacheScalarFieldEnum = {
-  id: 'id',
-  reportKey: 'reportKey',
-  payload: 'payload',
-  generatedAt: 'generatedAt'
-} as const
-
-export type ReportCacheScalarFieldEnum = (typeof ReportCacheScalarFieldEnum)[keyof typeof ReportCacheScalarFieldEnum]
 
 
 export const DeliverySlotScalarFieldEnum = {
@@ -659,21 +480,6 @@ export const SortOrder = {
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
 
 
-export const NullableJsonNullValueInput = {
-  DbNull: DbNull,
-  JsonNull: JsonNull
-} as const
-
-export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
-
-
-export const JsonNullValueInput = {
-  JsonNull: JsonNull
-} as const
-
-export type JsonNullValueInput = (typeof JsonNullValueInput)[keyof typeof JsonNullValueInput]
-
-
 export const QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -688,13 +494,4 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
-
-
-export const JsonNullValueFilter = {
-  DbNull: DbNull,
-  JsonNull: JsonNull,
-  AnyNull: AnyNull
-} as const
-
-export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

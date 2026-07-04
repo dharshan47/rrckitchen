@@ -25,6 +25,7 @@ interface MenuItem {
   name: string;
   description: string | null;
   price: number;
+  compareAtPrice?: number | null;
   foodType: string;
   timeSlot: string;
   isAvailable: boolean;
@@ -52,7 +53,7 @@ export default function MenuDetailDialog({ item, onClose }: MenuDetailDialogProp
   const kitchenName = item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen";
   const hasMultiplePhotos = item.photos?.length > 1;
   const price = Number(item.price);
-  const mrp = Math.round(price * 1.35);
+  const mrp = item.compareAtPrice ?? Math.round(price * 1.35);
   const offAmount = mrp - price;
 
   const handleAddToCart = useCallback(() => {

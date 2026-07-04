@@ -1,7 +1,23 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Button } from "@/components/ui/button";
 import { KitchenNavbar, KitchenFooter, KitchenFAQ } from "@/components/kitchen-hub";
 import { ChefHat, Clock, DollarSign, TrendingUp, Users, ShieldCheck } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Become a Kitchen Partner",
+  description:
+    "Join RrcKitchen as a home kitchen partner in Thanjavur. Earn from your cooking skills, set your own schedule, and reach local customers. No investment needed.",
+  keywords: ["home kitchen partner", " Thanjavur food business", "home chef registration", "earn from cooking"],
+  openGraph: {
+    title: "Become a Kitchen Partner",
+    description:
+      "Join RrcKitchen as a home kitchen partner in Thanjavur. Earn from your cooking skills, set your own schedule, and reach local customers.",
+    type: "website",
+    locale: "en_IN",
+    siteName: "RrcKitchen",
+  },
+};
 
 const benefits = [
   {
@@ -51,9 +67,9 @@ export default function KitchenPage() {
       <KitchenNavbar />
       <main>
         {/* Hero */}
-        <section className="bg-gradient-to-b from-primary/5 to-white py-20">
+        <section className="bg-gradient-to-b from-primary/5 to-white py-20" aria-labelledby="hero-heading">
           <div className="mx-auto max-w-4xl px-6 text-center space-y-8">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
+            <h1 id="hero-heading" className="text-4xl md:text-5xl font-bold tracking-tight">
               Turn Your Home Kitchen Into a Business
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-7">
@@ -61,7 +77,7 @@ export default function KitchenPage() {
             </p>
             <div className="flex gap-4 justify-center">
               <Button asChild size="lg" className="rounded-full">
-                <Link href="/login/kitchen">Register Your Kitchen</Link>
+                <Link href="/kitchen/signup">Register Your Kitchen</Link>
               </Button>
               <Button asChild variant="outline" size="lg" className="rounded-full">
                 <Link href="#how-it-works">How It Works</Link>
@@ -71,9 +87,9 @@ export default function KitchenPage() {
         </section>
 
         {/* How It Works */}
-        <section id="how-it-works" className="py-16">
+        <section id="how-it-works" className="py-16" aria-labelledby="how-it-works-heading">
           <div className="mx-auto max-w-5xl px-6">
-            <h2 className="text-3xl font-bold tracking-tight text-center mb-12">How It Works</h2>
+            <h2 id="how-it-works-heading" className="text-3xl font-bold tracking-tight text-center mb-12">How It Works</h2>
             <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
               {steps.map((step) => (
                 <div key={step.num} className="text-center space-y-3 p-6">
@@ -89,9 +105,9 @@ export default function KitchenPage() {
         </section>
 
         {/* Benefits */}
-        <section id="benefits" className="bg-muted/30 py-16">
+        <section id="benefits" className="bg-muted/30 py-16" aria-labelledby="benefits-heading">
           <div className="mx-auto max-w-5xl px-6">
-            <h2 className="text-3xl font-bold tracking-tight text-center mb-12">
+            <h2 id="benefits-heading" className="text-3xl font-bold tracking-tight text-center mb-12">
               Why Partner With Us
             </h2>
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -112,14 +128,14 @@ export default function KitchenPage() {
         <KitchenFAQ />
 
         {/* CTA */}
-        <section className="bg-primary/5 py-16">
+        <section className="bg-primary/5 py-16" aria-labelledby="cta-heading">
           <div className="mx-auto max-w-2xl px-6 text-center space-y-6">
-            <h2 className="text-3xl font-bold tracking-tight">Ready to Get Started?</h2>
+            <h2 id="cta-heading" className="text-3xl font-bold tracking-tight">Ready to Get Started?</h2>
             <p className="text-muted-foreground">
               Join hundreds of home chefs already earning on RrcKitchen.
             </p>
             <Button asChild size="lg" className="rounded-full">
-              <Link href="/login/kitchen">Register Your Kitchen</Link>
+              <Link href="/kitchen/signup">Register Your Kitchen</Link>
             </Button>
           </div>
         </section>

@@ -2,8 +2,7 @@ import { getMenuItemById } from "@/actions/menu";
 import { notFound } from "next/navigation";
 import { MenuItemDetail } from "@/components/menu/menu-item-detail";
 
-export const revalidate = 30;
-export const dynamic = "force-dynamic";
+export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;

@@ -212,10 +212,6 @@ export type KitchenPartnerWhereInput = {
   kitchenCategories?: Prisma.KitchenCategoryListRelationFilter
   kitchenAvailability?: Prisma.KitchenAvailabilityListRelationFilter
   menus?: Prisma.MenuListRelationFilter
-  bankAccount?: Prisma.XOR<Prisma.BankAccountNullableScalarRelationFilter, Prisma.BankAccountWhereInput> | null
-  upiAccount?: Prisma.XOR<Prisma.UpiAccountNullableScalarRelationFilter, Prisma.UpiAccountWhereInput> | null
-  commission?: Prisma.XOR<Prisma.CommissionNullableScalarRelationFilter, Prisma.CommissionWhereInput> | null
-  withdrawals?: Prisma.WithdrawalListRelationFilter
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentListRelationFilter
   orderItems?: Prisma.OrderItemListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
@@ -236,10 +232,6 @@ export type KitchenPartnerOrderByWithRelationInput = {
   kitchenCategories?: Prisma.KitchenCategoryOrderByRelationAggregateInput
   kitchenAvailability?: Prisma.KitchenAvailabilityOrderByRelationAggregateInput
   menus?: Prisma.MenuOrderByRelationAggregateInput
-  bankAccount?: Prisma.BankAccountOrderByWithRelationInput
-  upiAccount?: Prisma.UpiAccountOrderByWithRelationInput
-  commission?: Prisma.CommissionOrderByWithRelationInput
-  withdrawals?: Prisma.WithdrawalOrderByRelationAggregateInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentOrderByRelationAggregateInput
   orderItems?: Prisma.OrderItemOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
@@ -263,10 +255,6 @@ export type KitchenPartnerWhereUniqueInput = Prisma.AtLeast<{
   kitchenCategories?: Prisma.KitchenCategoryListRelationFilter
   kitchenAvailability?: Prisma.KitchenAvailabilityListRelationFilter
   menus?: Prisma.MenuListRelationFilter
-  bankAccount?: Prisma.XOR<Prisma.BankAccountNullableScalarRelationFilter, Prisma.BankAccountWhereInput> | null
-  upiAccount?: Prisma.XOR<Prisma.UpiAccountNullableScalarRelationFilter, Prisma.UpiAccountWhereInput> | null
-  commission?: Prisma.XOR<Prisma.CommissionNullableScalarRelationFilter, Prisma.CommissionWhereInput> | null
-  withdrawals?: Prisma.WithdrawalListRelationFilter
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentListRelationFilter
   orderItems?: Prisma.OrderItemListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
@@ -314,10 +302,6 @@ export type KitchenPartnerCreateInput = {
   kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
@@ -337,10 +321,6 @@ export type KitchenPartnerUncheckedCreateInput = {
   kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
@@ -360,10 +340,6 @@ export type KitchenPartnerUpdateInput = {
   kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
@@ -383,10 +359,6 @@ export type KitchenPartnerUncheckedUpdateInput = {
   kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
@@ -615,68 +587,6 @@ export type KitchenPartnerUpdateOneRequiredWithoutReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenPartnerUpdateToOneWithWhereWithoutReviewsInput, Prisma.KitchenPartnerUpdateWithoutReviewsInput>, Prisma.KitchenPartnerUncheckedUpdateWithoutReviewsInput>
 }
 
-export type KitchenPartnerCreateNestedOneWithoutBankAccountInput = {
-  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutBankAccountInput, Prisma.KitchenPartnerUncheckedCreateWithoutBankAccountInput>
-  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutBankAccountInput
-  connect?: Prisma.KitchenPartnerWhereUniqueInput
-}
-
-export type KitchenPartnerUpdateOneWithoutBankAccountNestedInput = {
-  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutBankAccountInput, Prisma.KitchenPartnerUncheckedCreateWithoutBankAccountInput>
-  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutBankAccountInput
-  upsert?: Prisma.KitchenPartnerUpsertWithoutBankAccountInput
-  disconnect?: Prisma.KitchenPartnerWhereInput | boolean
-  delete?: Prisma.KitchenPartnerWhereInput | boolean
-  connect?: Prisma.KitchenPartnerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenPartnerUpdateToOneWithWhereWithoutBankAccountInput, Prisma.KitchenPartnerUpdateWithoutBankAccountInput>, Prisma.KitchenPartnerUncheckedUpdateWithoutBankAccountInput>
-}
-
-export type KitchenPartnerCreateNestedOneWithoutUpiAccountInput = {
-  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutUpiAccountInput, Prisma.KitchenPartnerUncheckedCreateWithoutUpiAccountInput>
-  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutUpiAccountInput
-  connect?: Prisma.KitchenPartnerWhereUniqueInput
-}
-
-export type KitchenPartnerUpdateOneWithoutUpiAccountNestedInput = {
-  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutUpiAccountInput, Prisma.KitchenPartnerUncheckedCreateWithoutUpiAccountInput>
-  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutUpiAccountInput
-  upsert?: Prisma.KitchenPartnerUpsertWithoutUpiAccountInput
-  disconnect?: Prisma.KitchenPartnerWhereInput | boolean
-  delete?: Prisma.KitchenPartnerWhereInput | boolean
-  connect?: Prisma.KitchenPartnerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenPartnerUpdateToOneWithWhereWithoutUpiAccountInput, Prisma.KitchenPartnerUpdateWithoutUpiAccountInput>, Prisma.KitchenPartnerUncheckedUpdateWithoutUpiAccountInput>
-}
-
-export type KitchenPartnerCreateNestedOneWithoutCommissionInput = {
-  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutCommissionInput, Prisma.KitchenPartnerUncheckedCreateWithoutCommissionInput>
-  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutCommissionInput
-  connect?: Prisma.KitchenPartnerWhereUniqueInput
-}
-
-export type KitchenPartnerUpdateOneRequiredWithoutCommissionNestedInput = {
-  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutCommissionInput, Prisma.KitchenPartnerUncheckedCreateWithoutCommissionInput>
-  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutCommissionInput
-  upsert?: Prisma.KitchenPartnerUpsertWithoutCommissionInput
-  connect?: Prisma.KitchenPartnerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenPartnerUpdateToOneWithWhereWithoutCommissionInput, Prisma.KitchenPartnerUpdateWithoutCommissionInput>, Prisma.KitchenPartnerUncheckedUpdateWithoutCommissionInput>
-}
-
-export type KitchenPartnerCreateNestedOneWithoutWithdrawalsInput = {
-  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutWithdrawalsInput, Prisma.KitchenPartnerUncheckedCreateWithoutWithdrawalsInput>
-  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutWithdrawalsInput
-  connect?: Prisma.KitchenPartnerWhereUniqueInput
-}
-
-export type KitchenPartnerUpdateOneWithoutWithdrawalsNestedInput = {
-  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutWithdrawalsInput, Prisma.KitchenPartnerUncheckedCreateWithoutWithdrawalsInput>
-  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutWithdrawalsInput
-  upsert?: Prisma.KitchenPartnerUpsertWithoutWithdrawalsInput
-  disconnect?: Prisma.KitchenPartnerWhereInput | boolean
-  delete?: Prisma.KitchenPartnerWhereInput | boolean
-  connect?: Prisma.KitchenPartnerWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenPartnerUpdateToOneWithWhereWithoutWithdrawalsInput, Prisma.KitchenPartnerUpdateWithoutWithdrawalsInput>, Prisma.KitchenPartnerUncheckedUpdateWithoutWithdrawalsInput>
-}
-
 export type KitchenPartnerCreateWithoutUserInput = {
   id?: string
   status?: $Enums.PartnerStatus
@@ -690,10 +600,6 @@ export type KitchenPartnerCreateWithoutUserInput = {
   kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
@@ -712,10 +618,6 @@ export type KitchenPartnerUncheckedCreateWithoutUserInput = {
   kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
@@ -750,10 +652,6 @@ export type KitchenPartnerUpdateWithoutUserInput = {
   kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
@@ -772,10 +670,6 @@ export type KitchenPartnerUncheckedUpdateWithoutUserInput = {
   kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
@@ -794,10 +688,6 @@ export type KitchenPartnerCreateWithoutKitchenKycInput = {
   kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
@@ -816,10 +706,6 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenKycInput = {
   kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
@@ -854,10 +740,6 @@ export type KitchenPartnerUpdateWithoutKitchenKycInput = {
   kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
@@ -876,10 +758,6 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenKycInput = {
   kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
@@ -898,10 +776,6 @@ export type KitchenPartnerCreateWithoutKitchenAliasInput = {
   kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
@@ -920,10 +794,6 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAliasInput = {
   kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
@@ -958,10 +828,6 @@ export type KitchenPartnerUpdateWithoutKitchenAliasInput = {
   kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
@@ -980,10 +846,6 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAliasInput = {
   kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
@@ -1002,10 +864,6 @@ export type KitchenPartnerCreateWithoutKitchenCategoriesInput = {
   kitchenKyc?: Prisma.KitchenPartnerKycCreateNestedOneWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
@@ -1024,10 +882,6 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenCategoriesInput = {
   kitchenKyc?: Prisma.KitchenPartnerKycUncheckedCreateNestedOneWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
@@ -1062,10 +916,6 @@ export type KitchenPartnerUpdateWithoutKitchenCategoriesInput = {
   kitchenKyc?: Prisma.KitchenPartnerKycUpdateOneWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
@@ -1084,10 +934,6 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenCategoriesInput = {
   kitchenKyc?: Prisma.KitchenPartnerKycUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
@@ -1106,10 +952,6 @@ export type KitchenPartnerCreateWithoutKitchenAvailabilityInput = {
   kitchenKyc?: Prisma.KitchenPartnerKycCreateNestedOneWithoutKitchenPartnerInput
   kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
@@ -1128,10 +970,6 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAvailabilityInput = {
   kitchenKyc?: Prisma.KitchenPartnerKycUncheckedCreateNestedOneWithoutKitchenPartnerInput
   kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
@@ -1166,10 +1004,6 @@ export type KitchenPartnerUpdateWithoutKitchenAvailabilityInput = {
   kitchenKyc?: Prisma.KitchenPartnerKycUpdateOneWithoutKitchenPartnerNestedInput
   kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
@@ -1188,10 +1022,6 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAvailabilityInput = {
   kitchenKyc?: Prisma.KitchenPartnerKycUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
@@ -1210,10 +1040,6 @@ export type KitchenPartnerCreateWithoutMenusInput = {
   kitchenKyc?: Prisma.KitchenPartnerKycCreateNestedOneWithoutKitchenPartnerInput
   kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
@@ -1232,10 +1058,6 @@ export type KitchenPartnerUncheckedCreateWithoutMenusInput = {
   kitchenKyc?: Prisma.KitchenPartnerKycUncheckedCreateNestedOneWithoutKitchenPartnerInput
   kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
@@ -1270,10 +1092,6 @@ export type KitchenPartnerUpdateWithoutMenusInput = {
   kitchenKyc?: Prisma.KitchenPartnerKycUpdateOneWithoutKitchenPartnerNestedInput
   kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
@@ -1292,10 +1110,6 @@ export type KitchenPartnerUncheckedUpdateWithoutMenusInput = {
   kitchenKyc?: Prisma.KitchenPartnerKycUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
@@ -1315,10 +1129,6 @@ export type KitchenPartnerCreateWithoutDeliveryPartnerAssignmentsInput = {
   kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
 }
@@ -1337,10 +1147,6 @@ export type KitchenPartnerUncheckedCreateWithoutDeliveryPartnerAssignmentsInput 
   kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
 }
@@ -1375,10 +1181,6 @@ export type KitchenPartnerUpdateWithoutDeliveryPartnerAssignmentsInput = {
   kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
 }
@@ -1397,10 +1199,6 @@ export type KitchenPartnerUncheckedUpdateWithoutDeliveryPartnerAssignmentsInput 
   kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
 }
@@ -1419,10 +1217,6 @@ export type KitchenPartnerCreateWithoutOrderItemsInput = {
   kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
 }
@@ -1441,10 +1235,6 @@ export type KitchenPartnerUncheckedCreateWithoutOrderItemsInput = {
   kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
 }
@@ -1479,10 +1269,6 @@ export type KitchenPartnerUpdateWithoutOrderItemsInput = {
   kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
 }
@@ -1501,10 +1287,6 @@ export type KitchenPartnerUncheckedUpdateWithoutOrderItemsInput = {
   kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
 }
@@ -1523,10 +1305,6 @@ export type KitchenPartnerCreateWithoutReviewsInput = {
   kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
 }
@@ -1545,10 +1323,6 @@ export type KitchenPartnerUncheckedCreateWithoutReviewsInput = {
   kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
   menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
 }
@@ -1583,10 +1357,6 @@ export type KitchenPartnerUpdateWithoutReviewsInput = {
   kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
 }
@@ -1605,428 +1375,8 @@ export type KitchenPartnerUncheckedUpdateWithoutReviewsInput = {
   kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-}
-
-export type KitchenPartnerCreateWithoutBankAccountInput = {
-  id?: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  rejectedReason?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
-  kitchenAlias?: Prisma.KitchenAliasCreateNestedOneWithoutKitchenPartnerInput
-  kitchenKyc?: Prisma.KitchenPartnerKycCreateNestedOneWithoutKitchenPartnerInput
-  kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
-  menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
-  orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
-}
-
-export type KitchenPartnerUncheckedCreateWithoutBankAccountInput = {
-  id?: string
-  userId: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  rejectedReason?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
-}
-
-export type KitchenPartnerCreateOrConnectWithoutBankAccountInput = {
-  where: Prisma.KitchenPartnerWhereUniqueInput
-  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutBankAccountInput, Prisma.KitchenPartnerUncheckedCreateWithoutBankAccountInput>
-}
-
-export type KitchenPartnerUpsertWithoutBankAccountInput = {
-  update: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutBankAccountInput, Prisma.KitchenPartnerUncheckedUpdateWithoutBankAccountInput>
-  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutBankAccountInput, Prisma.KitchenPartnerUncheckedCreateWithoutBankAccountInput>
-  where?: Prisma.KitchenPartnerWhereInput
-}
-
-export type KitchenPartnerUpdateToOneWithWhereWithoutBankAccountInput = {
-  where?: Prisma.KitchenPartnerWhereInput
-  data: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutBankAccountInput, Prisma.KitchenPartnerUncheckedUpdateWithoutBankAccountInput>
-}
-
-export type KitchenPartnerUpdateWithoutBankAccountInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
-  kitchenAlias?: Prisma.KitchenAliasUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenKyc?: Prisma.KitchenPartnerKycUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
-  menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
-  orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
-}
-
-export type KitchenPartnerUncheckedUpdateWithoutBankAccountInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-}
-
-export type KitchenPartnerCreateWithoutUpiAccountInput = {
-  id?: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  rejectedReason?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
-  kitchenAlias?: Prisma.KitchenAliasCreateNestedOneWithoutKitchenPartnerInput
-  kitchenKyc?: Prisma.KitchenPartnerKycCreateNestedOneWithoutKitchenPartnerInput
-  kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
-  menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
-  orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
-}
-
-export type KitchenPartnerUncheckedCreateWithoutUpiAccountInput = {
-  id?: string
-  userId: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  rejectedReason?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
-}
-
-export type KitchenPartnerCreateOrConnectWithoutUpiAccountInput = {
-  where: Prisma.KitchenPartnerWhereUniqueInput
-  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutUpiAccountInput, Prisma.KitchenPartnerUncheckedCreateWithoutUpiAccountInput>
-}
-
-export type KitchenPartnerUpsertWithoutUpiAccountInput = {
-  update: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutUpiAccountInput, Prisma.KitchenPartnerUncheckedUpdateWithoutUpiAccountInput>
-  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutUpiAccountInput, Prisma.KitchenPartnerUncheckedCreateWithoutUpiAccountInput>
-  where?: Prisma.KitchenPartnerWhereInput
-}
-
-export type KitchenPartnerUpdateToOneWithWhereWithoutUpiAccountInput = {
-  where?: Prisma.KitchenPartnerWhereInput
-  data: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutUpiAccountInput, Prisma.KitchenPartnerUncheckedUpdateWithoutUpiAccountInput>
-}
-
-export type KitchenPartnerUpdateWithoutUpiAccountInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
-  kitchenAlias?: Prisma.KitchenAliasUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenKyc?: Prisma.KitchenPartnerKycUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
-  menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
-  orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
-}
-
-export type KitchenPartnerUncheckedUpdateWithoutUpiAccountInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-}
-
-export type KitchenPartnerCreateWithoutCommissionInput = {
-  id?: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  rejectedReason?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
-  kitchenAlias?: Prisma.KitchenAliasCreateNestedOneWithoutKitchenPartnerInput
-  kitchenKyc?: Prisma.KitchenPartnerKycCreateNestedOneWithoutKitchenPartnerInput
-  kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
-  menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalCreateNestedManyWithoutKitchenPartnerInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
-  orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
-}
-
-export type KitchenPartnerUncheckedCreateWithoutCommissionInput = {
-  id?: string
-  userId: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  rejectedReason?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  withdrawals?: Prisma.WithdrawalUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
-}
-
-export type KitchenPartnerCreateOrConnectWithoutCommissionInput = {
-  where: Prisma.KitchenPartnerWhereUniqueInput
-  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutCommissionInput, Prisma.KitchenPartnerUncheckedCreateWithoutCommissionInput>
-}
-
-export type KitchenPartnerUpsertWithoutCommissionInput = {
-  update: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutCommissionInput, Prisma.KitchenPartnerUncheckedUpdateWithoutCommissionInput>
-  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutCommissionInput, Prisma.KitchenPartnerUncheckedCreateWithoutCommissionInput>
-  where?: Prisma.KitchenPartnerWhereInput
-}
-
-export type KitchenPartnerUpdateToOneWithWhereWithoutCommissionInput = {
-  where?: Prisma.KitchenPartnerWhereInput
-  data: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutCommissionInput, Prisma.KitchenPartnerUncheckedUpdateWithoutCommissionInput>
-}
-
-export type KitchenPartnerUpdateWithoutCommissionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
-  kitchenAlias?: Prisma.KitchenAliasUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenKyc?: Prisma.KitchenPartnerKycUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
-  menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUpdateManyWithoutKitchenPartnerNestedInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
-  orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
-}
-
-export type KitchenPartnerUncheckedUpdateWithoutCommissionInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  withdrawals?: Prisma.WithdrawalUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-}
-
-export type KitchenPartnerCreateWithoutWithdrawalsInput = {
-  id?: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  rejectedReason?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
-  kitchenAlias?: Prisma.KitchenAliasCreateNestedOneWithoutKitchenPartnerInput
-  kitchenKyc?: Prisma.KitchenPartnerKycCreateNestedOneWithoutKitchenPartnerInput
-  kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
-  menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionCreateNestedOneWithoutKitchenPartnerInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
-  orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
-}
-
-export type KitchenPartnerUncheckedCreateWithoutWithdrawalsInput = {
-  id?: string
-  userId: string
-  status?: $Enums.PartnerStatus
-  approvedAt?: Date | string | null
-  rejectedReason?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  bankAccount?: Prisma.BankAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  upiAccount?: Prisma.UpiAccountUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  commission?: Prisma.CommissionUncheckedCreateNestedOneWithoutKitchenPartnerInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
-}
-
-export type KitchenPartnerCreateOrConnectWithoutWithdrawalsInput = {
-  where: Prisma.KitchenPartnerWhereUniqueInput
-  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutWithdrawalsInput, Prisma.KitchenPartnerUncheckedCreateWithoutWithdrawalsInput>
-}
-
-export type KitchenPartnerUpsertWithoutWithdrawalsInput = {
-  update: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutWithdrawalsInput, Prisma.KitchenPartnerUncheckedUpdateWithoutWithdrawalsInput>
-  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutWithdrawalsInput, Prisma.KitchenPartnerUncheckedCreateWithoutWithdrawalsInput>
-  where?: Prisma.KitchenPartnerWhereInput
-}
-
-export type KitchenPartnerUpdateToOneWithWhereWithoutWithdrawalsInput = {
-  where?: Prisma.KitchenPartnerWhereInput
-  data: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutWithdrawalsInput, Prisma.KitchenPartnerUncheckedUpdateWithoutWithdrawalsInput>
-}
-
-export type KitchenPartnerUpdateWithoutWithdrawalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
-  kitchenAlias?: Prisma.KitchenAliasUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenKyc?: Prisma.KitchenPartnerKycUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
-  menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUpdateOneWithoutKitchenPartnerNestedInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
-  orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
-}
-
-export type KitchenPartnerUncheckedUpdateWithoutWithdrawalsInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
-  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  bankAccount?: Prisma.BankAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  upiAccount?: Prisma.UpiAccountUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  commission?: Prisma.CommissionUncheckedUpdateOneWithoutKitchenPartnerNestedInput
-  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
 }
 
 
@@ -2038,7 +1388,6 @@ export type KitchenPartnerCountOutputType = {
   kitchenCategories: number
   kitchenAvailability: number
   menus: number
-  withdrawals: number
   deliveryPartnerAssignments: number
   orderItems: number
   reviews: number
@@ -2048,7 +1397,6 @@ export type KitchenPartnerCountOutputTypeSelect<ExtArgs extends runtime.Types.Ex
   kitchenCategories?: boolean | KitchenPartnerCountOutputTypeCountKitchenCategoriesArgs
   kitchenAvailability?: boolean | KitchenPartnerCountOutputTypeCountKitchenAvailabilityArgs
   menus?: boolean | KitchenPartnerCountOutputTypeCountMenusArgs
-  withdrawals?: boolean | KitchenPartnerCountOutputTypeCountWithdrawalsArgs
   deliveryPartnerAssignments?: boolean | KitchenPartnerCountOutputTypeCountDeliveryPartnerAssignmentsArgs
   orderItems?: boolean | KitchenPartnerCountOutputTypeCountOrderItemsArgs
   reviews?: boolean | KitchenPartnerCountOutputTypeCountReviewsArgs
@@ -2088,13 +1436,6 @@ export type KitchenPartnerCountOutputTypeCountMenusArgs<ExtArgs extends runtime.
 /**
  * KitchenPartnerCountOutputType without action
  */
-export type KitchenPartnerCountOutputTypeCountWithdrawalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.WithdrawalWhereInput
-}
-
-/**
- * KitchenPartnerCountOutputType without action
- */
 export type KitchenPartnerCountOutputTypeCountDeliveryPartnerAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.DeliveryPartnerKitchenAssignmentWhereInput
 }
@@ -2129,10 +1470,6 @@ export type KitchenPartnerSelect<ExtArgs extends runtime.Types.Extensions.Intern
   kitchenCategories?: boolean | Prisma.KitchenPartner$kitchenCategoriesArgs<ExtArgs>
   kitchenAvailability?: boolean | Prisma.KitchenPartner$kitchenAvailabilityArgs<ExtArgs>
   menus?: boolean | Prisma.KitchenPartner$menusArgs<ExtArgs>
-  bankAccount?: boolean | Prisma.KitchenPartner$bankAccountArgs<ExtArgs>
-  upiAccount?: boolean | Prisma.KitchenPartner$upiAccountArgs<ExtArgs>
-  commission?: boolean | Prisma.KitchenPartner$commissionArgs<ExtArgs>
-  withdrawals?: boolean | Prisma.KitchenPartner$withdrawalsArgs<ExtArgs>
   deliveryPartnerAssignments?: boolean | Prisma.KitchenPartner$deliveryPartnerAssignmentsArgs<ExtArgs>
   orderItems?: boolean | Prisma.KitchenPartner$orderItemsArgs<ExtArgs>
   reviews?: boolean | Prisma.KitchenPartner$reviewsArgs<ExtArgs>
@@ -2182,10 +1519,6 @@ export type KitchenPartnerInclude<ExtArgs extends runtime.Types.Extensions.Inter
   kitchenCategories?: boolean | Prisma.KitchenPartner$kitchenCategoriesArgs<ExtArgs>
   kitchenAvailability?: boolean | Prisma.KitchenPartner$kitchenAvailabilityArgs<ExtArgs>
   menus?: boolean | Prisma.KitchenPartner$menusArgs<ExtArgs>
-  bankAccount?: boolean | Prisma.KitchenPartner$bankAccountArgs<ExtArgs>
-  upiAccount?: boolean | Prisma.KitchenPartner$upiAccountArgs<ExtArgs>
-  commission?: boolean | Prisma.KitchenPartner$commissionArgs<ExtArgs>
-  withdrawals?: boolean | Prisma.KitchenPartner$withdrawalsArgs<ExtArgs>
   deliveryPartnerAssignments?: boolean | Prisma.KitchenPartner$deliveryPartnerAssignmentsArgs<ExtArgs>
   orderItems?: boolean | Prisma.KitchenPartner$orderItemsArgs<ExtArgs>
   reviews?: boolean | Prisma.KitchenPartner$reviewsArgs<ExtArgs>
@@ -2207,10 +1540,6 @@ export type $KitchenPartnerPayload<ExtArgs extends runtime.Types.Extensions.Inte
     kitchenCategories: Prisma.$KitchenCategoryPayload<ExtArgs>[]
     kitchenAvailability: Prisma.$KitchenAvailabilityPayload<ExtArgs>[]
     menus: Prisma.$MenuPayload<ExtArgs>[]
-    bankAccount: Prisma.$BankAccountPayload<ExtArgs> | null
-    upiAccount: Prisma.$UpiAccountPayload<ExtArgs> | null
-    commission: Prisma.$CommissionPayload<ExtArgs> | null
-    withdrawals: Prisma.$WithdrawalPayload<ExtArgs>[]
     deliveryPartnerAssignments: Prisma.$DeliveryPartnerKitchenAssignmentPayload<ExtArgs>[]
     orderItems: Prisma.$OrderItemPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
@@ -2624,10 +1953,6 @@ export interface Prisma__KitchenPartnerClient<T, Null = never, ExtArgs extends r
   kitchenCategories<T extends Prisma.KitchenPartner$kitchenCategoriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$kitchenCategoriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenCategoryPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitchenAvailability<T extends Prisma.KitchenPartner$kitchenAvailabilityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$kitchenAvailabilityArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenAvailabilityPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   menus<T extends Prisma.KitchenPartner$menusArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$menusArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MenuPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  bankAccount<T extends Prisma.KitchenPartner$bankAccountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$bankAccountArgs<ExtArgs>>): Prisma.Prisma__BankAccountClient<runtime.Types.Result.GetResult<Prisma.$BankAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  upiAccount<T extends Prisma.KitchenPartner$upiAccountArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$upiAccountArgs<ExtArgs>>): Prisma.Prisma__UpiAccountClient<runtime.Types.Result.GetResult<Prisma.$UpiAccountPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  commission<T extends Prisma.KitchenPartner$commissionArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$commissionArgs<ExtArgs>>): Prisma.Prisma__CommissionClient<runtime.Types.Result.GetResult<Prisma.$CommissionPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  withdrawals<T extends Prisma.KitchenPartner$withdrawalsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$withdrawalsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WithdrawalPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deliveryPartnerAssignments<T extends Prisma.KitchenPartner$deliveryPartnerAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$deliveryPartnerAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orderItems<T extends Prisma.KitchenPartner$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.KitchenPartner$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -3176,87 +2501,6 @@ export type KitchenPartner$menusArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.MenuScalarFieldEnum | Prisma.MenuScalarFieldEnum[]
-}
-
-/**
- * KitchenPartner.bankAccount
- */
-export type KitchenPartner$bankAccountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the BankAccount
-   */
-  select?: Prisma.BankAccountSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the BankAccount
-   */
-  omit?: Prisma.BankAccountOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.BankAccountInclude<ExtArgs> | null
-  where?: Prisma.BankAccountWhereInput
-}
-
-/**
- * KitchenPartner.upiAccount
- */
-export type KitchenPartner$upiAccountArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the UpiAccount
-   */
-  select?: Prisma.UpiAccountSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the UpiAccount
-   */
-  omit?: Prisma.UpiAccountOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UpiAccountInclude<ExtArgs> | null
-  where?: Prisma.UpiAccountWhereInput
-}
-
-/**
- * KitchenPartner.commission
- */
-export type KitchenPartner$commissionArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Commission
-   */
-  select?: Prisma.CommissionSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Commission
-   */
-  omit?: Prisma.CommissionOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.CommissionInclude<ExtArgs> | null
-  where?: Prisma.CommissionWhereInput
-}
-
-/**
- * KitchenPartner.withdrawals
- */
-export type KitchenPartner$withdrawalsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Withdrawal
-   */
-  select?: Prisma.WithdrawalSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Withdrawal
-   */
-  omit?: Prisma.WithdrawalOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.WithdrawalInclude<ExtArgs> | null
-  where?: Prisma.WithdrawalWhereInput
-  orderBy?: Prisma.WithdrawalOrderByWithRelationInput | Prisma.WithdrawalOrderByWithRelationInput[]
-  cursor?: Prisma.WithdrawalWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.WithdrawalScalarFieldEnum | Prisma.WithdrawalScalarFieldEnum[]
 }
 
 /**

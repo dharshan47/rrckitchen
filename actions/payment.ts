@@ -21,7 +21,10 @@ export async function createPaymentOrder({ userId, items }: CreateOrderInput) {
     throw new Error("Some menu items not found");
   }
 
-  const totalAmount = items.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const totalAmount = items.reduce((sum, i) => {
+    const menuItem = menuItems.find((m) => m.id === i.id)!;
+    return sum + Number(menuItem.price) * i.qty;
+  }, 0);
   const timeSlot = menuItems[0].timeSlot;
   const serviceDate = new Date();
   serviceDate.setDate(serviceDate.getDate() + 1);
@@ -44,7 +47,7 @@ export async function createPaymentOrder({ userId, items }: CreateOrderInput) {
               menuItemId: item.id,
               kitchenPartnerId,
               quantity: item.qty,
-              unitPrice: item.price,
+              unitPrice: Number(menuItem.price),
             };
           }),
         },
@@ -98,6 +101,7 @@ export function verifyPaymentSignature(
 export async function confirmPayment(
   razorpayOrderId: string,
   razorpayPaymentId: string,
+  paymentMethod?: string,
 ) {
   const payment = await prisma.payment.findFirst({
     where: { providerOrderId: razorpayOrderId },
@@ -107,27 +111,32 @@ export async function confirmPayment(
     throw new Error("Payment record not found");
   }
 
+  if (!paymentMethod) {
+    try {
+      const rpPayment = await razorpayClient.payments.fetch(razorpayPaymentId);
+      paymentMethod = rpPayment.method;
+    } catch {
+      // fallback - method stays undefined
+    }
+  }
+
   await prisma.payment.update({
     where: { id: payment.id },
     data: {
       status: "SUCCESS",
       providerPaymentId: razorpayPaymentId,
+      paymentMethod: paymentMethod ?? null,
       paidAt: new Date(),
     },
   });
 
   await prisma.order.update({
     where: { id: payment.orderId },
-    data: { status: "CONFIRMED" },
+    data: { status: "PREPARING" },
   });
 
-  await prisma.transaction.create({
-    data: {
-      paymentId: payment.id,
-      type: "ORDERPAYMENT",
-      amount: payment.amount,
-      direction: "CREDIT",
-    },
+  await prisma.orderStatusHistory.create({
+    data: { orderId: payment.orderId, status: "PREPARING", note: "Payment confirmed" },
   });
 
   return { orderId: payment.orderId };
@@ -142,6 +151,10 @@ export async function failPayment(razorpayOrderId: string) {
     throw new Error("Payment record not found");
   }
 
+  if (payment.status !== "PENDING") {
+    return;
+  }
+
   await prisma.payment.update({
     where: { id: payment.id },
     data: { status: "FAILED" },
@@ -150,6 +163,10 @@ export async function failPayment(razorpayOrderId: string) {
   await prisma.order.update({
     where: { id: payment.orderId },
     data: { status: "CANCELLED" },
+  });
+
+  await prisma.orderStatusHistory.create({
+    data: { orderId: payment.orderId, status: "CANCELLED", note: "Payment cancelled by customer" },
   });
 }
 

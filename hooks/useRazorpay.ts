@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import type { CartItem } from "@/stores/cartStore";
 
 interface CreateOrderResponse {
@@ -27,38 +28,73 @@ interface RazorpayCheckoutOptions {
   modal: {
     ondismiss: () => void;
   };
+  config?: {
+    display: {
+      blocks: Record<string, { name: string; instruments: { method: string }[] }>;
+      sequence: string[];
+      preferences: {
+        show_default_blocks?: boolean;
+      };
+    };
+  };
+}
+
+type RazorpayInstance = new (options: RazorpayCheckoutOptions) => { open: () => void };
+
+async function loadRazorpaySdk(): Promise<RazorpayInstance | null> {
+  if (typeof window === "undefined") return null;
+
+  if ((window as unknown as Record<string, unknown>).Razorpay) {
+    return (window as unknown as Record<string, RazorpayInstance>).Razorpay;
+  }
+
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    script.onload = () => {
+      resolve((window as unknown as Record<string, RazorpayInstance>).Razorpay ?? null);
+    };
+    script.onerror = () => {
+      console.error("[Razorpay] Failed to load SDK.");
+      resolve(null);
+    };
+    document.body.appendChild(script);
+  });
 }
 
 export function useRazorpay() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [paymentResult, setPaymentResult] = useState<{ success: boolean; orderId?: string } | null>(null);
 
-  const createOrder = useCallback(async (items: CartItem[]): Promise<CreateOrderResponse> => {
-    const res = await fetch("/api/payment/create-order", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        items: items.map((i) => ({ id: i.id, qty: i.qty, price: i.price })),
-      }),
-    });
+  const createOrderMutation = useMutation({
+    mutationFn: async (items: CartItem[]): Promise<CreateOrderResponse> => {
+      const res = await fetch("/api/payment/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          items: items.map((i) => ({ id: i.id, qty: i.qty, price: i.price })),
+        }),
+      });
 
-    if (!res.ok) {
-      const err = await res.json();
-      throw new Error(err.error || "Failed to create order");
-    }
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to create order");
+      }
 
-    return res.json();
-  }, []);
+      return res.json();
+    },
+  });
 
   const initiateCheckout = useCallback(async (items: CartItem[], total: number, phoneNumber: string) => {
     setIsProcessing(true);
     setPaymentResult(null);
 
     try {
-      const order = await createOrder(items);
+      const order = await createOrderMutation.mutateAsync(items);
 
       const options: RazorpayCheckoutOptions = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? "rzp_test_T73mnMj6Sm4Zvi",
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
         amount: order.amount,
         currency: order.currency,
         name: "RrcKitchen",
@@ -69,6 +105,20 @@ export function useRazorpay() {
         },
         theme: {
           color: "#f97316",
+        },
+        config: {
+          display: {
+            blocks: {
+              upi: {
+                name: "UPI — Google Pay, PhonePe, Paytm",
+                instruments: [{ method: "upi" }],
+              },
+            },
+            sequence: ["block.upi"],
+            preferences: {
+              show_default_blocks: true,
+            },
+          },
         },
         handler: async (response) => {
           try {
@@ -98,28 +148,37 @@ export function useRazorpay() {
           }
         },
         modal: {
-          ondismiss: () => {
+          ondismiss: async () => {
+            try {
+              await fetch("/api/payment/fail", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ razorpay_order_id: order.orderId }),
+              });
+            } catch {
+              // silent
+            }
             setIsProcessing(false);
             setPaymentResult(null);
           },
         },
       };
 
-      if (typeof window !== "undefined" && (window as unknown as Record<string, unknown>).Razorpay) {
-        const RazorpayConstructor = (window as unknown as Record<string, new (options: RazorpayCheckoutOptions) => { open: () => void }>).Razorpay;
-        const razorpay = new RazorpayConstructor(options);
-        razorpay.open();
-      } else {
+      const razorpayInstance = await loadRazorpaySdk();
+      if (!razorpayInstance) {
         console.log("[Razorpay] SDK not loaded.");
         setPaymentResult({ success: false });
         setIsProcessing(false);
+        return;
       }
+      const razorpay = new razorpayInstance(options);
+      razorpay.open();
     } catch (error) {
       console.error("[Razorpay] Checkout failed:", error);
       setPaymentResult({ success: false });
       setIsProcessing(false);
     }
-  }, [createOrder]);
+  }, [createOrderMutation]);
 
   const resetPayment = useCallback(() => {
     setPaymentResult(null);
