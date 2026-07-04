@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { SkeletonCard } from "@/components/patterns/skeleton-card";
 import { HomeClient } from "@/components/home/home-client";
 
+export const dynamic = "force-dynamic";
+
 export default function HomePage() {
   return (
     <Suspense fallback={<HomeFallback />}>

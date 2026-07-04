@@ -2,6 +2,8 @@ import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MenuContent } from "./menu-content";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Tomorrow's Menu",
   description: "Browse home-cooked meals for tomorrow. Filter by time slot, Veg/Non-Veg, and kitchen.",

@@ -14,12 +14,6 @@ const slugLabels: Record<string, string> = {
   dinner: "Dinner",
 };
 
-export const revalidate = 3600;
-
-export function generateStaticParams() {
-  return [{ slug: "breakfast" }, { slug: "lunch" }, { slug: "evening-snacks" }, { slug: "dinner" }];
-}
-
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const label = slugLabels[slug];
