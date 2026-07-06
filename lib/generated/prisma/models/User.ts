@@ -288,6 +288,7 @@ export type UserWhereInput = {
   deliveryReviews?: Prisma.DeliveryReviewListRelationFilter
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerNullableScalarRelationFilter, Prisma.KitchenPartnerWhereInput> | null
   deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
+  pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -318,6 +319,7 @@ export type UserOrderByWithRelationInput = {
   deliveryReviews?: Prisma.DeliveryReviewOrderByRelationAggregateInput
   kitchenPartner?: Prisma.KitchenPartnerOrderByWithRelationInput
   deliveryPartner?: Prisma.DeliveryPartnerOrderByWithRelationInput
+  pushSubscriptions?: Prisma.PushSubscriptionOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -351,6 +353,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   deliveryReviews?: Prisma.DeliveryReviewListRelationFilter
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerNullableScalarRelationFilter, Prisma.KitchenPartnerWhereInput> | null
   deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
+  pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
 }, "id" | "phoneNumber" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -427,6 +430,7 @@ export type UserCreateInput = {
   deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -457,6 +461,7 @@ export type UserUncheckedCreateInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -487,6 +492,7 @@ export type UserUpdateInput = {
   deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -517,6 +523,7 @@ export type UserUncheckedUpdateInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -811,6 +818,20 @@ export type UserUpdateOneRequiredWithoutDeliveryReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutDeliveryReviewsInput, Prisma.UserUpdateWithoutDeliveryReviewsInput>, Prisma.UserUncheckedUpdateWithoutDeliveryReviewsInput>
 }
 
+export type UserCreateNestedOneWithoutPushSubscriptionsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPushSubscriptionsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutPushSubscriptionsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutPushSubscriptionsInput
+  upsert?: Prisma.UserUpsertWithoutPushSubscriptionsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutPushSubscriptionsInput, Prisma.UserUpdateWithoutPushSubscriptionsInput>, Prisma.UserUncheckedUpdateWithoutPushSubscriptionsInput>
+}
+
 export type UserCreateWithoutUserRolesInput = {
   id?: string
   phoneNumber?: string | null
@@ -838,6 +859,7 @@ export type UserCreateWithoutUserRolesInput = {
   deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUserRolesInput = {
@@ -867,6 +889,7 @@ export type UserUncheckedCreateWithoutUserRolesInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUserRolesInput = {
@@ -912,6 +935,7 @@ export type UserUpdateWithoutUserRolesInput = {
   deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserRolesInput = {
@@ -941,6 +965,7 @@ export type UserUncheckedUpdateWithoutUserRolesInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -970,6 +995,7 @@ export type UserCreateWithoutSessionsInput = {
   deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -999,6 +1025,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1044,6 +1071,7 @@ export type UserUpdateWithoutSessionsInput = {
   deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1073,6 +1101,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -1102,6 +1131,7 @@ export type UserCreateWithoutAccountsInput = {
   deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -1131,6 +1161,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1176,6 +1207,7 @@ export type UserUpdateWithoutAccountsInput = {
   deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1205,6 +1237,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOtpCodesInput = {
@@ -1234,6 +1267,7 @@ export type UserCreateWithoutOtpCodesInput = {
   deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOtpCodesInput = {
@@ -1263,6 +1297,7 @@ export type UserUncheckedCreateWithoutOtpCodesInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOtpCodesInput = {
@@ -1308,6 +1343,7 @@ export type UserUpdateWithoutOtpCodesInput = {
   deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOtpCodesInput = {
@@ -1337,6 +1373,7 @@ export type UserUncheckedUpdateWithoutOtpCodesInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAddressesInput = {
@@ -1366,6 +1403,7 @@ export type UserCreateWithoutAddressesInput = {
   deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAddressesInput = {
@@ -1395,6 +1433,7 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAddressesInput = {
@@ -1440,6 +1479,7 @@ export type UserUpdateWithoutAddressesInput = {
   deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
@@ -1469,6 +1509,7 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutKitchenPartnerInput = {
@@ -1498,6 +1539,7 @@ export type UserCreateWithoutKitchenPartnerInput = {
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutKitchenPartnerInput = {
@@ -1527,6 +1569,7 @@ export type UserUncheckedCreateWithoutKitchenPartnerInput = {
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutKitchenPartnerInput = {
@@ -1572,6 +1615,7 @@ export type UserUpdateWithoutKitchenPartnerInput = {
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
@@ -1601,6 +1645,7 @@ export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDeliveryPartnerInput = {
@@ -1630,6 +1675,7 @@ export type UserCreateWithoutDeliveryPartnerInput = {
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
@@ -1659,6 +1705,7 @@ export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDeliveryPartnerInput = {
@@ -1704,6 +1751,7 @@ export type UserUpdateWithoutDeliveryPartnerInput = {
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
@@ -1733,6 +1781,7 @@ export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -1762,6 +1811,7 @@ export type UserCreateWithoutOrdersInput = {
   deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -1791,6 +1841,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -1836,6 +1887,7 @@ export type UserUpdateWithoutOrdersInput = {
   deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -1865,6 +1917,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -1894,6 +1947,7 @@ export type UserCreateWithoutReviewsInput = {
   deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -1923,6 +1977,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -1968,6 +2023,7 @@ export type UserUpdateWithoutReviewsInput = {
   deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -1997,6 +2053,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDeliveryReviewsInput = {
@@ -2026,6 +2083,7 @@ export type UserCreateWithoutDeliveryReviewsInput = {
   reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeliveryReviewsInput = {
@@ -2055,6 +2113,7 @@ export type UserUncheckedCreateWithoutDeliveryReviewsInput = {
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDeliveryReviewsInput = {
@@ -2100,6 +2159,7 @@ export type UserUpdateWithoutDeliveryReviewsInput = {
   reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeliveryReviewsInput = {
@@ -2129,6 +2189,143 @@ export type UserUncheckedUpdateWithoutDeliveryReviewsInput = {
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutPushSubscriptionsInput = {
+  id?: string
+  phoneNumber?: string | null
+  phoneNumberVerified?: boolean
+  role?: string
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  name?: string | null
+  fullName?: string | null
+  email?: string | null
+  emailVerified?: boolean
+  image?: string | null
+  isActive?: boolean
+  razorpayCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
+  kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
+  id?: string
+  phoneNumber?: string | null
+  phoneNumberVerified?: boolean
+  role?: string
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  name?: string | null
+  fullName?: string | null
+  email?: string | null
+  emailVerified?: boolean
+  image?: string | null
+  isActive?: boolean
+  razorpayCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
+  kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
+  deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutPushSubscriptionsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput>
+}
+
+export type UserUpsertWithoutPushSubscriptionsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutPushSubscriptionsInput, Prisma.UserUncheckedUpdateWithoutPushSubscriptionsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutPushSubscriptionsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutPushSubscriptionsInput, Prisma.UserUncheckedUpdateWithoutPushSubscriptionsInput>
+}
+
+export type UserUpdateWithoutPushSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
+  kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
+  kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
 }
 
 
@@ -2145,6 +2342,7 @@ export type UserCountOutputType = {
   orders: number
   reviews: number
   deliveryReviews: number
+  pushSubscriptions: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2156,6 +2354,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   orders?: boolean | UserCountOutputTypeCountOrdersArgs
   reviews?: boolean | UserCountOutputTypeCountReviewsArgs
   deliveryReviews?: boolean | UserCountOutputTypeCountDeliveryReviewsArgs
+  pushSubscriptions?: boolean | UserCountOutputTypeCountPushSubscriptionsArgs
 }
 
 /**
@@ -2224,6 +2423,13 @@ export type UserCountOutputTypeCountDeliveryReviewsArgs<ExtArgs extends runtime.
   where?: Prisma.DeliveryReviewWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountPushSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.PushSubscriptionWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2253,6 +2459,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   deliveryReviews?: boolean | Prisma.User$deliveryReviewsArgs<ExtArgs>
   kitchenPartner?: boolean | Prisma.User$kitchenPartnerArgs<ExtArgs>
   deliveryPartner?: boolean | Prisma.User$deliveryPartnerArgs<ExtArgs>
+  pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2328,6 +2535,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   deliveryReviews?: boolean | Prisma.User$deliveryReviewsArgs<ExtArgs>
   kitchenPartner?: boolean | Prisma.User$kitchenPartnerArgs<ExtArgs>
   deliveryPartner?: boolean | Prisma.User$deliveryPartnerArgs<ExtArgs>
+  pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -2346,6 +2554,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     deliveryReviews: Prisma.$DeliveryReviewPayload<ExtArgs>[]
     kitchenPartner: Prisma.$KitchenPartnerPayload<ExtArgs> | null
     deliveryPartner: Prisma.$DeliveryPartnerPayload<ExtArgs> | null
+    pushSubscriptions: Prisma.$PushSubscriptionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2769,6 +2978,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   deliveryReviews<T extends Prisma.User$deliveryReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deliveryReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitchenPartner<T extends Prisma.User$kitchenPartnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$kitchenPartnerArgs<ExtArgs>>): Prisma.Prisma__KitchenPartnerClient<runtime.Types.Result.GetResult<Prisma.$KitchenPartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   deliveryPartner<T extends Prisma.User$deliveryPartnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deliveryPartnerArgs<ExtArgs>>): Prisma.Prisma__DeliveryPartnerClient<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  pushSubscriptions<T extends Prisma.User$pushSubscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pushSubscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3435,6 +3645,30 @@ export type User$deliveryPartnerArgs<ExtArgs extends runtime.Types.Extensions.In
    */
   include?: Prisma.DeliveryPartnerInclude<ExtArgs> | null
   where?: Prisma.DeliveryPartnerWhereInput
+}
+
+/**
+ * User.pushSubscriptions
+ */
+export type User$pushSubscriptionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the PushSubscription
+   */
+  select?: Prisma.PushSubscriptionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the PushSubscription
+   */
+  omit?: Prisma.PushSubscriptionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.PushSubscriptionInclude<ExtArgs> | null
+  where?: Prisma.PushSubscriptionWhereInput
+  orderBy?: Prisma.PushSubscriptionOrderByWithRelationInput | Prisma.PushSubscriptionOrderByWithRelationInput[]
+  cursor?: Prisma.PushSubscriptionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.PushSubscriptionScalarFieldEnum | Prisma.PushSubscriptionScalarFieldEnum[]
 }
 
 /**

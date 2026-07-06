@@ -4,6 +4,8 @@ import { useKitchenData } from "../layout"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapPin, Phone } from "lucide-react"
+import { updateOrderStatus } from "@/actions/orders"
+import { toast } from "sonner"
 
 export default function OrdersPage() {
   const data = useKitchenData()
@@ -38,12 +40,21 @@ export default function OrdersPage() {
                     <div className="flex gap-2">
                       {order.status === "Confirmed" && (
                         <>
-                          <Button size="sm" className="bg-green-600 hover:bg-green-700" aria-label={`Accept order ${order.id.substring(0, 8)}`}>Accept</Button>
-                          <Button size="sm" variant="outline" className="text-red-600 border-red-200" aria-label={`Reject order ${order.id.substring(0, 8)}`}>Reject</Button>
+                          <Button size="sm" className="bg-green-600 hover:bg-green-700" aria-label={`Accept order ${order.id.substring(0, 8)}`} onClick={async () => {
+                            const res = await updateOrderStatus(order.id, "PREPARING");
+                            if (res.success) { toast.success("Order accepted"); } else { toast.error(res.error); }
+                          }}>Accept</Button>
+                          <Button size="sm" variant="outline" className="text-red-600 border-red-200" aria-label={`Reject order ${order.id.substring(0, 8)}`} onClick={async () => {
+                            const res = await updateOrderStatus(order.id, "CANCELLED");
+                            if (res.success) { toast.success("Order rejected"); } else { toast.error(res.error); }
+                          }}>Reject</Button>
                         </>
                       )}
                       {order.status === "Preparing" && (
-                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700" aria-label={`Mark order ${order.id.substring(0, 8)} as complete`}>Complete</Button>
+                        <Button size="sm" className="bg-blue-600 hover:bg-blue-700" aria-label={`Mark order ${order.id.substring(0, 8)} as ready for pickup`} onClick={async () => {
+                          const res = await updateOrderStatus(order.id, "READYFORPICKUP");
+                          if (res.success) { toast.success("Order ready for pickup"); } else { toast.error(res.error); }
+                        }}>Ready for Pickup</Button>
                       )}
                     </div>
                   </div>

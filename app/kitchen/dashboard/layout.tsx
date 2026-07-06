@@ -20,6 +20,8 @@ import {
   SidebarMenuButton,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { SwUpdateBanner } from "@/components/patterns/sw-update-banner"
+import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init"
 import { ChefHat, LayoutDashboard, ShoppingBag, Utensils, Wallet, UserCircle, LogOut } from "lucide-react"
 
 const DataContext = createContext<Awaited<ReturnType<typeof getKitchenDashboardData>>>(null)
@@ -74,7 +76,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   const kitchen = data.kitchen
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <><SidebarProvider defaultOpen={true}>
       <div className="min-h-screen bg-gray-50 flex w-full">
         <Sidebar collapsible="offcanvas" side="left">
           <SidebarHeader className="border-b border-border px-4 h-16 flex-row items-center justify-between">
@@ -154,6 +156,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </main>
         </div>
       </div>
-    </SidebarProvider>
+      </SidebarProvider>
+      <SwUpdateBanner />
+      <PushSubscriptionInit />
+    </>
   )
 }

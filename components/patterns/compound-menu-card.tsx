@@ -3,7 +3,7 @@
 import { createContext, useContext, useCallback, useMemo, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { ProgressiveImage } from "@/components/patterns/progressive-image";
-import { useAuthRole } from "@/stores";
+
 
 interface MenuCardItem {
   id: string;
@@ -115,7 +115,6 @@ function BadgeRibbon() {
 }
 
 function AddButtonOverlay() {
-  const { item, onAddToCart } = useMenuCardContext();
   return (
     <div className="absolute bottom-2 right-2 z-10">
       
@@ -124,8 +123,8 @@ function AddButtonOverlay() {
 }
 
 function Header() {
-  const { item, discount, onAddToCart } = useMenuCardContext();
-  const savingsAmount = discount - item.price;
+  const ctx = useMenuCardContext();
+  const { item, discount, onAddToCart } = ctx;
   
   return (
     <div className="px-3 pb-4 pt-1.5">
@@ -141,7 +140,9 @@ function Header() {
             <div className="rounded-md bg-[#EE7005] px-2 py-0.5 text-sm font-black text-white shadow-sm">
               ₹{item.price}
             </div>
-            <span className="text-sm font-medium text-muted-foreground line-through">₹{discount}</span>
+            {item.compareAtPrice != null && (
+              <span className="text-sm font-medium text-muted-foreground line-through">₹{discount}</span>
+            )}
           </div>
           
           <Button
@@ -154,10 +155,7 @@ function Header() {
           </Button>
         </div>
         
-        
-
-        {/* Dashed Separator */}
-        <div className="mt-4 border-t border-dashed border-border" />
+    
       </div>
     </div>
   );

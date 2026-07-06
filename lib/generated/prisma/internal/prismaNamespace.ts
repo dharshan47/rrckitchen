@@ -412,6 +412,7 @@ export const ModelName = {
   Review: 'Review',
   DeliveryReview: 'DeliveryReview',
   Payment: 'Payment',
+  PushSubscription: 'PushSubscription',
   DeliverySlot: 'DeliverySlot'
 } as const
 
@@ -428,7 +429,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "payment" | "deliverySlot"
+    modelProps: "user" | "role" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "payment" | "pushSubscription" | "deliverySlot"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2504,6 +2505,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    PushSubscription: {
+      payload: Prisma.$PushSubscriptionPayload<ExtArgs>
+      fields: Prisma.PushSubscriptionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.PushSubscriptionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PushSubscriptionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.PushSubscriptionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>
+        }
+        findFirst: {
+          args: Prisma.PushSubscriptionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PushSubscriptionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.PushSubscriptionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>
+        }
+        findMany: {
+          args: Prisma.PushSubscriptionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>[]
+        }
+        create: {
+          args: Prisma.PushSubscriptionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>
+        }
+        createMany: {
+          args: Prisma.PushSubscriptionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.PushSubscriptionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>[]
+        }
+        delete: {
+          args: Prisma.PushSubscriptionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>
+        }
+        update: {
+          args: Prisma.PushSubscriptionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>
+        }
+        deleteMany: {
+          args: Prisma.PushSubscriptionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.PushSubscriptionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.PushSubscriptionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>[]
+        }
+        upsert: {
+          args: Prisma.PushSubscriptionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PushSubscriptionPayload>
+        }
+        aggregate: {
+          args: Prisma.PushSubscriptionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePushSubscription>
+        }
+        groupBy: {
+          args: Prisma.PushSubscriptionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PushSubscriptionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.PushSubscriptionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PushSubscriptionCountAggregateOutputType> | number
+        }
+      }
+    }
     DeliverySlot: {
       payload: Prisma.$DeliverySlotPayload<ExtArgs>
       fields: Prisma.DeliverySlotFieldRefs
@@ -2993,6 +3068,19 @@ export const PaymentScalarFieldEnum = {
 export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
 
 
+export const PushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  endpoint: 'endpoint',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
+
+
 export const DeliverySlotScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -3374,6 +3462,7 @@ export type GlobalOmitConfig = {
   review?: Prisma.ReviewOmit
   deliveryReview?: Prisma.DeliveryReviewOmit
   payment?: Prisma.PaymentOmit
+  pushSubscription?: Prisma.PushSubscriptionOmit
   deliverySlot?: Prisma.DeliverySlotOmit
 }
 

@@ -39,7 +39,7 @@ export function SiteHeader() {
   const isAccountPage = pathname.startsWith("/account/");
   const isMenuDetailPage = pathname.startsWith("/menu/") && pathname !== "/menu";
   const isMenuSlugPage = pathname.startsWith("/menu/category/");
-  const hideNav = isMenuDetailPage || isMenuSlugPage || isAccountPage;
+  const hideNav = isCartPage || isMenuDetailPage || isMenuSlugPage || isAccountPage;
 
   return (
     <>
@@ -126,14 +126,10 @@ export function SiteHeader() {
       {!hideNav && (
       <header className="sticky top-0 z-50 md:hidden bg-background border-b border-border px-4 py-3 space-y-3">
         <div className="flex items-center justify-between">
-          <Link href="/" className="text-xl font-extrabold text-primary tracking-tight">
+          <Link href="/" className="text-xl font-extrabold text-foreground tracking-tight">
             RRC Kitchen
           </Link>
-          {isLoggedIn ? (
-            <Button asChild size="sm" className="h-8 px-4 rounded-sm font-semibold">
-              <Link href="/account/profile">Profile</Link>
-            </Button>
-          ) : (
+          {!isLoggedIn && (
             <Button asChild size="sm" className="h-8 px-4 rounded-sm font-semibold">
               <Link href="/login">Login</Link>
             </Button>
@@ -157,7 +153,7 @@ export function SiteHeader() {
             placeholder="Search meals..."
             value={searchQuery}
             onChange={handleMobileSearchChange}
-            className="w-full bg-secondary border-none rounded-lg h-10 pl-10 pr-4 text-sm focus-visible:ring-1 focus-visible:ring-primary placeholder:text-muted-foreground"
+            className="w-full bg-search-bar border-none rounded-lg h-10 pl-10 pr-4 text-sm focus-visible:ring-1 focus-visible:ring-primary placeholder:text-muted-foreground"
           />
         </div>
 

@@ -1,23 +1,9 @@
 "use client";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState, useEffect } from "react";
-import { usePWA } from "@/hooks/usePWA";
+import { useState } from "react";
 import { useEventBus } from "@/hooks/useEventBus";
 import { AppEvents } from "@/lib/patterns/event-bus";
-
-/**
- * Registers the PWA service worker on mount.
- */
-function PWARegistrar({ children }: { children: React.ReactNode }) {
-  const { registerServiceWorker } = usePWA();
-
-  useEffect(() => {
-    registerServiceWorker();
-  }, [registerServiceWorker]);
-
-  return <>{children}</>;
-}
 
 /** Logs important events in development mode for debugging. */
 function EventBusLogger() {
@@ -39,7 +25,6 @@ function EventBusLogger() {
 /**
  * Global providers wrapping the entire app.
  * - TanStack Query client for server-state management
- * - PWA service worker registration
  * - Event bus logging (dev only)
  */
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -59,10 +44,8 @@ export function Providers({ children }: { children: React.ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PWARegistrar>
-        <EventBusLogger />
-        {children}
-      </PWARegistrar>
+      <EventBusLogger />
+      {children}
     </QueryClientProvider>
   );
 }

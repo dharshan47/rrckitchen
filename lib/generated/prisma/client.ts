@@ -182,6 +182,11 @@ export type DeliveryReview = Prisma.DeliveryReviewModel
  */
 export type Payment = Prisma.PaymentModel
 /**
+ * Model PushSubscription
+ * 
+ */
+export type PushSubscription = Prisma.PushSubscriptionModel
+/**
  * Model DeliverySlot
  * 
  */

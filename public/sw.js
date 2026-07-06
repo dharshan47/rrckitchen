@@ -146,6 +146,13 @@ async function fetchAndCache(request, cacheName) {
   return response;
 }
 
+// Listen for skip waiting message from the client
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 // Push notification handling
 self.addEventListener('push', (event) => {
   if (!event.data) return;

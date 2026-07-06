@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { z } from "zod"
-import { User, Mail, Phone, MapPin, Plus, Trash2, LogOut, Package, ChevronRight, Pencil, X, Check, Loader2 } from "lucide-react"
+import { User, Mail, Phone, MapPin, Plus, Trash2, LogOut, Package, ChevronRight, Pencil, X, Check, Loader2, ArrowLeft } from "lucide-react"
 import { Button, Input, Card } from "@/components/ui"
 import { useSession, signOut } from "@/lib/auth-client"
 import { addAddress, deleteAddress, getUserAddresses } from "@/actions/address"
@@ -122,6 +122,11 @@ export default function AccountProfilePage() {
 
   return (
     <main className="min-h-screen bg-background">
+      <div className="md:hidden sticky top-0 z-10 bg-background border-b border-border px-4 h-12 flex items-center">
+        <Button variant="ghost" size="icon-sm" onClick={() => router.back()} aria-label="Go back">
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+      </div>
       <div className="mx-auto max-w-3xl px-4 py-8 space-y-8">
         <div>
           <h1 className="text-2xl font-bold">My Account</h1>
@@ -129,7 +134,7 @@ export default function AccountProfilePage() {
         </div>
 
         <Card className="p-6">
-          <div className="flex items-start justify-between gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
             <div className="flex items-center gap-6">
               <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary/10">
                 <User className="h-8 w-8 text-primary" />
@@ -153,7 +158,7 @@ export default function AccountProfilePage() {
               </div>
             </div>
             {!editingProfile && (
-              <Button variant="outline" size="sm" onClick={() => setEditingProfile(true)}>
+              <Button variant="outline" size="sm" onClick={() => setEditingProfile(true)} className="self-start sm:self-auto w-full sm:w-auto">
                 <Pencil className="h-4 w-4 mr-1" />
                 Edit
               </Button>

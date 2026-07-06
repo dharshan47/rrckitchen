@@ -38,6 +38,7 @@ model User {
   deliveryReviews    DeliveryReview[]
   kitchenPartner     KitchenPartner?
   deliveryPartner    DeliveryPartner?
+  pushSubscriptions  PushSubscription[]
 
   @@index([phoneNumber])
   @@map("user")
@@ -515,6 +516,22 @@ enum PaymentStatus {
   SUCCESS
   FAILED
   REFUNDED
+}
+
+// ============ PUSH NOTIFICATIONS ============
+
+model PushSubscription {
+  id            String    @id @default(cuid())
+  userId        String
+  endpoint      String    @unique
+  p256dh        String
+  auth          String
+  userAgent     String?
+  createdAt     DateTime  @default(now())
+
+  user          User      @relation(fields: [userId], references: [id])
+
+  @@index([userId])
 }
 
 // ============ DELIVERY SLOT ============

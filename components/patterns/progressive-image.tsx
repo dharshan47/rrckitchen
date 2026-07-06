@@ -49,7 +49,7 @@ export function ProgressiveImage({
     return (
       <div
         ref={ref}
-        className={`flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200 ${className}`}
+        className={`flex items-center justify-center bg-linear-to-br from-slate-100 to-slate-200 ${className}`}
         style={fill ? { position: "relative" } : { width, height }}
       >
         <span className="text-2xl font-bold text-muted-foreground/30">{alt.charAt(0)}</span>

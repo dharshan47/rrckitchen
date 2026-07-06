@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma"
 import { getSession } from "@/lib/auth-server"
 import { razorpayClient } from "@/lib/auth"
 import { confirmPayment } from "@/actions/payment"
+import { sendPushToDeliveryPartners } from "@/lib/notification"
 
 export async function getUserOrders() {
   const session = await getSession()
@@ -143,6 +144,23 @@ export async function updateOrderStatus(orderId: string, status: string) {
     await prisma.orderStatusHistory.create({
       data: { orderId, status: status as import("@/lib/generated/prisma/client").OrderStatus },
     })
+
+    if (status === "READYFORPICKUP") {
+      const orderItems = await prisma.orderItem.findMany({
+        where: { orderId },
+        select: { kitchenPartnerId: true },
+        distinct: ["kitchenPartnerId"],
+      })
+
+      for (const item of orderItems) {
+        await sendPushToDeliveryPartners(
+          item.kitchenPartnerId,
+          "Order Ready for Pickup",
+          "An order is ready for pickup from your assigned kitchen partner.",
+          `/delivery-partner/dashboard`
+        )
+      }
+    }
 
     return { success: true }
   } catch {

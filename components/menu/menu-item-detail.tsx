@@ -64,6 +64,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
   const kitchenName = item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen";
   const hasMultiplePhotos = item.photos?.length > 1;
   const price = Number(item.price);
+  const hasDiscount = item.compareAtPrice != null;
   const mrp = item.compareAtPrice ?? Math.round(price * 1.35);
   const offAmount = mrp - price;
 
@@ -222,6 +223,24 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                   )}
                 </div>
 
+                {/* Mobile: dot indicators */}
+                {hasMultiplePhotos && (
+                  <div className="md:hidden flex items-center justify-center gap-1.5 mt-3">
+                    {sortedPhotos.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setImageIndex(i)}
+                        className={`rounded-full transition-all ${
+                          i === imageIndex
+                            ? "h-2 w-5 bg-primary"
+                            : "h-2 w-2 bg-muted-foreground/30"
+                        }`}
+                        aria-label={`View image ${i + 1}`}
+                      />
+                    ))}
+                  </div>
+                )}
+
                 {/* Desktop Thumbnail carousel - centered below image */}
                 {hasMultiplePhotos && (
                   <div className="hidden md:flex items-center justify-center gap-2 mt-8 px-10 relative group/carousel">
@@ -282,10 +301,14 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                 <div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl lg:text-3xl font-bold text-foreground">₹{price}</span>
-                    <span className="text-sm lg:text-base text-muted-foreground line-through">₹{mrp}</span>
-                    <span className="text-xs font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
-                      ₹{offAmount} OFF
-                    </span>
+                    {hasDiscount && (
+                      <>
+                        <span className="text-sm lg:text-base text-muted-foreground line-through">₹{mrp}</span>
+                        <span className="text-xs font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
+                          ₹{offAmount} OFF
+                        </span>
+                      </>
+                    )}
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">(incl. of all taxes)</p>
                 </div>
@@ -489,13 +512,17 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
               )}
               <div>
                 <p className="text-sm font-bold text-foreground">{item.name}</p>
-                <div className="flex items-baseline gap-1.5">
-                  <span className="text-base font-bold text-primary">₹{price}</span>
-                  <span className="text-xs text-muted-foreground line-through">₹{mrp}</span>
-                  <span className="text-[10px] font-semibold text-green-600 bg-green-50 px-1 py-0.5 rounded">
-                    ₹{offAmount} OFF
-                  </span>
-                </div>
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-base font-bold text-primary">₹{price}</span>
+                    {hasDiscount && (
+                      <>
+                        <span className="text-xs text-muted-foreground line-through">₹{mrp}</span>
+                        <span className="text-[10px] font-semibold text-green-600 bg-green-50 px-1 py-0.5 rounded">
+                          ₹{offAmount} OFF
+                        </span>
+                      </>
+                    )}
+                  </div>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -526,8 +553,12 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
             <p className="text-sm font-semibold text-foreground truncate">{item.name}</p>
             <div className="flex items-baseline gap-1.5">
               <span className="text-base font-bold text-primary">₹{price}</span>
-              <span className="text-xs text-muted-foreground line-through">₹{mrp}</span>
-              <span className="text-[10px] font-semibold text-green-600">₹{offAmount} OFF</span>
+              {hasDiscount && (
+                <>
+                  <span className="text-xs text-muted-foreground line-through">₹{mrp}</span>
+                  <span className="text-[10px] font-semibold text-green-600">₹{offAmount} OFF</span>
+                </>
+              )}
             </div>
           </div>
           <Button

@@ -1,6 +1,16 @@
+"use client";
+
 import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
 
 export function SiteFooter() {
+  const { data: session } = useSession();
+  const user = session?.user;
+  const role = user?.role;
+
+  const isDeliveryPartner = role === "deliverypartner";
+  const isKitchenPartner = role === "kitchenpartner";
+
   return (
     <footer className="bg-background border-t border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
@@ -29,8 +39,12 @@ export function SiteFooter() {
               Partner With Us
             </h3>
             <div className="flex flex-col gap-3">
-              <FooterLink href="/delivery-partner/login">Become a Delivery Partner</FooterLink>
-              <FooterLink href="#">Sell on RRC Kitchen</FooterLink>
+              <FooterLink href={isDeliveryPartner ? "/delivery-partner/dashboard" : "/delivery-partner/login"}>
+                Become a Delivery Partner
+              </FooterLink>
+              <FooterLink href={isKitchenPartner ? "/kitchen/dashboard" : "/kitchen"}>
+                Sell on RRC Kitchen
+              </FooterLink>
             </div>
           </div>
 

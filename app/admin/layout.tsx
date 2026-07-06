@@ -6,6 +6,8 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { SwUpdateBanner } from "@/components/patterns/sw-update-banner";
+import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init";
 import { useSession, signOut } from "@/lib/auth-client";
 import {
   SidebarProvider,
@@ -76,7 +78,7 @@ export default function AdminLayout({
   }
 
   return (
-    <SidebarProvider defaultOpen={true}>
+    <><SidebarProvider defaultOpen={true}>
       <div className="min-h-screen bg-gray-50 flex w-full">
         <Sidebar collapsible="offcanvas" side="left">
           <SidebarHeader className="border-b border-border px-4 h-16 flex-row items-center justify-between">
@@ -145,6 +147,9 @@ export default function AdminLayout({
           </main>
         </div>
       </div>
-    </SidebarProvider>
+      </SidebarProvider>
+      <SwUpdateBanner />
+      <PushSubscriptionInit />
+    </>
   );
 }

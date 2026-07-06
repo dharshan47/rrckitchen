@@ -79,6 +79,7 @@ export const ModelName = {
   Review: 'Review',
   DeliveryReview: 'DeliveryReview',
   Payment: 'Payment',
+  PushSubscription: 'PushSubscription',
   DeliverySlot: 'DeliverySlot'
 } as const
 
@@ -472,6 +473,19 @@ export const PaymentScalarFieldEnum = {
 } as const
 
 export type PaymentScalarFieldEnum = (typeof PaymentScalarFieldEnum)[keyof typeof PaymentScalarFieldEnum]
+
+
+export const PushSubscriptionScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  endpoint: 'endpoint',
+  p256dh: 'p256dh',
+  auth: 'auth',
+  userAgent: 'userAgent',
+  createdAt: 'createdAt'
+} as const
+
+export type PushSubscriptionScalarFieldEnum = (typeof PushSubscriptionScalarFieldEnum)[keyof typeof PushSubscriptionScalarFieldEnum]
 
 
 export const DeliverySlotScalarFieldEnum = {
