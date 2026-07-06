@@ -77,6 +77,7 @@ export const ModelName = {
   OrderItem: 'OrderItem',
   OrderStatusHistory: 'OrderStatusHistory',
   Review: 'Review',
+  DeliveryReview: 'DeliveryReview',
   Payment: 'Payment',
   DeliverySlot: 'DeliverySlot'
 } as const
@@ -233,7 +234,6 @@ export const KitchenPartnerKycScalarFieldEnum = {
   kitchenPartnerId: 'kitchenPartnerId',
   aadhaarVerified: 'aadhaarVerified',
   aadhaarDocumentUrl: 'aadhaarDocumentUrl',
-  fssaiNumber: 'fssaiNumber',
   addressProofUrl: 'addressProofUrl',
   reviewedByAdminId: 'reviewedByAdminId',
   reviewedAt: 'reviewedAt',
@@ -443,6 +443,19 @@ export const ReviewScalarFieldEnum = {
 } as const
 
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const DeliveryReviewScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  userId: 'userId',
+  deliveryPartnerId: 'deliveryPartnerId',
+  rating: 'rating',
+  comment: 'comment',
+  createdAt: 'createdAt'
+} as const
+
+export type DeliveryReviewScalarFieldEnum = (typeof DeliveryReviewScalarFieldEnum)[keyof typeof DeliveryReviewScalarFieldEnum]
 
 
 export const PaymentScalarFieldEnum = {

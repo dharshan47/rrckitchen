@@ -410,6 +410,7 @@ export const ModelName = {
   OrderItem: 'OrderItem',
   OrderStatusHistory: 'OrderStatusHistory',
   Review: 'Review',
+  DeliveryReview: 'DeliveryReview',
   Payment: 'Payment',
   DeliverySlot: 'DeliverySlot'
 } as const
@@ -427,7 +428,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "payment" | "deliverySlot"
+    modelProps: "user" | "role" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "payment" | "deliverySlot"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2355,6 +2356,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    DeliveryReview: {
+      payload: Prisma.$DeliveryReviewPayload<ExtArgs>
+      fields: Prisma.DeliveryReviewFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.DeliveryReviewFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryReviewPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.DeliveryReviewFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryReviewPayload>
+        }
+        findFirst: {
+          args: Prisma.DeliveryReviewFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryReviewPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.DeliveryReviewFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryReviewPayload>
+        }
+        findMany: {
+          args: Prisma.DeliveryReviewFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryReviewPayload>[]
+        }
+        create: {
+          args: Prisma.DeliveryReviewCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryReviewPayload>
+        }
+        createMany: {
+          args: Prisma.DeliveryReviewCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.DeliveryReviewCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryReviewPayload>[]
+        }
+        delete: {
+          args: Prisma.DeliveryReviewDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryReviewPayload>
+        }
+        update: {
+          args: Prisma.DeliveryReviewUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryReviewPayload>
+        }
+        deleteMany: {
+          args: Prisma.DeliveryReviewDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.DeliveryReviewUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.DeliveryReviewUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryReviewPayload>[]
+        }
+        upsert: {
+          args: Prisma.DeliveryReviewUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$DeliveryReviewPayload>
+        }
+        aggregate: {
+          args: Prisma.DeliveryReviewAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateDeliveryReview>
+        }
+        groupBy: {
+          args: Prisma.DeliveryReviewGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeliveryReviewGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.DeliveryReviewCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.DeliveryReviewCountAggregateOutputType> | number
+        }
+      }
+    }
     Payment: {
       payload: Prisma.$PaymentPayload<ExtArgs>
       fields: Prisma.PaymentFieldRefs
@@ -2678,7 +2753,6 @@ export const KitchenPartnerKycScalarFieldEnum = {
   kitchenPartnerId: 'kitchenPartnerId',
   aadhaarVerified: 'aadhaarVerified',
   aadhaarDocumentUrl: 'aadhaarDocumentUrl',
-  fssaiNumber: 'fssaiNumber',
   addressProofUrl: 'addressProofUrl',
   reviewedByAdminId: 'reviewedByAdminId',
   reviewedAt: 'reviewedAt',
@@ -2888,6 +2962,19 @@ export const ReviewScalarFieldEnum = {
 } as const
 
 export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
+
+
+export const DeliveryReviewScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  userId: 'userId',
+  deliveryPartnerId: 'deliveryPartnerId',
+  rating: 'rating',
+  comment: 'comment',
+  createdAt: 'createdAt'
+} as const
+
+export type DeliveryReviewScalarFieldEnum = (typeof DeliveryReviewScalarFieldEnum)[keyof typeof DeliveryReviewScalarFieldEnum]
 
 
 export const PaymentScalarFieldEnum = {
@@ -3285,6 +3372,7 @@ export type GlobalOmitConfig = {
   orderItem?: Prisma.OrderItemOmit
   orderStatusHistory?: Prisma.OrderStatusHistoryOmit
   review?: Prisma.ReviewOmit
+  deliveryReview?: Prisma.DeliveryReviewOmit
   payment?: Prisma.PaymentOmit
   deliverySlot?: Prisma.DeliverySlotOmit
 }

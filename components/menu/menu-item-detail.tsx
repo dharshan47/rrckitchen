@@ -10,7 +10,6 @@ import { LocationDialog } from "@/components/location";
 import {
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
   Star,
   RefreshCw,
   Truck,
@@ -19,6 +18,7 @@ import {
   Package,
   Search,
   TruckIcon,
+  Share2,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -47,14 +47,15 @@ interface MenuItemDetailProps {
 
 export function MenuItemDetail({ item }: MenuItemDetailProps) {
   const [imageIndex, setImageIndex] = useState(0);
+  const [showPrevCarousel, setShowPrevCarousel] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
   const [showMobileSticky, setShowMobileSticky] = useState(false);
   const [passedContent, setPassedContent] = useState(false);
   const [atBottom, setAtBottom] = useState(false);
+  const [touchStart, setTouchStart] = useState<number | null>(null);
   const addToCart = useCartActions().addToCart;
   const deliveryAddress = useMenuDeliveryAddress();
   const imageSectionRef = useRef<HTMLDivElement>(null);
-  const pageTopRef = useRef<HTMLDivElement>(null);
   const howToOrderRef = useRef<HTMLDivElement>(null);
   const pageBottomRef = useRef<HTMLDivElement>(null);
 
@@ -88,6 +89,33 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
     });
   }, [addToCart, item, price, kitchenName]);
 
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    setTouchStart(e.touches[0].clientX);
+  }, []);
+
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchStart === null) return;
+    const diff = e.changedTouches[0].clientX - touchStart;
+    const SWIPE_THRESHOLD = 50;
+    if (Math.abs(diff) > SWIPE_THRESHOLD) {
+      if (diff > 0) {
+        handlePrevImage();
+      } else {
+        handleNextImage();
+      }
+    }
+    setTouchStart(null);
+  }, [touchStart, handlePrevImage, handleNextImage]);
+
+  const handleShare = useCallback(async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      await navigator.share({ title: item.name, text: item.name, url });
+    } else {
+      await navigator.clipboard.writeText(url);
+    }
+  }, [item.name]);
+
   // Mobile: show sticky top bar when image section scrolls past
   useEffect(() => {
     const el = imageSectionRef.current;
@@ -100,28 +128,13 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
     return () => observer.disconnect();
   }, []);
 
-  // Desktop: show bar only when How to Order section enters viewport
+  // Desktop: show compact bar when image/details section is scrolled past
+  // (i.e., when How to Order section is in view)
   useEffect(() => {
-    const el = howToOrderRef.current;
+    const el = imageSectionRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setPassedContent(true);
-      },
-      { threshold: 0 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  // Desktop: hide bar when back at top
-  useEffect(() => {
-    const el = pageTopRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) setPassedContent(false);
-      },
+      ([entry]) => setPassedContent(!entry.isIntersecting),
       { threshold: 0 }
     );
     observer.observe(el);
@@ -140,6 +153,17 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
     return () => observer.disconnect();
   }, []);
 
+  // Thumbnail Carousel: Toggle Previous button based on scroll
+  useEffect(() => {
+    const el = document.getElementById("thumb-scroll");
+    if (!el) return;
+    const handleScroll = () => {
+      setShowPrevCarousel(el.scrollLeft > 50);
+    };
+    el.addEventListener("scroll", handleScroll);
+    return () => el.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <>
       <div className="min-h-screen bg-background text-foreground">
@@ -151,8 +175,6 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
         )}
 
         <div className="mx-auto max-w-7xl px-4 lg:px-10 py-6 lg:py-10">
-          {/* Top sentinel (non-sticky, before flex container) */}
-          <div ref={pageTopRef} className="h-1" />
           {/* Top Section: Side by side on desktop */}
           <div className="flex flex-col lg:flex-row lg:gap-10">
             {/* Left Column - Image Gallery + Price + Add to Cart */}
@@ -160,72 +182,100 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
               ref={imageSectionRef}
               className="lg:w-[55%] lg:sticky lg:top-28 lg:self-start"
             >
-              {/* Main Image - BIG if single, MEDIUM if multiple */}
-              <div className={`relative rounded-2xl overflow-hidden bg-slate-100 ${hasMultiplePhotos ? "aspect-[4/3]" : "aspect-square"}`}>
-                {sortedPhotos.length > 0 ? (
-                  <>
-                    <ProgressiveImage
-                      src={sortedPhotos[imageIndex]?.imageUrl}
-                      alt={item.name}
-                      fill
-                      priority
-                    />
-                    {hasMultiplePhotos && (
-                      <>
-                        <button
-                          onClick={handlePrevImage}
-                          className="absolute left-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/90 text-foreground flex items-center justify-center shadow-md hover:bg-white transition-colors"
-                        >
-                          <ChevronLeft className="h-5 w-5" />
-                        </button>
-                        <button
-                          onClick={handleNextImage}
-                          className="absolute right-4 top-1/2 -translate-y-1/2 h-10 w-10 rounded-full bg-white/90 text-foreground flex items-center justify-center shadow-md hover:bg-white transition-colors"
-                        >
-                          <ChevronRight className="h-5 w-5" />
-                        </button>
-                        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                          {sortedPhotos.map((_, i) => (
-                            <span
-                              key={i}
-                              className={`h-2 w-2 rounded-full transition-all ${
-                                i === imageIndex
-                                  ? "bg-white shadow-md w-4"
-                                  : "bg-white/60"
-                              }`}
-                            />
-                          ))}
-                        </div>
-                      </>
+              {/* Main Image Container */}
+              <div
+                className="relative overflow-hidden bg-white"
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+              >
+                <div className="relative aspect-square w-full overflow-hidden border border-border/40 bg-slate-50 shadow-sm">
+                  {sortedPhotos.length > 0 ? (
+                    <>
+                      <ProgressiveImage
+                        src={sortedPhotos[imageIndex]?.imageUrl}
+                        alt={item.name}
+                        fill
+                        priority
+                        className="object-contain p-4"
+                      />
+                      <button
+                        onClick={() => window.history.back()}
+                        className="md:hidden absolute top-4 left-4 h-9 w-9 rounded-full bg-white/90 text-foreground flex items-center justify-center shadow-md"
+                        aria-label="Go back"
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={handleShare}
+                        className="md:hidden absolute top-4 right-4 h-9 w-9 rounded-full bg-white/90 text-foreground flex items-center justify-center shadow-md"
+                        aria-label="Share"
+                      >
+                        <Share2 className="h-5 w-5" />
+                      </button>
+                    </>
+                  ) : (
+                    <div className="h-full flex items-center justify-center">
+                      <span className="text-8xl font-bold text-muted-foreground/15">
+                        {item.name.charAt(0)}
+                      </span>
+                    </div>
+                  )}
+                </div>
+
+                {/* Desktop Thumbnail carousel - centered below image */}
+                {hasMultiplePhotos && (
+                  <div className="hidden md:flex items-center justify-center gap-2 mt-8 px-10 relative group/carousel">
+                    {/* Previous Button - only if scrolled past first page */}
+                    {showPrevCarousel && (
+                      <button
+                        className="absolute left-0 h-10 w-10 rounded-full bg-white text-foreground flex items-center justify-center shadow-lg border border-border hover:scale-110 transition-transform z-10"
+                        onClick={() => {
+                          const el = document.getElementById("thumb-scroll");
+                          if (el) el.scrollBy({ left: -400, behavior: "smooth" });
+                        }}
+                      >
+                        <ChevronLeft className="h-5 w-5" />
+                      </button>
                     )}
-                  </>
-                ) : (
-                  <div className="h-full flex items-center justify-center">
-                    <span className="text-8xl font-bold text-muted-foreground/15">
-                      {item.name.charAt(0)}
-                    </span>
+
+                    <div 
+                      id="thumb-scroll"
+                      className="flex gap-3 overflow-x-auto scrollbar-none snap-x snap-mandatory px-1"
+                      style={{ maxWidth: "600px" }}
+                    >
+                      {sortedPhotos.map((photo, i) => (
+                        <button
+                          key={photo.id ?? `thumb-${i}`}
+                          onClick={() => setImageIndex(i)}
+                          className={`snap-start shrink-0 relative overflow-hidden border-2 transition-all shadow-sm ${
+                            i === imageIndex
+                              ? "border-[#1a6a32] ring-1 ring-[#1a6a32]"
+                              : "border-transparent opacity-80 hover:opacity-100 hover:border-border"
+                          } w-20 h-20 lg:w-24 lg:h-24`}
+                        >
+                          <ProgressiveImage 
+                            src={photo.imageUrl} 
+                            alt="" 
+                            fill 
+                            className="object-contain p-1.5"
+                          />
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Next Button - visible if more images exist */}
+                    <button
+                      className="absolute right-0 h-10 w-10 rounded-full bg-white text-foreground flex items-center justify-center shadow-lg border border-border hover:scale-110 transition-transform z-10"
+                      onClick={() => {
+                        const el = document.getElementById("thumb-scroll");
+                        if (el) el.scrollBy({ left: 400, behavior: "smooth" });
+                      }}
+                    >
+                      <ChevronRight className="h-5 w-5" />
+                    </button>
                   </div>
                 )}
               </div>
-
-              {/* Carousel of all images below (only when multiple photos) */}
-              {hasMultiplePhotos && (
-                <div className="flex gap-3 mt-4 overflow-x-auto scrollbar-none pb-2 snap-x snap-mandatory">
-                  {sortedPhotos.map((photo, i) => (
-                    <button
-                      key={photo.id ?? `thumb-${i}`}
-                      onClick={() => setImageIndex(i)}
-                      className={`snap-start shrink-0 relative rounded-xl overflow-hidden border-2 transition-all ${
-                        i === imageIndex
-                          ? "border-primary ring-1 ring-primary"
-                          : "border-transparent opacity-70 hover:opacity-100"
-                      } ${sortedPhotos.length <= 3 ? "h-28 w-28 lg:h-32 lg:w-32" : "h-24 w-24 lg:h-28 lg:w-28"}`}
-                    >
-                      <ProgressiveImage src={photo.imageUrl} alt="" fill />
-                    </button>
-                  ))}
-                </div>
-              )}
 
               {/* Price + Add to Cart row below image section */}
               <div className="mt-4 lg:mt-6 flex items-center justify-between">
@@ -241,7 +291,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                 </div>
                 <Button
                   size="default"
-                  className="rounded-full px-6 h-11"
+                  className="rounded-full px-6 h-11 hidden md:inline-flex"
                   onClick={handleAddToCart}
                 >
                   <ShoppingCart className="h-4 w-4 mr-1.5" />
@@ -258,7 +308,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                   Menu
                 </Link>
                 <span>/</span>
-                <span className="text-foreground font-medium truncate max-w-[200px]">
+                <span className="text-foreground font-medium truncate max-w-50">
                   {item.name}
                 </span>
               </nav>
@@ -269,9 +319,21 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                   <h1 className="text-2xl lg:text-3xl font-bold text-foreground leading-tight">
                     {item.name}
                   </h1>
-                  <Badge variant={createBadgeVariant(item.foodType)} className="shrink-0 mt-1">
-                    {item.foodType}
-                  </Badge>
+                  <div className="flex items-center gap-2 shrink-0 mt-1">
+                    <Badge
+                      variant={createBadgeVariant(item.foodType)}
+                      className={item.foodType === "VEG" ? "bg-green-100 text-green-700 hover:bg-green-100" : ""}
+                    >
+                      {item.foodType}
+                    </Badge>
+                    <button
+                      onClick={handleShare}
+                      className="hidden lg:flex h-8 w-8 rounded-full bg-muted items-center justify-center hover:bg-muted/80 transition-colors"
+                      aria-label="Share"
+                    >
+                      <Share2 className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Net Qty & Rating */}
@@ -292,7 +354,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex items-center gap-3 rounded-xl bg-green-50 border border-green-200 p-3">
                     <RefreshCw className="h-5 w-5 text-green-600 shrink-0" />
-                    <p className="text-sm font-medium text-green-700">Same Day Exchange</p>
+                    <p className="text-sm font-medium text-green-700">Freshly Prepared</p>
                   </div>
                   <div className="flex items-center gap-3 rounded-xl bg-orange-50 border border-orange-200 p-3">
                     <Truck className="h-5 w-5 text-orange-600 shrink-0" />
@@ -309,10 +371,6 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                     <div className="flex items-start justify-between px-4 py-3">
                       <span className="text-muted-foreground">Brand</span>
                       <span className="font-medium text-foreground text-right max-w-[60%]">{kitchenName}</span>
-                    </div>
-                    <div className="flex items-start justify-between px-4 py-3">
-                      <span className="text-muted-foreground">Dietary Preference</span>
-                      <span className="font-medium text-foreground text-right">{item.foodType === "VEG" ? "Veg" : "Non Veg"}</span>
                     </div>
                     <div className="px-4 py-3">
                       <span className="text-muted-foreground block mb-1">Allergen Information</span>
@@ -380,7 +438,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
         </div>
 
         {/* Mobile bottom spacing for fixed bars */}
-        <div className="md:hidden h-24" />
+        <div className="md:hidden h-20" />
 
         {/* Bottom sentinel at end of component (bar hides when footer is near) */}
         <div ref={pageBottomRef} className="h-1" />
@@ -391,16 +449,15 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
         <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-background border-b border-border shadow-sm animate-in slide-in-from-top duration-200">
           <div className="flex items-center gap-3 px-4 h-14">
             <button
-              onClick={() => setLocationOpen(true)}
-              className="flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-foreground transition-colors shrink-0 max-w-[120px]"
+              onClick={() => window.history.back()}
+              className="shrink-0 text-foreground"
+              aria-label="Go back"
             >
-              <MapPin className="h-3.5 w-3.5 text-primary shrink-0" />
-              <span className="truncate">{deliveryAddress || "Select location"}</span>
-              <ChevronDown className="h-3 w-3 shrink-0" />
+              <ChevronLeft className="h-6 w-6" />
             </button>
             <div className="flex-1 flex items-center gap-2 min-w-0">
               {sortedPhotos[0] && (
-                <div className="h-8 w-8 rounded-md overflow-hidden bg-slate-100 shrink-0">
+                <div className="h-8 w-8 overflow-hidden bg-slate-100 shrink-0">
                   <ProgressiveImage src={sortedPhotos[0].imageUrl} alt="" fill />
                 </div>
               )}
@@ -409,13 +466,13 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                 <p className="text-xs font-medium text-primary">₹{price}</p>
               </div>
             </div>
-            <Button
-              size="sm"
-              className="rounded-full px-5 shrink-0 h-8 text-xs"
-              onClick={handleAddToCart}
+            <button
+              onClick={handleShare}
+              className="shrink-0 text-foreground"
+              aria-label="Share"
             >
-              Add
-            </Button>
+              <Share2 className="h-5 w-5" />
+            </button>
           </div>
         </div>
       )}
@@ -426,7 +483,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
           <div className="mx-auto max-w-7xl w-full px-10 h-16 flex items-center justify-between">
             <div className="flex items-center gap-4">
               {sortedPhotos[0] && (
-                <div className="h-10 w-10 rounded-lg overflow-hidden bg-slate-100 shrink-0">
+                <div className="h-10 w-10 overflow-hidden bg-slate-100 shrink-0">
                   <ProgressiveImage src={sortedPhotos[0].imageUrl} alt="" fill />
                 </div>
               )}
@@ -441,20 +498,29 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                 </div>
               </div>
             </div>
-            <Button
-              size="default"
-              className="rounded-full px-6 h-10"
-              onClick={handleAddToCart}
-            >
-              <ShoppingCart className="h-4 w-4 mr-1.5" />
-              Add to Cart
-            </Button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleShare}
+                className="h-9 w-9 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
+                aria-label="Share"
+              >
+                <Share2 className="h-4 w-4" />
+              </button>
+              <Button
+                size="default"
+                className="rounded-full px-6 h-10"
+                onClick={handleAddToCart}
+              >
+                <ShoppingCart className="h-4 w-4 mr-1.5" />
+                Add to Cart
+              </Button>
+            </div>
           </div>
         </div>
       )}
 
       {/* Mobile: Fixed Bottom Add to Cart */}
-      <div className="md:hidden fixed bottom-16 left-0 right-0 z-40 bg-background border-t border-border px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-border px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
         <div className="flex items-center justify-between gap-3">
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-foreground truncate">{item.name}</p>
@@ -503,7 +569,7 @@ function HowToBuySection({ itemName }: { itemName: string }) {
     {
       icon: Search,
       title: "Search for the item",
-      description: `Search for "${itemName}" in the RrcKitchen app or browse through the menu section to find it.`,
+      description: `Search for "${itemName}" in the RRC Kitchen app or browse through the menu section to find it.`,
     },
     {
       icon: Star,

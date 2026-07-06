@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Home Page', () => {
-  test('loads and displays RrcKitchen branding', async ({ page }) => {
+  test('loads and displays RRC Kitchen branding', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: /RrcKitchen/i })).toBeVisible();
+    await expect(page.getByRole('link', { name: /RRC Kitchen/i })).toBeVisible();
   });
 
   test('shows four meal time cards', async ({ page }) => {

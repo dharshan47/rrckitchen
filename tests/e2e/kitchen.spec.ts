@@ -46,10 +46,10 @@ test.describe('Kitchen Landing Page', () => {
     await expect(page.getByText(/Frequently Asked/i)).toBeVisible();
   });
 
-  test('footer shows RrcKitchen link to home', async ({ page }) => {
+  test('footer shows RRC Kitchen link to home', async ({ page }) => {
     await page.goto('/kitchen');
     const footer = page.locator('footer');
-    await expect(footer.getByRole('link', { name: /RrcKitchen/i })).toBeVisible();
+    await expect(footer.getByRole('link', { name: /RRC Kitchen/i })).toBeVisible();
   });
 
   test('Register button links to login/kitchen', async ({ page }) => {

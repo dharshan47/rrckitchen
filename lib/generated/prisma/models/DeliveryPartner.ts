@@ -194,6 +194,7 @@ export type DeliveryPartnerWhereInput = {
   kyc?: Prisma.XOR<Prisma.DeliveryPartnerKycNullableScalarRelationFilter, Prisma.DeliveryPartnerKycWhereInput> | null
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemListRelationFilter
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentListRelationFilter
+  reviews?: Prisma.DeliveryReviewListRelationFilter
 }
 
 export type DeliveryPartnerOrderByWithRelationInput = {
@@ -207,6 +208,7 @@ export type DeliveryPartnerOrderByWithRelationInput = {
   kyc?: Prisma.DeliveryPartnerKycOrderByWithRelationInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemOrderByRelationAggregateInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentOrderByRelationAggregateInput
+  reviews?: Prisma.DeliveryReviewOrderByRelationAggregateInput
 }
 
 export type DeliveryPartnerWhereUniqueInput = Prisma.AtLeast<{
@@ -223,6 +225,7 @@ export type DeliveryPartnerWhereUniqueInput = Prisma.AtLeast<{
   kyc?: Prisma.XOR<Prisma.DeliveryPartnerKycNullableScalarRelationFilter, Prisma.DeliveryPartnerKycWhereInput> | null
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemListRelationFilter
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentListRelationFilter
+  reviews?: Prisma.DeliveryReviewListRelationFilter
 }, "id" | "userId">
 
 export type DeliveryPartnerOrderByWithAggregationInput = {
@@ -259,6 +262,7 @@ export type DeliveryPartnerCreateInput = {
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateInput = {
@@ -271,6 +275,7 @@ export type DeliveryPartnerUncheckedCreateInput = {
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUpdateInput = {
@@ -283,6 +288,7 @@ export type DeliveryPartnerUpdateInput = {
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateInput = {
@@ -295,6 +301,7 @@ export type DeliveryPartnerUncheckedUpdateInput = {
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateManyInput = {
@@ -434,6 +441,20 @@ export type DeliveryPartnerUpdateOneRequiredWithoutKitchenAssignmentsNestedInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutKitchenAssignmentsInput, Prisma.DeliveryPartnerUpdateWithoutKitchenAssignmentsInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutKitchenAssignmentsInput>
 }
 
+export type DeliveryPartnerCreateNestedOneWithoutReviewsInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutReviewsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutReviewsInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutReviewsInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+}
+
+export type DeliveryPartnerUpdateOneRequiredWithoutReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutReviewsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutReviewsInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutReviewsInput
+  upsert?: Prisma.DeliveryPartnerUpsertWithoutReviewsInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutReviewsInput, Prisma.DeliveryPartnerUpdateWithoutReviewsInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutReviewsInput>
+}
+
 export type DeliveryPartnerCreateWithoutUserInput = {
   id?: string
   status?: $Enums.PartnerStatus
@@ -443,6 +464,7 @@ export type DeliveryPartnerCreateWithoutUserInput = {
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutUserInput = {
@@ -454,6 +476,7 @@ export type DeliveryPartnerUncheckedCreateWithoutUserInput = {
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutUserInput = {
@@ -481,6 +504,7 @@ export type DeliveryPartnerUpdateWithoutUserInput = {
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutUserInput = {
@@ -492,6 +516,7 @@ export type DeliveryPartnerUncheckedUpdateWithoutUserInput = {
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutKycInput = {
@@ -503,6 +528,7 @@ export type DeliveryPartnerCreateWithoutKycInput = {
   user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutKycInput = {
@@ -514,6 +540,7 @@ export type DeliveryPartnerUncheckedCreateWithoutKycInput = {
   deletedAt?: Date | string | null
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutKycInput = {
@@ -541,6 +568,7 @@ export type DeliveryPartnerUpdateWithoutKycInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutKycInput = {
@@ -552,6 +580,7 @@ export type DeliveryPartnerUncheckedUpdateWithoutKycInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutCatalogueItemsInput = {
@@ -563,6 +592,7 @@ export type DeliveryPartnerCreateWithoutCatalogueItemsInput = {
   user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutCatalogueItemsInput = {
@@ -574,6 +604,7 @@ export type DeliveryPartnerUncheckedCreateWithoutCatalogueItemsInput = {
   deletedAt?: Date | string | null
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutCatalogueItemsInput = {
@@ -601,6 +632,7 @@ export type DeliveryPartnerUpdateWithoutCatalogueItemsInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutCatalogueItemsInput = {
@@ -612,6 +644,7 @@ export type DeliveryPartnerUncheckedUpdateWithoutCatalogueItemsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutKitchenAssignmentsInput = {
@@ -623,6 +656,7 @@ export type DeliveryPartnerCreateWithoutKitchenAssignmentsInput = {
   user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutKitchenAssignmentsInput = {
@@ -634,6 +668,7 @@ export type DeliveryPartnerUncheckedCreateWithoutKitchenAssignmentsInput = {
   deletedAt?: Date | string | null
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutKitchenAssignmentsInput = {
@@ -661,6 +696,7 @@ export type DeliveryPartnerUpdateWithoutKitchenAssignmentsInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutKitchenAssignmentsInput = {
@@ -672,6 +708,71 @@ export type DeliveryPartnerUncheckedUpdateWithoutKitchenAssignmentsInput = {
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerCreateWithoutReviewsInput = {
+  id?: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
+  kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerUncheckedCreateWithoutReviewsInput = {
+  id?: string
+  userId: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerCreateOrConnectWithoutReviewsInput = {
+  where: Prisma.DeliveryPartnerWhereUniqueInput
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutReviewsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutReviewsInput>
+}
+
+export type DeliveryPartnerUpsertWithoutReviewsInput = {
+  update: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutReviewsInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutReviewsInput>
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutReviewsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutReviewsInput>
+  where?: Prisma.DeliveryPartnerWhereInput
+}
+
+export type DeliveryPartnerUpdateToOneWithWhereWithoutReviewsInput = {
+  where?: Prisma.DeliveryPartnerWhereInput
+  data: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutReviewsInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutReviewsInput>
+}
+
+export type DeliveryPartnerUpdateWithoutReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
+  kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerUncheckedUpdateWithoutReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 
@@ -682,11 +783,13 @@ export type DeliveryPartnerUncheckedUpdateWithoutKitchenAssignmentsInput = {
 export type DeliveryPartnerCountOutputType = {
   catalogueItems: number
   kitchenAssignments: number
+  reviews: number
 }
 
 export type DeliveryPartnerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   catalogueItems?: boolean | DeliveryPartnerCountOutputTypeCountCatalogueItemsArgs
   kitchenAssignments?: boolean | DeliveryPartnerCountOutputTypeCountKitchenAssignmentsArgs
+  reviews?: boolean | DeliveryPartnerCountOutputTypeCountReviewsArgs
 }
 
 /**
@@ -713,6 +816,13 @@ export type DeliveryPartnerCountOutputTypeCountKitchenAssignmentsArgs<ExtArgs ex
   where?: Prisma.DeliveryPartnerKitchenAssignmentWhereInput
 }
 
+/**
+ * DeliveryPartnerCountOutputType without action
+ */
+export type DeliveryPartnerCountOutputTypeCountReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DeliveryReviewWhereInput
+}
+
 
 export type DeliveryPartnerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -725,6 +835,7 @@ export type DeliveryPartnerSelect<ExtArgs extends runtime.Types.Extensions.Inter
   kyc?: boolean | Prisma.DeliveryPartner$kycArgs<ExtArgs>
   catalogueItems?: boolean | Prisma.DeliveryPartner$catalogueItemsArgs<ExtArgs>
   kitchenAssignments?: boolean | Prisma.DeliveryPartner$kitchenAssignmentsArgs<ExtArgs>
+  reviews?: boolean | Prisma.DeliveryPartner$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.DeliveryPartnerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["deliveryPartner"]>
 
@@ -763,6 +874,7 @@ export type DeliveryPartnerInclude<ExtArgs extends runtime.Types.Extensions.Inte
   kyc?: boolean | Prisma.DeliveryPartner$kycArgs<ExtArgs>
   catalogueItems?: boolean | Prisma.DeliveryPartner$catalogueItemsArgs<ExtArgs>
   kitchenAssignments?: boolean | Prisma.DeliveryPartner$kitchenAssignmentsArgs<ExtArgs>
+  reviews?: boolean | Prisma.DeliveryPartner$reviewsArgs<ExtArgs>
   _count?: boolean | Prisma.DeliveryPartnerCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DeliveryPartnerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -779,6 +891,7 @@ export type $DeliveryPartnerPayload<ExtArgs extends runtime.Types.Extensions.Int
     kyc: Prisma.$DeliveryPartnerKycPayload<ExtArgs> | null
     catalogueItems: Prisma.$DeliveryPartnerCatalogueItemPayload<ExtArgs>[]
     kitchenAssignments: Prisma.$DeliveryPartnerKitchenAssignmentPayload<ExtArgs>[]
+    reviews: Prisma.$DeliveryReviewPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1185,6 +1298,7 @@ export interface Prisma__DeliveryPartnerClient<T, Null = never, ExtArgs extends 
   kyc<T extends Prisma.DeliveryPartner$kycArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$kycArgs<ExtArgs>>): Prisma.Prisma__DeliveryPartnerKycClient<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerKycPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   catalogueItems<T extends Prisma.DeliveryPartner$catalogueItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$catalogueItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerCatalogueItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitchenAssignments<T extends Prisma.DeliveryPartner$kitchenAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$kitchenAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  reviews<T extends Prisma.DeliveryPartner$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1685,6 +1799,30 @@ export type DeliveryPartner$kitchenAssignmentsArgs<ExtArgs extends runtime.Types
   take?: number
   skip?: number
   distinct?: Prisma.DeliveryPartnerKitchenAssignmentScalarFieldEnum | Prisma.DeliveryPartnerKitchenAssignmentScalarFieldEnum[]
+}
+
+/**
+ * DeliveryPartner.reviews
+ */
+export type DeliveryPartner$reviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DeliveryReview
+   */
+  select?: Prisma.DeliveryReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DeliveryReview
+   */
+  omit?: Prisma.DeliveryReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeliveryReviewInclude<ExtArgs> | null
+  where?: Prisma.DeliveryReviewWhereInput
+  orderBy?: Prisma.DeliveryReviewOrderByWithRelationInput | Prisma.DeliveryReviewOrderByWithRelationInput[]
+  cursor?: Prisma.DeliveryReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DeliveryReviewScalarFieldEnum | Prisma.DeliveryReviewScalarFieldEnum[]
 }
 
 /**

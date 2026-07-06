@@ -11,8 +11,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const isAdminPage = pathname.startsWith("/admin");
   const isKitchenPage = pathname.startsWith("/kitchen");
   const isDeliveryPartnerPage = pathname.startsWith("/delivery-partner");
+  const isPolicyPage = pathname.startsWith("/privacy-policy") || pathname.startsWith("/terms-of-use") || pathname.startsWith("/contact");
 
-  if (isLoginPage || isSignupPage || isAdminPage || isKitchenPage || isDeliveryPartnerPage) {
+  if (isLoginPage || isSignupPage || isAdminPage || isKitchenPage || isDeliveryPartnerPage || isPolicyPage) {
     return <>{children}</>;
   }
 

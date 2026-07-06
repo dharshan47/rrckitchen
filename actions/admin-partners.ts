@@ -9,6 +9,17 @@ export async function getAdminKitchenPartners() {
 
   const partners = await prisma.kitchenPartner.findMany({
     orderBy: { createdAt: "desc" },
+    where: {
+      user: {
+        userRoles: {
+          none: {
+            role: {
+              name: "ADMIN",
+            },
+          },
+        },
+      },
+    },
     include: {
       kitchenAlias: true,
       kitchenKyc: true,
@@ -37,7 +48,6 @@ export async function getAdminKitchenPartners() {
           upiId: p.kitchenKyc.upiId,
           gpayNumber: p.kitchenKyc.gpayNumber,
           phoneNumber: p.kitchenKyc.phoneNumber,
-          fssaiNumber: p.kitchenKyc.fssaiNumber,
           aadhaarVerified: p.kitchenKyc.aadhaarVerified,
         }
       : null,

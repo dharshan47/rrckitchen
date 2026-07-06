@@ -27,10 +27,21 @@ function MenuGridFallback() {
     <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
-          <Skeleton className="aspect-[4/3] w-full rounded-none" />
-          <div className="p-4 space-y-3">
-            <Skeleton className="h-5 w-16" />
-            <Skeleton className="h-4 w-3/4" />
+          <div className="relative aspect-square w-full overflow-hidden bg-muted">
+            <Skeleton className="absolute inset-3 rounded-none" />
+          </div>
+          <div className="px-3 pb-4 pt-1.5">
+            <div className="flex flex-col">
+              <Skeleton className="h-4 w-3/4" />
+              <div className="mt-4 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-6 w-16 rounded-md" />
+                  <Skeleton className="h-4 w-12" />
+                </div>
+                <Skeleton className="h-8 w-14 rounded-lg" />
+              </div>
+              <div className="mt-4 border-t border-dashed border-border" />
+            </div>
           </div>
         </div>
       ))}

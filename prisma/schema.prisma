@@ -35,6 +35,7 @@ model User {
   addresses          Address[]
   orders             Order[]
   reviews            Review[]
+  deliveryReviews    DeliveryReview[]
   kitchenPartner     KitchenPartner?
   deliveryPartner    DeliveryPartner?
 
@@ -188,7 +189,6 @@ model KitchenPartnerKyc {
   kitchenPartnerId    String          @unique
   aadhaarVerified     Boolean         @default(false)
   aadhaarDocumentUrl  String?
-  fssaiNumber         String?
   addressProofUrl     String?
   reviewedByAdminId   String?
   reviewedAt          DateTime?
@@ -310,6 +310,7 @@ model DeliveryPartner {
   kyc                 DeliveryPartnerKyc?
   catalogueItems      DeliveryPartnerCatalogueItem[]
   kitchenAssignments  DeliveryPartnerKitchenAssignment[]
+  reviews             DeliveryReview[]
 
   @@index([status])
 }
@@ -404,6 +405,7 @@ model Order {
   statusHistory     OrderStatusHistory[]
   payment           Payment?
   review            Review?
+  deliveryReview    DeliveryReview?
 
   @@index([userId])
   @@index([serviceDate, timeSlot])
@@ -466,6 +468,22 @@ model Review {
   kitchenPartner    KitchenPartner  @relation(fields: [kitchenPartnerId], references: [id])
 
   @@index([kitchenPartnerId])
+}
+
+model DeliveryReview {
+  id                String            @id @default(cuid())
+  orderId           String            @unique
+  userId            String
+  deliveryPartnerId String
+  rating            Int
+  comment           String?
+  createdAt         DateTime          @default(now())
+
+  order             Order             @relation(fields: [orderId], references: [id])
+  user              User              @relation(fields: [userId], references: [id])
+  deliveryPartner   DeliveryPartner   @relation(fields: [deliveryPartnerId], references: [id])
+
+  @@index([deliveryPartnerId])
 }
 
 // ============ PAYMENT ============

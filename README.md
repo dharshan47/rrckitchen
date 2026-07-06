@@ -8,7 +8,7 @@ A multi-vendor tiffin / meal delivery marketplace connecting customers, kitchen 
 - **Cart** — Client-side cart with add/remove/quantity/clear actions
 - **Ordering** — Place orders with delivery address and time slot, tracked through status flow (confirmed → preparing → ready for pickup → completed)
 - **Payments** — Razorpay integration (cards/UPI/netbanking) + cash on pickup
-- **Kitchen Partner Portal** — Dashboard with menu CRUD, order management, payments/payouts, profile/KYC (Aadhaar, FSSAI, bank details, UPI)
+- **Kitchen Partner Portal** — Dashboard with menu CRUD, order management, payments/payouts, profile/KYC (bank details, UPI)
 - **Delivery Partner Portal** — Dashboard, profile, bank/UPI payout details, kitchen assignments
 - **Admin Panel** — Manage kitchens (approve/reject KYC), customers, delivery partners, orders, CMS
 - **Customer Account** — Order history, profile management, saved addresses

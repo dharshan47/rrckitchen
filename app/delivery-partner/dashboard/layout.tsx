@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useContext, useState } from "react"
+import { createContext, useContext, useEffect } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -8,9 +8,19 @@ import { useQuery } from "@tanstack/react-query"
 import { signOut } from "@/lib/auth-client"
 import { getDeliveryDashboardData } from "@/actions/dashboard"
 import { Spinner } from "@/components/ui/spinner"
-import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Bike, LayoutDashboard, UserCircle, Wallet, LogOut, X, MenuIcon } from "lucide-react"
+import {
+  SidebarProvider,
+  Sidebar,
+  SidebarHeader,
+  SidebarContent,
+  SidebarFooter,
+  SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarTrigger,
+} from "@/components/ui/sidebar"
+import { Bike, LayoutDashboard, UserCircle, Wallet, LogOut } from "lucide-react"
 
 const DataContext = createContext<Awaited<ReturnType<typeof getDeliveryDashboardData>>>(null)
 
@@ -29,7 +39,6 @@ const navItems = [
 export default function DeliveryDashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
-  const [sidebarOpen, setSidebarOpen] = useState(false)
 
   const { data, isLoading } = useQuery({
     queryKey: ["delivery-dashboard"],
@@ -42,76 +51,54 @@ export default function DeliveryDashboardLayout({ children }: { children: React.
     router.push("/")
   }
 
+  useEffect(() => {
+    if (!data && !isLoading) {
+      router.push("/delivery-partner/login")
+    }
+  }, [data, isLoading, router])
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center" role="status" aria-label="Loading delivery partner dashboard">
         <Spinner className="size-8 text-muted-foreground" />
-        
       </div>
     )
   }
 
   if (!data) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card>
-          <CardContent className="p-6 text-center">
-            <p className="text-muted-foreground">Unauthorized or no delivery partner profile found.</p>
-          </CardContent>
-        </Card>
-      </div>
-    )
+    return null
   }
 
   const profile = data.profile
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
-      )}
-
-      <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-white border-r border-border transform transition-transform duration-200 ease-in-out lg:translate-x-0 lg:static lg:z-auto ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="flex flex-col h-full">
-          <div className="flex items-center justify-between px-4 h-16 border-b border-border">
+    <SidebarProvider defaultOpen={true}>
+      <div className="min-h-screen bg-gray-50 flex w-full">
+        <Sidebar collapsible="offcanvas" side="left">
+          <SidebarHeader className="border-b border-border px-4 h-16 flex-row items-center justify-between">
             <Link href="/delivery-partner/dashboard" className="flex items-center gap-2">
               <Bike className="h-6 w-6 text-primary" />
               <span className="text-lg font-extrabold tracking-tight">Delivery Hub</span>
             </Link>
-            <button className="lg:hidden" onClick={() => setSidebarOpen(false)}>
-              <X className="h-5 w-5" />
-            </button>
-          </div>
-
-          <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  onClick={() => setSidebarOpen(false)}
-                  className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
-                    isActive
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-gray-100 hover:text-foreground"
-                  }`}
-                >
-                  <item.icon className="h-5 w-5 shrink-0" />
-                  {item.label}
-                </Link>
-              )
-            })}
-          </nav>
-
-          <div className="p-3 border-t border-border">
+          </SidebarHeader>
+          <SidebarContent>
+            <SidebarMenu>
+              {navItems.map((item) => {
+                const isActive = pathname === item.href
+                return (
+                  <SidebarMenuItem key={item.href}>
+                    <SidebarMenuButton asChild isActive={isActive}>
+                      <Link href={item.href}>
+                        <item.icon />
+                        <span>{item.label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )
+              })}
+            </SidebarMenu>
+          </SidebarContent>
+          <SidebarFooter className="border-t border-border p-3">
             <div className="flex items-center gap-3 px-3 py-2 mb-2">
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{profile.name}</p>
@@ -127,51 +114,45 @@ export default function DeliveryDashboardLayout({ children }: { children: React.
               <LogOut className="h-4 w-4" />
               Sign Out
             </button>
-          </div>
-        </div>
-      </aside>
+          </SidebarFooter>
+        </Sidebar>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="sticky top-0 z-30 bg-white border-b border-border">
-          <div className="flex items-center justify-between px-4 h-16">
-            <div className="flex items-center gap-3">
-              <button
-                className="lg:hidden"
-                onClick={() => setSidebarOpen(true)}
-                aria-label="Open sidebar"
-              >
-                <MenuIcon className="h-6 w-6" />
-              </button>
-              <div className="hidden sm:flex items-center gap-2">
-                <Bike className="h-5 w-5 text-primary shrink-0" />
-                <h1 className="text-lg font-bold truncate">Delivery Partner Dashboard</h1>
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className="sticky top-0 z-30 bg-white border-b border-border">
+            <div className="flex items-center justify-between px-4 h-16">
+              <div className="flex items-center gap-3">
+                <SidebarTrigger className="flex" />
+                <div className="hidden sm:flex items-center gap-2">
+                  <Bike className="h-5 w-5 text-primary shrink-0" />
+                  <h1 className="text-lg font-bold truncate">Delivery Partner Dashboard</h1>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="hidden sm:block text-sm text-muted-foreground truncate max-w-[150px]">
+                  Welcome, {profile.name}
+                </span>
+                <Badge variant="secondary" className="hidden sm:inline-flex bg-green-100 text-green-700">
+                  Online
+                </Badge>
+                <button
+                  onClick={handleLogout}
+                  className="hidden lg:flex items-center gap-1.5 text-sm text-destructive hover:text-destructive/80 transition-colors shrink-0"
+                  aria-label="Sign out"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span className="text-xs font-semibold">Sign Out</span>
+                </button>
               </div>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="hidden sm:block text-sm text-muted-foreground truncate max-w-[150px]">
-                Welcome, {profile.name}
-              </span>
-              <Badge variant="secondary" className="hidden sm:inline-flex bg-green-100 text-green-700">
-                Online
-              </Badge>
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-1.5 text-sm text-destructive hover:text-destructive/80 transition-colors shrink-0"
-                aria-label="Sign out"
-              >
-                <LogOut className="h-4 w-4" />
-                <span className="text-xs font-semibold hidden sm:inline">Sign Out</span>
-              </button>
-            </div>
-          </div>
-        </header>
+          </header>
 
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
-          <DataContext.Provider value={data}>
-            {children}
-          </DataContext.Provider>
-        </main>
+          <main className="flex-1 overflow-y-auto p-4 md:p-6">
+            <DataContext.Provider value={data}>
+              {children}
+            </DataContext.Provider>
+          </main>
+        </div>
       </div>
-    </div>
+    </SidebarProvider>
   )
 }

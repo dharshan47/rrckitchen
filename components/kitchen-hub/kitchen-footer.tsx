@@ -12,14 +12,14 @@ export function KitchenFooter() {
               <span className="text-lg font-extrabold">Kitchen Hub</span>
             </div>
             <p className="text-sm text-muted-foreground leading-6 max-w-xs">
-              Join RrcKitchen&apos;s network of home chefs. Reach more customers, manage orders, and grow your kitchen business.
+              Join RRC Kitchen&apos;s network of home chefs. Reach more customers, manage orders, and grow your kitchen business.
             </p>
           </div>
           <div className="space-y-3">
             <h4 className="text-sm font-semibold text-foreground">Quick Links</h4>
             <div className="flex flex-col gap-2">
               <Link href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-                RrcKitchen Home
+                RRC Kitchen Home
               </Link>
               <Link href="#faq" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 FAQ
@@ -35,7 +35,7 @@ export function KitchenFooter() {
               <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 Help Center
               </Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+              <Link href="/contact" className="text-sm text-muted-foreground hover:text-primary transition-colors">
                 Contact Us
               </Link>
             </div>
@@ -43,10 +43,10 @@ export function KitchenFooter() {
         </div>
         <div className="mt-8 pt-8 border-t border-border flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-muted-foreground">
-            &copy; RrcKitchen Marketplace Private Limited
+            &copy; RRC Kitchen Marketplace Private Limited
           </p>
           <Link href="/" className="text-xs text-muted-foreground hover:text-primary transition-colors">
-            RrcKitchen
+            RRC Kitchen
           </Link>
         </div>
       </div>

@@ -1,9 +1,9 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Login Page (Customer)', () => {
-  test('loads with RrcKitchen branding', async ({ page }) => {
+  test('loads with RRC Kitchen branding', async ({ page }) => {
     await page.goto('/login');
-    await expect(page.getByRole('heading', { name: /RrcKitchen/i })).toBeVisible();
+    await expect(page.getByRole('heading', { name: /RRC Kitchen/i })).toBeVisible();
   });
 
   test('shows subtitle text', async ({ page }) => {

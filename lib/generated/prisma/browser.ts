@@ -148,6 +148,11 @@ export type OrderStatusHistory = Prisma.OrderStatusHistoryModel
  */
 export type Review = Prisma.ReviewModel
 /**
+ * Model DeliveryReview
+ * 
+ */
+export type DeliveryReview = Prisma.DeliveryReviewModel
+/**
  * Model Payment
  * 
  */

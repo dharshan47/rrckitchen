@@ -70,7 +70,7 @@ export function LocationAutocomplete({
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
-        className={`w-full h-12 pl-11 pr-4 bg-secondary border-none rounded-xl text-sm ${className ?? ""}`}
+        className={`w-full h-12 pl-11 pr-4 bg-search-bar border-none rounded-xl text-sm ${className ?? ""}`}
       />
     </div>
   )

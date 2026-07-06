@@ -172,7 +172,7 @@ function CategoryRow({
         className="flex gap-4 overflow-x-auto scrollbar-none pb-2 -mx-4 px-4 lg:mx-0 lg:px-0 snap-x snap-mandatory"
       >
         {visibleItems.map((item) => (
-          <div key={item.id} className="snap-start shrink-0 w-[220px] lg:w-[240px]">
+          <div key={item.id} className="snap-start shrink-0 w-55 lg:w-60">
             <CompoundMenuCard.Root
               item={{
                 id: item.id,
@@ -200,7 +200,7 @@ function CategoryRow({
         {hasMore && (
           <Link
             href={`/menu/category/${slug}`}
-            className="snap-start shrink-0 w-[220px] lg:w-[240px] rounded-3xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary/60 bg-muted/30"
+            className="snap-start shrink-0 w-55 lg:w-60 rounded-3xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary/60 bg-muted/30"
           >
             <span className="text-3xl font-light">→</span>
             <span className="text-sm font-semibold">View all {title}</span>

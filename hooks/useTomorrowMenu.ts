@@ -1,6 +1,6 @@
 "use client";
 
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { useDebouncedValue } from "./useDebouncedValue";
 import { menuStore } from "@/stores";
 
@@ -18,7 +18,6 @@ function buildQueryParams(search: string, foodType: string, timeSlot: string): s
 
 /**
  * Fetches tomorrow's menu items from the API.
- * Uses TanStack Query with Suspense for seamless loading experience.
  */
 export function useTomorrowMenu() {
   const searchQuery = menuStore((state) => state.searchQuery);
@@ -26,7 +25,7 @@ export function useTomorrowMenu() {
   const selectedTimeSlot = menuStore((state) => state.selectedTimeSlot);
   const debouncedSearch = useDebouncedValue(searchQuery, 350);
 
-  return useSuspenseQuery({
+  return useQuery({
     queryKey: [
       "tomorrow-menu",
       { q: debouncedSearch, foodType: selectedFoodType, timeSlot: selectedTimeSlot },

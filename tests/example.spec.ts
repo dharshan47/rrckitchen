@@ -36,7 +36,7 @@ const mockMenu = [
 test('home page loads and shows menu link', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('link', { name: /Menu/i })).toBeVisible();
-  await expect(page.getByRole('heading', { name: /RrcKitchen/i })).toBeVisible();
+  await expect(page.getByRole('heading', { name: /RRC Kitchen/i })).toBeVisible();
 });
 
 test('menu page shows controls and cart updates on add', async ({ page }) => {

@@ -29,8 +29,10 @@ import { ChartPieSimple } from "@/components/charts/pie-chart"
 import type { ChartConfig } from "@/components/ui/chart"
 import { useQuery } from "@tanstack/react-query"
 import { getAdminDashboardData } from "@/actions/dashboard"
+import { useRouter } from "next/navigation"
 
 export default function AdminOverview() {
+  const router = useRouter()
   const { data, isLoading } = useQuery({
     queryKey: ["admin-dashboard"],
     queryFn: getAdminDashboardData,
@@ -46,13 +48,8 @@ export default function AdminOverview() {
   }
 
   if (!data) {
-    return (
-      <Card>
-        <CardContent className="p-6 text-center">
-          <p className="text-muted-foreground">Unauthorized. Please log in as admin.</p>
-        </CardContent>
-      </Card>
-    )
+    router.push("/admin/login")
+    return null
   }
 
   const s = data.stats

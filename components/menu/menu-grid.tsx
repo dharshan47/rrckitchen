@@ -69,7 +69,7 @@ export default function MenuGrid({ items: propItems, onItemClick }: MenuGridProp
 
   if (!items.length) {
     return (
-      <div className="grid min-h-[384px] gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+      <div className="grid min-h-96 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
         <div className="col-span-full flex items-center justify-center">
           <p className="rounded-3xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
             No matching meals found.

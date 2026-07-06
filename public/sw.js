@@ -152,7 +152,7 @@ self.addEventListener('push', (event) => {
   try {
     const data = event.data.json();
     const options = {
-      body: data.body || 'Order update from RrcKitchen',
+      body: data.body || 'Order update from RRC Kitchen',
       icon: data.icon || '/icons/icon-192x192.png',
       badge: '/icons/badge.png',
       vibrate: [100, 50, 100],

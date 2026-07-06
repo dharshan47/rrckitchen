@@ -7,15 +7,14 @@ import { ChefHat, Clock, DollarSign, TrendingUp, Users, ShieldCheck } from "luci
 export const metadata: Metadata = {
   title: "Become a Kitchen Partner",
   description:
-    "Join RrcKitchen as a home kitchen partner in Thanjavur. Earn from your cooking skills, set your own schedule, and reach local customers. No investment needed.",
+    "Join as a home kitchen partner in Thanjavur. Earn from your cooking skills, set your own schedule, and reach local customers. No investment needed.",
   keywords: ["home kitchen partner", " Thanjavur food business", "home chef registration", "earn from cooking"],
   openGraph: {
     title: "Become a Kitchen Partner",
     description:
-      "Join RrcKitchen as a home kitchen partner in Thanjavur. Earn from your cooking skills, set your own schedule, and reach local customers.",
+      "Join as a home kitchen partner in Thanjavur. Earn from your cooking skills, set your own schedule, and reach local customers.",
     type: "website",
     locale: "en_IN",
-    siteName: "RrcKitchen",
   },
 };
 
@@ -67,13 +66,13 @@ export default function KitchenPage() {
       <KitchenNavbar />
       <main>
         {/* Hero */}
-        <section className="bg-gradient-to-b from-primary/5 to-white py-20" aria-labelledby="hero-heading">
+        <section className="bg-linear-to-b from-primary/5 to-white py-20" aria-labelledby="hero-heading">
           <div className="mx-auto max-w-4xl px-6 text-center space-y-8">
             <h1 id="hero-heading" className="text-4xl md:text-5xl font-bold tracking-tight">
               Turn Your Home Kitchen Into a Business
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto leading-7">
-              Join RrcKitchen&apos;s network of home chefs in Thanjavur. Cook what you love, set your own schedule, and earn from your passion.
+              Join RRC Kitchen&apos;s network of home chefs in Thanjavur. Cook what you love, set your own schedule, and earn from your passion.
             </p>
             <div className="flex gap-4 justify-center">
               <Button asChild size="lg" className="rounded-full">
@@ -132,7 +131,7 @@ export default function KitchenPage() {
           <div className="mx-auto max-w-2xl px-6 text-center space-y-6">
             <h2 id="cta-heading" className="text-3xl font-bold tracking-tight">Ready to Get Started?</h2>
             <p className="text-muted-foreground">
-              Join hundreds of home chefs already earning on RrcKitchen.
+              Join hundreds of home chefs already earning on RRC Kitchen.
             </p>
             <Button asChild size="lg" className="rounded-full">
               <Link href="/kitchen/signup">Register Your Kitchen</Link>

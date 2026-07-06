@@ -4,10 +4,9 @@ import { useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { MenuGrid } from "@/components/menu";
 import { useTomorrowMenu } from "@/hooks/useTomorrowMenu";
-import { useMenuFoodType, useMenuActions } from "@/stores";
+
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
 import { Button } from "@/components/ui/button";
-import type { FoodTypeFilter } from "@/stores/menuStore";
 
 interface MenuItem {
   id: string;
@@ -41,16 +40,9 @@ const timeSlotSlugs: Record<string, string> = {
 
 const timeSlotOrder = ["MORNING", "LUNCH", "EVENINGSNACKS", "DINNER"];
 
-const foodTypeTabs: { label: string; value: FoodTypeFilter }[] = [
-  { label: "All", value: "ALL" },
-  { label: "Veg", value: "VEG" },
-  { label: "Nonveg", value: "NONVEG" },
-];
-
 export function MenuContent() {
   const router = useRouter();
-  const selectedFoodType = useMenuFoodType();
-  const { setSelectedFoodType } = useMenuActions();
+
   const { data } = useTomorrowMenu();
 
   const allItems = useMemo(() => (data ?? []) as MenuItem[], [data]);
@@ -68,28 +60,13 @@ export function MenuContent() {
 
   const handleItemClick = useCallback(
     (item: { id: string }) => router.push(`/menu/${item.id}`),
-    [router]
+    [router],
   );
 
   return (
     <ErrorBoundary>
       <main className="min-h-screen bg-background text-foreground">
         <div className="mx-auto flex max-w-7xl flex-col px-6 py-10 lg:px-10">
-          <div className="flex gap-2 mb-8">
-            {foodTypeTabs.map((tab) => (
-              <Button
-                key={tab.value}
-                type="button"
-                variant={selectedFoodType === tab.value ? "default" : "outline"}
-                size="sm"
-                className="rounded-full px-5"
-                onClick={() => setSelectedFoodType(tab.value)}
-              >
-                {tab.label}
-              </Button>
-            ))}
-          </div>
-
           {Object.keys(grouped).length === 0 ? (
             <p className="py-16 text-center text-sm text-muted-foreground">
               No matching meals found.

@@ -11,11 +11,22 @@ import { createBadgeVariant, formatTimeSlot } from "@/lib/patterns";
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import { useSession } from "@/lib/auth-client";
-import { Trash2, Minus, Plus, ShoppingBag, ArrowLeft, Undo2, CreditCard, Loader2 } from "lucide-react";
+import {
+  Trash2,
+  Minus,
+  Plus,
+  ShoppingBag,
+  ArrowLeft,
+  Undo2,
+  CreditCard,
+  Loader2,
+} from "lucide-react";
 
 function CartContent() {
-  const { cart, updateQuantity, removeFromCart, clearCart, total, itemCount } = useOptimisticCart();
-  const { initiateCheckout, isProcessing, paymentResult, resetPayment } = useRazorpay();
+  const { cart, updateQuantity, removeFromCart, clearCart, total, itemCount } =
+    useOptimisticCart();
+  const { initiateCheckout, isProcessing, paymentResult, resetPayment } =
+    useRazorpay();
   const { data: session, isPending } = useSession();
 
   const handleCheckout = useCallback(async () => {
@@ -52,7 +63,6 @@ function CartContent() {
       <main className="min-h-screen bg-background text-foreground">
         <div className="mx-auto flex max-w-2xl flex-col items-center justify-center gap-6 px-4 py-24 text-center">
           <Loader2 className="h-12 w-12 animate-spin text-muted-foreground/40" />
-          
         </div>
       </main>
     );
@@ -102,10 +112,17 @@ function CartContent() {
         <div className="mb-6 flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">Your Cart</h1>
-            <p className="text-sm text-muted-foreground">{itemCount} item{itemCount !== 1 ? "s" : ""}</p>
+            <p className="text-sm text-muted-foreground">
+              {itemCount} item{itemCount !== 1 ? "s" : ""}
+            </p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => window.history.back()} title="Undo last action">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.history.back()}
+              title="Undo last action"
+            >
               <Undo2 className="mr-2 h-4 w-4" />
               Undo
             </Button>
@@ -123,12 +140,19 @@ function CartContent() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold truncate">{item.name}</span>
-                    <Badge variant={createBadgeVariant(item.foodType)} className="shrink-0 text-[9px] px-1.5 py-0">
+                    <Badge
+                      variant={createBadgeVariant(item.foodType)}
+                      className="shrink-0 text-[9px] px-1.5 py-0"
+                    >
                       {item.foodType}
                     </Badge>
                   </div>
-                  <p className="mt-0.5 text-xs text-muted-foreground">{item.kitchenName}</p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">{formatTimeSlot(item.timeSlot)}</p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {item.kitchenName}
+                  </p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {formatTimeSlot(item.timeSlot)}
+                  </p>
                   <p className="mt-1 text-sm font-bold">₹{item.price}</p>
                 </div>
 
@@ -141,7 +165,9 @@ function CartContent() {
                   >
                     <Minus className="h-3 w-3" />
                   </Button>
-                  <span className="w-6 text-center text-sm font-medium">{item.qty}</span>
+                  <span className="w-6 text-center text-sm font-medium">
+                    {item.qty}
+                  </span>
                   <Button
                     variant="outline"
                     size="icon"
@@ -201,9 +227,6 @@ function CartContent() {
               Payment failed. Please try again.
             </div>
           )}
-          <p className="text-xs text-muted-foreground text-center">
-            Secure payment via Razorpay. Pricing is being finalized.
-          </p>
         </div>
       </div>
     </main>

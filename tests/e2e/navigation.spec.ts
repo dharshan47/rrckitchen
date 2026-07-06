@@ -27,7 +27,7 @@ test.describe('Site Navigation', () => {
 
   test('navigates menu back to home', async ({ page }) => {
     await page.goto('/menu');
-    await page.getByRole('link', { name: /RrcKitchen/i }).first().click();
+    await page.getByRole('link', { name: /RRC Kitchen/i }).first().click();
     await expect(page).toHaveURL('/');
   });
 

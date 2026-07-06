@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useKitchenData } from "../layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
@@ -23,7 +24,6 @@ export default function ProfilePage() {
   const [upiId, setUpiId] = useState(kitchen.upiId ?? "")
   const [gpayNumber, setGpayNumber] = useState(kitchen.gpayNumber ?? "")
   const [phoneNumber, setPhoneNumber] = useState(kitchen.phoneNumber ?? "")
-
   const bankMutation = useMutation({
     mutationFn: () =>
       updateKitchenBankDetails({
@@ -66,12 +66,11 @@ export default function ProfilePage() {
             </div>
             <div className="space-y-2">
               <Label>Status</Label>
-              <p className="font-medium">{kitchen.status}</p>
+              <Badge variant="secondary" className="bg-green-100 text-green-700 font-medium">
+                {kitchen.status}
+              </Badge>
             </div>
-            <div className="space-y-2">
-              <Label>FSSAI</Label>
-              <p className="font-medium">{kitchen.fssaiNumber ?? "Not provided"}</p>
-            </div>
+
           </div>
         </CardContent>
       </Card>

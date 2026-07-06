@@ -24,9 +24,9 @@ describe("SkeletonCard", () => {
     expect(skeletons.length).toBeGreaterThanOrEqual(9);
   });
 
-  it("menu-item skeleton has rounded-3xl class", () => {
+  it("menu-item skeleton has rounded-xl class", () => {
     const { container } = render(<SkeletonCard variant="menu-item" />);
-    expect(container.querySelector(".rounded-3xl")).toBeInTheDocument();
+    expect(container.querySelector(".rounded-xl")).toBeInTheDocument();
   });
 
   it("cart-item skeleton has rounded-2xl class", () => {

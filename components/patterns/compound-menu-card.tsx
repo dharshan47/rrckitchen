@@ -1,9 +1,7 @@
 "use client";
 
 import { createContext, useContext, useCallback, useMemo, type ReactNode } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { createBadgeVariant } from "@/lib/patterns";
 import { ProgressiveImage } from "@/components/patterns/progressive-image";
 import { useAuthRole } from "@/stores";
 
@@ -79,13 +77,15 @@ function ImageSection({ children }: { children?: ReactNode }) {
   const { item } = useMenuCardContext();
   if (!item.imageUrl) return null;
   return (
-    <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
-      <ProgressiveImage
-        src={item.imageUrl}
-        alt={item.name}
-        fill
-        className="object-cover"
-      />
+    <div className="relative aspect-square w-full overflow-hidden bg-white p-3">
+      <div className="relative h-full w-full">
+        <ProgressiveImage
+          src={item.imageUrl}
+          alt={item.name}
+          fill
+          className="object-contain"
+        />
+      </div>
       {children}
     </div>
   );
@@ -93,11 +93,22 @@ function ImageSection({ children }: { children?: ReactNode }) {
 
 function BadgeRibbon() {
   const { item, discount } = useMenuCardContext();
+  if (item.compareAtPrice == null) return null;
+
   const savingsPercent = Math.round(((discount - item.price) / discount) * 100);
+
+  if (savingsPercent <= 0) return null;
+
   return (
-    <div className="absolute left-0 top-0 z-10">
-      <div className="relative bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-md after:absolute after:bottom-[-6px] after:left-0 after:border-l-[14px] after:border-r-[14px] after:border-t-[6px] after:border-l-primary after:border-r-primary after:border-t-transparent after:content-['']">
-        {savingsPercent}% OFF
+    <div className="absolute left-2 top-0 z-10">
+      <div
+        className="flex h-9 w-9 flex-col items-center justify-center bg-[#1B2F45] text-center text-white shadow-sm"
+        style={{
+          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 83% 92%, 66% 100%, 50% 92%, 33% 100%, 16% 92%, 0% 100%)",
+        }}
+      >
+        <span className="text-[11px] font-black leading-none">{savingsPercent}%</span>
+        <span className="text-[8px] font-black leading-none uppercase tracking-tighter">Off</span>
       </div>
     </div>
   );
@@ -107,54 +118,53 @@ function AddButtonOverlay() {
   const { item, onAddToCart } = useMenuCardContext();
   return (
     <div className="absolute bottom-2 right-2 z-10">
-      <Button
-        size="sm"
-        variant="secondary"
-        className="h-8 w-16 rounded-lg bg-background/90 text-xs font-semibold shadow-sm backdrop-blur-sm hover:bg-background"
-        onClick={(e) => { e.stopPropagation(); onAddToCart(item.id); }}
-      >
-        Add
-      </Button>
+      
     </div>
   );
 }
 
 function Header() {
-  const { item, discount } = useMenuCardContext();
-  const userRole = useAuthRole();
-  const isAdmin = userRole === "admin";
-  const hasDiscount = discount > item.price;
+  const { item, discount, onAddToCart } = useMenuCardContext();
+  const savingsAmount = discount - item.price;
+  
   return (
-    <div className="px-3 pb-3 pt-2">
-      <div className="mb-1 flex items-baseline gap-1.5">
-        <span className="text-lg font-bold text-foreground">₹{item.price}</span>
-        {hasDiscount && (
-          <span className="text-sm text-muted-foreground line-through">₹{discount}</span>
-        )}
-        <Badge variant={createBadgeVariant(item.foodType)} className="ml-auto shrink-0 text-[10px] leading-none">
-          {item.foodType}
-        </Badge>
+    <div className="px-3 pb-4 pt-1.5">
+      <div className="flex flex-col">
+        {/* Name */}
+        <h3 className="line-clamp-2 text-sm font-bold leading-snug text-foreground">
+          {item.name}
+        </h3>
+        
+        {/* Price & Add Button Row */}
+        <div className="mt-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="rounded-md bg-[#EE7005] px-2 py-0.5 text-sm font-black text-white shadow-sm">
+              ₹{item.price}
+            </div>
+            <span className="text-sm font-medium text-muted-foreground line-through">₹{discount}</span>
+          </div>
+          
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 rounded-lg font-bold border-[#EE7005] text-[#EE7005] px-4 hover:text-[#EE7005]"
+            onClick={(e) => { e.stopPropagation(); onAddToCart(item.id); }}
+          >
+            Add
+          </Button>
+        </div>
+        
+        
+
+        {/* Dashed Separator */}
+        <div className="mt-4 border-t border-dashed border-border" />
       </div>
-      <h3 className="line-clamp-2 text-sm font-semibold leading-tight text-foreground">
-        {item.name}
-      </h3>
-      {isAdmin && (
-        <p className="mt-0.5 text-[11px] text-muted-foreground">{item.kitchenName}</p>
-      )}
     </div>
   );
 }
 
 function Footer() {
-  const { item } = useMenuCardContext();
-  return (
-    <p className="px-3 pb-3 text-[10px] uppercase tracking-wider text-muted-foreground">
-      {item.timeSlot === "MORNING" ? "Breakfast" :
-       item.timeSlot === "LUNCH" ? "Lunch" :
-       item.timeSlot === "EVENINGSNACKS" ? "Snacks" :
-       item.timeSlot === "DINNER" ? "Dinner" : item.timeSlot}
-    </p>
-  );
+  return null; // Merged into Header for the combined design look
 }
 
 export const CompoundMenuCard = { Root, ImageSection, BadgeRibbon, AddButtonOverlay, Header, Footer };

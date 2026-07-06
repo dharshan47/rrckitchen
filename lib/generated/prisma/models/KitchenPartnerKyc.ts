@@ -29,7 +29,6 @@ export type KitchenPartnerKycMinAggregateOutputType = {
   kitchenPartnerId: string | null
   aadhaarVerified: boolean | null
   aadhaarDocumentUrl: string | null
-  fssaiNumber: string | null
   addressProofUrl: string | null
   reviewedByAdminId: string | null
   reviewedAt: Date | null
@@ -47,7 +46,6 @@ export type KitchenPartnerKycMaxAggregateOutputType = {
   kitchenPartnerId: string | null
   aadhaarVerified: boolean | null
   aadhaarDocumentUrl: string | null
-  fssaiNumber: string | null
   addressProofUrl: string | null
   reviewedByAdminId: string | null
   reviewedAt: Date | null
@@ -65,7 +63,6 @@ export type KitchenPartnerKycCountAggregateOutputType = {
   kitchenPartnerId: number
   aadhaarVerified: number
   aadhaarDocumentUrl: number
-  fssaiNumber: number
   addressProofUrl: number
   reviewedByAdminId: number
   reviewedAt: number
@@ -85,7 +82,6 @@ export type KitchenPartnerKycMinAggregateInputType = {
   kitchenPartnerId?: true
   aadhaarVerified?: true
   aadhaarDocumentUrl?: true
-  fssaiNumber?: true
   addressProofUrl?: true
   reviewedByAdminId?: true
   reviewedAt?: true
@@ -103,7 +99,6 @@ export type KitchenPartnerKycMaxAggregateInputType = {
   kitchenPartnerId?: true
   aadhaarVerified?: true
   aadhaarDocumentUrl?: true
-  fssaiNumber?: true
   addressProofUrl?: true
   reviewedByAdminId?: true
   reviewedAt?: true
@@ -121,7 +116,6 @@ export type KitchenPartnerKycCountAggregateInputType = {
   kitchenPartnerId?: true
   aadhaarVerified?: true
   aadhaarDocumentUrl?: true
-  fssaiNumber?: true
   addressProofUrl?: true
   reviewedByAdminId?: true
   reviewedAt?: true
@@ -212,7 +206,6 @@ export type KitchenPartnerKycGroupByOutputType = {
   kitchenPartnerId: string
   aadhaarVerified: boolean
   aadhaarDocumentUrl: string | null
-  fssaiNumber: string | null
   addressProofUrl: string | null
   reviewedByAdminId: string | null
   reviewedAt: Date | null
@@ -251,7 +244,6 @@ export type KitchenPartnerKycWhereInput = {
   kitchenPartnerId?: Prisma.StringFilter<"KitchenPartnerKyc"> | string
   aadhaarVerified?: Prisma.BoolFilter<"KitchenPartnerKyc"> | boolean
   aadhaarDocumentUrl?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
-  fssaiNumber?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
   addressProofUrl?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
   reviewedByAdminId?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
   reviewedAt?: Prisma.DateTimeNullableFilter<"KitchenPartnerKyc"> | Date | string | null
@@ -270,7 +262,6 @@ export type KitchenPartnerKycOrderByWithRelationInput = {
   kitchenPartnerId?: Prisma.SortOrder
   aadhaarVerified?: Prisma.SortOrder
   aadhaarDocumentUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  fssaiNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   addressProofUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedByAdminId?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -292,7 +283,6 @@ export type KitchenPartnerKycWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.KitchenPartnerKycWhereInput | Prisma.KitchenPartnerKycWhereInput[]
   aadhaarVerified?: Prisma.BoolFilter<"KitchenPartnerKyc"> | boolean
   aadhaarDocumentUrl?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
-  fssaiNumber?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
   addressProofUrl?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
   reviewedByAdminId?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
   reviewedAt?: Prisma.DateTimeNullableFilter<"KitchenPartnerKyc"> | Date | string | null
@@ -311,7 +301,6 @@ export type KitchenPartnerKycOrderByWithAggregationInput = {
   kitchenPartnerId?: Prisma.SortOrder
   aadhaarVerified?: Prisma.SortOrder
   aadhaarDocumentUrl?: Prisma.SortOrderInput | Prisma.SortOrder
-  fssaiNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   addressProofUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedByAdminId?: Prisma.SortOrderInput | Prisma.SortOrder
   reviewedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -335,7 +324,6 @@ export type KitchenPartnerKycScalarWhereWithAggregatesInput = {
   kitchenPartnerId?: Prisma.StringWithAggregatesFilter<"KitchenPartnerKyc"> | string
   aadhaarVerified?: Prisma.BoolWithAggregatesFilter<"KitchenPartnerKyc"> | boolean
   aadhaarDocumentUrl?: Prisma.StringNullableWithAggregatesFilter<"KitchenPartnerKyc"> | string | null
-  fssaiNumber?: Prisma.StringNullableWithAggregatesFilter<"KitchenPartnerKyc"> | string | null
   addressProofUrl?: Prisma.StringNullableWithAggregatesFilter<"KitchenPartnerKyc"> | string | null
   reviewedByAdminId?: Prisma.StringNullableWithAggregatesFilter<"KitchenPartnerKyc"> | string | null
   reviewedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"KitchenPartnerKyc"> | Date | string | null
@@ -352,7 +340,6 @@ export type KitchenPartnerKycCreateInput = {
   id?: string
   aadhaarVerified?: boolean
   aadhaarDocumentUrl?: string | null
-  fssaiNumber?: string | null
   addressProofUrl?: string | null
   reviewedByAdminId?: string | null
   reviewedAt?: Date | string | null
@@ -371,7 +358,6 @@ export type KitchenPartnerKycUncheckedCreateInput = {
   kitchenPartnerId: string
   aadhaarVerified?: boolean
   aadhaarDocumentUrl?: string | null
-  fssaiNumber?: string | null
   addressProofUrl?: string | null
   reviewedByAdminId?: string | null
   reviewedAt?: Date | string | null
@@ -388,7 +374,6 @@ export type KitchenPartnerKycUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   aadhaarVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aadhaarDocumentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fssaiNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressProofUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedByAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -407,7 +392,6 @@ export type KitchenPartnerKycUncheckedUpdateInput = {
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   aadhaarVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aadhaarDocumentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fssaiNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressProofUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedByAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -425,7 +409,6 @@ export type KitchenPartnerKycCreateManyInput = {
   kitchenPartnerId: string
   aadhaarVerified?: boolean
   aadhaarDocumentUrl?: string | null
-  fssaiNumber?: string | null
   addressProofUrl?: string | null
   reviewedByAdminId?: string | null
   reviewedAt?: Date | string | null
@@ -442,7 +425,6 @@ export type KitchenPartnerKycUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   aadhaarVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aadhaarDocumentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fssaiNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressProofUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedByAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -460,7 +442,6 @@ export type KitchenPartnerKycUncheckedUpdateManyInput = {
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   aadhaarVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aadhaarDocumentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fssaiNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressProofUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedByAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -483,7 +464,6 @@ export type KitchenPartnerKycCountOrderByAggregateInput = {
   kitchenPartnerId?: Prisma.SortOrder
   aadhaarVerified?: Prisma.SortOrder
   aadhaarDocumentUrl?: Prisma.SortOrder
-  fssaiNumber?: Prisma.SortOrder
   addressProofUrl?: Prisma.SortOrder
   reviewedByAdminId?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrder
@@ -501,7 +481,6 @@ export type KitchenPartnerKycMaxOrderByAggregateInput = {
   kitchenPartnerId?: Prisma.SortOrder
   aadhaarVerified?: Prisma.SortOrder
   aadhaarDocumentUrl?: Prisma.SortOrder
-  fssaiNumber?: Prisma.SortOrder
   addressProofUrl?: Prisma.SortOrder
   reviewedByAdminId?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrder
@@ -519,7 +498,6 @@ export type KitchenPartnerKycMinOrderByAggregateInput = {
   kitchenPartnerId?: Prisma.SortOrder
   aadhaarVerified?: Prisma.SortOrder
   aadhaarDocumentUrl?: Prisma.SortOrder
-  fssaiNumber?: Prisma.SortOrder
   addressProofUrl?: Prisma.SortOrder
   reviewedByAdminId?: Prisma.SortOrder
   reviewedAt?: Prisma.SortOrder
@@ -568,7 +546,6 @@ export type KitchenPartnerKycCreateWithoutKitchenPartnerInput = {
   id?: string
   aadhaarVerified?: boolean
   aadhaarDocumentUrl?: string | null
-  fssaiNumber?: string | null
   addressProofUrl?: string | null
   reviewedByAdminId?: string | null
   reviewedAt?: Date | string | null
@@ -585,7 +562,6 @@ export type KitchenPartnerKycUncheckedCreateWithoutKitchenPartnerInput = {
   id?: string
   aadhaarVerified?: boolean
   aadhaarDocumentUrl?: string | null
-  fssaiNumber?: string | null
   addressProofUrl?: string | null
   reviewedByAdminId?: string | null
   reviewedAt?: Date | string | null
@@ -618,7 +594,6 @@ export type KitchenPartnerKycUpdateWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   aadhaarVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aadhaarDocumentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fssaiNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressProofUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedByAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -635,7 +610,6 @@ export type KitchenPartnerKycUncheckedUpdateWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   aadhaarVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   aadhaarDocumentUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fssaiNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressProofUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedByAdminId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   reviewedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -655,7 +629,6 @@ export type KitchenPartnerKycSelect<ExtArgs extends runtime.Types.Extensions.Int
   kitchenPartnerId?: boolean
   aadhaarVerified?: boolean
   aadhaarDocumentUrl?: boolean
-  fssaiNumber?: boolean
   addressProofUrl?: boolean
   reviewedByAdminId?: boolean
   reviewedAt?: boolean
@@ -674,7 +647,6 @@ export type KitchenPartnerKycSelectCreateManyAndReturn<ExtArgs extends runtime.T
   kitchenPartnerId?: boolean
   aadhaarVerified?: boolean
   aadhaarDocumentUrl?: boolean
-  fssaiNumber?: boolean
   addressProofUrl?: boolean
   reviewedByAdminId?: boolean
   reviewedAt?: boolean
@@ -693,7 +665,6 @@ export type KitchenPartnerKycSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   kitchenPartnerId?: boolean
   aadhaarVerified?: boolean
   aadhaarDocumentUrl?: boolean
-  fssaiNumber?: boolean
   addressProofUrl?: boolean
   reviewedByAdminId?: boolean
   reviewedAt?: boolean
@@ -712,7 +683,6 @@ export type KitchenPartnerKycSelectScalar = {
   kitchenPartnerId?: boolean
   aadhaarVerified?: boolean
   aadhaarDocumentUrl?: boolean
-  fssaiNumber?: boolean
   addressProofUrl?: boolean
   reviewedByAdminId?: boolean
   reviewedAt?: boolean
@@ -725,7 +695,7 @@ export type KitchenPartnerKycSelectScalar = {
   phoneNumber?: boolean
 }
 
-export type KitchenPartnerKycOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kitchenPartnerId" | "aadhaarVerified" | "aadhaarDocumentUrl" | "fssaiNumber" | "addressProofUrl" | "reviewedByAdminId" | "reviewedAt" | "bankName" | "bankAccountNumber" | "ifscCode" | "accountHolderName" | "upiId" | "gpayNumber" | "phoneNumber", ExtArgs["result"]["kitchenPartnerKyc"]>
+export type KitchenPartnerKycOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kitchenPartnerId" | "aadhaarVerified" | "aadhaarDocumentUrl" | "addressProofUrl" | "reviewedByAdminId" | "reviewedAt" | "bankName" | "bankAccountNumber" | "ifscCode" | "accountHolderName" | "upiId" | "gpayNumber" | "phoneNumber", ExtArgs["result"]["kitchenPartnerKyc"]>
 export type KitchenPartnerKycInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   kitchenPartner?: boolean | Prisma.KitchenPartnerDefaultArgs<ExtArgs>
 }
@@ -746,7 +716,6 @@ export type $KitchenPartnerKycPayload<ExtArgs extends runtime.Types.Extensions.I
     kitchenPartnerId: string
     aadhaarVerified: boolean
     aadhaarDocumentUrl: string | null
-    fssaiNumber: string | null
     addressProofUrl: string | null
     reviewedByAdminId: string | null
     reviewedAt: Date | null
@@ -1185,7 +1154,6 @@ export interface KitchenPartnerKycFieldRefs {
   readonly kitchenPartnerId: Prisma.FieldRef<"KitchenPartnerKyc", 'String'>
   readonly aadhaarVerified: Prisma.FieldRef<"KitchenPartnerKyc", 'Boolean'>
   readonly aadhaarDocumentUrl: Prisma.FieldRef<"KitchenPartnerKyc", 'String'>
-  readonly fssaiNumber: Prisma.FieldRef<"KitchenPartnerKyc", 'String'>
   readonly addressProofUrl: Prisma.FieldRef<"KitchenPartnerKyc", 'String'>
   readonly reviewedByAdminId: Prisma.FieldRef<"KitchenPartnerKyc", 'String'>
   readonly reviewedAt: Prisma.FieldRef<"KitchenPartnerKyc", 'DateTime'>

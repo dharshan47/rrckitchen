@@ -7,10 +7,10 @@ export const revalidate = 3600;
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const item = await getMenuItemById(id);
-  if (!item) return { title: "Item Not Found — RrcKitchen" };
+  if (!item) return { title: "Item Not Found" };
   return {
-    title: `${item.name} — RrcKitchen`,
-    description: item.description ?? `Order ${item.name} for tomorrow from RrcKitchen.`,
+    title: `${item.name}`,
+    description: item.description ?? `Order ${item.name} for tomorrow from RRC Kitchen.`,
   };
 }
 

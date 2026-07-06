@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!label) return { title: "Category Not Found" };
   return {
     title: `Buy ${label} Foods`,
-    description: `Order delicious ${label.toLowerCase()} meals for tomorrow from RrcKitchen. Browse home-cooked options and order now.`,
+    description: `Order delicious ${label.toLowerCase()} meals for tomorrow from RRC Kitchen. Browse home-cooked options and order now.`,
   };
 }
 

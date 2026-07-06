@@ -97,14 +97,14 @@ export function useRazorpay() {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
         amount: order.amount,
         currency: order.currency,
-        name: "RrcKitchen",
+        name: "RRC Kitchen",
         description: `Order for ${items.length} item(s)`,
         order_id: order.orderId,
         prefill: {
           contact: phoneNumber,
         },
         theme: {
-          color: "#f97316",
+          color: "#EE7005",
         },
         config: {
           display: {

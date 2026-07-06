@@ -18,33 +18,61 @@ export async function getUserOrders() {
       orderItems: {
         include: {
           menuItem: { select: { name: true, foodType: true, photos: { take: 1, orderBy: { sortOrder: "asc" } } } },
+          kitchenPartner: {
+            include: {
+              deliveryPartnerAssignments: {
+                where: { status: "DELIVERED" },
+                include: {
+                  deliveryPartner: {
+                    select: {
+                      id: true,
+                      user: { select: { name: true } },
+                    },
+                  },
+                },
+                take: 1,
+              },
+            },
+          },
         },
       },
       address: { select: { lineOne: true, lineTwo: true, pincode: true } },
       payment: { select: { status: true, provider: true } },
+      deliveryReview: { select: { id: true, rating: true, comment: true } },
     },
     orderBy: { createdAt: "desc" },
   })
 
-  return orders.map((o) => ({
-    id: o.id,
-    status: o.status,
-    serviceDate: o.serviceDate.toISOString(),
-    timeSlot: o.timeSlot,
-    totalAmount: o.totalAmount.toString(),
-    createdAt: o.createdAt.toISOString(),
-    items: o.orderItems.map((i) => ({
-      name: i.menuItem.name,
-      foodType: i.menuItem.foodType,
-      quantity: i.quantity,
-      unitPrice: i.unitPrice.toString(),
-      imageUrl: i.menuItem.photos[0]?.imageUrl ?? null,
-    })),
-    address: o.address
-      ? `${o.address.lineOne}${o.address.lineTwo ? `, ${o.address.lineTwo}` : ""}, ${o.address.pincode}`
-      : null,
-    paymentStatus: o.payment?.status ?? null,
-  }))
+  return orders.map((o) => {
+    const kitchenPartner = o.orderItems[0]?.kitchenPartner
+    const deliveryAssignment = kitchenPartner?.deliveryPartnerAssignments[0]
+    return {
+      id: o.id,
+      status: o.status,
+      serviceDate: o.serviceDate.toISOString(),
+      timeSlot: o.timeSlot,
+      totalAmount: o.totalAmount.toString(),
+      createdAt: o.createdAt.toISOString(),
+      items: o.orderItems.map((i) => ({
+        name: i.menuItem.name,
+        foodType: i.menuItem.foodType,
+        quantity: i.quantity,
+        unitPrice: i.unitPrice.toString(),
+        imageUrl: i.menuItem.photos[0]?.imageUrl ?? null,
+      })),
+      address: o.address
+        ? `${o.address.lineOne}${o.address.lineTwo ? `, ${o.address.lineTwo}` : ""}, ${o.address.pincode}`
+        : null,
+      paymentStatus: o.payment?.status ?? null,
+      deliveryReview: o.deliveryReview ?? null,
+      deliveryPartner: deliveryAssignment
+        ? {
+            id: deliveryAssignment.deliveryPartner.id,
+            name: deliveryAssignment.deliveryPartner.user?.name ?? "Delivery Partner",
+          }
+        : null,
+    }
+  })
 }
 
 export type UserOrder = Awaited<ReturnType<typeof getUserOrders>>[number]
@@ -54,6 +82,9 @@ export async function getAdminOrders() {
   if (!session?.user?.id) return []
 
   const orders = await prisma.order.findMany({
+    where: {
+      payment: { status: "SUCCESS" },
+    },
     include: {
       user: { select: { name: true } },
       orderItems: {

@@ -105,7 +105,7 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
         {step === "phone" && (
           <form onSubmit={phoneForm.handleSubmit(onPhoneSubmit)} className="grid gap-5">
             <div className="grid gap-2">
-              <Label htmlFor="phone" className="text-sm font-medium">Mobile number</Label>
+              <Label htmlFor="phone" className="text-sm font-medium">Phone number</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                 <Input

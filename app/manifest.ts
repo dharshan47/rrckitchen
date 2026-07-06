@@ -2,14 +2,14 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "RrcKitchen — Thanjavur home food delivery",
-    short_name: "RrcKitchen",
+    name: "RRC Kitchen — Thanjavur home food delivery",
+    short_name: "RRC Kitchen",
     description:
       "Order fresh home-cooked meals from local kitchens in Thanjavur. Next-day delivery with OTP login and Razorpay checkout.",
     start_url: "/",
     display: "standalone",
-    background_color: "#ffffff",
-    theme_color: "#f97316",
+    background_color: "#FFFFFF",
+    theme_color: "#EE7005",
     orientation: "portrait-primary",
     categories: ["food", "lifestyle"],
     lang: "en",

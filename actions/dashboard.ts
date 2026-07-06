@@ -148,6 +148,7 @@ export async function getAdminDashboardData() {
         user: { select: { name: true } },
         _count: { select: { kitchenAssignments: true } },
         kyc: true,
+        reviews: { select: { rating: true } },
       },
     }),
   ])
@@ -227,11 +228,17 @@ export async function getAdminDashboardData() {
     }
   })
 
-  const deliveryPerformance = deliveryPartnersData.map((s) => ({
-    name: s.user?.name ?? "Delivery Partner",
-    deliveries: s._count.kitchenAssignments,
-    rating: 0,
-  }))
+  const deliveryPerformance = deliveryPartnersData.map((s) => {
+    const avgRating =
+      s.reviews.length > 0
+        ? s.reviews.reduce((sum, r) => sum + r.rating, 0) / s.reviews.length
+        : 0
+    return {
+      name: s.user?.name ?? "Delivery Partner",
+      deliveries: s._count.kitchenAssignments,
+      rating: Math.round(avgRating * 10) / 10,
+    }
+  })
 
   const recentOrders = recentOrdersData.map((o) => {
     const kitchen = o.orderItems[0]?.kitchenPartner?.kitchenAlias?.displayName ?? "Unknown"
@@ -474,7 +481,6 @@ export async function getKitchenDashboardData() {
       id: kitchenPartner.id,
       displayName: kitchenPartner.kitchenAlias?.displayName ?? "My Kitchen",
       status: kitchenPartner.status,
-      fssaiNumber: kitchenPartner.kitchenKyc?.fssaiNumber ?? null,
       bankName: kitchenPartner.kitchenKyc?.bankName ?? null,
       bankAccountNumber: kitchenPartner.kitchenKyc?.bankAccountNumber ?? null,
       ifscCode: kitchenPartner.kitchenKyc?.ifscCode ?? null,
@@ -720,6 +726,7 @@ export async function getDeliveryDashboardData() {
         },
         orderBy: { createdAt: "desc" },
       },
+      reviews: { select: { rating: true } },
     },
   })
 
@@ -735,6 +742,7 @@ export async function getDeliveryDashboardData() {
           },
           orderBy: { createdAt: "desc" },
         },
+        reviews: { select: { rating: true } },
       },
     })
   }
@@ -743,6 +751,11 @@ export async function getDeliveryDashboardData() {
   const completedAssignments = deliveryPartner.kitchenAssignments.filter((a) => a.status === "DELIVERED").length
   const pendingAssignments = deliveryPartner.kitchenAssignments.filter((a) => a.status === "PENDING").length
   const cancelledAssignments = deliveryPartner.kitchenAssignments.filter((a) => a.status === "CANCELLED").length
+
+  const avgRating =
+    deliveryPartner.reviews.length > 0
+      ? deliveryPartner.reviews.reduce((sum, r) => sum + r.rating, 0) / deliveryPartner.reviews.length
+      : 0
 
   const recentAssignments = deliveryPartner.kitchenAssignments.slice(0, 10).map((a) => ({
     id: a.id,
@@ -824,7 +837,7 @@ export async function getDeliveryDashboardData() {
       todayEarnings: 0,
       weeklyEarnings: 0,
       monthlyEarnings: 0,
-      rating: 0,
+      rating: Math.round(avgRating * 10) / 10,
       distanceTravelled: 0,
     },
     assignments: recentAssignments,

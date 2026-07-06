@@ -1,6 +1,6 @@
 {
-  "name": "RrcKitchen",
-  "short_name": "RrcKitchen",
+  "name": "RRC Kitchen",
+  "short_name": "RRC Kitchen",
   "description": "Thanjavur-first home food delivery PWA built with Next.js and shadcn UI.",
   "start_url": "/",
   "display": "standalone",

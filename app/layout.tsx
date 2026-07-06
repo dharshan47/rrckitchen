@@ -21,16 +21,16 @@ const geistMono = Geist_Mono({
 });
 
 export const viewport: Viewport = {
-  themeColor: "#f97316",
+  themeColor: "#EE7005",
 };
 
 export const metadata: Metadata = {
-  title: { default: "RrcKitchen — Thanjavur home meals", template: "%s — RrcKitchen" },
+  title: { default: "RRC Kitchen", template: "%s" },
   description:
     "Order fresh home-cooked meals from local kitchens in Thanjavur for next-day delivery. Browse menus by time slot, filter by Veg/Non-Veg, and pay securely.",
   icons: {
-    icon: "/next.svg",
-    apple: "/next.svg",
+    icon: "/Logo.png",
+    apple: "/Logo.png",
   },
   manifest: "/manifest.webmanifest",
   other: {
@@ -51,7 +51,7 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://checkout.razorpay.com" />
         <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
-        <link rel="preload" href="/next.svg" as="image" />
+        <link rel="preload" href="/Logo.png" as="image" />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <Providers>

@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { ArrowLeft, Package, Check, ChefHat, Bike, XCircle, RefreshCw, Loader2 } from "lucide-react"
+import { ArrowLeft, Package, Check, ChefHat, Bike, XCircle, RefreshCw, Loader2, Star } from "lucide-react"
 import { Button, Card, Badge } from "@/components/ui"
 import {
   Dialog,
@@ -19,6 +19,7 @@ import { useSession } from "@/lib/auth-client"
 import { getUserOrders, cancelOrder, type UserOrder } from "@/actions/orders"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { DeliveryRatingDialog } from "@/components/delivery/delivery-rating-dialog"
 
 const statusFlow: { key: UserOrder["status"]; label: string; icon: typeof Check }[] = [
   { key: "CONFIRMED", label: "Confirmed", icon: Check },
@@ -45,6 +46,7 @@ export default function AccountOrdersPage() {
   const queryClient = useQueryClient()
   const { data: session, isPending: sessionLoading } = useSession()
   const [cancellingOrder, setCancellingOrder] = useState<string | null>(null)
+  const [ratingOrder, setRatingOrder] = useState<{ id: string; deliveryPartnerId: string; deliveryPartnerName: string } | null>(null)
 
   const { data: orders = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["orders"],
@@ -125,7 +127,7 @@ export default function AccountOrdersPage() {
         ) : (
           <div className="space-y-6">
             {orders.map((order) => (
-              <OrderCard key={order.id} order={order} onCancel={() => setCancellingOrder(order.id)} />
+              <OrderCard key={order.id} order={order} onCancel={() => setCancellingOrder(order.id)} onRateDelivery={() => setRatingOrder({ id: order.id, deliveryPartnerId: order.deliveryPartner!.id, deliveryPartnerName: order.deliveryPartner!.name })} />
             ))}
           </div>
         )}
@@ -151,11 +153,19 @@ export default function AccountOrdersPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <DeliveryRatingDialog
+        open={!!ratingOrder}
+        onOpenChange={(open) => { if (!open) setRatingOrder(null) }}
+        orderId={ratingOrder?.id ?? ""}
+        deliveryPartnerId={ratingOrder?.deliveryPartnerId ?? ""}
+        deliveryPartnerName={ratingOrder?.deliveryPartnerName ?? "Delivery Partner"}
+      />
     </main>
   )
 }
 
-function OrderCard({ order, onCancel }: { order: UserOrder; onCancel: () => void }) {
+function OrderCard({ order, onCancel, onRateDelivery }: { order: UserOrder; onCancel: () => void; onRateDelivery: () => void }) {
   const isCancelled = order.status === "CANCELLED" || order.status === "REFUNDED"
   const canCancel = !isCancelled && (order.status === "CONFIRMED" || order.status === "PREPARING")
   const currentIdx = isCancelled ? 0 : getStatusIndex(order.status)
@@ -253,7 +263,19 @@ function OrderCard({ order, onCancel }: { order: UserOrder; onCancel: () => void
             </Button>
           )}
         </div>
-        {order.address && <p className="text-xs text-muted-foreground truncate max-w-48">{order.address}</p>}
+        <div className="flex items-center gap-2">
+          {order.status === "COMPLETED" && order.deliveryPartner && !order.deliveryReview && (
+            <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={onRateDelivery}>
+              <Star className="h-3 w-3" /> Rate Delivery
+            </Button>
+          )}
+          {order.deliveryReview && (
+            <span className="text-xs text-muted-foreground flex items-center gap-1">
+              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" /> {order.deliveryReview.rating}/5
+            </span>
+          )}
+          {order.address && <p className="text-xs text-muted-foreground truncate max-w-48">{order.address}</p>}
+        </div>
       </div>
     </Card>
   )

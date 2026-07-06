@@ -40,9 +40,10 @@ interface MenuItemData {
 }
 
 function FoodTypeBadge({ type }: { type: string }) {
+  const isVeg = type === "VEG"
   return (
-    <Badge variant={type === "VEG" ? "secondary" : "destructive"}>
-      {type === "VEG" ? "Veg" : "Non-Veg"}
+    <Badge variant={isVeg ? "secondary" : "destructive"} className={isVeg ? "bg-green-100 text-green-700 hover:bg-green-100" : ""}>
+      {isVeg ? "Veg" : "Non-Veg"}
     </Badge>
   )
 }

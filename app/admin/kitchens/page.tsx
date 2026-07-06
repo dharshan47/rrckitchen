@@ -4,11 +4,9 @@ import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Search, Eye, Ban, CheckCircle, XCircle, Loader2 } from "lucide-react"
 import { toast } from "sonner"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Spinner } from "@/components/ui/spinner"
 import {
   Table,
   TableBody,
@@ -25,6 +23,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { getAdminKitchenPartners, updateKitchenPartnerStatus } from "@/actions/admin-partners"
+import { SkeletonCard } from "@/components/patterns/skeleton-card"
 
 const statusStyles: Record<string, string> = {
   ACTIVE: "bg-green-100 text-green-700",
@@ -73,8 +72,31 @@ export default function AdminKitchensPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Spinner className="size-8 text-muted-foreground" />
+      <div className="space-y-6">
+        <Card>
+          <CardHeader>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <CardTitle>Kitchen Partners</CardTitle>
+                <p className="text-sm text-muted-foreground">Manage all registered kitchen partners</p>
+              </div>
+              <div className="relative w-full sm:w-72">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search by name, status, phone..."
+                  value=""
+                  disabled
+                  className="w-full h-12 pl-11 pr-4 bg-search-bar border-none rounded-xl text-sm"
+                />
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4 overflow-hidden">
+              <SkeletonCard variant="menu-item" count={6} />
+            </div>
+          </CardContent>
+        </Card>
       </div>
     )
   }
@@ -83,18 +105,18 @@ export default function AdminKitchensPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
               <CardTitle>Kitchen Partners</CardTitle>
               <p className="text-sm text-muted-foreground">Manage all registered kitchen partners</p>
             </div>
-            <div className="relative w-72">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <div className="relative w-full sm:w-72">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search by name, status, phone..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-10"
+                className="w-full h-12 pl-11 pr-4 bg-search-bar border-none rounded-xl text-sm"
               />
             </div>
           </div>
@@ -221,10 +243,7 @@ export default function AdminKitchensPage() {
                   <p className="text-muted-foreground text-xs">Phone (KYC)</p>
                   <p className="font-medium">{selected.kyc.phoneNumber ?? "—"}</p>
                 </div>
-                <div>
-                  <p className="text-muted-foreground text-xs">FSSAI Number</p>
-                  <p className="font-medium">{selected.kyc.fssaiNumber ?? "—"}</p>
-                </div>
+
               </div>
               <div className="border-t pt-3">
                 <p className="text-xs text-muted-foreground">

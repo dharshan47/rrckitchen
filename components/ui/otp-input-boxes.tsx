@@ -63,7 +63,7 @@ export function OtpInputBoxes({ value, onChange, disabled, className }: OtpInput
   );
 
   return (
-    <div className={cn("flex items-center justify-center gap-2", className)} onPaste={handlePaste}>
+    <div className={cn("flex items-center justify-center gap-1.5 sm:gap-2", className)} onPaste={handlePaste}>
       {Array.from({ length: OTP_LENGTH }).map((_, index) => (
         <input
           key={index}
@@ -79,7 +79,7 @@ export function OtpInputBoxes({ value, onChange, disabled, className }: OtpInput
           disabled={disabled}
           aria-label={`Digit ${index + 1}`}
           className={cn(
-            "flex size-12 items-center justify-center rounded-xl border-2 border-border bg-background text-center text-lg font-bold text-foreground shadow-sm outline-none transition-all",
+            "flex size-10 sm:size-12 items-center justify-center rounded-xl border-2 border-border bg-background text-center text-sm sm:text-lg font-bold text-foreground shadow-sm outline-none transition-all",
             "focus:border-primary focus:ring-2 focus:ring-primary/20",
             "data-[filled=true]:border-primary/60",
             "disabled:cursor-not-allowed disabled:opacity-50",

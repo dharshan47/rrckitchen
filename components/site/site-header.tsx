@@ -38,6 +38,8 @@ export function SiteHeader() {
   const isCartPage = pathname === "/cart";
   const isAccountPage = pathname.startsWith("/account/");
   const isMenuDetailPage = pathname.startsWith("/menu/") && pathname !== "/menu";
+  const isMenuSlugPage = pathname.startsWith("/menu/category/");
+  const hideNav = isMenuDetailPage || isMenuSlugPage || isAccountPage;
 
   return (
     <>
@@ -69,7 +71,7 @@ export function SiteHeader() {
                 placeholder="Search for meals.."
                 value={searchQuery}
                 onChange={handleMobileSearchChange}
-                className="w-full h-12 pl-12 pr-4 bg-secondary border-none rounded-xl text-sm focus-visible:ring-2 focus-visible:ring-primary placeholder:text-muted-foreground"
+                className="w-full h-12 pl-12 pr-4 bg-search-bar border-none rounded-xl text-sm focus-visible:ring-2 focus-visible:ring-primary placeholder:text-muted-foreground"
               />
             </div>
           </div>
@@ -121,50 +123,32 @@ export function SiteHeader() {
       </header>
 
       {/* Mobile Header */}
+      {!hideNav && (
       <header className="sticky top-0 z-50 md:hidden bg-background border-b border-border px-4 py-3 space-y-3">
         <div className="flex items-center justify-between">
           <Link href="/" className="text-xl font-extrabold text-primary tracking-tight">
-            RrcKitchen
+            RRC Kitchen
           </Link>
-          <div className="flex items-center gap-3">
-            <Link href={cartHref} className="relative" aria-label="Shopping cart">
-              <ShoppingCart className="h-5 w-5 text-foreground" />
-              {cartCount > 0 && (
-                <Badge className="absolute -top-2 -right-2 h-4 min-w-4 flex items-center justify-center rounded-full p-0 text-[9px] font-bold">
-                  {cartCount}
-                </Badge>
-              )}
-            </Link>
-            {isLoggedIn ? (
-              <Button asChild size="sm" className="h-8 px-4 rounded-sm font-semibold">
-                <Link href="/account/profile">Profile</Link>
-              </Button>
-            ) : (
-              <Button asChild size="sm" className="h-8 px-4 rounded-sm font-semibold">
-                <Link href="/login">Login</Link>
-              </Button>
-            )}
-          </div>
+          {isLoggedIn ? (
+            <Button asChild size="sm" className="h-8 px-4 rounded-sm font-semibold">
+              <Link href="/account/profile">Profile</Link>
+            </Button>
+          ) : (
+            <Button asChild size="sm" className="h-8 px-4 rounded-sm font-semibold">
+              <Link href="/login">Login</Link>
+            </Button>
+          )}
         </div>
 
-        {!isCartPage && !isAccountPage && !isMenuDetailPage && (
-          <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
-            {foodTypeOptions.map((opt) => (
-              <button
-                key={opt.value}
-                onClick={() => setSelectedFoodType(opt.value)}
-                className={cn(
-                  "flex items-center gap-1 whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all",
-                    selectedFoodType === opt.value
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-foreground/70"
-                )}
-              >
-                {opt.label}
-              </button>
-            ))}
-          </div>
-        )}
+        <button
+          onClick={() => setLocationOpen(true)}
+          className="flex items-center gap-2 text-sm font-medium text-muted-foreground"
+        >
+          <MapPin className="h-4 w-4 text-primary" />
+          <span>{deliveryAddress || "Select location"}</span>
+          <ChevronDown className="h-3.5 w-3.5" />
+        </button>
+
         <div className="relative">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
             <Search className="h-4 w-4 text-muted-foreground" />
@@ -176,23 +160,38 @@ export function SiteHeader() {
             className="w-full bg-secondary border-none rounded-lg h-10 pl-10 pr-4 text-sm focus-visible:ring-1 focus-visible:ring-primary placeholder:text-muted-foreground"
           />
         </div>
+
+        <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
+          {foodTypeOptions.map((opt) => (
+            <button
+              key={opt.value}
+              onClick={() => setSelectedFoodType(opt.value)}
+              className={cn(
+                "flex items-center gap-1 whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all",
+                  selectedFoodType === opt.value
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-foreground/70"
+              )}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
       </header>
+      )}
 
       {/* Mobile Bottom Navigation */}
+      {!hideNav && (
+        <>
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-border px-2 py-2 flex items-center justify-around shadow-[0_-1px_10px_rgba(0,0,0,0.05)]">
         <MobileNavItem href="/" icon={<Home className="h-6 w-6" />} label="Home" active />
         <MobileNavItem href="/menu" icon={<LayoutDashboard className="h-6 w-6" />} label="Menu" />
-        <button
-          onClick={() => setLocationOpen(true)}
-          className="flex flex-col items-center gap-1 px-3 py-1 text-muted-foreground"
-        >
-          <MapPin className="h-6 w-6" />
-          <span className="text-[10px] font-semibold uppercase tracking-wider">Location</span>
-        </button>
         <MobileNavItem href={isLoggedIn ? "/account/profile" : "/login"} icon={<User className="h-6 w-6" />} label="Account" />
         <MobileNavItem href={cartHref} icon={<ShoppingCart className="h-6 w-6" />} label="Cart" badge={cartCount} />
       </nav>
       <div className="h-16 md:hidden" />
+        </>
+      )}
 
       <LocationDialog open={locationOpen} onClose={() => setLocationOpen(false)} />
     </>
