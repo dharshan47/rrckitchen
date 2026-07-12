@@ -57,6 +57,17 @@ self.addEventListener('fetch', (event) => {
   // Skip chrome-extension and other protocols
   if (!url.startsWith('http')) return;
 
+  // Skip third-party / external URLs (Razorpay, Google Maps, etc.)
+  try {
+    const urlObj = new URL(url);
+    if (urlObj.origin !== self.location.origin) {
+      event.respondWith(fetch(request));
+      return;
+    }
+  } catch {
+    return;
+  }
+
   // Skip auth API calls (never cache sensitive data)
   if (url.includes('/api/auth/')) {
     event.respondWith(fetch(request));
