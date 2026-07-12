@@ -8,7 +8,7 @@ const csp = isDev
       `default-src 'self'`,
       `script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.razorpay.com https://maps.googleapis.com https://unpkg.com `,
       `style-src 'self' 'unsafe-inline' https://unpkg.com`,
-      `img-src 'self' blob: data: https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://api.maptiler.com`,
+      `img-src 'self' blob: data: https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://api.maptiler.com https://*.razorpay.com`,
       `font-src 'self'`,
       `connect-src 'self' ws: http://localhost:* https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com https://api.maptiler.com `,
       `frame-src 'self' https://*.razorpay.com`,
@@ -20,7 +20,7 @@ const csp = isDev
       `default-src 'self'`,
       `script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.razorpay.com https://maps.googleapis.com https://unpkg.com `,
       `style-src 'self' 'unsafe-inline' https://unpkg.com`,
-      `img-src 'self' blob: data: https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://api.maptiler.com`,
+      `img-src 'self' blob: data: https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://api.maptiler.com https://*.razorpay.com`,
       `font-src 'self'`,
       `connect-src 'self' https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com https://api.maptiler.com `,
       `frame-src 'self' https://*.razorpay.com`,
@@ -83,7 +83,7 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "Content-Type", value: "application/javascript; charset=utf-8" },
           { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
-          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'; connect-src 'self' https://checkout.razorpay.com" },
+          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'; connect-src 'self' https://checkout.razorpay.com https://*.razorpay.com; img-src 'self' https://*.razorpay.com; frame-src 'self' https://*.razorpay.com" },
         ],
       },
       {

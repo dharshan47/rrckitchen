@@ -77,7 +77,7 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
                 <Input
                   id="phone"
                   inputMode="tel"
-                  placeholder="+919876543210"
+                  placeholder="9876543210"
                   className="pl-10"
                   {...phoneForm.register("phone")}
                 />

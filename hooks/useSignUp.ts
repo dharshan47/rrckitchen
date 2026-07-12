@@ -39,7 +39,7 @@ export function useSignUp(role: SignUpRole) {
 
     const normalized = normalizePhone(formPhone);
     if (!normalized) {
-      setErrorMessage("Enter a valid mobile number including country code or 10-digit number.");
+      setErrorMessage("Enter a valid 10-digit mobile number.");
       return;
     }
 

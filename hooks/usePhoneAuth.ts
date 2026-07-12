@@ -40,7 +40,7 @@ export function usePhoneAuth(role: UserRole) {
   const sendOtpMutation = useMutation({
     mutationFn: async (formPhone: string) => {
       const normalized = normalizePhone(formPhone);
-      if (!normalized) throw new Error("Enter a valid mobile number including country code or 10-digit number.");
+      if (!normalized) throw new Error("Enter a valid 10-digit mobile number.");
 
       const registered = await checkPhoneRegistered(normalized);
       if (!registered) throw new Error("Phone number not registered. Please sign up.");

@@ -12,7 +12,9 @@ const STATIC_ASSETS = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(STATIC_CACHE).then((cache) => {
-      return cache.addAll(STATIC_ASSETS);
+      return cache.addAll(STATIC_ASSETS).catch(() => {
+        // Ignore failures - some assets may not exist at install time
+      });
     })
   );
   self.skipWaiting();
@@ -93,7 +95,7 @@ self.addEventListener('fetch', (event) => {
   if (request.mode === 'navigate') {
     event.respondWith(
       networkFirst(request, DYNAMIC_CACHE).catch(() => {
-        return caches.match('/offline');
+        return caches.match('/');
       })
     );
     return;

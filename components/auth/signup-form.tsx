@@ -81,7 +81,7 @@ function SignupFormInner({ role = "customer", title, subtitle, nameLabel = "Full
                 <Input
                   id="phone"
                   inputMode="tel"
-                  placeholder="+919876543210"
+                  placeholder="9876543210"
                   disabled={isLoading}
                   className="pl-10"
                   {...phoneForm.register("phone")}
