@@ -7,7 +7,6 @@ const API_CACHE = `rrc-api-${CACHE_VERSION}`;
 const STATIC_ASSETS = [
   '/',
   '/manifest.json',
-  '/offline',
 ];
 
 self.addEventListener('install', (event) => {
