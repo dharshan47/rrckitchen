@@ -5,12 +5,6 @@ import { getSessionCookie } from "better-auth/cookies";
 const protectedPaths = [
   "/kitchen/dashboard",
   "/delivery-partner/dashboard",
-  "/admin",
-];
-
-const publicAdminPaths = [
-  "/admin/2fa",
-  "/admin/2fa-setup",
 ];
 
 const roleLoginMap: Record<string, string> = {
@@ -19,9 +13,6 @@ const roleLoginMap: Record<string, string> = {
 };
 
 function matchesProtected(pathname: string, prefix: string): boolean {
-  if (prefix === "/admin") {
-    return pathname === "/admin" || pathname.startsWith("/admin/");
-  }
   return pathname === prefix || pathname.startsWith(prefix + "/");
 }
 
@@ -33,17 +24,13 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (
-    matchedPrefix === "/admin" &&
-    publicAdminPaths.some((p) => pathname.startsWith(p))
-  ) {
-    return NextResponse.next();
-  }
-
   const sessionCookie = getSessionCookie(request);
   if (!sessionCookie) {
-    if (matchedPrefix === "/admin") {
-      return NextResponse.rewrite(new URL("/404", request.url));
+    const loginPath = roleLoginMap[matchedPrefix];
+    if (loginPath) {
+      const loginUrl = new URL(loginPath, request.url);
+      loginUrl.searchParams.set("redirect", pathname);
+      return NextResponse.redirect(loginUrl);
     }
     const loginUrl = new URL("/login", request.url);
     loginUrl.searchParams.set("redirect", pathname);
@@ -64,13 +51,6 @@ export async function proxy(request: NextRequest) {
     } catch {
       return NextResponse.rewrite(new URL("/404", request.url));
     }
-  }
-
-  const loginPath = roleLoginMap[matchedPrefix];
-  if (loginPath) {
-    const loginUrl = new URL(loginPath, request.url);
-    loginUrl.searchParams.set("redirect", pathname);
-    return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
