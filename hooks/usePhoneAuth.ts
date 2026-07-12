@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { useAuthStore, UserRole } from "@/stores";
 import { checkPhoneRegistered } from "@/actions/onboarding/auth";
+import { normalizePhone } from "@/lib/phone";
 
 export function usePhoneAuth(role: UserRole) {
   const setRole = useAuthStore((state) => state.setRole);
@@ -36,19 +37,9 @@ export function usePhoneAuth(role: UserRole) {
     return () => clearInterval(timer);
   }, [resendCooldown]);
 
-  const normalizePhoneNumber = useMemo(
-    () => (value: string) => {
-      const digits = value.replace(/\D/g, "");
-      if (digits.length === 10) return `+91${digits}`;
-      if (digits.length >= 11 && digits.length <= 15) return `+${digits}`;
-      return "";
-    },
-    []
-  );
-
   const sendOtpMutation = useMutation({
     mutationFn: async (formPhone: string) => {
-      const normalized = normalizePhoneNumber(formPhone);
+      const normalized = normalizePhone(formPhone);
       if (!normalized) throw new Error("Enter a valid mobile number including country code or 10-digit number.");
 
       const registered = await checkPhoneRegistered(normalized);
@@ -102,7 +93,7 @@ export function usePhoneAuth(role: UserRole) {
     mutationFn: async (): Promise<boolean> => {
       if (resendCooldownRef.current > 0 || !phoneNumberRef.current) return false;
 
-      const normalized = normalizePhoneNumber(phoneNumberRef.current);
+      const normalized = normalizePhone(phoneNumberRef.current);
       if (!normalized) throw new Error("Enter a valid mobile number to resend OTP.");
 
       const res = await fetch("/api/auth/twilio/send", {

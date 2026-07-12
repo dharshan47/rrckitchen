@@ -3,15 +3,9 @@
 import { useCallback, useEffect, useState } from "react";
 import type { UserRole } from "@/stores";
 import { assignUserRole, updateUserName } from "@/actions/onboarding/auth";
+import { normalizePhone } from "@/lib/phone";
 
 type SignUpRole = Exclude<UserRole, "admin">;
-
-const normalizePhone = (value: string) => {
-  const digits = value.replace(/\D/g, "");
-  if (digits.length === 10) return `+91${digits}`;
-  if (digits.length >= 11 && digits.length <= 15) return `+${digits}`;
-  return "";
-};
 
 const roleToRoute: Record<SignUpRole, string> = {
   customer: "/",

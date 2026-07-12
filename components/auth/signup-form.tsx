@@ -13,9 +13,7 @@ type SignUpRole = Exclude<UserRole, "admin">;
 const phoneSchema = z.object({
   phone: z
     .string()
-    .min(10, "Enter a valid 10-digit mobile number")
-    .max(15)
-    .regex(/^\+?\d{10,15}$/, "Enter a valid mobile number with country code"),
+    .regex(/^\d{10}$/, "Enter a valid 10-digit mobile number"),
 });
 
 const otpSchema = z.object({
