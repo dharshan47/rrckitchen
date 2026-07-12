@@ -147,8 +147,11 @@ export default function AccountProfilePage() {
   })
 
   const handleLogout = async () => {
-    await signOut()
-    router.push("/")
+    await Promise.race([
+      signOut(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 5000)),
+    ]).catch(() => {});
+    router.push("/");
   }
 
   const onProfileSubmit = (data: ProfileForm) => {

@@ -7,7 +7,9 @@ export const authClient = createAuthClient({
     adminClient(),
     twoFactorClient({
       onTwoFactorRedirect() {
-        window.location.href = "/admin/2fa";
+        if (typeof window !== "undefined" && window.location.pathname !== "/admin/2fa") {
+          window.location.href = "/admin/2fa";
+        }
       },
     }),
   ],
