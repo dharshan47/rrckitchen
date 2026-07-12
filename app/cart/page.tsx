@@ -14,7 +14,7 @@ import { createBadgeVariant, formatTimeSlot } from "@/lib/patterns";
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import { useSession } from "@/lib/auth-client";
-import { useCartCoupon, useCartOrderType, useCartActions } from "@/stores";
+import { useCartCoupon, useCartOrderType, useCartActions, useMenuDeliveryAddress } from "@/stores";
 import { CouponInput } from "@/components/order/coupon-input";
 import { PaymentMethodSelector, type PaymentMethod } from "@/components/order/payment-method-selector";
 import { OrderTypeSelector } from "@/components/order/order-type-selector";
@@ -72,6 +72,7 @@ function CartContent() {
   const { initiateCheckout, isProcessing, paymentResult, resetPayment } =
     useRazorpay();
   const { data: session, isPending } = useSession();
+  const deliveryAddress = useMenuDeliveryAddress();
   const appliedCoupon = useCartCoupon();
   const orderType = useCartOrderType();
   const { applyCoupon, removeCoupon, setOrderType } = useCartActions();
@@ -113,6 +114,10 @@ function CartContent() {
   });
 
   const handleCheckout = useCallback(async () => {
+    if (!deliveryAddress) {
+      toast.error("Please select a delivery location before placing your order");
+      return;
+    }
     if (paymentMethod === "CASH_ON_DELIVERY") {
       setCodProcessing(true);
       try {
@@ -143,7 +148,7 @@ function CartContent() {
     }
     const phone = session?.user?.phoneNumber ?? "";
     await initiateCheckout(cart, total, phone, appliedCoupon?.code);
-  }, [cart, total, initiateCheckout, session, paymentMethod, appliedCoupon, clearCart, resetPayment]);
+  }, [cart, total, initiateCheckout, session, paymentMethod, appliedCoupon, clearCart, resetPayment, deliveryAddress]);
 
   const handleApplyOfferCoupon = useCallback((code: string) => {
     applyCoupon({

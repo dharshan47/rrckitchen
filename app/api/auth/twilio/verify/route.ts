@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { normalizePhone } from "@/lib/phone";
 import { cookies } from "next/headers";
+import { client } from "@/lib/twilio";
 
 async function signSessionToken(token: string, secret: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -31,24 +32,40 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "OTP and phone number are required" }, { status: 400 });
     }
 
-    const otpRecord = await prisma.otpCode.findFirst({
-      where: {
-        mobileNumber: phoneNumber,
-        code: otp,
-        consumedAt: null,
-        expiresAt: { gte: new Date() },
-      },
-      orderBy: { createdAt: "desc" },
-    });
+    const verifyServiceSid = process.env.TWILIO_VERIFY_SERVICE_SID;
+    let verified = false;
 
-    if (!otpRecord) {
-      return NextResponse.json({ error: "Invalid or expired OTP" }, { status: 400 });
+    if (verifyServiceSid) {
+      try {
+        const check = await client.verify.v2.services(verifyServiceSid)
+          .verificationChecks
+          .create({ to: phoneNumber, code: otp });
+        verified = check.status === "approved";
+      } catch (err) {
+        console.error("[OTP_VERIFY] Twilio Verify check failed:", err);
+      }
     }
 
-    await prisma.otpCode.update({
-      where: { id: otpRecord.id },
-      data: { consumedAt: new Date() },
-    });
+    if (!verified) {
+      const otpRecord = await prisma.otpCode.findFirst({
+        where: {
+          mobileNumber: phoneNumber,
+          code: otp,
+          consumedAt: null,
+          expiresAt: { gte: new Date() },
+        },
+        orderBy: { createdAt: "desc" },
+      });
+
+      if (!otpRecord) {
+        return NextResponse.json({ error: "Invalid or expired OTP" }, { status: 400 });
+      }
+
+      await prisma.otpCode.update({
+        where: { id: otpRecord.id },
+        data: { consumedAt: new Date() },
+      });
+    }
 
     let user = await prisma.user.findFirst({
       where: { phoneNumber },

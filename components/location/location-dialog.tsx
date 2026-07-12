@@ -61,7 +61,7 @@ function LocationDialogInner({ onClose }: { onClose: () => void }) {
 
   const handleUseCurrentLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      setError("Geolocation is not supported by your browser.")
+      setError("Geolocation is not supported by your browser. Please search for an address above.")
       return
     }
     setBusy(true)
@@ -77,9 +77,13 @@ function LocationDialogInner({ onClose }: { onClose: () => void }) {
         setDeliveryAddress("Current Location")
         onClose()
       },
-      () => {
+      (err) => {
         setBusy(false)
-        setError("Unable to retrieve your location. Please enable location permissions or search for an address.")
+        if (err.code === err.PERMISSION_DENIED) {
+          setError("Location permission denied. Please allow location access in your browser settings, or search for an address above.")
+        } else {
+          setError("Unable to retrieve your location. Please enable location permissions or search for an address.")
+        }
       },
       { enableHighAccuracy: true, timeout: 10000 }
     )
@@ -157,7 +161,9 @@ function LocationDialogInner({ onClose }: { onClose: () => void }) {
           <div className="mx-6 mt-4 flex items-start gap-3 rounded-xl bg-red-50 border border-red-200 p-4">
             <AlertTriangle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-red-700">Location not serviceable</p>
+              <p className="text-sm font-semibold text-red-700">
+                {error.startsWith("We are not serviceable") ? "Location not serviceable" : "Location access failed"}
+              </p>
               <p className="text-xs text-red-600 mt-1 leading-5">{error}</p>
             </div>
           </div>
