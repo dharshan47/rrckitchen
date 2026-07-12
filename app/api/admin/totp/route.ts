@@ -58,6 +58,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(result);
     }
 
+    if (action === "generate-backup-codes") {
+      const result = await auth.api.generateBackupCodes({
+        body: { password: password ?? "" },
+        headers: h,
+      });
+      return NextResponse.json(result);
+    }
+
     return NextResponse.json({ error: "Invalid action" }, { status: 400 });
   } catch (error: any) {
     console.error("[totp POST] failed:", error?.message || error);

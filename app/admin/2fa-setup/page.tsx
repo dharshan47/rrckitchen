@@ -7,6 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import QRCode from "react-qr-code";
 import { useSession } from "@/lib/auth-client";
 import { Button, Input, Label, Card } from "@/components/ui";
+import { Copy, Download, Check, ShieldCheck, ArrowRight } from "lucide-react";
 
 const verifySchema = z.object({
   code: z.string().length(6, "Code must be 6 digits").regex(/^\d+$/, "Code must be numeric"),
@@ -17,12 +18,14 @@ type VerifyForm = z.infer<typeof verifySchema>;
 export default function AdminTwoFactorSetupPage() {
   const { data: session, isPending } = useSession();
   const [totpURI, setTotpURI] = useState<string | null>(null);
+  const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
+  const [codesCopied, setCodesCopied] = useState(false);
 
   useEffect(() => {
-    if (!isPending && session?.user?.twoFactorEnabled) {
+    if (!isPending && session?.user?.twoFactorEnabled && !backupCodes) {
       window.location.href = "/admin";
     }
-  }, [session, isPending]);
+  }, [session, isPending, backupCodes]);
 
   const verifyForm = useForm<VerifyForm>({
     resolver: zodResolver(verifySchema),
@@ -65,13 +68,39 @@ export default function AdminTwoFactorSetupPage() {
       }
       return res.json();
     },
-    onSuccess: () => {
-      window.location.href = "/admin";
+    onSuccess: async () => {
+      const res = await fetch("/api/admin/totp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "generate-backup-codes", password: "" }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setBackupCodes(data.backupCodes);
+      }
     },
     onError: (err) => {
       verifyForm.setError("root", { message: err.message || "Verification failed" });
     },
   });
+
+  const copyCodes = async () => {
+    if (!backupCodes) return;
+    await navigator.clipboard.writeText(backupCodes.join("\n"));
+    setCodesCopied(true);
+    setTimeout(() => setCodesCopied(false), 2000);
+  };
+
+  const downloadCodes = () => {
+    if (!backupCodes) return;
+    const blob = new Blob([backupCodes.join("\n")], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "rrckitchen-backup-codes.txt";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   if (isPending || enable.isPending) {
     return (
@@ -91,6 +120,55 @@ export default function AdminTwoFactorSetupPage() {
           <h1 className="text-xl font-bold mb-4 text-destructive">Failed to enable 2FA</h1>
           <p className="text-sm text-muted-foreground mb-4">{enable.error?.message}</p>
           <Button className="w-full" onClick={() => enable.mutate()}>Try again</Button>
+        </Card>
+      </div>
+    );
+  }
+
+  if (backupCodes) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+        <Card className="max-w-md w-full p-6">
+          <div className="text-center mb-6">
+            <ShieldCheck className="h-10 w-10 text-green-600 mx-auto mb-2" />
+            <h1 className="text-xl font-bold">2FA Enabled Successfully</h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Save these backup codes in a safe place. You can use them to sign in if you lose access to your authenticator app.
+            </p>
+          </div>
+
+          <div className="bg-muted rounded-lg p-4 mb-4">
+            <div className="grid grid-cols-2 gap-2 font-mono text-sm">
+              {backupCodes.map((code, i) => (
+                <div key={i} className="flex items-center gap-2">
+                  <span className="text-muted-foreground w-5 text-right">{i + 1}.</span>
+                  <span className="tracking-wider">{code.match(/.{4}/g)?.join("-") || code}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex gap-2 mb-4">
+            <Button variant="outline" className="flex-1" onClick={copyCodes}>
+              {codesCopied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}
+              {codesCopied ? "Copied!" : "Copy"}
+            </Button>
+            <Button variant="outline" className="flex-1" onClick={downloadCodes}>
+              <Download className="h-4 w-4 mr-2" />
+              Download
+            </Button>
+          </div>
+
+          <p className="text-xs text-muted-foreground text-center mb-4">
+            Backup codes are case-sensitive. Each code can only be used once.
+            <br />
+            You can generate new codes later from your profile settings.
+          </p>
+
+          <Button className="w-full" onClick={() => { window.location.href = "/admin"; }}>
+            <ArrowRight className="h-4 w-4 mr-2" />
+            Go to Dashboard
+          </Button>
         </Card>
       </div>
     );
