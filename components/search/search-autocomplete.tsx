@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
-import { Search, Loader2, MapPin, UtensilsCrossed } from "lucide-react"
+import { Search, MapPin, UtensilsCrossed } from "lucide-react"
 import Image from "next/image"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { cn } from "@/lib/utils"
@@ -21,10 +21,11 @@ interface SearchItem {
 interface SearchKitchen {
   id: string
   displayName: string
+  items: { id: string; name: string; price: number; imageUrl: string | null }[]
 }
 
 interface SearchResult {
-  items: SearchItem[]
+  dishes: SearchItem[]
   kitchens: SearchKitchen[]
 }
 
@@ -49,9 +50,9 @@ export function SearchAutocomplete({
   const [dismissCount, setDismissCount] = useState(0)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const debouncedQuery = useDebouncedValue(query, 250)
+  const debouncedQuery = useDebouncedValue(query, 150)
 
-  const { data: results, isFetching } = useQuery<SearchResult>({
+  const { data: results } = useQuery<SearchResult>({
     queryKey: ["menu-search", debouncedQuery],
     queryFn: async () => {
       const res = await fetch(`/api/menu/search?q=${encodeURIComponent(debouncedQuery)}`)
@@ -65,13 +66,12 @@ export function SearchAutocomplete({
   const handleFocus = useCallback(() => {
     if (navigateOnFocus) {
       router.push("/search")
-    } else if (results && (results.items.length > 0 || results.kitchens.length > 0)) {
+    } else if (results && (results.dishes.length > 0 || results.kitchens.length > 0)) {
       setDismissCount(0)
     }
   }, [navigateOnFocus, results, router])
 
-  const hasResults = results && (results.items.length > 0 || results.kitchens.length > 0)
-  const isLoading = isFetching && !results
+  const hasResults = results && (results.dishes.length > 0 || results.kitchens.length > 0)
   const isOpen = dismissCount === 0 && debouncedQuery.length >= 1
 
   useEffect(() => {
@@ -86,7 +86,7 @@ export function SearchAutocomplete({
 
   const flatResults = useCallback(() => {
     if (!results) return [] as ({ type: "item" } & SearchItem)[]
-    const items: ({ type: "item" } & SearchItem)[] = results.items.map((i) => ({ ...i, type: "item" as const }))
+    const items: ({ type: "item" } & SearchItem)[] = results.dishes.map((i) => ({ ...i, type: "item" as const }))
     const kitchens: ({ type: "kitchen"; id: string; name: string })[] = results.kitchens.map((k) => ({
       type: "kitchen" as const,
       id: k.id,
@@ -167,30 +167,22 @@ export function SearchAutocomplete({
             inputClassName
           )}
         />
-        {isFetching && (
-          <Loader2 className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 animate-spin text-muted-foreground" />
-        )}
       </div>
 
       {isOpen && (
         <div className="absolute z-50 mt-2 w-full rounded-xl border border-border bg-popover shadow-lg max-h-80 overflow-y-auto">
-          {isLoading ? (
-            <div className="flex items-center justify-center gap-2 px-4 py-8 text-sm text-muted-foreground">
-              <Loader2 className="h-4 w-4 animate-spin" />
-              Searching...
-            </div>
-          ) : !hasResults ? (
+          {!hasResults ? (
             <div className="px-4 py-8 text-sm text-muted-foreground text-center">
               No results found for &ldquo;{debouncedQuery}&rdquo;
             </div>
           ) : (
             <>
-              {results!.items.length > 0 && (
+              {results!.dishes.length > 0 && (
                 <div>
                   <p className="px-4 pt-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
-                    Meals
+                    Dishes
                   </p>
-                  {results!.items.map((item, i) => (
+                  {results!.dishes.map((item, i) => (
                     <button
                       key={item.id}
                       onClick={() => handleSelect("item", item.id)}
@@ -226,7 +218,7 @@ export function SearchAutocomplete({
                     Kitchens
                   </p>
                   {results!.kitchens.map((kitchen, i) => {
-                    const idx = (results!.items.length ?? 0) + i
+                    const idx = (results!.dishes.length ?? 0) + i
                     return (
                       <button
                         key={kitchen.id}
@@ -242,7 +234,9 @@ export function SearchAutocomplete({
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-medium truncate">{kitchen.displayName}</p>
-                          <p className="text-xs text-muted-foreground">Kitchen</p>
+                          <p className="text-xs text-muted-foreground truncate">
+                            {kitchen.items.map((mi) => mi.name).join(", ")}
+                          </p>
                         </div>
                       </button>
                     )

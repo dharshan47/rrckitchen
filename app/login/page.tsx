@@ -1,5 +1,4 @@
 "use client";
-import Link from "next/link";
 import { MobileOtpLogin } from "@/components/auth";
 
 export default function LoginPage() {
@@ -8,17 +7,6 @@ export default function LoginPage() {
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,hsl(var(--primary)/0.08),transparent_50%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,hsl(var(--primary)/0.05),transparent_50%)] pointer-events-none" />
       <div className="relative w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-block">
-            <h1 className="text-4xl font-extrabold tracking-tight bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-              RRC Kitchen
-            </h1>
-          </Link>
-          <p className="text-sm text-muted-foreground mt-3 max-w-xs mx-auto">
-            Sign in to order home-cooked meals for tomorrow
-          </p>
-        </div>
-
         <MobileOtpLogin role="customer" noAccountHref="/signup" noAccountLabel="Don&apos;t have an account?" />
       </div>
     </main>

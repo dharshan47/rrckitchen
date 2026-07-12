@@ -2,7 +2,6 @@ import { Suspense } from "react";
 import { SkeletonCard } from "@/components/patterns/skeleton-card";
 import { HomeClient } from "@/components/home/home-client";
 import { getHomePageData } from "@/actions/catalog/home-data";
-import { getActiveCoupons } from "@/components/home/offers-strip";
 import { getSession } from "@/lib/auth-server";
 
 export const dynamic = "force-dynamic";
@@ -11,10 +10,7 @@ export default async function HomePage() {
   const session = await getSession();
   const userId = session?.user?.id;
 
-  const [homeData, coupons] = await Promise.all([
-    getHomePageData(userId),
-    getActiveCoupons(),
-  ]);
+  const homeData = await getHomePageData(userId);
 
   return (
     <Suspense fallback={<HomeFallback />}>
@@ -22,7 +18,6 @@ export default async function HomePage() {
         topRatedKitchens={homeData.topRatedKitchens}
         newKitchens={homeData.newKitchens}
         recentOrderKitchens={homeData.recentOrderKitchens}
-        coupons={coupons}
       />
     </Suspense>
   );

@@ -62,12 +62,6 @@ export function WishlistButton({ menuItemId, className, size = "sm", variant = "
     toggleMutation.mutate();
   };
 
-  const sizeClasses = {
-    sm: "h-8 w-8",
-    md: "h-9 w-9",
-    lg: "h-10 w-10",
-  };
-
   const iconSizes = {
     sm: "h-4 w-4",
     md: "h-5 w-5",
@@ -80,8 +74,7 @@ export function WishlistButton({ menuItemId, className, size = "sm", variant = "
         onClick={handleClick}
         disabled={toggleMutation.isPending}
         className={cn(
-          "absolute top-2 right-2 z-10 flex items-center justify-center rounded-full bg-white/90 shadow-sm hover:bg-white transition-all",
-          sizeClasses[size],
+          "absolute top-1.5 right-1.5 z-10 flex items-center justify-center transition-all",
           className
         )}
         aria-label={isFavorite ? "Remove from favourites" : "Add to favourites"}
@@ -93,7 +86,7 @@ export function WishlistButton({ menuItemId, className, size = "sm", variant = "
             className={cn(
               iconSizes[size],
               "transition-colors",
-              isFavorite ? "fill-red-500 text-red-500" : "text-muted-foreground hover:text-red-400"
+              isFavorite ? "fill-red-500 text-red-500" : "text-muted-foreground/60 hover:text-red-400"
             )}
           />
         )}

@@ -25,7 +25,8 @@ async function signSessionToken(token: string, secret: string): Promise<string> 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    let { otp, phoneNumber } = body;
+    let { phoneNumber } = body;
+    const { otp } = body;
     phoneNumber = normalizePhone(phoneNumber ?? "");
 
     if (!otp || !phoneNumber) {

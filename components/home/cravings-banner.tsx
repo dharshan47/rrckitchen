@@ -28,7 +28,7 @@ export function CravingsBanner() {
 
   return (
     <div className="animate-in fade-in slide-in-from-top-4 duration-500 delay-300 mb-4 px-4">
-      <div className="relative rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 p-4 pr-10">
+      <div className="relative rounded-xl bg-linear-to-r from-primary/10 to-primary/5 border border-primary/20 p-4 pr-10">
         <button
           onClick={() => setDismissed(true)}
           className="absolute top-2 right-2 text-muted-foreground hover:text-foreground"

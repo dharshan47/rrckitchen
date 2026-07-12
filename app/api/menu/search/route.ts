@@ -6,12 +6,12 @@ export async function GET(request: Request) {
   const q = url.searchParams.get("q")?.trim() ?? ""
 
   if (!q || q.length < 1) {
-    return NextResponse.json({ items: [], kitchens: [] })
+    return NextResponse.json({ dishes: [], kitchens: [] })
   }
 
   const search = q.toLowerCase()
 
-  const [items, kitchens] = await Promise.all([
+  const [dishes, kitchenRows] = await Promise.all([
     prisma.menuItem.findMany({
       where: {
         isAvailable: true,
@@ -65,6 +65,8 @@ export async function GET(request: Request) {
       },
       select: {
         id: true,
+        avgRating: true,
+        totalReviews: true,
         kitchenAlias: { select: { displayName: true } },
       },
       take: 5,
@@ -72,8 +74,48 @@ export async function GET(request: Request) {
     }),
   ])
 
+  const kitchenIds = kitchenRows.map((k) => k.id)
+  const kitchenMenuItems = kitchenIds.length > 0
+    ? await prisma.menuItem.findMany({
+        where: {
+          isAvailable: true,
+          menu: {
+            isActive: true,
+            kitchenPartnerId: { in: kitchenIds },
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          price: true,
+          menu: { select: { kitchenPartnerId: true } },
+          photos: {
+            take: 1,
+            orderBy: { sortOrder: "asc" },
+            select: { imageUrl: true },
+          },
+        },
+        orderBy: { name: "asc" },
+      })
+    : []
+
+  const itemsByKitchen = new Map<string, { id: string; name: string; price: number; imageUrl: string | null }[]>()
+  for (const mi of kitchenMenuItems) {
+    const kid = mi.menu.kitchenPartnerId
+    if (!itemsByKitchen.has(kid)) itemsByKitchen.set(kid, [])
+    const arr = itemsByKitchen.get(kid)!
+    if (arr.length < 4) {
+      arr.push({
+        id: mi.id,
+        name: mi.name,
+        price: Number(mi.price),
+        imageUrl: mi.photos[0]?.imageUrl ?? null,
+      })
+    }
+  }
+
   return NextResponse.json({
-    items: items.map((item) => ({
+    dishes: dishes.map((item) => ({
       id: item.id,
       name: item.name,
       price: Number(item.price),
@@ -84,9 +126,12 @@ export async function GET(request: Request) {
       kitchenId: item.menu?.kitchenPartner?.id ?? null,
       imageUrl: item.photos[0]?.imageUrl ?? null,
     })),
-    kitchens: kitchens.map((k) => ({
+    kitchens: kitchenRows.map((k) => ({
       id: k.id,
       displayName: k.kitchenAlias?.displayName ?? "Unknown Kitchen",
+      avgRating: Number(k.avgRating),
+      totalReviews: k.totalReviews,
+      items: itemsByKitchen.get(k.id) ?? [],
     })),
   })
 }

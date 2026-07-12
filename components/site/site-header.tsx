@@ -3,25 +3,24 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { User, ShoppingCart, Home, LayoutDashboard, MapPin, ChevronDown, Search } from "lucide-react";
+import { User, ShoppingCart, Home, LayoutDashboard, MapPin, ChevronDown, LogOut, Package } from "lucide-react";
 import { Button, Badge } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { useMenuStore, FoodTypeFilter, useCartStore, useMenuDeliveryAddress } from "@/stores";
-import { useSession } from "@/lib/auth-client";
+import { useCartStore, useMenuDeliveryAddress } from "@/stores";
+import { useSession, signOut } from "@/lib/auth-client";
 import { LocationDialog } from "@/components/location";
 import { SearchAutocomplete } from "@/components/search/search-autocomplete";
-
-const foodTypeOptions: { value: FoodTypeFilter; label: string }[] = [
-  { value: "ALL", label: "All" },
-  { value: "VEG", label: "Veg" },
-  { value: "NONVEG", label: "Non Veg" },
-];
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 
 export function SiteHeader() {
   const pathname = usePathname();
   const [locationOpen, setLocationOpen] = useState(false);
-  const selectedFoodType = useMenuStore((s) => s.selectedFoodType);
-  const setSelectedFoodType = useMenuStore((s) => s.setSelectedFoodType);
   const cartCount = useCartStore((s) => s.cart.reduce((t, i) => t + i.qty, 0));
   const deliveryAddress = useMenuDeliveryAddress();
   const { data: session } = useSession();
@@ -82,75 +81,59 @@ export function SiteHeader() {
             </Link>
           </div>
         </div>
-
-        {!isCartPage && !isAccountPage && !isMenuDetailPage && (
-          <div className="border-t border-border">
-            <div className="mx-auto max-w-7xl px-6 h-14 flex items-center gap-8 overflow-x-auto scrollbar-none">
-              {foodTypeOptions.map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => setSelectedFoodType(opt.value)}
-                  className={cn(
-                    "flex items-center gap-2 h-full border-b-2 whitespace-nowrap transition-colors",
-                    selectedFoodType === opt.value
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  <span className="text-sm font-bold uppercase tracking-wide">{opt.label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </header>
 
       {/* Mobile Header */}
       {!hideNav && (
-      <header className="sticky top-0 z-50 md:hidden bg-background border-b border-border px-4 py-3 space-y-3">
-        <div className="flex items-center justify-between">
-          <Link href="/" className="text-xl font-extrabold text-foreground tracking-tight">
-            RRC Kitchen
-          </Link>
-          {!isLoggedIn && (
-            <Button asChild size="sm" className="h-8 px-4 rounded-sm font-semibold">
-              <Link href="/login">Login</Link>
-            </Button>
-          )}
-        </div>
-
-        <button
-          onClick={() => setLocationOpen(true)}
-          className="flex items-center gap-2 text-sm font-medium text-muted-foreground"
-        >
-          <MapPin className="h-4 w-4 text-primary" />
-          <span>{deliveryAddress || "Select location"}</span>
-          <ChevronDown className="h-3.5 w-3.5" />
-        </button>
-
-        <SearchAutocomplete
-          navigateOnFocus
-          placeholder="Search meals..."
-          inputClassName="h-10 rounded-lg text-sm pl-10 focus-visible:ring-1"
-        />
-
-        <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
-          {foodTypeOptions.map((opt) => (
+        <header className="sticky top-0 z-50 md:hidden bg-background border-b border-border px-4 py-3 space-y-3">
+          <div className="flex items-center justify-between">
             <button
-              key={opt.value}
-              onClick={() => setSelectedFoodType(opt.value)}
-              className={cn(
-                "flex items-center gap-1 whitespace-nowrap px-3 py-1.5 rounded-full text-xs font-semibold transition-all",
-                  selectedFoodType === opt.value
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-muted text-foreground/70"
-              )}
+              onClick={() => setLocationOpen(true)}
+              className="flex items-center gap-2 text-sm font-medium text-muted-foreground"
             >
-              {opt.label}
+              <MapPin className="h-4 w-4 text-primary" />
+              <span className="truncate max-w-40">{deliveryAddress || "Select location"}</span>
+              <ChevronDown className="h-3.5 w-3.5" />
             </button>
-          ))}
-        </div>
-      </header>
+            {isLoggedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors">
+                    <User className="h-5 w-5" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="min-w-40">
+                  <DropdownMenuItem asChild>
+                    <Link href="/account/profile" className="flex items-center gap-2 cursor-pointer">
+                      <User className="h-4 w-4" />
+                      Profile
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/account/orders" className="flex items-center gap-2 cursor-pointer">
+                      <Package className="h-4 w-4" />
+                      My Orders
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut()} variant="destructive" className="flex items-center gap-2 cursor-pointer">
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Button asChild size="sm" className="h-8 px-4 rounded-sm font-semibold">
+                <Link href="/login">Login</Link>
+              </Button>
+            )}
+          </div>
+          <SearchAutocomplete
+            navigateOnFocus
+            placeholder="Search meals..."
+            inputClassName="h-10 rounded-lg text-sm pl-10 focus-visible:ring-1"
+          />
+        </header>
       )}
 
       {/* Mobile Bottom Navigation */}
@@ -159,8 +142,6 @@ export function SiteHeader() {
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-border px-2 py-2 flex items-center justify-around shadow-[0_-1px_10px_rgba(0,0,0,0.05)]">
         <MobileNavItem href="/" icon={<Home className="h-6 w-6" />} label="Home" active />
         <MobileNavItem href="/menu" icon={<LayoutDashboard className="h-6 w-6" />} label="Menu" />
-        <MobileNavItem href="/search" icon={<Search className="h-6 w-6" />} label="Search" />
-        <MobileNavItem href={isLoggedIn ? "/account/profile" : "/login"} icon={<User className="h-6 w-6" />} label="Account" />
         <MobileNavItem href={cartHref} icon={<ShoppingCart className="h-6 w-6" />} label="Cart" badge={cartCount} />
       </nav>
       <div className="h-16 md:hidden" />

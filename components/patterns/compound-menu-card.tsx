@@ -143,9 +143,13 @@ function Header() {
         {/* Price & Add Button Row */}
         <div className="mt-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="rounded-md bg-[#EE7005] px-2 py-0.5 text-sm font-black text-white shadow-sm">
-              ₹{item.price}
-            </div>
+            {item.compareAtPrice != null ? (
+              <div className="rounded-md bg-[#EE7005] px-2 py-0.5 text-sm font-black text-white shadow-sm">
+                ₹{item.price}
+              </div>
+            ) : (
+              <span className="text-sm font-black text-foreground">₹{item.price}</span>
+            )}
             {item.compareAtPrice != null && (
               <span className="text-sm font-medium text-muted-foreground line-through">₹{discount}</span>
             )}

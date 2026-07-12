@@ -2,8 +2,10 @@
 
 import { useSearchParams, useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
-import { Search, Loader2, UtensilsCrossed, MapPin } from "lucide-react"
+import { Search, UtensilsCrossed, Star, ChevronRight } from "lucide-react"
 import Image from 'next/image'
+import Link from "next/link"
+
 
 interface SearchItem {
   id: string
@@ -20,10 +22,13 @@ interface SearchItem {
 interface SearchKitchen {
   id: string
   displayName: string
+  avgRating: number
+  totalReviews: number
+  items: { id: string; name: string; price: number; imageUrl: string | null }[]
 }
 
 interface SearchResult {
-  items: SearchItem[]
+  dishes: SearchItem[]
   kitchens: SearchKitchen[]
 }
 
@@ -32,7 +37,7 @@ export function SearchPageContent() {
   const router = useRouter()
   const q = searchParams.get("q") ?? ""
 
-  const { data, isFetching } = useQuery<SearchResult>({
+  const { data } = useQuery<SearchResult>({
     queryKey: ["menu-search-page", q],
     queryFn: async () => {
       const res = await fetch(`/api/menu/search?q=${encodeURIComponent(q)}`)
@@ -43,21 +48,15 @@ export function SearchPageContent() {
     staleTime: 30_000,
   })
 
-  const items = data?.items ?? []
+  const dishes = data?.dishes ?? []
   const kitchens = data?.kitchens ?? []
 
-  const hasResults = items.length > 0 || kitchens.length > 0
-
-  const showLoader = isFetching && q.length >= 1 && !hasResults
+  const hasResults = dishes.length > 0 || kitchens.length > 0
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8">
 
-      {showLoader ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-        </div>
-      ) : q && !hasResults && !isFetching ? (
+      {q && !hasResults ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <UtensilsCrossed className="h-12 w-12 text-muted-foreground/40 mb-4" />
           <p className="text-lg font-semibold text-foreground">No results found</p>
@@ -75,37 +74,44 @@ export function SearchPageContent() {
         </div>
       ) : (
         <div className="space-y-10">
-          {items.length > 0 && (
+          {dishes.length > 0 && (
             <section>
               <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
                 <UtensilsCrossed className="h-5 w-5 text-primary" />
-                Meals
-                <span className="text-sm font-normal text-muted-foreground">({items.length})</span>
+                Dishes
+                <span className="text-sm font-normal text-muted-foreground">({dishes.length})</span>
               </h2>
-              <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                {items.map((item) => (
+              <div className="divide-y divide-border rounded-xl border border-border bg-card overflow-hidden">
+                {dishes.map((item) => (
                   <button
                     key={item.id}
                     onClick={() => router.push(`/menu/${item.id}`)}
-                    className="rounded-xl border border-border bg-card overflow-hidden text-left hover:shadow-md transition-shadow group"
+                    className="w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-muted/50 transition-colors"
                   >
-                    <div className="h-40 bg-muted flex items-center justify-center overflow-hidden relative">
+                    <div className="h-16 w-16 rounded-lg bg-muted flex items-center justify-center overflow-hidden relative shrink-0">
                       {item.imageUrl ? (
-                        <Image src={item.imageUrl} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform" />
+                        <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
                       ) : (
-                        <UtensilsCrossed className="h-8 w-8 text-muted-foreground/40" />
+                        <UtensilsCrossed className="h-6 w-6 text-muted-foreground/40" />
                       )}
                     </div>
-                    <div className="p-3 space-y-1">
-                      <h3 className="font-semibold text-sm line-clamp-1">{item.name}</h3>
-                      <p className="text-xs text-muted-foreground">{item.kitchenName}</p>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-primary">₹{item.price}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold line-clamp-1">{item.name}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{item.kitchenName}</p>
+                      <div className="flex items-center gap-2 mt-1">
+                        {item.compareAtPrice != null ? (
+                          <div className="rounded-sm bg-[#EE7005] px-1.5 py-0.5 text-xs font-bold text-white">
+                            ₹{item.price}
+                          </div>
+                        ) : (
+                          <span className="text-xs font-bold text-foreground">₹{item.price}</span>
+                        )}
                         {item.compareAtPrice && (
-                          <span className="text-xs line-through text-muted-foreground">₹{item.compareAtPrice}</span>
+                          <span className="text-xs text-muted-foreground line-through">₹{item.compareAtPrice}</span>
                         )}
                       </div>
                     </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
                   </button>
                 ))}
               </div>
@@ -115,25 +121,56 @@ export function SearchPageContent() {
           {kitchens.length > 0 && (
             <section>
               <h2 className="text-lg font-bold mb-4 flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-primary" />
+                <UtensilsCrossed className="h-5 w-5 text-primary" />
                 Kitchens
                 <span className="text-sm font-normal text-muted-foreground">({kitchens.length})</span>
               </h2>
-              <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+              <div className="space-y-4">
                 {kitchens.map((kitchen) => (
-                  <button
+                  <Link
                     key={kitchen.id}
-                    onClick={() => router.push(`/menu?kitchen=${kitchen.id}`)}
-                    className="flex items-center gap-4 rounded-xl border border-border bg-card p-4 text-left hover:shadow-md transition-shadow"
+                    href={`/menu?kitchen=${kitchen.id}`}
+                    className="block rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
                   >
-                    <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <MapPin className="h-6 w-6 text-primary" />
+                    <div className="p-4 pb-3">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h3 className="font-bold text-base">{kitchen.displayName}</h3>
+                          {kitchen.avgRating > 0 && (
+                            <div className="flex items-center gap-1.5 mt-1">
+                              <div className="flex items-center gap-0.5 rounded-sm bg-green-700 px-1 py-0.5">
+                                <Star className="h-3 w-3 fill-white text-white" />
+                                <span className="text-xs font-bold text-white">{kitchen.avgRating.toFixed(1)}</span>
+                              </div>
+                              <span className="text-xs text-muted-foreground">
+                                {kitchen.totalReviews} ratings
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                        <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold">{kitchen.displayName}</p>
-                      <p className="text-xs text-muted-foreground">View meals from this kitchen</p>
-                    </div>
-                  </button>
+                    {kitchen.items.length > 0 && (
+                      <div className="flex gap-2 px-4 pb-4 overflow-x-auto scrollbar-none">
+                        {kitchen.items.map((mi) => (
+                          <div
+                            key={mi.id}
+                            className="flex flex-col items-center gap-1 shrink-0"
+                          >
+                            <div className="h-20 w-20 rounded-lg bg-muted flex items-center justify-center overflow-hidden relative">
+                              {mi.imageUrl ? (
+                                <Image src={mi.imageUrl} alt={mi.name} fill className="object-cover" />
+                              ) : (
+                                <UtensilsCrossed className="h-6 w-6 text-muted-foreground/40" />
+                              )}
+                            </div>
+                            <p className="text-[10px] font-medium text-center line-clamp-1 w-20">{mi.name}</p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </Link>
                 ))}
               </div>
             </section>

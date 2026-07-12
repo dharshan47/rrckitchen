@@ -28,7 +28,7 @@ function MenuItemSkeleton({ hasOffer = true }: { hasOffer?: boolean }) {
             </div>
             <Skeleton className="h-8 w-16 rounded-lg border border-orange-200" />
           </div>
-          <div className="mt-4 border-t border-dashed border-border" />
+
         </div>
       </div>
     </div>
