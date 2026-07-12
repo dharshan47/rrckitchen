@@ -109,13 +109,16 @@ async function cacheFirst(request, cacheName, maxAgeSeconds = null) {
     if (maxAgeSeconds) {
       const age = Date.now() - new Date(cached.headers.get('date') || 0).getTime();
       if (age > maxAgeSeconds * 1000) {
-        // Cache expired, fetch in background
-        fetchAndCache(request, cacheName);
+        fetchAndCache(request, cacheName).catch(() => {});
       }
     }
     return cached;
   }
-  return fetchAndCache(request, cacheName);
+  try {
+    return await fetchAndCache(request, cacheName);
+  } catch {
+    return fetch(request);
+  }
 }
 
 async function networkFirst(request, cacheName) {
@@ -126,10 +129,10 @@ async function networkFirst(request, cacheName) {
       cache.put(request, response.clone());
     }
     return response;
-  } catch (error) {
+  } catch {
     const cached = await caches.match(request);
     if (cached) return cached;
-    throw error;
+    return fetch(request);
   }
 }
 
@@ -143,7 +146,7 @@ async function staleWhileRevalidate(request, cacheName) {
       }
       return response;
     })
-    .catch(() => cached);
+    .catch(() => cached || fetch(request));
   return cached || fetchPromise;
 }
 
