@@ -1,6 +1,5 @@
-import crypto from "crypto";
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { confirmPayment, failPayment } from "@/actions/payment";
+import { confirmPayment, failPayment } from "@/actions/payments/payment";
 
 const mockPaymentFindFirst = vi.fn();
 const mockPaymentUpdate = vi.fn();

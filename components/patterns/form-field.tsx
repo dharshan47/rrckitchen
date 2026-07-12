@@ -98,8 +98,6 @@ interface FormProps {
 }
 
 export function CrudForm({ onSubmit, children, className }: FormProps) {
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
   const handleSubmit = useCallback(
     (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
@@ -113,10 +111,8 @@ export function CrudForm({ onSubmit, children, className }: FormProps) {
         }
       });
       if (Object.keys(newErrors).length > 0) {
-        setErrors(newErrors);
         return;
       }
-      setErrors({});
       onSubmit(data);
     },
     [onSubmit]

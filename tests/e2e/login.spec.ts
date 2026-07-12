@@ -52,43 +52,4 @@ test.describe('Login Kitchen Route', () => {
   });
 });
 
-test.describe('Admin Login Route', () => {
-  test('loads with admin branding', async ({ page }) => {
-    await page.goto('/admin/login');
-    await expect(page.getByRole('heading', { name: /Admin Login/i })).toBeVisible();
-  });
 
-  test('shows subtitle text', async ({ page }) => {
-    await page.goto('/admin/login');
-    await expect(page.getByText(/Sign in with your admin credentials/i)).toBeVisible();
-  });
-
-  test('shows email input', async ({ page }) => {
-    await page.goto('/admin/login');
-    await expect(page.getByLabel(/Email/i)).toBeVisible();
-  });
-
-  test('shows password input', async ({ page }) => {
-    await page.goto('/admin/login');
-    await expect(page.getByLabel(/Password/i)).toBeVisible();
-  });
-
-  test('shows sign in button', async ({ page }) => {
-    await page.goto('/admin/login');
-    await expect(page.getByRole('button', { name: /Sign in/i })).toBeVisible();
-  });
-
-  test('email input accepts text', async ({ page }) => {
-    await page.goto('/admin/login');
-    const input = page.getByLabel(/Email/i);
-    await input.fill('admin@rrckitchen.com');
-    await expect(input).toHaveValue('admin@rrckitchen.com');
-  });
-
-  test('password input accepts text', async ({ page }) => {
-    await page.goto('/admin/login');
-    const input = page.getByLabel(/Password/i);
-    await input.fill('secret123');
-    await expect(input).toHaveValue('secret123');
-  });
-});

@@ -1,4 +1,4 @@
-import type { FoodTypeFilter, TimeSlotFilter } from "@/stores/menuStore";
+import type { TimeSlotFilter } from "@/stores/menuStore";
 
 /** Maps a food type string to a Badge variant for UI display. */
 export function createBadgeVariant(foodType: string): "secondary" | "destructive" | "outline" | "default" {

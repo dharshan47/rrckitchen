@@ -1,0 +1,20 @@
+name: Scheduled Jobs
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+    - cron: "0 2 * * *"
+  workflow_dispatch:
+
+jobs:
+  cravings-nudge:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'curl -f "${{ secrets.APP_URL }}/api/jobs/cravings-nudge" -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"'
+  retry-refund:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'curl -f "${{ secrets.APP_URL }}/api/jobs/retry-refund" -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"'
+  settle-payouts:
+    runs-on: ubuntu-latest
+    steps:
+      - run: 'curl -f "${{ secrets.APP_URL }}/api/jobs/settle-payouts" -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"'

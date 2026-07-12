@@ -1,6 +1,9 @@
 "use client"
 
 import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useKitchenData } from "../layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -9,31 +12,108 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { updateKitchenBankDetails } from "@/actions/dashboard"
+import { updateKitchenBankDetails, updateKitchenAddress } from "@/actions/admin/dashboard"
+import { updateProfileNameEmail } from "@/actions/onboarding/profile"
+import { LocationAutocomplete } from "@/components/location/location-autocomplete"
+import { MapPin } from "lucide-react"
+
+const profileSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email("Enter a valid email").or(z.literal("")),
+})
+
+type ProfileForm = z.infer<typeof profileSchema>
+
+const addressSchema = z.object({
+  lineOne: z.string().min(1, "Please select a location"),
+  latitude: z.number(),
+  longitude: z.number(),
+  pincode: z.string(),
+})
+
+type AddressForm = z.infer<typeof addressSchema>
+
+const bankSchema = z.object({
+  bankName: z.string().min(1, "Bank name is required"),
+  bankAccountNumber: z.string().min(1, "Account number is required"),
+  ifscCode: z.string().min(1, "IFSC code is required"),
+  accountHolderName: z.string().min(1, "Account holder name is required"),
+  upiId: z.string(),
+  gpayNumber: z.string(),
+  phoneNumber: z.string(),
+})
+
+type BankForm = z.infer<typeof bankSchema>
 
 export default function ProfilePage() {
   const queryClient = useQueryClient()
   const data = useKitchenData()
   const kitchen = data.kitchen
   const [editingBank, setEditingBank] = useState(false)
+  const [editingAddress, setEditingAddress] = useState(false)
+  const [editingProfile, setEditingProfile] = useState(false)
 
-  const [bankName, setBankName] = useState(kitchen.bankName ?? "")
-  const [bankAccountNumber, setBankAccountNumber] = useState(kitchen.bankAccountNumber ?? "")
-  const [ifscCode, setIfscCode] = useState(kitchen.ifscCode ?? "")
-  const [accountHolderName, setAccountHolderName] = useState(kitchen.accountHolderName ?? "")
-  const [upiId, setUpiId] = useState(kitchen.upiId ?? "")
-  const [gpayNumber, setGpayNumber] = useState(kitchen.gpayNumber ?? "")
-  const [phoneNumber, setPhoneNumber] = useState(kitchen.phoneNumber ?? "")
+  const profileForm = useForm<ProfileForm>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      name: kitchen.userName ?? "",
+      email: kitchen.email ?? "",
+    },
+  })
+
+  const addressForm = useForm<AddressForm>({
+    resolver: zodResolver(addressSchema),
+    defaultValues: {
+      lineOne: kitchen.address?.lineOne ?? "",
+      latitude: kitchen.address?.latitude ?? 0,
+      longitude: kitchen.address?.longitude ?? 0,
+      pincode: "613001",
+    },
+  })
+
+  const bankForm = useForm<BankForm>({
+    resolver: zodResolver(bankSchema),
+    defaultValues: {
+      bankName: kitchen.bankName ?? "",
+      bankAccountNumber: kitchen.bankAccountNumber ?? "",
+      ifscCode: kitchen.ifscCode ?? "",
+      accountHolderName: kitchen.accountHolderName ?? "",
+      upiId: kitchen.upiId ?? "",
+      gpayNumber: kitchen.gpayNumber ?? "",
+      phoneNumber: kitchen.phoneNumber ?? "",
+    },
+  })
+
+  const addressMutation = useMutation({
+    mutationFn: (data: AddressForm) =>
+      updateKitchenAddress({
+        lineOne: data.lineOne,
+        pincode: "613001",
+        latitude: data.latitude,
+        longitude: data.longitude,
+      }),
+    onSuccess: (result) => {
+      if (result.success) {
+        toast.success("Address updated")
+        setEditingAddress(false)
+        queryClient.invalidateQueries({ queryKey: ["kitchen-dashboard"] })
+      } else {
+        toast.error(result.error ?? "Failed to update")
+      }
+    },
+    onError: () => toast.error("Something went wrong"),
+  })
+
   const bankMutation = useMutation({
-    mutationFn: () =>
+    mutationFn: (data: BankForm) =>
       updateKitchenBankDetails({
-        bankName,
-        bankAccountNumber,
-        ifscCode,
-        accountHolderName,
-        upiId,
-        gpayNumber,
-        phoneNumber,
+        bankName: data.bankName,
+        bankAccountNumber: data.bankAccountNumber,
+        ifscCode: data.ifscCode,
+        accountHolderName: data.accountHolderName,
+        upiId: data.upiId ?? "",
+        gpayNumber: data.gpayNumber ?? "",
+        phoneNumber: data.phoneNumber ?? "",
       }),
     onSuccess: (result) => {
       if (result.success) {
@@ -47,31 +127,144 @@ export default function ProfilePage() {
     onError: () => toast.error("Something went wrong"),
   })
 
-  const handleSaveBank = (e: React.FormEvent) => {
-    e.preventDefault()
-    bankMutation.mutate()
-  }
+  const profileMutation = useMutation({
+    mutationFn: (data: ProfileForm) =>
+      updateProfileNameEmail({ name: data.name, email: data.email }),
+    onSuccess: (result) => {
+      if (result.success) {
+        toast.success("Profile updated")
+        setEditingProfile(false)
+        queryClient.invalidateQueries({ queryKey: ["kitchen-dashboard"] })
+      } else {
+        toast.error(result.error ?? "Failed to update profile")
+      }
+    },
+    onError: () => toast.error("Something went wrong"),
+  })
 
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Profile</CardTitle>
+          {!editingProfile && (
+            <Button variant="outline" size="sm" onClick={() => {
+              profileForm.reset({ name: kitchen.userName ?? "", email: kitchen.email ?? "" })
+              setEditingProfile(true)
+            }}>
+              Edit
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label>Kitchen Name</Label>
-              <p className="font-medium">{kitchen.displayName}</p>
+          {editingProfile ? (
+            <form onSubmit={profileForm.handleSubmit((data) => profileMutation.mutate(data))} className="grid gap-4 sm:grid-cols-2">
+              <div className="grid gap-2">
+                <Label htmlFor="kh-name">Name</Label>
+                <Input id="kh-name" {...profileForm.register("name")} placeholder="Your name" />
+                {profileForm.formState.errors.name && (
+                  <p className="text-xs text-destructive">{profileForm.formState.errors.name.message}</p>
+                )}
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="kh-email">Email</Label>
+                <Input id="kh-email" type="email" {...profileForm.register("email")} placeholder="Your email" />
+                {profileForm.formState.errors.email && (
+                  <p className="text-xs text-destructive">{profileForm.formState.errors.email.message}</p>
+                )}
+              </div>
+              <div className="flex items-end gap-2 sm:col-span-2">
+                <Button type="submit" size="sm" disabled={profileMutation.isPending}>
+                  {profileMutation.isPending ? "Saving..." : "Save"}
+                </Button>
+                <Button type="button" variant="outline" size="sm" onClick={() => { profileForm.reset(); setEditingProfile(false) }}>
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          ) : (
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label>Kitchen Name</Label>
+                <p className="font-medium">{kitchen.displayName}</p>
+              </div>
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Badge variant="secondary" className="bg-green-100 text-green-700 font-medium">
+                  {kitchen.status}
+                </Badge>
+              </div>
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <p className="font-medium">{kitchen.email ?? "Not set"}</p>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label>Status</Label>
-              <Badge variant="secondary" className="bg-green-100 text-green-700 font-medium">
-                {kitchen.status}
-              </Badge>
-            </div>
+          )}
+        </CardContent>
+      </Card>
 
-          </div>
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between">
+          <CardTitle>Kitchen Address</CardTitle>
+          {!kitchen.address && (
+            <Button variant="outline" size="sm" onClick={() => setEditingAddress(true)}>
+              Add Address
+            </Button>
+          )}
+        </CardHeader>
+        <CardContent>
+          {editingAddress ? (
+            <form onSubmit={addressForm.handleSubmit((data) => addressMutation.mutate(data))} className="space-y-4">
+              <div className="grid gap-2">
+                <Label>Search your kitchen location</Label>
+                <LocationAutocomplete
+                  onPlaceSelect={(place) => {
+                    addressForm.setValue("lineOne", place.address, { shouldValidate: true })
+                    addressForm.setValue("latitude", place.lat, { shouldValidate: true })
+                    addressForm.setValue("longitude", place.lng, { shouldValidate: true })
+                  }}
+                  defaultValue={kitchen.address?.lineOne ?? ""}
+                />
+              </div>
+              {addressForm.formState.errors.lineOne && (
+                <p className="text-xs text-destructive">{addressForm.formState.errors.lineOne.message}</p>
+              )}
+              <div className="flex gap-2">
+                <Button type="submit" disabled={addressMutation.isPending}>
+                  {addressMutation.isPending ? "Saving..." : "Save Address"}
+                </Button>
+                <Button type="button" variant="outline" onClick={() => { addressForm.reset(); setEditingAddress(false) }}>
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          ) : kitchen.address ? (
+            <div className="space-y-2">
+              <div className="flex items-start gap-2">
+                <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0" />
+                <div>
+                  <p className="font-medium">{kitchen.address.lineOne}</p>
+                  <p className="text-sm text-muted-foreground">Pincode: {kitchen.address.pincode}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {kitchen.address.latitude.toFixed(6)}, {kitchen.address.longitude.toFixed(6)}
+                  </p>
+                </div>
+              </div>
+              <Button variant="outline" size="sm" onClick={() => {
+                addressForm.reset({
+                  lineOne: kitchen.address!.lineOne,
+                  latitude: kitchen.address!.latitude,
+                  longitude: kitchen.address!.longitude,
+                  pincode: "613001",
+                })
+                setEditingAddress(true)
+              }}>
+                Edit Address
+              </Button>
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">No address set. Add your kitchen location for delivery pickup.</p>
+          )}
         </CardContent>
       </Card>
 
@@ -86,7 +279,7 @@ export default function ProfilePage() {
         </CardHeader>
         <CardContent>
           {editingBank ? (
-            <form onSubmit={handleSaveBank} className="space-y-6">
+            <form onSubmit={bankForm.handleSubmit((data) => bankMutation.mutate(data))} className="space-y-6">
               <div>
                 <h3 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
                   Bank Account
@@ -94,39 +287,31 @@ export default function ProfilePage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="grid gap-2">
                     <Label htmlFor="kh-bankName">Bank Name</Label>
-                    <Input
-                      id="kh-bankName"
-                      value={bankName}
-                      onChange={(e) => setBankName(e.target.value)}
-                      placeholder="Enter bank name"
-                    />
+                    <Input id="kh-bankName" {...bankForm.register("bankName")} placeholder="Enter bank name" />
+                    {bankForm.formState.errors.bankName && (
+                      <p className="text-xs text-destructive">{bankForm.formState.errors.bankName.message}</p>
+                    )}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="kh-accountHolderName">Account Holder Name</Label>
-                    <Input
-                      id="kh-accountHolderName"
-                      value={accountHolderName}
-                      onChange={(e) => setAccountHolderName(e.target.value)}
-                      placeholder="Enter account holder name"
-                    />
+                    <Input id="kh-accountHolderName" {...bankForm.register("accountHolderName")} placeholder="Enter account holder name" />
+                    {bankForm.formState.errors.accountHolderName && (
+                      <p className="text-xs text-destructive">{bankForm.formState.errors.accountHolderName.message}</p>
+                    )}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="kh-bankAccountNumber">Bank Account Number</Label>
-                    <Input
-                      id="kh-bankAccountNumber"
-                      value={bankAccountNumber}
-                      onChange={(e) => setBankAccountNumber(e.target.value)}
-                      placeholder="Enter bank account number"
-                    />
+                    <Input id="kh-bankAccountNumber" {...bankForm.register("bankAccountNumber")} placeholder="Enter bank account number" />
+                    {bankForm.formState.errors.bankAccountNumber && (
+                      <p className="text-xs text-destructive">{bankForm.formState.errors.bankAccountNumber.message}</p>
+                    )}
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="kh-ifscCode">IFSC Code</Label>
-                    <Input
-                      id="kh-ifscCode"
-                      value={ifscCode}
-                      onChange={(e) => setIfscCode(e.target.value)}
-                      placeholder="Enter IFSC code"
-                    />
+                    <Input id="kh-ifscCode" {...bankForm.register("ifscCode")} placeholder="Enter IFSC code" />
+                    {bankForm.formState.errors.ifscCode && (
+                      <p className="text-xs text-destructive">{bankForm.formState.errors.ifscCode.message}</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -138,30 +323,15 @@ export default function ProfilePage() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="grid gap-2">
                     <Label htmlFor="kh-upiId">UPI ID</Label>
-                    <Input
-                      id="kh-upiId"
-                      value={upiId}
-                      onChange={(e) => setUpiId(e.target.value)}
-                      placeholder="e.g. name@upi"
-                    />
+                    <Input id="kh-upiId" {...bankForm.register("upiId")} placeholder="e.g. name@upi" />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="kh-gpayNumber">Google Pay Number</Label>
-                    <Input
-                      id="kh-gpayNumber"
-                      value={gpayNumber}
-                      onChange={(e) => setGpayNumber(e.target.value)}
-                      placeholder="Phone number for GPay"
-                    />
+                    <Input id="kh-gpayNumber" {...bankForm.register("gpayNumber")} placeholder="Phone number for GPay" />
                   </div>
                   <div className="grid gap-2">
                     <Label htmlFor="kh-phoneNumber">PhonePe / Other UPI Number</Label>
-                    <Input
-                      id="kh-phoneNumber"
-                      value={phoneNumber}
-                      onChange={(e) => setPhoneNumber(e.target.value)}
-                      placeholder="Phone number for PhonePe"
-                    />
+                    <Input id="kh-phoneNumber" {...bankForm.register("phoneNumber")} placeholder="Phone number for PhonePe" />
                   </div>
                 </div>
               </div>
@@ -170,20 +340,7 @@ export default function ProfilePage() {
                 <Button type="submit" disabled={bankMutation.isPending}>
                   {bankMutation.isPending ? "Saving..." : "Save Bank Details"}
                 </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setEditingBank(false)
-                      setBankName(kitchen.bankName ?? "")
-                      setBankAccountNumber(kitchen.bankAccountNumber ?? "")
-                      setIfscCode(kitchen.ifscCode ?? "")
-                      setAccountHolderName(kitchen.accountHolderName ?? "")
-                      setUpiId(kitchen.upiId ?? "")
-                      setGpayNumber(kitchen.gpayNumber ?? "")
-                      setPhoneNumber(kitchen.phoneNumber ?? "")
-                    }}
-                >
+                <Button type="button" variant="outline" onClick={() => { bankForm.reset(); setEditingBank(false) }}>
                   Cancel
                 </Button>
               </div>

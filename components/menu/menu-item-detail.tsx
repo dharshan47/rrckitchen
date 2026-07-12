@@ -21,6 +21,7 @@ import {
   Share2,
 } from "lucide-react";
 import Link from "next/link";
+import { WishlistButton } from "@/components/menu/wishlist-button";
 
 interface MenuItemPhoto {
   id?: string;
@@ -37,6 +38,8 @@ interface MenuItem {
   foodType: string;
   timeSlot: string;
   isAvailable: boolean;
+  avgRating: number | null;
+  totalReviews: number;
   menu: { kitchenPartner: { kitchenAlias: { displayName: string } | null } | null } | null;
   photos: MenuItemPhoto[];
 }
@@ -206,6 +209,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                       >
                         <ChevronLeft className="h-5 w-5" />
                       </button>
+                      <WishlistButton menuItemId={item.id} size="md" className="md:hidden absolute top-4 right-16" />
                       <button
                         onClick={handleShare}
                         className="md:hidden absolute top-4 right-4 h-9 w-9 rounded-full bg-white/90 text-foreground flex items-center justify-center shadow-md"
@@ -349,6 +353,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                     >
                       {item.foodType}
                     </Badge>
+                    <WishlistButton menuItemId={item.id} size="sm" variant="inline" className="hidden lg:flex" />
                     <button
                       onClick={handleShare}
                       className="hidden lg:flex h-8 w-8 rounded-full bg-muted items-center justify-center hover:bg-muted/80 transition-colors"
@@ -366,11 +371,13 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                     Net Qty: 1 Serving
                   </span>
                   <span className="text-muted-foreground/40">•</span>
-                  <span className="flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                    <span className="text-foreground font-medium">4.6</span>
-                    (120+)
-                  </span>
+                  {item.avgRating && (
+                    <span className="flex items-center gap-1">
+                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                      <span className="text-foreground font-medium">{item.avgRating}</span>
+                      ({item.totalReviews}+)
+                    </span>
+                  )}
                 </div>
 
                 {/* Delivery Info Badges */}
@@ -489,6 +496,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                 <p className="text-xs font-medium text-primary">₹{price}</p>
               </div>
             </div>
+            <WishlistButton menuItemId={item.id} size="sm" variant="inline" />
             <button
               onClick={handleShare}
               className="shrink-0 text-foreground"

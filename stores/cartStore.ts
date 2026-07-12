@@ -11,14 +11,30 @@ export interface CartItem {
   foodType: string;
   timeSlot: string;
   kitchenName: string;
+  kitchenId?: string;
+  imageUrl?: string;
 }
+
+export interface AppliedCoupon {
+  code: string;
+  discount: number;
+  type: "PERCENTAGE" | "FIXED" | "FREE_DELIVERY";
+  description?: string;
+}
+
+export type OrderType = "PREBOOK" | "INSTANT";
 
 interface CartState {
   cart: CartItem[];
+  appliedCoupon: AppliedCoupon | null;
+  orderType: OrderType;
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, qty: number) => void;
   clearCart: () => void;
+  applyCoupon: (coupon: AppliedCoupon) => void;
+  removeCoupon: () => void;
+  setOrderType: (type: OrderType) => void;
 }
 
 // Fine-grained selectors for stable references and minimal re-renders
@@ -30,11 +46,21 @@ export const selectCartActions = (s: CartState) => ({
   removeFromCart: s.removeFromCart,
   updateQuantity: s.updateQuantity,
   clearCart: s.clearCart,
+  applyCoupon: s.applyCoupon,
+  removeCoupon: s.removeCoupon,
+  setOrderType: s.setOrderType,
 });
 
+export const selectCartCoupon = (s: CartState) => s.appliedCoupon;
+
+export const selectCartOrderType = (s: CartState) => s.orderType;
+
 export const cartStore = create<CartState>()(
-  subscribeWithSelector((set, get) => ({
+  subscribeWithSelector((set) => ({
     cart: [],
+    appliedCoupon: null,
+    orderType: "PREBOOK" as OrderType,
+    setOrderType: (type: OrderType) => set({ orderType: type }),
     addToCart: (item: CartItem) => {
       set((state) => {
         const existing = state.cart.find((cartItem) => cartItem.id === item.id);
@@ -64,8 +90,16 @@ export const cartStore = create<CartState>()(
       globalEventBus.emit(AppEvents.CART_UPDATED, { action: "update-qty", id, qty });
     },
     clearCart: () => {
-      set({ cart: [] });
+      set({ cart: [], appliedCoupon: null });
       globalEventBus.emit(AppEvents.CART_UPDATED, { action: "clear" });
+    },
+    applyCoupon: (coupon: AppliedCoupon) => {
+      set({ appliedCoupon: coupon });
+      globalEventBus.emit(AppEvents.CART_UPDATED, { action: "apply-coupon", coupon });
+    },
+    removeCoupon: () => {
+      set({ appliedCoupon: null });
+      globalEventBus.emit(AppEvents.CART_UPDATED, { action: "remove-coupon" });
     },
   }))
 );
@@ -82,4 +116,10 @@ export function useCartTotal() {
 }
 export function useCartActions() {
   return cartStore(useShallow(selectCartActions));
+}
+export function useCartCoupon() {
+  return cartStore(selectCartCoupon);
+}
+export function useCartOrderType() {
+  return cartStore(selectCartOrderType);
 }

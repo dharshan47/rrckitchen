@@ -28,10 +28,16 @@ export type AggregateReview = {
 
 export type ReviewAvgAggregateOutputType = {
   rating: number | null
+  tasteRating: number | null
+  packagingRating: number | null
+  portionSizeRating: number | null
 }
 
 export type ReviewSumAggregateOutputType = {
   rating: number | null
+  tasteRating: number | null
+  packagingRating: number | null
+  portionSizeRating: number | null
 }
 
 export type ReviewMinAggregateOutputType = {
@@ -40,6 +46,9 @@ export type ReviewMinAggregateOutputType = {
   userId: string | null
   kitchenPartnerId: string | null
   rating: number | null
+  tasteRating: number | null
+  packagingRating: number | null
+  portionSizeRating: number | null
   comment: string | null
   createdAt: Date | null
 }
@@ -50,6 +59,9 @@ export type ReviewMaxAggregateOutputType = {
   userId: string | null
   kitchenPartnerId: string | null
   rating: number | null
+  tasteRating: number | null
+  packagingRating: number | null
+  portionSizeRating: number | null
   comment: string | null
   createdAt: Date | null
 }
@@ -60,7 +72,11 @@ export type ReviewCountAggregateOutputType = {
   userId: number
   kitchenPartnerId: number
   rating: number
+  tasteRating: number
+  packagingRating: number
+  portionSizeRating: number
   comment: number
+  mediaUrls: number
   createdAt: number
   _all: number
 }
@@ -68,10 +84,16 @@ export type ReviewCountAggregateOutputType = {
 
 export type ReviewAvgAggregateInputType = {
   rating?: true
+  tasteRating?: true
+  packagingRating?: true
+  portionSizeRating?: true
 }
 
 export type ReviewSumAggregateInputType = {
   rating?: true
+  tasteRating?: true
+  packagingRating?: true
+  portionSizeRating?: true
 }
 
 export type ReviewMinAggregateInputType = {
@@ -80,6 +102,9 @@ export type ReviewMinAggregateInputType = {
   userId?: true
   kitchenPartnerId?: true
   rating?: true
+  tasteRating?: true
+  packagingRating?: true
+  portionSizeRating?: true
   comment?: true
   createdAt?: true
 }
@@ -90,6 +115,9 @@ export type ReviewMaxAggregateInputType = {
   userId?: true
   kitchenPartnerId?: true
   rating?: true
+  tasteRating?: true
+  packagingRating?: true
+  portionSizeRating?: true
   comment?: true
   createdAt?: true
 }
@@ -100,7 +128,11 @@ export type ReviewCountAggregateInputType = {
   userId?: true
   kitchenPartnerId?: true
   rating?: true
+  tasteRating?: true
+  packagingRating?: true
+  portionSizeRating?: true
   comment?: true
+  mediaUrls?: true
   createdAt?: true
   _all?: true
 }
@@ -197,7 +229,11 @@ export type ReviewGroupByOutputType = {
   userId: string
   kitchenPartnerId: string
   rating: number
+  tasteRating: number | null
+  packagingRating: number | null
+  portionSizeRating: number | null
   comment: string | null
+  mediaUrls: string[]
   createdAt: Date
   _count: ReviewCountAggregateOutputType | null
   _avg: ReviewAvgAggregateOutputType | null
@@ -230,7 +266,11 @@ export type ReviewWhereInput = {
   userId?: Prisma.StringFilter<"Review"> | string
   kitchenPartnerId?: Prisma.StringFilter<"Review"> | string
   rating?: Prisma.IntFilter<"Review"> | number
+  tasteRating?: Prisma.IntNullableFilter<"Review"> | number | null
+  packagingRating?: Prisma.IntNullableFilter<"Review"> | number | null
+  portionSizeRating?: Prisma.IntNullableFilter<"Review"> | number | null
   comment?: Prisma.StringNullableFilter<"Review"> | string | null
+  mediaUrls?: Prisma.StringNullableListFilter<"Review">
   createdAt?: Prisma.DateTimeFilter<"Review"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -243,7 +283,11 @@ export type ReviewOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
   rating?: Prisma.SortOrder
+  tasteRating?: Prisma.SortOrderInput | Prisma.SortOrder
+  packagingRating?: Prisma.SortOrderInput | Prisma.SortOrder
+  portionSizeRating?: Prisma.SortOrderInput | Prisma.SortOrder
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
+  mediaUrls?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   order?: Prisma.OrderOrderByWithRelationInput
   user?: Prisma.UserOrderByWithRelationInput
@@ -259,7 +303,11 @@ export type ReviewWhereUniqueInput = Prisma.AtLeast<{
   userId?: Prisma.StringFilter<"Review"> | string
   kitchenPartnerId?: Prisma.StringFilter<"Review"> | string
   rating?: Prisma.IntFilter<"Review"> | number
+  tasteRating?: Prisma.IntNullableFilter<"Review"> | number | null
+  packagingRating?: Prisma.IntNullableFilter<"Review"> | number | null
+  portionSizeRating?: Prisma.IntNullableFilter<"Review"> | number | null
   comment?: Prisma.StringNullableFilter<"Review"> | string | null
+  mediaUrls?: Prisma.StringNullableListFilter<"Review">
   createdAt?: Prisma.DateTimeFilter<"Review"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -272,7 +320,11 @@ export type ReviewOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
   rating?: Prisma.SortOrder
+  tasteRating?: Prisma.SortOrderInput | Prisma.SortOrder
+  packagingRating?: Prisma.SortOrderInput | Prisma.SortOrder
+  portionSizeRating?: Prisma.SortOrderInput | Prisma.SortOrder
   comment?: Prisma.SortOrderInput | Prisma.SortOrder
+  mediaUrls?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.ReviewCountOrderByAggregateInput
   _avg?: Prisma.ReviewAvgOrderByAggregateInput
@@ -290,14 +342,22 @@ export type ReviewScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"Review"> | string
   kitchenPartnerId?: Prisma.StringWithAggregatesFilter<"Review"> | string
   rating?: Prisma.IntWithAggregatesFilter<"Review"> | number
+  tasteRating?: Prisma.IntNullableWithAggregatesFilter<"Review"> | number | null
+  packagingRating?: Prisma.IntNullableWithAggregatesFilter<"Review"> | number | null
+  portionSizeRating?: Prisma.IntNullableWithAggregatesFilter<"Review"> | number | null
   comment?: Prisma.StringNullableWithAggregatesFilter<"Review"> | string | null
+  mediaUrls?: Prisma.StringNullableListFilter<"Review">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Review"> | Date | string
 }
 
 export type ReviewCreateInput = {
   id?: string
   rating: number
+  tasteRating?: number | null
+  packagingRating?: number | null
+  portionSizeRating?: number | null
   comment?: string | null
+  mediaUrls?: Prisma.ReviewCreatemediaUrlsInput | string[]
   createdAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutReviewInput
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
@@ -310,14 +370,22 @@ export type ReviewUncheckedCreateInput = {
   userId: string
   kitchenPartnerId: string
   rating: number
+  tasteRating?: number | null
+  packagingRating?: number | null
+  portionSizeRating?: number | null
   comment?: string | null
+  mediaUrls?: Prisma.ReviewCreatemediaUrlsInput | string[]
   createdAt?: Date | string
 }
 
 export type ReviewUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tasteRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  packagingRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSizeRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaUrls?: Prisma.ReviewUpdatemediaUrlsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutReviewNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
@@ -330,7 +398,11 @@ export type ReviewUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tasteRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  packagingRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSizeRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaUrls?: Prisma.ReviewUpdatemediaUrlsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -340,14 +412,22 @@ export type ReviewCreateManyInput = {
   userId: string
   kitchenPartnerId: string
   rating: number
+  tasteRating?: number | null
+  packagingRating?: number | null
+  portionSizeRating?: number | null
   comment?: string | null
+  mediaUrls?: Prisma.ReviewCreatemediaUrlsInput | string[]
   createdAt?: Date | string
 }
 
 export type ReviewUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tasteRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  packagingRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSizeRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaUrls?: Prisma.ReviewUpdatemediaUrlsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -357,7 +437,11 @@ export type ReviewUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tasteRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  packagingRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSizeRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaUrls?: Prisma.ReviewUpdatemediaUrlsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -382,12 +466,19 @@ export type ReviewCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
   rating?: Prisma.SortOrder
+  tasteRating?: Prisma.SortOrder
+  packagingRating?: Prisma.SortOrder
+  portionSizeRating?: Prisma.SortOrder
   comment?: Prisma.SortOrder
+  mediaUrls?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type ReviewAvgOrderByAggregateInput = {
   rating?: Prisma.SortOrder
+  tasteRating?: Prisma.SortOrder
+  packagingRating?: Prisma.SortOrder
+  portionSizeRating?: Prisma.SortOrder
 }
 
 export type ReviewMaxOrderByAggregateInput = {
@@ -396,6 +487,9 @@ export type ReviewMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
   rating?: Prisma.SortOrder
+  tasteRating?: Prisma.SortOrder
+  packagingRating?: Prisma.SortOrder
+  portionSizeRating?: Prisma.SortOrder
   comment?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -406,12 +500,18 @@ export type ReviewMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   kitchenPartnerId?: Prisma.SortOrder
   rating?: Prisma.SortOrder
+  tasteRating?: Prisma.SortOrder
+  packagingRating?: Prisma.SortOrder
+  portionSizeRating?: Prisma.SortOrder
   comment?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type ReviewSumOrderByAggregateInput = {
   rating?: Prisma.SortOrder
+  tasteRating?: Prisma.SortOrder
+  packagingRating?: Prisma.SortOrder
+  portionSizeRating?: Prisma.SortOrder
 }
 
 export type ReviewCreateNestedManyWithoutUserInput = {
@@ -530,10 +630,23 @@ export type ReviewUncheckedUpdateOneWithoutOrderNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ReviewUpdateToOneWithWhereWithoutOrderInput, Prisma.ReviewUpdateWithoutOrderInput>, Prisma.ReviewUncheckedUpdateWithoutOrderInput>
 }
 
+export type ReviewCreatemediaUrlsInput = {
+  set: string[]
+}
+
+export type ReviewUpdatemediaUrlsInput = {
+  set?: string[]
+  push?: string | string[]
+}
+
 export type ReviewCreateWithoutUserInput = {
   id?: string
   rating: number
+  tasteRating?: number | null
+  packagingRating?: number | null
+  portionSizeRating?: number | null
   comment?: string | null
+  mediaUrls?: Prisma.ReviewCreatemediaUrlsInput | string[]
   createdAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutReviewInput
   kitchenPartner: Prisma.KitchenPartnerCreateNestedOneWithoutReviewsInput
@@ -544,7 +657,11 @@ export type ReviewUncheckedCreateWithoutUserInput = {
   orderId: string
   kitchenPartnerId: string
   rating: number
+  tasteRating?: number | null
+  packagingRating?: number | null
+  portionSizeRating?: number | null
   comment?: string | null
+  mediaUrls?: Prisma.ReviewCreatemediaUrlsInput | string[]
   createdAt?: Date | string
 }
 
@@ -583,14 +700,22 @@ export type ReviewScalarWhereInput = {
   userId?: Prisma.StringFilter<"Review"> | string
   kitchenPartnerId?: Prisma.StringFilter<"Review"> | string
   rating?: Prisma.IntFilter<"Review"> | number
+  tasteRating?: Prisma.IntNullableFilter<"Review"> | number | null
+  packagingRating?: Prisma.IntNullableFilter<"Review"> | number | null
+  portionSizeRating?: Prisma.IntNullableFilter<"Review"> | number | null
   comment?: Prisma.StringNullableFilter<"Review"> | string | null
+  mediaUrls?: Prisma.StringNullableListFilter<"Review">
   createdAt?: Prisma.DateTimeFilter<"Review"> | Date | string
 }
 
 export type ReviewCreateWithoutKitchenPartnerInput = {
   id?: string
   rating: number
+  tasteRating?: number | null
+  packagingRating?: number | null
+  portionSizeRating?: number | null
   comment?: string | null
+  mediaUrls?: Prisma.ReviewCreatemediaUrlsInput | string[]
   createdAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutReviewInput
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
@@ -601,7 +726,11 @@ export type ReviewUncheckedCreateWithoutKitchenPartnerInput = {
   orderId: string
   userId: string
   rating: number
+  tasteRating?: number | null
+  packagingRating?: number | null
+  portionSizeRating?: number | null
   comment?: string | null
+  mediaUrls?: Prisma.ReviewCreatemediaUrlsInput | string[]
   createdAt?: Date | string
 }
 
@@ -634,7 +763,11 @@ export type ReviewUpdateManyWithWhereWithoutKitchenPartnerInput = {
 export type ReviewCreateWithoutOrderInput = {
   id?: string
   rating: number
+  tasteRating?: number | null
+  packagingRating?: number | null
+  portionSizeRating?: number | null
   comment?: string | null
+  mediaUrls?: Prisma.ReviewCreatemediaUrlsInput | string[]
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutReviewsInput
   kitchenPartner: Prisma.KitchenPartnerCreateNestedOneWithoutReviewsInput
@@ -645,7 +778,11 @@ export type ReviewUncheckedCreateWithoutOrderInput = {
   userId: string
   kitchenPartnerId: string
   rating: number
+  tasteRating?: number | null
+  packagingRating?: number | null
+  portionSizeRating?: number | null
   comment?: string | null
+  mediaUrls?: Prisma.ReviewCreatemediaUrlsInput | string[]
   createdAt?: Date | string
 }
 
@@ -668,7 +805,11 @@ export type ReviewUpdateToOneWithWhereWithoutOrderInput = {
 export type ReviewUpdateWithoutOrderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tasteRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  packagingRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSizeRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaUrls?: Prisma.ReviewUpdatemediaUrlsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneRequiredWithoutReviewsNestedInput
@@ -679,7 +820,11 @@ export type ReviewUncheckedUpdateWithoutOrderInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tasteRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  packagingRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSizeRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaUrls?: Prisma.ReviewUpdatemediaUrlsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -688,14 +833,22 @@ export type ReviewCreateManyUserInput = {
   orderId: string
   kitchenPartnerId: string
   rating: number
+  tasteRating?: number | null
+  packagingRating?: number | null
+  portionSizeRating?: number | null
   comment?: string | null
+  mediaUrls?: Prisma.ReviewCreatemediaUrlsInput | string[]
   createdAt?: Date | string
 }
 
 export type ReviewUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tasteRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  packagingRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSizeRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaUrls?: Prisma.ReviewUpdatemediaUrlsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutReviewNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneRequiredWithoutReviewsNestedInput
@@ -706,7 +859,11 @@ export type ReviewUncheckedUpdateWithoutUserInput = {
   orderId?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tasteRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  packagingRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSizeRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaUrls?: Prisma.ReviewUpdatemediaUrlsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -715,7 +872,11 @@ export type ReviewUncheckedUpdateManyWithoutUserInput = {
   orderId?: Prisma.StringFieldUpdateOperationsInput | string
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tasteRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  packagingRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSizeRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaUrls?: Prisma.ReviewUpdatemediaUrlsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -724,14 +885,22 @@ export type ReviewCreateManyKitchenPartnerInput = {
   orderId: string
   userId: string
   rating: number
+  tasteRating?: number | null
+  packagingRating?: number | null
+  portionSizeRating?: number | null
   comment?: string | null
+  mediaUrls?: Prisma.ReviewCreatemediaUrlsInput | string[]
   createdAt?: Date | string
 }
 
 export type ReviewUpdateWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tasteRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  packagingRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSizeRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaUrls?: Prisma.ReviewUpdatemediaUrlsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutReviewNestedInput
   user?: Prisma.UserUpdateOneRequiredWithoutReviewsNestedInput
@@ -742,7 +911,11 @@ export type ReviewUncheckedUpdateWithoutKitchenPartnerInput = {
   orderId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tasteRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  packagingRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSizeRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaUrls?: Prisma.ReviewUpdatemediaUrlsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -751,7 +924,11 @@ export type ReviewUncheckedUpdateManyWithoutKitchenPartnerInput = {
   orderId?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   rating?: Prisma.IntFieldUpdateOperationsInput | number
+  tasteRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  packagingRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSizeRating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   comment?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  mediaUrls?: Prisma.ReviewUpdatemediaUrlsInput | string[]
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -763,7 +940,11 @@ export type ReviewSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   userId?: boolean
   kitchenPartnerId?: boolean
   rating?: boolean
+  tasteRating?: boolean
+  packagingRating?: boolean
+  portionSizeRating?: boolean
   comment?: boolean
+  mediaUrls?: boolean
   createdAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -776,7 +957,11 @@ export type ReviewSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   userId?: boolean
   kitchenPartnerId?: boolean
   rating?: boolean
+  tasteRating?: boolean
+  packagingRating?: boolean
+  portionSizeRating?: boolean
   comment?: boolean
+  mediaUrls?: boolean
   createdAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -789,7 +974,11 @@ export type ReviewSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   userId?: boolean
   kitchenPartnerId?: boolean
   rating?: boolean
+  tasteRating?: boolean
+  packagingRating?: boolean
+  portionSizeRating?: boolean
   comment?: boolean
+  mediaUrls?: boolean
   createdAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -802,11 +991,15 @@ export type ReviewSelectScalar = {
   userId?: boolean
   kitchenPartnerId?: boolean
   rating?: boolean
+  tasteRating?: boolean
+  packagingRating?: boolean
+  portionSizeRating?: boolean
   comment?: boolean
+  mediaUrls?: boolean
   createdAt?: boolean
 }
 
-export type ReviewOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "userId" | "kitchenPartnerId" | "rating" | "comment" | "createdAt", ExtArgs["result"]["review"]>
+export type ReviewOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "userId" | "kitchenPartnerId" | "rating" | "tasteRating" | "packagingRating" | "portionSizeRating" | "comment" | "mediaUrls" | "createdAt", ExtArgs["result"]["review"]>
 export type ReviewInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -836,7 +1029,11 @@ export type $ReviewPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     userId: string
     kitchenPartnerId: string
     rating: number
+    tasteRating: number | null
+    packagingRating: number | null
+    portionSizeRating: number | null
     comment: string | null
+    mediaUrls: string[]
     createdAt: Date
   }, ExtArgs["result"]["review"]>
   composites: {}
@@ -1269,7 +1466,11 @@ export interface ReviewFieldRefs {
   readonly userId: Prisma.FieldRef<"Review", 'String'>
   readonly kitchenPartnerId: Prisma.FieldRef<"Review", 'String'>
   readonly rating: Prisma.FieldRef<"Review", 'Int'>
+  readonly tasteRating: Prisma.FieldRef<"Review", 'Int'>
+  readonly packagingRating: Prisma.FieldRef<"Review", 'Int'>
+  readonly portionSizeRating: Prisma.FieldRef<"Review", 'Int'>
   readonly comment: Prisma.FieldRef<"Review", 'String'>
+  readonly mediaUrls: Prisma.FieldRef<"Review", 'String[]'>
   readonly createdAt: Prisma.FieldRef<"Review", 'DateTime'>
 }
     

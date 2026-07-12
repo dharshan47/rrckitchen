@@ -80,7 +80,7 @@ export function invalidateRequestCache(pattern?: RegExp): void {
 }
 
 const DEBOUNCE_CACHE_MAX = 50;
-const debounceCache = new Map<string, number>();
+const debounceCache = new Map<string, ReturnType<typeof setTimeout>>();
 
 /**
  * Debounces a function call by key. Cancels any previous pending
@@ -90,7 +90,7 @@ const debounceCache = new Map<string, number>();
 export function debounceRequest(key: string, fn: () => void, delay = 300): void {
   const existing = debounceCache.get(key);
   if (existing) clearTimeout(existing);
-  const timer = window.setTimeout(() => {
+  const timer = setTimeout(() => {
     debounceCache.delete(key);
     fn();
   }, delay);

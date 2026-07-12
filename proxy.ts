@@ -8,35 +8,62 @@ const protectedPaths = [
   "/admin",
 ];
 
-const publicAdminPaths = ["/admin/login", "/admin/signup"];
+const publicAdminPaths = [
+  "/admin/2fa",
+  "/admin/2fa-setup",
+];
 
 const roleLoginMap: Record<string, string> = {
   "/kitchen": "/kitchen/login",
   "/delivery-partner": "/delivery-partner/login",
-  "/admin": "/admin/login",
 };
 
-export function proxy(request: NextRequest) {
-  const sessionCookie = getSessionCookie(request);
-
-  if (sessionCookie) {
-    return NextResponse.next();
+function matchesProtected(pathname: string, prefix: string): boolean {
+  if (prefix === "/admin") {
+    return pathname === "/admin" || pathname.startsWith("/admin/");
   }
+  return pathname === prefix || pathname.startsWith(prefix + "/");
+}
 
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  const matchedPrefix = protectedPaths.find((p) =>
-    p === "/admin"
-      ? pathname === "/admin" || pathname.startsWith("/admin/")
-      : pathname === p || pathname.startsWith(p + "/"),
-  );
-
+  const matchedPrefix = protectedPaths.find((p) => matchesProtected(pathname, p));
   if (!matchedPrefix) {
     return NextResponse.next();
   }
 
-  if (matchedPrefix === "/admin" && publicAdminPaths.includes(pathname)) {
+  if (
+    matchedPrefix === "/admin" &&
+    publicAdminPaths.some((p) => pathname.startsWith(p))
+  ) {
     return NextResponse.next();
+  }
+
+  const sessionCookie = getSessionCookie(request);
+  if (!sessionCookie) {
+    if (matchedPrefix === "/admin") {
+      return NextResponse.rewrite(new URL("/404", request.url));
+    }
+    const loginUrl = new URL("/login", request.url);
+    loginUrl.searchParams.set("redirect", pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (matchedPrefix === "/admin") {
+    try {
+      const sessionRes = await fetch(
+        new URL("/api/auth/get-session", request.url),
+        { headers: { cookie: request.headers.get("cookie") ?? "" } }
+      );
+      if (!sessionRes.ok) return NextResponse.rewrite(new URL("/404", request.url));
+      const session = await sessionRes.json();
+      if (!session?.user || session.user.role !== "admin") {
+        return NextResponse.rewrite(new URL("/404", request.url));
+      }
+    } catch {
+      return NextResponse.rewrite(new URL("/404", request.url));
+    }
   }
 
   const loginPath = roleLoginMap[matchedPrefix];

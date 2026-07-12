@@ -29,6 +29,7 @@ export type DeliverySlotMinAggregateOutputType = {
   name: string | null
   startTime: string | null
   endTime: string | null
+  cutoffTime: string | null
   isActive: boolean | null
 }
 
@@ -37,6 +38,7 @@ export type DeliverySlotMaxAggregateOutputType = {
   name: string | null
   startTime: string | null
   endTime: string | null
+  cutoffTime: string | null
   isActive: boolean | null
 }
 
@@ -45,6 +47,7 @@ export type DeliverySlotCountAggregateOutputType = {
   name: number
   startTime: number
   endTime: number
+  cutoffTime: number
   isActive: number
   _all: number
 }
@@ -55,6 +58,7 @@ export type DeliverySlotMinAggregateInputType = {
   name?: true
   startTime?: true
   endTime?: true
+  cutoffTime?: true
   isActive?: true
 }
 
@@ -63,6 +67,7 @@ export type DeliverySlotMaxAggregateInputType = {
   name?: true
   startTime?: true
   endTime?: true
+  cutoffTime?: true
   isActive?: true
 }
 
@@ -71,6 +76,7 @@ export type DeliverySlotCountAggregateInputType = {
   name?: true
   startTime?: true
   endTime?: true
+  cutoffTime?: true
   isActive?: true
   _all?: true
 }
@@ -152,6 +158,7 @@ export type DeliverySlotGroupByOutputType = {
   name: string
   startTime: string
   endTime: string
+  cutoffTime: string | null
   isActive: boolean
   _count: DeliverySlotCountAggregateOutputType | null
   _min: DeliverySlotMinAggregateOutputType | null
@@ -181,6 +188,7 @@ export type DeliverySlotWhereInput = {
   name?: Prisma.StringFilter<"DeliverySlot"> | string
   startTime?: Prisma.StringFilter<"DeliverySlot"> | string
   endTime?: Prisma.StringFilter<"DeliverySlot"> | string
+  cutoffTime?: Prisma.StringNullableFilter<"DeliverySlot"> | string | null
   isActive?: Prisma.BoolFilter<"DeliverySlot"> | boolean
 }
 
@@ -189,6 +197,7 @@ export type DeliverySlotOrderByWithRelationInput = {
   name?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  cutoffTime?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
 }
 
@@ -200,6 +209,7 @@ export type DeliverySlotWhereUniqueInput = Prisma.AtLeast<{
   name?: Prisma.StringFilter<"DeliverySlot"> | string
   startTime?: Prisma.StringFilter<"DeliverySlot"> | string
   endTime?: Prisma.StringFilter<"DeliverySlot"> | string
+  cutoffTime?: Prisma.StringNullableFilter<"DeliverySlot"> | string | null
   isActive?: Prisma.BoolFilter<"DeliverySlot"> | boolean
 }, "id">
 
@@ -208,6 +218,7 @@ export type DeliverySlotOrderByWithAggregationInput = {
   name?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  cutoffTime?: Prisma.SortOrderInput | Prisma.SortOrder
   isActive?: Prisma.SortOrder
   _count?: Prisma.DeliverySlotCountOrderByAggregateInput
   _max?: Prisma.DeliverySlotMaxOrderByAggregateInput
@@ -222,6 +233,7 @@ export type DeliverySlotScalarWhereWithAggregatesInput = {
   name?: Prisma.StringWithAggregatesFilter<"DeliverySlot"> | string
   startTime?: Prisma.StringWithAggregatesFilter<"DeliverySlot"> | string
   endTime?: Prisma.StringWithAggregatesFilter<"DeliverySlot"> | string
+  cutoffTime?: Prisma.StringNullableWithAggregatesFilter<"DeliverySlot"> | string | null
   isActive?: Prisma.BoolWithAggregatesFilter<"DeliverySlot"> | boolean
 }
 
@@ -230,6 +242,7 @@ export type DeliverySlotCreateInput = {
   name: string
   startTime: string
   endTime: string
+  cutoffTime?: string | null
   isActive?: boolean
 }
 
@@ -238,6 +251,7 @@ export type DeliverySlotUncheckedCreateInput = {
   name: string
   startTime: string
   endTime: string
+  cutoffTime?: string | null
   isActive?: boolean
 }
 
@@ -246,6 +260,7 @@ export type DeliverySlotUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  cutoffTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
@@ -254,6 +269,7 @@ export type DeliverySlotUncheckedUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  cutoffTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
@@ -262,6 +278,7 @@ export type DeliverySlotCreateManyInput = {
   name: string
   startTime: string
   endTime: string
+  cutoffTime?: string | null
   isActive?: boolean
 }
 
@@ -270,6 +287,7 @@ export type DeliverySlotUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  cutoffTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
@@ -278,6 +296,7 @@ export type DeliverySlotUncheckedUpdateManyInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   startTime?: Prisma.StringFieldUpdateOperationsInput | string
   endTime?: Prisma.StringFieldUpdateOperationsInput | string
+  cutoffTime?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
@@ -286,6 +305,7 @@ export type DeliverySlotCountOrderByAggregateInput = {
   name?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  cutoffTime?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
 }
 
@@ -294,6 +314,7 @@ export type DeliverySlotMaxOrderByAggregateInput = {
   name?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  cutoffTime?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
 }
 
@@ -302,6 +323,7 @@ export type DeliverySlotMinOrderByAggregateInput = {
   name?: Prisma.SortOrder
   startTime?: Prisma.SortOrder
   endTime?: Prisma.SortOrder
+  cutoffTime?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
 }
 
@@ -312,6 +334,7 @@ export type DeliverySlotSelect<ExtArgs extends runtime.Types.Extensions.Internal
   name?: boolean
   startTime?: boolean
   endTime?: boolean
+  cutoffTime?: boolean
   isActive?: boolean
 }, ExtArgs["result"]["deliverySlot"]>
 
@@ -320,6 +343,7 @@ export type DeliverySlotSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   name?: boolean
   startTime?: boolean
   endTime?: boolean
+  cutoffTime?: boolean
   isActive?: boolean
 }, ExtArgs["result"]["deliverySlot"]>
 
@@ -328,6 +352,7 @@ export type DeliverySlotSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   name?: boolean
   startTime?: boolean
   endTime?: boolean
+  cutoffTime?: boolean
   isActive?: boolean
 }, ExtArgs["result"]["deliverySlot"]>
 
@@ -336,10 +361,11 @@ export type DeliverySlotSelectScalar = {
   name?: boolean
   startTime?: boolean
   endTime?: boolean
+  cutoffTime?: boolean
   isActive?: boolean
 }
 
-export type DeliverySlotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "startTime" | "endTime" | "isActive", ExtArgs["result"]["deliverySlot"]>
+export type DeliverySlotOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "startTime" | "endTime" | "cutoffTime" | "isActive", ExtArgs["result"]["deliverySlot"]>
 
 export type $DeliverySlotPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "DeliverySlot"
@@ -349,6 +375,7 @@ export type $DeliverySlotPayload<ExtArgs extends runtime.Types.Extensions.Intern
     name: string
     startTime: string
     endTime: string
+    cutoffTime: string | null
     isActive: boolean
   }, ExtArgs["result"]["deliverySlot"]>
   composites: {}
@@ -777,6 +804,7 @@ export interface DeliverySlotFieldRefs {
   readonly name: Prisma.FieldRef<"DeliverySlot", 'String'>
   readonly startTime: Prisma.FieldRef<"DeliverySlot", 'String'>
   readonly endTime: Prisma.FieldRef<"DeliverySlot", 'String'>
+  readonly cutoffTime: Prisma.FieldRef<"DeliverySlot", 'String'>
   readonly isActive: Prisma.FieldRef<"DeliverySlot", 'Boolean'>
 }
     

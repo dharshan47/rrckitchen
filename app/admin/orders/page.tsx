@@ -1,7 +1,9 @@
 "use client"
 
-import { useState } from "react"
-import { Badge } from "@/components/ui/badge"
+import { useState, useRef } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Spinner } from "@/components/ui/spinner"
@@ -29,10 +31,10 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { getAdminOrders, updateOrderStatus, verifyPaymentWithRazorpay } from "@/actions/orders"
+import { getAdminOrders, updateOrderStatus, verifyPaymentWithRazorpay } from "@/actions/orders/orders"
 import { ChevronRight, Loader2, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
 
 const statusStyles: Record<string, string> = {
   CONFIRMED: "bg-blue-100 text-blue-700",
@@ -65,7 +67,7 @@ function methodDisplayName(method: string): string {
   return methodLabels[method.toLowerCase()] ?? method.charAt(0).toUpperCase() + method.slice(1)
 }
 
-const statusFlow = ["CONFIRMED", "PREPARING", "READYFORPICKUP", "COMPLETED"]
+const statusFlow = ["CONFIRMED", "PREPARING", "READYFORPICKUP", "COMPLETED"] as const
 
 const nextStatus: Record<string, string> = {
   CONFIRMED: "PREPARING",
@@ -73,10 +75,20 @@ const nextStatus: Record<string, string> = {
   READYFORPICKUP: "COMPLETED",
 }
 
+const statusChangeSchema = z.object({
+  newStatus: z.enum(["CONFIRMED", "PREPARING", "READYFORPICKUP", "COMPLETED", "CANCELLED", "REFUNDED"]),
+})
+
+type StatusChangeForm = z.infer<typeof statusChangeSchema>
+
 export default function AdminOrdersPage() {
   const queryClient = useQueryClient()
-  const [selectedOrder, setSelectedOrder] = useState<any>(null)
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
   const autoVerified = useRef(false)
+
+  const form = useForm<StatusChangeForm>({
+    resolver: zodResolver(statusChangeSchema),
+  })
 
   const { data: orders = [], isLoading } = useQuery({
     queryKey: ["admin-orders"],
@@ -84,9 +96,18 @@ export default function AdminOrdersPage() {
     refetchInterval: 15_000,
   })
 
+  const selectedOrder = selectedOrderId ? orders.find((o) => o.id === selectedOrderId) ?? null : null
+
+  useEffect(() => {
+    if (selectedOrder) {
+      form.setValue("newStatus", selectedOrder.status as StatusChangeForm["newStatus"])
+      form.clearErrors()
+    }
+  }, [selectedOrder, form])
+
   const verifyMutation = useMutation({
     mutationFn: (orderId: string) => verifyPaymentWithRazorpay(orderId),
-    onSuccess: (result, orderId) => {
+    onSuccess: (result) => {
       if (result.success) {
         toast.success(result.message)
         queryClient.invalidateQueries({ queryKey: ["admin-orders"] })
@@ -105,12 +126,12 @@ export default function AdminOrdersPage() {
         pending.forEach((o) => verifyMutation.mutate(o.id))
       }
     }
-  }, [orders])
+  }, [orders, verifyMutation])
 
   const advanceMutation = useMutation({
     mutationFn: ({ orderId, status }: { orderId: string; status: string }) =>
       updateOrderStatus(orderId, status),
-    onSuccess: (result, { orderId, status }) => {
+    onSuccess: (result, { status }) => {
       if (result.success) {
         toast.success(`Order marked as ${status.replace(/_/g, " ").toLowerCase()}`)
         queryClient.invalidateQueries({ queryKey: ["admin-orders"] })
@@ -124,10 +145,10 @@ export default function AdminOrdersPage() {
   const statusChangeMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) =>
       updateOrderStatus(id, status),
-    onSuccess: (result, { id, status }) => {
+    onSuccess: (result, { status }) => {
       if (result.success) {
         toast.success(`Order status updated to ${status.replace(/_/g, " ").toLowerCase()}`)
-        setSelectedOrder(null)
+        setSelectedOrderId(null)
         queryClient.invalidateQueries({ queryKey: ["admin-orders"] })
       } else {
         toast.error(result.error ?? "Failed to update")
@@ -140,10 +161,10 @@ export default function AdminOrdersPage() {
     advanceMutation.mutate({ orderId, status })
   }
 
-  const handleStatusChange = () => {
-    if (!selectedOrder) return
-    statusChangeMutation.mutate({ id: selectedOrder.id, status: selectedOrder.newStatus })
-  }
+  const onStatusChange = form.handleSubmit((data) => {
+    if (!selectedOrderId) return
+    statusChangeMutation.mutate({ id: selectedOrderId, status: data.newStatus })
+  })
 
   if (isLoading) {
     return (
@@ -201,8 +222,8 @@ export default function AdminOrdersPage() {
                     <TableCell className="text-xs text-muted-foreground">
                       {order.paymentMethod
                         ? methodDisplayName(order.paymentMethod)
-                        : order.paymentProvider === "CASHONPICKUP"
-                          ? "Cash on Pickup"
+                        : order.paymentProvider === "CASH_ON_DELIVERY"
+                          ? "COD"
                           : "—"}
                     </TableCell>
                     <TableCell className="text-right">
@@ -250,7 +271,7 @@ export default function AdminOrdersPage() {
                           size="sm"
                           variant="ghost"
                           className="h-7 text-xs"
-                          onClick={() => setSelectedOrder({ ...order, newStatus: order.status })}
+                          onClick={() => setSelectedOrderId(order.id)}
                         >
                           Change
                         </Button>
@@ -264,7 +285,7 @@ export default function AdminOrdersPage() {
         </CardContent>
       </Card>
 
-      <Dialog open={!!selectedOrder} onOpenChange={(open) => { if (!open) setSelectedOrder(null) }}>
+      <Dialog open={!!selectedOrderId} onOpenChange={(open) => { if (!open) setSelectedOrderId(null) }}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
             <DialogTitle>Update Order Status</DialogTitle>
@@ -273,7 +294,7 @@ export default function AdminOrdersPage() {
             </DialogDescription>
           </DialogHeader>
           {selectedOrder && (
-            <div className="space-y-4">
+            <form onSubmit={onStatusChange} className="space-y-4">
               <div className="grid gap-2">
                 <label className="text-sm font-medium">Current Status</label>
                 <span className={`inline-flex self-start items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[selectedOrder.status] ?? ""}`}>
@@ -281,13 +302,13 @@ export default function AdminOrdersPage() {
                 </span>
               </div>
               <div className="grid gap-2">
-                <label className="text-sm font-medium">New Status</label>
+                <label className="text-sm font-medium" htmlFor="newStatus">New Status</label>
                 <Select
-                  value={selectedOrder.newStatus}
-                  onValueChange={(v) => setSelectedOrder({ ...selectedOrder, newStatus: v })}
+                  value={form.getValues("newStatus")}
+                  onValueChange={(v) => form.setValue("newStatus", v as StatusChangeForm["newStatus"])}
                 >
-                  <SelectTrigger>
-                    <SelectValue />
+                  <SelectTrigger id="newStatus">
+                    <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
                     {statusFlow.map((s) => (
@@ -297,14 +318,17 @@ export default function AdminOrdersPage() {
                     <SelectItem value="REFUNDED">Refunded</SelectItem>
                   </SelectContent>
                 </Select>
+                {form.formState.errors.newStatus && (
+                  <p className="text-xs text-destructive">{form.formState.errors.newStatus.message}</p>
+                )}
               </div>
               <DialogFooter>
-                <Button variant="outline" onClick={() => setSelectedOrder(null)}>Cancel</Button>
-                <Button onClick={handleStatusChange} disabled={statusChangeMutation.isPending}>
+                <Button type="button" variant="outline" onClick={() => setSelectedOrderId(null)}>Cancel</Button>
+                <Button type="submit" disabled={statusChangeMutation.isPending}>
                   {statusChangeMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Update"}
                 </Button>
               </DialogFooter>
-            </div>
+            </form>
           )}
         </DialogContent>
       </Dialog>

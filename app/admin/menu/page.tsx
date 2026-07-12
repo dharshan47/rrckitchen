@@ -1,7 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/incompatible-library */
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import Image from "next/image"
 import { Search, Pencil, Trash2, ImageIcon, Upload, X, Loader2, Tag } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -22,7 +27,7 @@ import { Spinner } from "@/components/ui/spinner"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { CloudinaryUpload } from "@/components/cloudinary/cloudinary-upload"
 import { toast } from "sonner"
-import { getAllMenuItems, updateMenuItem, addMenuItemPhoto, deleteMenuItemPhoto, deleteMenuItem } from "@/actions/admin-menu"
+import { getAllMenuItems, updateMenuItem, addMenuItemPhoto, deleteMenuItemPhoto, deleteMenuItem } from "@/actions/admin/admin-menu"
 
 interface MenuItemData {
   id: string
@@ -38,6 +43,21 @@ interface MenuItemData {
   kitchenName: string
   createdAt: Date
 }
+
+const menuItemSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  description: z.string().nullable(),
+  price: z.coerce.number().positive("Price must be positive"),
+  compareAtPrice: z.preprocess(
+    (v) => (v === "" || v === null || v === undefined ? null : Number(v)),
+    z.number().positive("MRP must be positive").nullable(),
+  ),
+  foodType: z.enum(["VEG", "NONVEG"]),
+  timeSlot: z.enum(["MORNING", "LUNCH", "EVENINGSNACKS", "DINNER"]),
+  isAvailable: z.boolean(),
+})
+
+type MenuItemForm = z.infer<typeof menuItemSchema>
 
 function FoodTypeBadge({ type }: { type: string }) {
   const isVeg = type === "VEG"
@@ -58,7 +78,20 @@ const timeSlotLabels: Record<string, string> = {
 export default function AdminMenuPage() {
   const queryClient = useQueryClient()
   const [search, setSearch] = useState("")
-  const [editItem, setEditItem] = useState<MenuItemData | null>(null)
+  const [editingId, setEditingId] = useState<string | null>(null)
+
+  const form = useForm<MenuItemForm>({
+    resolver: zodResolver(menuItemSchema) as any,
+    defaultValues: {
+      name: "",
+      description: "",
+      price: 0,
+      compareAtPrice: null,
+      foodType: "VEG",
+      timeSlot: "MORNING",
+      isAvailable: true,
+    },
+  })
 
   const { data: items = [], isLoading } = useQuery({
     queryKey: ["admin-menu-items"],
@@ -71,13 +104,29 @@ export default function AdminMenuPage() {
     item.kitchenName.toLowerCase().includes(search.toLowerCase())
   )
 
+  const editingItem = editingId ? items.find((i) => i.id === editingId) ?? null : null
+
+  useEffect(() => {
+    if (editingItem) {
+      form.reset({
+        name: editingItem.name,
+        description: editingItem.description,
+        price: editingItem.price,
+        compareAtPrice: editingItem.compareAtPrice,
+        foodType: editingItem.foodType as "VEG" | "NONVEG",
+        timeSlot: editingItem.timeSlot as "MORNING" | "LUNCH" | "EVENINGSNACKS" | "DINNER",
+        isAvailable: editingItem.isAvailable,
+      })
+    }
+  }, [editingItem, form])
+
   const handleEdit = (item: MenuItemData) => {
-    setEditItem({ ...item })
+    setEditingId(item.id)
   }
 
   const saveMutation = useMutation({
-    mutationFn: (data: MenuItemData) =>
-      updateMenuItem(data.id, {
+    mutationFn: ({ id, data }: { id: string; data: MenuItemForm }) =>
+      updateMenuItem(id, {
         name: data.name,
         description: data.description ?? "",
         price: data.price,
@@ -89,7 +138,7 @@ export default function AdminMenuPage() {
     onSuccess: (result) => {
       if (result.success) {
         toast.success("Menu item updated")
-        setEditItem(null)
+        setEditingId(null)
         queryClient.invalidateQueries({ queryKey: ["admin-menu-items"] })
       } else {
         toast.error(result.error ?? "Failed to update")
@@ -98,10 +147,10 @@ export default function AdminMenuPage() {
     onError: () => toast.error("Failed to update menu item"),
   })
 
-  const handleSave = () => {
-    if (!editItem) return
-    saveMutation.mutate(editItem)
-  }
+  const onSave = form.handleSubmit((data) => {
+    if (!editingId) return
+    saveMutation.mutate({ id: editingId, data })
+  })
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteMenuItem(id),
@@ -128,10 +177,6 @@ export default function AdminMenuPage() {
       if (result.success) {
         toast.success("Image added")
         queryClient.invalidateQueries({ queryKey: ["admin-menu-items"] })
-        setEditItem((prev) => {
-          if (!prev || !result.photo) return prev
-          return { ...prev, photos: [...prev.photos, { id: result.photo.id, imageUrl: result.photo.imageUrl }] }
-        })
       } else {
         toast.error(result.error ?? "Failed to add image")
       }
@@ -140,19 +185,16 @@ export default function AdminMenuPage() {
   })
 
   const handleAddPhoto = (info: { secure_url: string; public_id: string }) => {
-    if (!editItem) return
-    addPhotoMutation.mutate({ id: editItem.id, url: info.secure_url, publicId: info.public_id })
+    if (!editingId) return
+    addPhotoMutation.mutate({ id: editingId, url: info.secure_url, publicId: info.public_id })
   }
 
   const deletePhotoMutation = useMutation({
     mutationFn: (photoId: string) => deleteMenuItemPhoto(photoId),
-    onSuccess: (result, photoId) => {
+    onSuccess: (result) => {
       if (result.success) {
         toast.success("Image removed")
         queryClient.invalidateQueries({ queryKey: ["admin-menu-items"] })
-        setEditItem((prev) =>
-          prev ? { ...prev, photos: prev.photos.filter((p) => p.id !== photoId) } : null
-        )
       } else {
         toast.error(result.error ?? "Failed to remove image")
       }
@@ -206,9 +248,9 @@ export default function AdminMenuPage() {
                 {filtered.map((item) => (
                   <TableRow key={item.id}>
                     <TableCell>
-                      <div className="h-10 w-10 rounded-md bg-muted flex items-center justify-center overflow-hidden">
+                      <div className="h-10 w-10 rounded-md bg-muted flex items-center justify-center overflow-hidden relative">
                         {item.photos[0]?.imageUrl ? (
-                          <img src={item.photos[0].imageUrl} alt="" className="h-full w-full object-cover" />
+                          <Image src={item.photos[0].imageUrl} alt="" fill className="object-cover" />
                         ) : (
                           <ImageIcon className="h-4 w-4 text-muted-foreground" />
                         )}
@@ -253,57 +295,62 @@ export default function AdminMenuPage() {
         </CardContent>
       </Card>
 
-      <Dialog open={!!editItem} onOpenChange={(open) => { if (!open) setEditItem(null) }}>
+      <Dialog open={!!editingId} onOpenChange={(open) => { if (!open) setEditingId(null) }}>
         <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Edit Menu Item</DialogTitle>
             <DialogDescription>Update details, price, offer, or manage images.</DialogDescription>
           </DialogHeader>
 
-          {editItem && (
-            <div className="space-y-4">
+          {editingItem && (
+            <form onSubmit={onSave} className="space-y-4">
               <div className="grid gap-2">
-                <Label>Name</Label>
-                <Input value={editItem.name} onChange={(e) => setEditItem({ ...editItem, name: e.target.value })} />
+                <Label htmlFor="name">Name</Label>
+                <Input id="name" {...form.register("name")} />
+                {form.formState.errors.name && (
+                  <p className="text-xs text-destructive">{form.formState.errors.name.message}</p>
+                )}
               </div>
 
               <div className="grid gap-2">
-                <Label>Description</Label>
-                <Textarea value={editItem.description ?? ""} onChange={(e) => setEditItem({ ...editItem, description: e.target.value })} />
+                <Label htmlFor="desc">Description</Label>
+                <Textarea id="desc" {...form.register("description")} />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label>Price (₹)</Label>
-                  <Input
-                    type="number"
-                    value={editItem.price}
-                    onChange={(e) => setEditItem({ ...editItem, price: Number(e.target.value) })}
-                  />
+                  <Label htmlFor="price">Price (₹)</Label>
+                  <Input id="price" type="number" {...form.register("price")} />
+                  {form.formState.errors.price && (
+                    <p className="text-xs text-destructive">{form.formState.errors.price.message}</p>
+                  )}
                 </div>
                 <div className="grid gap-2">
-                  <Label className="flex items-center gap-1">
+                  <Label htmlFor="mrp" className="flex items-center gap-1">
                     <Tag className="h-3.5 w-3.5 text-green-600" />
                     MRP / Compare At (₹)
                   </Label>
                   <Input
+                    id="mrp"
                     type="number"
                     placeholder="Original price"
-                    value={editItem.compareAtPrice ?? ""}
-                    onChange={(e) => setEditItem({ ...editItem, compareAtPrice: e.target.value ? Number(e.target.value) : null })}
+                    {...form.register("compareAtPrice")}
                   />
+                  {form.formState.errors.compareAtPrice && (
+                    <p className="text-xs text-destructive">{form.formState.errors.compareAtPrice.message}</p>
+                  )}
                   <p className="text-xs text-muted-foreground">Set higher than price to show discount</p>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label>Food Type</Label>
+                  <Label htmlFor="foodType">Food Type</Label>
                   <Select
-                    value={editItem.foodType}
-                    onValueChange={(v) => setEditItem({ ...editItem, foodType: v })}
+                    value={form.getValues("foodType")}
+                    onValueChange={(v) => form.setValue("foodType", v as "VEG" | "NONVEG", { shouldValidate: true })}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger id="foodType">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -311,14 +358,17 @@ export default function AdminMenuPage() {
                       <SelectItem value="NONVEG">Non-Veg</SelectItem>
                     </SelectContent>
                   </Select>
+                  {form.formState.errors.foodType && (
+                    <p className="text-xs text-destructive">{form.formState.errors.foodType.message}</p>
+                  )}
                 </div>
                 <div className="grid gap-2">
-                  <Label>Time Slot</Label>
+                  <Label htmlFor="timeSlot">Time Slot</Label>
                   <Select
-                    value={editItem.timeSlot}
-                    onValueChange={(v) => setEditItem({ ...editItem, timeSlot: v })}
+                    value={form.watch("timeSlot")}
+                    onValueChange={(v) => form.setValue("timeSlot", v as "MORNING" | "LUNCH" | "EVENINGSNACKS" | "DINNER", { shouldValidate: true })}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger id="timeSlot">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -328,25 +378,28 @@ export default function AdminMenuPage() {
                       <SelectItem value="DINNER">Dinner</SelectItem>
                     </SelectContent>
                   </Select>
+                  {form.formState.errors.timeSlot && (
+                    <p className="text-xs text-destructive">{form.formState.errors.timeSlot.message}</p>
+                  )}
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
                 <Switch
                   id="edit-available"
-                  checked={editItem.isAvailable}
-                  onCheckedChange={(v) => setEditItem({ ...editItem, isAvailable: v })}
+                  checked={form.watch("isAvailable")}
+                  onCheckedChange={(v) => form.setValue("isAvailable", v, { shouldValidate: true })}
                 />
                 <Label htmlFor="edit-available" className="text-sm font-normal">Available</Label>
               </div>
 
               <div className="grid gap-2">
-                <Label>Images ({editItem.photos.length})</Label>
-                {editItem.photos.length > 0 ? (
+                <Label>Images ({editingItem.photos.length})</Label>
+                {editingItem.photos.length > 0 ? (
                   <div className="flex flex-wrap gap-2">
-                    {editItem.photos.map((photo) => (
+                    {editingItem.photos.map((photo) => (
                       <div key={photo.id || photo.imageUrl} className="relative h-16 w-16 shrink-0 rounded-md overflow-hidden border group">
-                        <img src={photo.imageUrl} alt="" className="h-full w-full object-cover" />
+                        <Image src={photo.imageUrl} alt="" fill className="object-cover" />
                         <button
                           type="button"
                           onClick={() => handleDeletePhoto(photo.id)}
@@ -394,19 +447,19 @@ export default function AdminMenuPage() {
                 </CloudinaryUpload>
               </div>
 
-              {editItem.compareAtPrice && editItem.compareAtPrice > editItem.price && (
+              {form.watch("compareAtPrice") && form.watch("compareAtPrice")! > form.watch("price") && (
                 <div className="rounded-lg bg-green-50 border border-green-200 p-3 text-sm text-green-700">
-                  <strong>Offer active:</strong> ₹{editItem.price} (save ₹{editItem.compareAtPrice - editItem.price})
+                  <strong>Offer active:</strong> ₹{form.watch("price")} (save ₹{form.watch("compareAtPrice")! - form.watch("price")})
                 </div>
               )}
 
               <div className="flex justify-end gap-2 pt-2">
-                <Button variant="outline" onClick={() => setEditItem(null)}>Cancel</Button>
-                <Button onClick={handleSave} disabled={saveMutation.isPending}>
+                <Button type="button" variant="outline" onClick={() => setEditingId(null)}>Cancel</Button>
+                <Button type="submit" disabled={saveMutation.isPending}>
                   {saveMutation.isPending ? <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> Saving...</> : "Save"}
                 </Button>
               </div>
-            </div>
+            </form>
           )}
         </DialogContent>
       </Dialog>

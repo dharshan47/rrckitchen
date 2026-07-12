@@ -1,8 +1,16 @@
 import { createAuthClient } from "better-auth/react";
-import { adminClient, phoneNumberClient } from "better-auth/client/plugins";
+import { phoneNumberClient, adminClient, twoFactorClient } from "better-auth/client/plugins";
 
 export const authClient = createAuthClient({
-  plugins: [phoneNumberClient(), adminClient()],
+  plugins: [
+    phoneNumberClient(),
+    adminClient(),
+    twoFactorClient({
+      onTwoFactorRedirect() {
+        window.location.href = "/admin/2fa";
+      },
+    }),
+  ],
   fetchOptions: {
     onError: async (context) => {
       const { response } = context;
@@ -14,5 +22,4 @@ export const authClient = createAuthClient({
   },
 });
 
-export const { phoneNumber, useSession,signIn,signUp,signOut } = authClient;
-
+export const { useSession, signIn, signUp, signOut, twoFactor } = authClient;

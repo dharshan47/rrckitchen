@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
-import { getAdminDashboardData } from "@/actions/dashboard"
+import { getAdminDashboardData } from "@/actions/admin/dashboard"
 import { Pencil, ToggleLeft, ToggleRight } from "lucide-react"
 
 const categorySchema = z.object({

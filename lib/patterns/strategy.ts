@@ -30,14 +30,15 @@ export const noDiscountStrategy: PriceCalculationStrategy = {
   },
 };
 
-export const percentageDiscountStrategy = (percent: number): PriceCalculationStrategy => ({
+export const percentageDiscountStrategy = (maxDiscount?: number): PriceCalculationStrategy => ({
   execute({ basePrice, qty, discounts = [] }) {
     const subtotal = basePrice * qty;
-    const totalDiscount = discounts.reduce((acc, d) => {
+    const rawDiscount = discounts.reduce((acc, d) => {
       if (d.type === "percentage") return acc + subtotal * (d.value / 100);
       if (d.type === "fixed") return acc + d.value;
       return acc;
     }, 0);
+    const totalDiscount = maxDiscount != null ? Math.min(rawDiscount, maxDiscount) : rawDiscount;
     return { subtotal, discount: totalDiscount, total: Math.max(0, subtotal - totalDiscount) };
   },
 });

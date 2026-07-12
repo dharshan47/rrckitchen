@@ -1,14 +1,15 @@
 "use client"
 
-import { createContext, useContext, useEffect } from "react"
+import { createContext, useContext, useEffect, useState, useCallback } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { signOut } from "@/lib/auth-client"
-import { getDeliveryDashboardData } from "@/actions/dashboard"
+import { getDeliveryDashboardData } from "@/actions/admin/dashboard"
 import { Spinner } from "@/components/ui/spinner"
 import { Badge } from "@/components/ui/badge"
+import { Switch } from "@/components/ui/switch"
 import {
   SidebarProvider,
   Sidebar,
@@ -22,7 +23,9 @@ import {
 } from "@/components/ui/sidebar"
 import { SwUpdateBanner } from "@/components/patterns/sw-update-banner"
 import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init"
-import { Bike, LayoutDashboard, UserCircle, Wallet, LogOut } from "lucide-react"
+import { DeliveryPersonLocationBroadcaster } from "@/components/delivery-partner/location-broadcaster"
+import { Bike, LayoutDashboard, UserCircle, Wallet, LogOut, Wifi, WifiOff } from "lucide-react"
+import { toast } from "sonner"
 
 const DataContext = createContext<Awaited<ReturnType<typeof getDeliveryDashboardData>>>(null)
 
@@ -41,12 +44,40 @@ const navItems = [
 export default function DeliveryDashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const router = useRouter()
+  const queryClient = useQueryClient()
+  const [isOnline, setIsOnline] = useState(false)
 
   const { data, isLoading } = useQuery({
     queryKey: ["delivery-dashboard"],
     queryFn: getDeliveryDashboardData,
     refetchInterval: 20_000,
   })
+
+  const onlineMutation = useMutation({
+    mutationFn: async (online: boolean) => {
+      const res = await fetch("/api/delivery/online", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ online }),
+      })
+      if (!res.ok) throw new Error("Failed to update status")
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["delivery-dashboard"] })
+    },
+    onError: (err) => {
+      toast.error(err.message)
+      setIsOnline(!isOnline)
+    },
+  })
+
+  const handleOnlineToggle = useCallback((checked: boolean) => {
+    setIsOnline(checked)
+    onlineMutation.mutate(checked)
+  }, [onlineMutation])
+
+  const activeOrder = data?.deliveryOrders?.[0]
+  const broadcasterOrderId = activeOrder?.id
 
   const handleLogout = async () => {
     await signOut()
@@ -104,9 +135,21 @@ export default function DeliveryDashboardLayout({ children }: { children: React.
             <div className="flex items-center gap-3 px-3 py-2 mb-2">
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium truncate">{profile.name}</p>
-                <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs mt-0.5">
-                  Online
-                </Badge>
+                <div className="flex items-center gap-2 mt-1">
+                  <Switch
+                    checked={isOnline}
+                    onCheckedChange={handleOnlineToggle}
+                    disabled={onlineMutation.isPending}
+                    aria-label="Toggle online status"
+                  />
+                  <span className="flex items-center gap-1 text-xs">
+                    {isOnline ? (
+                      <><Wifi className="h-3 w-3 text-green-600" /> Online</>
+                    ) : (
+                      <><WifiOff className="h-3 w-3 text-muted-foreground" /> Offline</>
+                    )}
+                  </span>
+                </div>
               </div>
             </div>
             <button
@@ -117,6 +160,13 @@ export default function DeliveryDashboardLayout({ children }: { children: React.
               Sign Out
             </button>
           </SidebarFooter>
+          {isOnline && broadcasterOrderId && data?.profile && (
+            <DeliveryPersonLocationBroadcaster
+              deliveryPersonId={data.profile.id}
+              orderId={broadcasterOrderId}
+              enabled={isOnline}
+            />
+          )}
         </Sidebar>
 
         <div className="flex-1 flex flex-col min-w-0">
@@ -130,7 +180,7 @@ export default function DeliveryDashboardLayout({ children }: { children: React.
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className="hidden sm:block text-sm text-muted-foreground truncate max-w-[150px]">
+                <span className="hidden sm:block text-sm text-muted-foreground truncate max-w-37.5">
                   Welcome, {profile.name}
                 </span>
                 <Badge variant="secondary" className="hidden sm:inline-flex bg-green-100 text-green-700">

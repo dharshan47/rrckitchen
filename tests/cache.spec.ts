@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { cachedRequest, invalidateRequestCache, cacheImage, clearImageCache, clearAllCaches, getCachedImage, debounceRequest } from '@/lib/cache';
 
 describe('Image Cache', () => {

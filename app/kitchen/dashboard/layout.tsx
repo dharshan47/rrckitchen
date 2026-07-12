@@ -6,7 +6,7 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
 import { signOut } from "@/lib/auth-client"
-import { getKitchenDashboardData } from "@/actions/dashboard"
+import { getKitchenDashboardData } from "@/actions/admin/dashboard"
 import { Spinner } from "@/components/ui/spinner"
 import { Badge } from "@/components/ui/badge"
 import {

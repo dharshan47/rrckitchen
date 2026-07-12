@@ -3,6 +3,7 @@
 import { createContext, useContext, useCallback, useMemo, type ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { ProgressiveImage } from "@/components/patterns/progressive-image";
+import { WishlistButton as WishlistBtn } from "@/components/menu/wishlist-button";
 
 
 interface MenuCardItem {
@@ -115,9 +116,14 @@ function BadgeRibbon() {
 }
 
 function AddButtonOverlay() {
+  return null;
+}
+
+function WishlistButton() {
+  const { item } = useMenuCardContext();
   return (
-    <div className="absolute bottom-2 right-2 z-10">
-      
+    <div className="absolute right-2 top-2 z-10">
+      <WishlistBtn menuItemId={item.id} size="sm" />
     </div>
   );
 }
@@ -165,5 +171,5 @@ function Footer() {
   return null; // Merged into Header for the combined design look
 }
 
-export const CompoundMenuCard = { Root, ImageSection, BadgeRibbon, AddButtonOverlay, Header, Footer };
+export const CompoundMenuCard = { Root, ImageSection, BadgeRibbon, AddButtonOverlay, WishlistButton, Header, Footer };
 export type { MenuCardItem };

@@ -28,11 +28,10 @@ import { ChartPieDonut } from "@/components/charts/donut-chart"
 import { ChartPieSimple } from "@/components/charts/pie-chart"
 import type { ChartConfig } from "@/components/ui/chart"
 import { useQuery } from "@tanstack/react-query"
-import { getAdminDashboardData } from "@/actions/dashboard"
-import { useRouter } from "next/navigation"
+import { getAdminDashboardData } from "@/actions/admin/dashboard"
+import { notFound } from "next/navigation"
 
 export default function AdminOverview() {
-  const router = useRouter()
   const { data, isLoading } = useQuery({
     queryKey: ["admin-dashboard"],
     queryFn: getAdminDashboardData,
@@ -48,8 +47,7 @@ export default function AdminOverview() {
   }
 
   if (!data) {
-    router.push("/admin/login")
-    return null
+    notFound()
   }
 
   const s = data.stats

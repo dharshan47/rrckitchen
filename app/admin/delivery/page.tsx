@@ -2,9 +2,8 @@
 
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { Search, Eye, Ban, CheckCircle, XCircle, Loader2, Building, CreditCard } from "lucide-react"
+import { Search, Eye, Ban, CheckCircle, XCircle, Loader2, CreditCard } from "lucide-react"
 import { toast } from "sonner"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -24,7 +23,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { getAdminDeliveryPartners, updateDeliveryPartnerStatus } from "@/actions/admin-partners"
+import { getAdminDeliveryPartners, updateDeliveryPartnerStatus } from "@/actions/admin/admin-partners"
 
 const statusStyles: Record<string, string> = {
   ACTIVE: "bg-green-100 text-green-700",
@@ -37,6 +36,7 @@ const statusStyles: Record<string, string> = {
 export default function AdminDeliveryPage() {
   const queryClient = useQueryClient()
   const [search, setSearch] = useState("")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selected, setSelected] = useState<any>(null)
 
   const { data: partners, isLoading } = useQuery({
@@ -56,7 +56,7 @@ export default function AdminDeliveryPage() {
   const actionMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) =>
       updateDeliveryPartnerStatus(id, status),
-    onSuccess: (result, { id, status }) => {
+    onSuccess: (result, { status }) => {
       if (result.success) {
         toast.success(`Delivery partner ${status === "SUSPENDED" ? "suspended" : status === "ACTIVE" || status === "APPROVED" ? "approved" : "rejected"}`)
         queryClient.invalidateQueries({ queryKey: ["admin-delivery-partners"] })

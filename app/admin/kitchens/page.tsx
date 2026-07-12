@@ -22,7 +22,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { getAdminKitchenPartners, updateKitchenPartnerStatus } from "@/actions/admin-partners"
+import { getAdminKitchenPartners, updateKitchenPartnerStatus } from "@/actions/admin/admin-partners"
 import { SkeletonCard } from "@/components/patterns/skeleton-card"
 
 const statusStyles: Record<string, string> = {
@@ -36,6 +36,7 @@ const statusStyles: Record<string, string> = {
 export default function AdminKitchensPage() {
   const queryClient = useQueryClient()
   const [search, setSearch] = useState("")
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selected, setSelected] = useState<any>(null)
 
   const { data: partners, isLoading } = useQuery({
@@ -55,7 +56,7 @@ export default function AdminKitchensPage() {
   const actionMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) =>
       updateKitchenPartnerStatus(id, status),
-    onSuccess: (result, { id, status }) => {
+    onSuccess: (result, { status }) => {
       if (result.success) {
         toast.success(`Kitchen partner ${status === "SUSPENDED" ? "suspended" : status === "ACTIVE" || status === "APPROVED" ? "approved" : "rejected"}`)
         queryClient.invalidateQueries({ queryKey: ["admin-kitchen-partners"] })

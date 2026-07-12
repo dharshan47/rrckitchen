@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { confirmPayment, failPayment } from "@/actions/payment";
+import { confirmPayment, failPayment } from "@/actions/payments/payment";
+import { processWebhookRefund } from "@/actions/payments/refund";
+import { processWebhookPayout } from "@/actions/payouts/delivery-payout";
 
 export const runtime = "nodejs";
 
@@ -57,6 +59,21 @@ export async function POST(req: NextRequest) {
             throw e;
           }
         }
+        break;
+      }
+
+      case "refund.processed": {
+        const refundEntity = event.payload.refund.entity;
+        const razorpayRefundId = refundEntity.id as string;
+        await processWebhookRefund(razorpayRefundId);
+        break;
+      }
+
+      case "payout.processed": {
+        const payoutEntity = event.payload.payout.entity;
+        const razorpayPayoutId = payoutEntity.id as string;
+        const payoutStatus = payoutEntity.status === "processed" ? "SETTLED" : "FAILED" as const;
+        await processWebhookPayout(razorpayPayoutId, payoutStatus);
         break;
       }
 

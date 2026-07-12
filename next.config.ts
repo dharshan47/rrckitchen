@@ -6,11 +6,11 @@ const isDev = process.env.NODE_ENV === "development";
 const csp = isDev
   ? [
       `default-src 'self'`,
-      `script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.razorpay.com https://maps.googleapis.com`,
-      `style-src 'self' 'unsafe-inline'`,
-      `img-src 'self' blob: data: https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://maps.gstatic.com https://*.googleapis.com`,
+      `script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.razorpay.com https://maps.googleapis.com https://unpkg.com `,
+      `style-src 'self' 'unsafe-inline' https://unpkg.com`,
+      `img-src 'self' blob: data: https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://api.maptiler.com`,
       `font-src 'self'`,
-      `connect-src 'self' ws: http://localhost:* https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com`,
+      `connect-src 'self' ws: http://localhost:* https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com https://api.maptiler.com `,
       `frame-src 'self' https://*.razorpay.com`,
       `worker-src 'self' blob:`,
       `base-uri 'self'`,
@@ -18,11 +18,11 @@ const csp = isDev
     ].join("; ")
   : [
       `default-src 'self'`,
-      `script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.razorpay.com https://maps.googleapis.com`,
-      `style-src 'self' 'unsafe-inline'`,
-      `img-src 'self' blob: data: https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://maps.gstatic.com https://*.googleapis.com`,
+      `script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*.razorpay.com https://maps.googleapis.com https://unpkg.com `,
+      `style-src 'self' 'unsafe-inline' https://unpkg.com`,
+      `img-src 'self' blob: data: https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://api.maptiler.com`,
       `font-src 'self'`,
-      `connect-src 'self' https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com`,
+      `connect-src 'self' https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com https://api.maptiler.com `,
       `frame-src 'self' https://*.razorpay.com`,
       `worker-src 'self' blob:`,
       `base-uri 'self'`,

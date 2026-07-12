@@ -16,7 +16,7 @@ function MenuSkeleton() {
         <section className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
-              <Skeleton className="aspect-[4/3] w-full rounded-none" />
+              <Skeleton className="aspect-4/3 w-full rounded-none" />
               <div className="p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <Skeleton className="h-5 w-16" />

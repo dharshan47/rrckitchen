@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getTomorrowMenu } from "@/actions/menu";
+import { getTomorrowMenu } from "@/actions/catalog/menu";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";

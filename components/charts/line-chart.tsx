@@ -66,7 +66,7 @@ export function ChartLineDots({
               cursor={false}
               content={<ChartTooltipContent hideLabel />}
             />
-            {dataKeys.map((key, i) => (
+            {dataKeys.map((key) => (
               <Line
                 key={key}
                 dataKey={key}

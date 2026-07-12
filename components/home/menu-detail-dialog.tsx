@@ -6,12 +6,15 @@ import { Button } from "@/components/ui";
 import { ProgressiveImage } from "@/components/patterns/progressive-image";
 import { useCartActions } from "@/stores";
 import { formatTimeSlot } from "@/lib/patterns";
+import { useSession } from "@/lib/auth-client";
+import { useQuery } from "@tanstack/react-query";
 import {
   ChevronLeft,
   ChevronRight,
   Star,
   RefreshCw,
   Truck,
+  Coins,
 } from "lucide-react";
 
 interface MenuItemPhoto {
@@ -29,7 +32,9 @@ interface MenuItem {
   foodType: string;
   timeSlot: string;
   isAvailable: boolean;
-  menu: { kitchenPartner: { kitchenAlias: { displayName: string } | null } | null } | null;
+  avgRating?: number | null;
+  totalReviews?: number;
+  menu: { kitchenPartner: { kitchenAlias: { displayName: string } | null; avgRating?: number | null; totalReviews?: number } | null } | null;
   photos: MenuItemPhoto[];
 }
 
@@ -41,6 +46,17 @@ interface MenuDetailDialogProps {
 export default function MenuDetailDialog({ item, onClose }: MenuDetailDialogProps) {
   const [detailImageIndex, setDetailImageIndex] = useState(0);
   const addToCart = useCartActions().addToCart;
+  const { data: session } = useSession();
+
+  const { data: loyalty } = useQuery({
+    queryKey: ["loyalty-points"],
+    queryFn: async () => {
+      const res = await fetch("/api/loyalty/points");
+      if (!res.ok) return null;
+      return res.json() as Promise<{ points: number; lifetimePoints: number; tier: string }>;
+    },
+    enabled: !!session?.user,
+  });
 
   const handlePrevImage = useCallback(() => {
     setDetailImageIndex((i) => (i > 0 ? i - 1 : item.photos.length - 1));
@@ -50,7 +66,10 @@ export default function MenuDetailDialog({ item, onClose }: MenuDetailDialogProp
     setDetailImageIndex((i) => (i < item.photos.length - 1 ? i + 1 : 0));
   }, [item.photos.length]);
 
-  const kitchenName = item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen";
+  const kitchenPartner = item.menu?.kitchenPartner;
+  const kitchenName = kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen";
+  const avgRating = item.avgRating ?? kitchenPartner?.avgRating ?? null;
+  const totalReviews = item.totalReviews ?? kitchenPartner?.totalReviews ?? 0;
   const hasMultiplePhotos = item.photos?.length > 1;
   const price = Number(item.price);
   const mrp = item.compareAtPrice ?? Math.round(price * 1.35);
@@ -148,25 +167,47 @@ export default function MenuDetailDialog({ item, onClose }: MenuDetailDialogProp
           {/* Net Qty & Rating */}
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>Net Qty: 1 Serving</span>
-            <span className="text-muted-foreground/40">•</span>
-            <span className="flex items-center gap-1">
-              <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-              <span className="text-foreground font-medium">4.6</span>
-              (120+)
-            </span>
+            {avgRating && (
+              <>
+                <span className="text-muted-foreground/40">•</span>
+                <span className="flex items-center gap-1">
+                  <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                  <span className="text-foreground font-medium">{avgRating}</span>
+                  ({totalReviews}+)
+                </span>
+              </>
+            )}
           </div>
 
           {/* Delivery Info Badges */}
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center gap-3 rounded-xl bg-green-50 border border-green-200 p-3">
               <RefreshCw className="h-5 w-5 text-green-600 shrink-0" />
-              <p className="text-sm font-medium text-green-700">Same Day Exchange</p>
+              <p className="text-sm font-medium text-green-700">Freshly Prepared</p>
             </div>
             <div className="flex items-center gap-3 rounded-xl bg-orange-50 border border-orange-200 p-3">
               <Truck className="h-5 w-5 text-orange-600 shrink-0" />
               <p className="text-sm font-medium text-orange-700">Fast Delivery</p>
             </div>
           </div>
+
+          {/* Loyalty Points */}
+          {loyalty && (
+            <div className="flex items-center gap-3 rounded-xl bg-amber-50 border border-amber-200 p-3">
+              <Coins className="h-5 w-5 text-amber-600 shrink-0" />
+              <div className="flex-1">
+                <p className="text-sm font-medium text-amber-700">
+                  {loyalty.points} Loyalty Points
+                </p>
+                <p className="text-xs text-amber-600/70">
+                  Tier: {loyalty.tier} &middot; {loyalty.lifetimePoints} lifetime pts earned
+                </p>
+              </div>
+              <span className="text-xs font-semibold text-amber-700 bg-amber-200/50 px-2 py-1 rounded-full">
+                Use
+              </span>
+            </div>
+          )}
 
           {/* Highlights */}
           <div className="space-y-3">
@@ -175,15 +216,15 @@ export default function MenuDetailDialog({ item, onClose }: MenuDetailDialogProp
             </h3>
             <div className="rounded-xl border border-border divide-y divide-border text-sm">
               <div className="flex items-start justify-between px-4 py-3">
-                <span className="text-muted-foreground">brand</span>
+                <span className="text-muted-foreground">Brand</span>
                 <span className="font-medium text-foreground text-right max-w-[60%]">{kitchenName}</span>
               </div>
               <div className="flex items-start justify-between px-4 py-3">
-                <span className="text-muted-foreground">dietary preference</span>
+                <span className="text-muted-foreground">Dietary preference</span>
                 <span className="font-medium text-foreground text-right">{item.foodType === "VEG" ? "Veg" : "Non Veg"}</span>
               </div>
               <div className="px-4 py-3">
-                <span className="text-muted-foreground block mb-1">allergen information</span>
+                <span className="text-muted-foreground block mb-1">Allergen information</span>
                 <span className="text-foreground">Contains: Home-cooked ingredients. Please consult the kitchen for specific allergen details.</span>
               </div>
               {item.description && (
@@ -193,7 +234,7 @@ export default function MenuDetailDialog({ item, onClose }: MenuDetailDialogProp
                 </div>
               )}
               <div className="flex items-start justify-between px-4 py-3">
-                <span className="text-muted-foreground">time slot</span>
+                <span className="text-muted-foreground">Time Slot</span>
                 <span className="font-medium text-foreground text-right">{formatTimeSlot(item.timeSlot)}</span>
               </div>
             </div>

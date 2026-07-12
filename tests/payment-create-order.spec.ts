@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { createPaymentOrder } from "@/actions/payment";
+import { createPaymentOrder } from "@/actions/payments/payment";
 
 const mockFindMany = vi.fn();
 const mockCreate = vi.fn();

@@ -15,11 +15,12 @@ export function useCleanup() {
   }, []);
 
   useEffect(() => {
+    const fns = fnsRef.current;
     return () => {
-      fnsRef.current.forEach((fn) => {
+      fns.forEach((fn) => {
         try { fn(); } catch { /* silent */ }
       });
-      fnsRef.current.clear();
+      fns.clear();
     };
   }, []);
 
@@ -28,7 +29,8 @@ export function useCleanup() {
 
 export function useTimer(callback: () => void, delayMs: number, enabled = true) {
   const savedCallback = useRef(callback);
-  savedCallback.current = callback;
+
+  useEffect(() => { savedCallback.current = callback; });
 
   useEffect(() => {
     if (!enabled) return;
@@ -39,7 +41,8 @@ export function useTimer(callback: () => void, delayMs: number, enabled = true) 
 
 export function useInterval(callback: () => void, delayMs: number, enabled = true) {
   const savedCallback = useRef(callback);
-  savedCallback.current = callback;
+
+  useEffect(() => { savedCallback.current = callback; });
 
   useEffect(() => {
     if (!enabled || delayMs <= 0) return;
@@ -55,7 +58,8 @@ export function useEventListener<K extends keyof WindowEventMap>(
   options?: AddEventListenerOptions
 ) {
   const handlerRef = useRef(handler);
-  handlerRef.current = handler;
+
+  useEffect(() => { handlerRef.current = handler; });
 
   useEffect(() => {
     const listener = (e: WindowEventMap[K]) => handlerRef.current(e);
@@ -75,6 +79,7 @@ export function useWebSocket(url: string | null, options?: {
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectCount = useRef(0);
   const mountedRef = useRef(true);
+  const connectRef = useRef<() => void>(() => {});
 
   const connect = useCallback(() => {
     if (!url) return;
@@ -100,7 +105,7 @@ export function useWebSocket(url: string | null, options?: {
       if (mountedRef.current && reconnectCount.current < (options?.maxReconnects ?? 5)) {
         reconnectCount.current++;
         const delay = Math.min(1000 * Math.pow(2, reconnectCount.current), 30000);
-        setTimeout(connect, delay);
+        setTimeout(() => connectRef.current(), delay);
       }
     };
 
@@ -108,6 +113,10 @@ export function useWebSocket(url: string | null, options?: {
       options?.onError?.(e);
     };
   }, [url, options]);
+
+  useEffect(() => {
+    connectRef.current = connect;
+  });
 
   useEffect(() => {
     mountedRef.current = true;

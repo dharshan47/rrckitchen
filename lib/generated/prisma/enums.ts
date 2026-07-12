@@ -70,6 +70,27 @@ export const OrderStatus = {
 export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
 
 
+export const ServiceDateType = {
+  TODAY: 'TODAY',
+  TOMORROW: 'TOMORROW',
+  FUTURE: 'FUTURE'
+} as const
+
+export type ServiceDateType = (typeof ServiceDateType)[keyof typeof ServiceDateType]
+
+
+export const DeliveryStatus = {
+  ASSIGNED: 'ASSIGNED',
+  ACCEPTED: 'ACCEPTED',
+  PICKEDUP: 'PICKEDUP',
+  INTRANSIT: 'INTRANSIT',
+  DELIVERED: 'DELIVERED',
+  FAILED: 'FAILED'
+} as const
+
+export type DeliveryStatus = (typeof DeliveryStatus)[keyof typeof DeliveryStatus]
+
+
 export const OrderSource = {
   APP: 'APP',
   PHONECALL: 'PHONECALL'
@@ -78,19 +99,162 @@ export const OrderSource = {
 export type OrderSource = (typeof OrderSource)[keyof typeof OrderSource]
 
 
-export const PaymentProvider = {
-  RAZORPAY: 'RAZORPAY',
-  CASHONPICKUP: 'CASHONPICKUP'
+export const OrderItemStatus = {
+  CONFIRMED: 'CONFIRMED',
+  UNAVAILABLE: 'UNAVAILABLE',
+  REFUNDED: 'REFUNDED'
 } as const
 
-export type PaymentProvider = (typeof PaymentProvider)[keyof typeof PaymentProvider]
+export type OrderItemStatus = (typeof OrderItemStatus)[keyof typeof OrderItemStatus]
 
 
 export const PaymentStatus = {
   PENDING: 'PENDING',
   SUCCESS: 'SUCCESS',
+  PARTIAL_REFUND: 'PARTIAL_REFUND',
   FAILED: 'FAILED',
   REFUNDED: 'REFUNDED'
 } as const
 
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
+
+
+export const PaymentProvider = {
+  RAZORPAY: 'RAZORPAY',
+  CASH_ON_DELIVERY: 'CASH_ON_DELIVERY'
+} as const
+
+export type PaymentProvider = (typeof PaymentProvider)[keyof typeof PaymentProvider]
+
+
+export const TicketStatus = {
+  OPEN: 'OPEN',
+  INPROGRESS: 'INPROGRESS',
+  RESOLVED: 'RESOLVED',
+  CLOSED: 'CLOSED'
+} as const
+
+export type TicketStatus = (typeof TicketStatus)[keyof typeof TicketStatus]
+
+
+export const TicketPriority = {
+  LOW: 'LOW',
+  MEDIUM: 'MEDIUM',
+  HIGH: 'HIGH',
+  URGENT: 'URGENT'
+} as const
+
+export type TicketPriority = (typeof TicketPriority)[keyof typeof TicketPriority]
+
+
+export const DiscountType = {
+  FLAT: 'FLAT',
+  PERCENTAGE: 'PERCENTAGE'
+} as const
+
+export type DiscountType = (typeof DiscountType)[keyof typeof DiscountType]
+
+
+export const CouponScope = {
+  PLATFORM: 'PLATFORM',
+  KITCHEN_SPECIFIC: 'KITCHEN_SPECIFIC'
+} as const
+
+export type CouponScope = (typeof CouponScope)[keyof typeof CouponScope]
+
+
+export const PaymentOfferType = {
+  UPI: 'UPI',
+  WALLET: 'WALLET',
+  CARDS: 'CARDS',
+  NETBANKING: 'NETBANKING',
+  ALL: 'ALL'
+} as const
+
+export type PaymentOfferType = (typeof PaymentOfferType)[keyof typeof PaymentOfferType]
+
+
+export const RefundReason = {
+  ITEM_OUT_OF_STOCK: 'ITEM_OUT_OF_STOCK',
+  KITCHEN_REJECTED: 'KITCHEN_REJECTED',
+  CUSTOMER_CANCELLED: 'CUSTOMER_CANCELLED',
+  QUALITY_ISSUE: 'QUALITY_ISSUE',
+  LATE_DELIVERY: 'LATE_DELIVERY',
+  OTHER: 'OTHER'
+} as const
+
+export type RefundReason = (typeof RefundReason)[keyof typeof RefundReason]
+
+
+export const RefundStatus = {
+  INITIATED: 'INITIATED',
+  PROCESSING: 'PROCESSING',
+  PROCESSED: 'PROCESSED',
+  FAILED: 'FAILED'
+} as const
+
+export type RefundStatus = (typeof RefundStatus)[keyof typeof RefundStatus]
+
+
+export const PayoutStatus = {
+  PENDING: 'PENDING',
+  PROCESSING: 'PROCESSING',
+  SETTLED: 'SETTLED',
+  FAILED: 'FAILED'
+} as const
+
+export type PayoutStatus = (typeof PayoutStatus)[keyof typeof PayoutStatus]
+
+
+export const AdminPermission = {
+  MANAGE_ADMINS: 'MANAGE_ADMINS',
+  APPROVE_KYC: 'APPROVE_KYC',
+  MANAGE_CATALOG: 'MANAGE_CATALOG',
+  ISSUE_REFUNDS: 'ISSUE_REFUNDS',
+  MANAGE_PAYOUTS: 'MANAGE_PAYOUTS',
+  MANAGE_COUPONS: 'MANAGE_COUPONS',
+  VIEW_FINANCIALS: 'VIEW_FINANCIALS',
+  MANAGE_SUPPORT: 'MANAGE_SUPPORT',
+  BAN_USERS: 'BAN_USERS',
+  MANAGE_CMS: 'MANAGE_CMS'
+} as const
+
+export type AdminPermission = (typeof AdminPermission)[keyof typeof AdminPermission]
+
+
+export const AdminActionType = {
+  REMOVE_ADMIN: 'REMOVE_ADMIN',
+  GRANT_PERMISSION: 'GRANT_PERMISSION',
+  LARGE_REFUND: 'LARGE_REFUND',
+  PAYOUT_SETTLEMENT: 'PAYOUT_SETTLEMENT',
+  BAN_USER: 'BAN_USER'
+} as const
+
+export type AdminActionType = (typeof AdminActionType)[keyof typeof AdminActionType]
+
+
+export const AdminApprovalStatus = {
+  PENDING: 'PENDING',
+  APPROVED: 'APPROVED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type AdminApprovalStatus = (typeof AdminApprovalStatus)[keyof typeof AdminApprovalStatus]
+
+
+export const RemittanceMethod = {
+  UPI_TO_PLATFORM: 'UPI_TO_PLATFORM',
+  BANK_TRANSFER: 'BANK_TRANSFER',
+  ADMIN_COLLECTED_CASH: 'ADMIN_COLLECTED_CASH'
+} as const
+
+export type RemittanceMethod = (typeof RemittanceMethod)[keyof typeof RemittanceMethod]
+
+
+export const RemittanceStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  DISPUTED: 'DISPUTED'
+} as const
+
+export type RemittanceStatus = (typeof RemittanceStatus)[keyof typeof RemittanceStatus]

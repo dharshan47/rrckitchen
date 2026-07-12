@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyPaymentSignature, confirmPayment } from "@/actions/payment";
+import { verifyPaymentSignature, confirmPayment } from "@/actions/payments/payment";
 
 export const runtime = "nodejs";
 

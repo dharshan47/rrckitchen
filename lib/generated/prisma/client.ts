@@ -177,6 +177,21 @@ export type Review = Prisma.ReviewModel
  */
 export type DeliveryReview = Prisma.DeliveryReviewModel
 /**
+ * Model MenuItemFeedback
+ * 
+ */
+export type MenuItemFeedback = Prisma.MenuItemFeedbackModel
+/**
+ * Model DeliveryAssignment
+ * 
+ */
+export type DeliveryAssignment = Prisma.DeliveryAssignmentModel
+/**
+ * Model DeliveryLocation
+ * 
+ */
+export type DeliveryLocation = Prisma.DeliveryLocationModel
+/**
  * Model Payment
  * 
  */
@@ -191,3 +206,118 @@ export type PushSubscription = Prisma.PushSubscriptionModel
  * 
  */
 export type DeliverySlot = Prisma.DeliverySlotModel
+/**
+ * Model NotificationLog
+ * 
+ */
+export type NotificationLog = Prisma.NotificationLogModel
+/**
+ * Model SupportTicket
+ * 
+ */
+export type SupportTicket = Prisma.SupportTicketModel
+/**
+ * Model TicketMessage
+ * 
+ */
+export type TicketMessage = Prisma.TicketMessageModel
+/**
+ * Model Referral
+ * 
+ */
+export type Referral = Prisma.ReferralModel
+/**
+ * Model LoyaltyPoints
+ * 
+ */
+export type LoyaltyPoints = Prisma.LoyaltyPointsModel
+/**
+ * Model LoyaltyTransaction
+ * 
+ */
+export type LoyaltyTransaction = Prisma.LoyaltyTransactionModel
+/**
+ * Model Coupon
+ * 
+ */
+export type Coupon = Prisma.CouponModel
+/**
+ * Model CouponRedemption
+ * 
+ */
+export type CouponRedemption = Prisma.CouponRedemptionModel
+/**
+ * Model PaymentOffer
+ * 
+ */
+export type PaymentOffer = Prisma.PaymentOfferModel
+/**
+ * Model Refund
+ * 
+ */
+export type Refund = Prisma.RefundModel
+/**
+ * Model KitchenPayout
+ * 
+ */
+export type KitchenPayout = Prisma.KitchenPayoutModel
+/**
+ * Model DeliveryPartnerPayout
+ * 
+ */
+export type DeliveryPartnerPayout = Prisma.DeliveryPartnerPayoutModel
+/**
+ * Model KitchenAddress
+ * 
+ */
+export type KitchenAddress = Prisma.KitchenAddressModel
+/**
+ * Model MenuItemDailyStock
+ * 
+ */
+export type MenuItemDailyStock = Prisma.MenuItemDailyStockModel
+/**
+ * Model AdminProfile
+ * 
+ */
+export type AdminProfile = Prisma.AdminProfileModel
+/**
+ * Model AdminInvite
+ * 
+ */
+export type AdminInvite = Prisma.AdminInviteModel
+/**
+ * Model AdminApprovalRequest
+ * 
+ */
+export type AdminApprovalRequest = Prisma.AdminApprovalRequestModel
+/**
+ * Model AdminAuditLog
+ * 
+ */
+export type AdminAuditLog = Prisma.AdminAuditLogModel
+/**
+ * Model TwoFactor
+ * 
+ */
+export type TwoFactor = Prisma.TwoFactorModel
+/**
+ * Model UserCodEligibility
+ * 
+ */
+export type UserCodEligibility = Prisma.UserCodEligibilityModel
+/**
+ * Model CashRemittance
+ * 
+ */
+export type CashRemittance = Prisma.CashRemittanceModel
+/**
+ * Model CodVariance
+ * 
+ */
+export type CodVariance = Prisma.CodVarianceModel
+/**
+ * Model WishlistItem
+ * 
+ */
+export type WishlistItem = Prisma.WishlistItemModel

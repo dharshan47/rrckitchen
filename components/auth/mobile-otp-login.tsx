@@ -1,13 +1,12 @@
 "use client";
 
 import { memo } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { usePhoneAuth } from "@/hooks/usePhoneAuth";
 import { Button, Card, CardContent, CardHeader, CardTitle, Input, Label, Spinner, OtpInputBoxes } from "@/components/ui";
-import Link from "next/link";
-import { ArrowLeft, Phone, KeyRound, LogIn } from "lucide-react";
+import { ArrowLeft, Phone, KeyRound, CheckCircle, LogIn } from "lucide-react";
 
 export type UserRole = "customer" | "delivery-partner" | "kitchen";
 
@@ -35,56 +34,27 @@ interface MobileOtpLoginProps {
   noAccountLabel?: string;
 }
 
-/**
- * Inner component for phone-based OTP login flow.
- * Handles three steps: phone number entry, OTP verification, and final login.
- */
 function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel }: MobileOtpLoginProps) {
-  const {
-    step,
-    statusMessage,
-    errorMessage,
-    isLoading,
-    resendCooldown,
-    sendOtp,
-    verifyOtp,
-    login,
-    resendOtp,
-  } = usePhoneAuth(role);
+  const { step, errorMessage, isLoading, resendCooldown, verified, sendOtp, verifyOtp, resendOtp } = usePhoneAuth(role);
 
-  const phoneForm = useForm<PhoneForm>({
-    resolver: zodResolver(phoneSchema),
-  });
+  const phoneForm = useForm<PhoneForm>({ resolver: zodResolver(phoneSchema) });
+  const otpForm = useForm<OtpForm>({ resolver: zodResolver(otpSchema) });
+  const otpCode = useWatch({ control: otpForm.control, name: "code" }) || "";
 
-  const otpForm = useForm<OtpForm>({
-    resolver: zodResolver(otpSchema),
-  });
-
-  const onPhoneSubmit = (data: PhoneForm) => {
-    sendOtp(data.phone);
+  const handleLogin = () => {
+    const redirectMap: Record<string, string> = {
+      customer: "/",
+      "delivery-partner": "/delivery-partner/dashboard",
+      kitchen: "/kitchen/dashboard",
+    };
+    window.location.href = redirectMap[role] ?? "/";
   };
-
-  const onOtpSubmit = (data: OtpForm) => {
-    verifyOtp(data.code);
-  };
-
-  const serverError = errorMessage ? (
-    <div className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive animate-in fade-in slide-in-from-top-2 duration-200">
-      {errorMessage}
-    </div>
-  ) : null;
-
-  const serverStatus = statusMessage ? (
-    <div className="rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-sm text-primary animate-in fade-in slide-in-from-top-2 duration-200">
-      {statusMessage}
-    </div>
-  ) : null;
 
   return (
     <Card className="mx-auto w-full border-border/50 shadow-lg shadow-primary/5 backdrop-blur-sm bg-card">
       <CardHeader className="px-6 py-8">
         <CardTitle className="flex items-center gap-2 text-xl">
-          {step !== "phone" && (
+          {step !== "phone" && !verified && (
             <button
               type="button"
               onClick={() => window.location.reload()}
@@ -95,15 +65,13 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
             </button>
           )}
           <span>
-            {step === "phone" && "Sign In"}
-            {step === "otp" && "Enter OTP"}
-            {step === "login" && "Ready to Login"}
+            {verified ? "Welcome!" : step === "phone" ? "Sign In" : "Enter OTP"}
           </span>
         </CardTitle>
       </CardHeader>
       <CardContent className="grid gap-5 px-6 pb-8">
-        {step === "phone" && (
-          <form onSubmit={phoneForm.handleSubmit(onPhoneSubmit)} className="grid gap-5">
+        {step === "phone" && !verified && (
+          <form onSubmit={phoneForm.handleSubmit((d) => sendOtp(d.phone))} className="grid gap-5">
             <div className="grid gap-2">
               <Label htmlFor="phone" className="text-sm font-medium">Phone number</Label>
               <div className="relative">
@@ -120,26 +88,19 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
                 <p className="text-xs text-destructive">{phoneForm.formState.errors.phone.message}</p>
               )}
             </div>
-
-            {serverError}
-            {serverStatus}
-
+            {errorMessage && <p className="text-xs text-destructive">{errorMessage}</p>}
             <Button type="submit" className="w-full h-11 gap-2" disabled={isLoading}>
-              {isLoading ? (
-                <><Spinner className="h-4 w-4" /> Sending OTP...</>
-              ) : (
-                "Continue"
-              )}
+              {isLoading ? <><Spinner className="h-4 w-4" /> Sending OTP...</> : "Continue"}
             </Button>
           </form>
         )}
 
-        {step === "otp" && (
-          <form onSubmit={otpForm.handleSubmit(onOtpSubmit)} className="grid gap-5">
+        {step === "otp" && !verified && (
+          <form onSubmit={otpForm.handleSubmit((d) => verifyOtp(d.code))} className="grid gap-5">
             <div className="grid gap-2">
               <Label htmlFor="otp" className="text-sm font-medium">OTP code</Label>
               <OtpInputBoxes
-                value={otpForm.watch("code") || ""}
+                value={otpCode}
                 onChange={(value) => otpForm.setValue("code", value)}
                 disabled={isLoading}
                 className="pt-1"
@@ -148,30 +109,36 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
                 <p className="text-xs text-destructive">{otpForm.formState.errors.code.message}</p>
               )}
             </div>
-
-            {serverError}
-            {serverStatus}
-
+            {errorMessage && <p className="text-xs text-destructive">{errorMessage}</p>}
             <Button type="submit" className="w-full h-11 gap-2" disabled={isLoading}>
-              {isLoading ? (
-                <><Spinner className="h-4 w-4" /> Verifying...</>
-              ) : (
-                <><KeyRound className="h-4 w-4" /> Verify OTP</>
-              )}
+              {isLoading ? <><Spinner className="h-4 w-4" /> Verifying...</> : <><KeyRound className="h-4 w-4" /> Verify OTP</>}
             </Button>
           </form>
         )}
 
-        {step === "login" && (
-          <div className="grid gap-4">
-            {serverStatus}
-            <Button type="button" className="w-full h-11 gap-2" onClick={login}>
-              <LogIn className="h-4 w-4" /> Login
+        {/* Success state after verification */}
+        {verified && (
+          <div className="flex flex-col items-center gap-6 py-4">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
+              <CheckCircle className="h-8 w-8 text-green-600" />
+            </div>
+            <div className="text-center">
+              <p className="text-lg font-bold">Phone Verified!</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Your phone number has been verified successfully.
+              </p>
+            </div>
+            <Button
+              onClick={handleLogin}
+              className="w-full h-11 gap-2"
+            >
+              <LogIn className="h-4 w-4" />
+              Login 
             </Button>
           </div>
         )}
 
-        {step === "otp" && (
+        {step === "otp" && !verified && (
           <div className="rounded-2xl border border-border/60 bg-muted/30 p-4 text-sm text-muted-foreground">
             <p>Didn&apos;t get a code?</p>
             <Button
@@ -186,13 +153,12 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
             </Button>
           </div>
         )}
-
-        {noAccountHref && noAccountLabel && (
+        {!verified && noAccountHref && noAccountLabel && (
           <p className="text-center text-sm text-muted-foreground">
             {noAccountLabel}{" "}
-            <Link href={noAccountHref} className="font-semibold text-primary hover:underline underline-offset-4 transition-all hover:text-primary/80">
-              Sign Up
-            </Link>
+            <a href={noAccountHref} className="font-semibold text-primary hover:underline underline-offset-4 transition-all hover:text-primary/80">
+              Sign up
+            </a>
           </p>
         )}
       </CardContent>

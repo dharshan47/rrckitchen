@@ -7,7 +7,7 @@ import {
   undoLastCommand,
   commandHistory,
 } from '@/lib/patterns/command';
-import { MenuFacade, menuFacade } from '@/lib/patterns/facade';
+import { menuFacade } from '@/lib/patterns/facade';
 import { cartStore } from '@/stores';
 
 const mockItem = {

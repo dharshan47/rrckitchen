@@ -52,7 +52,7 @@ export default function DashboardPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           <Card role="group" aria-label={`Today's Orders: ${s.todayOrders}`}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Today's Orders</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Today&apos;s Orders</CardTitle>
               <ShoppingBag className="h-4 w-4 text-blue-600" aria-hidden="true" />
             </CardHeader>
             <CardContent><div className="text-2xl font-bold">{s.todayOrders}</div></CardContent>
@@ -73,7 +73,7 @@ export default function DashboardPage() {
           </Card>
           <Card role="group" aria-label={`Today's Revenue: ₹${s.todayRevenue.toLocaleString()}`}>
             <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Today's Revenue</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Today&apos;s Revenue</CardTitle>
               <DollarSign className="h-4 w-4 text-emerald-600" aria-hidden="true" />
             </CardHeader>
             <CardContent><div className="text-2xl font-bold">₹{s.todayRevenue.toLocaleString()}</div></CardContent>

@@ -58,8 +58,6 @@ test.describe('CloudinaryUpload Component Rendering', () => {
   test('kitchen upload triggers file picker on click', async ({ page }) => {
     await page.goto('/kitchen/dashboard/menu')
     const uploadBtn = page.locator('button', { hasText: 'Upload' })
-    const fileInput = page.locator('input[type="file"]')
-
     const [fileChooser] = await Promise.all([
       page.waitForEvent('filechooser'),
       uploadBtn.click(),
@@ -71,7 +69,6 @@ test.describe('CloudinaryUpload Component Rendering', () => {
   test('profile camera button triggers file picker on click', async ({ page }) => {
     await page.goto('/account/profile')
     const cameraBtn = page.locator('button[aria-label="Change photo"]')
-    const fileInput = page.locator('input[type="file"]')
 
     const [fileChooser] = await Promise.all([
       page.waitForEvent('filechooser'),

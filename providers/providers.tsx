@@ -19,6 +19,18 @@ function EventBusLogger() {
     }
   });
 
+  useEventBus(AppEvents.ORDER_STATUS_CHANGED, (payload) => {
+    if (process.env.NODE_ENV === "development") {
+      console.log("[EventBus] Order status changed:", payload);
+    }
+  });
+
+  useEventBus(AppEvents.RIDER_LOCATION_UPDATED, (payload) => {
+    if (process.env.NODE_ENV === "development") {
+      console.log("[EventBus] Rider location:", payload);
+    }
+  });
+
   return null;
 }
 

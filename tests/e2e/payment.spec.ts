@@ -61,7 +61,7 @@ test.describe('Payment Flow', () => {
   });
 
   test('pay button is disabled during processing', async ({ page }) => {
-    await page.route('**/api/payment/create-order', async (route) => {
+    await page.route('**/api/payment/create-order', async () => {
       await new Promise(() => {});
     });
 
@@ -88,10 +88,11 @@ test.describe('Payment Flow', () => {
     await expect(page.getByRole('link', { name: /Add More/i })).toBeVisible();
   });
 
-  test('shows secure payment notice', async ({ page }) => {
+  test('shows payment method selector', async ({ page }) => {
     await page.goto('/menu');
     await page.getByRole('button', { name: 'Add' }).first().click();
     await page.goto('/cart');
-    await expect(page.getByText(/secure payment via razorpay/i)).toBeVisible();
+    await expect(page.getByText(/Payment Method/i)).toBeVisible();
+    await expect(page.getByText(/Pay Online/i)).toBeVisible();
   });
 });

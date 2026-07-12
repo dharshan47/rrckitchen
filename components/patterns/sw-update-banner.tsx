@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { usePWA } from "@/hooks/usePWA";
 import { Button } from "@/components/ui/button";
 

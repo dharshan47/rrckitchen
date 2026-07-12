@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "RRC Kitchen — Thanjavur home food delivery",
+    name: "RRC Kitchen",
     short_name: "RRC Kitchen",
     description:
       "Order fresh home-cooked meals from local kitchens in Thanjavur. Next-day delivery with OTP login and Razorpay checkout.",

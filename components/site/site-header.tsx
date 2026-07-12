@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useCallback } from "react";
-import { Search, User, ShoppingCart, Home, LayoutDashboard, MapPin, ChevronDown } from "lucide-react";
-import { Button, Badge, Input } from "@/components/ui";
+import { useState } from "react";
+import { User, ShoppingCart, Home, LayoutDashboard, MapPin, ChevronDown, Search } from "lucide-react";
+import { Button, Badge } from "@/components/ui";
 import { cn } from "@/lib/utils";
-import { useMenuStore, FoodTypeFilter, useCartStore, useMenuDeliveryAddress, useMenuSearchQuery, useMenuActions } from "@/stores";
+import { useMenuStore, FoodTypeFilter, useCartStore, useMenuDeliveryAddress } from "@/stores";
 import { useSession } from "@/lib/auth-client";
 import { LocationDialog } from "@/components/location";
+import { SearchAutocomplete } from "@/components/search/search-autocomplete";
 
 const foodTypeOptions: { value: FoodTypeFilter; label: string }[] = [
   { value: "ALL", label: "All" },
@@ -23,14 +24,6 @@ export function SiteHeader() {
   const setSelectedFoodType = useMenuStore((s) => s.setSelectedFoodType);
   const cartCount = useCartStore((s) => s.cart.reduce((t, i) => t + i.qty, 0));
   const deliveryAddress = useMenuDeliveryAddress();
-  const searchQuery = useMenuSearchQuery();
-  const { setSearchQuery } = useMenuActions();
-
-  const handleMobileSearchChange = useCallback(
-    (event: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(event.target.value),
-    [setSearchQuery]
-  );
-
   const { data: session } = useSession();
   const isLoggedIn = !!session?.user;
   const cartHref = isLoggedIn ? "/cart" : "/login";
@@ -63,17 +56,7 @@ export function SiteHeader() {
           </div>
 
           <div className="flex-1 max-w-2xl mx-12">
-            <div className="relative">
-              <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-                <Search className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <Input
-                placeholder="Search for meals.."
-                value={searchQuery}
-                onChange={handleMobileSearchChange}
-                className="w-full h-12 pl-12 pr-4 bg-search-bar border-none rounded-xl text-sm focus-visible:ring-2 focus-visible:ring-primary placeholder:text-muted-foreground"
-              />
-            </div>
+            <SearchAutocomplete navigateOnFocus />
           </div>
 
           <div className="flex items-center gap-8">
@@ -145,17 +128,11 @@ export function SiteHeader() {
           <ChevronDown className="h-3.5 w-3.5" />
         </button>
 
-        <div className="relative">
-          <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-            <Search className="h-4 w-4 text-muted-foreground" />
-          </div>
-          <Input
-            placeholder="Search meals..."
-            value={searchQuery}
-            onChange={handleMobileSearchChange}
-            className="w-full bg-search-bar border-none rounded-lg h-10 pl-10 pr-4 text-sm focus-visible:ring-1 focus-visible:ring-primary placeholder:text-muted-foreground"
-          />
-        </div>
+        <SearchAutocomplete
+          navigateOnFocus
+          placeholder="Search meals..."
+          inputClassName="h-10 rounded-lg text-sm pl-10 focus-visible:ring-1"
+        />
 
         <div className="flex items-center gap-2 overflow-x-auto scrollbar-none pb-1">
           {foodTypeOptions.map((opt) => (
@@ -182,6 +159,7 @@ export function SiteHeader() {
       <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-border px-2 py-2 flex items-center justify-around shadow-[0_-1px_10px_rgba(0,0,0,0.05)]">
         <MobileNavItem href="/" icon={<Home className="h-6 w-6" />} label="Home" active />
         <MobileNavItem href="/menu" icon={<LayoutDashboard className="h-6 w-6" />} label="Menu" />
+        <MobileNavItem href="/search" icon={<Search className="h-6 w-6" />} label="Search" />
         <MobileNavItem href={isLoggedIn ? "/account/profile" : "/login"} icon={<User className="h-6 w-6" />} label="Account" />
         <MobileNavItem href={cartHref} icon={<ShoppingCart className="h-6 w-6" />} label="Cart" badge={cartCount} />
       </nav>

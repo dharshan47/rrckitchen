@@ -1,4 +1,4 @@
-import { getMenuItemById } from "@/actions/menu";
+import { getMenuItemById } from "@/actions/catalog/menu";
 import { notFound } from "next/navigation";
 import { MenuItemDetail } from "@/components/menu/menu-item-detail";
 

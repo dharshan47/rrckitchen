@@ -1,20 +1,27 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { authClient } from "@/lib/auth-client";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { useAuthStore, UserRole } from "@/stores";
-import { checkPhoneRegistered } from "@/actions/auth";
+import { checkPhoneRegistered } from "@/actions/onboarding/auth";
 
 export function usePhoneAuth(role: UserRole) {
   const setRole = useAuthStore((state) => state.setRole);
   const resetAuthState = useAuthStore((state) => state.resetAuthState);
 
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [step, setStep] = useState<"phone" | "otp" | "login">("phone");
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [step, setStep] = useState<"phone" | "otp">("phone");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
+  const [verified, setVerified] = useState(false);
+
+  const phoneNumberRef = useRef(phoneNumber);
+  const roleRef = useRef(role);
+  const resendCooldownRef = useRef(resendCooldown);
+
+  useEffect(() => { phoneNumberRef.current = phoneNumber; }, [phoneNumber]);
+  useEffect(() => { roleRef.current = role; }, [role]);
+  useEffect(() => { resendCooldownRef.current = resendCooldown; }, [resendCooldown]);
 
   useEffect(() => {
     setRole(role);
@@ -39,104 +46,95 @@ export function usePhoneAuth(role: UserRole) {
     []
   );
 
-  const sendOtp = useCallback(async (formPhone: string) => {
-    setErrorMessage(null);
-    setStatusMessage(null);
+  const sendOtpMutation = useMutation({
+    mutationFn: async (formPhone: string) => {
+      const normalized = normalizePhoneNumber(formPhone);
+      if (!normalized) throw new Error("Enter a valid mobile number including country code or 10-digit number.");
 
-    const normalized = normalizePhoneNumber(formPhone);
-    if (!normalized) {
-      setErrorMessage("Enter a valid mobile number including country code or 10-digit number.");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
       const registered = await checkPhoneRegistered(normalized);
-      if (!registered) {
-        setErrorMessage("Phone number not registered. Please sign up.");
-        return;
+      if (!registered) throw new Error("Phone number not registered. Please sign up.");
+
+      const res = await fetch("/api/auth/twilio/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: normalized }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.status) {
+        throw new Error(data.error || "Failed to send OTP");
       }
 
-      await authClient.phoneNumber.sendOtp({ phoneNumber: normalized });
       setPhoneNumber(normalized);
       setStep("otp");
       setResendCooldown(30);
-      setStatusMessage("OTP sent. Check your SMS for the code.");
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to send OTP. Try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [normalizePhoneNumber]);
+    },
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+  });
 
-  const verifyOtp = useCallback(async (code: string) => {
-    setErrorMessage(null);
-    setStatusMessage(null);
+  const verifyOtpMutation = useMutation({
+    mutationFn: async (code: string) => {
+      if (!code.trim()) throw new Error("Enter the OTP code sent to your phone.");
 
-    if (!code.trim()) {
-      setErrorMessage("Enter the OTP code sent to your phone.");
-      return;
-    }
+      const currentPhone = phoneNumberRef.current;
 
-    setIsLoading(true);
-    try {
-      const result = await authClient.phoneNumber.verify({ phoneNumber, code });
-      if (result?.data) {
-        setStatusMessage("Phone verified. Login to continue...");
-        setStep("login");
-      } else {
-        setErrorMessage(result?.error?.message ?? "OTP verification failed. Please try again.");
+      const res = await fetch("/api/auth/twilio/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ otp: code, phoneNumber: currentPhone }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.status) {
+        throw new Error(data.error || "OTP verification failed. Please try again.");
       }
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to verify OTP. Try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [phoneNumber]);
+    },
+    onSuccess: () => {
+      setVerified(true);
+      setErrorMessage(null);
+    },
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+  });
 
-  const login = useCallback(() => {
-    const redirectMap: Record<string, string> = {
-      customer: "/",
-      "delivery-partner": "/delivery-partner/dashboard",
-      kitchen: "/kitchen/dashboard",
-      admin: "/admin",
-    };
-    window.location.href = redirectMap[role] ?? "/";
-  }, [role]);
+  const resendOtpMutation = useMutation({
+    mutationFn: async (): Promise<boolean> => {
+      if (resendCooldownRef.current > 0 || !phoneNumberRef.current) return false;
 
-  const resendOtp = useCallback(async () => {
-    if (resendCooldown > 0) return;
+      const normalized = normalizePhoneNumber(phoneNumberRef.current);
+      if (!normalized) throw new Error("Enter a valid mobile number to resend OTP.");
 
-    setErrorMessage(null);
-    setStatusMessage(null);
+      const res = await fetch("/api/auth/twilio/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: normalized }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.status) {
+        throw new Error(data.error || "Failed to resend OTP");
+      }
 
-    const normalized = normalizePhoneNumber(phoneNumber);
-    if (!normalized) {
-      setErrorMessage("Enter a valid mobile number to resend OTP.");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      await authClient.phoneNumber.sendOtp({ phoneNumber: normalized });
       setResendCooldown(30);
-      setStatusMessage("OTP resent. Check your SMS for the code.");
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Unable to resend OTP. Try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [phoneNumber, resendCooldown, normalizePhoneNumber]);
+      return true;
+    },
+    onError: (error) => {
+      setErrorMessage(error.message);
+    },
+  });
+
+  const sendOtp = useCallback((formPhone: string) => sendOtpMutation.mutate(formPhone), [sendOtpMutation]);
+  const verifyOtp = useCallback((code: string) => verifyOtpMutation.mutate(code), [verifyOtpMutation]);
+  const resendOtp = useCallback(() => resendOtpMutation.mutate(), [resendOtpMutation]);
 
   return {
     step,
-    statusMessage,
     errorMessage,
-    isLoading,
+    isLoading: sendOtpMutation.isPending || verifyOtpMutation.isPending || resendOtpMutation.isPending,
     resendCooldown,
+    verified,
     sendOtp,
     verifyOtp,
-    login,
     resendOtp,
   };
 }

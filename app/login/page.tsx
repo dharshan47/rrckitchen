@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import { MobileOtpLogin } from "@/components/auth";
 
@@ -10,13 +11,14 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <Link href="/" className="inline-block">
             <h1 className="text-4xl font-extrabold tracking-tight bg-linear-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-             RRC Kitchen
+              RRC Kitchen
             </h1>
           </Link>
           <p className="text-sm text-muted-foreground mt-3 max-w-xs mx-auto">
             Sign in to order home-cooked meals for tomorrow
           </p>
         </div>
+
         <MobileOtpLogin role="customer" noAccountHref="/signup" noAccountLabel="Don&apos;t have an account?" />
       </div>
     </main>

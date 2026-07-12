@@ -51,7 +51,8 @@ function setup(overrides = {}) {
   return { onUpload, uploadPreset, cloudName }
 }
 
-function createMockFile(name = "test.jpg", size = 1024, mimeType = "image/jpeg") {
+function createMockFile(name = "test.jpg", _size = 1024, mimeType = "image/jpeg") {
+  void _size
   return new File(["fake-image-content"], name, { type: mimeType })
 }
 

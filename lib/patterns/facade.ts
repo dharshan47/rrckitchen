@@ -56,7 +56,8 @@ export class MenuFacade {
     return cartStore.getState().cart.reduce((sum, item) => sum + item.price * item.qty, 0);
   }
 
-  async checkout(params: CheckoutParams): Promise<{ success: boolean; orderId?: string }> {
+  async checkout(_params: CheckoutParams): Promise<{ success: boolean; orderId?: string }> {
+    void _params
     try {
       const orderId = `ORD-${Date.now()}`;
       return { success: true, orderId };

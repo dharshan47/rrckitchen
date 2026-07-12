@@ -65,33 +65,49 @@ async function loadRazorpaySdk(): Promise<RazorpayInstance | null> {
 
 export function useRazorpay() {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentResult, setPaymentResult] = useState<{ success: boolean; orderId?: string } | null>(null);
+  const [paymentResult, setPaymentResult] = useState<{ success: boolean; orderId?: string; error?: string } | null>(null);
 
   const createOrderMutation = useMutation({
-    mutationFn: async (items: CartItem[]): Promise<CreateOrderResponse> => {
-      const res = await fetch("/api/payment/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          items: items.map((i) => ({ id: i.id, qty: i.qty, price: i.price })),
-        }),
-      });
+    mutationFn: async (input: { items: CartItem[]; couponCode?: string }): Promise<CreateOrderResponse> => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15_000);
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error || "Failed to create order");
+      try {
+        const res = await fetch("/api/payment/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            items: input.items.map((i) => ({ id: i.id, qty: i.qty, price: i.price })),
+            couponCode: input.couponCode,
+          }),
+          signal: controller.signal,
+        });
+
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({ error: `Server error (${res.status})` }));
+          throw new Error(err.error || `Request failed (${res.status})`);
+        }
+
+        return res.json();
+      } catch (error) {
+        if (error instanceof DOMException && error.name === "AbortError") {
+          throw new Error("Request timed out. Please try again.");
+        }
+        throw error;
+      } finally {
+        clearTimeout(timeoutId);
       }
-
-      return res.json();
     },
+    retry: 2,
+    retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
   });
 
-  const initiateCheckout = useCallback(async (items: CartItem[], total: number, phoneNumber: string) => {
+  const initiateCheckout = useCallback(async (items: CartItem[], total: number, phoneNumber: string, couponCode?: string) => {
     setIsProcessing(true);
     setPaymentResult(null);
 
     try {
-      const order = await createOrderMutation.mutateAsync(items);
+      const order = await createOrderMutation.mutateAsync({ items, couponCode });
 
       const options: RazorpayCheckoutOptions = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
@@ -175,7 +191,8 @@ export function useRazorpay() {
       razorpay.open();
     } catch (error) {
       console.error("[Razorpay] Checkout failed:", error);
-      setPaymentResult({ success: false });
+      const message = error instanceof Error ? error.message : "Payment failed. Please try again.";
+      setPaymentResult({ success: false, error: message });
       setIsProcessing(false);
     }
   }, [createOrderMutation]);

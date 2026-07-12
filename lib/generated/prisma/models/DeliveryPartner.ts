@@ -20,8 +20,22 @@ export type DeliveryPartnerModel = runtime.Types.Result.DefaultSelection<Prisma.
 
 export type AggregateDeliveryPartner = {
   _count: DeliveryPartnerCountAggregateOutputType | null
+  _avg: DeliveryPartnerAvgAggregateOutputType | null
+  _sum: DeliveryPartnerSumAggregateOutputType | null
   _min: DeliveryPartnerMinAggregateOutputType | null
   _max: DeliveryPartnerMaxAggregateOutputType | null
+}
+
+export type DeliveryPartnerAvgAggregateOutputType = {
+  avgRating: runtime.Decimal | null
+  totalReviews: number | null
+  cashInHand: runtime.Decimal | null
+}
+
+export type DeliveryPartnerSumAggregateOutputType = {
+  avgRating: runtime.Decimal | null
+  totalReviews: number | null
+  cashInHand: runtime.Decimal | null
 }
 
 export type DeliveryPartnerMinAggregateOutputType = {
@@ -29,8 +43,13 @@ export type DeliveryPartnerMinAggregateOutputType = {
   userId: string | null
   status: $Enums.PartnerStatus | null
   approvedAt: Date | null
+  isOnline: boolean | null
+  avgRating: runtime.Decimal | null
+  totalReviews: number | null
   createdAt: Date | null
   deletedAt: Date | null
+  cashInHand: runtime.Decimal | null
+  codEligible: boolean | null
 }
 
 export type DeliveryPartnerMaxAggregateOutputType = {
@@ -38,8 +57,13 @@ export type DeliveryPartnerMaxAggregateOutputType = {
   userId: string | null
   status: $Enums.PartnerStatus | null
   approvedAt: Date | null
+  isOnline: boolean | null
+  avgRating: runtime.Decimal | null
+  totalReviews: number | null
   createdAt: Date | null
   deletedAt: Date | null
+  cashInHand: runtime.Decimal | null
+  codEligible: boolean | null
 }
 
 export type DeliveryPartnerCountAggregateOutputType = {
@@ -47,19 +71,41 @@ export type DeliveryPartnerCountAggregateOutputType = {
   userId: number
   status: number
   approvedAt: number
+  isOnline: number
+  avgRating: number
+  totalReviews: number
   createdAt: number
   deletedAt: number
+  cashInHand: number
+  codEligible: number
   _all: number
 }
 
+
+export type DeliveryPartnerAvgAggregateInputType = {
+  avgRating?: true
+  totalReviews?: true
+  cashInHand?: true
+}
+
+export type DeliveryPartnerSumAggregateInputType = {
+  avgRating?: true
+  totalReviews?: true
+  cashInHand?: true
+}
 
 export type DeliveryPartnerMinAggregateInputType = {
   id?: true
   userId?: true
   status?: true
   approvedAt?: true
+  isOnline?: true
+  avgRating?: true
+  totalReviews?: true
   createdAt?: true
   deletedAt?: true
+  cashInHand?: true
+  codEligible?: true
 }
 
 export type DeliveryPartnerMaxAggregateInputType = {
@@ -67,8 +113,13 @@ export type DeliveryPartnerMaxAggregateInputType = {
   userId?: true
   status?: true
   approvedAt?: true
+  isOnline?: true
+  avgRating?: true
+  totalReviews?: true
   createdAt?: true
   deletedAt?: true
+  cashInHand?: true
+  codEligible?: true
 }
 
 export type DeliveryPartnerCountAggregateInputType = {
@@ -76,8 +127,13 @@ export type DeliveryPartnerCountAggregateInputType = {
   userId?: true
   status?: true
   approvedAt?: true
+  isOnline?: true
+  avgRating?: true
+  totalReviews?: true
   createdAt?: true
   deletedAt?: true
+  cashInHand?: true
+  codEligible?: true
   _all?: true
 }
 
@@ -119,6 +175,18 @@ export type DeliveryPartnerAggregateArgs<ExtArgs extends runtime.Types.Extension
   /**
    * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
    * 
+   * Select which fields to average
+  **/
+  _avg?: DeliveryPartnerAvgAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
+   * Select which fields to sum
+  **/
+  _sum?: DeliveryPartnerSumAggregateInputType
+  /**
+   * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+   * 
    * Select which fields to find the minimum value
   **/
   _min?: DeliveryPartnerMinAggregateInputType
@@ -149,6 +217,8 @@ export type DeliveryPartnerGroupByArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   _count?: DeliveryPartnerCountAggregateInputType | true
+  _avg?: DeliveryPartnerAvgAggregateInputType
+  _sum?: DeliveryPartnerSumAggregateInputType
   _min?: DeliveryPartnerMinAggregateInputType
   _max?: DeliveryPartnerMaxAggregateInputType
 }
@@ -158,9 +228,16 @@ export type DeliveryPartnerGroupByOutputType = {
   userId: string
   status: $Enums.PartnerStatus
   approvedAt: Date | null
+  isOnline: boolean
+  avgRating: runtime.Decimal
+  totalReviews: number
   createdAt: Date
   deletedAt: Date | null
+  cashInHand: runtime.Decimal
+  codEligible: boolean
   _count: DeliveryPartnerCountAggregateOutputType | null
+  _avg: DeliveryPartnerAvgAggregateOutputType | null
+  _sum: DeliveryPartnerSumAggregateOutputType | null
   _min: DeliveryPartnerMinAggregateOutputType | null
   _max: DeliveryPartnerMaxAggregateOutputType | null
 }
@@ -188,13 +265,24 @@ export type DeliveryPartnerWhereInput = {
   userId?: Prisma.StringFilter<"DeliveryPartner"> | string
   status?: Prisma.EnumPartnerStatusFilter<"DeliveryPartner"> | $Enums.PartnerStatus
   approvedAt?: Prisma.DateTimeNullableFilter<"DeliveryPartner"> | Date | string | null
+  isOnline?: Prisma.BoolFilter<"DeliveryPartner"> | boolean
+  avgRating?: Prisma.DecimalFilter<"DeliveryPartner"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFilter<"DeliveryPartner"> | number
   createdAt?: Prisma.DateTimeFilter<"DeliveryPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"DeliveryPartner"> | Date | string | null
+  cashInHand?: Prisma.DecimalFilter<"DeliveryPartner"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFilter<"DeliveryPartner"> | boolean
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   kyc?: Prisma.XOR<Prisma.DeliveryPartnerKycNullableScalarRelationFilter, Prisma.DeliveryPartnerKycWhereInput> | null
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemListRelationFilter
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentListRelationFilter
   reviews?: Prisma.DeliveryReviewListRelationFilter
+  orders?: Prisma.OrderListRelationFilter
+  deliveryAssignments?: Prisma.DeliveryAssignmentListRelationFilter
+  deliveryLocations?: Prisma.DeliveryLocationListRelationFilter
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutListRelationFilter
+  cashRemittances?: Prisma.CashRemittanceListRelationFilter
+  codVariances?: Prisma.CodVarianceListRelationFilter
 }
 
 export type DeliveryPartnerOrderByWithRelationInput = {
@@ -202,13 +290,24 @@ export type DeliveryPartnerOrderByWithRelationInput = {
   userId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  isOnline?: Prisma.SortOrder
+  avgRating?: Prisma.SortOrder
+  totalReviews?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cashInHand?: Prisma.SortOrder
+  codEligible?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   kyc?: Prisma.DeliveryPartnerKycOrderByWithRelationInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemOrderByRelationAggregateInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentOrderByRelationAggregateInput
   reviews?: Prisma.DeliveryReviewOrderByRelationAggregateInput
+  orders?: Prisma.OrderOrderByRelationAggregateInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentOrderByRelationAggregateInput
+  deliveryLocations?: Prisma.DeliveryLocationOrderByRelationAggregateInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutOrderByRelationAggregateInput
+  cashRemittances?: Prisma.CashRemittanceOrderByRelationAggregateInput
+  codVariances?: Prisma.CodVarianceOrderByRelationAggregateInput
 }
 
 export type DeliveryPartnerWhereUniqueInput = Prisma.AtLeast<{
@@ -219,13 +318,24 @@ export type DeliveryPartnerWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.DeliveryPartnerWhereInput | Prisma.DeliveryPartnerWhereInput[]
   status?: Prisma.EnumPartnerStatusFilter<"DeliveryPartner"> | $Enums.PartnerStatus
   approvedAt?: Prisma.DateTimeNullableFilter<"DeliveryPartner"> | Date | string | null
+  isOnline?: Prisma.BoolFilter<"DeliveryPartner"> | boolean
+  avgRating?: Prisma.DecimalFilter<"DeliveryPartner"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFilter<"DeliveryPartner"> | number
   createdAt?: Prisma.DateTimeFilter<"DeliveryPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"DeliveryPartner"> | Date | string | null
+  cashInHand?: Prisma.DecimalFilter<"DeliveryPartner"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFilter<"DeliveryPartner"> | boolean
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   kyc?: Prisma.XOR<Prisma.DeliveryPartnerKycNullableScalarRelationFilter, Prisma.DeliveryPartnerKycWhereInput> | null
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemListRelationFilter
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentListRelationFilter
   reviews?: Prisma.DeliveryReviewListRelationFilter
+  orders?: Prisma.OrderListRelationFilter
+  deliveryAssignments?: Prisma.DeliveryAssignmentListRelationFilter
+  deliveryLocations?: Prisma.DeliveryLocationListRelationFilter
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutListRelationFilter
+  cashRemittances?: Prisma.CashRemittanceListRelationFilter
+  codVariances?: Prisma.CodVarianceListRelationFilter
 }, "id" | "userId">
 
 export type DeliveryPartnerOrderByWithAggregationInput = {
@@ -233,11 +343,18 @@ export type DeliveryPartnerOrderByWithAggregationInput = {
   userId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  isOnline?: Prisma.SortOrder
+  avgRating?: Prisma.SortOrder
+  totalReviews?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cashInHand?: Prisma.SortOrder
+  codEligible?: Prisma.SortOrder
   _count?: Prisma.DeliveryPartnerCountOrderByAggregateInput
+  _avg?: Prisma.DeliveryPartnerAvgOrderByAggregateInput
   _max?: Prisma.DeliveryPartnerMaxOrderByAggregateInput
   _min?: Prisma.DeliveryPartnerMinOrderByAggregateInput
+  _sum?: Prisma.DeliveryPartnerSumOrderByAggregateInput
 }
 
 export type DeliveryPartnerScalarWhereWithAggregatesInput = {
@@ -248,21 +365,37 @@ export type DeliveryPartnerScalarWhereWithAggregatesInput = {
   userId?: Prisma.StringWithAggregatesFilter<"DeliveryPartner"> | string
   status?: Prisma.EnumPartnerStatusWithAggregatesFilter<"DeliveryPartner"> | $Enums.PartnerStatus
   approvedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"DeliveryPartner"> | Date | string | null
+  isOnline?: Prisma.BoolWithAggregatesFilter<"DeliveryPartner"> | boolean
+  avgRating?: Prisma.DecimalWithAggregatesFilter<"DeliveryPartner"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntWithAggregatesFilter<"DeliveryPartner"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"DeliveryPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"DeliveryPartner"> | Date | string | null
+  cashInHand?: Prisma.DecimalWithAggregatesFilter<"DeliveryPartner"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolWithAggregatesFilter<"DeliveryPartner"> | boolean
 }
 
 export type DeliveryPartnerCreateInput = {
   id?: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
   user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateInput = {
@@ -270,25 +403,47 @@ export type DeliveryPartnerUncheckedCreateInput = {
   userId: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateInput = {
@@ -296,12 +451,23 @@ export type DeliveryPartnerUncheckedUpdateInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateManyInput = {
@@ -309,16 +475,26 @@ export type DeliveryPartnerCreateManyInput = {
   userId: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
 }
 
 export type DeliveryPartnerUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type DeliveryPartnerUncheckedUpdateManyInput = {
@@ -326,8 +502,13 @@ export type DeliveryPartnerUncheckedUpdateManyInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type DeliveryPartnerNullableScalarRelationFilter = {
@@ -340,8 +521,19 @@ export type DeliveryPartnerCountOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
+  isOnline?: Prisma.SortOrder
+  avgRating?: Prisma.SortOrder
+  totalReviews?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+  cashInHand?: Prisma.SortOrder
+  codEligible?: Prisma.SortOrder
+}
+
+export type DeliveryPartnerAvgOrderByAggregateInput = {
+  avgRating?: Prisma.SortOrder
+  totalReviews?: Prisma.SortOrder
+  cashInHand?: Prisma.SortOrder
 }
 
 export type DeliveryPartnerMaxOrderByAggregateInput = {
@@ -349,8 +541,13 @@ export type DeliveryPartnerMaxOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
+  isOnline?: Prisma.SortOrder
+  avgRating?: Prisma.SortOrder
+  totalReviews?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+  cashInHand?: Prisma.SortOrder
+  codEligible?: Prisma.SortOrder
 }
 
 export type DeliveryPartnerMinOrderByAggregateInput = {
@@ -358,8 +555,19 @@ export type DeliveryPartnerMinOrderByAggregateInput = {
   userId?: Prisma.SortOrder
   status?: Prisma.SortOrder
   approvedAt?: Prisma.SortOrder
+  isOnline?: Prisma.SortOrder
+  avgRating?: Prisma.SortOrder
+  totalReviews?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+  cashInHand?: Prisma.SortOrder
+  codEligible?: Prisma.SortOrder
+}
+
+export type DeliveryPartnerSumOrderByAggregateInput = {
+  avgRating?: Prisma.SortOrder
+  totalReviews?: Prisma.SortOrder
+  cashInHand?: Prisma.SortOrder
 }
 
 export type DeliveryPartnerScalarRelationFilter = {
@@ -441,6 +649,22 @@ export type DeliveryPartnerUpdateOneRequiredWithoutKitchenAssignmentsNestedInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutKitchenAssignmentsInput, Prisma.DeliveryPartnerUpdateWithoutKitchenAssignmentsInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutKitchenAssignmentsInput>
 }
 
+export type DeliveryPartnerCreateNestedOneWithoutOrdersInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutOrdersInput, Prisma.DeliveryPartnerUncheckedCreateWithoutOrdersInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutOrdersInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+}
+
+export type DeliveryPartnerUpdateOneWithoutOrdersNestedInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutOrdersInput, Prisma.DeliveryPartnerUncheckedCreateWithoutOrdersInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutOrdersInput
+  upsert?: Prisma.DeliveryPartnerUpsertWithoutOrdersInput
+  disconnect?: Prisma.DeliveryPartnerWhereInput | boolean
+  delete?: Prisma.DeliveryPartnerWhereInput | boolean
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutOrdersInput, Prisma.DeliveryPartnerUpdateWithoutOrdersInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutOrdersInput>
+}
+
 export type DeliveryPartnerCreateNestedOneWithoutReviewsInput = {
   create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutReviewsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutReviewsInput>
   connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutReviewsInput
@@ -455,28 +679,120 @@ export type DeliveryPartnerUpdateOneRequiredWithoutReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutReviewsInput, Prisma.DeliveryPartnerUpdateWithoutReviewsInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutReviewsInput>
 }
 
+export type DeliveryPartnerCreateNestedOneWithoutDeliveryAssignmentsInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutDeliveryAssignmentsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutDeliveryAssignmentsInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutDeliveryAssignmentsInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+}
+
+export type DeliveryPartnerUpdateOneRequiredWithoutDeliveryAssignmentsNestedInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutDeliveryAssignmentsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutDeliveryAssignmentsInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutDeliveryAssignmentsInput
+  upsert?: Prisma.DeliveryPartnerUpsertWithoutDeliveryAssignmentsInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutDeliveryAssignmentsInput, Prisma.DeliveryPartnerUpdateWithoutDeliveryAssignmentsInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutDeliveryAssignmentsInput>
+}
+
+export type DeliveryPartnerCreateNestedOneWithoutDeliveryLocationsInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutDeliveryLocationsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutDeliveryLocationsInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutDeliveryLocationsInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+}
+
+export type DeliveryPartnerUpdateOneRequiredWithoutDeliveryLocationsNestedInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutDeliveryLocationsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutDeliveryLocationsInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutDeliveryLocationsInput
+  upsert?: Prisma.DeliveryPartnerUpsertWithoutDeliveryLocationsInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutDeliveryLocationsInput, Prisma.DeliveryPartnerUpdateWithoutDeliveryLocationsInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutDeliveryLocationsInput>
+}
+
+export type DeliveryPartnerCreateNestedOneWithoutDeliveryPayoutsInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutDeliveryPayoutsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutDeliveryPayoutsInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutDeliveryPayoutsInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+}
+
+export type DeliveryPartnerUpdateOneRequiredWithoutDeliveryPayoutsNestedInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutDeliveryPayoutsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutDeliveryPayoutsInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutDeliveryPayoutsInput
+  upsert?: Prisma.DeliveryPartnerUpsertWithoutDeliveryPayoutsInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutDeliveryPayoutsInput, Prisma.DeliveryPartnerUpdateWithoutDeliveryPayoutsInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutDeliveryPayoutsInput>
+}
+
+export type DeliveryPartnerCreateNestedOneWithoutCashRemittancesInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutCashRemittancesInput, Prisma.DeliveryPartnerUncheckedCreateWithoutCashRemittancesInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutCashRemittancesInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+}
+
+export type DeliveryPartnerUpdateOneRequiredWithoutCashRemittancesNestedInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutCashRemittancesInput, Prisma.DeliveryPartnerUncheckedCreateWithoutCashRemittancesInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutCashRemittancesInput
+  upsert?: Prisma.DeliveryPartnerUpsertWithoutCashRemittancesInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutCashRemittancesInput, Prisma.DeliveryPartnerUpdateWithoutCashRemittancesInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutCashRemittancesInput>
+}
+
+export type DeliveryPartnerCreateNestedOneWithoutCodVariancesInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutCodVariancesInput, Prisma.DeliveryPartnerUncheckedCreateWithoutCodVariancesInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutCodVariancesInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+}
+
+export type DeliveryPartnerUpdateOneRequiredWithoutCodVariancesNestedInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutCodVariancesInput, Prisma.DeliveryPartnerUncheckedCreateWithoutCodVariancesInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutCodVariancesInput
+  upsert?: Prisma.DeliveryPartnerUpsertWithoutCodVariancesInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutCodVariancesInput, Prisma.DeliveryPartnerUpdateWithoutCodVariancesInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutCodVariancesInput>
+}
+
 export type DeliveryPartnerCreateWithoutUserInput = {
   id?: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutUserInput = {
   id?: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutUserInput = {
@@ -499,36 +815,69 @@ export type DeliveryPartnerUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutKycInput = {
   id?: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
   user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutKycInput = {
@@ -536,11 +885,22 @@ export type DeliveryPartnerUncheckedCreateWithoutKycInput = {
   userId: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutKycInput = {
@@ -563,12 +923,23 @@ export type DeliveryPartnerUpdateWithoutKycInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutKycInput = {
@@ -576,23 +947,45 @@ export type DeliveryPartnerUncheckedUpdateWithoutKycInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutCatalogueItemsInput = {
   id?: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
   user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutCatalogueItemsInput = {
@@ -600,11 +993,22 @@ export type DeliveryPartnerUncheckedCreateWithoutCatalogueItemsInput = {
   userId: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutCatalogueItemsInput = {
@@ -627,12 +1031,23 @@ export type DeliveryPartnerUpdateWithoutCatalogueItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutCatalogueItemsInput = {
@@ -640,23 +1055,45 @@ export type DeliveryPartnerUncheckedUpdateWithoutCatalogueItemsInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutKitchenAssignmentsInput = {
   id?: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
   user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
   reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutKitchenAssignmentsInput = {
@@ -664,11 +1101,22 @@ export type DeliveryPartnerUncheckedCreateWithoutKitchenAssignmentsInput = {
   userId: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutKitchenAssignmentsInput = {
@@ -691,12 +1139,23 @@ export type DeliveryPartnerUpdateWithoutKitchenAssignmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
   reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutKitchenAssignmentsInput = {
@@ -704,23 +1163,153 @@ export type DeliveryPartnerUncheckedUpdateWithoutKitchenAssignmentsInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerCreateWithoutOrdersInput = {
+  id?: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
+  user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
+  kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerUncheckedCreateWithoutOrdersInput = {
+  id?: string
+  userId: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
+  kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerCreateOrConnectWithoutOrdersInput = {
+  where: Prisma.DeliveryPartnerWhereUniqueInput
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutOrdersInput, Prisma.DeliveryPartnerUncheckedCreateWithoutOrdersInput>
+}
+
+export type DeliveryPartnerUpsertWithoutOrdersInput = {
+  update: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutOrdersInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutOrdersInput>
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutOrdersInput, Prisma.DeliveryPartnerUncheckedCreateWithoutOrdersInput>
+  where?: Prisma.DeliveryPartnerWhereInput
+}
+
+export type DeliveryPartnerUpdateToOneWithWhereWithoutOrdersInput = {
+  where?: Prisma.DeliveryPartnerWhereInput
+  data: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutOrdersInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutOrdersInput>
+}
+
+export type DeliveryPartnerUpdateWithoutOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
+  kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerUncheckedUpdateWithoutOrdersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutReviewsInput = {
   id?: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
   user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
   kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutReviewsInput = {
@@ -728,11 +1317,22 @@ export type DeliveryPartnerUncheckedCreateWithoutReviewsInput = {
   userId: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
   createdAt?: Date | string
   deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
   kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutReviewsInput = {
@@ -755,12 +1355,23 @@ export type DeliveryPartnerUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
   kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutReviewsInput = {
@@ -768,11 +1379,562 @@ export type DeliveryPartnerUncheckedUpdateWithoutReviewsInput = {
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
   kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
   catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerCreateWithoutDeliveryAssignmentsInput = {
+  id?: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
+  user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
+  kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerUncheckedCreateWithoutDeliveryAssignmentsInput = {
+  id?: string
+  userId: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
+  kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerCreateOrConnectWithoutDeliveryAssignmentsInput = {
+  where: Prisma.DeliveryPartnerWhereUniqueInput
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutDeliveryAssignmentsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutDeliveryAssignmentsInput>
+}
+
+export type DeliveryPartnerUpsertWithoutDeliveryAssignmentsInput = {
+  update: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutDeliveryAssignmentsInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutDeliveryAssignmentsInput>
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutDeliveryAssignmentsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutDeliveryAssignmentsInput>
+  where?: Prisma.DeliveryPartnerWhereInput
+}
+
+export type DeliveryPartnerUpdateToOneWithWhereWithoutDeliveryAssignmentsInput = {
+  where?: Prisma.DeliveryPartnerWhereInput
+  data: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutDeliveryAssignmentsInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutDeliveryAssignmentsInput>
+}
+
+export type DeliveryPartnerUpdateWithoutDeliveryAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
+  kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerUncheckedUpdateWithoutDeliveryAssignmentsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerCreateWithoutDeliveryLocationsInput = {
+  id?: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
+  user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
+  kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerUncheckedCreateWithoutDeliveryLocationsInput = {
+  id?: string
+  userId: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
+  kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerCreateOrConnectWithoutDeliveryLocationsInput = {
+  where: Prisma.DeliveryPartnerWhereUniqueInput
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutDeliveryLocationsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutDeliveryLocationsInput>
+}
+
+export type DeliveryPartnerUpsertWithoutDeliveryLocationsInput = {
+  update: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutDeliveryLocationsInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutDeliveryLocationsInput>
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutDeliveryLocationsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutDeliveryLocationsInput>
+  where?: Prisma.DeliveryPartnerWhereInput
+}
+
+export type DeliveryPartnerUpdateToOneWithWhereWithoutDeliveryLocationsInput = {
+  where?: Prisma.DeliveryPartnerWhereInput
+  data: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutDeliveryLocationsInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutDeliveryLocationsInput>
+}
+
+export type DeliveryPartnerUpdateWithoutDeliveryLocationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
+  kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerUncheckedUpdateWithoutDeliveryLocationsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerCreateWithoutDeliveryPayoutsInput = {
+  id?: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
+  user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
+  kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerUncheckedCreateWithoutDeliveryPayoutsInput = {
+  id?: string
+  userId: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
+  kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerCreateOrConnectWithoutDeliveryPayoutsInput = {
+  where: Prisma.DeliveryPartnerWhereUniqueInput
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutDeliveryPayoutsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutDeliveryPayoutsInput>
+}
+
+export type DeliveryPartnerUpsertWithoutDeliveryPayoutsInput = {
+  update: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutDeliveryPayoutsInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutDeliveryPayoutsInput>
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutDeliveryPayoutsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutDeliveryPayoutsInput>
+  where?: Prisma.DeliveryPartnerWhereInput
+}
+
+export type DeliveryPartnerUpdateToOneWithWhereWithoutDeliveryPayoutsInput = {
+  where?: Prisma.DeliveryPartnerWhereInput
+  data: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutDeliveryPayoutsInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutDeliveryPayoutsInput>
+}
+
+export type DeliveryPartnerUpdateWithoutDeliveryPayoutsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
+  kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerUncheckedUpdateWithoutDeliveryPayoutsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerCreateWithoutCashRemittancesInput = {
+  id?: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
+  user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
+  kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerUncheckedCreateWithoutCashRemittancesInput = {
+  id?: string
+  userId: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
+  kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  codVariances?: Prisma.CodVarianceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerCreateOrConnectWithoutCashRemittancesInput = {
+  where: Prisma.DeliveryPartnerWhereUniqueInput
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutCashRemittancesInput, Prisma.DeliveryPartnerUncheckedCreateWithoutCashRemittancesInput>
+}
+
+export type DeliveryPartnerUpsertWithoutCashRemittancesInput = {
+  update: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutCashRemittancesInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutCashRemittancesInput>
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutCashRemittancesInput, Prisma.DeliveryPartnerUncheckedCreateWithoutCashRemittancesInput>
+  where?: Prisma.DeliveryPartnerWhereInput
+}
+
+export type DeliveryPartnerUpdateToOneWithWhereWithoutCashRemittancesInput = {
+  where?: Prisma.DeliveryPartnerWhereInput
+  data: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutCashRemittancesInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutCashRemittancesInput>
+}
+
+export type DeliveryPartnerUpdateWithoutCashRemittancesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
+  kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerUncheckedUpdateWithoutCashRemittancesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  codVariances?: Prisma.CodVarianceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerCreateWithoutCodVariancesInput = {
+  id?: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
+  user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
+  kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerUncheckedCreateWithoutCodVariancesInput = {
+  id?: string
+  userId: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  cashInHand?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: boolean
+  kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerCreateOrConnectWithoutCodVariancesInput = {
+  where: Prisma.DeliveryPartnerWhereUniqueInput
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutCodVariancesInput, Prisma.DeliveryPartnerUncheckedCreateWithoutCodVariancesInput>
+}
+
+export type DeliveryPartnerUpsertWithoutCodVariancesInput = {
+  update: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutCodVariancesInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutCodVariancesInput>
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutCodVariancesInput, Prisma.DeliveryPartnerUncheckedCreateWithoutCodVariancesInput>
+  where?: Prisma.DeliveryPartnerWhereInput
+}
+
+export type DeliveryPartnerUpdateToOneWithWhereWithoutCodVariancesInput = {
+  where?: Prisma.DeliveryPartnerWhereInput
+  data: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutCodVariancesInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutCodVariancesInput>
+}
+
+export type DeliveryPartnerUpdateWithoutCodVariancesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
+  kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerUncheckedUpdateWithoutCodVariancesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cashInHand?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  codEligible?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  cashRemittances?: Prisma.CashRemittanceUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 
@@ -784,12 +1946,24 @@ export type DeliveryPartnerCountOutputType = {
   catalogueItems: number
   kitchenAssignments: number
   reviews: number
+  orders: number
+  deliveryAssignments: number
+  deliveryLocations: number
+  deliveryPayouts: number
+  cashRemittances: number
+  codVariances: number
 }
 
 export type DeliveryPartnerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   catalogueItems?: boolean | DeliveryPartnerCountOutputTypeCountCatalogueItemsArgs
   kitchenAssignments?: boolean | DeliveryPartnerCountOutputTypeCountKitchenAssignmentsArgs
   reviews?: boolean | DeliveryPartnerCountOutputTypeCountReviewsArgs
+  orders?: boolean | DeliveryPartnerCountOutputTypeCountOrdersArgs
+  deliveryAssignments?: boolean | DeliveryPartnerCountOutputTypeCountDeliveryAssignmentsArgs
+  deliveryLocations?: boolean | DeliveryPartnerCountOutputTypeCountDeliveryLocationsArgs
+  deliveryPayouts?: boolean | DeliveryPartnerCountOutputTypeCountDeliveryPayoutsArgs
+  cashRemittances?: boolean | DeliveryPartnerCountOutputTypeCountCashRemittancesArgs
+  codVariances?: boolean | DeliveryPartnerCountOutputTypeCountCodVariancesArgs
 }
 
 /**
@@ -823,19 +1997,72 @@ export type DeliveryPartnerCountOutputTypeCountReviewsArgs<ExtArgs extends runti
   where?: Prisma.DeliveryReviewWhereInput
 }
 
+/**
+ * DeliveryPartnerCountOutputType without action
+ */
+export type DeliveryPartnerCountOutputTypeCountOrdersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.OrderWhereInput
+}
+
+/**
+ * DeliveryPartnerCountOutputType without action
+ */
+export type DeliveryPartnerCountOutputTypeCountDeliveryAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DeliveryAssignmentWhereInput
+}
+
+/**
+ * DeliveryPartnerCountOutputType without action
+ */
+export type DeliveryPartnerCountOutputTypeCountDeliveryLocationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DeliveryLocationWhereInput
+}
+
+/**
+ * DeliveryPartnerCountOutputType without action
+ */
+export type DeliveryPartnerCountOutputTypeCountDeliveryPayoutsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.DeliveryPartnerPayoutWhereInput
+}
+
+/**
+ * DeliveryPartnerCountOutputType without action
+ */
+export type DeliveryPartnerCountOutputTypeCountCashRemittancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CashRemittanceWhereInput
+}
+
+/**
+ * DeliveryPartnerCountOutputType without action
+ */
+export type DeliveryPartnerCountOutputTypeCountCodVariancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CodVarianceWhereInput
+}
+
 
 export type DeliveryPartnerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   userId?: boolean
   status?: boolean
   approvedAt?: boolean
+  isOnline?: boolean
+  avgRating?: boolean
+  totalReviews?: boolean
   createdAt?: boolean
   deletedAt?: boolean
+  cashInHand?: boolean
+  codEligible?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   kyc?: boolean | Prisma.DeliveryPartner$kycArgs<ExtArgs>
   catalogueItems?: boolean | Prisma.DeliveryPartner$catalogueItemsArgs<ExtArgs>
   kitchenAssignments?: boolean | Prisma.DeliveryPartner$kitchenAssignmentsArgs<ExtArgs>
   reviews?: boolean | Prisma.DeliveryPartner$reviewsArgs<ExtArgs>
+  orders?: boolean | Prisma.DeliveryPartner$ordersArgs<ExtArgs>
+  deliveryAssignments?: boolean | Prisma.DeliveryPartner$deliveryAssignmentsArgs<ExtArgs>
+  deliveryLocations?: boolean | Prisma.DeliveryPartner$deliveryLocationsArgs<ExtArgs>
+  deliveryPayouts?: boolean | Prisma.DeliveryPartner$deliveryPayoutsArgs<ExtArgs>
+  cashRemittances?: boolean | Prisma.DeliveryPartner$cashRemittancesArgs<ExtArgs>
+  codVariances?: boolean | Prisma.DeliveryPartner$codVariancesArgs<ExtArgs>
   _count?: boolean | Prisma.DeliveryPartnerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["deliveryPartner"]>
 
@@ -844,8 +2071,13 @@ export type DeliveryPartnerSelectCreateManyAndReturn<ExtArgs extends runtime.Typ
   userId?: boolean
   status?: boolean
   approvedAt?: boolean
+  isOnline?: boolean
+  avgRating?: boolean
+  totalReviews?: boolean
   createdAt?: boolean
   deletedAt?: boolean
+  cashInHand?: boolean
+  codEligible?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["deliveryPartner"]>
 
@@ -854,8 +2086,13 @@ export type DeliveryPartnerSelectUpdateManyAndReturn<ExtArgs extends runtime.Typ
   userId?: boolean
   status?: boolean
   approvedAt?: boolean
+  isOnline?: boolean
+  avgRating?: boolean
+  totalReviews?: boolean
   createdAt?: boolean
   deletedAt?: boolean
+  cashInHand?: boolean
+  codEligible?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["deliveryPartner"]>
 
@@ -864,17 +2101,28 @@ export type DeliveryPartnerSelectScalar = {
   userId?: boolean
   status?: boolean
   approvedAt?: boolean
+  isOnline?: boolean
+  avgRating?: boolean
+  totalReviews?: boolean
   createdAt?: boolean
   deletedAt?: boolean
+  cashInHand?: boolean
+  codEligible?: boolean
 }
 
-export type DeliveryPartnerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "status" | "approvedAt" | "createdAt" | "deletedAt", ExtArgs["result"]["deliveryPartner"]>
+export type DeliveryPartnerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "status" | "approvedAt" | "isOnline" | "avgRating" | "totalReviews" | "createdAt" | "deletedAt" | "cashInHand" | "codEligible", ExtArgs["result"]["deliveryPartner"]>
 export type DeliveryPartnerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   kyc?: boolean | Prisma.DeliveryPartner$kycArgs<ExtArgs>
   catalogueItems?: boolean | Prisma.DeliveryPartner$catalogueItemsArgs<ExtArgs>
   kitchenAssignments?: boolean | Prisma.DeliveryPartner$kitchenAssignmentsArgs<ExtArgs>
   reviews?: boolean | Prisma.DeliveryPartner$reviewsArgs<ExtArgs>
+  orders?: boolean | Prisma.DeliveryPartner$ordersArgs<ExtArgs>
+  deliveryAssignments?: boolean | Prisma.DeliveryPartner$deliveryAssignmentsArgs<ExtArgs>
+  deliveryLocations?: boolean | Prisma.DeliveryPartner$deliveryLocationsArgs<ExtArgs>
+  deliveryPayouts?: boolean | Prisma.DeliveryPartner$deliveryPayoutsArgs<ExtArgs>
+  cashRemittances?: boolean | Prisma.DeliveryPartner$cashRemittancesArgs<ExtArgs>
+  codVariances?: boolean | Prisma.DeliveryPartner$codVariancesArgs<ExtArgs>
   _count?: boolean | Prisma.DeliveryPartnerCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DeliveryPartnerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -892,14 +2140,25 @@ export type $DeliveryPartnerPayload<ExtArgs extends runtime.Types.Extensions.Int
     catalogueItems: Prisma.$DeliveryPartnerCatalogueItemPayload<ExtArgs>[]
     kitchenAssignments: Prisma.$DeliveryPartnerKitchenAssignmentPayload<ExtArgs>[]
     reviews: Prisma.$DeliveryReviewPayload<ExtArgs>[]
+    orders: Prisma.$OrderPayload<ExtArgs>[]
+    deliveryAssignments: Prisma.$DeliveryAssignmentPayload<ExtArgs>[]
+    deliveryLocations: Prisma.$DeliveryLocationPayload<ExtArgs>[]
+    deliveryPayouts: Prisma.$DeliveryPartnerPayoutPayload<ExtArgs>[]
+    cashRemittances: Prisma.$CashRemittancePayload<ExtArgs>[]
+    codVariances: Prisma.$CodVariancePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     userId: string
     status: $Enums.PartnerStatus
     approvedAt: Date | null
+    isOnline: boolean
+    avgRating: runtime.Decimal
+    totalReviews: number
     createdAt: Date
     deletedAt: Date | null
+    cashInHand: runtime.Decimal
+    codEligible: boolean
   }, ExtArgs["result"]["deliveryPartner"]>
   composites: {}
 }
@@ -1299,6 +2558,12 @@ export interface Prisma__DeliveryPartnerClient<T, Null = never, ExtArgs extends 
   catalogueItems<T extends Prisma.DeliveryPartner$catalogueItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$catalogueItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerCatalogueItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitchenAssignments<T extends Prisma.DeliveryPartner$kitchenAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$kitchenAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.DeliveryPartner$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  orders<T extends Prisma.DeliveryPartner$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deliveryAssignments<T extends Prisma.DeliveryPartner$deliveryAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$deliveryAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deliveryLocations<T extends Prisma.DeliveryPartner$deliveryLocationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$deliveryLocationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  deliveryPayouts<T extends Prisma.DeliveryPartner$deliveryPayoutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$deliveryPayoutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerPayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cashRemittances<T extends Prisma.DeliveryPartner$cashRemittancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$cashRemittancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CashRemittancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  codVariances<T extends Prisma.DeliveryPartner$codVariancesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$codVariancesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CodVariancePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1332,8 +2597,13 @@ export interface DeliveryPartnerFieldRefs {
   readonly userId: Prisma.FieldRef<"DeliveryPartner", 'String'>
   readonly status: Prisma.FieldRef<"DeliveryPartner", 'PartnerStatus'>
   readonly approvedAt: Prisma.FieldRef<"DeliveryPartner", 'DateTime'>
+  readonly isOnline: Prisma.FieldRef<"DeliveryPartner", 'Boolean'>
+  readonly avgRating: Prisma.FieldRef<"DeliveryPartner", 'Decimal'>
+  readonly totalReviews: Prisma.FieldRef<"DeliveryPartner", 'Int'>
   readonly createdAt: Prisma.FieldRef<"DeliveryPartner", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"DeliveryPartner", 'DateTime'>
+  readonly cashInHand: Prisma.FieldRef<"DeliveryPartner", 'Decimal'>
+  readonly codEligible: Prisma.FieldRef<"DeliveryPartner", 'Boolean'>
 }
     
 
@@ -1823,6 +3093,150 @@ export type DeliveryPartner$reviewsArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.DeliveryReviewScalarFieldEnum | Prisma.DeliveryReviewScalarFieldEnum[]
+}
+
+/**
+ * DeliveryPartner.orders
+ */
+export type DeliveryPartner$ordersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Order
+   */
+  select?: Prisma.OrderSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Order
+   */
+  omit?: Prisma.OrderOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.OrderInclude<ExtArgs> | null
+  where?: Prisma.OrderWhereInput
+  orderBy?: Prisma.OrderOrderByWithRelationInput | Prisma.OrderOrderByWithRelationInput[]
+  cursor?: Prisma.OrderWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[]
+}
+
+/**
+ * DeliveryPartner.deliveryAssignments
+ */
+export type DeliveryPartner$deliveryAssignmentsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DeliveryAssignment
+   */
+  select?: Prisma.DeliveryAssignmentSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DeliveryAssignment
+   */
+  omit?: Prisma.DeliveryAssignmentOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeliveryAssignmentInclude<ExtArgs> | null
+  where?: Prisma.DeliveryAssignmentWhereInput
+  orderBy?: Prisma.DeliveryAssignmentOrderByWithRelationInput | Prisma.DeliveryAssignmentOrderByWithRelationInput[]
+  cursor?: Prisma.DeliveryAssignmentWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DeliveryAssignmentScalarFieldEnum | Prisma.DeliveryAssignmentScalarFieldEnum[]
+}
+
+/**
+ * DeliveryPartner.deliveryLocations
+ */
+export type DeliveryPartner$deliveryLocationsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DeliveryLocation
+   */
+  select?: Prisma.DeliveryLocationSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DeliveryLocation
+   */
+  omit?: Prisma.DeliveryLocationOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeliveryLocationInclude<ExtArgs> | null
+  where?: Prisma.DeliveryLocationWhereInput
+  orderBy?: Prisma.DeliveryLocationOrderByWithRelationInput | Prisma.DeliveryLocationOrderByWithRelationInput[]
+  cursor?: Prisma.DeliveryLocationWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DeliveryLocationScalarFieldEnum | Prisma.DeliveryLocationScalarFieldEnum[]
+}
+
+/**
+ * DeliveryPartner.deliveryPayouts
+ */
+export type DeliveryPartner$deliveryPayoutsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the DeliveryPartnerPayout
+   */
+  select?: Prisma.DeliveryPartnerPayoutSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the DeliveryPartnerPayout
+   */
+  omit?: Prisma.DeliveryPartnerPayoutOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.DeliveryPartnerPayoutInclude<ExtArgs> | null
+  where?: Prisma.DeliveryPartnerPayoutWhereInput
+  orderBy?: Prisma.DeliveryPartnerPayoutOrderByWithRelationInput | Prisma.DeliveryPartnerPayoutOrderByWithRelationInput[]
+  cursor?: Prisma.DeliveryPartnerPayoutWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.DeliveryPartnerPayoutScalarFieldEnum | Prisma.DeliveryPartnerPayoutScalarFieldEnum[]
+}
+
+/**
+ * DeliveryPartner.cashRemittances
+ */
+export type DeliveryPartner$cashRemittancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CashRemittance
+   */
+  select?: Prisma.CashRemittanceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CashRemittance
+   */
+  omit?: Prisma.CashRemittanceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CashRemittanceInclude<ExtArgs> | null
+  where?: Prisma.CashRemittanceWhereInput
+  orderBy?: Prisma.CashRemittanceOrderByWithRelationInput | Prisma.CashRemittanceOrderByWithRelationInput[]
+  cursor?: Prisma.CashRemittanceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CashRemittanceScalarFieldEnum | Prisma.CashRemittanceScalarFieldEnum[]
+}
+
+/**
+ * DeliveryPartner.codVariances
+ */
+export type DeliveryPartner$codVariancesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CodVariance
+   */
+  select?: Prisma.CodVarianceSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CodVariance
+   */
+  omit?: Prisma.CodVarianceOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CodVarianceInclude<ExtArgs> | null
+  where?: Prisma.CodVarianceWhereInput
+  orderBy?: Prisma.CodVarianceOrderByWithRelationInput | Prisma.CodVarianceOrderByWithRelationInput[]
+  cursor?: Prisma.CodVarianceWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CodVarianceScalarFieldEnum | Prisma.CodVarianceScalarFieldEnum[]
 }
 
 /**

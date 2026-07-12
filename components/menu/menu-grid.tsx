@@ -101,7 +101,7 @@ export default function MenuGrid({ items: propItems, onItemClick }: MenuGridProp
           >
             <CompoundMenuCard.ImageSection>
               <CompoundMenuCard.BadgeRibbon />
-              <CompoundMenuCard.AddButtonOverlay />
+              <CompoundMenuCard.WishlistButton />
             </CompoundMenuCard.ImageSection>
             <CompoundMenuCard.Header />
             <CompoundMenuCard.Footer />

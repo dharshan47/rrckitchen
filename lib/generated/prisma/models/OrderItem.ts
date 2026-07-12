@@ -29,11 +29,13 @@ export type AggregateOrderItem = {
 export type OrderItemAvgAggregateOutputType = {
   quantity: number | null
   unitPrice: runtime.Decimal | null
+  packagingFee: runtime.Decimal | null
 }
 
 export type OrderItemSumAggregateOutputType = {
   quantity: number | null
   unitPrice: runtime.Decimal | null
+  packagingFee: runtime.Decimal | null
 }
 
 export type OrderItemMinAggregateOutputType = {
@@ -43,6 +45,8 @@ export type OrderItemMinAggregateOutputType = {
   kitchenPartnerId: string | null
   quantity: number | null
   unitPrice: runtime.Decimal | null
+  packagingFee: runtime.Decimal | null
+  status: $Enums.OrderItemStatus | null
 }
 
 export type OrderItemMaxAggregateOutputType = {
@@ -52,6 +56,8 @@ export type OrderItemMaxAggregateOutputType = {
   kitchenPartnerId: string | null
   quantity: number | null
   unitPrice: runtime.Decimal | null
+  packagingFee: runtime.Decimal | null
+  status: $Enums.OrderItemStatus | null
 }
 
 export type OrderItemCountAggregateOutputType = {
@@ -61,6 +67,8 @@ export type OrderItemCountAggregateOutputType = {
   kitchenPartnerId: number
   quantity: number
   unitPrice: number
+  packagingFee: number
+  status: number
   _all: number
 }
 
@@ -68,11 +76,13 @@ export type OrderItemCountAggregateOutputType = {
 export type OrderItemAvgAggregateInputType = {
   quantity?: true
   unitPrice?: true
+  packagingFee?: true
 }
 
 export type OrderItemSumAggregateInputType = {
   quantity?: true
   unitPrice?: true
+  packagingFee?: true
 }
 
 export type OrderItemMinAggregateInputType = {
@@ -82,6 +92,8 @@ export type OrderItemMinAggregateInputType = {
   kitchenPartnerId?: true
   quantity?: true
   unitPrice?: true
+  packagingFee?: true
+  status?: true
 }
 
 export type OrderItemMaxAggregateInputType = {
@@ -91,6 +103,8 @@ export type OrderItemMaxAggregateInputType = {
   kitchenPartnerId?: true
   quantity?: true
   unitPrice?: true
+  packagingFee?: true
+  status?: true
 }
 
 export type OrderItemCountAggregateInputType = {
@@ -100,6 +114,8 @@ export type OrderItemCountAggregateInputType = {
   kitchenPartnerId?: true
   quantity?: true
   unitPrice?: true
+  packagingFee?: true
+  status?: true
   _all?: true
 }
 
@@ -196,6 +212,8 @@ export type OrderItemGroupByOutputType = {
   kitchenPartnerId: string
   quantity: number
   unitPrice: runtime.Decimal
+  packagingFee: runtime.Decimal
+  status: $Enums.OrderItemStatus
   _count: OrderItemCountAggregateOutputType | null
   _avg: OrderItemAvgAggregateOutputType | null
   _sum: OrderItemSumAggregateOutputType | null
@@ -228,6 +246,8 @@ export type OrderItemWhereInput = {
   kitchenPartnerId?: Prisma.StringFilter<"OrderItem"> | string
   quantity?: Prisma.IntFilter<"OrderItem"> | number
   unitPrice?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFilter<"OrderItem"> | $Enums.OrderItemStatus
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
   menuItem?: Prisma.XOR<Prisma.MenuItemScalarRelationFilter, Prisma.MenuItemWhereInput>
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerScalarRelationFilter, Prisma.KitchenPartnerWhereInput>
@@ -240,6 +260,8 @@ export type OrderItemOrderByWithRelationInput = {
   kitchenPartnerId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  packagingFee?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   order?: Prisma.OrderOrderByWithRelationInput
   menuItem?: Prisma.MenuItemOrderByWithRelationInput
   kitchenPartner?: Prisma.KitchenPartnerOrderByWithRelationInput
@@ -255,6 +277,8 @@ export type OrderItemWhereUniqueInput = Prisma.AtLeast<{
   kitchenPartnerId?: Prisma.StringFilter<"OrderItem"> | string
   quantity?: Prisma.IntFilter<"OrderItem"> | number
   unitPrice?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFilter<"OrderItem"> | $Enums.OrderItemStatus
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
   menuItem?: Prisma.XOR<Prisma.MenuItemScalarRelationFilter, Prisma.MenuItemWhereInput>
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerScalarRelationFilter, Prisma.KitchenPartnerWhereInput>
@@ -267,6 +291,8 @@ export type OrderItemOrderByWithAggregationInput = {
   kitchenPartnerId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  packagingFee?: Prisma.SortOrder
+  status?: Prisma.SortOrder
   _count?: Prisma.OrderItemCountOrderByAggregateInput
   _avg?: Prisma.OrderItemAvgOrderByAggregateInput
   _max?: Prisma.OrderItemMaxOrderByAggregateInput
@@ -284,12 +310,16 @@ export type OrderItemScalarWhereWithAggregatesInput = {
   kitchenPartnerId?: Prisma.StringWithAggregatesFilter<"OrderItem"> | string
   quantity?: Prisma.IntWithAggregatesFilter<"OrderItem"> | number
   unitPrice?: Prisma.DecimalWithAggregatesFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalWithAggregatesFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusWithAggregatesFilter<"OrderItem"> | $Enums.OrderItemStatus
 }
 
 export type OrderItemCreateInput = {
   id?: string
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.OrderItemStatus
   order: Prisma.OrderCreateNestedOneWithoutOrderItemsInput
   menuItem: Prisma.MenuItemCreateNestedOneWithoutOrderItemsInput
   kitchenPartner: Prisma.KitchenPartnerCreateNestedOneWithoutOrderItemsInput
@@ -302,12 +332,16 @@ export type OrderItemUncheckedCreateInput = {
   kitchenPartnerId: string
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.OrderItemStatus
 }
 
 export type OrderItemUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderItemsNestedInput
   menuItem?: Prisma.MenuItemUpdateOneRequiredWithoutOrderItemsNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneRequiredWithoutOrderItemsNestedInput
@@ -320,6 +354,8 @@ export type OrderItemUncheckedUpdateInput = {
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
 }
 
 export type OrderItemCreateManyInput = {
@@ -329,12 +365,16 @@ export type OrderItemCreateManyInput = {
   kitchenPartnerId: string
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.OrderItemStatus
 }
 
 export type OrderItemUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
 }
 
 export type OrderItemUncheckedUpdateManyInput = {
@@ -344,6 +384,8 @@ export type OrderItemUncheckedUpdateManyInput = {
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
 }
 
 export type OrderItemListRelationFilter = {
@@ -363,11 +405,14 @@ export type OrderItemCountOrderByAggregateInput = {
   kitchenPartnerId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  packagingFee?: Prisma.SortOrder
+  status?: Prisma.SortOrder
 }
 
 export type OrderItemAvgOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  packagingFee?: Prisma.SortOrder
 }
 
 export type OrderItemMaxOrderByAggregateInput = {
@@ -377,6 +422,8 @@ export type OrderItemMaxOrderByAggregateInput = {
   kitchenPartnerId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  packagingFee?: Prisma.SortOrder
+  status?: Prisma.SortOrder
 }
 
 export type OrderItemMinOrderByAggregateInput = {
@@ -386,11 +433,14 @@ export type OrderItemMinOrderByAggregateInput = {
   kitchenPartnerId?: Prisma.SortOrder
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  packagingFee?: Prisma.SortOrder
+  status?: Prisma.SortOrder
 }
 
 export type OrderItemSumOrderByAggregateInput = {
   quantity?: Prisma.SortOrder
   unitPrice?: Prisma.SortOrder
+  packagingFee?: Prisma.SortOrder
 }
 
 export type OrderItemCreateNestedManyWithoutKitchenPartnerInput = {
@@ -519,10 +569,16 @@ export type OrderItemUncheckedUpdateManyWithoutOrderNestedInput = {
   deleteMany?: Prisma.OrderItemScalarWhereInput | Prisma.OrderItemScalarWhereInput[]
 }
 
+export type EnumOrderItemStatusFieldUpdateOperationsInput = {
+  set?: $Enums.OrderItemStatus
+}
+
 export type OrderItemCreateWithoutKitchenPartnerInput = {
   id?: string
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.OrderItemStatus
   order: Prisma.OrderCreateNestedOneWithoutOrderItemsInput
   menuItem: Prisma.MenuItemCreateNestedOneWithoutOrderItemsInput
 }
@@ -533,6 +589,8 @@ export type OrderItemUncheckedCreateWithoutKitchenPartnerInput = {
   menuItemId: string
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.OrderItemStatus
 }
 
 export type OrderItemCreateOrConnectWithoutKitchenPartnerInput = {
@@ -571,12 +629,16 @@ export type OrderItemScalarWhereInput = {
   kitchenPartnerId?: Prisma.StringFilter<"OrderItem"> | string
   quantity?: Prisma.IntFilter<"OrderItem"> | number
   unitPrice?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFilter<"OrderItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFilter<"OrderItem"> | $Enums.OrderItemStatus
 }
 
 export type OrderItemCreateWithoutMenuItemInput = {
   id?: string
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.OrderItemStatus
   order: Prisma.OrderCreateNestedOneWithoutOrderItemsInput
   kitchenPartner: Prisma.KitchenPartnerCreateNestedOneWithoutOrderItemsInput
 }
@@ -587,6 +649,8 @@ export type OrderItemUncheckedCreateWithoutMenuItemInput = {
   kitchenPartnerId: string
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.OrderItemStatus
 }
 
 export type OrderItemCreateOrConnectWithoutMenuItemInput = {
@@ -619,6 +683,8 @@ export type OrderItemCreateWithoutOrderInput = {
   id?: string
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.OrderItemStatus
   menuItem: Prisma.MenuItemCreateNestedOneWithoutOrderItemsInput
   kitchenPartner: Prisma.KitchenPartnerCreateNestedOneWithoutOrderItemsInput
 }
@@ -629,6 +695,8 @@ export type OrderItemUncheckedCreateWithoutOrderInput = {
   kitchenPartnerId: string
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.OrderItemStatus
 }
 
 export type OrderItemCreateOrConnectWithoutOrderInput = {
@@ -663,12 +731,16 @@ export type OrderItemCreateManyKitchenPartnerInput = {
   menuItemId: string
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.OrderItemStatus
 }
 
 export type OrderItemUpdateWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderItemsNestedInput
   menuItem?: Prisma.MenuItemUpdateOneRequiredWithoutOrderItemsNestedInput
 }
@@ -679,6 +751,8 @@ export type OrderItemUncheckedUpdateWithoutKitchenPartnerInput = {
   menuItemId?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
 }
 
 export type OrderItemUncheckedUpdateManyWithoutKitchenPartnerInput = {
@@ -687,6 +761,8 @@ export type OrderItemUncheckedUpdateManyWithoutKitchenPartnerInput = {
   menuItemId?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
 }
 
 export type OrderItemCreateManyMenuItemInput = {
@@ -695,12 +771,16 @@ export type OrderItemCreateManyMenuItemInput = {
   kitchenPartnerId: string
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.OrderItemStatus
 }
 
 export type OrderItemUpdateWithoutMenuItemInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
   order?: Prisma.OrderUpdateOneRequiredWithoutOrderItemsNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneRequiredWithoutOrderItemsNestedInput
 }
@@ -711,6 +791,8 @@ export type OrderItemUncheckedUpdateWithoutMenuItemInput = {
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
 }
 
 export type OrderItemUncheckedUpdateManyWithoutMenuItemInput = {
@@ -719,6 +801,8 @@ export type OrderItemUncheckedUpdateManyWithoutMenuItemInput = {
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
 }
 
 export type OrderItemCreateManyOrderInput = {
@@ -727,12 +811,16 @@ export type OrderItemCreateManyOrderInput = {
   kitchenPartnerId: string
   quantity: number
   unitPrice: runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.OrderItemStatus
 }
 
 export type OrderItemUpdateWithoutOrderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
   menuItem?: Prisma.MenuItemUpdateOneRequiredWithoutOrderItemsNestedInput
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneRequiredWithoutOrderItemsNestedInput
 }
@@ -743,6 +831,8 @@ export type OrderItemUncheckedUpdateWithoutOrderInput = {
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
 }
 
 export type OrderItemUncheckedUpdateManyWithoutOrderInput = {
@@ -751,6 +841,8 @@ export type OrderItemUncheckedUpdateManyWithoutOrderInput = {
   kitchenPartnerId?: Prisma.StringFieldUpdateOperationsInput | string
   quantity?: Prisma.IntFieldUpdateOperationsInput | number
   unitPrice?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  packagingFee?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumOrderItemStatusFieldUpdateOperationsInput | $Enums.OrderItemStatus
 }
 
 
@@ -762,6 +854,8 @@ export type OrderItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   kitchenPartnerId?: boolean
   quantity?: boolean
   unitPrice?: boolean
+  packagingFee?: boolean
+  status?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   menuItem?: boolean | Prisma.MenuItemDefaultArgs<ExtArgs>
   kitchenPartner?: boolean | Prisma.KitchenPartnerDefaultArgs<ExtArgs>
@@ -774,6 +868,8 @@ export type OrderItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   kitchenPartnerId?: boolean
   quantity?: boolean
   unitPrice?: boolean
+  packagingFee?: boolean
+  status?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   menuItem?: boolean | Prisma.MenuItemDefaultArgs<ExtArgs>
   kitchenPartner?: boolean | Prisma.KitchenPartnerDefaultArgs<ExtArgs>
@@ -786,6 +882,8 @@ export type OrderItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   kitchenPartnerId?: boolean
   quantity?: boolean
   unitPrice?: boolean
+  packagingFee?: boolean
+  status?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   menuItem?: boolean | Prisma.MenuItemDefaultArgs<ExtArgs>
   kitchenPartner?: boolean | Prisma.KitchenPartnerDefaultArgs<ExtArgs>
@@ -798,9 +896,11 @@ export type OrderItemSelectScalar = {
   kitchenPartnerId?: boolean
   quantity?: boolean
   unitPrice?: boolean
+  packagingFee?: boolean
+  status?: boolean
 }
 
-export type OrderItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "menuItemId" | "kitchenPartnerId" | "quantity" | "unitPrice", ExtArgs["result"]["orderItem"]>
+export type OrderItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "menuItemId" | "kitchenPartnerId" | "quantity" | "unitPrice" | "packagingFee" | "status", ExtArgs["result"]["orderItem"]>
 export type OrderItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   menuItem?: boolean | Prisma.MenuItemDefaultArgs<ExtArgs>
@@ -831,6 +931,8 @@ export type $OrderItemPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     kitchenPartnerId: string
     quantity: number
     unitPrice: runtime.Decimal
+    packagingFee: runtime.Decimal
+    status: $Enums.OrderItemStatus
   }, ExtArgs["result"]["orderItem"]>
   composites: {}
 }
@@ -1263,6 +1365,8 @@ export interface OrderItemFieldRefs {
   readonly kitchenPartnerId: Prisma.FieldRef<"OrderItem", 'String'>
   readonly quantity: Prisma.FieldRef<"OrderItem", 'Int'>
   readonly unitPrice: Prisma.FieldRef<"OrderItem", 'Decimal'>
+  readonly packagingFee: Prisma.FieldRef<"OrderItem", 'Decimal'>
+  readonly status: Prisma.FieldRef<"OrderItem", 'OrderItemStatus'>
 }
     
 

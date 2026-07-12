@@ -53,4 +53,8 @@ export const AppEvents = {
   MENU_FILTER_CHANGED: "menu:filter-changed",
   ORDER_PLACED: "order:placed",
   NETWORK_STATUS_CHANGED: "network:status-changed",
+  RIDER_LOCATION_UPDATED: "rider:location-updated",
+  ORDER_STATUS_CHANGED: "order:status-changed",
+  UPSELL_TRIGGERED: "order:upsell-triggered",
+  NOTIFICATION_SENT: "notification:sent",
 } as const;

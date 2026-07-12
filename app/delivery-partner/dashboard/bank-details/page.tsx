@@ -1,39 +1,49 @@
 "use client"
 
-import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 import { useDeliveryData } from "../layout"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
-import { updateDeliveryPartnerBankDetails } from "@/actions/dashboard"
+import { updateDeliveryPartnerBankDetails } from "@/actions/admin/dashboard"
 
 export default function BankDetailsPage() {
   const queryClient = useQueryClient()
   const data = useDeliveryData()
   const profile = data.profile
 
-  const [bankName, setBankName] = useState(profile.bankName ?? "")
-  const [bankAccountNumber, setBankAccountNumber] = useState(profile.bankAccount ?? "")
-  const [ifscCode, setIfscCode] = useState(profile.bankIfsc ?? "")
-  const [accountHolderName, setAccountHolderName] = useState(profile.accountHolderName ?? "")
-  const [upiId, setUpiId] = useState(profile.upi ?? "")
-  const [googlePayNumber, setGooglePayNumber] = useState(profile.googlePayNumber ?? "")
-  const [phonePeNumber, setPhonePeNumber] = useState(profile.phonePeNumber ?? "")
+  const bankDetailsSchema = z.object({
+    bankName: z.string(),
+    bankAccountNumber: z.string(),
+    ifscCode: z.string(),
+    accountHolderName: z.string(),
+    upiId: z.string(),
+    googlePayNumber: z.string(),
+    phonePeNumber: z.string(),
+  })
+  type BankDetailsFormData = z.infer<typeof bankDetailsSchema>
+
+  const form = useForm<BankDetailsFormData>({
+    resolver: zodResolver(bankDetailsSchema),
+    defaultValues: {
+      bankName: profile.bankName ?? "",
+      bankAccountNumber: profile.bankAccount ?? "",
+      ifscCode: profile.bankIfsc ?? "",
+      accountHolderName: profile.accountHolderName ?? "",
+      upiId: profile.upi ?? "",
+      googlePayNumber: profile.googlePayNumber ?? "",
+      phonePeNumber: profile.phonePeNumber ?? "",
+    },
+  })
 
   const saveMutation = useMutation({
-    mutationFn: () =>
-      updateDeliveryPartnerBankDetails({
-        bankName,
-        bankAccountNumber,
-        ifscCode,
-        accountHolderName,
-        upiId,
-        googlePayNumber,
-        phonePeNumber,
-      }),
+    mutationFn: (data: BankDetailsFormData) =>
+      updateDeliveryPartnerBankDetails(data),
     onSuccess: (result) => {
       if (result.success) {
         toast.success("Bank details updated successfully")
@@ -45,9 +55,8 @@ export default function BankDetailsPage() {
     onError: () => toast.error("Something went wrong"),
   })
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault()
-    saveMutation.mutate()
+  const handleSave = (data: BankDetailsFormData) => {
+    saveMutation.mutate(data)
   }
 
   return (
@@ -57,7 +66,7 @@ export default function BankDetailsPage() {
           <CardTitle>Bank & UPI Details</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSave} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleSave)} className="space-y-6">
             <div>
               <h3 className="text-sm font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
                 Bank Account
@@ -67,8 +76,7 @@ export default function BankDetailsPage() {
                   <Label htmlFor="bankName">Bank Name</Label>
                   <Input
                     id="bankName"
-                    value={bankName}
-                    onChange={(e) => setBankName(e.target.value)}
+                    {...form.register("bankName")}
                     placeholder="Enter bank name"
                   />
                 </div>
@@ -76,8 +84,7 @@ export default function BankDetailsPage() {
                   <Label htmlFor="accountHolderName">Account Holder Name</Label>
                   <Input
                     id="accountHolderName"
-                    value={accountHolderName}
-                    onChange={(e) => setAccountHolderName(e.target.value)}
+                    {...form.register("accountHolderName")}
                     placeholder="Enter account holder name"
                   />
                 </div>
@@ -85,8 +92,7 @@ export default function BankDetailsPage() {
                   <Label htmlFor="bankAccountNumber">Bank Account Number</Label>
                   <Input
                     id="bankAccountNumber"
-                    value={bankAccountNumber}
-                    onChange={(e) => setBankAccountNumber(e.target.value)}
+                    {...form.register("bankAccountNumber")}
                     placeholder="Enter bank account number"
                   />
                 </div>
@@ -94,8 +100,7 @@ export default function BankDetailsPage() {
                   <Label htmlFor="ifscCode">IFSC Code</Label>
                   <Input
                     id="ifscCode"
-                    value={ifscCode}
-                    onChange={(e) => setIfscCode(e.target.value)}
+                    {...form.register("ifscCode")}
                     placeholder="Enter IFSC code"
                   />
                 </div>
@@ -111,8 +116,7 @@ export default function BankDetailsPage() {
                   <Label htmlFor="upiId">UPI ID</Label>
                   <Input
                     id="upiId"
-                    value={upiId}
-                    onChange={(e) => setUpiId(e.target.value)}
+                    {...form.register("upiId")}
                     placeholder="e.g. name@upi"
                   />
                 </div>
@@ -120,8 +124,7 @@ export default function BankDetailsPage() {
                   <Label htmlFor="googlePayNumber">Google Pay Number</Label>
                   <Input
                     id="googlePayNumber"
-                    value={googlePayNumber}
-                    onChange={(e) => setGooglePayNumber(e.target.value)}
+                    {...form.register("googlePayNumber")}
                     placeholder="Phone number for GPay"
                   />
                 </div>
@@ -129,8 +132,7 @@ export default function BankDetailsPage() {
                   <Label htmlFor="phonePeNumber">PhonePe Number</Label>
                   <Input
                     id="phonePeNumber"
-                    value={phonePeNumber}
-                    onChange={(e) => setPhonePeNumber(e.target.value)}
+                    {...form.register("phonePeNumber")}
                     placeholder="Phone number for PhonePe"
                   />
                 </div>

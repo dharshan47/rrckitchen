@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { authClient } from "@/lib/auth-client";
 import type { UserRole } from "@/stores";
-import { assignUserRole, updateUserName } from "@/actions/auth";
+import { assignUserRole, updateUserName } from "@/actions/onboarding/auth";
+
+type SignUpRole = Exclude<UserRole, "admin">;
 
 const normalizePhone = (value: string) => {
   const digits = value.replace(/\D/g, "");
@@ -12,25 +13,21 @@ const normalizePhone = (value: string) => {
   return "";
 };
 
-const roleToRoute: Record<UserRole, string> = {
+const roleToRoute: Record<SignUpRole, string> = {
   customer: "/",
   "delivery-partner": "/delivery-partner/dashboard",
   kitchen: "/kitchen/dashboard",
-  admin: "/admin",
 };
 
-const roleToDbName: Record<UserRole, string> = {
+const roleToDbName: Record<SignUpRole, "CUSTOMER" | "DELIVERYPARTNER" | "KITCHENPARTNER"> = {
   customer: "CUSTOMER",
   "delivery-partner": "DELIVERYPARTNER",
   kitchen: "KITCHENPARTNER",
-  admin: "ADMIN",
 };
 
-export function useSignUp(role: UserRole) {
+export function useSignUp(role: SignUpRole) {
   const [step, setStep] = useState<"phone" | "otp" | "name">("phone");
-  const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
-  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [resendCooldown, setResendCooldown] = useState(0);
@@ -45,7 +42,6 @@ export function useSignUp(role: UserRole) {
 
   const sendOtp = useCallback(async (formPhone: string) => {
     setErrorMessage(null);
-    setStatusMessage(null);
 
     const normalized = normalizePhone(formPhone);
     if (!normalized) {
@@ -55,11 +51,19 @@ export function useSignUp(role: UserRole) {
 
     setIsLoading(true);
     try {
-      await authClient.phoneNumber.sendOtp({ phoneNumber: normalized });
+      const res = await fetch("/api/auth/twilio/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: normalized }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.status) {
+        throw new Error(data.error || "Failed to send OTP");
+      }
+
       setPhoneNumber(normalized);
       setStep("otp");
       setResendCooldown(30);
-      setStatusMessage("OTP sent. Check your SMS for the code.");
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unable to send OTP. Try again.");
     } finally {
@@ -69,7 +73,6 @@ export function useSignUp(role: UserRole) {
 
   const verifyOtp = useCallback(async (code: string) => {
     setErrorMessage(null);
-    setStatusMessage(null);
 
     if (!code.trim()) {
       setErrorMessage("Enter the OTP code sent to your phone.");
@@ -78,13 +81,17 @@ export function useSignUp(role: UserRole) {
 
     setIsLoading(true);
     try {
-      const result = await authClient.phoneNumber.verify({ phoneNumber, code });
-      if (result?.error) {
-        setErrorMessage(result.error.message ?? "OTP verification failed. Try again.");
+      const res = await fetch("/api/auth/twilio/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ otp: code, phoneNumber }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.status) {
+        setErrorMessage(data.error || "OTP verification failed. Try again.");
         return;
       }
 
-      setStatusMessage("Phone verified! Now set your name...");
       setStep("name");
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Something went wrong. Try again.");
@@ -93,23 +100,20 @@ export function useSignUp(role: UserRole) {
     }
   }, [phoneNumber]);
 
-  const completeSignup = useCallback(async (formName: string) => {
+  const completeSignup = useCallback(async (name: string, email: string, extra?: { kitchenName?: string }) => {
+  void extra
     setErrorMessage(null);
-    setStatusMessage(null);
 
-    if (!formName.trim()) {
+    if (!name.trim()) {
       setErrorMessage("Please enter your name.");
       return;
     }
 
     setIsLoading(true);
     try {
-      setStatusMessage("Setting up your profile...");
-
-      await updateUserName(formName.trim());
+      await updateUserName(name.trim(), email.trim());
       await assignUserRole(roleToDbName[role]);
 
-      setStatusMessage("Redirecting...");
       window.location.href = roleToRoute[role];
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Something went wrong. Try again.");
@@ -122,16 +126,23 @@ export function useSignUp(role: UserRole) {
     if (resendCooldown > 0) return;
 
     setErrorMessage(null);
-    setStatusMessage(null);
 
     const normalized = normalizePhone(phoneNumber);
     if (!normalized) return;
 
     setIsLoading(true);
     try {
-      await authClient.phoneNumber.sendOtp({ phoneNumber: normalized });
+      const res = await fetch("/api/auth/twilio/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ mobile: normalized }),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.status) {
+        throw new Error(data.error || "Failed to resend OTP");
+      }
+
       setResendCooldown(30);
-      setStatusMessage("OTP resent. Check your SMS.");
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Unable to resend OTP. Try again.");
     } finally {
@@ -141,7 +152,6 @@ export function useSignUp(role: UserRole) {
 
   return {
     step,
-    statusMessage,
     errorMessage,
     isLoading,
     resendCooldown,

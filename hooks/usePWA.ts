@@ -1,18 +1,17 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { toast } from "sonner";
 
 export function usePWA() {
   const [isOnline, setIsOnline] = useState(() => {
     if (typeof navigator === "undefined") return true;
     return navigator.onLine;
   });
-  const [isStandalone, setIsStandalone] = useState(() => {
+  const [isStandalone] = useState(() => {
     if (typeof window === "undefined") return false;
     return window.matchMedia("(display-mode: standalone)").matches;
   });
-  const [isIOS, setIsIOS] = useState(() => {
+  const [isIOS] = useState(() => {
     if (typeof window === "undefined") return false;
     return /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as unknown as Record<string, boolean>).MSStream;
   });

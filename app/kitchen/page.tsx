@@ -56,7 +56,7 @@ const steps = [
   { num: "2", title: "Set Your Menu", desc: "Add dishes with prices, photos, and time slots." },
   { num: "3", title: "Mark Availability", desc: "Set which slots you'll serve for tomorrow." },
   { num: "4", title: "Receive Orders", desc: "Get notified when customers place orders." },
-  { num: "5", title: "Cook & Deliver", desc: "Prepare fresh meals and hand them over." },
+  { num: "5", title: "Cook", desc: "Prepare fresh meals and hand them over." },
   { num: "6", title: "Get Paid", desc: "Receive weekly settlements directly to your account." },
 ];
 

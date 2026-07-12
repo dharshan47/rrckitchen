@@ -171,6 +171,7 @@ export type ServiceZoneWhereInput = {
   pincodes?: Prisma.StringNullableListFilter<"ServiceZone">
   isActive?: Prisma.BoolFilter<"ServiceZone"> | boolean
   addresses?: Prisma.AddressListRelationFilter
+  kitchenPartners?: Prisma.KitchenPartnerListRelationFilter
 }
 
 export type ServiceZoneOrderByWithRelationInput = {
@@ -179,6 +180,7 @@ export type ServiceZoneOrderByWithRelationInput = {
   pincodes?: Prisma.SortOrder
   isActive?: Prisma.SortOrder
   addresses?: Prisma.AddressOrderByRelationAggregateInput
+  kitchenPartners?: Prisma.KitchenPartnerOrderByRelationAggregateInput
 }
 
 export type ServiceZoneWhereUniqueInput = Prisma.AtLeast<{
@@ -190,6 +192,7 @@ export type ServiceZoneWhereUniqueInput = Prisma.AtLeast<{
   pincodes?: Prisma.StringNullableListFilter<"ServiceZone">
   isActive?: Prisma.BoolFilter<"ServiceZone"> | boolean
   addresses?: Prisma.AddressListRelationFilter
+  kitchenPartners?: Prisma.KitchenPartnerListRelationFilter
 }, "id" | "name">
 
 export type ServiceZoneOrderByWithAggregationInput = {
@@ -218,6 +221,7 @@ export type ServiceZoneCreateInput = {
   pincodes?: Prisma.ServiceZoneCreatepincodesInput | string[]
   isActive?: boolean
   addresses?: Prisma.AddressCreateNestedManyWithoutServiceZoneInput
+  kitchenPartners?: Prisma.KitchenPartnerCreateNestedManyWithoutServiceZoneInput
 }
 
 export type ServiceZoneUncheckedCreateInput = {
@@ -226,6 +230,7 @@ export type ServiceZoneUncheckedCreateInput = {
   pincodes?: Prisma.ServiceZoneCreatepincodesInput | string[]
   isActive?: boolean
   addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutServiceZoneInput
+  kitchenPartners?: Prisma.KitchenPartnerUncheckedCreateNestedManyWithoutServiceZoneInput
 }
 
 export type ServiceZoneUpdateInput = {
@@ -234,6 +239,7 @@ export type ServiceZoneUpdateInput = {
   pincodes?: Prisma.ServiceZoneUpdatepincodesInput | string[]
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   addresses?: Prisma.AddressUpdateManyWithoutServiceZoneNestedInput
+  kitchenPartners?: Prisma.KitchenPartnerUpdateManyWithoutServiceZoneNestedInput
 }
 
 export type ServiceZoneUncheckedUpdateInput = {
@@ -242,6 +248,7 @@ export type ServiceZoneUncheckedUpdateInput = {
   pincodes?: Prisma.ServiceZoneUpdatepincodesInput | string[]
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
   addresses?: Prisma.AddressUncheckedUpdateManyWithoutServiceZoneNestedInput
+  kitchenPartners?: Prisma.KitchenPartnerUncheckedUpdateManyWithoutServiceZoneNestedInput
 }
 
 export type ServiceZoneCreateManyInput = {
@@ -268,6 +275,11 @@ export type ServiceZoneUncheckedUpdateManyInput = {
 export type ServiceZoneScalarRelationFilter = {
   is?: Prisma.ServiceZoneWhereInput
   isNot?: Prisma.ServiceZoneWhereInput
+}
+
+export type ServiceZoneNullableScalarRelationFilter = {
+  is?: Prisma.ServiceZoneWhereInput | null
+  isNot?: Prisma.ServiceZoneWhereInput | null
 }
 
 export type StringNullableListFilter<$PrismaModel = never> = {
@@ -311,6 +323,22 @@ export type ServiceZoneUpdateOneRequiredWithoutAddressesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceZoneUpdateToOneWithWhereWithoutAddressesInput, Prisma.ServiceZoneUpdateWithoutAddressesInput>, Prisma.ServiceZoneUncheckedUpdateWithoutAddressesInput>
 }
 
+export type ServiceZoneCreateNestedOneWithoutKitchenPartnersInput = {
+  create?: Prisma.XOR<Prisma.ServiceZoneCreateWithoutKitchenPartnersInput, Prisma.ServiceZoneUncheckedCreateWithoutKitchenPartnersInput>
+  connectOrCreate?: Prisma.ServiceZoneCreateOrConnectWithoutKitchenPartnersInput
+  connect?: Prisma.ServiceZoneWhereUniqueInput
+}
+
+export type ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput = {
+  create?: Prisma.XOR<Prisma.ServiceZoneCreateWithoutKitchenPartnersInput, Prisma.ServiceZoneUncheckedCreateWithoutKitchenPartnersInput>
+  connectOrCreate?: Prisma.ServiceZoneCreateOrConnectWithoutKitchenPartnersInput
+  upsert?: Prisma.ServiceZoneUpsertWithoutKitchenPartnersInput
+  disconnect?: Prisma.ServiceZoneWhereInput | boolean
+  delete?: Prisma.ServiceZoneWhereInput | boolean
+  connect?: Prisma.ServiceZoneWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ServiceZoneUpdateToOneWithWhereWithoutKitchenPartnersInput, Prisma.ServiceZoneUpdateWithoutKitchenPartnersInput>, Prisma.ServiceZoneUncheckedUpdateWithoutKitchenPartnersInput>
+}
+
 export type ServiceZoneCreatepincodesInput = {
   set: string[]
 }
@@ -325,6 +353,7 @@ export type ServiceZoneCreateWithoutAddressesInput = {
   name: string
   pincodes?: Prisma.ServiceZoneCreatepincodesInput | string[]
   isActive?: boolean
+  kitchenPartners?: Prisma.KitchenPartnerCreateNestedManyWithoutServiceZoneInput
 }
 
 export type ServiceZoneUncheckedCreateWithoutAddressesInput = {
@@ -332,6 +361,7 @@ export type ServiceZoneUncheckedCreateWithoutAddressesInput = {
   name: string
   pincodes?: Prisma.ServiceZoneCreatepincodesInput | string[]
   isActive?: boolean
+  kitchenPartners?: Prisma.KitchenPartnerUncheckedCreateNestedManyWithoutServiceZoneInput
 }
 
 export type ServiceZoneCreateOrConnectWithoutAddressesInput = {
@@ -355,6 +385,7 @@ export type ServiceZoneUpdateWithoutAddressesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pincodes?: Prisma.ServiceZoneUpdatepincodesInput | string[]
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenPartners?: Prisma.KitchenPartnerUpdateManyWithoutServiceZoneNestedInput
 }
 
 export type ServiceZoneUncheckedUpdateWithoutAddressesInput = {
@@ -362,6 +393,55 @@ export type ServiceZoneUncheckedUpdateWithoutAddressesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
   pincodes?: Prisma.ServiceZoneUpdatepincodesInput | string[]
   isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  kitchenPartners?: Prisma.KitchenPartnerUncheckedUpdateManyWithoutServiceZoneNestedInput
+}
+
+export type ServiceZoneCreateWithoutKitchenPartnersInput = {
+  id?: string
+  name: string
+  pincodes?: Prisma.ServiceZoneCreatepincodesInput | string[]
+  isActive?: boolean
+  addresses?: Prisma.AddressCreateNestedManyWithoutServiceZoneInput
+}
+
+export type ServiceZoneUncheckedCreateWithoutKitchenPartnersInput = {
+  id?: string
+  name: string
+  pincodes?: Prisma.ServiceZoneCreatepincodesInput | string[]
+  isActive?: boolean
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutServiceZoneInput
+}
+
+export type ServiceZoneCreateOrConnectWithoutKitchenPartnersInput = {
+  where: Prisma.ServiceZoneWhereUniqueInput
+  create: Prisma.XOR<Prisma.ServiceZoneCreateWithoutKitchenPartnersInput, Prisma.ServiceZoneUncheckedCreateWithoutKitchenPartnersInput>
+}
+
+export type ServiceZoneUpsertWithoutKitchenPartnersInput = {
+  update: Prisma.XOR<Prisma.ServiceZoneUpdateWithoutKitchenPartnersInput, Prisma.ServiceZoneUncheckedUpdateWithoutKitchenPartnersInput>
+  create: Prisma.XOR<Prisma.ServiceZoneCreateWithoutKitchenPartnersInput, Prisma.ServiceZoneUncheckedCreateWithoutKitchenPartnersInput>
+  where?: Prisma.ServiceZoneWhereInput
+}
+
+export type ServiceZoneUpdateToOneWithWhereWithoutKitchenPartnersInput = {
+  where?: Prisma.ServiceZoneWhereInput
+  data: Prisma.XOR<Prisma.ServiceZoneUpdateWithoutKitchenPartnersInput, Prisma.ServiceZoneUncheckedUpdateWithoutKitchenPartnersInput>
+}
+
+export type ServiceZoneUpdateWithoutKitchenPartnersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  pincodes?: Prisma.ServiceZoneUpdatepincodesInput | string[]
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  addresses?: Prisma.AddressUpdateManyWithoutServiceZoneNestedInput
+}
+
+export type ServiceZoneUncheckedUpdateWithoutKitchenPartnersInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  pincodes?: Prisma.ServiceZoneUpdatepincodesInput | string[]
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutServiceZoneNestedInput
 }
 
 
@@ -371,10 +451,12 @@ export type ServiceZoneUncheckedUpdateWithoutAddressesInput = {
 
 export type ServiceZoneCountOutputType = {
   addresses: number
+  kitchenPartners: number
 }
 
 export type ServiceZoneCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   addresses?: boolean | ServiceZoneCountOutputTypeCountAddressesArgs
+  kitchenPartners?: boolean | ServiceZoneCountOutputTypeCountKitchenPartnersArgs
 }
 
 /**
@@ -394,6 +476,13 @@ export type ServiceZoneCountOutputTypeCountAddressesArgs<ExtArgs extends runtime
   where?: Prisma.AddressWhereInput
 }
 
+/**
+ * ServiceZoneCountOutputType without action
+ */
+export type ServiceZoneCountOutputTypeCountKitchenPartnersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.KitchenPartnerWhereInput
+}
+
 
 export type ServiceZoneSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -401,6 +490,7 @@ export type ServiceZoneSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   pincodes?: boolean
   isActive?: boolean
   addresses?: boolean | Prisma.ServiceZone$addressesArgs<ExtArgs>
+  kitchenPartners?: boolean | Prisma.ServiceZone$kitchenPartnersArgs<ExtArgs>
   _count?: boolean | Prisma.ServiceZoneCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["serviceZone"]>
 
@@ -428,6 +518,7 @@ export type ServiceZoneSelectScalar = {
 export type ServiceZoneOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "pincodes" | "isActive", ExtArgs["result"]["serviceZone"]>
 export type ServiceZoneInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   addresses?: boolean | Prisma.ServiceZone$addressesArgs<ExtArgs>
+  kitchenPartners?: boolean | Prisma.ServiceZone$kitchenPartnersArgs<ExtArgs>
   _count?: boolean | Prisma.ServiceZoneCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ServiceZoneIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -437,6 +528,7 @@ export type $ServiceZonePayload<ExtArgs extends runtime.Types.Extensions.Interna
   name: "ServiceZone"
   objects: {
     addresses: Prisma.$AddressPayload<ExtArgs>[]
+    kitchenPartners: Prisma.$KitchenPartnerPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -838,6 +930,7 @@ readonly fields: ServiceZoneFieldRefs;
 export interface Prisma__ServiceZoneClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   addresses<T extends Prisma.ServiceZone$addressesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceZone$addressesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AddressPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  kitchenPartners<T extends Prisma.ServiceZone$kitchenPartnersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceZone$kitchenPartnersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenPartnerPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1285,6 +1378,30 @@ export type ServiceZone$addressesArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.AddressScalarFieldEnum | Prisma.AddressScalarFieldEnum[]
+}
+
+/**
+ * ServiceZone.kitchenPartners
+ */
+export type ServiceZone$kitchenPartnersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the KitchenPartner
+   */
+  select?: Prisma.KitchenPartnerSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the KitchenPartner
+   */
+  omit?: Prisma.KitchenPartnerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.KitchenPartnerInclude<ExtArgs> | null
+  where?: Prisma.KitchenPartnerWhereInput
+  orderBy?: Prisma.KitchenPartnerOrderByWithRelationInput | Prisma.KitchenPartnerOrderByWithRelationInput[]
+  cursor?: Prisma.KitchenPartnerWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.KitchenPartnerScalarFieldEnum | Prisma.KitchenPartnerScalarFieldEnum[]
 }
 
 /**

@@ -4,7 +4,7 @@ import { useKitchenData } from "../layout"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapPin, Phone } from "lucide-react"
-import { updateOrderStatus } from "@/actions/orders"
+import { updateOrderStatus } from "@/actions/orders/orders"
 import { toast } from "sonner"
 
 export default function OrdersPage() {

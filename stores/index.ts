@@ -6,12 +6,12 @@ export * from "./menuStore";
 import { authStore } from "./authStore";
 import { cartStore } from "./cartStore";
 import { menuStore } from "./menuStore";
-import type { CartItem } from "./cartStore";
+import type { CartItem, AppliedCoupon } from "./cartStore";
 import type { FoodTypeFilter, TimeSlotFilter } from "./menuStore";
 import type { UserRole } from "./authStore";
 
 export { authStore, cartStore, menuStore };
-export type { CartItem, FoodTypeFilter, TimeSlotFilter, UserRole };
+export type { CartItem, AppliedCoupon, FoodTypeFilter, TimeSlotFilter, UserRole };
 
 // Legacy hook-style accessors for backward compatibility
 export const useAuthStore = authStore;

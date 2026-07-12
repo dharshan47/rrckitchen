@@ -4,6 +4,7 @@ import Script from "next/script";
 import "./globals.css";
 import { Providers } from "@/providers/providers";
 import { AppShell } from "@/components/layout/app-shell";
+import { Toaster } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
@@ -57,6 +58,7 @@ export default function RootLayout({
         <Providers>
           <AppShell>
             {children}
+             <Toaster />
           </AppShell>
         </Providers>
         <Script

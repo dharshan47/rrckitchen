@@ -173,7 +173,7 @@ self.addEventListener('push', (event) => {
       ],
     };
     event.waitUntil(self.registration.showNotification(data.title || 'Order Update', options));
-  } catch (e) {
+  } catch {
     // silent fail
   }
 });

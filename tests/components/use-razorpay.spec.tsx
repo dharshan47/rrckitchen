@@ -9,7 +9,7 @@ vi.stubGlobal("fetch", mockFetch);
 
 beforeEach(() => {
   vi.clearAllMocks();
-  delete (window as Record<string, unknown>).Razorpay;
+  delete ((window as unknown) as Record<string, unknown>).Razorpay;
 });
 
 function TestHarness() {
@@ -44,7 +44,7 @@ describe("useRazorpay", () => {
     });
 
     const razorpayOpen = vi.fn();
-    (window as Record<string, unknown>).Razorpay = class {
+    ((window as unknown) as Record<string, unknown>).Razorpay = class {
       constructor() {}
       open() { razorpayOpen(); }
     };
@@ -76,7 +76,7 @@ describe("useRazorpay", () => {
 
     let capturedHandler: ((r: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => void) | null = null;
 
-    (window as Record<string, unknown>).Razorpay = class {
+    ((window as unknown) as Record<string, unknown>).Razorpay = class {
       constructor(options: Record<string, unknown>) {
         capturedHandler = options.handler as typeof capturedHandler;
       }
@@ -141,7 +141,7 @@ describe("useRazorpay", () => {
       .mockResolvedValueOnce({ ok: false, json: async () => ({ error: "Signature mismatch" }) });
 
     let capturedHandler: ((r: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => void) | null = null;
-    (window as Record<string, unknown>).Razorpay = class {
+    ((window as unknown) as Record<string, unknown>).Razorpay = class {
       constructor(options: Record<string, unknown>) {
         capturedHandler = options.handler as typeof capturedHandler;
       }
@@ -181,7 +181,7 @@ describe("useRazorpay", () => {
       });
 
     let capturedHandler: ((r: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) => void) | null = null;
-    (window as Record<string, unknown>).Razorpay = class {
+    ((window as unknown) as Record<string, unknown>).Razorpay = class {
       constructor(options: Record<string, unknown>) {
         capturedHandler = options.handler as typeof capturedHandler;
       }

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { useMenuStore, useCartStore, cartStore, menuStore, authStore } from '@/stores';
+import { cartStore, menuStore, authStore } from '@/stores';
 import type { CartItem } from '@/stores';
 
 const mockItem: CartItem = {

@@ -1,9 +1,11 @@
 "use client"
 
-import { useState } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { z } from "zod"
 import { useKitchenData } from "../layout"
-import { updateKitchenBankDetails } from "@/actions/dashboard"
+import { updateKitchenBankDetails } from "@/actions/admin/dashboard"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -17,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { DollarSign } from "lucide-react"
+
 
 export default function PaymentsPage() {
   const queryClient = useQueryClient()
@@ -25,18 +27,32 @@ export default function PaymentsPage() {
   const s = data.stats
   const kyc = data.kitchen
 
-  const [bankForm, setBankForm] = useState({
-    bankName: kyc.bankName ?? "",
-    accountHolderName: kyc.accountHolderName ?? "",
-    bankAccountNumber: kyc.bankAccountNumber ?? "",
-    ifscCode: kyc.ifscCode ?? "",
-    upiId: kyc.upiId ?? "",
-    gpayNumber: kyc.gpayNumber ?? "",
-    phoneNumber: kyc.phoneNumber ?? "",
+  const bankSchema = z.object({
+    bankName: z.string().optional(),
+    accountHolderName: z.string().optional(),
+    bankAccountNumber: z.string().optional(),
+    ifscCode: z.string().optional(),
+    upiId: z.string().optional(),
+    gpayNumber: z.string().optional(),
+    phoneNumber: z.string().optional(),
+  })
+  type BankFormData = z.infer<typeof bankSchema>
+
+  const form = useForm<BankFormData>({
+    resolver: zodResolver(bankSchema),
+    defaultValues: {
+      bankName: kyc.bankName ?? "",
+      accountHolderName: kyc.accountHolderName ?? "",
+      bankAccountNumber: kyc.bankAccountNumber ?? "",
+      ifscCode: kyc.ifscCode ?? "",
+      upiId: kyc.upiId ?? "",
+      gpayNumber: kyc.gpayNumber ?? "",
+      phoneNumber: kyc.phoneNumber ?? "",
+    },
   })
 
   const saveMutation = useMutation({
-    mutationFn: () => updateKitchenBankDetails(bankForm),
+    mutationFn: (data: BankFormData) => updateKitchenBankDetails(data),
     onSuccess: (result) => {
       if (result.success) {
         queryClient.invalidateQueries({ queryKey: ["kitchen-dashboard"] })
@@ -44,8 +60,8 @@ export default function PaymentsPage() {
     },
   })
 
-  const handleSave = () => {
-    saveMutation.mutate()
+  const handleSave = (data: BankFormData) => {
+    saveMutation.mutate(data)
   }
 
   return (
@@ -80,77 +96,44 @@ export default function PaymentsPage() {
           <CardTitle>Bank & Payment Details</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-6 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="bankName">Bank Name</Label>
-              <Input
-                id="bankName"
-                value={bankForm.bankName}
-                onChange={(e) => setBankForm({ ...bankForm, bankName: e.target.value })}
-                placeholder="Enter bank name"
-              />
+          <form onSubmit={form.handleSubmit(handleSave)}>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="bankName">Bank Name</Label>
+                <Input id="bankName" {...form.register("bankName")} placeholder="Enter bank name" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="accountHolderName">Account Holder Name</Label>
+                <Input id="accountHolderName" {...form.register("accountHolderName")} placeholder="Enter account holder name" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="bankAccountNumber">Bank Account Number</Label>
+                <Input id="bankAccountNumber" {...form.register("bankAccountNumber")} placeholder="Enter account number" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="ifscCode">IFSC Code</Label>
+                <Input id="ifscCode" {...form.register("ifscCode")} placeholder="Enter IFSC code" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="upiId">UPI ID</Label>
+                <Input id="upiId" {...form.register("upiId")} placeholder="e.g. name@upi" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="gpayNumber">GPay / PhonePe Number</Label>
+                <Input id="gpayNumber" {...form.register("gpayNumber")} placeholder="Enter GPay/PhonePe number" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="phoneNumber">Phone Number</Label>
+                <Input id="phoneNumber" {...form.register("phoneNumber")} placeholder="Enter phone number" />
+              </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="accountHolderName">Account Holder Name</Label>
-              <Input
-                id="accountHolderName"
-                value={bankForm.accountHolderName}
-                onChange={(e) => setBankForm({ ...bankForm, accountHolderName: e.target.value })}
-                placeholder="Enter account holder name"
-              />
+            <div className="mt-6 flex items-center gap-4">
+              <Button type="submit" disabled={saveMutation.isPending}>
+                {saveMutation.isPending ? "Saving..." : "Save Payment Details"}
+              </Button>
+              {saveMutation.isSuccess && <span className="text-sm text-green-600">Saved successfully!</span>}
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="bankAccountNumber">Bank Account Number</Label>
-              <Input
-                id="bankAccountNumber"
-                value={bankForm.bankAccountNumber}
-                onChange={(e) => setBankForm({ ...bankForm, bankAccountNumber: e.target.value })}
-                placeholder="Enter account number"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="ifscCode">IFSC Code</Label>
-              <Input
-                id="ifscCode"
-                value={bankForm.ifscCode}
-                onChange={(e) => setBankForm({ ...bankForm, ifscCode: e.target.value })}
-                placeholder="Enter IFSC code"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="upiId">UPI ID</Label>
-              <Input
-                id="upiId"
-                value={bankForm.upiId}
-                onChange={(e) => setBankForm({ ...bankForm, upiId: e.target.value })}
-                placeholder="e.g. name@upi"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="gpayNumber">GPay / PhonePe Number</Label>
-              <Input
-                id="gpayNumber"
-                value={bankForm.gpayNumber}
-                onChange={(e) => setBankForm({ ...bankForm, gpayNumber: e.target.value })}
-                placeholder="Enter GPay/PhonePe number"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
-              <Input
-                id="phoneNumber"
-                value={bankForm.phoneNumber}
-                onChange={(e) => setBankForm({ ...bankForm, phoneNumber: e.target.value })}
-                placeholder="Enter phone number"
-              />
-            </div>
-          </div>
-          <div className="mt-6 flex items-center gap-4">
-            <Button onClick={handleSave} disabled={saveMutation.isPending}>
-              {saveMutation.isPending ? "Saving..." : "Save Payment Details"}
-            </Button>
-            {saveMutation.isSuccess && <span className="text-sm text-green-600">Saved successfully!</span>}
-          </div>
+          </form>
         </CardContent>
       </Card>
 

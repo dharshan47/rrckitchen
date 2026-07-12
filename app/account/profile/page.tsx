@@ -7,11 +7,13 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { z } from "zod"
-import { User, Mail, Phone, MapPin, Plus, Trash2, LogOut, Package, ChevronRight, Pencil, X, Check, Loader2, ArrowLeft } from "lucide-react"
+import { User, Mail, Phone, MapPin, Plus, Trash2, LogOut, Package, ChevronRight, Pencil, X, Check, Loader2, ArrowLeft, Heart, Copy, Share2, Ticket, Star, Coins } from "lucide-react"
 import { Button, Input, Card } from "@/components/ui"
 import { useSession, signOut } from "@/lib/auth-client"
-import { addAddress, deleteAddress, getUserAddresses } from "@/actions/address"
-import { updateProfileNameEmail } from "@/actions/profile"
+import { addAddress, deleteAddress, getUserAddresses } from "@/actions/cart-checkout/address"
+import { updateProfileNameEmail } from "@/actions/onboarding/profile"
+import { toast } from "sonner"
+import Image from "next/image"
 
 type UserProfile = { id: string; name: string; email: string; phoneNumber: string | null }
 
@@ -30,6 +32,25 @@ const profileSchema = z.object({
 })
 
 type ProfileForm = z.infer<typeof profileSchema>
+
+interface WishlistItem {
+  id: string
+  menuItemId: string
+  menuItem: {
+    id: string
+    name: string
+    price: number
+    foodType: string
+    timeSlot: string
+    description: string | null
+    photos: { imageUrl: string }[]
+    menu: {
+      kitchenPartner: {
+        kitchenAlias: { displayName: string } | null
+      } | null
+    } | null
+  }
+}
 
 export default function AccountProfilePage() {
   const router = useRouter()
@@ -51,6 +72,26 @@ export default function AccountProfilePage() {
   const { data: addresses = [] } = useQuery({
     queryKey: ["addresses"],
     queryFn: getUserAddresses,
+    enabled: !!session?.user,
+  })
+
+  const { data: loyaltyPoints } = useQuery({
+    queryKey: ["loyalty-points"],
+    queryFn: async () => {
+      const res = await fetch("/api/loyalty/points")
+      if (!res.ok) return null
+      return res.json() as Promise<{ points: number; lifetimePoints: number; tier: string }>
+    },
+    enabled: !!session?.user,
+  })
+
+  const { data: wishlist = [] } = useQuery({
+    queryKey: ["wishlist"],
+    queryFn: async () => {
+      const res = await fetch("/api/wishlist")
+      if (!res.ok) return []
+      return res.json() as Promise<WishlistItem[]>
+    },
     enabled: !!session?.user,
   })
 
@@ -96,6 +137,15 @@ export default function AccountProfilePage() {
     },
   })
 
+  const wishlistRemoveMutation = useMutation({
+    mutationFn: (menuItemId: string) =>
+      fetch(`/api/wishlist?menuItemId=${menuItemId}`, { method: "DELETE" }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["wishlist"] })
+      toast.success("Removed from favourites")
+    },
+  })
+
   const handleLogout = async () => {
     await signOut()
     router.push("/")
@@ -103,6 +153,14 @@ export default function AccountProfilePage() {
 
   const onProfileSubmit = (data: ProfileForm) => {
     profileMutation.mutate({ name: data.name, email: data.email || undefined })
+  }
+
+  const referralCode = session?.user?.id?.slice(0, 8).toUpperCase() || ""
+  const referralLink = `https://rrckitchen.com/signup?ref=${referralCode}`
+
+  const copyReferral = () => {
+    navigator.clipboard.writeText(referralLink)
+    toast.success("Referral link copied!")
   }
 
   if (isPending) {
@@ -201,6 +259,26 @@ export default function AccountProfilePage() {
           )}
         </Card>
 
+        {/* Loyalty Points */}
+        {loyaltyPoints && (
+          <Card className="p-6">
+            <div className="flex items-center gap-4">
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                <Coins className="h-6 w-6 text-primary" />
+              </div>
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-semibold">Loyalty Points</h2>
+                  <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase">{loyaltyPoints.tier}</span>
+                </div>
+                <p className="text-2xl font-bold mt-1">{loyaltyPoints.points} pts</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{loyaltyPoints.lifetimePoints} lifetime points earned</p>
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* Quick Links */}
         <div className="space-y-2">
           <Link
             href="/account/orders"
@@ -215,8 +293,99 @@ export default function AccountProfilePage() {
             </div>
             <ChevronRight className="h-4 w-4 text-muted-foreground" />
           </Link>
+          <Link
+            href="/account/support"
+            className="flex items-center justify-between rounded-xl border border-border p-4 hover:bg-muted/50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <Ticket className="h-5 w-5 text-primary" />
+              <div>
+                <p className="font-medium text-sm">Support Tickets</p>
+                <p className="text-xs text-muted-foreground">View and manage support requests</p>
+              </div>
+            </div>
+            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+          </Link>
         </div>
 
+        {/* Referral Section */}
+        <Card className="p-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+              <Share2 className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-sm">Refer & Earn</h2>
+              <p className="text-xs text-muted-foreground">Share your referral link with friends</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <code className="flex-1 rounded-lg bg-muted px-3 py-2 text-xs font-mono truncate">{referralLink}</code>
+            <Button size="sm" variant="outline" onClick={copyReferral} className="shrink-0">
+              <Copy className="h-4 w-4" />
+            </Button>
+          </div>
+        </Card>
+
+        {/* Favourites / Wishlist Section */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Heart className="h-5 w-5 text-primary" />
+              <h2 className="text-lg font-semibold">My Favourites</h2>
+            </div>
+            {wishlist.length > 0 && (
+              <Link href="/menu" className="text-sm font-semibold text-primary hover:text-primary/80">
+                Browse Menu
+              </Link>
+            )}
+          </div>
+
+          {wishlist.length === 0 ? (
+            <Card className="p-6 text-center">
+              <Heart className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
+              <p className="text-sm text-muted-foreground">No favourites yet</p>
+              <p className="text-xs text-muted-foreground/60 mt-1">Tap the heart icon on any menu item to save it here</p>
+              <Button asChild variant="outline" size="sm" className="mt-3">
+                <Link href="/menu">Browse Menu</Link>
+              </Button>
+            </Card>
+          ) : (
+            <div className="grid gap-3 sm:grid-cols-2">
+              {wishlist.map((item) => (
+                <Card key={item.id} className="p-3 flex items-center gap-3">
+                  <Link href={`/menu/${item.menuItem.id}`} className="shrink-0">
+                    <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center overflow-hidden">
+                      {item.menuItem.photos[0]?.imageUrl ? (
+                        <Image src={item.menuItem.photos[0].imageUrl} alt="" width={48} height={48} className="h-full w-full object-cover" />
+                      ) : (
+                        <Star className="h-5 w-5 text-muted-foreground/40" />
+                      )}
+                    </div>
+                  </Link>
+                  <Link href={`/menu/${item.menuItem.id}`} className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{item.menuItem.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      ₹{item.menuItem.price} · {item.menuItem.foodType}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {item.menuItem.menu?.kitchenPartner?.kitchenAlias?.displayName ?? ""}
+                    </p>
+                  </Link>
+                  <button
+                    onClick={() => wishlistRemoveMutation.mutate(item.menuItem.id)}
+                    className="shrink-0 p-1.5 text-muted-foreground hover:text-destructive transition-colors"
+                    aria-label="Remove from favourites"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </Card>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Addresses Section */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-semibold">Saved Addresses</h2>
