@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendOtpSms } from "@/lib/twilio";
+import { normalizePhone } from "@/lib/phone";
 import prisma from "@/lib/prisma";
 
 function generateOtp(): string {
@@ -9,7 +10,7 @@ function generateOtp(): string {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { mobile } = body;
+    const mobile = normalizePhone(body.mobile ?? "");
 
     if (!mobile) {
       return NextResponse.json({ error: "Mobile number is required" }, { status: 400 });

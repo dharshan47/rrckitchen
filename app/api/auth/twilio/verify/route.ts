@@ -1,13 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { normalizePhone } from "@/lib/phone";
 import { cookies } from "next/headers";
-
-function normalizePhone(value: string): string {
-  const digits = value.replace(/\D/g, "");
-  if (digits.length === 10) return `+91${digits}`;
-  if (digits.length >= 11 && digits.length <= 15) return `+${digits}`;
-  return value;
-}
 
 async function signSessionToken(token: string, secret: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -30,7 +24,8 @@ async function signSessionToken(token: string, secret: string): Promise<string> 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { otp, phoneNumber } = body;
+    let { otp, phoneNumber } = body;
+    phoneNumber = normalizePhone(phoneNumber ?? "");
 
     if (!otp || !phoneNumber) {
       return NextResponse.json({ error: "OTP and phone number are required" }, { status: 400 });
@@ -55,16 +50,14 @@ export async function POST(request: NextRequest) {
       data: { consumedAt: new Date() },
     });
 
-    const normalizedPhone = normalizePhone(phoneNumber);
-
     let user = await prisma.user.findFirst({
-      where: { phoneNumber: normalizedPhone },
+      where: { phoneNumber },
     });
 
     if (!user) {
       user = await prisma.user.create({
         data: {
-          phoneNumber: normalizedPhone,
+          phoneNumber,
           phoneNumberVerified: true,
         },
       });
