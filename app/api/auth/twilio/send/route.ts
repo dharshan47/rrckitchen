@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { sendOtpSms, sendSms } from "@/lib/twilio";
+import { sendOtpSms } from "@/lib/twilio";
 import { normalizePhone } from "@/lib/phone";
 import prisma from "@/lib/prisma";
 
@@ -28,15 +28,9 @@ export async function POST(request: NextRequest) {
       data: { mobileNumber: mobile, code: otp, expiresAt },
     });
 
-    let result = await sendOtpSms(mobile, otp);
-
+    const result = await sendOtpSms(mobile, otp);
     if (!result.success) {
-      console.warn("[OTP_SEND] Content template failed, falling back to plain SMS:", result.error);
-      result = await sendSms(mobile, `Your RRC Kitchen verification code is: ${otp}. It expires in 5 minutes. Please do not share this code.`);
-    }
-
-    if (!result.success) {
-      console.error("[OTP_SEND] All SMS methods failed:", result.error);
+      console.error("[OTP_SEND] Failed:", result.error);
       return NextResponse.json({ error: result.error || "Failed to send OTP" }, { status: 400 });
     }
 

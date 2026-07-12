@@ -18,22 +18,34 @@ export async function sendSms(
   to: string,
   body: string
 ): Promise<TwilioResult> {
-  if (!accountSid || !authToken || !fromNumber) {
+  if (!accountSid || !authToken) {
     return { success: false, error: "Twilio not configured" };
   }
 
   try {
-    const message = await client.messages.create({
-      to,
-      body,
-      from: fromNumber,
-    });
+    if (messagingServiceSid) {
+      const message = await client.messages.create({
+        to,
+        body,
+        messagingServiceSid,
+      });
+      return { success: true, messageId: message.sid };
+    }
 
-    return { success: true, messageId: message.sid };
+    if (fromNumber) {
+      const message = await client.messages.create({
+        to,
+        body,
+        from: fromNumber,
+      });
+      return { success: true, messageId: message.sid };
+    }
+
+    return { success: false, error: "No sender configured (messaging service or phone number)" };
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Twilio service unavailable";
-    console.error("[TWILIO] sendSms failed:", message);
-    return { success: false, error: message };
+    const msg = err instanceof Error ? err.message : "Twilio service unavailable";
+    console.error("[TWILIO] sendSms failed:", msg);
+    return { success: false, error: msg };
   }
 }
 
@@ -41,22 +53,5 @@ export async function sendOtpSms(
   to: string,
   otp: string
 ): Promise<TwilioResult> {
-  if (!accountSid || !authToken || !messagingServiceSid || !contentSid) {
-    return { success: false, error: "Twilio not configured" };
-  }
-
-  try {
-    const message = await client.messages.create({
-      to,
-      messagingServiceSid,
-      contentSid,
-      contentVariables: JSON.stringify({ "1": otp }),
-    });
-
-    return { success: true, messageId: message.sid };
-  } catch (err) {
-    const message = err instanceof Error ? err.message : "Twilio service unavailable";
-    console.error("[TWILIO] sendOtpSms failed:", message);
-    return { success: false, error: message };
-  }
+  return sendSms(to, `Your RRC Kitchen verification code is: ${otp}. It expires in 5 minutes. Please do not share this code.`);
 }
