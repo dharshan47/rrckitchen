@@ -2,6 +2,7 @@ import { QueryClient, dehydrate, HydrationBoundary } from "@tanstack/react-query
 import { HomeClient } from "@/components/home/home-client";
 import { getKitchenData, getRecentOrderKitchens } from "@/actions/catalog/home-data";
 import { getTomorrowMenu } from "@/actions/catalog/menu";
+import { serializeMenuItems } from "@/actions/catalog/serialize-menu";
 import { getSession } from "@/lib/auth-server";
 
 export default async function HomePage() {
@@ -16,7 +17,7 @@ export default async function HomePage() {
     getRecentOrderKitchens(session?.user?.id),
     queryClient.prefetchQuery({
       queryKey: ["tomorrow-menu", { q: "", foodType: "ALL", timeSlot: "ALL" }],
-      queryFn: () => getTomorrowMenu({ foodType: "ALL", timeSlot: "ALL" }),
+      queryFn: () => getTomorrowMenu({ foodType: "ALL", timeSlot: "ALL" }).then(serializeMenuItems),
     }),
   ]);
 

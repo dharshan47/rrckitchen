@@ -3,6 +3,7 @@ import { QueryClient, dehydrate, HydrationBoundary } from "@tanstack/react-query
 import { Skeleton } from "@/components/ui/skeleton";
 import { MenuContent } from "./menu-content";
 import { getTomorrowMenu } from "@/actions/catalog/menu";
+import { serializeMenuItems } from "@/actions/catalog/serialize-menu";
 
 export const metadata = {
   title: "Tomorrow's Menu",
@@ -41,7 +42,7 @@ export default async function MenuPage() {
 
   await queryClient.prefetchQuery({
     queryKey: ["tomorrow-menu", { q: "", foodType: "ALL", timeSlot: "ALL" }],
-    queryFn: () => getTomorrowMenu({ foodType: "ALL", timeSlot: "ALL" }),
+    queryFn: () => getTomorrowMenu({ foodType: "ALL", timeSlot: "ALL" }).then(serializeMenuItems),
   });
 
   return (
