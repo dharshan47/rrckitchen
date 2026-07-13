@@ -140,7 +140,7 @@ export function SearchPageContent() {
                             <div className="flex items-center gap-1.5 mt-1">
                               <div className="flex items-center gap-0.5 rounded-sm bg-green-700 px-1 py-0.5">
                                 <Star className="h-3 w-3 fill-white text-white" />
-                                <span className="text-xs font-bold text-white">{kitchen.avgRating.toFixed(1)}</span>
+                                <span className="text-xs font-bold text-white">{Number(kitchen.avgRating).toFixed(1)}</span>
                               </div>
                               <span className="text-xs text-muted-foreground">
                                 {kitchen.totalReviews} ratings

@@ -93,7 +93,7 @@ export default function MenuGrid({ items: propItems, onItemClick }: MenuGridProp
               foodType: item.foodType,
               timeSlot: item.timeSlot,
               kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
-              kitchenRating: (item.menu?.kitchenPartner as { avgRating?: number | null })?.avgRating ?? null,
+              kitchenRating: (item.menu?.kitchenPartner as { avgRating?: number | null })?.avgRating != null ? Number((item.menu?.kitchenPartner as { avgRating?: number | null })?.avgRating) : null,
               totalReviews: (item.menu?.kitchenPartner as { totalReviews?: number })?.totalReviews ?? 0,
               description: item.description,
               imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,

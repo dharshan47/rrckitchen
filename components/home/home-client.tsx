@@ -387,7 +387,7 @@ function CombinedMenuSection({
                 foodType: item.foodType,
                 timeSlot: item.timeSlot,
                 kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
-                kitchenRating: item.menu?.kitchenPartner?.avgRating ?? null,
+kitchenRating: item.menu?.kitchenPartner?.avgRating != null ? Number(item.menu?.kitchenPartner?.avgRating) : null,
                 totalReviews: item.menu?.kitchenPartner?.totalReviews ?? 0,
                 description: item.description,
                 imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
