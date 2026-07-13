@@ -1,4 +1,5 @@
 import prisma from "@/lib/prisma";
+import { cached } from "@/lib/server-cache";
 
 export interface HomePageData {
   topRatedKitchens: Array<{
@@ -21,15 +22,17 @@ export interface HomePageData {
   }>;
 }
 
-export async function getHomePageData(userId?: string): Promise<HomePageData> {
+export async function getKitchenData() {
+  return cached("getKitchenData", 30_000, () => _getKitchenData());
+}
+
+async function _getKitchenData() {
   const now = new Date();
   const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
   const [topRated, newKitchensData] = await Promise.all([
     prisma.kitchenPartner.findMany({
-      where: {
-        status: { in: ["APPROVED", "ACTIVE"] },
-      },
+      where: { status: { in: ["APPROVED", "ACTIVE"] } },
       include: {
         kitchenAlias: true,
         _count: { select: { reviews: true } },
@@ -39,10 +42,7 @@ export async function getHomePageData(userId?: string): Promise<HomePageData> {
       take: 10,
     }),
     prisma.kitchenPartner.findMany({
-      where: {
-        status: { in: ["APPROVED", "ACTIVE"] },
-        createdAt: { gte: thirtyDaysAgo },
-      },
+      where: { status: { in: ["APPROVED", "ACTIVE"] }, createdAt: { gte: thirtyDaysAgo } },
       include: { kitchenAlias: true },
       orderBy: { createdAt: "desc" },
       take: 8,
@@ -73,39 +73,45 @@ export async function getHomePageData(userId?: string): Promise<HomePageData> {
     imageUrl: null,
   }));
 
-  const recentOrderKitchens: HomePageData["recentOrderKitchens"] = [];
-  if (userId) {
-    const recentOrders = await prisma.order.findMany({
-      where: {
-        userId,
-        payment: { status: "SUCCESS" },
-      },
-      include: {
-        orderItems: {
-          include: {
-            kitchenPartner: { include: { kitchenAlias: true } },
-          },
-          take: 1,
-        },
-      },
-      orderBy: { createdAt: "desc" },
-      take: 3,
-      distinct: ["id"],
-    });
+  return { topRatedKitchens, newKitchens };
+}
 
-    const seenKitchenIds = new Set<string>();
-    for (const order of recentOrders) {
-      const kp = order.orderItems[0]?.kitchenPartner;
-      if (kp && !seenKitchenIds.has(kp.id)) {
-        seenKitchenIds.add(kp.id);
-        recentOrderKitchens.push({
-          id: kp.id,
-          displayName: kp.kitchenAlias?.displayName ?? "Kitchen",
-          imageUrl: null,
-        });
-      }
+export async function getRecentOrderKitchens(userId?: string) {
+  if (!userId) return [];
+
+  const recentOrders = await prisma.order.findMany({
+    where: { userId, payment: { status: "SUCCESS" } },
+    include: {
+      orderItems: {
+        include: { kitchenPartner: { include: { kitchenAlias: true } } },
+        take: 1,
+      },
+    },
+    orderBy: { createdAt: "desc" },
+    take: 3,
+    distinct: ["id"],
+  });
+
+  const seen = new Set<string>();
+  const kitchens: Array<{ id: string; displayName: string; imageUrl: string | null }> = [];
+  for (const order of recentOrders) {
+    const kp = order.orderItems[0]?.kitchenPartner;
+    if (kp && !seen.has(kp.id)) {
+      seen.add(kp.id);
+      kitchens.push({
+        id: kp.id,
+        displayName: kp.kitchenAlias?.displayName ?? "Kitchen",
+        imageUrl: null,
+      });
     }
   }
+  return kitchens;
+}
 
-  return { topRatedKitchens, newKitchens, recentOrderKitchens };
+export async function getHomePageData(userId?: string): Promise<HomePageData> {
+  const [kitchenData, recentOrderKitchens] = await Promise.all([
+    getKitchenData(),
+    getRecentOrderKitchens(userId),
+  ]);
+  return { ...kitchenData, recentOrderKitchens };
 }

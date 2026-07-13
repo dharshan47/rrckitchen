@@ -7,7 +7,7 @@ import { CompoundMenuCard } from "@/components/patterns/compound-menu-card";
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
 
 /** Shape of a menu item returned from the API. */
-interface MenuGridItem {
+export interface MenuGridItem {
   id: string;
   name: string;
   description: string | null;
@@ -41,14 +41,17 @@ interface MenuGridProps {
 }
 
 /**
- * Renders the menu grid with suspense-based data fetching.
- * Loading/error states are handled by parent Suspense boundaries.
- * If `items` is provided, renders those instead of fetching internally.
+ * Renders the menu grid. Uses server-provided `items` as initial data
+ * while maintaining reactivity to filter changes via useTomorrowMenu.
  */
 export default function MenuGrid({ items: propItems, onItemClick }: MenuGridProps) {
-  const { data } = useTomorrowMenu();
+  const { data, isFetching } = useTomorrowMenu();
   const { addToCart } = useCartActions();
-  const items = useMemo(() => (propItems ?? data ?? []) as MenuGridItem[], [propItems, data]);
+  const items = useMemo(() => {
+    if (data) return data as MenuGridItem[];
+    if (propItems) return propItems;
+    return [];
+  }, [data, propItems]);
 
   const handleAddToCart = useCallback(
     (id: string) => {
@@ -66,6 +69,29 @@ export default function MenuGrid({ items: propItems, onItemClick }: MenuGridProp
     },
     [items, addToCart]
   );
+
+  if (!data && !propItems && isFetching) {
+    return (
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-6">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
+            <div className="relative aspect-square w-full overflow-hidden bg-muted">
+              <div className="absolute inset-0 bg-muted animate-pulse" />
+            </div>
+            <div className="px-3 pb-4 pt-1.5">
+              <div className="flex flex-col space-y-2">
+                <div className="h-4 w-3/4 bg-muted animate-pulse rounded" />
+                <div className="flex items-center justify-between pt-2">
+                  <div className="h-6 w-16 bg-muted animate-pulse rounded-md" />
+                  <div className="h-8 w-14 bg-muted animate-pulse rounded-lg" />
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   if (!items.length) {
     return (

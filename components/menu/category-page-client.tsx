@@ -1,12 +1,12 @@
 "use client";
 
-import { Suspense, useEffect, useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useMenuActions, useMenuFoodType } from "@/stores";
 import { MenuGrid } from "@/components/menu";
+import type { MenuGridItem } from "@/components/menu/menu-grid";
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
 import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import type { FoodTypeFilter } from "@/stores/menuStore";
 
 const slugLabels: Record<string, string> = {
@@ -22,38 +22,11 @@ const foodTypeTabs: { label: string; value: FoodTypeFilter }[] = [
   { label: "Nonveg", value: "NONVEG" },
 ];
 
-function MenuGridFallback() {
-  return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-6">
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
-          <div className="relative aspect-square w-full overflow-hidden bg-muted">
-            <Skeleton className="absolute inset-3 rounded-none" />
-          </div>
-          <div className="px-3 pb-4 pt-1.5">
-            <div className="flex flex-col">
-              <Skeleton className="h-4 w-3/4" />
-              <div className="mt-4 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Skeleton className="h-6 w-16 rounded-md" />
-                  <Skeleton className="h-4 w-12" />
-                </div>
-                <Skeleton className="h-8 w-14 rounded-lg" />
-              </div>
-              <div className="mt-4 border-t border-dashed border-border" />
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 /**
  * Client component for category-filtered menu pages.
- * Sets the time slot filter on mount and renders the menu grid inside an error boundary.
+ * Sets the time slot filter on mount and renders the menu grid.
  */
-export function CategoryPageClient({ slug, timeSlot }: { slug: string; timeSlot: string }) {
+export function CategoryPageClient({ slug, timeSlot, initialMenuItems }: { slug: string; timeSlot: string; initialMenuItems?: MenuGridItem[] }) {
   const router = useRouter();
   const selectedFoodType = useMenuFoodType();
   const { setSelectedTimeSlot, setSelectedFoodType } = useMenuActions();
@@ -96,9 +69,7 @@ export function CategoryPageClient({ slug, timeSlot }: { slug: string; timeSlot:
             </div>
           </div>
           <section>
-            <Suspense fallback={<MenuGridFallback />}>
-              <MenuGrid onItemClick={handleItemClick} />
-            </Suspense>
+            <MenuGrid items={initialMenuItems} onItemClick={handleItemClick} />
           </section>
         </div>
       </main>

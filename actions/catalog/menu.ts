@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 import { FoodType, TimeSlot } from "@/lib/generated/prisma/enums";
+import { cached } from "@/lib/server-cache";
 
 interface MenuFilterOptions {
   query?: string;
@@ -8,6 +9,11 @@ interface MenuFilterOptions {
 }
 
 export async function getTomorrowMenu({ query, foodType, timeSlot }: MenuFilterOptions = {}) {
+  const cacheKey = `getTomorrowMenu:${query ?? ""}:${foodType ?? "ALL"}:${timeSlot ?? "ALL"}`;
+  return cached(cacheKey, 15_000, () => _getTomorrowMenu({ query, foodType, timeSlot }));
+}
+
+async function _getTomorrowMenu({ query, foodType, timeSlot }: MenuFilterOptions = {}) {
   const search = query?.trim().toLowerCase();
 
   return prisma.menuItem.findMany({
@@ -73,6 +79,10 @@ export async function getTomorrowMenu({ query, foodType, timeSlot }: MenuFilterO
 }
 
 export async function getMenuItemById(id: string) {
+  return cached(`getMenuItemById:${id}`, 30_000, () => _getMenuItemById(id));
+}
+
+async function _getMenuItemById(id: string) {
   const item = await prisma.menuItem.findFirst({
     where: {
       id,

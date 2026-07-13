@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTomorrowMenu } from "@/hooks/useTomorrowMenu";
 import { CompoundMenuCard } from "@/components/patterns/compound-menu-card";
-import { useCartActions } from "@/stores";
+import { useCartActions, useMenuActions } from "@/stores";
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Coffee, UtensilsCrossed, Pizza, Moon, ArrowRight } from "lucide-react";
 
 interface MenuItem {
@@ -46,12 +47,64 @@ function getKitchenName(item: MenuItem): string {
   return item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Home kitchen";
 }
 
-export function MenuContent() {
+interface MenuContentProps {
+  initialMenuItems?: MenuItem[];
+}
+
+function MenuCardSkeleton() {
+  return (
+    <div className="rounded-xl border border-border bg-card overflow-hidden">
+      <Skeleton className="aspect-4/3 w-full rounded-none" />
+      <div className="p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-5 w-16" />
+          <Skeleton className="h-5 w-12 rounded-full" />
+        </div>
+        <Skeleton className="h-4 w-3/4" />
+        <div className="pt-1">
+          <Skeleton className="h-4 w-20" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MenuSectionSkeleton() {
+  return (
+    <>
+      {SLOTS.map((slot) => (
+        <section key={slot.key}>
+          <div className="flex items-center justify-between mb-4 sm:mb-5">
+            <div className="flex items-center gap-2">
+              <slot.icon className="h-5 w-5 text-muted-foreground" />
+              <Skeleton className="h-6 w-24" />
+              <Skeleton className="h-4 w-8" />
+            </div>
+            <Skeleton className="h-4 w-14" />
+          </div>
+          <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-6">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <MenuCardSkeleton key={i} />
+            ))}
+          </div>
+        </section>
+      ))}
+    </>
+  );
+}
+
+export function MenuContent({ initialMenuItems }: MenuContentProps) {
   const router = useRouter();
-  const { data } = useTomorrowMenu();
+  const { setSelectedTimeSlot, setSelectedFoodType } = useMenuActions();
+  const { data, isFetching, isPlaceholderData } = useTomorrowMenu();
   const { addToCart } = useCartActions();
 
-  const allItems = useMemo(() => (data ?? []) as MenuItem[], [data]);
+  useLayoutEffect(() => {
+    setSelectedTimeSlot("ALL");
+    setSelectedFoodType("ALL");
+  }, [setSelectedTimeSlot, setSelectedFoodType]);
+
+  const allItems = useMemo(() => (data ?? initialMenuItems ?? []) as MenuItem[], [data, initialMenuItems]);
 
   const slotGroups = useMemo(() => {
     const groups: SlotGroup[] = SLOTS.map((slot) => ({
@@ -83,7 +136,9 @@ export function MenuContent() {
     [router],
   );
 
-  if (allItems.length === 0) {
+  const isLoading = allItems.length === 0 && isFetching;
+
+  if (allItems.length === 0 && !isFetching) {
     return (
       <ErrorBoundary>
         <main className="min-h-screen bg-background text-foreground">
@@ -97,9 +152,26 @@ export function MenuContent() {
     );
   }
 
+  if (isLoading) {
+    return (
+      <ErrorBoundary>
+        <main className="min-h-screen bg-background text-foreground">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-10 lg:px-10 space-y-8 sm:space-y-10 animate-pulse">
+            <MenuSectionSkeleton />
+          </div>
+        </main>
+      </ErrorBoundary>
+    );
+  }
+
   return (
     <ErrorBoundary>
       <main className="min-h-screen bg-background text-foreground">
+        {isPlaceholderData && (
+          <div className="fixed top-0 left-0 z-50 h-0.5 w-full bg-primary/20">
+            <div className="h-full w-full origin-left animate-loading-bar bg-primary" />
+          </div>
+        )}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-10 lg:px-10 space-y-8 sm:space-y-10">
           {slotGroups.map((group) => (
             <section key={group.key}>

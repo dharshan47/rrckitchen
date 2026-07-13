@@ -1,6 +1,8 @@
 import { Suspense } from "react";
+import { QueryClient, dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { MenuContent } from "./menu-content";
+import { getTomorrowMenu } from "@/actions/catalog/menu";
 
 export const metadata = {
   title: "Tomorrow's Menu",
@@ -11,6 +13,7 @@ function MenuSkeleton() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-10 lg:px-10">
+        <div className="h-5 w-32 bg-muted rounded mb-2" />
         <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
@@ -33,10 +36,19 @@ function MenuSkeleton() {
   );
 }
 
-export default function MenuPage() {
+export default async function MenuPage() {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery({
+    queryKey: ["tomorrow-menu", { q: "", foodType: "ALL", timeSlot: "ALL" }],
+    queryFn: () => getTomorrowMenu({ foodType: "ALL", timeSlot: "ALL" }),
+  });
+
   return (
     <Suspense fallback={<MenuSkeleton />}>
-      <MenuContent />
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <MenuContent />
+      </HydrationBoundary>
     </Suspense>
   );
 }

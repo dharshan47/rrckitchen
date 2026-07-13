@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 import { CategoryPageClient } from "@/components/menu/category-page-client";
+import { getTomorrowMenu } from "@/actions/catalog/menu";
+
 const slugToTimeSlot: Record<string, string> = {
   breakfast: "MORNING",
   lunch: "LUNCH",
@@ -13,6 +15,32 @@ const slugLabels: Record<string, string> = {
   "evening-snacks": "Evening Snacks",
   dinner: "Dinner",
 };
+
+function serializeMenuItems(items: Awaited<ReturnType<typeof getTomorrowMenu>>) {
+  return items.map((item) => ({
+    ...item,
+    price: Number(item.price),
+    compareAtPrice: item.compareAtPrice ? Number(item.compareAtPrice) : null,
+    menu: item.menu
+      ? {
+          ...item.menu,
+          kitchenPartner: item.menu.kitchenPartner
+            ? {
+                ...item.menu.kitchenPartner,
+                avgRating: item.menu.kitchenPartner.avgRating
+                  ? Number(item.menu.kitchenPartner.avgRating)
+                  : null,
+                totalReviews: item.menu.kitchenPartner.totalReviews,
+              }
+            : null,
+        }
+      : null,
+    photos: item.photos.map((p) => ({
+      imageUrl: p.imageUrl,
+      sortOrder: p.sortOrder,
+    })),
+  }));
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -30,5 +58,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
 
   if (!timeSlot) notFound();
 
-  return <CategoryPageClient slug={slug} timeSlot={timeSlot} />;
+  const menuItems = await getTomorrowMenu({ foodType: "ALL", timeSlot }).then(serializeMenuItems);
+
+  return <CategoryPageClient slug={slug} timeSlot={timeSlot} initialMenuItems={menuItems} />;
 }

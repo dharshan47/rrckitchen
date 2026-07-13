@@ -52,6 +52,7 @@
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
   --color-search-bar: var(--search-bar);
+  --animate-loading-bar: loading-bar 2s ease-in-out infinite;
 
 }
 
@@ -131,6 +132,13 @@
   --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: #EE7005;
   --search-bar: oklch(0.97 0 0);
+}
+
+@keyframes loading-bar {
+  0% { transform: scaleX(0); transform-origin: left; }
+  50% { transform: scaleX(1); transform-origin: left; }
+  50.01% { transform-origin: right; }
+  100% { transform: scaleX(0); transform-origin: right; }
 }
 
 @layer base {

@@ -3,8 +3,8 @@
 import { useCallback, useMemo, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { useTomorrowMenu } from "@/hooks/useTomorrowMenu";
-import { useCartActions, useMenuActions, useMenuTimeSlot, useMenuFoodType } from "@/stores";
+import { useQuery } from "@tanstack/react-query";
+import { useCartActions, useMenuActions } from "@/stores";
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
 import { CompoundMenuCard } from "@/components/patterns/compound-menu-card";
 import { HeroCarousel } from "./hero-carousel";
@@ -70,25 +70,27 @@ const staticOffers = [
 
 export function HomeClient({ topRatedKitchens = [], newKitchens = [], recentOrderKitchens = [], initialMenuItems }: HomeClientProps) {
   const router = useRouter();
-  const { data, isLoading, isError } = useTomorrowMenu();
   const { addToCart } = useCartActions();
   const { setSelectedTimeSlot, setSelectedFoodType } = useMenuActions();
-  const currentTimeSlot = useMenuTimeSlot();
-  const currentFoodType = useMenuFoodType();
 
   useLayoutEffect(() => {
-    if (currentTimeSlot !== "ALL" || currentFoodType !== "ALL") {
-      setSelectedTimeSlot("ALL");
-      setSelectedFoodType("ALL");
-    }
-  }, [currentTimeSlot, currentFoodType, setSelectedTimeSlot, setSelectedFoodType]);
+    setSelectedTimeSlot("ALL");
+    setSelectedFoodType("ALL");
+  }, [setSelectedTimeSlot, setSelectedFoodType]);
 
-  const filtersReady = currentTimeSlot === "ALL" && currentFoodType === "ALL";
+  const { data, isError, isFetching } = useQuery({
+    queryKey: ["tomorrow-menu", { q: "", foodType: "ALL", timeSlot: "ALL" }],
+    queryFn: async () => {
+      const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+      const res = await fetch(`${baseUrl}/api/menu/tomorrow`);
+      if (!res.ok) throw new Error("Failed to load menu");
+      return res.json();
+    },
+    staleTime: 15_000,
+    gcTime: 60_000,
+  });
 
-  const apiItems = useMemo(() => {
-    if (filtersReady && data) return data as MenuItem[];
-    return initialMenuItems ?? [];
-  }, [data, initialMenuItems, filtersReady]);
+  const apiItems = useMemo(() => (data ?? initialMenuItems ?? []) as MenuItem[], [data, initialMenuItems]);
 
   const handleItemClick = useCallback(
     (item: { id: string }) => { router.push(`/menu/${item.id}`); },
@@ -112,173 +114,122 @@ export function HomeClient({ topRatedKitchens = [], newKitchens = [], recentOrde
     [apiItems, addToCart]
   );
 
+  const showSkeleton = !data && isFetching;
+  const showError = isError && !apiItems.length;
+
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-8 pt-1 sm:pt-3 pb-3 sm:pb-6 space-y-4 sm:space-y-6 lg:space-y-8">
         <ErrorBoundary>
-          {/* 1. Hero Banner Carousel */}
-          <HeroCarousel />
+          {showSkeleton ? (
+            <HomePageSkeleton />
+          ) : (
+            <>
+              <HeroCarousel />
+              <CravingsBanner />
 
-          {/* 2. Cravings Banner (logged-in users) */}
-          <CravingsBanner />
-
-          {/* 4. Offers for you - Swiggy style */}
-          <section>
-            <h2 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" />
-              Offers for you
-            </h2>
-            <div className="flex gap-3 overflow-x-auto scrollbar-none -mx-3 sm:mx-0 px-3 sm:px-0 pb-1">
-              {staticOffers.map((offer, i) => (
-                <div
-                  key={i}
-                  className={`shrink-0 w-56 sm:w-64 rounded-xl bg-linear-to-br ${offer.gradient} border ${offer.border} p-3 sm:p-4`}
-                >
-                  <offer.icon className="h-5 w-5 text-primary mb-2" />
-                  <p className="text-xs font-bold text-primary uppercase tracking-wide">{offer.title}</p>
-                  <p className="text-sm font-semibold mt-0.5">{offer.desc}</p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          {/* 5. Reorder Row */}
-          {recentOrderKitchens.length > 0 && (
-            <section>
-              <h2 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-2">
-                <Clock className="h-4 w-4 text-primary" />
-                Reorder from your favourites
-              </h2>
-              <div className="flex gap-3 overflow-x-auto scrollbar-none -mx-3 sm:mx-0 px-3 sm:px-0 pb-1">
-                {recentOrderKitchens.map((k) => (
-                  <Link
-                    key={k.id}
-                    href={`/menu?kitchenId=${k.id}`}
-                    className="shrink-0 rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors min-w-36 sm:min-w-40"
-                  >
-                    <p className="text-sm font-semibold">{k.displayName}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Reorder now</p>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* 6. Top Rated Kitchens near you */}
-          {topRatedKitchens.length > 0 && (
-            <section>
-              <div className="flex items-center justify-between mb-2 sm:mb-3">
-                <h2 className="text-base sm:text-lg font-bold flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-primary" />
-                  Top rated kitchens near you
+              <section>
+                <h2 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  Offers for you
                 </h2>
-                <Link
-                  href="/menu"
-                  className="text-xs sm:text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
-                >
-                  See all
-                </Link>
-              </div>
-              <div className="flex gap-3 overflow-x-auto scrollbar-none -mx-3 sm:mx-0 px-3 sm:px-0 pb-1">
-                {topRatedKitchens.map((k) => (
-                  <Link
-                    key={k.id}
-                    href={`/menu?kitchenId=${k.id}`}
-                    className="shrink-0 rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors min-w-40 sm:min-w-44"
-                  >
-                    <div className="flex items-center gap-1 mb-1">
-                      <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm font-bold">{k.avgRating ?? "New"}</span>
+                <div className="flex gap-3 overflow-x-auto scrollbar-none -mx-3 sm:mx-0 px-3 sm:px-0 pb-1">
+                  {staticOffers.map((offer, i) => (
+                    <div key={i} className={`shrink-0 w-56 sm:w-64 rounded-xl bg-linear-to-br ${offer.gradient} border ${offer.border} p-3 sm:p-4`}>
+                      <offer.icon className="h-5 w-5 text-primary mb-2" />
+                      <p className="text-xs font-bold text-primary uppercase tracking-wide">{offer.title}</p>
+                      <p className="text-sm font-semibold mt-0.5">{offer.desc}</p>
                     </div>
-                    <p className="text-sm font-semibold truncate">{k.displayName}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">{k.totalReviews} ratings</p>
-                  </Link>
-                ))}
-              </div>
-            </section>
-          )}
+                  ))}
+                </div>
+              </section>
 
-          {/* 7. Featured Menu Items (max 6 from all categories) */}
-          <section>
-            <h2 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" />
-              Today&apos;s Featured Meals
-            </h2>
-            {!isLoading || apiItems.length > 0 ? (
-              apiItems.length > 0 ? (
-                <FeaturedItems
-                  items={apiItems}
-                  onItemClick={handleItemClick}
-                  onAddToCart={handleAddToCart}
-                />
-              ) : (
-                <p className="text-center text-sm text-muted-foreground py-6">
-                  No menu items available right now. Check back later!
-                </p>
-              )
-            ) : (
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="rounded-xl border border-border bg-card overflow-hidden animate-pulse">
-                    <div className="aspect-square w-full bg-muted" />
-                    <div className="p-3 space-y-2">
-                      <div className="h-3 w-16 bg-muted rounded" />
-                      <div className="h-4 w-3/4 bg-muted rounded" />
-                      <div className="flex items-center justify-between pt-1">
-                        <div className="h-6 w-14 bg-muted rounded" />
-                        <div className="h-7 w-14 bg-muted rounded" />
-                      </div>
-                    </div>
+              {recentOrderKitchens.length > 0 && (
+                <section>
+                  <h2 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-primary" />
+                    Reorder from your favourites
+                  </h2>
+                  <div className="flex gap-3 overflow-x-auto scrollbar-none -mx-3 sm:mx-0 px-3 sm:px-0 pb-1">
+                    {recentOrderKitchens.map((k) => (
+                      <Link key={k.id} href={`/menu?kitchenId=${k.id}`} className="shrink-0 rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors min-w-36 sm:min-w-40">
+                        <p className="text-sm font-semibold">{k.displayName}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Reorder now</p>
+                      </Link>
+                    ))}
                   </div>
-                ))}
-              </div>
-            )}
-            {isError && !apiItems.length && (
-              <p className="text-center text-sm text-destructive py-2">
-                Unable to load menu items right now. Please try again later.
-              </p>
-            )}
-          </section>
+                </section>
+              )}
 
-          {/* 8. New Kitchens */}
-          {newKitchens.length > 0 && (
-            <section>
-              <h2 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-2">
-                <ChefHat className="h-4 w-4 text-primary" />
-                New kitchens to try
-              </h2>
-              <div className="flex gap-3 overflow-x-auto scrollbar-none -mx-3 sm:mx-0 px-3 sm:px-0 pb-1">
-                {newKitchens.map((k) => (
-                  <Link
-                    key={k.id}
-                    href={`/menu?kitchenId=${k.id}`}
-                    className="shrink-0 rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors min-w-36 sm:min-w-40"
-                  >
-                    <p className="text-sm font-semibold">{k.displayName}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Recently joined</p>
-                  </Link>
-                ))}
-              </div>
-            </section>
+              {topRatedKitchens.length > 0 && (
+                <section>
+                  <div className="flex items-center justify-between mb-2 sm:mb-3">
+                    <h2 className="text-base sm:text-lg font-bold flex items-center gap-2">
+                      <TrendingUp className="h-4 w-4 text-primary" />
+                      Top rated kitchens near you
+                    </h2>
+                    <Link href="/menu" className="text-xs sm:text-sm font-semibold text-primary hover:text-primary/80 transition-colors">See all</Link>
+                  </div>
+                  <div className="flex gap-3 overflow-x-auto scrollbar-none -mx-3 sm:mx-0 px-3 sm:px-0 pb-1">
+                    {topRatedKitchens.map((k) => (
+                      <Link key={k.id} href={`/menu?kitchenId=${k.id}`} className="shrink-0 rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors min-w-40 sm:min-w-44">
+                        <div className="flex items-center gap-1 mb-1">
+                          <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                          <span className="text-sm font-bold">{k.avgRating ?? "New"}</span>
+                        </div>
+                        <p className="text-sm font-semibold truncate">{k.displayName}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{k.totalReviews} ratings</p>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              <section>
+                <h2 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-2">
+                  <Sparkles className="h-4 w-4 text-primary" />
+                  Today&apos;s Featured Meals
+                </h2>
+                {showError ? (
+                  <p className="text-center text-sm text-destructive py-6">Unable to load menu items right now. Please try again later.</p>
+                ) : apiItems.length > 0 ? (
+                  <FeaturedItems items={apiItems} onItemClick={handleItemClick} onAddToCart={handleAddToCart} />
+                ) : (
+                  <p className="text-center text-sm text-muted-foreground py-6">No menu items available right now. Check back later!</p>
+                )}
+              </section>
+
+              {newKitchens.length > 0 && (
+                <section>
+                  <h2 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-2">
+                    <ChefHat className="h-4 w-4 text-primary" />
+                    New kitchens to try
+                  </h2>
+                  <div className="flex gap-3 overflow-x-auto scrollbar-none -mx-3 sm:mx-0 px-3 sm:px-0 pb-1">
+                    {newKitchens.map((k) => (
+                      <Link key={k.id} href={`/menu?kitchenId=${k.id}`} className="shrink-0 rounded-xl border border-border bg-card p-3 sm:p-4 hover:border-primary/30 transition-colors min-w-36 sm:min-w-40">
+                        <p className="text-sm font-semibold">{k.displayName}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">Recently joined</p>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              <section className="rounded-2xl bg-linear-to-r from-primary/10 to-secondary/10 border border-primary/20 p-5 sm:p-6 text-center">
+                <h2 className="text-lg sm:text-xl font-bold mb-2">Become a Home Chef</h2>
+                <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
+                  Cook from home, set your own hours, and earn money sharing your food with your community.
+                </p>
+                <Link href="/kitchen/signup" className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors">
+                  Start earning this week
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              </section>
+
+              <HowItWorksSection />
+            </>
           )}
-
-          {/* 9. Become a Home Chef Banner */}
-          <section className="rounded-2xl bg-linear-to-r from-primary/10 to-secondary/10 border border-primary/20 p-5 sm:p-6 text-center">
-            <h2 className="text-lg sm:text-xl font-bold mb-2">Become a Home Chef</h2>
-            <p className="text-sm text-muted-foreground mb-4 max-w-md mx-auto">
-              Cook from home, set your own hours, and earn money sharing your food with your community.
-            </p>
-            <Link
-              href="/kitchen/signup"
-              className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 sm:px-6 py-2 sm:py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              Start earning this week
-              <ArrowRight className="h-4 w-4" />
-            </Link>
-          </section>
-
-          {/* 10. How It Works */}
-          <HowItWorksSection />
         </ErrorBoundary>
       </div>
     </main>
@@ -362,6 +313,74 @@ function FeaturedItems({
           <span className="text-sm font-semibold">View all menu</span>
         </Link>
       )}
+    </div>
+  );
+}
+
+function HomePageSkeleton() {
+  return (
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8 animate-pulse">
+      {/* Hero Banner */}
+      <div className="w-full h-40 sm:h-48 lg:h-56 rounded-2xl bg-muted" />
+
+      {/* Cravings banner */}
+      <div className="w-full h-14 sm:h-16 rounded-xl bg-muted" />
+
+      {/* Offers section */}
+      <section>
+        <div className="h-5 w-32 bg-muted rounded mb-3" />
+        <div className="flex gap-3 overflow-x-auto scrollbar-none -mx-3 sm:mx-0 px-3 sm:px-0 pb-1">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="shrink-0 w-56 sm:w-64 rounded-xl bg-muted h-24" />
+          ))}
+        </div>
+      </section>
+
+      {/* Top rated kitchens */}
+      <section>
+        <div className="h-5 w-48 bg-muted rounded mb-3" />
+        <div className="flex gap-3 overflow-x-auto scrollbar-none -mx-3 sm:mx-0 px-3 sm:px-0 pb-1">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="shrink-0 min-w-40 sm:min-w-44 rounded-xl bg-muted h-20" />
+          ))}
+        </div>
+      </section>
+
+      {/* Featured meals grid */}
+      <section>
+        <div className="h-5 w-40 bg-muted rounded mb-3" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="rounded-xl bg-muted overflow-hidden">
+              <div className="aspect-square w-full bg-muted-foreground/10" />
+              <div className="p-3 space-y-2">
+                <div className="h-3 w-16 bg-muted-foreground/10 rounded" />
+                <div className="h-4 w-3/4 bg-muted-foreground/10 rounded" />
+                <div className="flex items-center justify-between pt-1">
+                  <div className="h-6 w-14 bg-muted-foreground/10 rounded" />
+                  <div className="h-7 w-14 bg-muted-foreground/10 rounded" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* New kitchens */}
+      <section>
+        <div className="h-5 w-36 bg-muted rounded mb-3" />
+        <div className="flex gap-3 overflow-x-auto scrollbar-none -mx-3 sm:mx-0 px-3 sm:px-0 pb-1">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="shrink-0 min-w-36 sm:min-w-40 rounded-xl bg-muted h-20" />
+          ))}
+        </div>
+      </section>
+
+      {/* Home chef banner */}
+      <div className="w-full h-32 sm:h-36 rounded-2xl bg-muted" />
+
+      {/* How it works */}
+      <div className="w-full h-48 rounded-2xl bg-muted" />
     </div>
   );
 }

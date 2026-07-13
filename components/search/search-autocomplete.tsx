@@ -52,7 +52,7 @@ export function SearchAutocomplete({
   const inputRef = useRef<HTMLInputElement>(null)
   const debouncedQuery = useDebouncedValue(query, 150)
 
-  const { data: results } = useQuery<SearchResult>({
+  const { data: results, isFetching } = useQuery<SearchResult>({
     queryKey: ["menu-search", debouncedQuery],
     queryFn: async () => {
       const res = await fetch(`/api/menu/search?q=${encodeURIComponent(debouncedQuery)}`)
@@ -73,6 +73,7 @@ export function SearchAutocomplete({
   }, [navigateOnFocus, results, router])
 
   const hasResults = results && (results.dishes.length > 0 || results.kitchens.length > 0)
+  const isLoading = isFetching && !results
   const isOpen = dismissCount === 0 && debouncedQuery.length >= 1
 
   useEffect(() => {
@@ -172,7 +173,12 @@ export function SearchAutocomplete({
 
       {isOpen && (
         <div className="absolute z-50 mt-2 w-full rounded-xl border border-border bg-popover shadow-lg max-h-80 overflow-y-auto">
-          {!hasResults ? (
+          {isLoading ? (
+            <div className="px-4 py-6 text-sm text-muted-foreground text-center">
+              <span className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-muted-foreground/30 border-t-muted-foreground mr-2 align-middle" />
+              Searching...
+            </div>
+          ) : !hasResults ? (
             <div className="px-4 py-8 text-sm text-muted-foreground text-center">
               No results found for &ldquo;{debouncedQuery}&rdquo;
             </div>

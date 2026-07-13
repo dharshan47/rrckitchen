@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 import { Search, UtensilsCrossed, Star, ChevronRight } from "lucide-react"
 import Image from 'next/image'
 import Link from "next/link"
-
+import { Skeleton } from "@/components/ui/skeleton"
 
 interface SearchItem {
   id: string
@@ -32,12 +32,65 @@ interface SearchResult {
   kitchens: SearchKitchen[]
 }
 
+function SearchSkeleton() {
+  return (
+    <div className="space-y-10 animate-pulse">
+      <section>
+        <div className="flex items-center gap-2 mb-4">
+          <Skeleton className="h-5 w-5 rounded" />
+          <Skeleton className="h-5 w-24" />
+          <Skeleton className="h-4 w-8" />
+        </div>
+        <div className="divide-y divide-border rounded-xl border border-border overflow-hidden">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3 px-4 py-3">
+              <Skeleton className="h-16 w-16 rounded-lg shrink-0" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-4 w-16" />
+              </div>
+              <Skeleton className="h-4 w-4 shrink-0" />
+            </div>
+          ))}
+        </div>
+      </section>
+      <section>
+        <div className="flex items-center gap-2 mb-4">
+          <Skeleton className="h-5 w-5 rounded" />
+          <Skeleton className="h-5 w-20" />
+          <Skeleton className="h-4 w-8" />
+        </div>
+        {Array.from({ length: 2 }).map((_, i) => (
+          <div key={i} className="rounded-xl border border-border mb-4 p-4">
+            <div className="flex items-center justify-between">
+              <div className="space-y-2">
+                <Skeleton className="h-5 w-32" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+              <Skeleton className="h-5 w-5" />
+            </div>
+            <div className="flex gap-2 mt-4">
+              {Array.from({ length: 3 }).map((_, j) => (
+                <div key={j} className="flex flex-col items-center gap-1">
+                  <Skeleton className="h-20 w-20 rounded-lg" />
+                  <Skeleton className="h-3 w-16" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
+    </div>
+  )
+}
+
 export function SearchPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const q = searchParams.get("q") ?? ""
 
-  const { data } = useQuery<SearchResult>({
+  const { data, isFetching } = useQuery<SearchResult>({
     queryKey: ["menu-search-page", q],
     queryFn: async () => {
       const res = await fetch(`/api/menu/search?q=${encodeURIComponent(q)}`)
@@ -50,26 +103,27 @@ export function SearchPageContent() {
 
   const dishes = data?.dishes ?? []
   const kitchens = data?.kitchens ?? []
-
   const hasResults = dishes.length > 0 || kitchens.length > 0
+  const isLoading = isFetching && !data
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-8">
-
-      {q && !hasResults ? (
-        <div className="flex flex-col items-center justify-center py-20 text-center">
-          <UtensilsCrossed className="h-12 w-12 text-muted-foreground/40 mb-4" />
-          <p className="text-lg font-semibold text-foreground">No results found</p>
-          <p className="text-sm text-muted-foreground mt-1">
-            We couldn&apos;t find anything for &ldquo;{q}&rdquo;
-          </p>
-        </div>
-      ) : !q ? (
+      {!q ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
           <Search className="h-12 w-12 text-muted-foreground/40 mb-4" />
           <p className="text-lg font-semibold text-foreground">Search for meals & kitchens</p>
           <p className="text-sm text-muted-foreground mt-1">
             Find your favourite meals or explore kitchens in Thanjavur
+          </p>
+        </div>
+      ) : isLoading ? (
+        <SearchSkeleton />
+      ) : !hasResults ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <UtensilsCrossed className="h-12 w-12 text-muted-foreground/40 mb-4" />
+          <p className="text-lg font-semibold text-foreground">No results found</p>
+          <p className="text-sm text-muted-foreground mt-1">
+            We couldn&apos;t find anything for &ldquo;{q}&rdquo;
           </p>
         </div>
       ) : (

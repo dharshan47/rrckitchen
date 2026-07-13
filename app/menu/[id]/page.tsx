@@ -1,12 +1,15 @@
+import { cache } from "react";
 import { getMenuItemById } from "@/actions/catalog/menu";
 import { notFound } from "next/navigation";
 import { MenuItemDetail } from "@/components/menu/menu-item-detail";
+
+const getItem = cache(getMenuItemById);
 
 export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const item = await getMenuItemById(id);
+  const item = await getItem(id);
   if (!item) return { title: "Item Not Found" };
   return {
     title: `${item.name}`,
@@ -16,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 export default async function MenuItemPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const item = await getMenuItemById(id);
+  const item = await getItem(id);
 
   if (!item) notFound();
 
