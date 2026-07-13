@@ -30,8 +30,12 @@ export const metadata: Metadata = {
   description:
     "Order fresh home-cooked meals from local kitchens in Thanjavur for next-day delivery. Browse menus by time slot, filter by Veg/Non-Veg, and pay securely.",
   icons: {
-    icon: "/Logo.png",
-    apple: "/Logo.png",
+    icon: [
+      { url: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-384x384.png", sizes: "384x384", type: "image/png" },
+      { url: "/icons/icon-512x512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: "/icons/icon-192x192.png",
   },
   manifest: "/manifest.webmanifest",
   other: {
@@ -52,15 +56,35 @@ export default function RootLayout({
       <head>
         <link rel="preconnect" href="https://checkout.razorpay.com" />
         <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
-        <link rel="preload" href="/Logo.png" as="image" />
+        <style>{`
+          #splash {
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column;
+            background: #FFFFFF;
+          }
+          #splash.hide {
+            opacity: 0; pointer-events: none; transition: opacity 0.25s;
+          }
+          #splash span {
+            color: #EE7005; font-size: 1.5rem; font-weight: 700;
+            font-family: 'Inter', system-ui, sans-serif;
+          }
+        `}</style>
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <div id="splash"><span>RRC Kitchen</span></div>
         <Providers>
           <AppShell>
             {children}
-             <Toaster />
+             <Toaster position="top-center" />
           </AppShell>
         </Providers>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var s=document.getElementById('splash');if(s){var r=function(){s.classList.add('hide')};'complete'===document.readyState?setTimeout(r,200):window.addEventListener('load',function(){setTimeout(r,200)})}})();`
+          }}
+        />
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
           strategy="lazyOnload"

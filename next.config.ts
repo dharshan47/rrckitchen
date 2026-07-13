@@ -10,7 +10,7 @@ const csp = isDev
       `style-src 'self' 'unsafe-inline' https://unpkg.com`,
       `img-src 'self' blob: data: https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://api.maptiler.com https://*.razorpay.com`,
       `font-src 'self'`,
-      `connect-src 'self' ws: http://localhost:* https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com https://api.maptiler.com `,
+      `connect-src 'self' ws: http://localhost:* wss://*.ably.io https://*.ably.io https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com https://api.maptiler.com `,
       `frame-src 'self' https://*.razorpay.com`,
       `worker-src 'self' blob:`,
       `base-uri 'self'`,
@@ -22,7 +22,7 @@ const csp = isDev
       `style-src 'self' 'unsafe-inline' https://unpkg.com`,
       `img-src 'self' blob: data: https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://api.maptiler.com https://*.razorpay.com`,
       `font-src 'self'`,
-      `connect-src 'self' https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com https://api.maptiler.com `,
+      `connect-src 'self' wss://*.ably.io https://*.ably.io https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com https://api.maptiler.com `,
       `frame-src 'self' https://*.razorpay.com`,
       `worker-src 'self' blob:`,
       `base-uri 'self'`,
@@ -83,7 +83,7 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "Content-Type", value: "application/javascript; charset=utf-8" },
           { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
-          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'; connect-src 'self' https://checkout.razorpay.com https://*.razorpay.com; img-src 'self' https://*.razorpay.com; frame-src 'self' https://*.razorpay.com" },
+          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'; connect-src 'self' https://*.razorpay.com https://*.ably.io wss://*.ably.io https://unpkg.com https://api.maptiler.com https://maps.googleapis.com https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com; img-src 'self' data: blob: https://*.razorpay.com https://api.maptiler.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com; style-src 'self' 'unsafe-inline' https://unpkg.com; font-src 'self'; frame-src 'self' https://*.razorpay.com; worker-src 'self' blob:; base-uri 'self'; form-action 'self'" },
         ],
       },
       {

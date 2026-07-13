@@ -134,7 +134,7 @@ async function networkFirst(request, cacheName) {
   } catch {
     const cached = await caches.match(request);
     if (cached) return cached;
-    return fetch(request);
+    return new Response("Offline", { status: 503 });
   }
 }
 
@@ -148,7 +148,7 @@ async function staleWhileRevalidate(request, cacheName) {
       }
       return response;
     })
-    .catch(() => cached || fetch(request));
+    .catch(() => cached);
   return cached || fetchPromise;
 }
 

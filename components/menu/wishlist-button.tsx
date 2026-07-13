@@ -63,9 +63,9 @@ export function WishlistButton({ menuItemId, className, size = "sm", variant = "
   };
 
   const iconSizes = {
-    sm: "h-4 w-4",
-    md: "h-5 w-5",
-    lg: "h-5 w-5",
+    sm: "h-5 w-5",
+    md: "h-6 w-6",
+    lg: "h-6 w-6",
   };
 
   if (variant === "overlay") {
@@ -85,8 +85,8 @@ export function WishlistButton({ menuItemId, className, size = "sm", variant = "
           <Heart
             className={cn(
               iconSizes[size],
-              "transition-colors",
-              isFavorite ? "fill-red-500 text-red-500" : "text-muted-foreground/60 hover:text-red-400"
+              "transition-colors drop-shadow-sm",
+              isFavorite ? "fill-red-500 text-red-500" : "text-foreground/70 hover:text-red-400"
             )}
           />
         )}

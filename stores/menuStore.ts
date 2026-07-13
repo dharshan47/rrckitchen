@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware"
 import { useShallow } from "zustand/react/shallow";
 import { globalEventBus, AppEvents } from "@/lib/patterns/event-bus";
 
@@ -43,27 +44,35 @@ export const selectMenuActions = (s: MenuState) => ({
  * Zustand store for menu search/filter state.
  * Emits events on the global event bus when filters change.
  */
-export const menuStore = create<MenuState>((set) => ({
-  searchQuery: "",
-  selectedFoodType: "ALL",
-  selectedTimeSlot: "ALL",
-  selectedTab: "menu",
-  deliveryAddress: "",
-  setSearchQuery: (value: string) => {
-    set({ searchQuery: value });
-    globalEventBus.emit(AppEvents.MENU_FILTER_CHANGED, { type: "search", value });
-  },
-  setSelectedFoodType: (value: FoodTypeFilter) => {
-    set({ selectedFoodType: value });
-    globalEventBus.emit(AppEvents.MENU_FILTER_CHANGED, { type: "foodType", value });
-  },
-  setSelectedTimeSlot: (value: TimeSlotFilter) => {
-    set({ selectedTimeSlot: value });
-    globalEventBus.emit(AppEvents.MENU_FILTER_CHANGED, { type: "timeSlot", value });
-  },
-  setSelectedTab: (value: MenuTab) => set({ selectedTab: value }),
-  setDeliveryAddress: (value: string) => set({ deliveryAddress: value }),
-}));
+export const menuStore = create<MenuState>()(
+  persist(
+    (set) => ({
+      searchQuery: "",
+      selectedFoodType: "ALL",
+      selectedTimeSlot: "ALL",
+      selectedTab: "menu",
+      deliveryAddress: "",
+      setSearchQuery: (value: string) => {
+        set({ searchQuery: value });
+        globalEventBus.emit(AppEvents.MENU_FILTER_CHANGED, { type: "search", value });
+      },
+      setSelectedFoodType: (value: FoodTypeFilter) => {
+        set({ selectedFoodType: value });
+        globalEventBus.emit(AppEvents.MENU_FILTER_CHANGED, { type: "foodType", value });
+      },
+      setSelectedTimeSlot: (value: TimeSlotFilter) => {
+        set({ selectedTimeSlot: value });
+        globalEventBus.emit(AppEvents.MENU_FILTER_CHANGED, { type: "timeSlot", value });
+      },
+      setSelectedTab: (value: MenuTab) => set({ selectedTab: value }),
+      setDeliveryAddress: (value: string) => set({ deliveryAddress: value }),
+    }),
+    {
+      name: "rrc-menu-store",
+      partialize: (state) => ({ deliveryAddress: state.deliveryAddress }),
+    }
+  )
+);
 
 /** Hook returning the current search query value. */
 export function useMenuSearchQuery() {

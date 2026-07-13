@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useTomorrowMenu } from "@/hooks/useTomorrowMenu";
 import { useCartActions } from "@/stores";
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
-import { SkeletonCard } from "@/components/patterns/skeleton-card";
 import { CompoundMenuCard } from "@/components/patterns/compound-menu-card";
 import { HeroCarousel } from "./hero-carousel";
 import { CravingsBanner } from "./cravings-banner";
@@ -21,7 +20,13 @@ interface MenuItem {
   foodType: string;
   timeSlot: string;
   isAvailable: boolean;
-  menu: { kitchenPartner: { kitchenAlias: { displayName: string } | null } | null } | null;
+  menu: {
+    kitchenPartner: {
+      kitchenAlias: { displayName: string } | null;
+      avgRating?: number | null;
+      totalReviews?: number;
+    } | null;
+  } | null;
   photos: { imageUrl: string; sortOrder: number }[];
 }
 
@@ -208,8 +213,27 @@ export function HomeClient({ topRatedKitchens = [], newKitchens = [], recentOrde
           {isLoading ? (
             <section>
               <div className="h-6 w-36 bg-muted rounded animate-pulse mb-3" />
-              <div className="flex lg:hidden gap-3 overflow-hidden">
-                <SkeletonCard variant="menu-item" count={6} />
+              <div className="flex lg:hidden gap-3 overflow-x-auto scrollbar-none -mx-3 px-3 pb-2">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="snap-start shrink-0 w-40 sm:w-48 rounded-xl border border-border bg-card overflow-hidden">
+                    <div className="relative aspect-square w-full bg-white p-3">
+                      <div className="relative h-full w-full">
+                        <div className="h-full w-full bg-muted rounded-sm animate-pulse" />
+                      </div>
+                    </div>
+                    <div className="px-3 pb-4 pt-1.5 space-y-2">
+                      <div className="h-3 w-16 bg-muted rounded animate-pulse" />
+                      <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
+                      <div className="flex items-center justify-between gap-1.5 pt-2">
+                        <div className="flex items-center gap-1.5">
+                          <div className="h-6 w-12 bg-muted rounded animate-pulse" />
+                          <div className="h-4 w-8 bg-muted rounded animate-pulse" />
+                        </div>
+                        <div className="h-7 w-14 bg-muted rounded animate-pulse" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
               <div className="hidden lg:grid lg:grid-cols-6 gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
@@ -219,14 +243,15 @@ export function HomeClient({ topRatedKitchens = [], newKitchens = [], recentOrde
                         <div className="h-full w-full bg-muted rounded-sm animate-pulse" />
                       </div>
                     </div>
-                    <div className="px-3 pb-4 pt-1.5">
+                    <div className="px-3 pb-4 pt-1.5 space-y-2">
+                      <div className="h-3 w-20 bg-muted rounded animate-pulse" />
                       <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
-                      <div className="mt-4 flex items-center justify-between">
-                        <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-between gap-1.5 pt-2">
+                        <div className="flex items-center gap-1.5">
                           <div className="h-6 w-14 bg-muted rounded animate-pulse" />
-                          <div className="h-4 w-8 bg-muted rounded animate-pulse" />
+                          <div className="h-4 w-10 bg-muted rounded animate-pulse" />
                         </div>
-                        <div className="h-8 w-14 bg-muted rounded animate-pulse" />
+                        <div className="h-7 w-14 bg-muted rounded animate-pulse" />
                       </div>
                     </div>
                   </div>
@@ -340,7 +365,6 @@ function CombinedMenuSection({
         <h2 className="text-base sm:text-lg font-bold flex items-center gap-2">
           <IndianRupee className="h-4 w-4 text-primary" />
           Menu items
-          <span className="text-sm font-normal text-muted-foreground">({items.length})</span>
         </h2>
         <Link
           href="/menu"
@@ -363,6 +387,8 @@ function CombinedMenuSection({
                 foodType: item.foodType,
                 timeSlot: item.timeSlot,
                 kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
+                kitchenRating: item.menu?.kitchenPartner?.avgRating ?? null,
+                totalReviews: item.menu?.kitchenPartner?.totalReviews ?? 0,
                 description: item.description,
                 imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
               }}
@@ -402,6 +428,8 @@ function CombinedMenuSection({
               foodType: item.foodType,
               timeSlot: item.timeSlot,
               kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
+              kitchenRating: item.menu?.kitchenPartner?.avgRating ?? null,
+              totalReviews: item.menu?.kitchenPartner?.totalReviews ?? 0,
               description: item.description,
               imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
             }}

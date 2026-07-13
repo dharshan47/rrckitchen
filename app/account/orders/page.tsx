@@ -56,6 +56,7 @@ export default function AccountOrdersPage() {
     queryKey: ["orders"],
     queryFn: getUserOrders,
     enabled: !!session?.user,
+    refetchInterval: 30_000,
   })
 
   const cancelMutation = useMutation({
