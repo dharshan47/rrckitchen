@@ -1,68 +1,74 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { X, Download } from "lucide-react";
 
 export function InstallPrompt() {
-  const [isIOS] = useState(
-    () => typeof navigator !== "undefined" && /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as unknown as Record<string, boolean>).MSStream
-  );
-  const [isStandalone] = useState(
-    () => typeof window !== "undefined" && window.matchMedia("(display-mode: standalone)").matches
-  );
   const [deferredPrompt, setDeferredPrompt] = useState<Event | null>(null);
+  const [showPrompt, setShowPrompt] = useState(false);
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    const handleBeforeInstall = (e: Event) => {
+    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (!isMobile) return;
+
+    const isStandalone = window.matchMedia("(display-mode: standalone)").matches;
+    if (isStandalone) return;
+
+    const handler = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
+      if (!dismissed) {
+        setTimeout(() => setShowPrompt(true), 5000);
+      }
     };
-    window.addEventListener("beforeinstallprompt", handleBeforeInstall);
-    return () => window.removeEventListener("beforeinstallprompt", handleBeforeInstall);
+
+    window.addEventListener("beforeinstallprompt", handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
+  }, [dismissed]);
+
+  const handleInstall = useCallback(() => {
+    if (!deferredPrompt) return;
+    (deferredPrompt as unknown as { prompt: () => Promise<void> }).prompt();
+    setShowPrompt(false);
+  }, [deferredPrompt]);
+
+  const handleDismiss = useCallback(() => {
+    setShowPrompt(false);
+    setDismissed(true);
   }, []);
 
-  if (isStandalone || dismissed) return null;
+  if (!showPrompt) return null;
 
-  const handleInstall = () => {
-    if (deferredPrompt) {
-      (deferredPrompt as unknown as { prompt: () => Promise<void> }).prompt();
-      setDeferredPrompt(null);
-    }
-  };
-
-  if (isIOS) {
-    return (
-      <div className="fixed bottom-4 left-4 right-4 z-50 rounded-2xl border border-border bg-white p-4 shadow-lg md:left-auto md:right-4 md:w-80">
-        <p className="text-sm text-muted-foreground">
-          Install RRC Kitchen: tap the share button and then &ldquo;Add to Home Screen&rdquo;.
-        </p>
-        <Button variant="ghost" size="sm" className="mt-2" onClick={() => setDismissed(true)}>
-          Dismiss
-        </Button>
-      </div>
-    );
-  }
-
-  if (deferredPrompt) {
-    return (
-      <div className="fixed bottom-4 left-4 right-4 z-50 rounded-2xl border border-border bg-white p-4 shadow-lg md:left-auto md:right-4 md:w-80">
-        <div className="flex items-center gap-3">
-          <Download className="h-5 w-5 text-primary" />
-          <p className="flex-1 text-sm font-medium">Install RRC Kitchen for quick access</p>
+  return (
+    <div className="fixed bottom-20 left-4 right-4 z-50 md:hidden">
+      <div className="rounded-2xl border border-border bg-card p-4 shadow-2xl shadow-black/20 animate-in slide-in-from-bottom-4 fade-in duration-300">
+        <div className="flex items-start justify-between mb-2">
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Download className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <p className="text-sm font-bold">Install RRC Kitchen</p>
+              <p className="text-xs text-muted-foreground">Quick access from your home screen</p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={handleDismiss}
+            className="p-1 text-muted-foreground hover:text-foreground"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
-        <div className="mt-3 flex gap-2">
-          <Button size="sm" onClick={handleInstall}>
-            Install
-          </Button>
-          <Button variant="outline" size="sm" onClick={() => setDismissed(true)}>
-            Not now
-          </Button>
-        </div>
+        <button
+          type="button"
+          onClick={handleInstall}
+          className="w-full mt-2 rounded-xl bg-primary py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+        >
+          Install App
+        </button>
       </div>
-    );
-  }
-
-  return null;
+    </div>
+  );
 }

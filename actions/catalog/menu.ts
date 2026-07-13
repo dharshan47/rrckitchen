@@ -36,12 +36,23 @@ export async function getTomorrowMenu({ query, foodType, timeSlot }: MenuFilterO
       foodType: foodType && foodType !== "ALL" ? foodType as FoodType : undefined,
       timeSlot: timeSlot && timeSlot !== "ALL" ? timeSlot as TimeSlot : undefined,
     },
-    include: {
+    select: {
+      id: true,
+      name: true,
+      description: true,
+      price: true,
+      compareAtPrice: true,
+      foodType: true,
+      timeSlot: true,
+      isAvailable: true,
+      menuId: true,
       menu: {
-        include: {
+        select: {
           kitchenPartner: {
             select: {
-              kitchenAlias: true,
+              kitchenAlias: {
+                select: { displayName: true },
+              },
               avgRating: true,
               totalReviews: true,
             },
@@ -49,6 +60,7 @@ export async function getTomorrowMenu({ query, foodType, timeSlot }: MenuFilterO
         },
       },
       photos: {
+        select: { imageUrl: true, sortOrder: true },
         orderBy: { sortOrder: "asc" },
       },
     },

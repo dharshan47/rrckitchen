@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import { useDebouncedValue } from "./useDebouncedValue";
 import { menuStore } from "@/stores";
 
@@ -43,7 +43,9 @@ export function useTomorrowMenu() {
       }
       return res.json();
     },
-    staleTime: 30_000,
+    placeholderData: keepPreviousData,
+    staleTime: 15_000,
+    gcTime: 60_000,
     refetchOnWindowFocus: false,
   });
 }

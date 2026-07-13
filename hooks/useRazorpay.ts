@@ -41,26 +41,9 @@ interface RazorpayCheckoutOptions {
 
 type RazorpayInstance = new (options: RazorpayCheckoutOptions) => { open: () => void };
 
-async function loadRazorpaySdk(): Promise<RazorpayInstance | null> {
+function getRazorpaySdk(): RazorpayInstance | null {
   if (typeof window === "undefined") return null;
-
-  if ((window as unknown as Record<string, unknown>).Razorpay) {
-    return (window as unknown as Record<string, RazorpayInstance>).Razorpay;
-  }
-
-  return new Promise((resolve) => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    script.onload = () => {
-      resolve((window as unknown as Record<string, RazorpayInstance>).Razorpay ?? null);
-    };
-    script.onerror = () => {
-      console.error("[Razorpay] Failed to load SDK.");
-      resolve(null);
-    };
-    document.body.appendChild(script);
-  });
+  return (window as unknown as Record<string, RazorpayInstance>).Razorpay ?? null;
 }
 
 export function useRazorpay() {
@@ -103,6 +86,11 @@ export function useRazorpay() {
   });
 
   const initiateCheckout = useCallback(async (items: CartItem[], total: number, phoneNumber: string, couponCode?: string) => {
+    if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
+      setPaymentResult({ success: false, error: "Payment is not configured. Please contact support." });
+      return;
+    }
+
     setIsProcessing(true);
     setPaymentResult(null);
 
@@ -180,14 +168,25 @@ export function useRazorpay() {
         },
       };
 
-      const razorpayInstance = await loadRazorpaySdk();
-      if (!razorpayInstance) {
-        console.log("[Razorpay] SDK not loaded.");
-        setPaymentResult({ success: false });
+      const RazorpayCtor = getRazorpaySdk();
+      if (!RazorpayCtor) {
+        console.log("[Razorpay] SDK not loaded. Waiting for load...");
+        await new Promise<void>((resolve) => {
+          const check = () => {
+            const sdk = getRazorpaySdk();
+            if (sdk) { resolve(); return; }
+            setTimeout(check, 200);
+          };
+          check();
+        });
+      }
+      const RazorpayCtorFinal = getRazorpaySdk();
+      if (!RazorpayCtorFinal) {
+        setPaymentResult({ success: false, error: "Payment service is not available. Please refresh and try again." });
         setIsProcessing(false);
         return;
       }
-      const razorpay = new razorpayInstance(options);
+      const razorpay = new RazorpayCtorFinal(options);
       razorpay.open();
     } catch (error) {
       console.error("[Razorpay] Checkout failed:", error);

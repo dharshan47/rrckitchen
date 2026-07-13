@@ -69,7 +69,7 @@ export default function MenuGrid({ items: propItems, onItemClick }: MenuGridProp
 
   if (!items.length) {
     return (
-      <div className="grid min-h-96 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+      <div className="grid min-h-96 grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-6">
         <div className="col-span-full flex items-center justify-center">
           <p className="rounded-3xl border border-border bg-card p-8 text-center text-sm text-muted-foreground">
             No matching meals found.
@@ -81,7 +81,7 @@ export default function MenuGrid({ items: propItems, onItemClick }: MenuGridProp
 
   return (
     <ErrorBoundary>
-      <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-6">
         {items.map((item) => (
           <CompoundMenuCard.Root
             key={item.id}

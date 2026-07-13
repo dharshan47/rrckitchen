@@ -257,11 +257,16 @@ function CartContent() {
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-2xl px-4 py-8 lg:px-8">
         <div className="mb-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Your Cart</h1>
-            <p className="text-sm text-muted-foreground">
-              {itemCounts} item{itemCounts !== 1 ? "s" : ""} · ₹{total.toFixed(0)}
-            </p>
+          <div className="flex items-center gap-3">
+            <Link href="/menu" className="md:hidden p-1 -ml-1 text-muted-foreground hover:text-foreground">
+              <ArrowLeft className="h-5 w-5" />
+            </Link>
+            <div>
+              <h1 className="text-2xl font-bold">Your Cart</h1>
+              <p className="text-sm text-muted-foreground">
+                {itemCounts} item{itemCounts !== 1 ? "s" : ""} · ₹{total.toFixed(0)}
+              </p>
+            </div>
           </div>
           <div className="flex gap-2">
             <Button variant="outline" size="sm" onClick={clearCart}>

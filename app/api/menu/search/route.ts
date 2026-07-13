@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
+import { redis } from "@/lib/redis"
+
+const CACHE_TTL = 45
 
 export async function GET(request: Request) {
   const url = new URL(request.url)
@@ -7,6 +10,15 @@ export async function GET(request: Request) {
 
   if (!q || q.length < 1) {
     return NextResponse.json({ dishes: [], kitchens: [] })
+  }
+
+  const cacheKey = `menu:search:${q.toLowerCase().replace(/\s+/g, "_")}`
+
+  const cached = await redis.get(cacheKey)
+  if (cached) {
+    return NextResponse.json(cached, {
+      headers: { "X-Cache": "HIT" },
+    })
   }
 
   const search = q.toLowerCase()
@@ -114,7 +126,7 @@ export async function GET(request: Request) {
     }
   }
 
-  return NextResponse.json({
+  const result = {
     dishes: dishes.map((item) => ({
       id: item.id,
       name: item.name,
@@ -133,5 +145,11 @@ export async function GET(request: Request) {
       totalReviews: k.totalReviews,
       items: itemsByKitchen.get(k.id) ?? [],
     })),
+  }
+
+  await redis.set(cacheKey, result, { ex: CACHE_TTL })
+
+  return NextResponse.json(result, {
+    headers: { "X-Cache": "MISS" },
   })
 }

@@ -11,7 +11,7 @@ function MenuSkeleton() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto flex max-w-7xl flex-col gap-8 px-6 py-10 lg:px-10">
-        <section className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+        <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-6">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
               <Skeleton className="aspect-4/3 w-full rounded-none" />

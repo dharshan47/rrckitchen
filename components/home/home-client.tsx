@@ -1,15 +1,15 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useLayoutEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTomorrowMenu } from "@/hooks/useTomorrowMenu";
-import { useCartActions } from "@/stores";
+import { useCartActions, useMenuActions, useMenuTimeSlot, useMenuFoodType } from "@/stores";
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
 import { CompoundMenuCard } from "@/components/patterns/compound-menu-card";
 import { HeroCarousel } from "./hero-carousel";
 import { CravingsBanner } from "./cravings-banner";
-import { Star, Clock, ChefHat, ArrowRight, TrendingUp, Sparkles, Coffee, Sun, Cookie, Moon, Zap, Bike, BadgePercent } from "lucide-react";
+import { Star, Clock, ChefHat, ArrowRight, TrendingUp, Sparkles, Zap, Bike, BadgePercent } from "lucide-react";
 
 interface MenuItem {
   id: string;
@@ -41,14 +41,8 @@ interface HomeClientProps {
   topRatedKitchens?: KitchenRow[];
   newKitchens?: { id: string; displayName: string; createdAt: string }[];
   recentOrderKitchens?: { id: string; displayName: string }[];
+  initialMenuItems?: MenuItem[];
 }
-
-const timeSlotCategories = [
-  { value: "MORNING", label: "Breakfast", icon: Coffee, href: "/menu/category/breakfast" },
-  { value: "LUNCH", label: "Lunch", icon: Sun, href: "/menu/category/lunch" },
-  { value: "EVENINGSNACKS", label: "Snacks", icon: Cookie, href: "/menu/category/evening-snacks" },
-  { value: "DINNER", label: "Dinner", icon: Moon, href: "/menu/category/dinner" },
-];
 
 const staticOffers = [
   {
@@ -74,12 +68,27 @@ const staticOffers = [
   },
 ];
 
-export function HomeClient({ topRatedKitchens = [], newKitchens = [], recentOrderKitchens = [] }: HomeClientProps) {
+export function HomeClient({ topRatedKitchens = [], newKitchens = [], recentOrderKitchens = [], initialMenuItems }: HomeClientProps) {
   const router = useRouter();
   const { data, isLoading, isError } = useTomorrowMenu();
   const { addToCart } = useCartActions();
+  const { setSelectedTimeSlot, setSelectedFoodType } = useMenuActions();
+  const currentTimeSlot = useMenuTimeSlot();
+  const currentFoodType = useMenuFoodType();
 
-  const apiItems = useMemo(() => (data ?? []) as MenuItem[], [data]);
+  useLayoutEffect(() => {
+    if (currentTimeSlot !== "ALL" || currentFoodType !== "ALL") {
+      setSelectedTimeSlot("ALL");
+      setSelectedFoodType("ALL");
+    }
+  }, [currentTimeSlot, currentFoodType, setSelectedTimeSlot, setSelectedFoodType]);
+
+  const filtersReady = currentTimeSlot === "ALL" && currentFoodType === "ALL";
+
+  const apiItems = useMemo(() => {
+    if (filtersReady && data) return data as MenuItem[];
+    return initialMenuItems ?? [];
+  }, [data, initialMenuItems, filtersReady]);
 
   const handleItemClick = useCallback(
     (item: { id: string }) => { router.push(`/menu/${item.id}`); },
@@ -110,25 +119,7 @@ export function HomeClient({ topRatedKitchens = [], newKitchens = [], recentOrde
           {/* 1. Hero Banner Carousel */}
           <HeroCarousel />
 
-          {/* 2. Quick Category Icons — medium on large screens like Swiggy */}
-          <div className="flex items-center justify-center sm:justify-start gap-3 sm:gap-5 lg:gap-8 overflow-x-auto scrollbar-none py-2">
-            {timeSlotCategories.map((cat) => (
-              <Link
-                key={cat.value}
-                href={cat.href}
-                className="shrink-0 flex flex-col items-center gap-1.5 sm:gap-2 group"
-              >
-                <div className="h-12 w-12 sm:h-14 sm:w-14 lg:h-16 lg:w-16 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                  <cat.icon className="h-5 w-5 sm:h-6 sm:w-6 lg:h-7 lg:w-7 text-primary" />
-                </div>
-                <span className="text-[10px] sm:text-xs lg:text-sm font-semibold text-muted-foreground group-hover:text-foreground transition-colors whitespace-nowrap">
-                  {cat.label}
-                </span>
-              </Link>
-            ))}
-          </div>
-
-          {/* 3. Cravings Banner (logged-in users) */}
+          {/* 2. Cravings Banner (logged-in users) */}
           <CravingsBanner />
 
           {/* 4. Offers for you - Swiggy style */}
@@ -207,70 +198,47 @@ export function HomeClient({ topRatedKitchens = [], newKitchens = [], recentOrde
             </section>
           )}
 
-          {/* 7. Combined Menu (all time slots) */}
-          {isLoading ? (
-            <section>
-              <div className="h-6 w-36 bg-muted rounded animate-pulse mb-3" />
-              <div className="flex lg:hidden gap-3 overflow-x-auto scrollbar-none -mx-3 px-3 pb-2">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <div key={i} className="snap-start shrink-0 w-40 sm:w-48 rounded-xl border border-border bg-card overflow-hidden">
-                    <div className="relative aspect-square w-full bg-white p-3">
-                      <div className="relative h-full w-full">
-                        <div className="h-full w-full bg-muted rounded-sm animate-pulse" />
-                      </div>
-                    </div>
-                    <div className="px-3 pb-4 pt-1.5 space-y-2">
-                      <div className="h-3 w-16 bg-muted rounded animate-pulse" />
-                      <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
-                      <div className="flex items-center justify-between gap-1.5 pt-2">
-                        <div className="flex items-center gap-1.5">
-                          <div className="h-6 w-12 bg-muted rounded animate-pulse" />
-                          <div className="h-4 w-8 bg-muted rounded animate-pulse" />
-                        </div>
-                        <div className="h-7 w-14 bg-muted rounded animate-pulse" />
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="hidden lg:grid lg:grid-cols-6 gap-4">
+          {/* 7. Featured Menu Items (max 6 from all categories) */}
+          <section>
+            <h2 className="text-base sm:text-lg font-bold mb-2 sm:mb-3 flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-primary" />
+              Today&apos;s Featured Meals
+            </h2>
+            {!isLoading || apiItems.length > 0 ? (
+              apiItems.length > 0 ? (
+                <FeaturedItems
+                  items={apiItems}
+                  onItemClick={handleItemClick}
+                  onAddToCart={handleAddToCart}
+                />
+              ) : (
+                <p className="text-center text-sm text-muted-foreground py-6">
+                  No menu items available right now. Check back later!
+                </p>
+              )
+            ) : (
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
                 {Array.from({ length: 6 }).map((_, i) => (
-                  <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
-                    <div className="relative aspect-square w-full bg-white p-3">
-                      <div className="relative h-full w-full">
-                        <div className="h-full w-full bg-muted rounded-sm animate-pulse" />
-                      </div>
-                    </div>
-                    <div className="px-3 pb-4 pt-1.5 space-y-2">
-                      <div className="h-3 w-20 bg-muted rounded animate-pulse" />
-                      <div className="h-4 w-3/4 bg-muted rounded animate-pulse" />
-                      <div className="flex items-center justify-between gap-1.5 pt-2">
-                        <div className="flex items-center gap-1.5">
-                          <div className="h-6 w-14 bg-muted rounded animate-pulse" />
-                          <div className="h-4 w-10 bg-muted rounded animate-pulse" />
-                        </div>
-                        <div className="h-7 w-14 bg-muted rounded animate-pulse" />
+                  <div key={i} className="rounded-xl border border-border bg-card overflow-hidden animate-pulse">
+                    <div className="aspect-square w-full bg-muted" />
+                    <div className="p-3 space-y-2">
+                      <div className="h-3 w-16 bg-muted rounded" />
+                      <div className="h-4 w-3/4 bg-muted rounded" />
+                      <div className="flex items-center justify-between pt-1">
+                        <div className="h-6 w-14 bg-muted rounded" />
+                        <div className="h-7 w-14 bg-muted rounded" />
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-            </section>
-          ) : isError ? (
-            <p className="text-center text-sm text-destructive py-8 sm:py-12">
-              Unable to load menu items right now. Please try again later.
-            </p>
-          ) : apiItems.length > 0 ? (
-            <TimeSlotMenuSections
-              items={apiItems}
-              onItemClick={handleItemClick}
-              onAddToCart={handleAddToCart}
-            />
-          ) : (
-            <p className="text-center text-sm text-muted-foreground py-6 sm:py-8">
-              No menu items available right now. Check back later!
-            </p>
-          )}
+            )}
+            {isError && !apiItems.length && (
+              <p className="text-center text-sm text-destructive py-2">
+                Unable to load menu items right now. Please try again later.
+              </p>
+            )}
+          </section>
 
           {/* 8. New Kitchens */}
           {newKitchens.length > 0 && (
@@ -345,7 +313,7 @@ function HowItWorksSection() {
   );
 }
 
-function TimeSlotMenuSections({
+function FeaturedItems({
   items,
   onItemClick,
   onAddToCart,
@@ -354,133 +322,46 @@ function TimeSlotMenuSections({
   onItemClick: (item: { id: string }) => void;
   onAddToCart: (id: string) => void;
 }) {
-  const grouped = useMemo(() => {
-    const map: Record<string, MenuItem[]> = {};
-    for (const item of items) {
-      const slot = item.timeSlot || "OTHER";
-      if (!map[slot]) map[slot] = [];
-      map[slot].push(item);
-    }
-    return map;
-  }, [items]);
-
-  const slotOrder = ["MORNING", "LUNCH", "EVENINGSNACKS", "DINNER"];
-  const slotLabels: Record<string, { label: string; icon: typeof Coffee; href: string }> = {
-    MORNING: { label: "Breakfast", icon: Coffee, href: "/menu/category/breakfast" },
-    LUNCH: { label: "Lunch", icon: Sun, href: "/menu/category/lunch" },
-    EVENINGSNACKS: { label: "Snacks", icon: Cookie, href: "/menu/category/evening-snacks" },
-    DINNER: { label: "Dinner", icon: Moon, href: "/menu/category/dinner" },
-  };
-
-  const MAX_CARDS = 2;
+  const featured = useMemo(() => items.slice(0, 6), [items]);
 
   return (
-    <>
-      {slotOrder.map((slot) => {
-        const slotItems = grouped[slot];
-        if (!slotItems?.length) return null;
-        const info = slotLabels[slot];
-        const visible = slotItems.slice(0, MAX_CARDS);
-        const hasMore = slotItems.length > MAX_CARDS;
-
-        return (
-          <section key={slot}>
-            <div className="flex items-center justify-between mb-2 sm:mb-3">
-              <h2 className="text-base sm:text-lg font-bold flex items-center gap-2">
-                <info.icon className="h-4 w-4 text-primary" />
-                {info.label}
-              </h2>
-              <Link
-                href={info.href}
-                className="text-xs sm:text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
-              >
-                See all
-              </Link>
-            </div>
-
-            {/* Mobile: horizontal scroll (2 cards visible) */}
-            <div className="flex lg:hidden gap-3 overflow-x-auto scrollbar-none -mx-3 px-3 pb-2 snap-x snap-mandatory">
-              {visible.map((item) => (
-                <div key={item.id} className="snap-start shrink-0 w-40 sm:w-48">
-                  <CompoundMenuCard.Root
-                    item={{
-                      id: item.id,
-                      name: item.name,
-                      price: Number(item.price),
-                      compareAtPrice: item.compareAtPrice ?? null,
-                      foodType: item.foodType,
-                      timeSlot: item.timeSlot,
-                      kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
-                      kitchenRating: item.menu?.kitchenPartner?.avgRating != null ? Number(item.menu?.kitchenPartner?.avgRating) : null,
-                      totalReviews: item.menu?.kitchenPartner?.totalReviews ?? 0,
-                      description: item.description,
-                      imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
-                    }}
-                    onAddToCart={onAddToCart}
-                    onItemClick={onItemClick}
-                  >
-                    <CompoundMenuCard.ImageSection>
-                      <CompoundMenuCard.BadgeRibbon />
-                      <CompoundMenuCard.WishlistButton />
-                    </CompoundMenuCard.ImageSection>
-                    <CompoundMenuCard.Header />
-                    <CompoundMenuCard.Footer />
-                  </CompoundMenuCard.Root>
-                </div>
-              ))}
-              {hasMore && (
-                <Link
-                  href={info.href}
-                  className="snap-start shrink-0 w-40 sm:w-48 rounded-3xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary/60 bg-muted/30"
-                >
-                  <span className="text-3xl font-light">→</span>
-                  <span className="text-xs font-semibold">View all</span>
-                </Link>
-              )}
-            </div>
-
-            {/* Desktop: grid */}
-            <div className="hidden lg:grid lg:grid-cols-6 gap-4">
-              {visible.map((item) => (
-                <CompoundMenuCard.Root
-                  key={item.id}
-                  item={{
-                    id: item.id,
-                    name: item.name,
-                    price: Number(item.price),
-                    compareAtPrice: item.compareAtPrice ?? null,
-                    foodType: item.foodType,
-                    timeSlot: item.timeSlot,
-                    kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
-                    kitchenRating: item.menu?.kitchenPartner?.avgRating ?? null,
-                    totalReviews: item.menu?.kitchenPartner?.totalReviews ?? 0,
-                    description: item.description,
-                    imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
-                  }}
-                  onAddToCart={onAddToCart}
-                  onItemClick={onItemClick}
-                >
-                  <CompoundMenuCard.ImageSection>
-                    <CompoundMenuCard.BadgeRibbon />
-                    <CompoundMenuCard.WishlistButton />
-                  </CompoundMenuCard.ImageSection>
-                  <CompoundMenuCard.Header />
-                  <CompoundMenuCard.Footer />
-                </CompoundMenuCard.Root>
-              ))}
-              {hasMore && (
-                <Link
-                  href={info.href}
-                  className="rounded-xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary/60 bg-muted/30 min-h-50"
-                >
-                  <span className="text-3xl font-light">→</span>
-                  <span className="text-sm font-semibold">View all</span>
-                </Link>
-              )}
-            </div>
-          </section>
-        );
-      })}
-    </>
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+      {featured.map((item) => (
+        <CompoundMenuCard.Root
+          key={item.id}
+          item={{
+            id: item.id,
+            name: item.name,
+            price: Number(item.price),
+            compareAtPrice: item.compareAtPrice ?? null,
+            foodType: item.foodType,
+            timeSlot: item.timeSlot,
+            kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
+            kitchenRating: item.menu?.kitchenPartner?.avgRating != null ? Number(item.menu?.kitchenPartner?.avgRating) : null,
+            totalReviews: item.menu?.kitchenPartner?.totalReviews ?? 0,
+            description: item.description,
+            imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
+          }}
+          onAddToCart={onAddToCart}
+          onItemClick={onItemClick}
+        >
+          <CompoundMenuCard.ImageSection>
+            <CompoundMenuCard.BadgeRibbon />
+            <CompoundMenuCard.WishlistButton />
+          </CompoundMenuCard.ImageSection>
+          <CompoundMenuCard.Header />
+          <CompoundMenuCard.Footer />
+        </CompoundMenuCard.Root>
+      ))}
+      {featured.length > 0 && featured.length < 6 && (
+        <Link
+          href="/menu"
+          className="rounded-xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary/60 bg-muted/30 min-h-50"
+        >
+          <span className="text-3xl font-light">→</span>
+          <span className="text-sm font-semibold">View all menu</span>
+        </Link>
+      )}
+    </div>
   );
 }

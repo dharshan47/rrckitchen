@@ -19,20 +19,35 @@ export async function getUserOrders() {
       userId: session.user.id,
       payment: { OR: [{ status: "SUCCESS" }, { provider: "CASH_ON_DELIVERY" }] },
     },
-    include: {
+    select: {
+      id: true,
+      status: true,
+      serviceDate: true,
+      timeSlot: true,
+      totalAmount: true,
+      deliveryOtp: true,
+      createdAt: true,
       orderItems: {
-        include: {
-          menuItem: { select: { name: true, foodType: true, photos: { take: 1, orderBy: { sortOrder: "asc" } } } },
+        select: {
+          quantity: true,
+          unitPrice: true,
+          kitchenPartnerId: true,
+          menuItem: {
+            select: {
+              name: true,
+              foodType: true,
+              photos: { take: 1, orderBy: { sortOrder: "asc" }, select: { imageUrl: true } },
+            },
+          },
           kitchenPartner: {
-            include: {
+            select: {
+              id: true,
+              kitchenAlias: { select: { displayName: true } },
               deliveryPartnerAssignments: {
                 where: { status: "DELIVERED" },
-                include: {
+                select: {
                   deliveryPartner: {
-                    select: {
-                      id: true,
-                      user: { select: { name: true } },
-                    },
+                    select: { id: true, user: { select: { name: true } } },
                   },
                 },
                 take: 1,
@@ -47,6 +62,7 @@ export async function getUserOrders() {
       review: { select: { id: true, rating: true } },
     },
     orderBy: { createdAt: "desc" },
+    take: 20,
   })
 
   return orders.map((o) => {

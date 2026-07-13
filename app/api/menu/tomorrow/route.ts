@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { getTomorrowMenu } from "@/actions/catalog/menu";
+import { redis } from "@/lib/redis";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+
+const CACHE_TTL = 30;
 
 export async function GET(request: Request) {
   try {
@@ -11,7 +14,21 @@ export async function GET(request: Request) {
     const foodType = url.searchParams.get("foodType") ?? "ALL";
     const timeSlot = url.searchParams.get("timeSlot") ?? "ALL";
 
+    const cacheKey = `menu:tomorrow:${foodType}:${timeSlot}:${q || "all"}`;
+
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached, {
+        headers: {
+          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+          "X-Cache": "HIT",
+        },
+      });
+    }
+
     const menuItems = await getTomorrowMenu({ query: q, foodType, timeSlot });
+
+    await redis.set(cacheKey, JSON.parse(JSON.stringify(menuItems)), { ex: CACHE_TTL });
 
     return NextResponse.json(menuItems, {
       headers: {
@@ -19,6 +36,7 @@ export async function GET(request: Request) {
         "CDN-Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
         "Vercel-CDN-Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
         "Surrogate-Control": "public, max-age=30",
+        "X-Cache": "MISS",
       },
     });
   } catch (error) {

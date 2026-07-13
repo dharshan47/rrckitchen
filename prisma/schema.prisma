@@ -195,6 +195,7 @@ model KitchenPartner {
 
   @@index([status])
   @@index([serviceZoneId])
+  @@index([avgRating])
 }
 
 enum PartnerStatus {
@@ -270,6 +271,7 @@ model Menu {
   menuItems      MenuItem[]
 
   @@index([kitchenPartnerId])
+  @@index([isActive])
 }
 
 model MenuItem {
@@ -296,6 +298,9 @@ model MenuItem {
   wishlistItems     WishlistItem[]
 
   @@index([menuId, timeSlot, foodType])
+  @@index([isAvailable, timeSlot, foodType])
+  @@index([isAvailable, foodType, timeSlot])
+  @@index([isAvailable, menuId])
 }
 
 enum FoodType {

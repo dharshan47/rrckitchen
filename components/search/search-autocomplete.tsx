@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, keepPreviousData } from "@tanstack/react-query"
 import { Search, MapPin, UtensilsCrossed } from "lucide-react"
 import Image from "next/image"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
@@ -60,6 +60,7 @@ export function SearchAutocomplete({
       return res.json()
     },
     enabled: debouncedQuery.length >= 1,
+    placeholderData: keepPreviousData,
     staleTime: 30_000,
   })
 

@@ -24,7 +24,7 @@ const foodTypeTabs: { label: string; value: FoodTypeFilter }[] = [
 
 function MenuGridFallback() {
   return (
-    <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
+    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-6">
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} className="rounded-xl border border-border bg-card overflow-hidden">
           <div className="relative aspect-square w-full overflow-hidden bg-muted">

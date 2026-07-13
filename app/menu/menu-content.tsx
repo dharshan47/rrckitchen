@@ -2,11 +2,12 @@
 
 import { useCallback, useMemo } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { useTomorrowMenu } from "@/hooks/useTomorrowMenu";
 import { CompoundMenuCard } from "@/components/patterns/compound-menu-card";
 import { useCartActions } from "@/stores";
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
-import { Coffee, UtensilsCrossed, Pizza, Moon } from "lucide-react";
+import { Coffee, UtensilsCrossed, Pizza, Moon, ArrowRight } from "lucide-react";
 
 interface MenuItem {
   id: string;
@@ -29,15 +30,16 @@ interface MenuItem {
 interface SlotGroup {
   key: string;
   label: string;
+  slug: string;
   icon: React.ComponentType<{ className?: string }>;
   items: MenuItem[];
 }
 
-const SLOTS: { key: string; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { key: "MORNING", label: "Breakfast", icon: Coffee },
-  { key: "LUNCH", label: "Lunch", icon: UtensilsCrossed },
-  { key: "EVENINGSNACKS", label: "Snacks", icon: Pizza },
-  { key: "DINNER", label: "Dinner", icon: Moon },
+const SLOTS: { key: string; label: string; slug: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { key: "MORNING", label: "Breakfast", slug: "breakfast", icon: Coffee },
+  { key: "LUNCH", label: "Lunch", slug: "lunch", icon: UtensilsCrossed },
+  { key: "EVENINGSNACKS", label: "Snacks", slug: "evening-snacks", icon: Pizza },
+  { key: "DINNER", label: "Dinner", slug: "dinner", icon: Moon },
 ];
 
 function getKitchenName(item: MenuItem): string {
@@ -101,14 +103,23 @@ export function MenuContent() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8 sm:py-10 lg:px-10 space-y-8 sm:space-y-10">
           {slotGroups.map((group) => (
             <section key={group.key}>
-              <div className="flex items-center gap-2 mb-4 sm:mb-5">
-                <group.icon className="h-5 w-5 text-primary" />
-                <h2 className="text-lg sm:text-xl font-bold">{group.label}</h2>
-                <span className="text-xs sm:text-sm text-muted-foreground">
-                  ({group.items.length})
-                </span>
+              <div className="flex items-center justify-between mb-4 sm:mb-5">
+                <div className="flex items-center gap-2">
+                  <group.icon className="h-5 w-5 text-primary" />
+                  <h2 className="text-lg sm:text-xl font-bold">{group.label}</h2>
+                  <span className="text-xs sm:text-sm text-muted-foreground">
+                    ({group.items.length})
+                  </span>
+                </div>
+                <Link
+                  href={`/menu/category/${group.slug}`}
+                  className="text-xs sm:text-sm font-semibold text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
+                >
+                  See all
+                  <ArrowRight className="h-3 w-3" />
+                </Link>
               </div>
-              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-6">
                 {group.items.map((item) => (
                   <CompoundMenuCard.Root
                     key={item.id}

@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { SiteHeader, SiteFooter } from "@/components/site";
 import { SwUpdateBanner } from "@/components/patterns/sw-update-banner";
 import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init";
+import { InstallPrompt } from "@/components/patterns/install-prompt";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -25,6 +26,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <SiteFooter />
       <SwUpdateBanner />
       <PushSubscriptionInit />
+      <InstallPrompt />
     </>
   );
 }
