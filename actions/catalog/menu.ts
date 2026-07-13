@@ -90,12 +90,18 @@ export async function getMenuItemById(id: string) {
 
   if (!item) return null;
 
-  const avgRating = item.menu?.kitchenPartnerId
+  const kitchenPartnerId = item.menu?.kitchenPartnerId;
+  const avgRating = kitchenPartnerId
     ? await prisma.review.aggregate({
-        where: { kitchenPartnerId: item.menu.kitchenPartnerId },
+        where: { kitchenPartnerId },
         _avg: { rating: true },
       })
     : null;
+  const totalReviews = kitchenPartnerId
+    ? await prisma.review.count({
+        where: { kitchenPartnerId },
+      })
+    : 0;
 
   return {
     id: item.id,
@@ -107,7 +113,7 @@ export async function getMenuItemById(id: string) {
     timeSlot: item.timeSlot,
     isAvailable: item.isAvailable,
     avgRating: avgRating?._avg.rating ? Math.round(avgRating._avg.rating * 10) / 10 : null,
-    totalReviews: item._count.orderItems,
+    totalReviews,
     menu: item.menu
       ? {
           kitchenPartner: item.menu.kitchenPartner

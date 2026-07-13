@@ -202,17 +202,17 @@ export default function AccountProfilePage() {
               </div>
               <div className="space-y-1 min-w-0">
                 <h2 className="text-lg font-semibold truncate">{user.name || "Customer"}</h2>
-                <div className="flex flex-col gap-1 text-sm text-muted-foreground">
+                <div className="flex flex-col gap-1.5 text-sm text-muted-foreground">
                   {user.phoneNumber && (
-                    <span className="flex items-center gap-2">
-                      <Phone className="h-3.5 w-3.5" />
-                      {user.phoneNumber}
+                    <span className="flex items-center gap-2.5">
+                      <Phone className="h-4 w-4 shrink-0 text-foreground/60" />
+                      <span className="truncate">{user.phoneNumber}</span>
                     </span>
                   )}
                   {user.email && (
-                    <span className="flex items-center gap-2">
-                      <Mail className="h-3.5 w-3.5" />
-                      {user.email}
+                    <span className="flex items-center gap-2.5">
+                      <Mail className="h-4 w-4 shrink-0 text-foreground/60" />
+                      <span className="truncate">{user.email}</span>
                     </span>
                   )}
                 </div>

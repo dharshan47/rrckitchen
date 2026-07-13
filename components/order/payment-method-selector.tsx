@@ -19,7 +19,7 @@ export function PaymentMethodSelector({ selected, onSelect, codAvailable = true,
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium">Payment Method</label>
+      <label className="text-sm font-medium block mb-3">Payment Method</label>
       <div className="grid gap-2">
         {methods.map((method) => {
           const isSelected = selected === method.id;

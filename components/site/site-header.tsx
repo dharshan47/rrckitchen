@@ -98,7 +98,7 @@ export function SiteHeader() {
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors">
+                  <button className="h-8 w-8 flex items-center justify-center rounded-full border border-border hover:bg-muted transition-colors">
                     <User className="h-5 w-5" />
                   </button>
                 </DropdownMenuTrigger>

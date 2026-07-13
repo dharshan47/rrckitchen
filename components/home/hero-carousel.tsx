@@ -49,7 +49,7 @@ export function HeroCarousel() {
             href={slide.cta}
             className="flex-[0_0_100%] min-w-0"
           >
-            <div className={`bg-linear-to-r ${slide.gradient} flex items-center gap-4 sm:gap-5 px-4 sm:px-6 py-5 sm:py-6 min-h-[84px] sm:min-h-[96px]`}>
+            <div             className={`bg-linear-to-r ${slide.gradient} flex items-center gap-4 sm:gap-5 px-4 sm:px-6 py-5 sm:py-6 min-h-22.5 sm:min-h-25`}>
               <div className={`${slide.iconBg} ${slide.iconColor} h-10 w-10 sm:h-12 sm:w-12 rounded-xl flex items-center justify-center shrink-0`}>
                 <slide.icon className="h-5 w-5 sm:h-6 sm:w-6" />
               </div>

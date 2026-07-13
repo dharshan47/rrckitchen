@@ -29,7 +29,7 @@ export function OrderTypeSelector({ selected, onSelect }: OrderTypeSelectorProps
 
   return (
     <div className="space-y-2">
-      <label className="text-sm font-medium">Order Type</label>
+      <label className="text-sm font-medium block mb-3">Order Type</label>
       <div className="grid grid-cols-2 gap-2">
         {options.map((option) => {
           const isSelected = selected === option.id;

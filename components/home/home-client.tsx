@@ -9,7 +9,7 @@ import { ErrorBoundary } from "@/components/patterns/error-boundary";
 import { CompoundMenuCard } from "@/components/patterns/compound-menu-card";
 import { HeroCarousel } from "./hero-carousel";
 import { CravingsBanner } from "./cravings-banner";
-import { Star, Clock, ChefHat, ArrowRight, TrendingUp, Sparkles, Coffee, Sun, Cookie, Moon, Zap, Bike, IndianRupee, BadgePercent } from "lucide-react";
+import { Star, Clock, ChefHat, ArrowRight, TrendingUp, Sparkles, Coffee, Sun, Cookie, Moon, Zap, Bike, BadgePercent } from "lucide-react";
 
 interface MenuItem {
   id: string;
@@ -49,8 +49,6 @@ const timeSlotCategories = [
   { value: "EVENINGSNACKS", label: "Snacks", icon: Cookie, href: "/menu/category/evening-snacks" },
   { value: "DINNER", label: "Dinner", icon: Moon, href: "/menu/category/dinner" },
 ];
-
-const MAX_VISIBLE_ITEMS = 6;
 
 const staticOffers = [
   {
@@ -107,7 +105,7 @@ export function HomeClient({ topRatedKitchens = [], newKitchens = [], recentOrde
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-8 py-3 sm:py-6 space-y-4 sm:space-y-6 lg:space-y-8">
+      <div className="mx-auto max-w-7xl px-3 sm:px-4 lg:px-8 pt-1 sm:pt-3 pb-3 sm:pb-6 space-y-4 sm:space-y-6 lg:space-y-8">
         <ErrorBoundary>
           {/* 1. Hero Banner Carousel */}
           <HeroCarousel />
@@ -263,7 +261,7 @@ export function HomeClient({ topRatedKitchens = [], newKitchens = [], recentOrde
               Unable to load menu items right now. Please try again later.
             </p>
           ) : apiItems.length > 0 ? (
-            <CombinedMenuSection
+            <TimeSlotMenuSections
               items={apiItems}
               onItemClick={handleItemClick}
               onAddToCart={handleAddToCart}
@@ -347,7 +345,7 @@ function HowItWorksSection() {
   );
 }
 
-function CombinedMenuSection({
+function TimeSlotMenuSections({
   items,
   onItemClick,
   onAddToCart,
@@ -356,104 +354,133 @@ function CombinedMenuSection({
   onItemClick: (item: { id: string }) => void;
   onAddToCart: (id: string) => void;
 }) {
-  const visibleItems = items.slice(0, MAX_VISIBLE_ITEMS);
-  const hasMore = items.length > MAX_VISIBLE_ITEMS;
+  const grouped = useMemo(() => {
+    const map: Record<string, MenuItem[]> = {};
+    for (const item of items) {
+      const slot = item.timeSlot || "OTHER";
+      if (!map[slot]) map[slot] = [];
+      map[slot].push(item);
+    }
+    return map;
+  }, [items]);
+
+  const slotOrder = ["MORNING", "LUNCH", "EVENINGSNACKS", "DINNER"];
+  const slotLabels: Record<string, { label: string; icon: typeof Coffee; href: string }> = {
+    MORNING: { label: "Breakfast", icon: Coffee, href: "/menu/category/breakfast" },
+    LUNCH: { label: "Lunch", icon: Sun, href: "/menu/category/lunch" },
+    EVENINGSNACKS: { label: "Snacks", icon: Cookie, href: "/menu/category/evening-snacks" },
+    DINNER: { label: "Dinner", icon: Moon, href: "/menu/category/dinner" },
+  };
+
+  const MAX_CARDS = 2;
 
   return (
-    <section>
-      <div className="flex items-center justify-between mb-2 sm:mb-3">
-        <h2 className="text-base sm:text-lg font-bold flex items-center gap-2">
-          <IndianRupee className="h-4 w-4 text-primary" />
-          Menu items
-        </h2>
-        <Link
-          href="/menu"
-          className="text-xs sm:text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
-        >
-          See all
-        </Link>
-      </div>
+    <>
+      {slotOrder.map((slot) => {
+        const slotItems = grouped[slot];
+        if (!slotItems?.length) return null;
+        const info = slotLabels[slot];
+        const visible = slotItems.slice(0, MAX_CARDS);
+        const hasMore = slotItems.length > MAX_CARDS;
 
-      {/* Mobile: horizontal scroll */}
-      <div className="flex lg:hidden gap-3 overflow-x-auto scrollbar-none -mx-3 px-3 pb-2 snap-x snap-mandatory">
-        {visibleItems.map((item) => (
-          <div key={item.id} className="snap-start shrink-0 w-40 sm:w-48">
-            <CompoundMenuCard.Root
-              item={{
-                id: item.id,
-                name: item.name,
-                price: Number(item.price),
-                compareAtPrice: item.compareAtPrice ?? null,
-                foodType: item.foodType,
-                timeSlot: item.timeSlot,
-                kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
-kitchenRating: item.menu?.kitchenPartner?.avgRating != null ? Number(item.menu?.kitchenPartner?.avgRating) : null,
-                totalReviews: item.menu?.kitchenPartner?.totalReviews ?? 0,
-                description: item.description,
-                imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
-              }}
-              onAddToCart={onAddToCart}
-              onItemClick={onItemClick}
-            >
-              <CompoundMenuCard.ImageSection>
-                <CompoundMenuCard.BadgeRibbon />
-                <CompoundMenuCard.WishlistButton />
-              </CompoundMenuCard.ImageSection>
-              <CompoundMenuCard.Header />
-              <CompoundMenuCard.Footer />
-            </CompoundMenuCard.Root>
-          </div>
-        ))}
-        {hasMore && (
-          <Link
-            href="/menu"
-            className="snap-start shrink-0 w-40 sm:w-48 rounded-3xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary/60 bg-muted/30"
-          >
-            <span className="text-3xl font-light">→</span>
-            <span className="text-xs font-semibold">View all</span>
-          </Link>
-        )}
-      </div>
+        return (
+          <section key={slot}>
+            <div className="flex items-center justify-between mb-2 sm:mb-3">
+              <h2 className="text-base sm:text-lg font-bold flex items-center gap-2">
+                <info.icon className="h-4 w-4 text-primary" />
+                {info.label}
+              </h2>
+              <Link
+                href={info.href}
+                className="text-xs sm:text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+              >
+                See all
+              </Link>
+            </div>
 
-      {/* Desktop: 6-column grid */}
-      <div className="hidden lg:grid lg:grid-cols-6 gap-4">
-        {visibleItems.map((item) => (
-          <CompoundMenuCard.Root
-            key={item.id}
-            item={{
-              id: item.id,
-              name: item.name,
-              price: Number(item.price),
-              compareAtPrice: item.compareAtPrice ?? null,
-              foodType: item.foodType,
-              timeSlot: item.timeSlot,
-              kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
-              kitchenRating: item.menu?.kitchenPartner?.avgRating ?? null,
-              totalReviews: item.menu?.kitchenPartner?.totalReviews ?? 0,
-              description: item.description,
-              imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
-            }}
-            onAddToCart={onAddToCart}
-            onItemClick={onItemClick}
-          >
-            <CompoundMenuCard.ImageSection>
-              <CompoundMenuCard.BadgeRibbon />
-              <CompoundMenuCard.WishlistButton />
-            </CompoundMenuCard.ImageSection>
-            <CompoundMenuCard.Header />
-            <CompoundMenuCard.Footer />
-          </CompoundMenuCard.Root>
-        ))}
-        {hasMore && (
-          <Link
-            href="/menu"
-            className="rounded-xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary/60 bg-muted/30 min-h-50"
-          >
-            <span className="text-3xl font-light">→</span>
-            <span className="text-sm font-semibold">View all</span>
-          </Link>
-        )}
-      </div>
-    </section>
+            {/* Mobile: horizontal scroll (2 cards visible) */}
+            <div className="flex lg:hidden gap-3 overflow-x-auto scrollbar-none -mx-3 px-3 pb-2 snap-x snap-mandatory">
+              {visible.map((item) => (
+                <div key={item.id} className="snap-start shrink-0 w-40 sm:w-48">
+                  <CompoundMenuCard.Root
+                    item={{
+                      id: item.id,
+                      name: item.name,
+                      price: Number(item.price),
+                      compareAtPrice: item.compareAtPrice ?? null,
+                      foodType: item.foodType,
+                      timeSlot: item.timeSlot,
+                      kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
+                      kitchenRating: item.menu?.kitchenPartner?.avgRating != null ? Number(item.menu?.kitchenPartner?.avgRating) : null,
+                      totalReviews: item.menu?.kitchenPartner?.totalReviews ?? 0,
+                      description: item.description,
+                      imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
+                    }}
+                    onAddToCart={onAddToCart}
+                    onItemClick={onItemClick}
+                  >
+                    <CompoundMenuCard.ImageSection>
+                      <CompoundMenuCard.BadgeRibbon />
+                      <CompoundMenuCard.WishlistButton />
+                    </CompoundMenuCard.ImageSection>
+                    <CompoundMenuCard.Header />
+                    <CompoundMenuCard.Footer />
+                  </CompoundMenuCard.Root>
+                </div>
+              ))}
+              {hasMore && (
+                <Link
+                  href={info.href}
+                  className="snap-start shrink-0 w-40 sm:w-48 rounded-3xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary/60 bg-muted/30"
+                >
+                  <span className="text-3xl font-light">→</span>
+                  <span className="text-xs font-semibold">View all</span>
+                </Link>
+              )}
+            </div>
+
+            {/* Desktop: grid */}
+            <div className="hidden lg:grid lg:grid-cols-6 gap-4">
+              {visible.map((item) => (
+                <CompoundMenuCard.Root
+                  key={item.id}
+                  item={{
+                    id: item.id,
+                    name: item.name,
+                    price: Number(item.price),
+                    compareAtPrice: item.compareAtPrice ?? null,
+                    foodType: item.foodType,
+                    timeSlot: item.timeSlot,
+                    kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
+                    kitchenRating: item.menu?.kitchenPartner?.avgRating ?? null,
+                    totalReviews: item.menu?.kitchenPartner?.totalReviews ?? 0,
+                    description: item.description,
+                    imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
+                  }}
+                  onAddToCart={onAddToCart}
+                  onItemClick={onItemClick}
+                >
+                  <CompoundMenuCard.ImageSection>
+                    <CompoundMenuCard.BadgeRibbon />
+                    <CompoundMenuCard.WishlistButton />
+                  </CompoundMenuCard.ImageSection>
+                  <CompoundMenuCard.Header />
+                  <CompoundMenuCard.Footer />
+                </CompoundMenuCard.Root>
+              ))}
+              {hasMore && (
+                <Link
+                  href={info.href}
+                  className="rounded-xl border-2 border-dashed border-border hover:border-primary/40 transition-colors flex flex-col items-center justify-center gap-2 text-muted-foreground hover:text-primary/60 bg-muted/30 min-h-50"
+                >
+                  <span className="text-3xl font-light">→</span>
+                  <span className="text-sm font-semibold">View all</span>
+                </Link>
+              )}
+            </div>
+          </section>
+        );
+      })}
+    </>
   );
 }

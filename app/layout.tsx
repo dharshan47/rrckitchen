@@ -37,6 +37,7 @@ export const metadata: Metadata = {
     ],
     apple: "/icons/icon-192x192.png",
   },
+  manifest: "/manifest.webmanifest",
   other: {
     "mobile-web-app-capable": "yes",
   },

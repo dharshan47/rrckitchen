@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Spinner } from "@/components/ui/spinner";
 import { SwUpdateBanner } from "@/components/patterns/sw-update-banner";
 import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init";
 import { useSession, signOut } from "@/lib/auth-client";
@@ -79,8 +80,16 @@ export default function AdminLayout({
     }
   }, [session, isPending, router, isPublicPath, pathname]);
 
-  if (isPublicPath || isPending) {
+  if (isPublicPath) {
     return <>{children}</>;
+  }
+
+  if (isPending) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center" role="status" aria-label="Loading admin dashboard">
+        <Spinner className="size-8 text-muted-foreground" />
+      </div>
+    );
   }
 
   if (!session || session.user.role !== "admin") {

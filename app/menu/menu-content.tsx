@@ -108,34 +108,33 @@ export function MenuContent() {
                   ({group.items.length})
                 </span>
               </div>
-              <div className="grid gap-px sm:grid-cols-2 lg:grid-cols-3 bg-border rounded-xl overflow-hidden">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
                 {group.items.map((item) => (
-                  <div key={item.id} className="bg-card">
-                    <CompoundMenuCard.Root
-                      item={{
-                        id: item.id,
-                        name: item.name,
-                        price: Number(item.price),
-                        compareAtPrice: item.compareAtPrice ? Number(item.compareAtPrice) : null,
-                        foodType: item.foodType,
-                        timeSlot: item.timeSlot,
-                        kitchenName: getKitchenName(item),
-                        kitchenRating: (item.menu?.kitchenPartner as { avgRating?: number | null })?.avgRating != null ? Number((item.menu?.kitchenPartner as { avgRating?: number | null })?.avgRating) : null,
-                        totalReviews: (item.menu?.kitchenPartner as { totalReviews?: number })?.totalReviews ?? 0,
-                        description: item.description,
-                        imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
-                      }}
-                      onAddToCart={handleAddToCart}
-                      onItemClick={handleItemClick}
-                    >
-                      <CompoundMenuCard.ImageSection>
-                        <CompoundMenuCard.BadgeRibbon />
-                        <CompoundMenuCard.WishlistButton />
-                      </CompoundMenuCard.ImageSection>
-                      <CompoundMenuCard.Header />
-                      <CompoundMenuCard.Footer />
-                    </CompoundMenuCard.Root>
-                  </div>
+                  <CompoundMenuCard.Root
+                    key={item.id}
+                    item={{
+                      id: item.id,
+                      name: item.name,
+                      price: Number(item.price),
+                      compareAtPrice: item.compareAtPrice ? Number(item.compareAtPrice) : null,
+                      foodType: item.foodType,
+                      timeSlot: item.timeSlot,
+                      kitchenName: getKitchenName(item),
+                      kitchenRating: (item.menu?.kitchenPartner as { avgRating?: number | null })?.avgRating != null ? Number((item.menu?.kitchenPartner as { avgRating?: number | null })?.avgRating) : null,
+                      totalReviews: (item.menu?.kitchenPartner as { totalReviews?: number })?.totalReviews ?? 0,
+                      description: item.description,
+                      imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
+                    }}
+                    onAddToCart={handleAddToCart}
+                    onItemClick={handleItemClick}
+                  >
+                    <CompoundMenuCard.ImageSection>
+                      <CompoundMenuCard.BadgeRibbon />
+                      <CompoundMenuCard.WishlistButton />
+                    </CompoundMenuCard.ImageSection>
+                    <CompoundMenuCard.Header />
+                    <CompoundMenuCard.Footer />
+                  </CompoundMenuCard.Root>
                 ))}
               </div>
             </section>

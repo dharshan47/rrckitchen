@@ -222,7 +222,7 @@ function LocationDialogInner({ onClose }: { onClose: () => void }) {
         )}
 
         {step === "select-location" && (
-          <div className="p-6 pb-0 space-y-5">
+            <div className="p-6 pb-0 space-y-4">
             <LocationAutocomplete
               placeholder="Search Location in Thanjavur"
               onPlaceSelect={handlePlaceFromAutocomplete}
@@ -230,20 +230,20 @@ function LocationDialogInner({ onClose }: { onClose: () => void }) {
             <div className="rounded-xl overflow-hidden border border-border">
               <ThanjavurMap
                 markerPosition={selectedPos ? [selectedPos.lat, selectedPos.lng] : undefined}
-                height="300px"
+                height="220px"
                 onLocationSelect={handleMapSelect}
                 interactive={true}
               />
             </div>
             {mapPicked ? (
-              <p className="text-xs text-green-600 text-center flex items-center justify-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5" />
-                Location selected. Tap Confirm to set.
+              <p className="text-xs text-green-600 text-center flex items-center justify-center gap-1.5 pb-1">
+                <MapPin className="h-3.5 w-3.5 shrink-0" />
+                <span>Location selected. Tap Confirm to set.</span>
               </p>
             ) : (
-              <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5">
-                <MapPin className="h-3.5 w-3.5" />
-                Click on the map to drop a pin or search above
+              <p className="text-xs text-muted-foreground text-center flex items-center justify-center gap-1.5 pb-1">
+                <MapPin className="h-3.5 w-3.5 shrink-0" />
+                <span>Click on the map to drop a pin or search above</span>
               </p>
             )}
           </div>
@@ -251,27 +251,27 @@ function LocationDialogInner({ onClose }: { onClose: () => void }) {
       </div>
 
       {step === "select-location" && (
-        <div className="p-6 shrink-0 border-t border-border">
+        <div className="px-4 py-4 shrink-0 border-t border-border">
           <div className="flex gap-2">
             <button
               onClick={handleUseCurrentLocation}
               disabled={busy}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-border py-3 text-sm font-medium hover:bg-muted/50 transition-colors disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-xl border border-border py-2.5 text-xs font-medium hover:bg-muted/50 transition-colors disabled:opacity-50"
             >
-              <LocateFixed className="h-4 w-4" />
-              {busy ? "Detecting..." : "Current Location"}
+              <LocateFixed className="h-3.5 w-3.5 shrink-0" />
+              <span>{busy ? "Detecting..." : "Current Location"}</span>
             </button>
             <button
               onClick={handleConfirmMapLocation}
               disabled={!selectedPos || busy}
-              className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
+              className="flex-1 flex items-center justify-center gap-1.5 rounded-xl bg-primary py-2.5 text-xs font-medium text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               {busy ? (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
               ) : (
-                <MapPin className="h-4 w-4" />
+                <MapPin className="h-3.5 w-3.5 shrink-0" />
               )}
-              {busy ? "Locating..." : "Confirm Location"}
+              <span>{busy ? "Locating..." : "Confirm Location"}</span>
             </button>
           </div>
         </div>

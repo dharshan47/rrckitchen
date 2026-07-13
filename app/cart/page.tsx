@@ -18,6 +18,7 @@ import { useCartCoupon, useCartOrderType, useCartActions, useMenuDeliveryAddress
 import { CouponInput } from "@/components/order/coupon-input";
 import { PaymentMethodSelector, type PaymentMethod } from "@/components/order/payment-method-selector";
 import { OrderTypeSelector } from "@/components/order/order-type-selector";
+import { CravingsPopup } from "@/components/order/cravings-popup";
 import {
   Trash2,
   Minus,
@@ -186,6 +187,7 @@ function CartContent() {
             </Button>
           </div>
         </div>
+        {paymentResult.orderId && <CravingsPopup orderId={paymentResult.orderId} />}
       </main>
     );
   }

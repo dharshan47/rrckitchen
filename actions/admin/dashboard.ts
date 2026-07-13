@@ -903,7 +903,7 @@ export async function getDeliveryDashboardData() {
         : "Address not set",
       customerLat: oi.order.address?.latitude ? Number(oi.order.address.latitude) : null,
       customerLng: oi.order.address?.longitude ? Number(oi.order.address.longitude) : null,
-      kitchenName: oi.kitchenPartner?.kitchenAlias?.displayName ?? "Unknown",
+      kitchenName: oi.kitchenPartner?.kitchenAlias?.displayName ?? "Home Kitchen",
       kitchenPhone: oi.kitchenPartner?.user?.phoneNumber ?? "-",
       kitchenAddress: ka
         ? `${ka.lineOne}, ${ka.pincode}`

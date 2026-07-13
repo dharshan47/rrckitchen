@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Heart, Loader2 } from "lucide-react";
+import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -19,8 +19,10 @@ export function WishlistButton({ menuItemId, className, size = "sm", variant = "
   const router = useRouter();
   const queryClient = useQueryClient();
 
+  const queryKey = ["wishlist-ids"];
+
   const { data: wishlist = [] } = useQuery<string[]>({
-    queryKey: ["wishlist-ids"],
+    queryKey,
     queryFn: async () => {
       const res = await fetch("/api/wishlist");
       if (!res.ok) return [];
@@ -43,13 +45,21 @@ export function WishlistButton({ menuItemId, className, size = "sm", variant = "
       if (!res.ok) throw new Error("Failed to toggle wishlist");
       return res.json() as Promise<{ added: boolean; removed: boolean }>;
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ["wishlist-ids"] });
-      queryClient.invalidateQueries({ queryKey: ["wishlist"] });
-      toast.success(data.added ? "Added to favourites" : "Removed from favourites");
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey });
+      const prev = queryClient.getQueryData<string[]>(queryKey) ?? [];
+      const updated = prev.includes(menuItemId)
+        ? prev.filter((id) => id !== menuItemId)
+        : [...prev, menuItemId];
+      queryClient.setQueryData(queryKey, updated);
+      return { prev };
     },
-    onError: () => {
+    onError: (_err, _vars, context) => {
+      if (context?.prev) queryClient.setQueryData(queryKey, context.prev);
       toast.error("Failed to update favourites");
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
     },
   });
 
@@ -72,24 +82,19 @@ export function WishlistButton({ menuItemId, className, size = "sm", variant = "
     return (
       <button
         onClick={handleClick}
-        disabled={toggleMutation.isPending}
         className={cn(
-          "absolute top-1.5 right-1.5 z-10 flex items-center justify-center transition-all",
+          "absolute top-1.5 right-1.5 z-10 flex items-center justify-center",
           className
         )}
         aria-label={isFavorite ? "Remove from favourites" : "Add to favourites"}
       >
-        {toggleMutation.isPending ? (
-          <Loader2 className={cn("animate-spin text-muted-foreground", iconSizes[size])} />
-        ) : (
-          <Heart
-            className={cn(
-              iconSizes[size],
-              "transition-colors drop-shadow-sm",
-              isFavorite ? "fill-red-500 text-red-500" : "text-foreground/70 hover:text-red-400"
-            )}
-          />
-        )}
+        <Heart
+          className={cn(
+            iconSizes[size],
+            "transition-colors drop-shadow-sm",
+            isFavorite ? "fill-red-500 text-red-500" : "text-foreground/70 hover:text-red-400"
+          )}
+        />
       </button>
     );
   }
@@ -97,7 +102,6 @@ export function WishlistButton({ menuItemId, className, size = "sm", variant = "
   return (
     <button
       onClick={handleClick}
-      disabled={toggleMutation.isPending}
       className={cn(
         "flex items-center gap-1.5 transition-colors",
         isFavorite ? "text-red-500" : "text-muted-foreground hover:text-red-400",
@@ -105,12 +109,7 @@ export function WishlistButton({ menuItemId, className, size = "sm", variant = "
       )}
       aria-label={isFavorite ? "Remove from favourites" : "Add to favourites"}
     >
-      {toggleMutation.isPending ? (
-        <Loader2 className={cn("animate-spin", iconSizes[size])} />
-      ) : (
-        <Heart className={cn(isFavorite ? "fill-red-500" : "", iconSizes[size])} />
-      )}
-      <span className="text-sm font-medium">{isFavorite ? "Favourited" : "Favourite"}</span>
+      <Heart className={cn(isFavorite ? "fill-red-500" : "", iconSizes[size])} />
     </button>
   );
 }
