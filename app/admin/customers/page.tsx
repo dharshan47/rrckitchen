@@ -236,8 +236,25 @@ export default function AdminCustomersPage() {
           </div>
 
           {usersLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+            <div className="space-y-3 animate-pulse">
+              <div className="flex gap-4 pb-3 border-b border-border">
+                <Skeleton className="h-4 flex-1" />
+                <Skeleton className="h-4 w-44" />
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-12 ml-auto" />
+              </div>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex gap-4 items-center">
+                  <Skeleton className="h-4 flex-1" />
+                  <Skeleton className="h-4 w-44" />
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-5 w-14 rounded-full" />
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-7 w-16 rounded-md ml-auto" />
+                </div>
+              ))}
             </div>
           ) : !userData || userData.users.length === 0 ? (
             <p className="py-8 text-center text-sm text-muted-foreground">No users found</p>

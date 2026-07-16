@@ -1,7 +1,6 @@
 "use client";
 
-
-import { useCallback, useState } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -15,32 +14,23 @@ import { useRazorpay } from "@/hooks/useRazorpay";
 import { useSession } from "@/lib/auth-client";
 import { useCartCoupon, useCartOrderType, useCartActions, useMenuDeliveryAddress } from "@/stores";
 import { DeliveryAddressCard } from "@/components/cart/delivery-address-card";
-import { CouponInput } from "@/components/order/coupon-input";
-import { PaymentMethodSelector, type PaymentMethod } from "@/components/order/payment-method-selector";
-import { OrderTypeSelector } from "@/components/order/order-type-selector";
-import { CravingsPopup } from "@/components/order/cravings-popup";
-import { AddToCartPopup, type AddPopupItem } from "@/components/menu/add-to-cart-popup";
+import { useEventCallback } from "@/hooks/useStableReference";
+import dynamic from "next/dynamic";
+import type { AddPopupItem } from "@/components/menu/add-to-cart-popup";
+import type { PaymentMethod } from "@/components/order/payment-method-selector";
 import {
-  Trash2,
-  Minus,
-  Plus,
-  ShoppingBag,
-  ArrowLeft,
-  CreditCard,
-  Loader2,
-  Banknote,
-  Tag,
-  Percent,
-  Gift,
-  ChevronRight,
-  Wallet,
-  Smartphone,
-  Building2,
-  Gem,
-  Flame,
+  Trash2, Minus, Plus, ShoppingBag, ArrowLeft, CreditCard,
+  Loader2, Banknote, Tag, Percent, Gift, ChevronRight,
+  Wallet, Smartphone, Building2, Gem, Flame,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
+
+const CravingsPopup = dynamic(() => import("@/components/order/cravings-popup").then(m => m.CravingsPopup), { ssr: false });
+const AddToCartPopup = dynamic(() => import("@/components/menu/add-to-cart-popup").then(m => m.AddToCartPopup), { ssr: false });
+const CouponInput = dynamic(() => import("@/components/order/coupon-input").then(m => m.CouponInput), { ssr: false });
+const PaymentMethodSelector = dynamic(() => import("@/components/order/payment-method-selector").then(m => m.PaymentMethodSelector), { ssr: false });
+const OrderTypeSelector = dynamic(() => import("@/components/order/order-type-selector").then(m => m.OrderTypeSelector), { ssr: false });
 
 interface CouponOffer {
   code: string;
@@ -61,6 +51,17 @@ interface PaymentOfferData {
   minOrderValue: number | null;
 }
 
+interface SuggestedItem {
+  id: string;
+  name: string;
+  price: number;
+  compareAtPrice: number | null;
+  foodType: string;
+  timeSlot: string;
+  photos: { imageUrl: string }[];
+  menu: { kitchenPartner: { kitchenAlias: { displayName: string } | null } | null };
+}
+
 const offerIcons: Record<string, { icon: typeof Smartphone; label: string; color: string }> = {
   UPI: { icon: Smartphone, label: "UPI", color: "text-purple-600 bg-purple-100" },
   WALLET: { icon: Gem, label: "Wallet", color: "text-emerald-600 bg-emerald-100" },
@@ -69,11 +70,340 @@ const offerIcons: Record<string, { icon: typeof Smartphone; label: string; color
   ALL: { icon: Wallet, label: "All Methods", color: "text-primary bg-primary/10" },
 };
 
+const CartItemCard = memo(function CartItemCard({
+  item,
+  onUpdateQuantity,
+  onRemove,
+}: {
+  item: { id: string; name: string; price: number; qty: number; foodType: string; timeSlot: string; kitchenName: string; imageUrl?: string };
+  onUpdateQuantity: (id: string, qty: number) => void;
+  onRemove: (id: string) => void;
+}) {
+  return (
+    <Card>
+      <CardContent className="flex items-center gap-4 p-4">
+        <div className="h-16 w-16 shrink-0 rounded-xl bg-muted flex items-center justify-center overflow-hidden">
+          {item.imageUrl ? (
+            <Image
+              src={item.imageUrl}
+              alt={item.name}
+              width={64}
+              height={64}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <ShoppingBag className="h-6 w-6 text-muted-foreground/40" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold truncate">{item.name}</span>
+            <Badge
+              variant={createBadgeVariant(item.foodType)}
+              className="shrink-0 text-[9px] px-1.5 py-0"
+            >
+              {item.foodType}
+            </Badge>
+          </div>
+          <p className="mt-0.5 text-xs text-muted-foreground">{item.kitchenName}</p>
+          <p className="mt-0.5 text-xs text-muted-foreground">{formatTimeSlot(item.timeSlot)}</p>
+          <p className="mt-1 text-sm font-bold">
+            ₹{item.price} <span className="text-xs font-normal text-muted-foreground">× {item.qty}</span>
+          </p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => onUpdateQuantity(item.id, item.qty - 1)}>
+            <Minus className="h-3 w-3" />
+          </Button>
+          <span className="w-6 text-center text-sm font-medium">{item.qty}</span>
+          <Button variant="outline" size="icon" className="h-8 w-8" onClick={() => onUpdateQuantity(item.id, item.qty + 1)}>
+            <Plus className="h-3 w-3" />
+          </Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => onRemove(item.id)}>
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+});
+
+const SuggestedItemCard = memo(function SuggestedItemCard({
+  item,
+  onAdd,
+}: {
+  item: SuggestedItem;
+  onAdd: (item: { id: string; name: string; price: number; compareAtPrice: number | null; foodType: string; timeSlot: string; kitchenName: string; imageUrl?: string | null }) => void;
+}) {
+  const kitchenName = item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen";
+  return (
+    <Card className="overflow-hidden">
+      <div className="relative aspect-square w-full bg-white p-2">
+        {item.photos?.[0]?.imageUrl ? (
+          <Image
+            src={item.photos[0].imageUrl}
+            alt={item.name}
+            fill
+            loading="lazy"
+            decoding="async"
+            className="object-contain p-1"
+            sizes="(max-width: 640px) 50vw, 25vw"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center bg-muted">
+            <ShoppingBag className="h-6 w-6 text-muted-foreground/30" />
+          </div>
+        )}
+      </div>
+      <CardContent className="p-2.5 space-y-1.5">
+        <p className="text-xs font-bold leading-tight line-clamp-2">{item.name}</p>
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-black text-foreground">₹{Number(item.price)}</span>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-6 rounded-md border-[#EE7005] text-[#EE7005] px-2 text-[10px] font-bold hover:text-[#EE7005]"
+            onClick={() => onAdd({
+              id: item.id,
+              name: item.name,
+              price: Number(item.price),
+              compareAtPrice: item.compareAtPrice,
+              foodType: item.foodType,
+              timeSlot: item.timeSlot,
+              kitchenName,
+              imageUrl: item.photos?.[0]?.imageUrl ?? null,
+            })}
+          >
+            Add
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+});
+
+const CouponOffersPanel = memo(function CouponOffersPanel({
+  show,
+  loading,
+  offers,
+  appliedCoupon,
+  onToggle,
+  onApply,
+  onApplyCoupon,
+  onRemoveCoupon,
+  total,
+}: {
+  show: boolean;
+  loading: boolean;
+  offers: CouponOffer[];
+  appliedCoupon: { code: string; discount: number; type: "PERCENTAGE" | "FIXED" | "FREE_DELIVERY"; description?: string } | null;
+  onToggle: () => void;
+  onApply: (code: string) => void;
+  onApplyCoupon: (coupon: { code: string; discount: number; type: "PERCENTAGE" | "FIXED" | "FREE_DELIVERY"; description?: string }) => void;
+  onRemoveCoupon: () => void;
+  total: number;
+}) {
+  const renderCouponContent = () => {
+    if (loading) {
+      return (
+        <div className="flex items-center justify-center py-4">
+          <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+        </div>
+      );
+    }
+    if (offers.length === 0) {
+      return (
+        <div className="text-center py-4">
+          <Gift className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
+          <p className="text-sm text-muted-foreground">No coupon offers available right now</p>
+          <p className="text-xs text-muted-foreground/60 mt-1">Enter your own coupon code below</p>
+        </div>
+      );
+    }
+    return offers.map((offer) => (
+      <button
+        key={offer.code}
+        type="button"
+        onClick={() => onApply(offer.code)}
+        disabled={!!appliedCoupon}
+        className="flex items-center gap-3 w-full rounded-xl border border-dashed border-primary/30 p-3 text-left hover:bg-primary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <Percent className="h-4 w-4 text-primary" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-bold text-primary">{offer.code}</p>
+          <p className="text-xs text-muted-foreground truncate">{offer.description}</p>
+        </div>
+        <div className="text-right shrink-0">
+          <p className="text-xs font-semibold text-green-600">
+            {offer.discountType === "PERCENTAGE" ? `${offer.discountValue}% OFF` : `₹${offer.discountValue} OFF`}
+          </p>
+          {offer.minOrderValue && (
+            <p className="text-[10px] text-muted-foreground">Min ₹{offer.minOrderValue}</p>
+          )}
+        </div>
+      </button>
+    ));
+  };
+
+  return (
+    <div className="space-y-3">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex items-center justify-between w-full text-left"
+      >
+        <div className="flex items-center gap-2">
+          <Tag className="h-4 w-4 text-primary" />
+          <span className="text-sm font-semibold">View Coupon Offers</span>
+        </div>
+        <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform ${show ? "rotate-90" : ""}`} />
+      </button>
+      {show && (
+        <Card className="p-3 space-y-2">
+          {renderCouponContent()}
+          <CouponInput
+            onApply={onApplyCoupon}
+            onRemove={onRemoveCoupon}
+            appliedCoupon={appliedCoupon}
+            cartTotal={total}
+          />
+        </Card>
+      )}
+    </div>
+  );
+});
+
+const PaymentOffersPanel = memo(function PaymentOffersPanel({
+  show,
+  offers,
+  selectedId,
+  onToggle,
+  onSelect,
+}: {
+  show: boolean;
+  offers: PaymentOfferData[];
+  selectedId: string | null;
+  onToggle: () => void;
+  onSelect: (offer: PaymentOfferData | null) => void;
+}) {
+  return (
+    <div className="space-y-3">
+      <button
+        type="button"
+        onClick={onToggle}
+        className="flex items-center justify-between w-full text-left"
+      >
+        <div className="flex items-center gap-2">
+          <Wallet className="h-4 w-4 text-primary" />
+          <span className="text-sm font-semibold">Payment Offers</span>
+        </div>
+        <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform ${show ? "rotate-90" : ""}`} />
+      </button>
+      {show && (
+        <div className="space-y-2">
+          {offers.length === 0 ? (
+            <div className="text-center py-4">
+              <Wallet className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
+              <p className="text-sm text-muted-foreground">No payment offers available</p>
+            </div>
+          ) : (
+            offers.map((offer) => {
+              const info = offerIcons[offer.offerType] ?? offerIcons.ALL;
+              const Icon = info.icon;
+              const isSelected = selectedId === offer.id;
+              const discountLabel = offer.discountType === "FLAT"
+                ? `₹${offer.discountValue} off`
+                : `${offer.discountValue}% off${offer.maxDiscount ? ` (up to ₹${offer.maxDiscount})` : ""}`;
+              return (
+                <button
+                  key={offer.id}
+                  type="button"
+                  onClick={() => onSelect(isSelected ? null : offer)}
+                  className={`flex items-center gap-3 w-full rounded-xl border p-3 text-left transition-all ${
+                    isSelected
+                      ? "border-primary bg-primary/5 ring-1 ring-primary"
+                      : "border-border hover:border-primary/30"
+                  }`}
+                >
+                  <div className={`h-9 w-9 rounded-lg ${info.color} flex items-center justify-center shrink-0`}>
+                    <Icon className="h-4 w-4" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold">{offer.name}</p>
+                    <p className="text-xs text-muted-foreground truncate">{offer.description}</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <p className="text-xs font-semibold text-green-600">{discountLabel}</p>
+                    {offer.minOrderValue && (
+                      <p className="text-[10px] text-muted-foreground">Min ₹{offer.minOrderValue}</p>
+                    )}
+                  </div>
+                </button>
+              );
+            })
+          )}
+        </div>
+      )}
+    </div>
+  );
+});
+
+const PriceBreakdown = memo(function PriceBreakdown({
+  itemCounts,
+  total,
+  couponSavings,
+  paymentOfferSavings,
+  savings,
+  finalTotal,
+}: {
+  itemCounts: number;
+  total: number;
+  couponSavings: number;
+  paymentOfferSavings: number;
+  savings: number;
+  finalTotal: number;
+}) {
+  return (
+    <div className="space-y-2 text-sm">
+      <div className="flex justify-between">
+        <span className="text-muted-foreground">Subtotal ({itemCounts} items)</span>
+        <span>₹{total.toFixed(0)}</span>
+      </div>
+      {couponSavings > 0 && (
+        <div className="flex justify-between text-green-600">
+          <span>Coupon Savings</span>
+          <span>-₹{couponSavings.toFixed(0)}</span>
+        </div>
+      )}
+      {paymentOfferSavings > 0 && (
+        <div className="flex justify-between text-green-600">
+          <span>Payment Offer</span>
+          <span>-₹{paymentOfferSavings.toFixed(0)}</span>
+        </div>
+      )}
+      <div className="flex justify-between">
+        <span className="text-muted-foreground">Delivery Fee</span>
+        <span className="text-green-600 font-medium">Free</span>
+      </div>
+      <Separator />
+      <div className="flex justify-between text-lg font-bold">
+        <span>Total</span>
+        <span>₹{finalTotal.toFixed(0)}</span>
+      </div>
+      {savings > 0 && (
+        <p className="text-xs text-green-600 text-right">You save ₹{savings.toFixed(0)} on this order!</p>
+      )}
+    </div>
+  );
+});
+
 function CartContent() {
-  const { cart, updateQuantity, removeFromCart, clearCart, total } =
-    useOptimisticCart();
-  const { initiateCheckout, isProcessing, paymentResult, resetPayment } =
-    useRazorpay();
+  const { cart, updateQuantity, removeFromCart, clearCart, total } = useOptimisticCart();
+  const { initiateCheckout, isProcessing, paymentResult, resetPayment } = useRazorpay();
   const { data: session, isPending } = useSession();
   const deliveryAddress = useMenuDeliveryAddress();
   const appliedCoupon = useCartCoupon();
@@ -87,8 +417,10 @@ function CartContent() {
   const [popupItem, setPopupItem] = useState<AddPopupItem | null>(null);
   const [popupOpen, setPopupOpen] = useState(false);
 
+  const bucketedTotal = useMemo(() => Math.round(total / 50) * 50, [total]);
+
   const { data: couponOffers = [], isLoading: couponOffersLoading } = useQuery({
-    queryKey: ["cart-coupon-offers", total],
+    queryKey: ["cart-coupon-offers", bucketedTotal],
     queryFn: async () => {
       const res = await fetch("/api/coupon/offers", {
         method: "POST",
@@ -100,7 +432,8 @@ function CartContent() {
       return (data.coupons || []) as CouponOffer[];
     },
     enabled: showCouponOffers,
-    staleTime: 30_000,
+    staleTime: 60_000,
+    gcTime: 300_000,
   });
 
   const { data: suggestedItems = [] } = useQuery({
@@ -109,54 +442,30 @@ function CartContent() {
       const res = await fetch("/api/menu/tomorrow?bestseller=true");
       if (!res.ok) return [];
       const data = await res.json();
-      return (data || []).slice(0, 10) as {
-        id: string;
-        name: string;
-        price: number;
-        compareAtPrice: number | null;
-        foodType: string;
-        timeSlot: string;
-        photos: { imageUrl: string }[];
-        menu: { kitchenPartner: { kitchenAlias: { displayName: string } | null } | null };
-      }[];
+      return (data || []).slice(0, 10) as SuggestedItem[];
     },
-    staleTime: 60_000,
+    staleTime: 300_000,
+    gcTime: 600_000,
   });
 
   const handleShowSuggestionPopup = useCallback((item: {
-    id: string;
-    name: string;
-    price: number;
-    compareAtPrice: number | null;
-    foodType: string;
-    timeSlot: string;
-    kitchenName: string;
-    imageUrl?: string | null;
+    id: string; name: string; price: number; compareAtPrice: number | null;
+    foodType: string; timeSlot: string; kitchenName: string; imageUrl?: string | null;
   }) => {
     addToCart({
-      id: item.id,
-      name: item.name,
-      price: Number(item.price),
-      qty: 1,
-      foodType: item.foodType,
-      timeSlot: item.timeSlot,
-      kitchenName: item.kitchenName,
+      id: item.id, name: item.name, price: Number(item.price), qty: 1,
+      foodType: item.foodType, timeSlot: item.timeSlot, kitchenName: item.kitchenName,
     });
     setPopupItem({
-      id: item.id,
-      name: item.name,
-      price: Number(item.price),
-      compareAtPrice: item.compareAtPrice ?? null,
-      foodType: item.foodType,
-      imageUrl: item.imageUrl ?? null,
-      kitchenName: item.kitchenName,
-      timeSlot: item.timeSlot,
+      id: item.id, name: item.name, price: Number(item.price),
+      compareAtPrice: item.compareAtPrice ?? null, foodType: item.foodType,
+      imageUrl: item.imageUrl ?? null, kitchenName: item.kitchenName, timeSlot: item.timeSlot,
     });
     setPopupOpen(true);
   }, [addToCart]);
 
   const { data: paymentOffers = [] } = useQuery({
-    queryKey: ["cart-payment-offers", total],
+    queryKey: ["cart-payment-offers", bucketedTotal],
     queryFn: async () => {
       const res = await fetch("/api/payment-offers", {
         method: "POST",
@@ -167,10 +476,11 @@ function CartContent() {
       const data = await res.json();
       return (data.offers || []) as PaymentOfferData[];
     },
-    staleTime: 30_000,
+    staleTime: 60_000,
+    gcTime: 300_000,
   });
 
-  const handleCheckout = useCallback(async () => {
+  const handleCheckout = useEventCallback(async () => {
     if (!deliveryAddress) {
       toast.error("Please select a delivery location before placing your order");
       return;
@@ -205,18 +515,15 @@ function CartContent() {
     }
     const phone = session?.user?.phoneNumber ?? "";
     await initiateCheckout(cart, total, phone, appliedCoupon?.code);
-  }, [cart, total, initiateCheckout, session, paymentMethod, appliedCoupon, clearCart, resetPayment, deliveryAddress]);
+  });
 
-  const handleApplyOfferCoupon = useCallback((code: string) => {
+  const handleApplyOfferCoupon = useEventCallback((code: string) => {
     applyCoupon({
-      code,
-      discount: 0,
-      type: "PERCENTAGE",
-      description: "Applying coupon...",
+      code, discount: 0, type: "PERCENTAGE", description: "Applying coupon...",
     });
     setShowCouponOffers(false);
     toast.success(`Coupon ${code} selected — enter it below to apply`);
-  }, [applyCoupon]);
+  });
 
   if (paymentResult?.success) {
     return (
@@ -226,13 +533,9 @@ function CartContent() {
             <ShoppingBag className="h-8 w-8 text-green-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">Order Placed! 🎉</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Your order has been placed successfully.
-            </p>
-            <p className="mt-1 text-xs text-muted-foreground font-mono">
-              Order ID: {paymentResult.orderId}
-            </p>
+            <h1 className="text-2xl font-bold">Order Placed!</h1>
+            <p className="mt-2 text-sm text-muted-foreground">Your order has been placed successfully.</p>
+            <p className="mt-1 text-xs text-muted-foreground font-mono">Order ID: {paymentResult.orderId}</p>
           </div>
           <div className="flex gap-3">
             <Button asChild variant="outline" onClick={resetPayment}>
@@ -265,9 +568,7 @@ function CartContent() {
           <ShoppingBag className="h-16 w-16 text-muted-foreground/40" />
           <div>
             <h1 className="text-2xl font-bold">Login to view cart</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Please log in to see your cart and place orders.
-            </p>
+            <p className="mt-2 text-sm text-muted-foreground">Please log in to see your cart and place orders.</p>
           </div>
           <Button asChild>
             <Link href="/login">Login</Link>
@@ -284,9 +585,7 @@ function CartContent() {
           <ShoppingBag className="h-16 w-16 text-muted-foreground/40" />
           <div>
             <h1 className="text-2xl font-bold">Your cart is empty</h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Add items from the menu to get started.
-            </p>
+            <p className="mt-2 text-sm text-muted-foreground">Add items from the menu to get started.</p>
           </div>
           <Button asChild>
             <Link href="/menu">Browse Menu</Link>
@@ -312,358 +611,42 @@ function CartContent() {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-6xl px-4 py-8 lg:px-8 pb-20 md:pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Cart Items - first on mobile, right column top on desktop */}
-          <div className="lg:col-span-2 lg:order-2 space-y-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <Link href="/menu" className="md:hidden p-1 -ml-1 text-muted-foreground hover:text-foreground">
-                  <ArrowLeft className="h-5 w-5" />
-                </Link>
-                <div>
-                  <h1 className="text-2xl font-bold">Your Cart</h1>
-                  <p className="text-sm text-muted-foreground">
-                    {itemCounts} item{itemCounts !== 1 ? "s" : ""} · ₹{total.toFixed(0)}
-                  </p>
-                </div>
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={clearCart}>
-                  <Trash2 className="mr-2 h-4 w-4" />
-                  Clear
-                </Button>
-              </div>
-            </div>
-
-            {/* Cart Items */}
-            <div className="space-y-3">
-              {cart.map((item) => (
-                <Card key={item.id}>
-                  <CardContent className="flex items-center gap-4 p-4">
-                    <div className="h-16 w-16 shrink-0 rounded-xl bg-muted flex items-center justify-center overflow-hidden">
-                      {item.imageUrl ? (
-                        <Image src={item.imageUrl} alt="" width={64} height={64} className="h-full w-full object-cover" />
-                      ) : (
-                        <ShoppingBag className="h-6 w-6 text-muted-foreground/40" />
-                      )}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold truncate">{item.name}</span>
-                        <Badge
-                          variant={createBadgeVariant(item.foodType)}
-                          className="shrink-0 text-[9px] px-1.5 py-0"
-                        >
-                          {item.foodType}
-                        </Badge>
-                      </div>
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        {item.kitchenName}
-                      </p>
-                      <p className="mt-0.5 text-xs text-muted-foreground">
-                        {formatTimeSlot(item.timeSlot)}
-                      </p>
-                      <p className="mt-1 text-sm font-bold">₹{item.price} <span className="text-xs font-normal text-muted-foreground">× {item.qty}</span></p>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => updateQuantity(item.id, item.qty - 1)}
-                      >
-                        <Minus className="h-3 w-3" />
-                      </Button>
-                      <span className="w-6 text-center text-sm font-medium">
-                        {item.qty}
-                      </span>
-                      <Button
-                        variant="outline"
-                        size="icon"
-                        className="h-8 w-8"
-                        onClick={() => updateQuantity(item.id, item.qty + 1)}
-                      >
-                        <Plus className="h-3 w-3" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-8 w-8 text-destructive"
-                        onClick={() => removeFromCart(item.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-
-            {/* Suggested Items */}
-            {suggestedItems.length > 0 && (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2">
-                  <Flame className="h-4 w-4 text-orange-500" />
-                  <h2 className="text-sm font-bold">Add More Items</h2>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-                  {suggestedItems.map((sItem: {
-                    id: string;
-                    name: string;
-                    price: number;
-                    compareAtPrice: number | null;
-                    foodType: string;
-                    timeSlot: string;
-                    photos: { imageUrl: string }[];
-                    menu: { kitchenPartner: { kitchenAlias: { displayName: string } | null } | null };
-                  }) => {
-                    const kitchenName = sItem.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen";
-                    return (
-                      <Card key={sItem.id} className="overflow-hidden">
-                        <div className="relative aspect-square w-full bg-white p-2">
-                          {sItem.photos?.[0]?.imageUrl ? (
-                            <Image
-                              src={sItem.photos[0].imageUrl}
-                              alt={sItem.name}
-                              fill
-                              className="object-contain p-1"
-                              sizes="(max-width: 640px) 50vw, 25vw"
-                            />
-                          ) : (
-                            <div className="flex h-full w-full items-center justify-center bg-muted">
-                              <ShoppingBag className="h-6 w-6 text-muted-foreground/30" />
-                            </div>
-                          )}
-                        </div>
-                        <CardContent className="p-2.5 space-y-1.5">
-                          <p className="text-xs font-bold leading-tight line-clamp-2">{sItem.name}</p>
-                          <div className="flex items-center justify-between">
-                            <span className="text-sm font-black text-foreground">₹{Number(sItem.price)}</span>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="h-6 rounded-md border-[#EE7005] text-[#EE7005] px-2 text-[10px] font-bold hover:text-[#EE7005]"
-                              onClick={() => handleShowSuggestionPopup({
-                                id: sItem.id,
-                                name: sItem.name,
-                                price: Number(sItem.price),
-                                compareAtPrice: sItem.compareAtPrice,
-                                foodType: sItem.foodType,
-                                timeSlot: sItem.timeSlot,
-                                kitchenName,
-                                imageUrl: sItem.photos?.[0]?.imageUrl ?? null,
-                              })}
-                            >
-                              Add
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Delivery Address - second on mobile, left column on desktop */}
-          <div className="lg:col-span-1 lg:order-1">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {/* Left Side - Payment Related Only */}
+          <div className="space-y-6">
             <div className="lg:sticky lg:top-24">
               <DeliveryAddressCard />
             </div>
-          </div>
-
-          {/* Payment Section - third on mobile, right column bottom on desktop */}
-          <div className="lg:col-span-2 lg:order-3 space-y-6">
-            <Separator className="my-5" />
-
+            <Separator />
             <div className="space-y-5">
-              <OrderTypeSelector
-                selected={orderType}
-                onSelect={setOrderType}
+              <CouponOffersPanel
+                show={showCouponOffers}
+                loading={couponOffersLoading}
+                offers={couponOffers}
+                appliedCoupon={appliedCoupon}
+                onToggle={() => setShowCouponOffers((p) => !p)}
+                onApply={handleApplyOfferCoupon}
+                onApplyCoupon={(coupon) => applyCoupon({
+                  code: coupon.code, discount: coupon.discount,
+                  type: coupon.type, description: coupon.description,
+                })}
+                onRemoveCoupon={removeCoupon}
+                total={total}
               />
-
               <Separator />
-
-              {/* Coupon Offers Section */}
-              <div className="space-y-3">
-                <button
-                  type="button"
-                  onClick={() => setShowCouponOffers(!showCouponOffers)}
-                  className="flex items-center justify-between w-full text-left"
-                >
-                  <div className="flex items-center gap-2">
-                    <Tag className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-semibold">View Coupon Offers</span>
-                  </div>
-                  <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform ${showCouponOffers ? "rotate-90" : ""}`} />
-                </button>
-
-                {showCouponOffers && (
-                  <Card className="p-3 space-y-2">
-                    {couponOffersLoading ? (
-                      <div className="flex items-center justify-center py-4">
-                        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                      </div>
-                    ) : couponOffers.length === 0 ? (
-                      <div className="text-center py-4">
-                        <Gift className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
-                        <p className="text-sm text-muted-foreground">No coupon offers available right now</p>
-                        <p className="text-xs text-muted-foreground/60 mt-1">Enter your own coupon code below</p>
-                      </div>
-                    ) : (
-                      couponOffers.map((offer) => (
-                        <button
-                          key={offer.code}
-                          type="button"
-                          onClick={() => handleApplyOfferCoupon(offer.code)}
-                          disabled={!!appliedCoupon}
-                          className="flex items-center gap-3 w-full rounded-xl border border-dashed border-primary/30 p-3 text-left hover:bg-primary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                            <Percent className="h-4 w-4 text-primary" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-bold text-primary">{offer.code}</p>
-                            <p className="text-xs text-muted-foreground truncate">{offer.description}</p>
-                          </div>
-                          <div className="text-right shrink-0">
-                            <p className="text-xs font-semibold text-green-600">
-                              {offer.discountType === "PERCENTAGE" ? `${offer.discountValue}% OFF` : `₹${offer.discountValue} OFF`}
-                            </p>
-                            {offer.minOrderValue && (
-                              <p className="text-[10px] text-muted-foreground">Min ₹{offer.minOrderValue}</p>
-                            )}
-                          </div>
-                        </button>
-                      ))
-                    )}
-                    <CouponInput
-                      onApply={(coupon) => applyCoupon({
-                        code: coupon.code,
-                        discount: coupon.discount,
-                        type: coupon.type,
-                        description: coupon.description,
-                      })}
-                      onRemove={removeCoupon}
-                      appliedCoupon={appliedCoupon ? {
-                        code: appliedCoupon.code,
-                        discount: appliedCoupon.discount,
-                        type: appliedCoupon.type,
-                        description: appliedCoupon.description,
-                      } : null}
-                      cartTotal={total}
-                    />
-                  </Card>
-                )}
-              </div>
-
+              <PaymentOffersPanel
+                show={showPaymentOffers}
+                offers={paymentOffers}
+                selectedId={selectedPaymentOffer?.id ?? null}
+                onToggle={() => setShowPaymentOffers((p) => !p)}
+                onSelect={setSelectedPaymentOffer}
+              />
               <Separator />
-
-              {/* Payment Offers Section */}
-              <div className="space-y-3">
-                <button
-                  type="button"
-                  onClick={() => setShowPaymentOffers(!showPaymentOffers)}
-                  className="flex items-center justify-between w-full text-left"
-                >
-                  <div className="flex items-center gap-2">
-                    <Wallet className="h-4 w-4 text-primary" />
-                    <span className="text-sm font-semibold">Payment Offers</span>
-                  </div>
-                  <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform ${showPaymentOffers ? "rotate-90" : ""}`} />
-                </button>
-
-                {showPaymentOffers && (
-                  <div className="space-y-2">
-                    {paymentOffers.length === 0 ? (
-                      <div className="text-center py-4">
-                        <Wallet className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
-                        <p className="text-sm text-muted-foreground">No payment offers available</p>
-                      </div>
-                    ) : (
-                      paymentOffers.map((offer) => {
-                        const info = offerIcons[offer.offerType] ?? offerIcons.ALL;
-                        const Icon = info.icon;
-                        const isSelected = selectedPaymentOffer?.id === offer.id;
-                        const discountLabel = offer.discountType === "FLAT"
-                          ? `₹${offer.discountValue} off`
-                          : `${offer.discountValue}% off${offer.maxDiscount ? ` (up to ₹${offer.maxDiscount})` : ""}`;
-                        return (
-                          <button
-                            key={offer.id}
-                            type="button"
-                            onClick={() => setSelectedPaymentOffer(isSelected ? null : offer)}
-                            className={`flex items-center gap-3 w-full rounded-xl border p-3 text-left transition-all ${
-                              isSelected
-                                ? "border-primary bg-primary/5 ring-1 ring-primary"
-                                : "border-border hover:border-primary/30"
-                            }`}
-                          >
-                            <div className={`h-9 w-9 rounded-lg ${info.color} flex items-center justify-center shrink-0`}>
-                              <Icon className="h-4 w-4" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold">{offer.name}</p>
-                              <p className="text-xs text-muted-foreground truncate">{offer.description}</p>
-                            </div>
-                            <div className="text-right shrink-0">
-                              <p className="text-xs font-semibold text-green-600">{discountLabel}</p>
-                              {offer.minOrderValue && (
-                                <p className="text-[10px] text-muted-foreground">Min ₹{offer.minOrderValue}</p>
-                              )}
-                            </div>
-                          </button>
-                        );
-                      })
-                    )}
-                  </div>
-                )}
-              </div>
-
-              <Separator />
-
-              {/* Price Breakdown */}
-              <div className="space-y-2 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Subtotal ({itemCounts} items)</span>
-                  <span>₹{total.toFixed(0)}</span>
-                </div>
-                {couponSavings > 0 && (
-                  <div className="flex justify-between text-green-600">
-                    <span>Coupon Savings</span>
-                    <span>-₹{couponSavings.toFixed(0)}</span>
-                  </div>
-                )}
-                {paymentOfferSavings > 0 && (
-                  <div className="flex justify-between text-green-600">
-                    <span>Payment Offer</span>
-                    <span>-₹{paymentOfferSavings.toFixed(0)}</span>
-                  </div>
-                )}
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Delivery Fee</span>
-                  <span className="text-green-600 font-medium">Free</span>
-                </div>
-                <Separator />
-                <div className="flex justify-between text-lg font-bold">
-                  <span>Total</span>
-                  <span>₹{finalTotal.toFixed(0)}</span>
-                </div>
-                {savings > 0 && (
-                  <p className="text-xs text-green-600 text-right">You save ₹{savings.toFixed(0)} on this order!</p>
-                )}
-              </div>
-
-              <Separator />
-
               <PaymentMethodSelector
                 selected={paymentMethod}
                 onSelect={setPaymentMethod}
                 codAvailable={true}
               />
-
               <div className="flex gap-3">
                 <Button variant="outline" asChild className="flex-1">
                   <Link href="/menu">
@@ -701,7 +684,74 @@ function CartContent() {
               )}
             </div>
           </div>
-      </div>
+
+          {/* Right Side - Menu Items, Quantity, Order Type, Total */}
+          <div className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Link href="/menu" className="md:hidden p-1 -ml-1 text-muted-foreground hover:text-foreground">
+                  <ArrowLeft className="h-5 w-5" />
+                </Link>
+                <div>
+                  <h1 className="text-2xl font-bold">Your Cart</h1>
+                  <p className="text-sm text-muted-foreground">
+                    {itemCounts} item{itemCounts !== 1 ? "s" : ""} · ₹{total.toFixed(0)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={clearCart}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Clear
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              {cart.map((item, idx) => (
+                <CartItemCard
+                  key={item.id}
+                  item={item}
+                  onUpdateQuantity={updateQuantity}
+                  onRemove={removeFromCart}
+                />
+              ))}
+            </div>
+
+            {suggestedItems.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Flame className="h-4 w-4 text-orange-500" />
+                  <h2 className="text-sm font-bold">Add More Items</h2>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  {suggestedItems.map((sItem) => (
+                    <SuggestedItemCard
+                      key={sItem.id}
+                      item={sItem}
+                      onAdd={handleShowSuggestionPopup}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <Separator />
+
+            <OrderTypeSelector selected={orderType} onSelect={setOrderType} />
+
+            <Separator />
+
+            <PriceBreakdown
+              itemCounts={itemCounts}
+              total={total}
+              couponSavings={couponSavings}
+              paymentOfferSavings={paymentOfferSavings}
+              savings={savings}
+              finalTotal={finalTotal}
+            />
+          </div>
+        </div>
       </div>
 
       <AddToCartPopup

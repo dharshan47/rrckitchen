@@ -91,7 +91,11 @@ export async function GET(request: Request) {
       };
     });
 
-    return NextResponse.json({ data: serialized, nextCursor });
+    return NextResponse.json({ data: serialized, nextCursor }, {
+      headers: {
+        "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+      },
+    });
   } catch (error) {
     console.error("Failed to fetch explore kitchens:", error);
     return NextResponse.json(

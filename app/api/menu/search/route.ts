@@ -154,6 +154,9 @@ export async function GET(request: Request) {
   await redis.set(cacheKey, result, { ex: CACHE_TTL })
 
   return NextResponse.json(result, {
-    headers: { "X-Cache": "MISS" },
+    headers: {
+      "X-Cache": "MISS",
+      "Cache-Control": "public, s-maxage=15, stale-while-revalidate=30",
+    },
   })
 }

@@ -23,7 +23,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { getAdminKitchenPartners, updateKitchenPartnerStatus } from "@/actions/admin/admin-partners"
-import { SkeletonCard } from "@/components/patterns/skeleton-card"
+import { Skeleton } from "@/components/ui/skeleton"
 
 const statusStyles: Record<string, string> = {
   ACTIVE: "bg-green-100 text-green-700",
@@ -93,8 +93,27 @@ export default function AdminKitchensPage() {
             </div>
           </CardHeader>
           <CardContent>
-            <div className="flex gap-4 overflow-hidden">
-              <SkeletonCard variant="menu-item" count={6} />
+            <div className="space-y-3 animate-pulse">
+              <div className="flex gap-4 pb-3 border-b border-border">
+                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-20 ml-auto" />
+              </div>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="flex gap-4 items-center">
+                  <Skeleton className="h-4 flex-1 max-w-[200px]" />
+                  <Skeleton className="h-4 w-28" />
+                  <Skeleton className="h-5 w-20 rounded-full" />
+                  <Skeleton className="h-4 w-16" />
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-8 w-16 rounded-md" />
+                  <Skeleton className="h-8 w-24 rounded-md ml-auto" />
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>

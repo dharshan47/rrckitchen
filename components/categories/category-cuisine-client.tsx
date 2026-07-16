@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ChefHat, Star } from "lucide-react";
 import { SortByDropdown, SortOption } from "@/components/kitchen/sort-by-dialog";
-import { VegFilter } from "@/components/kitchen/veg-filter";
+import { VegFilter, type VegFilterValue } from "@/components/kitchen/veg-filter";
 import { SearchAutocomplete } from "@/components/search/search-autocomplete";
 import { cn } from "@/lib/utils";
 
@@ -39,23 +39,22 @@ interface Props {
 export function CategoryCuisineClient({ categoryName, kitchens }: Props) {
   const router = useRouter();
   const [sortOption, setSortOption] = useState<SortOption | null>(null);
-  const [vegFilter, setVegFilter] = useState<boolean | null>(null);
+  const [vegFilter, setVegFilter] = useState<VegFilterValue>(null);
   const [showFilterBar, setShowFilterBar] = useState(false);
   const [nearFooter, setNearFooter] = useState(false);
   const sentinelRef = useRef<HTMLDivElement>(null);
   const footerSentinelRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const handler = () => {
-      if (!sentinelRef.current) return;
-      const rect = sentinelRef.current.getBoundingClientRect();
-      if (!nearFooter) {
-        setShowFilterBar(rect.top <= 0);
-      }
-    };
-    window.addEventListener("scroll", handler, { passive: true });
-    handler();
-    return () => window.removeEventListener("scroll", handler);
+    if (!sentinelRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (!nearFooter) setShowFilterBar(!entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
   }, [nearFooter]);
 
   useEffect(() => {
@@ -87,13 +86,17 @@ export function CategoryCuisineClient({ categoryName, kitchens }: Props) {
   const filteredKitchens = useMemo(() => {
     let result = kitchens;
 
-    if (vegFilter !== null) {
+    if (vegFilter === "pure-veg") {
       result = result.filter((k) =>
-        k.items.some((i) =>
-          vegFilter
-            ? i.foodType === "VEG"
-            : i.foodType === "NON_VEG"
-        )
+        k.items.length > 0 && k.items.every((i) => i.foodType === "VEG")
+      );
+    } else if (vegFilter === "veg") {
+      result = result.filter((k) =>
+        k.items.some((i) => i.foodType === "VEG")
+      );
+    } else if (vegFilter === "non-veg") {
+      result = result.filter((k) =>
+        k.items.some((i) => i.foodType === "NON_VEG")
       );
     }
 

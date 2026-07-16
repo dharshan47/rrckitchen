@@ -79,7 +79,7 @@ export function KitchenWishlistButton({ kitchenPartnerId, className, size = "sm"
   return (
     <button
       onClick={handleClick}
-      className={cn("flex items-center justify-center", className)}
+      className={cn("flex items-center justify-center min-h-11 min-w-11", className)}
       aria-label={isFavorite ? "Remove from favourites" : "Add to favourites"}
     >
       <Heart

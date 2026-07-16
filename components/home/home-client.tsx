@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
 import { InfiniteKitchenGrid } from "@/components/kitchen/infinite-kitchen-grid";
 import type { SortOption } from "@/components/kitchen/sort-by-dialog";
+import type { VegFilterValue } from "@/components/kitchen/veg-filter";
 import { useKitchenCategories } from "@/hooks/useExploreKitchens";
 import { ArrowRight } from "lucide-react";
 import { getCategoryImageUrl } from "@/lib/category-images";
@@ -33,10 +34,10 @@ function CategoryImage({ name, imageUrl, desktop = true }: { name: string; image
 }
 
 export function HomeClient() {
-  const { data: categories = [] } = useKitchenCategories();
+  const { data: categories = [], isLoading: catLoading } = useKitchenCategories();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<SortOption | null>(null);
-  const [vegFilter, setVegFilter] = useState<boolean | null>(null);
+  const [vegFilter, setVegFilter] = useState<VegFilterValue>(null);
   const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
 
   // Categories in the specific order
@@ -61,13 +62,33 @@ export function HomeClient() {
       <div className="mx-auto max-w-360 px-4 lg:px-12 pb-16 pt-1 lg:pt-8 space-y-6 lg:space-y-20">
         <ErrorBoundary>
           {/* What's on Your Mind - Category Navigation */}
-          {displayCategories.length > 0 && (
+          {catLoading ? (
+            <section>
+              <h2 className="text-base font-extrabold mb-2 lg:mb-8 tracking-tight text-foreground/90">
+                What&apos;s on your mind?
+              </h2>
+              <div className="hidden lg:grid grid-cols-7 gap-x-6 gap-y-8">
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <div key={i} className="flex flex-col items-center gap-0">
+                    <div className="w-full aspect-square rounded-full bg-muted animate-pulse" />
+                    <div className="h-4 w-16 bg-muted animate-pulse rounded mt-2" />
+                  </div>
+                ))}
+              </div>
+              <div className="lg:hidden flex gap-3 overflow-x-auto pb-3 scrollbar-none -mx-4 px-4">
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <div key={i} className="flex flex-col items-center gap-1 shrink-0 w-20">
+                    <div className="w-16 h-16 rounded-full bg-muted animate-pulse" />
+                    <div className="h-3 w-14 bg-muted animate-pulse rounded mt-1" />
+                  </div>
+                ))}
+              </div>
+            </section>
+          ) : displayCategories.length > 0 ? (
             <section>
               <h2 id="food-time-heading" className="text-base font-extrabold mb-2 lg:mb-8 tracking-tight text-foreground/90">
                 What&apos;s on your mind?
               </h2>
-
-              {/* Desktop Grid Layout */}
               <div className="hidden lg:grid grid-cols-7 gap-x-6 gap-y-8">
                 {displayCategories.slice(0, 12).map((cat) => {
                   const imageUrl = getCategoryImageUrl(cat.name);
@@ -95,8 +116,6 @@ export function HomeClient() {
                   );
                 })}
               </div>
-
-              {/* Mobile/Tablet View: Horizontal Scroll */}
               <div className="lg:hidden flex gap-3 overflow-x-auto pb-3 scrollbar-none -mx-4 px-4">
                 {displayCategories.map((cat) => {
                   const imageUrl = getCategoryImageUrl(cat.name);
@@ -125,7 +144,7 @@ export function HomeClient() {
                 })}
               </div>
             </section>
-          )}
+          ) : null}
 
           {/* Explore Kitchens Section */}
           <section className="space-y-6 lg:space-y-10 pt-4 lg:pt-10 border-t border-gray-100">
@@ -145,10 +164,10 @@ export function HomeClient() {
           <section className="bg-[#EE7005] overflow-hidden flex flex-col md:flex-row md:justify-between md:items-stretch shadow-2xl">
             <div className="px-6 sm:px-10 lg:px-14 py-8 sm:py-10 flex flex-col justify-center flex-1 gap-3 text-left">
               <h2 className="text-2xl sm:text-4xl font-black text-white leading-none tracking-tighter">Become a Home Chef</h2>
-              <p className="text-sm sm:text-base text-black/80 leading-relaxed max-w-lg font-medium">
+              <p className="text-sm sm:text-base text-black leading-relaxed max-w-lg font-medium">
                 Turn your passion into profession.<br />Cook from home, earn on your terms, and build something extraordinary.
               </p>
-              <Link href="/kitchen/signup" className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-black text-[#EE7005] hover:bg-slate-50 transition-all self-start shadow-[0_20px_50px_rgba(0,0,0,0.2)] active:scale-95 group">
+              <Link href="/kitchen/signup" className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 min-h-11 text-sm font-black text-[#B85300] hover:bg-slate-50 transition-all self-start shadow-[0_20px_50px_rgba(0,0,0,0.2)] active:scale-95 group">
                 Join the Kitchen
                 <ArrowRight className="h-4 w-4 group-hover:translate-x-2 transition-transform" />
               </Link>
@@ -156,11 +175,12 @@ export function HomeClient() {
             <div className="relative w-full md:w-[38%] lg:w-[30%] min-h-56 ">
               <Image
                 src="/banners/womenchef.png"
-                alt="RRC Kitchen Chef"
+                alt=""
                 fill
                 className="object-cover object-bottom-right"
                 sizes="(max-width: 1024px) 100vw, 28vw"
                 priority
+                fetchPriority="high"
               />
             </div>
           </section>

@@ -68,7 +68,13 @@ function SearchSkeleton() {
         {Array.from({ length: 2 }).map((_, i) => (
           <div key={i} className="rounded-xl border border-border mb-4 p-4">
             <div className="flex items-center justify-between">
-              <Skeleton className="h-5 w-32" />
+              <div>
+                <Skeleton className="h-5 w-32" />
+                <div className="flex items-center gap-1.5 mt-1">
+                  <Skeleton className="h-4 w-10 rounded-sm" />
+                  <Skeleton className="h-3 w-16" />
+                </div>
+              </div>
               <Skeleton className="h-5 w-5" />
             </div>
             <div className="flex gap-2 mt-4">
@@ -76,6 +82,7 @@ function SearchSkeleton() {
                 <div key={j} className="flex flex-col items-center gap-1">
                   <Skeleton className="h-20 w-20 rounded-lg" />
                   <Skeleton className="h-3 w-16" />
+                  <Skeleton className="h-3 w-10" />
                 </div>
               ))}
             </div>
@@ -91,9 +98,12 @@ function SearchSkeleton() {
         {Array.from({ length: 2 }).map((_, i) => (
           <div key={i} className="rounded-xl border border-border mb-4 p-4">
             <div className="flex items-center justify-between">
-              <div className="space-y-2">
+              <div>
                 <Skeleton className="h-5 w-32" />
-                <Skeleton className="h-4 w-20" />
+                <div className="flex items-center gap-1.5 mt-1">
+                  <Skeleton className="h-4 w-10 rounded-sm" />
+                  <Skeleton className="h-3 w-16" />
+                </div>
               </div>
               <Skeleton className="h-5 w-5" />
             </div>
@@ -314,7 +324,7 @@ export function SearchPageContent() {
                         >
                           <div className="h-20 w-20 rounded-lg bg-muted flex items-center justify-center overflow-hidden relative">
                             {item.imageUrl ? (
-                              <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
+                              <Image src={item.imageUrl} alt={item.name} fill className="object-cover" sizes="80px" />
                             ) : (
                               <UtensilsCrossed className="h-6 w-6 text-muted-foreground/40" />
                             )}
@@ -375,7 +385,7 @@ export function SearchPageContent() {
                           >
                             <div className="h-20 w-20 rounded-lg bg-muted flex items-center justify-center overflow-hidden relative">
                               {mi.imageUrl ? (
-                                <Image src={mi.imageUrl} alt={mi.name} fill className="object-cover" />
+                                <Image src={mi.imageUrl} alt={mi.name} fill className="object-cover" sizes="80px" />
                               ) : (
                                 <UtensilsCrossed className="h-6 w-6 text-muted-foreground/40" />
                               )}

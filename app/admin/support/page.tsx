@@ -2,6 +2,9 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import {
   Ticket,
   MessageSquare,
@@ -12,8 +15,17 @@ import {
   AlertCircle,
   Search,
   Send,
+  User,
+  Package,
+  ChefHat,
+  Truck,
+  CreditCard,
+  HelpCircle,
+  AlertTriangle,
 } from "lucide-react";
+import Image from "next/image";
 import { Button, Badge, Input } from "@/components/ui";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Dialog,
   DialogContent,
@@ -23,6 +35,10 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+
+const replySchema = z.object({
+  message: z.string().min(1, "Message cannot be empty").max(2000, "Message too long"),
+});
 
 interface TicketMessage {
   id: string;
@@ -40,6 +56,7 @@ interface SupportTicket {
   description: string;
   status: "OPEN" | "INPROGRESS" | "RESOLVED" | "CLOSED";
   priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
+  category: string;
   createdAt: string;
   updatedAt: string;
   messages: TicketMessage[];
@@ -60,12 +77,28 @@ const priorityColors: Record<string, string> = {
   URGENT: "text-red-600 bg-red-100 animate-pulse",
 };
 
+const categoryIcons: Record<string, typeof HelpCircle> = {
+  order: Package,
+  delivery: Truck,
+  food: ChefHat,
+  payment: CreditCard,
+  account: User,
+  kitchen: ChefHat,
+  "delivery-partner": Truck,
+  safety: AlertTriangle,
+  other: HelpCircle,
+};
+
 export default function AdminSupportPage() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
-  const [replyText, setReplyText] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
+
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<{ message: string }>({
+    resolver: zodResolver(replySchema),
+    defaultValues: { message: "" },
+  });
 
   const { data: tickets = [], isLoading, isError, refetch } = useQuery({
     queryKey: ["admin-support-tickets"],
@@ -105,7 +138,7 @@ export default function AdminSupportPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-support-tickets"] });
-      setReplyText("");
+      reset();
       toast.success("Reply sent");
     },
     onError: () => toast.error("Failed to send reply"),
@@ -157,8 +190,26 @@ export default function AdminSupportPage() {
       </div>
 
       {isLoading ? (
-        <div className="flex items-center justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/40" />
+        <div className="grid gap-3 animate-pulse">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border p-4 space-y-3">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-5 w-16 rounded-full" />
+                  <Skeleton className="h-4 w-12 rounded-full" />
+                </div>
+                <Skeleton className="h-3 w-20" />
+              </div>
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3 w-2/3" />
+              <div className="flex items-center gap-2 mt-2">
+                <Skeleton className="h-3 w-16" />
+                <Skeleton className="h-3 w-20" />
+                <Skeleton className="h-3 w-14" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : isError ? (
         <div className="text-center py-20 space-y-4">
@@ -206,7 +257,7 @@ export default function AdminSupportPage() {
       )}
 
       {/* Ticket Detail Dialog */}
-      <Dialog open={!!selectedTicket} onOpenChange={(open) => { if (!open) setSelectedTicket(null); setReplyText("") }}>
+      <Dialog open={!!selectedTicket} onOpenChange={(open) => { if (!open) { setSelectedTicket(null); reset(); } }}>
         <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
           {selectedTicket && (
             <>
@@ -227,6 +278,24 @@ export default function AdminSupportPage() {
               </DialogHeader>
 
               <div className="space-y-4">
+                {selectedTicket.user && (
+                  <div className="rounded-lg border border-border p-3 space-y-1.5">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
+                      <User className="h-3 w-3" /> User Info
+                    </h4>
+                    {selectedTicket.user.name && <p className="text-sm font-medium">{selectedTicket.user.name}</p>}
+                    {selectedTicket.user.email && <p className="text-xs text-muted-foreground">{selectedTicket.user.email}</p>}
+                    {selectedTicket.user.phoneNumber && <p className="text-xs text-muted-foreground">{selectedTicket.user.phoneNumber}</p>}
+                  </div>
+                )}
+
+                {selectedTicket.category && (
+                  <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                    {(() => { const Ci = categoryIcons[selectedTicket.category] || HelpCircle; return <Ci className="h-3.5 w-3.5" />; })()}
+                    <span className="capitalize">{selectedTicket.category.replace("-", " ")}</span>
+                  </div>
+                )}
+
                 <div className="rounded-lg bg-muted p-4 text-sm">
                   <p className="text-muted-foreground">{selectedTicket.description}</p>
                 </div>
@@ -239,6 +308,15 @@ export default function AdminSupportPage() {
                     {selectedTicket.messages.map((msg) => (
                       <div key={msg.id} className="rounded-lg border border-border p-3 text-sm">
                         <p>{msg.message}</p>
+                        {msg.mediaUrls?.length > 0 && (
+                          <div className="flex gap-2 mt-2">
+                            {msg.mediaUrls.map((url, i) => (
+                              <div key={i} className="relative h-20 w-20 rounded-lg overflow-hidden border border-border">
+                                <Image src={url} alt={`Media ${i + 1}`} fill className="object-cover" sizes="80px" />
+                              </div>
+                            ))}
+                          </div>
+                        )}
                         <p className="text-[10px] text-muted-foreground mt-1">
                           {new Date(msg.createdAt).toLocaleString("en-IN")}
                         </p>
@@ -272,22 +350,24 @@ export default function AdminSupportPage() {
                     </Button>
                   </div>
 
-                  <div className="flex gap-2">
-                    <Input
-                      value={replyText}
-                      onChange={(e) => setReplyText(e.target.value)}
-                      placeholder="Type your reply..."
-                      className="flex-1"
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter" && !e.shiftKey && replyText.trim()) {
-                          e.preventDefault();
-                          replyMutation.mutate({ ticketId: selectedTicket.id, message: replyText.trim() });
-                        }
-                      }}
-                    />
+                  <form onSubmit={handleSubmit((data) => replyMutation.mutate({ ticketId: selectedTicket.id, message: data.message }))} className="flex gap-2">
+                    <div className="flex-1">
+                      <Input
+                        {...register("message")}
+                        placeholder="Type your reply..."
+                        className="flex-1"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            handleSubmit((data) => replyMutation.mutate({ ticketId: selectedTicket.id, message: data.message }))();
+                          }
+                        }}
+                      />
+                      {errors.message && <p className="text-xs text-destructive mt-1">{errors.message.message}</p>}
+                    </div>
                     <Button
-                      onClick={() => replyMutation.mutate({ ticketId: selectedTicket.id, message: replyText.trim() })}
-                      disabled={!replyText.trim() || replyMutation.isPending}
+                      type="submit"
+                      disabled={replyMutation.isPending}
                     >
                       {replyMutation.isPending ? (
                         <Loader2 className="h-4 w-4 animate-spin" />
@@ -295,7 +375,7 @@ export default function AdminSupportPage() {
                         <Send className="h-4 w-4" />
                       )}
                     </Button>
-                  </div>
+                  </form>
                 </div>
               </div>
             </>

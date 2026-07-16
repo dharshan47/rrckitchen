@@ -4,12 +4,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { User, ShoppingCart, Home, LayoutGrid, MapPin, ChevronDown, LogOut, Package, Bell } from "lucide-react";
+import { User, ShoppingCart, Home, LayoutGrid, MapPin, ChevronDown, LogOut, Package, Bell, Search, HelpCircle } from "lucide-react";
 import { Badge } from "@/components/ui";
 import { cn } from "@/lib/utils";
 import { useCartStore, useMenuDeliveryAddress } from "@/stores";
 import { useSession, signOut } from "@/lib/auth-client";
-import { LocationDialog } from "@/components/location";
+import dynamic from "next/dynamic";
+const LocationDialog = dynamic(() => import("@/components/location").then(m => m.LocationDialog), { ssr: false });
 import { SearchAutocomplete } from "@/components/search/search-autocomplete";
 import {
   DropdownMenu,
@@ -25,6 +26,18 @@ const heroCards = [
   { image: "/banners/delivery-with-us.png", href: "/delivery-partner/signup", alt: "Deliver With Us" },
 ];
 
+function MobileNavItem({ href, icon, label, active = false, badge }: { href: string; icon: React.ReactNode; label: string; active?: boolean; badge?: number }) {
+  return (
+    <Link href={href} className={cn("flex flex-col items-center gap-0.5 px-3 py-0.5 relative min-h-11 min-w-11", active ? "text-[#B85300]" : "text-muted-foreground")}>
+      {icon}
+      <span className="text-[9px] font-semibold uppercase tracking-wider">{label}</span>
+      {badge !== undefined && badge > 0 && (
+        <Badge className="absolute -top-0.5 right-2 h-3.5 min-w-3.5 flex items-center justify-center rounded-full p-0 text-[8px] font-bold">{badge}</Badge>
+      )}
+    </Link>
+  );
+}
+
 export function SiteHeader() {
   const pathname = usePathname();
   const [locationOpen, setLocationOpen] = useState(false);
@@ -35,13 +48,14 @@ export function SiteHeader() {
   const cartHref = isLoggedIn ? "/cart" : "/login";
 
   const isHomePage = pathname === "/";
-  const isCategoriesPage = pathname === "/categories";
   const isAccountPage = pathname.startsWith("/account/");
   const isMenuDetailPage = pathname.startsWith("/menu/");
-  const hideNav = isMenuDetailPage || isAccountPage || isCategoriesPage;
+  const isSearchPage = pathname === "/search";
+  const isCartPage = pathname === "/cart";
+  const isHelpPage = pathname === "/help";
+  const hideNav = isMenuDetailPage || isAccountPage || isHelpPage;
 
   const [pastHero, setPastHero] = useState(!isHomePage);
-  const [nearFooter, setNearFooter] = useState(false);
   const [categoryFilterActive, setCategoryFilterActive] = useState(false);
   const [notifGranted, setNotifGranted] = useState(() => {
     if (typeof Notification !== "undefined") {
@@ -69,34 +83,108 @@ export function SiteHeader() {
     if (!isHomePage) return;
     const el = document.getElementById("food-time-heading");
     if (!el) return;
-    const handler = () => {
-      setPastHero(el.getBoundingClientRect().top <= 0);
-      const scrollBottom = window.innerHeight + window.scrollY;
-      const docHeight = document.documentElement.scrollHeight;
-      setNearFooter(docHeight - scrollBottom < 150);
-    };
-    window.addEventListener("scroll", handler, { passive: true });
-    return () => window.removeEventListener("scroll", handler);
+    const observer = new IntersectionObserver(
+      ([entry]) => setPastHero(!entry.isIntersecting),
+      { threshold: 0 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
   }, [isHomePage]);
 
   const showHero = isHomePage && !pastHero;
 
+  if (isCartPage) {
+    return (
+      <>
+        <header className="sticky top-0 z-50 border-b border-border bg-background">
+          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 lg:px-8 h-14 md:h-16">
+            <div className="flex items-center gap-2">
+              <span className="text-xs md:text-sm font-bold tracking-wide text-muted-foreground">SECURE CHECKOUT</span>
+            </div>
+            <div className="flex items-center gap-4">
+              <Link href="/help" className="hidden md:flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
+                <HelpCircle className="h-4 w-4" />
+                Help
+              </Link>
+              {isLoggedIn ? (
+                <Link href="/account/profile" className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
+                  <User className="h-5 w-5" />
+                  <span className="hidden md:inline">Profile</span>
+                </Link>
+              ) : (
+                <Link href="/login" className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground hover:text-foreground">
+                  <User className="h-5 w-5" />
+                  <span className="hidden md:inline">Login</span>
+                </Link>
+              )}
+            </div>
+          </div>
+        </header>
+        <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-border px-2 py-1.5 flex items-center justify-around shadow-[0_-1px_6px_rgba(0,0,0,0.05)]">
+          <MobileNavItem href="/" icon={<Home className="h-5 w-5" />} label="Home" active={false} />
+          <MobileNavItem href="/categories" icon={<LayoutGrid className="h-5 w-5" />} label="Categories" active={false} />
+          <MobileNavItem href={cartHref} icon={<ShoppingCart className="h-5 w-5" />} label="Cart" badge={cartCount} active={true} />
+          <MobileNavItem href="/help" icon={<HelpCircle className="h-5 w-5" />} label="Help" active={false} />
+        </nav>
+        <div className="h-14 md:hidden" />
+      </>
+    );
+  }
+
+  if (isHelpPage) {
+    return (
+      <>
+        <header className="sticky top-0 z-50 border-b border-border bg-background md:hidden">
+          <div className="flex items-center justify-between px-4 h-14">
+            <Link href="/" className="text-lg font-extrabold tracking-tight text-primary">RRC Kitchen</Link>
+            {isLoggedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button aria-label="User menu" className="h-8 w-8 flex items-center justify-center rounded-full border border-border hover:bg-muted transition-colors">
+                    <User className="h-5 w-5" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="min-w-40">
+                  <DropdownMenuItem asChild><Link href="/account/profile" className="flex items-center gap-2 cursor-pointer"><User className="h-4 w-4" />Profile</Link></DropdownMenuItem>
+                  <DropdownMenuItem asChild><Link href="/account/orders" className="flex items-center gap-2 cursor-pointer"><Package className="h-4 w-4" />My Orders</Link></DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut()} variant="destructive" className="flex items-center gap-2 cursor-pointer"><LogOut className="h-4 w-4" />Sign Out</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/login" className="flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-bold text-foreground hover:bg-muted transition-colors">
+                <User className="h-4 w-4" />
+                Login
+              </Link>
+            )}
+          </div>
+        </header>
+      </>
+    );
+  }
+
   return (
     <>
-      {/* Hero section - only visible on home page before scroll */}
-      <div className={`${showHero ? '' : 'hidden '} bg-primary`}>
+      <div className={`${showHero ? '' : 'hidden '} bg-[#C85A00]`}>
         <div className="hidden md:block">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 h-20">
             <div className="flex items-center gap-10">
               <Link href="/" className="text-2xl font-extrabold tracking-tight text-white">RRC Kitchen</Link>
-              <button onClick={() => setLocationOpen(true)} className="flex items-center gap-2 text-sm font-medium text-white/80 hover:text-white transition-colors group">
-                <MapPin className="h-4 w-4 text-white/80 group-hover:scale-110 transition-transform" />
+              <button onClick={() => setLocationOpen(true)} className="flex items-center gap-2 text-sm font-medium text-white/90 hover:text-white transition-colors group">
+                <MapPin className="h-4 w-4 text-white/90 group-hover:scale-110 transition-transform" />
                 <span className="truncate max-w-32">{deliveryAddress || "Select location"}</span>
                 <ChevronDown className="h-3.5 w-3.5" />
               </button>
             </div>
             <div className="flex-1 max-w-2xl mx-12">
-              <SearchAutocomplete navigateOnFocus />
+              {isSearchPage ? (
+                <div className="flex items-center gap-2 text-white/90">
+                  <Search className="h-5 w-5" />
+                  <span className="text-sm font-medium">Search</span>
+                </div>
+              ) : (
+                <SearchAutocomplete navigateOnFocus />
+              )}
             </div>
             <div className="flex items-center gap-8">
               {isLoggedIn ? (
@@ -130,43 +218,38 @@ export function SiteHeader() {
                 <ChevronDown className="h-3.5 w-3.5" />
               </button>
               <div className="flex items-center gap-2">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="h-8 w-8 flex items-center justify-center rounded-full border border-white/30 text-white hover:bg-white/10 transition-colors">
-                      <User className="h-5 w-5" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="min-w-40">
-                    {isLoggedIn ? (
-                      <>
-                        <DropdownMenuItem asChild>
-                          <Link href="/account/profile" className="flex items-center gap-2 cursor-pointer"><User className="h-4 w-4" />Profile</Link>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem asChild>
-                          <Link href="/account/orders" className="flex items-center gap-2 cursor-pointer"><Package className="h-4 w-4" />My Orders</Link>
-                        </DropdownMenuItem>
-                      </>
-                    ) : (
+                {isLoggedIn ? (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button aria-label="User menu" className="h-8 w-8 flex items-center justify-center rounded-full border border-white/30 text-white hover:bg-white/10 transition-colors">
+                        <User className="h-5 w-5" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="min-w-40">
                       <DropdownMenuItem asChild>
-                        <Link href="/login" className="flex items-center gap-2 cursor-pointer"><User className="h-4 w-4" />Sign In</Link>
+                        <Link href="/account/profile" className="flex items-center gap-2 cursor-pointer"><User className="h-4 w-4" />Profile</Link>
                       </DropdownMenuItem>
-                    )}
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={requestNotification} className="flex items-center gap-2 cursor-pointer">
-                      <Bell className={`h-4 w-4 ${notifGranted ? "fill-current" : ""}`} />
-                      {notifGranted ? "Notifications On" : "Enable Notifications"}
-                    </DropdownMenuItem>
-                    {isLoggedIn && (
-                      <>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => signOut()} variant="destructive" className="flex items-center gap-2 cursor-pointer"><LogOut className="h-4 w-4" />Sign Out</DropdownMenuItem>
-                      </>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      <DropdownMenuItem asChild>
+                        <Link href="/account/orders" className="flex items-center gap-2 cursor-pointer"><Package className="h-4 w-4" />My Orders</Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={requestNotification} className="flex items-center gap-2 cursor-pointer">
+                        <Bell className={`h-4 w-4 ${notifGranted ? "fill-current" : ""}`} />
+                        {notifGranted ? "Notifications On" : "Enable Notifications"}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => signOut()} variant="destructive" className="flex items-center gap-2 cursor-pointer"><LogOut className="h-4 w-4" />Sign Out</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                ) : (
+                  <Link href="/login" className="flex items-center gap-1.5 rounded-lg border border-white/30 px-3 py-1.5 text-xs font-bold text-white hover:bg-white/10 transition-colors">
+                    <User className="h-4 w-4" />
+                    Login
+                  </Link>
+                )}
               </div>
             </div>
-            <SearchAutocomplete navigateOnFocus placeholder="Search meals..." inputClassName="h-10 rounded-lg text-sm pl-10 focus-visible:ring-1 bg-white text-foreground placeholder:text-muted-foreground border border-border" />
+            <SearchAutocomplete mobileModal placeholder="Search meals..." inputClassName="h-10 rounded-lg text-sm pl-10 focus-visible:ring-1 bg-white text-foreground placeholder:text-muted-foreground border border-border" />
           </div>
         )}
 
@@ -174,7 +257,7 @@ export function SiteHeader() {
           <div className="text-center pt-4 sm:pt-6 lg:pt-8 mb-5 sm:mb-8 lg:mb-10">
             <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
               <span className="md:whitespace-nowrap">Order fresh home-cooked meals.</span>{' '}
-              <span className="text-white/70 md:whitespace-nowrap">Discover local chefs near you.</span>
+              <span className="text-white/90 md:whitespace-nowrap">Discover local chefs near you.</span>
             </h1>
           </div>
 
@@ -182,7 +265,7 @@ export function SiteHeader() {
             {heroCards.map((card) => (
               <Link key={card.alt} href={card.href}>
                 <div className="relative w-full aspect-4/3">
-                  <Image src={card.image} alt={card.alt} fill className="object-contain" sizes="33vw" loading="eager" />
+                  <Image src={card.image} alt={card.alt} fill className="object-contain" sizes="33vw" loading="eager" priority />
                 </div>
               </Link>
             ))}
@@ -191,7 +274,7 @@ export function SiteHeader() {
           <div className="md:hidden mb-3">
             <Link key={heroCards[1].alt} href={heroCards[1].href}>
               <div className="relative w-full aspect-4/3">
-                  <Image src={heroCards[1].image} alt={heroCards[1].alt} fill className="object-contain" sizes="(max-width: 768px) calc(100vw - 32px)" loading="eager" />
+                  <Image src={heroCards[1].image} alt={heroCards[1].alt} fill className="object-contain" sizes="(max-width: 768px) calc(100vw - 32px)" loading="eager" priority />
               </div>
             </Link>
           </div>
@@ -207,7 +290,6 @@ export function SiteHeader() {
         </div>
       </div>
 
-      {/* Sticky Desktop Header */}
       <header className={`sticky top-0 z-50 border-b border-border bg-background mb-0 lg:mb-6 ${
         showHero ? 'hidden md:hidden' : 'hidden md:block'
       } ${categoryFilterActive ? 'hidden' : ''}`}>
@@ -221,7 +303,14 @@ export function SiteHeader() {
             </button>
           </div>
           <div className="flex-1 max-w-2xl mx-12">
-            <SearchAutocomplete navigateOnFocus />
+            {isSearchPage ? (
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <Search className="h-5 w-5" />
+                <span className="text-sm font-medium">Search</span>
+              </div>
+            ) : (
+              <SearchAutocomplete navigateOnFocus />
+            )}
           </div>
           <div className="flex items-center gap-8">
             {isLoggedIn ? (
@@ -246,23 +335,22 @@ export function SiteHeader() {
         </div>
       </header>
 
-      {/* Mobile Header */}
       {!hideNav && (
         <header className={`sticky top-0 z-50 md:hidden border-b border-border px-4 py-3 space-y-3 mb-4 ${
-          isHomePage ? 'bg-primary': 'bg-background'
+          isHomePage ? 'bg-[#C85A00]' : 'bg-background'
         } ${
           isHomePage ? 'hidden' : ''
         }`}>
           <div className="flex items-center justify-between">
-            <button onClick={() => setLocationOpen(true)} className={`flex items-center gap-2 text-sm font-medium ${isHomePage ? 'text-white/80' : 'text-muted-foreground'}`}>
-              <MapPin className={`h-4 w-4 ${isHomePage ? 'text-white' : 'text-primary'}`} />
+            <button onClick={() => setLocationOpen(true)} className={`flex items-center gap-2 text-sm font-medium ${isHomePage ? 'text-white/90' : 'text-muted-foreground'}`}>
+              <MapPin className={`h-4 w-4 ${isHomePage ? 'text-white' : 'text-[#B85300]'}`} />
               <span className="truncate max-w-40">{deliveryAddress || "Select location"}</span>
               <ChevronDown className="h-3.5 w-3.5" />
             </button>
             {isLoggedIn ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <button className={`h-8 w-8 flex items-center justify-center rounded-full border transition-colors ${isHomePage ? 'border-white/30 text-white hover:bg-white/10' : 'border-border hover:bg-muted'}`}><User className="h-5 w-5" /></button>
+                  <button aria-label="User menu" className={`h-8 w-8 flex items-center justify-center rounded-full border transition-colors ${isHomePage ? 'border-white/30 text-white hover:bg-white/10' : 'border-border hover:bg-muted'}`}><User className="h-5 w-5" /></button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="min-w-40">
                   <DropdownMenuItem asChild><Link href="/account/profile" className="flex items-center gap-2 cursor-pointer"><User className="h-4 w-4" />Profile</Link></DropdownMenuItem>
@@ -284,31 +372,20 @@ export function SiteHeader() {
             )}
           </div>
           <SearchAutocomplete
-            navigateOnFocus
+            mobileModal
             placeholder="Search meals..."
             inputClassName="h-10 rounded-lg text-sm pl-10 focus-visible:ring-1 bg-white text-foreground placeholder:text-muted-foreground border border-border"
           />
         </header>
       )}
 
-      {/* Sticky Mobile Search Bar - shows after hero, hides near footer (non-home pages) */}
-      {!hideNav && pastHero && !nearFooter && !isHomePage && (
-        <div className="sticky top-0 z-40 md:hidden bg-background border-b border-border px-4 py-2">
-          <SearchAutocomplete
-            navigateOnFocus
-            placeholder="Search meals..."
-            inputClassName="h-10 rounded-lg text-sm pl-10 focus-visible:ring-1 bg-white border border-border"
-          />
-        </div>
-      )}
-
-      {/* Mobile Bottom Navigation */}
       {!hideNav && (
         <>
           <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-border px-2 py-1.5 flex items-center justify-around shadow-[0_-1px_6px_rgba(0,0,0,0.05)]">
             <MobileNavItem href="/" icon={<Home className="h-5 w-5" />} label="Home" active={pathname === "/"} />
             <MobileNavItem href="/categories" icon={<LayoutGrid className="h-5 w-5" />} label="Categories" active={pathname.startsWith("/categories")} />
             <MobileNavItem href={cartHref} icon={<ShoppingCart className="h-5 w-5" />} label="Cart" badge={cartCount} active={pathname === "/cart"} />
+            <MobileNavItem href="/help" icon={<HelpCircle className="h-5 w-5" />} label="Help" active={pathname.startsWith("/help")} />
           </nav>
           <div className="h-14 md:hidden" />
         </>
@@ -318,17 +395,3 @@ export function SiteHeader() {
     </>
   );
 }
-
-function MobileNavItem({ href, icon, label, active = false, badge }: { href: string; icon: React.ReactNode; label: string; active?: boolean; badge?: number }) {
-  return (
-    <Link href={href} className={cn("flex flex-col items-center gap-0.5 px-3 py-0.5 relative", active ? "text-primary" : "text-muted-foreground")}>
-      {icon}
-      <span className="text-[9px] font-semibold uppercase tracking-wider">{label}</span>
-      {badge !== undefined && badge > 0 && (
-        <Badge className="absolute -top-0.5 right-2 h-3.5 min-w-3.5 flex items-center justify-center rounded-full p-0 text-[8px] font-bold">{badge}</Badge>
-      )}
-    </Link>
-  );
-}
-
-

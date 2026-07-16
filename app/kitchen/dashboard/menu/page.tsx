@@ -37,10 +37,16 @@ import { useRouter } from "next/navigation"
 import { addKitchenMenuItem, toggleMenuItemAvailability, setKitchenAvailability } from "@/actions/admin/dashboard"
 
 const categories = [
-  { value: "breakfast", label: "Breakfast" },
-  { value: "lunch", label: "Lunch" },
+  { value: "south-indian", label: "South Indian" },
+  { value: "north-indian", label: "North Indian" },
+  { value: "chinese", label: "Chinese" },
+  { value: "continental", label: "Continental" },
   { value: "snacks", label: "Snacks" },
-  { value: "dinner", label: "Dinner" },
+  { value: "beverages", label: "Beverages" },
+  { value: "desserts", label: "Desserts" },
+  { value: "juices", label: "Juices" },
+  { value: "chat", label: "Chat" },
+  { value: "others", label: "Others" },
 ]
 
 function FoodTypeBadge({ type }: { type: string }) {

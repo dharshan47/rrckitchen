@@ -69,7 +69,7 @@ function SignupFormInner({ role = "customer", title, subtitle, nameLabel = "Full
           )}
           <span>{title ?? "Create Account"}</span>
         </CardTitle>
-        {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+        {subtitle && <p className="text-sm text-muted-foreground text-center">{subtitle}</p>}
       </CardHeader>
       <CardContent className="grid gap-4 px-6 pb-6">
         {step === "phone" && (

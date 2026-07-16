@@ -138,7 +138,7 @@ export function DeliveryAddressCard() {
       </Card>
 
       <Sheet open={open} onOpenChange={(o) => { if (!o) { resetForm(); setOpen(false); } }}>
-        <SheetContent side="left" className="w-full sm:max-w-md p-0 flex flex-col">
+        <SheetContent side="bottom" className="w-full sm:max-w-md p-0 flex flex-col sm:left-auto mx-auto">
           <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
             <SheetTitle className="text-base">Save Delivery Address</SheetTitle>
           </SheetHeader>

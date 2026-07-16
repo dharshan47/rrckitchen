@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ChefHat, Star, Loader2 } from "lucide-react";
 import { KitchenWishlistButton } from "@/components/kitchen/kitchen-wishlist-button";
 import { KitchenFilters } from "@/components/kitchen/kitchen-filters";
+import type { VegFilterValue } from "@/components/kitchen/veg-filter";
 import { SortOption } from "@/components/kitchen/sort-by-dialog";
 
 function KitchenCard({
@@ -38,7 +39,7 @@ function KitchenCard({
         <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-muted">
           <Image
             src={kitchen.imageUrl}
-            alt={kitchen.displayName}
+            alt=""
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
             sizes="(max-width: 1024px) 50vw, 16vw"
@@ -87,8 +88,8 @@ interface InfiniteKitchenGridProps {
   onCategorySelect?: (category: string | null) => void;
   sortOption?: SortOption | null;
   onSortChange?: (option: SortOption | null) => void;
-  vegFilter?: boolean | null;
-  onVegFilterChange?: (veg: boolean | null) => void;
+  vegFilter?: VegFilterValue;
+  onVegFilterChange?: (veg: VegFilterValue) => void;
   selectedCuisines?: string[];
   onCuisinesChange?: (cuisines: string[]) => void;
   showInlineFilters?: boolean;
@@ -110,7 +111,7 @@ export function InfiniteKitchenGrid({
   const sentinelRef = useRef<HTMLDivElement>(null);
   const [internalSelectedCategory, setInternalSelectedCategory] = useState<string | null>(null);
   const [internalSortOption, setInternalSortOption] = useState<SortOption | null>(null);
-  const [internalVegFilter, setInternalVegFilter] = useState<boolean | null>(null);
+  const [internalVegFilter, setInternalVegFilter] = useState<VegFilterValue>(null);
   const [internalSelectedCuisines, setInternalSelectedCuisines] = useState<string[]>([]);
 
   const selectedCategory = externalSelectedCategory !== undefined ? externalSelectedCategory : internalSelectedCategory;
@@ -134,21 +135,29 @@ export function InfiniteKitchenGrid({
 
   const { data: categories = [] } = useKitchenCategories();
 
-  const allKitchens = useMemo(
-    () => data?.pages.flatMap((page) => page.data) ?? [],
-    [data],
-  );
+  const allKitchens = useMemo(() => {
+    const seen = new Set<string>();
+    return (data?.pages.flatMap((page) => page.data) ?? []).filter((k) => {
+      if (seen.has(k.id)) return false;
+      seen.add(k.id);
+      return true;
+    });
+  }, [data]);
 
   const filteredKitchens = useMemo(() => {
     let result = allKitchens;
 
-    if (vegFilter !== null) {
+    if (vegFilter === "pure-veg") {
       result = result.filter((k) =>
-        k.items.some((i) =>
-          vegFilter
-            ? i.foodType === "VEG"
-            : i.foodType === "NON_VEG"
-        )
+        k.items.length > 0 && k.items.every((i) => i.foodType === "VEG")
+      );
+    } else if (vegFilter === "veg") {
+      result = result.filter((k) =>
+        k.items.some((i) => i.foodType === "VEG")
+      );
+    } else if (vegFilter === "non-veg") {
+      result = result.filter((k) =>
+        k.items.some((i) => i.foodType === "NON_VEG")
       );
     }
 
@@ -240,12 +249,18 @@ export function InfiniteKitchenGrid({
 
   const skeletonCards = useMemo(
     () =>
-      Array.from({ length: 6 }).map((_, i) => (
+      Array.from({ length: 16 }).map((_, i) => (
         <div key={i}>
-          <Skeleton className="w-full aspect-[4/3] rounded-xl" />
-          <div className="mt-2 space-y-1">
-            <Skeleton className="h-4 w-28" />
-            <Skeleton className="h-3 w-16" />
+          <div className="relative w-full aspect-[4/3] rounded-xl bg-muted">
+            <Skeleton className="absolute top-2 right-2 h-8 w-8 rounded-full" />
+          </div>
+          <div className="mt-1.5 space-y-0.5">
+            <Skeleton className="h-5 w-28" />
+            <Skeleton className="h-3 w-24" />
+            <div className="flex items-center gap-1">
+              <Skeleton className="h-3 w-3" />
+              <Skeleton className="h-3 w-8" />
+            </div>
           </div>
         </div>
       )),

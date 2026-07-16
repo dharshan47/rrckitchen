@@ -37,8 +37,8 @@ export function useTomorrowMenu() {
       return res.json();
     },
     placeholderData: keepPreviousData,
-    staleTime: 15_000,
-    gcTime: 60_000,
+    staleTime: 30_000,
+    gcTime: 120_000,
     refetchOnWindowFocus: false,
   });
 }

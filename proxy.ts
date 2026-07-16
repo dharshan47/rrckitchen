@@ -5,23 +5,43 @@ import { getSessionCookie } from "better-auth/cookies";
 const protectedPaths = [
   "/kitchen/dashboard",
   "/delivery-partner/dashboard",
+  "/admin",
 ];
 
 const roleLoginMap: Record<string, string> = {
   "/kitchen": "/kitchen/login",
   "/delivery-partner": "/delivery-partner/login",
+  "/admin": "/admin/2fa",
 };
 
 function matchesProtected(pathname: string, prefix: string): boolean {
   return pathname === prefix || pathname.startsWith(prefix + "/");
 }
 
+const STATIC_EXTENSIONS = /\.(jpg|jpeg|png|webp|avif|svg|ico|css|js|woff2?)$/;
+
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (STATIC_EXTENSIONS.test(pathname)) {
+    return NextResponse.next();
+  }
+
+  const response = NextResponse.next();
+
+  if (pathname.startsWith("/_next/static")) {
+    response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
+    return response;
+  }
+
+  if (pathname.startsWith("/icons/") || pathname.startsWith("/banners/")) {
+    response.headers.set("Cache-Control", "public, max-age=31536000, immutable");
+    return response;
+  }
+
   const matchedPrefix = protectedPaths.find((p) => matchesProtected(pathname, p));
   if (!matchedPrefix) {
-    return NextResponse.next();
+    return response;
   }
 
   const sessionCookie = getSessionCookie(request);
@@ -53,7 +73,7 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

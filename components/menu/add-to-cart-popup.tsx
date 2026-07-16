@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { ShoppingCart, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,20 +24,6 @@ interface AddToCartPopupProps {
 }
 
 export function AddToCartPopup({ item, qty = 1, open, onOpenChange }: AddToCartPopupProps) {
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (open) {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => {
-        onOpenChange(false);
-      }, 3500);
-    }
-    return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-    };
-  }, [open, item?.id, onOpenChange]);
-
   if (!item || !open) return null;
 
   return (
@@ -67,28 +52,23 @@ function CardContent({ item, qty, onClose }: { item: AddPopupItem; qty: number; 
     <Link
       href="/cart"
       onClick={onClose}
-      className="block rounded-lg bg-secondary p-3 shadow-lg hover:bg-secondary/80 transition-colors border border-border/50"
+      className="block rounded-lg bg-primary p-3 shadow-lg hover:brightness-110 transition-all border border-primary/50"
     >
-      <div className="flex items-center gap-3">
-        <div className="flex-1 min-w-0">
-          <p className="text-xs font-bold text-foreground leading-tight line-clamp-2">
-            Added {item.name}
-          </p>
-        </div>
-        <div className="text-right shrink-0">
-          <p className="text-xs font-black text-foreground">CART</p>
-          <p className="text-[10px] font-semibold text-muted-foreground">{qty} ITEM{qty > 1 ? "S" : ""}</p>
-        </div>
-        <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-muted">
+      <div className="flex items-center gap-2">
+        <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-md bg-primary-foreground/20">
           {item.imageUrl ? (
-            <Image src={item.imageUrl} alt={item.name} fill className="object-cover" sizes="40px" />
+            <Image src={item.imageUrl} alt={item.name} fill className="object-cover" sizes="36px" />
           ) : (
-            <div className="flex h-full w-full items-center justify-center bg-muted">
-              <ShoppingCart className="h-4 w-4 text-muted-foreground/40" />
+            <div className="flex h-full w-full items-center justify-center">
+              <ShoppingCart className="h-4 w-4 text-primary-foreground/60" />
             </div>
           )}
         </div>
-        <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+        <div className="text-left">
+          <p className="text-xs font-black text-primary-foreground leading-tight">CART</p>
+          <p className="text-[10px] font-semibold text-primary-foreground/70">{qty} ITEM{qty > 1 ? "S" : ""}</p>
+        </div>
+        <ChevronRight className="h-5 w-5 text-primary-foreground/60 shrink-0 ml-1" />
       </div>
     </Link>
   );

@@ -1,8 +1,9 @@
 "use client";
 
 import { SortByDropdown, SortOption } from "./sort-by-dialog";
-import { VegFilter } from "./veg-filter";
+import { VegFilter, type VegFilterValue } from "./veg-filter";
 import { CuisineDialog } from "./cuisine-dialog";
+export type { VegFilterValue };
 interface CategoryData {
   id: string;
   name: string;
@@ -15,8 +16,8 @@ interface KitchenFiltersProps {
   onCategorySelect: (category: string | null) => void;
   sortOption: SortOption | null;
   onSortChange: (option: SortOption | null) => void;
-  vegFilter: boolean | null;
-  onVegFilterChange: (veg: boolean | null) => void;
+  vegFilter: VegFilterValue;
+  onVegFilterChange: (veg: VegFilterValue) => void;
   selectedCuisines: string[];
   onCuisinesChange: (cuisines: string[]) => void;
 }

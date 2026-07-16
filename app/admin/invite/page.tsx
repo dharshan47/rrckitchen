@@ -5,6 +5,7 @@ import { useState, useMemo } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { UserPlus, Link2, Check, Loader2, Copy, ShieldBan, Users } from "lucide-react"
 import { Button, Card, Label, Badge } from "@/components/ui"
+import { Skeleton } from "@/components/ui/skeleton"
 import { DataTable } from "@/components/ui/data-table"
 import {
   useReactTable,
@@ -230,8 +231,23 @@ export default function AdminInvitePage() {
           <Card className="p-6">
             <h3 className="text-lg font-semibold mb-4">Pending Invites</h3>
             {invitesLoading ? (
-              <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              <div className="space-y-3 animate-pulse">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="flex items-center justify-between p-3 rounded-lg border border-border">
+                    <div className="space-y-2 flex-1">
+                      <div className="flex items-center gap-2">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-4 w-16 rounded-full" />
+                      </div>
+                      <div className="flex gap-1">
+                        <Skeleton className="h-4 w-20 rounded-full" />
+                        <Skeleton className="h-4 w-24 rounded-full" />
+                        <Skeleton className="h-4 w-16 rounded-full" />
+                      </div>
+                      <Skeleton className="h-3 w-28" />
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : invites.length === 0 ? (
               <p className="py-8 text-center text-sm text-muted-foreground">No pending invites</p>
@@ -272,8 +288,25 @@ export default function AdminInvitePage() {
           <Users className="h-5 w-5" /> Active Admins
         </h3>
         {adminsLoading ? (
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+          <div className="space-y-3 animate-pulse">
+            <div className="flex gap-4 pb-3 border-b border-border">
+              <Skeleton className="h-4 flex-1" />
+              <Skeleton className="h-4 w-40" />
+              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-20" />
+              <Skeleton className="h-4 w-12 ml-auto" />
+            </div>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex gap-4 items-center">
+                <Skeleton className="h-4 flex-1" />
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-4 w-48" />
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-7 w-7 rounded-md ml-auto" />
+              </div>
+            ))}
           </div>
         ) : activeAdmins.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">No active admins</p>

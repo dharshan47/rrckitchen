@@ -11,7 +11,11 @@ import { ChartBarLabel } from "@/components/ui/bar-chart"
 import { ChartLineDots } from "@/components/ui/line-chart"
 import { ChartPieDonut } from "@/components/ui/donut-chart"
 import type { ChartConfig } from "@/components/ui/chart"
-import { DollarSign, ShoppingBag, ChefHat, Utensils, TrendingUp, Users } from "lucide-react"
+import { DollarSign, ShoppingBag, ChefHat, Utensils, TrendingUp, Users, Ticket } from "lucide-react"
+import Link from "next/link"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 export default function DashboardPage() {
   const data = useKitchenData()
@@ -147,6 +151,48 @@ export default function DashboardPage() {
           xKey="day"
         />
       </div>
+
+      <section aria-label="Support tickets">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Ticket className="h-5 w-5 text-primary" />
+              Support Tickets
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {data.supportTickets.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted-foreground">No support tickets yet</p>
+            ) : (
+              <div className="space-y-2">
+                {data.supportTickets.slice(0, 5).map((ticket: { id: string; subject: string; status: string; priority: string; createdAt: Date }) => {
+                  const statusStyles: Record<string, { label: string; color: string }> = {
+                    OPEN: { label: "Open", color: "text-blue-600 bg-blue-100" },
+                    INPROGRESS: { label: "In Progress", color: "text-amber-600 bg-amber-100" },
+                    RESOLVED: { label: "Resolved", color: "text-green-600 bg-green-100" },
+                    CLOSED: { label: "Closed", color: "text-gray-600 bg-gray-100" },
+                  }
+                  const s = statusStyles[ticket.status] ?? { label: ticket.status, color: "text-gray-600 bg-gray-100" }
+                  return (
+                    <div key={ticket.id} className="flex items-center justify-between gap-3 rounded-lg border border-border p-3">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium truncate">{ticket.subject}</p>
+                        <p className="text-xs text-muted-foreground">{new Date(ticket.createdAt).toLocaleDateString("en-IN")}</p>
+                      </div>
+                      <Badge className={cn("text-xs shrink-0", s.color)}>{s.label}</Badge>
+                    </div>
+                  )
+                })}
+              </div>
+            )}
+            <div className="mt-3">
+              <Button variant="ghost" size="sm" className="w-full text-xs" asChild>
+                <Link href="/support">View All Tickets</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
     </div>
   )
 }

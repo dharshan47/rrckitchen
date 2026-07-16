@@ -1,58 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
-import { z } from "zod";
-import { ArrowLeft, Mail, Phone, MapPin, Clock, Send, Loader2, CheckCircle, AlertCircle } from "lucide-react";
-import { Button, Input, Card } from "@/components/ui";
-import { useSession } from "@/lib/auth-client";
-import { toast } from "sonner";
-import Link from "next/link";
-
-const ticketSchema = z.object({
-  subject: z.string().min(3, "Subject must be at least 3 characters").max(200, "Subject too long"),
-  description: z.string().min(10, "Please provide more detail (at least 10 characters)").max(2000, "Description too long"),
-  orderId: z.string().optional(),
-});
-
-type TicketForm = z.infer<typeof ticketSchema>;
+import { ArrowLeft, Mail, Phone, MapPin, Clock } from "lucide-react";
+import { Button } from "@/components/ui";
 
 export default function ContactPage() {
   const router = useRouter();
-  const { data: session } = useSession();
-  const [submitted, setSubmitted] = useState(false);
-
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<TicketForm>({
-    resolver: zodResolver(ticketSchema),
-  });
-
-  const submitMutation = useMutation({
-    mutationFn: async (data: TicketForm) => {
-      const res = await fetch("/api/support", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          subject: data.subject.trim(),
-          description: data.description.trim(),
-          orderId: data.orderId?.trim() || undefined,
-        }),
-      });
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "Failed to submit" }));
-        throw new Error(err.error || "Failed to submit ticket");
-      }
-    },
-    onSuccess: () => {
-      setSubmitted(true);
-      toast.success("Support ticket submitted!");
-    },
-    onError: (err) => {
-      toast.error(err instanceof Error ? err.message : "Failed to submit ticket");
-    },
-  });
 
   return (
     <>
@@ -140,78 +93,45 @@ export default function ContactPage() {
                 <p className="text-muted-foreground">Mon &ndash; Sat (9:00 &ndash; 18:00)</p>
               </div>
             </div>
+
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-2">
+              <p className="text-sm">
+                Need help with an order or have an issue?{" "}
+                <a href="/support" className="text-primary font-semibold underline">Visit our Support Center</a>{" "}
+                to create and track support tickets.
+              </p>
+              <p className="text-sm">
+                For more information, visit our{" "}
+                <a href="/help" className="text-primary font-semibold underline">Help Center</a>{" "}
+                for guides, FAQs, and troubleshooting.
+              </p>
+            </div>
           </div>
 
-          <Card className="p-6">
-            <h2 className="text-xl font-semibold mb-4">Submit a Ticket</h2>
-
-            {submitted ? (
-              <div className="text-center py-8 space-y-4">
-                <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-100 mx-auto">
-                  <CheckCircle className="h-7 w-7 text-green-600" />
-                </div>
-                <div>
-                  <p className="font-semibold">Ticket Submitted!</p>
-                  <p className="text-sm text-muted-foreground mt-1">We&apos;ll get back to you as soon as possible.</p>
-                </div>
-                <div className="flex gap-3 justify-center">
-                  <Button variant="outline" onClick={() => { setSubmitted(false); reset(); }}>
-                    Submit Another
-                  </Button>
-                  {session && (
-                    <Button asChild variant="outline">
-                      <Link href="/account/orders">View Orders</Link>
-                    </Button>
-                  )}
-                </div>
+          <div className="space-y-6">
+            <h2 className="text-xl font-semibold">Frequently Asked</h2>
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border p-4">
+                <p className="font-medium text-sm">How do I track my order?</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Go to your Orders page and select the order to see live tracking.
+                </p>
               </div>
-            ) : (
-              <form onSubmit={handleSubmit((data) => submitMutation.mutate(data))} className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Subject *</label>
-                  <Input
-                    placeholder="Brief summary of your issue"
-                    {...register("subject")}
-                  />
-                  {errors.subject && <p className="text-xs text-destructive mt-1">{errors.subject.message}</p>}
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1 block">Description *</label>
-                  <textarea
-                    {...register("description")}
-                    placeholder="Describe your issue in detail..."
-                    rows={4}
-                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-primary/30"
-                  />
-                  {errors.description && <p className="text-xs text-destructive mt-1">{errors.description.message}</p>}
-                </div>
-                <div>
-                  <label className="text-sm font-medium mb-1 block">
-                    Order ID <span className="text-muted-foreground font-normal">(optional)</span>
-                  </label>
-                  <Input
-                    placeholder="Paste order ID if related to an order"
-                    {...register("orderId")}
-                  />
-                </div>
-                {!session && (
-                  <div className="rounded-lg bg-amber-50 border border-amber-200 p-3 text-xs text-amber-700 flex items-start gap-2">
-                    <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
-                    <span>You are submitting anonymously.{" "}
-                      <Link href="/login" className="font-semibold underline">Log in</Link> to track your tickets.
-                    </span>
-                  </div>
-                )}
-                <Button type="submit" className="w-full" disabled={submitMutation.isPending}>
-                  {submitMutation.isPending ? (
-                    <><Loader2 className="h-4 w-4 mr-2 animate-spin" /> Submitting...</>
-                  ) : (
-                    <><Send className="h-4 w-4 mr-2" /> Submit Ticket</>
-                  )}
-                </Button>
-              </form>
-            )}
-          </Card>
+              <div className="rounded-lg border border-border p-4">
+                <p className="font-medium text-sm">How do I cancel my order?</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Orders can be cancelled before the kitchen starts preparing. Visit your Orders page for details.
+                </p>
+              </div>
+              <div className="rounded-lg border border-border p-4">
+                <p className="font-medium text-sm">Have a different issue?</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  <a href="/support" className="text-primary font-semibold underline">Create a support ticket</a>{" "}
+                  and we&apos;ll help you out.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </>

@@ -150,7 +150,7 @@ export function SearchAutocomplete({
   }, [results])
 
   const handleSelect = useCallback(
-    (type: "item" | "kitchen", id: string, slug?: string, kitchenName?: string) => {
+    (type: "item" | "kitchen", id: string, slug?: string, kitchenName?: string, itemName?: string) => {
       if (type === "kitchen" && kitchenName) {
         addRecentKitchen({ id, slug: slug ?? id, name: kitchenName })
       }
@@ -159,7 +159,7 @@ export function SearchAutocomplete({
       onNavigate?.()
       if (mobileModal) setShowMobileModal(false)
       if (type === "item") {
-        router.push(`/menu/${slug ?? id}`)
+        router.push(`/search?q=${encodeURIComponent(itemName ?? "")}`)
       } else {
         router.push(`/kitchen/${slug ?? id}`)
       }
@@ -181,7 +181,7 @@ export function SearchAutocomplete({
         if (selectedIndex >= 0 && selectedIndex < items.length) {
           const selected = items[selectedIndex]
           if (selected.type === "item") {
-            handleSelect("item", selected.id, (selected as { slug?: string }).slug)
+            handleSelect("item", selected.id, (selected as { slug?: string }).slug, undefined, (selected as { name?: string }).name)
           } else if (selected.type === "kitchen") {
             handleSelect("kitchen", selected.id, (selected as { slug?: string }).slug)
           }
@@ -260,7 +260,7 @@ export function SearchAutocomplete({
                 {results!.dishes.map((item, i) => (
                   <button
                     key={item.id}
-                    onClick={() => handleSelect("item", item.id, item.slug)}
+                    onClick={() => handleSelect("item", item.id, item.slug, undefined, item.name)}
                     onMouseEnter={() => setSelectedIndex(i)}
                     className={cn(
                       "w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-muted/50 transition-colors",
@@ -269,7 +269,7 @@ export function SearchAutocomplete({
                   >
                     <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center shrink-0 overflow-hidden relative">
                       {item.imageUrl ? (
-                        <Image src={item.imageUrl} alt="" fill className="object-cover" />
+                        <Image src={item.imageUrl} alt={item.name} fill className="object-cover" sizes="32px" />
                       ) : (
                         <UtensilsCrossed className="h-4 w-4 text-muted-foreground" />
                       )}

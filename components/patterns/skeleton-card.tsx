@@ -25,28 +25,36 @@ function MenuItemSkeleton({ hasOffer = true }: { hasOffer?: boolean }) {
             />
           </div>
         )}
+        <div className="absolute right-2 top-2 z-10">
+          <Skeleton className="h-8 w-8 rounded-full" />
+        </div>
       </div>
 
       <div className="px-3 pb-4 pt-1.5">
         <div className="flex flex-col">
-          {/* Name/Title placeholder */}
-          <Skeleton className="h-5 w-1/2" />
-          
-          {/* Price & Add Button Row */}
-          <div className="mt-4 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {/* Active Price Badge placeholder (e.g. ₹50) */}
-              <Skeleton className="h-7 w-16 rounded-md bg-orange-100" />
-              {/* Original Price placeholder (e.g. ₹55) */}
-              <Skeleton className="h-4 w-10" />
+          {/* Row 1: FoodType icon + Bestseller | Rating */}
+          <div className="flex items-center justify-between mb-1.5">
+            <div className="flex items-center gap-1.5">
+              <Skeleton className="h-3.5 w-3.5 rounded" />
+              <Skeleton className="h-3 w-16 rounded-sm" />
             </div>
-            
-            {/* Add Button placeholder */}
-            <Skeleton className="h-8 w-16 rounded-lg border border-orange-200" />
+            <Skeleton className="h-3 w-16" />
           </div>
           
-          {/* Dashed Separator at the bottom */}
-          <div className="mt-4 border-t border-dashed border-border" />
+          {/* Row 2: Kitchen name */}
+          <Skeleton className="h-3 w-24 mb-0.5" />
+          
+          {/* Row 3: Item name */}
+          <Skeleton className="h-4 w-3/4" />
+          
+          {/* Row 4: Price & Add Button */}
+          <div className="mt-4 flex items-center justify-between gap-1.5">
+            <div className="flex items-center gap-1.5">
+              <Skeleton className="h-5 w-14 rounded-md" />
+              <Skeleton className="h-3 w-10" />
+            </div>
+            <Skeleton className="h-7 w-16 rounded-lg" />
+          </div>
         </div>
       </div>
     </div>

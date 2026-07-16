@@ -338,11 +338,16 @@ export default function AccountProfilePage() {
               <Heart className="h-5 w-5 text-primary" />
               <h2 className="text-lg font-semibold">My Favourites</h2>
             </div>
-            {wishlist.length > 0 && (
-              <Link href="/menu" className="text-sm font-semibold text-primary hover:text-primary/80">
-                Browse Menu
+            <div className="flex items-center gap-2">
+              <Link href="/account/favourites" className="text-sm font-semibold text-primary hover:text-primary/80">
+                View All
               </Link>
-            )}
+              {wishlist.length > 0 && (
+                <Link href="/menu" className="text-sm font-semibold text-primary hover:text-primary/80">
+                  Browse Menu
+                </Link>
+              )}
+            </div>
           </div>
 
           {wishlist.length === 0 ? (

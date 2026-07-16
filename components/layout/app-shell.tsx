@@ -1,31 +1,39 @@
 "use client";
 
+import { memo, useMemo } from "react";
 import { usePathname } from "next/navigation";
-import { SiteHeader, SiteFooter } from "@/components/site";
-import { SwUpdateBanner } from "@/components/patterns/sw-update-banner";
-import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init";
-import { InstallPrompt } from "@/components/patterns/install-prompt";
+import dynamic from "next/dynamic";
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+const SiteHeader = dynamic(() => import("@/components/site/site-header").then(m => m.SiteHeader), { ssr: false });
+const SiteFooter = dynamic(() => import("@/components/site/site-footer").then(m => m.SiteFooter), { ssr: false });
+const SwUpdateBanner = dynamic(() => import("@/components/patterns/sw-update-banner").then(m => m.SwUpdateBanner), { ssr: false });
+const PushSubscriptionInit = dynamic(() => import("@/components/patterns/push-subscription-init").then(m => m.PushSubscriptionInit), { ssr: false });
+const InstallPrompt = dynamic(() => import("@/components/patterns/install-prompt").then(m => m.InstallPrompt), { ssr: false });
+
+const HIDE_HEADER_FOOTER_PATHS = [
+  "/login", "/signup", "/admin", "/kitchen", "/delivery-partner",
+  "/privacy-policy", "/terms-of-use", "/contact",
+];
+
+function shouldHideShell(pathname: string) {
+  return HIDE_HEADER_FOOTER_PATHS.some((p) => pathname.startsWith(p));
+}
+
+export const AppShell = memo(function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const isLoginPage = pathname.startsWith("/login");
-  const isSignupPage = pathname.startsWith("/signup");
-  const isAdminPage = pathname.startsWith("/admin");
-  const isKitchenPage = pathname.startsWith("/kitchen");
-  const isDeliveryPartnerPage = pathname.startsWith("/delivery-partner");
-  const isPolicyPage = pathname.startsWith("/privacy-policy") || pathname.startsWith("/terms-of-use") || pathname.startsWith("/contact");
-  if (isLoginPage || isSignupPage || isAdminPage || isKitchenPage || isDeliveryPartnerPage || isPolicyPage) {
-    return <>{children}</>;
-  }
+  const hideShell = useMemo(() => shouldHideShell(pathname), [pathname]);
+  const isCartPage = pathname === "/cart";
+
+  if (hideShell) return <>{children}</>;
 
   return (
     <>
       <SiteHeader />
       {children}
-      <SiteFooter />
+      {!isCartPage && <SiteFooter />}
       <SwUpdateBanner />
       <PushSubscriptionInit />
       <InstallPrompt />
     </>
   );
-}
+});

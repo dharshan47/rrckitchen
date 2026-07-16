@@ -520,7 +520,7 @@ export default function AdminCouponsPage() {
                   <Skeleton className="h-4 w-20" />
                   <Skeleton className="h-4 w-36" />
                   <Skeleton className="h-4 w-12" />
-                  <Skeleton className="h-5 w-14 rounded-full" />
+                  <Skeleton className="h-5 w-10 rounded-full" />
                   <Skeleton className="h-8 w-20 rounded-lg ml-auto" />
                 </div>
               ))}

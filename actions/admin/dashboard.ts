@@ -350,6 +350,7 @@ export async function getKitchenDashboardData() {
     nonVegCount,
     tomorrowAvailability,
     payoutAgg,
+    supportTickets,
   ] = await Promise.all([
     prisma.orderItem.count({
       where: { kitchenPartnerId: kitchenPartner.id, order: { createdAt: { gte: todayStart, lt: todayEnd } } },
@@ -422,6 +423,12 @@ export async function getKitchenDashboardData() {
     prisma.kitchenPayout.aggregate({
       where: { kitchenPartnerId: kitchenPartner.id, status: { in: ["PENDING", "SETTLED"] } },
       _sum: { netAmount: true },
+    }),
+    prisma.supportTicket.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: { id: true, subject: true, status: true, priority: true, createdAt: true },
     }),
   ])
 
@@ -541,6 +548,13 @@ export async function getKitchenDashboardData() {
     settlements: payoutAgg._sum.netAmount
       ? [{ period: format(now, "MMMM yyyy"), gross: monthRevenue, commission: Math.round(monthRevenue * 0.15), net: monthRevenue - Math.round(monthRevenue * 0.15), status: "Pending" }]
       : [],
+    supportTickets: supportTickets.map((t: { id: string; subject: string; status: string; priority: string; createdAt: Date }) => ({
+      id: t.id,
+      subject: t.subject,
+      status: t.status,
+      priority: t.priority,
+      createdAt: t.createdAt,
+    })),
   }
 }
 
@@ -837,7 +851,7 @@ export async function getDeliveryDashboardData() {
 
   const now = new Date()
 
-  const [todayPayouts, weekPayouts, monthPayouts] = await Promise.all([
+  const [todayPayouts, weekPayouts, monthPayouts, supportTickets] = await Promise.all([
     prisma.deliveryPartnerPayout.aggregate({
       where: {
         deliveryPartnerId: deliveryPartner.id,
@@ -861,6 +875,12 @@ export async function getDeliveryDashboardData() {
         status: { in: ["PENDING", "SETTLED"] },
       },
       _sum: { amount: true },
+    }),
+    prisma.supportTicket.findMany({
+      where: { userId: session.user.id },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: { id: true, subject: true, status: true, priority: true, createdAt: true },
     }),
   ])
 
@@ -967,5 +987,12 @@ export async function getDeliveryDashboardData() {
     },
     assignments: recentAssignments,
     deliveryOrders: deliveryOrderList,
+    supportTickets: supportTickets.map((t: { id: string; subject: string; status: string; priority: string; createdAt: Date }) => ({
+      id: t.id,
+      subject: t.subject,
+      status: t.status,
+      priority: t.priority,
+      createdAt: t.createdAt,
+    })),
   }
 }

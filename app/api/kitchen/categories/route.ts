@@ -24,6 +24,11 @@ export async function GET() {
         kitchenCount: c._count.kitchenCategories,
         imageUrl: getCategoryImageUrl(c.name),
       })),
+      {
+        headers: {
+          "Cache-Control": "public, s-maxage=120, stale-while-revalidate=300",
+        },
+      },
     );
   } catch (error) {
     console.error("Failed to fetch categories:", error);
