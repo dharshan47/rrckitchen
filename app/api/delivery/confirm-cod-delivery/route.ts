@@ -3,7 +3,6 @@ import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { getAblyRest } from "@/lib/ably/server";
 
-export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {

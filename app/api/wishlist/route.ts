@@ -16,6 +16,7 @@ export async function GET() {
         menuItem: {
           select: {
             id: true,
+            slug: true,
             name: true,
             price: true,
             foodType: true,

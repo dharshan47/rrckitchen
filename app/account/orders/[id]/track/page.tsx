@@ -1,14 +1,15 @@
 "use client"
 
-import { use } from "react"
+import { use, useCallback } from "react"
 import Link from "next/link"
-import { useQuery } from "@tanstack/react-query"
+import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { ArrowLeft, Package, Check, ChefHat, Bike, Loader2, ShieldCheck, XCircle } from "lucide-react"
 import { Button, Card, Badge } from "@/components/ui"
 import { useSession } from "@/lib/auth-client"
 import { getOrderForTracking } from "@/actions/orders/orders"
 import { LiveOrderTrackingMap } from "@/components/map/live-order-tracking-map"
 import { cn } from "@/lib/utils"
+import { useAblyOrderChannel } from "@/hooks/useAblySubscribe"
 
 const statusFlow: { key: string; label: string; icon: typeof Check }[] = [
   { key: "CONFIRMED", label: "Confirmed", icon: Check },
@@ -33,6 +34,7 @@ function getStatusIndex(status: string): number {
 export default function OrderTrackingPage({ params }: { params: Promise<{ id: string }> }) {
   const { id: orderId } = use(params)
   const { data: session, isPending: sessionLoading } = useSession()
+  const queryClient = useQueryClient()
 
   const { data: order, isLoading, isError, refetch } = useQuery({
     queryKey: ["order-tracking", orderId],
@@ -40,6 +42,16 @@ export default function OrderTrackingPage({ params }: { params: Promise<{ id: st
     enabled: !!session?.user && !!orderId,
     refetchInterval: 15_000,
   })
+
+  useAblyOrderChannel(
+    orderId,
+    useCallback((msg) => {
+      if (msg.name === "order:confirmation-code") {
+        queryClient.invalidateQueries({ queryKey: ["order-tracking", orderId] })
+      }
+    }, [orderId, queryClient]),
+    !!session?.user && !!orderId,
+  )
 
   if (sessionLoading || isLoading) {
     return (

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { requireAdmin } from "@/lib/auth-guards";
 
-export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {

@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma"
 import { getSession } from "@/lib/auth-server"
+import { uniqueSlug } from "@/lib/slug"
 
 type AllowedRole = "CUSTOMER" | "KITCHENPARTNER" | "DELIVERYPARTNER"
 
@@ -31,9 +32,15 @@ export async function assignUserRole(roleName: AllowedRole) {
   })
 
   if (roleName === "KITCHENPARTNER") {
+    const existingSlugs = new Set(
+      (await prisma.kitchenPartner.findMany({ select: { slug: true } }))
+        .map(k => k.slug)
+        .filter(Boolean) as string[]
+    )
+    const slug = uniqueSlug(session.user.name ?? "kitchen", existingSlugs)
     await prisma.kitchenPartner.upsert({
       where: { userId: session.user.id },
-      create: { userId: session.user.id },
+      create: { userId: session.user.id, slug },
       update: {},
     })
   } else if (roleName === "DELIVERYPARTNER") {

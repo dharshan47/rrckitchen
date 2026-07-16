@@ -439,7 +439,8 @@ export const ModelName = {
   UserCodEligibility: 'UserCodEligibility',
   CashRemittance: 'CashRemittance',
   CodVariance: 'CodVariance',
-  WishlistItem: 'WishlistItem'
+  WishlistItem: 'WishlistItem',
+  KitchenWishlist: 'KitchenWishlist'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -455,7 +456,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "menuItemFeedback" | "deliveryAssignment" | "deliveryLocation" | "payment" | "pushSubscription" | "deliverySlot" | "notificationLog" | "supportTicket" | "ticketMessage" | "referral" | "loyaltyPoints" | "loyaltyTransaction" | "coupon" | "couponRedemption" | "paymentOffer" | "refund" | "kitchenPayout" | "deliveryPartnerPayout" | "kitchenAddress" | "menuItemDailyStock" | "adminProfile" | "adminInvite" | "adminApprovalRequest" | "adminAuditLog" | "twoFactor" | "userCodEligibility" | "cashRemittance" | "codVariance" | "wishlistItem"
+    modelProps: "user" | "role" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "menuItemFeedback" | "deliveryAssignment" | "deliveryLocation" | "payment" | "pushSubscription" | "deliverySlot" | "notificationLog" | "supportTicket" | "ticketMessage" | "referral" | "loyaltyPoints" | "loyaltyTransaction" | "coupon" | "couponRedemption" | "paymentOffer" | "refund" | "kitchenPayout" | "deliveryPartnerPayout" | "kitchenAddress" | "menuItemDailyStock" | "adminProfile" | "adminInvite" | "adminApprovalRequest" | "adminAuditLog" | "twoFactor" | "userCodEligibility" | "cashRemittance" | "codVariance" | "wishlistItem" | "kitchenWishlist"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4603,6 +4604,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    KitchenWishlist: {
+      payload: Prisma.$KitchenWishlistPayload<ExtArgs>
+      fields: Prisma.KitchenWishlistFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.KitchenWishlistFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenWishlistPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.KitchenWishlistFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenWishlistPayload>
+        }
+        findFirst: {
+          args: Prisma.KitchenWishlistFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenWishlistPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.KitchenWishlistFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenWishlistPayload>
+        }
+        findMany: {
+          args: Prisma.KitchenWishlistFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenWishlistPayload>[]
+        }
+        create: {
+          args: Prisma.KitchenWishlistCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenWishlistPayload>
+        }
+        createMany: {
+          args: Prisma.KitchenWishlistCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.KitchenWishlistCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenWishlistPayload>[]
+        }
+        delete: {
+          args: Prisma.KitchenWishlistDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenWishlistPayload>
+        }
+        update: {
+          args: Prisma.KitchenWishlistUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenWishlistPayload>
+        }
+        deleteMany: {
+          args: Prisma.KitchenWishlistDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.KitchenWishlistUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.KitchenWishlistUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenWishlistPayload>[]
+        }
+        upsert: {
+          args: Prisma.KitchenWishlistUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$KitchenWishlistPayload>
+        }
+        aggregate: {
+          args: Prisma.KitchenWishlistAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateKitchenWishlist>
+        }
+        groupBy: {
+          args: Prisma.KitchenWishlistGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KitchenWishlistGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.KitchenWishlistCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.KitchenWishlistCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -4762,6 +4837,7 @@ export type AddressScalarFieldEnum = (typeof AddressScalarFieldEnum)[keyof typeo
 
 export const KitchenPartnerScalarFieldEnum = {
   id: 'id',
+  slug: 'slug',
   userId: 'userId',
   status: 'status',
   approvedAt: 'approvedAt',
@@ -4841,6 +4917,7 @@ export type MenuScalarFieldEnum = (typeof MenuScalarFieldEnum)[keyof typeof Menu
 
 export const MenuItemScalarFieldEnum = {
   id: 'id',
+  slug: 'slug',
   menuId: 'menuId',
   name: 'name',
   description: 'description',
@@ -5439,6 +5516,16 @@ export const WishlistItemScalarFieldEnum = {
 } as const
 
 export type WishlistItemScalarFieldEnum = (typeof WishlistItemScalarFieldEnum)[keyof typeof WishlistItemScalarFieldEnum]
+
+
+export const KitchenWishlistScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  kitchenPartnerId: 'kitchenPartnerId',
+  createdAt: 'createdAt'
+} as const
+
+export type KitchenWishlistScalarFieldEnum = (typeof KitchenWishlistScalarFieldEnum)[keyof typeof KitchenWishlistScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -6094,6 +6181,7 @@ export type GlobalOmitConfig = {
   cashRemittance?: Prisma.CashRemittanceOmit
   codVariance?: Prisma.CodVarianceOmit
   wishlistItem?: Prisma.WishlistItemOmit
+  kitchenWishlist?: Prisma.KitchenWishlistOmit
 }
 
 /* Types for Logging */

@@ -36,6 +36,24 @@ All mutations go through **server actions** in `actions/` directory. These are:
 - Called directly from client components
 - Handle validation, authorization, and database operations
 
+### 2a. Kitchen Detail Flow
+
+```
+User visits /kitchen/[slug]
+     |
+Server Component (app/kitchen/[slug]/page.tsx)
+     |
+getKitchenDetail(slug) Server Action
+     |
+Query: KitchenPartner -> KitchenAlias -> MenuItems -> Photos -> Reviews
+     |
+Returns KitchenDetail (displayName, imageUrl, avgRating, items)
+     |
+Renders KitchenDetailClient (Client Component)
+     |
+Interactive: search, filter, add-to-cart, toast notification
+```
+
 ### 3. State Management
 
 Three layers of state:

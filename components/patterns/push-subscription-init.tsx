@@ -9,20 +9,10 @@ export function PushSubscriptionInit() {
 
   useEffect(() => {
     if (!swRegistration || subscribed.current) return;
-    if (Notification.permission === "denied") return;
-
     if (Notification.permission === "granted") {
       subscribed.current = true;
       subscribeToPush();
-      return;
     }
-
-    Notification.requestPermission().then((permission) => {
-      if (permission === "granted") {
-        subscribed.current = true;
-        subscribeToPush();
-      }
-    });
   }, [swRegistration, subscribeToPush]);
 
   return null;

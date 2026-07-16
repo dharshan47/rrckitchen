@@ -13,7 +13,7 @@ import {
   XCircle,
 } from "lucide-react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
   TableBody,
@@ -22,10 +22,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { ChartBarLabel } from "@/components/charts/bar-chart"
-import { ChartLineDots } from "@/components/charts/line-chart"
-import { ChartPieDonut } from "@/components/charts/donut-chart"
-import { ChartPieSimple } from "@/components/charts/pie-chart"
+import { ChartBarLabel } from "@/components/ui/bar-chart"
+import { ChartLineDots } from "@/components/ui/line-chart"
+import { ChartPieDonut } from "@/components/ui/donut-chart"
+import { ChartPieSimple } from "@/components/ui/pie-chart"
 import type { ChartConfig } from "@/components/ui/chart"
 import { useQuery } from "@tanstack/react-query"
 import { getAdminDashboardData } from "@/actions/admin/dashboard"
@@ -40,8 +40,54 @@ export default function AdminOverview() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Spinner className="size-8 text-muted-foreground" />
+      <div className="space-y-6 animate-pulse">
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {Array.from({ length: 10 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border bg-card p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-3 w-20" />
+                <Skeleton className="h-4 w-4 rounded" />
+              </div>
+              <Skeleton className="h-6 w-16" />
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border bg-card p-6 space-y-4">
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-4 w-48" />
+              <Skeleton className="h-40 w-full rounded-lg" />
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border bg-card p-6 space-y-4">
+              <Skeleton className="h-5 w-32" />
+              <Skeleton className="h-4 w-36" />
+              <Skeleton className="h-32 w-full rounded-lg" />
+            </div>
+          ))}
+        </div>
+        <div className="grid gap-6 lg:grid-cols-2">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border bg-card p-6 space-y-4">
+              <Skeleton className="h-5 w-36" />
+              <Skeleton className="h-4 w-56" />
+              <div className="space-y-2">
+                {Array.from({ length: 4 }).map((_, j) => (
+                  <div key={j} className="flex gap-4">
+                    <Skeleton className="h-4 flex-1" />
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-12" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     )
   }

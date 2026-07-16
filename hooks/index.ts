@@ -12,4 +12,5 @@ export { useRequestDedupe } from "./useRequestDedupe";
 export { useIntersectionObserver } from "./useIntersectionObserver";
 export { usePWA } from "./usePWA";
 export { useVirtualizedMenu } from "./useVirtualizedMenu";
+export { useExploreKitchens } from "./useExploreKitchens";
 export { useRazorpay } from "./useRazorpay";

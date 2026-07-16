@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
   TableBody,
@@ -51,8 +51,45 @@ export default function AdminCMSPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Spinner className="size-8 text-muted-foreground" />
+      <div className="space-y-6 animate-pulse">
+        <div>
+          <Skeleton className="h-6 w-44 mb-1" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="rounded-xl border border-border bg-card">
+          <div className="p-6 space-y-2">
+            <Skeleton className="h-5 w-32" />
+            <Skeleton className="h-4 w-56" />
+          </div>
+          <div className="px-6 pb-6 space-y-3">
+            <div className="flex gap-6 pb-3 border-b border-border">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-4 flex-1" />
+              ))}
+            </div>
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex gap-6">
+                {Array.from({ length: 4 }).map((_, j) => (
+                  <Skeleton key={j} className="h-4 flex-1" />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+          <Skeleton className="h-5 w-36" />
+          <div className="space-y-3 max-w-md">
+            <div className="space-y-1.5">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-9 w-full rounded-lg" />
+            </div>
+            <div className="space-y-1.5">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-20 w-full rounded-lg" />
+            </div>
+            <Skeleton className="h-9 w-32 rounded-lg" />
+          </div>
+        </div>
       </div>
     )
   }

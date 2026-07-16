@@ -28,7 +28,7 @@ See [how-rrc-works.md](how-rrc-works.md) for the complete system guide with Merm
 |----------|-------------|
 | [how-rrc-works.md](how-rrc-works.md) | Complete system guide with diagrams (architecture, flows, patterns) |
 | [architecture.md](architecture.md) | System architecture overview |
-| [routes.md](routes.md) | All app routes and API endpoints |
+| [routes.md](routes.md) | All app routes and API endpoints (incl. `/kitchen/[slug]`) |
 | [components.md](components.md) | UI component catalog |
 | [database.md](database.md) | Database schema and models |
 | [api.md](api.md) | API reference |

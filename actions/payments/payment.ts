@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { razorpayClient } from "@/lib/razorpay";
 import { getAblyRest } from "@/lib/ably/server";
 import { redis } from "@/lib/redis";
+import { awardPoints } from "@/actions/loyalty/loyalty";
 
 export interface CreateOrderInput {
   userId: string;
@@ -327,6 +328,9 @@ export async function confirmPayment(
 
   const { createKitchenPayout } = await import("@/actions/payouts/kitchen-payout");
   await createKitchenPayout(payment.orderId);
+
+  // Award loyalty points
+  await awardPoints(payment.orderId).catch(() => {});
 
   // Track successful prepaid orders for COD eligibility
   await prisma.userCodEligibility.upsert({

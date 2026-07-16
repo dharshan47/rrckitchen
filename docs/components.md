@@ -70,6 +70,14 @@
 - **InstallPrompt** - PWA install banner
 - **PushSubscriptionInit** - Push notification subscription
 
+### Kitchen (`components/kitchen/`)
+- **KitchenDetailClient** - Kitchen detail page with image, rating, cuisine tags, menu items grouped by time slot, search/filter, add-to-cart with toast
+- **InfiniteKitchenGrid** - Scrollable grid of kitchen cards with lazy loading
+- **KitchenNavbar** - Kitchen portal navigation bar
+- **KitchenFooter** - Kitchen portal FAQ/footer section
+- **KitchenWishlistButton** - Kitchen-level wishlist toggle
+- **VegFilter / SortByDialog** - Menu filtering controls
+
 ### Admin (`components/admin/`)
 - **AcceptForm** - Admin invite acceptance form
 

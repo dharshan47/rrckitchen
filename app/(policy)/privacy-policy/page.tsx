@@ -18,7 +18,7 @@ export default function PrivacyPolicyPage() {
 
       <div className="border-t border-border pt-6 mt-10">
         <p className="text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} RRC Kitchen. All rights reserved.
+          &copy; 2026 RRC Kitchen. All rights reserved.
         </p>
       </div>
     </div>

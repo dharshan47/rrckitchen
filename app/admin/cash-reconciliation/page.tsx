@@ -2,7 +2,6 @@ import { requirePermission } from "@/lib/auth-guards";
 import prisma from "@/lib/prisma";
 import { CashReconciliationClient } from "./client";
 
-export const dynamic = "force-dynamic";
 
 export default async function CashReconciliationPage() {
   await requirePermission("MANAGE_PAYOUTS");

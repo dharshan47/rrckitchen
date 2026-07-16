@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/table"
 import { toast } from "sonner"
 import { LiveOrderTrackingMap } from "@/components/map/live-order-tracking-map"
-import { CodConfirmationDialog } from "@/components/delivery/cod-confirmation-dialog"
+import { CodConfirmationDialog } from "@/components/delivery-partner/cod-confirmation-dialog"
 
 export default function DeliveryPartnerDashboard() {
   const data = useDeliveryData()

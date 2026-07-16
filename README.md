@@ -5,6 +5,7 @@ A multi-vendor tiffin/meal delivery marketplace in Thanjavur connecting customer
 ## Features
 
 - **Menu Browsing** — Browse items by day, filter by food type (veg/non-veg), time slot, search by name/kitchen
+- **Kitchen Detail Pages** — Dedicated `/kitchen/[slug]` pages with full menu, rating, cuisine tags, and search
 - **Cart** — Client-side cart with add/remove/quantity/clear, coupon application
 - **Ordering** — Pre-book or Instant, tracked through status flow (confirmed → preparing → ready for pickup → completed)
 - **Payments** — Razorpay (cards/UPI/netbanking) + Cash on Delivery
@@ -55,6 +56,27 @@ Open [http://localhost:3000](http://localhost:3000).
 | `npm run build` | Production build |
 | `npm run start` | Start production server |
 | `npm run lint` | ESLint check |
+| `npm run postinstall` | Auto-generate Prisma client |
+
+## Routes
+
+### Public
+- `/` — Home page with hero carousel, top-rated kitchens, menu by time slot
+- `/menu` — Tomorrow's menu grouped by time slot with filters
+- `/menu/[id]` — Menu item detail with photos, pricing, add-to-cart
+- `/menu/category/[slug]` — Category-filtered menu
+- `/kitchen/[slug]` — Kitchen detail page with full menu
+- `/search` — Search with autocomplete
+- `/cart` — Cart with checkout
+- `/login` / `/signup` — Auth pages
+- `/terms-of-use` / `/privacy-policy` — Legal pages
+
+### Authenticated
+- `/account/profile` — Edit profile, addresses, loyalty
+- `/account/orders` — Order history with tracking
+- `/kitchen/dashboard` — Kitchen partner portal
+- `/delivery-partner/dashboard` — Delivery partner portal
+- `/admin/*` — Admin panel
 
 ## Project Structure
 
@@ -62,12 +84,22 @@ Open [http://localhost:3000](http://localhost:3000).
 ├── actions/          # Server actions (business logic)
 ├── app/              # Next.js App Router pages & API routes
 ├── components/       # React components (UI + feature)
+│   ├── ui/           # shadcn UI primitives (Button, Input, Card, etc.)
+│   ├── kitchen/      # Kitchen detail, grid, navbar
+│   ├── menu/         # Menu card, detail, wishlist
+│   ├── order/        # Order flow components
+│   ├── cart/         # Cart, delivery address
+│   ├── search/       # Search autocomplete, results
+│   ├── location/     # Map, address picker
+│   ├── site/         # Header, footer
+│   └── patterns/     # CompoundMenuCard, ErrorBoundary, PWA
 ├── hooks/            # Custom React hooks
-├── stores/           # Zustand state stores
+├── stores/           # Zustand state stores (cart, menu, auth)
 ├── lib/              # Library code (auth, prisma, utils)
 ├── providers/        # React context providers
 ├── prisma/           # Schema, migrations, seeds
-├── public/           # Static assets (PWA, icons)
+├── public/           # Static assets (PWA icons, banners)
+├── content/          # MDX content (privacy, terms)
 ├── types/            # TypeScript declarations
 └── docs/             # Documentation
 ```

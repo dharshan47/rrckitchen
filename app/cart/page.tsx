@@ -1,6 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
@@ -15,10 +14,12 @@ import { ErrorBoundary } from "@/components/patterns/error-boundary";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import { useSession } from "@/lib/auth-client";
 import { useCartCoupon, useCartOrderType, useCartActions, useMenuDeliveryAddress } from "@/stores";
+import { DeliveryAddressCard } from "@/components/cart/delivery-address-card";
 import { CouponInput } from "@/components/order/coupon-input";
 import { PaymentMethodSelector, type PaymentMethod } from "@/components/order/payment-method-selector";
 import { OrderTypeSelector } from "@/components/order/order-type-selector";
 import { CravingsPopup } from "@/components/order/cravings-popup";
+import { AddToCartPopup, type AddPopupItem } from "@/components/menu/add-to-cart-popup";
 import {
   Trash2,
   Minus,
@@ -36,6 +37,7 @@ import {
   Smartphone,
   Building2,
   Gem,
+  Flame,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -76,12 +78,14 @@ function CartContent() {
   const deliveryAddress = useMenuDeliveryAddress();
   const appliedCoupon = useCartCoupon();
   const orderType = useCartOrderType();
-  const { applyCoupon, removeCoupon, setOrderType } = useCartActions();
+  const { addToCart, applyCoupon, removeCoupon, setOrderType } = useCartActions();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("RAZORPAY");
   const [codProcessing, setCodProcessing] = useState(false);
   const [showCouponOffers, setShowCouponOffers] = useState(false);
   const [showPaymentOffers, setShowPaymentOffers] = useState(false);
   const [selectedPaymentOffer, setSelectedPaymentOffer] = useState<PaymentOfferData | null>(null);
+  const [popupItem, setPopupItem] = useState<AddPopupItem | null>(null);
+  const [popupOpen, setPopupOpen] = useState(false);
 
   const { data: couponOffers = [], isLoading: couponOffersLoading } = useQuery({
     queryKey: ["cart-coupon-offers", total],
@@ -98,6 +102,58 @@ function CartContent() {
     enabled: showCouponOffers,
     staleTime: 30_000,
   });
+
+  const { data: suggestedItems = [] } = useQuery({
+    queryKey: ["cart-suggested-items"],
+    queryFn: async () => {
+      const res = await fetch("/api/menu/tomorrow?bestseller=true");
+      if (!res.ok) return [];
+      const data = await res.json();
+      return (data || []).slice(0, 10) as {
+        id: string;
+        name: string;
+        price: number;
+        compareAtPrice: number | null;
+        foodType: string;
+        timeSlot: string;
+        photos: { imageUrl: string }[];
+        menu: { kitchenPartner: { kitchenAlias: { displayName: string } | null } | null };
+      }[];
+    },
+    staleTime: 60_000,
+  });
+
+  const handleShowSuggestionPopup = useCallback((item: {
+    id: string;
+    name: string;
+    price: number;
+    compareAtPrice: number | null;
+    foodType: string;
+    timeSlot: string;
+    kitchenName: string;
+    imageUrl?: string | null;
+  }) => {
+    addToCart({
+      id: item.id,
+      name: item.name,
+      price: Number(item.price),
+      qty: 1,
+      foodType: item.foodType,
+      timeSlot: item.timeSlot,
+      kitchenName: item.kitchenName,
+    });
+    setPopupItem({
+      id: item.id,
+      name: item.name,
+      price: Number(item.price),
+      compareAtPrice: item.compareAtPrice ?? null,
+      foodType: item.foodType,
+      imageUrl: item.imageUrl ?? null,
+      kitchenName: item.kitchenName,
+      timeSlot: item.timeSlot,
+    });
+    setPopupOpen(true);
+  }, [addToCart]);
 
   const { data: paymentOffers = [] } = useQuery({
     queryKey: ["cart-payment-offers", total],
@@ -255,317 +311,405 @@ function CartContent() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-2xl px-4 py-8 lg:px-8">
-        <div className="mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link href="/menu" className="md:hidden p-1 -ml-1 text-muted-foreground hover:text-foreground">
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-            <div>
-              <h1 className="text-2xl font-bold">Your Cart</h1>
-              <p className="text-sm text-muted-foreground">
-                {itemCounts} item{itemCounts !== 1 ? "s" : ""} · ₹{total.toFixed(0)}
-              </p>
+      <div className="mx-auto max-w-6xl px-4 py-8 lg:px-8 pb-20 md:pb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Cart Items - first on mobile, right column top on desktop */}
+          <div className="lg:col-span-2 lg:order-2 space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Link href="/menu" className="md:hidden p-1 -ml-1 text-muted-foreground hover:text-foreground">
+                  <ArrowLeft className="h-5 w-5" />
+                </Link>
+                <div>
+                  <h1 className="text-2xl font-bold">Your Cart</h1>
+                  <p className="text-sm text-muted-foreground">
+                    {itemCounts} item{itemCounts !== 1 ? "s" : ""} · ₹{total.toFixed(0)}
+                  </p>
+                </div>
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" size="sm" onClick={clearCart}>
+                  <Trash2 className="mr-2 h-4 w-4" />
+                  Clear
+                </Button>
+              </div>
             </div>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={clearCart}>
-              <Trash2 className="mr-2 h-4 w-4" />
-              Clear
-            </Button>
-          </div>
-        </div>
 
-        {/* Cart Items */}
-        <div className="space-y-3">
-          {cart.map((item) => (
-            <Card key={item.id}>
-              <CardContent className="flex items-center gap-4 p-4">
-                <div className="h-16 w-16 shrink-0 rounded-xl bg-muted flex items-center justify-center overflow-hidden">
-                  {item.imageUrl ? (
-                    <Image src={item.imageUrl} alt="" width={64} height={64} className="h-full w-full object-cover" />
-                  ) : (
-                    <ShoppingBag className="h-6 w-6 text-muted-foreground/40" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold truncate">{item.name}</span>
-                    <Badge
-                      variant={createBadgeVariant(item.foodType)}
-                      className="shrink-0 text-[9px] px-1.5 py-0"
-                    >
-                      {item.foodType}
-                    </Badge>
-                  </div>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {item.kitchenName}
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {formatTimeSlot(item.timeSlot)}
-                  </p>
-                  <p className="mt-1 text-sm font-bold">₹{item.price} <span className="text-xs font-normal text-muted-foreground">× {item.qty}</span></p>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => updateQuantity(item.id, item.qty - 1)}
-                  >
-                    <Minus className="h-3 w-3" />
-                  </Button>
-                  <span className="w-6 text-center text-sm font-medium">
-                    {item.qty}
-                  </span>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => updateQuantity(item.id, item.qty + 1)}
-                  >
-                    <Plus className="h-3 w-3" />
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 text-destructive"
-                    onClick={() => removeFromCart(item.id)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        <Separator className="my-5" />
-
-        <div className="space-y-5">
-          <OrderTypeSelector
-            selected={orderType}
-            onSelect={setOrderType}
-          />
-
-          <Separator />
-
-          {/* Coupon Offers Section */}
-          <div className="space-y-3">
-            <button
-              type="button"
-              onClick={() => setShowCouponOffers(!showCouponOffers)}
-              className="flex items-center justify-between w-full text-left"
-            >
-              <div className="flex items-center gap-2">
-                <Tag className="h-4 w-4 text-primary" />
-                <span className="text-sm font-semibold">View Coupon Offers</span>
-              </div>
-              <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform ${showCouponOffers ? "rotate-90" : ""}`} />
-            </button>
-
-            {showCouponOffers && (
-              <Card className="p-3 space-y-2">
-                {couponOffersLoading ? (
-                  <div className="flex items-center justify-center py-4">
-                    <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
-                  </div>
-                ) : couponOffers.length === 0 ? (
-                  <div className="text-center py-4">
-                    <Gift className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
-                    <p className="text-sm text-muted-foreground">No coupon offers available right now</p>
-                    <p className="text-xs text-muted-foreground/60 mt-1">Enter your own coupon code below</p>
-                  </div>
-                ) : (
-                  couponOffers.map((offer) => (
-                    <button
-                      key={offer.code}
-                      type="button"
-                      onClick={() => handleApplyOfferCoupon(offer.code)}
-                      disabled={!!appliedCoupon}
-                      className="flex items-center gap-3 w-full rounded-xl border border-dashed border-primary/30 p-3 text-left hover:bg-primary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                        <Percent className="h-4 w-4 text-primary" />
+            {/* Cart Items */}
+            <div className="space-y-3">
+              {cart.map((item) => (
+                <Card key={item.id}>
+                  <CardContent className="flex items-center gap-4 p-4">
+                    <div className="h-16 w-16 shrink-0 rounded-xl bg-muted flex items-center justify-center overflow-hidden">
+                      {item.imageUrl ? (
+                        <Image src={item.imageUrl} alt="" width={64} height={64} className="h-full w-full object-cover" />
+                      ) : (
+                        <ShoppingBag className="h-6 w-6 text-muted-foreground/40" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold truncate">{item.name}</span>
+                        <Badge
+                          variant={createBadgeVariant(item.foodType)}
+                          className="shrink-0 text-[9px] px-1.5 py-0"
+                        >
+                          {item.foodType}
+                        </Badge>
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-primary">{offer.code}</p>
-                        <p className="text-xs text-muted-foreground truncate">{offer.description}</p>
-                      </div>
-                      <div className="text-right shrink-0">
-                        <p className="text-xs font-semibold text-green-600">
-                          {offer.discountType === "PERCENTAGE" ? `${offer.discountValue}% OFF` : `₹${offer.discountValue} OFF`}
-                        </p>
-                        {offer.minOrderValue && (
-                          <p className="text-[10px] text-muted-foreground">Min ₹{offer.minOrderValue}</p>
-                        )}
-                      </div>
-                    </button>
-                  ))
-                )}
-                <CouponInput
-                  onApply={(coupon) => applyCoupon({
-                    code: coupon.code,
-                    discount: coupon.discount,
-                    type: coupon.type,
-                    description: coupon.description,
-                  })}
-                  onRemove={removeCoupon}
-                  appliedCoupon={appliedCoupon ? {
-                    code: appliedCoupon.code,
-                    discount: appliedCoupon.discount,
-                    type: appliedCoupon.type,
-                    description: appliedCoupon.description,
-                  } : null}
-                  cartTotal={total}
-                />
-              </Card>
-            )}
-          </div>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {item.kitchenName}
+                      </p>
+                      <p className="mt-0.5 text-xs text-muted-foreground">
+                        {formatTimeSlot(item.timeSlot)}
+                      </p>
+                      <p className="mt-1 text-sm font-bold">₹{item.price} <span className="text-xs font-normal text-muted-foreground">× {item.qty}</span></p>
+                    </div>
 
-          <Separator />
-
-          {/* Payment Offers Section */}
-          <div className="space-y-3">
-            <button
-              type="button"
-              onClick={() => setShowPaymentOffers(!showPaymentOffers)}
-              className="flex items-center justify-between w-full text-left"
-            >
-              <div className="flex items-center gap-2">
-                <Wallet className="h-4 w-4 text-primary" />
-                <span className="text-sm font-semibold">Payment Offers</span>
-              </div>
-              <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform ${showPaymentOffers ? "rotate-90" : ""}`} />
-            </button>
-
-            {showPaymentOffers && (
-              <div className="space-y-2">
-                {paymentOffers.length === 0 ? (
-                  <div className="text-center py-4">
-                    <Wallet className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
-                    <p className="text-sm text-muted-foreground">No payment offers available</p>
-                  </div>
-                ) : (
-                  paymentOffers.map((offer) => {
-                    const info = offerIcons[offer.offerType] ?? offerIcons.ALL;
-                    const Icon = info.icon;
-                    const isSelected = selectedPaymentOffer?.id === offer.id;
-                    const discountLabel = offer.discountType === "FLAT"
-                      ? `₹${offer.discountValue} off`
-                      : `${offer.discountValue}% off${offer.maxDiscount ? ` (up to ₹${offer.maxDiscount})` : ""}`;
-                    return (
-                      <button
-                        key={offer.id}
-                        type="button"
-                        onClick={() => setSelectedPaymentOffer(isSelected ? null : offer)}
-                        className={`flex items-center gap-3 w-full rounded-xl border p-3 text-left transition-all ${
-                          isSelected
-                            ? "border-primary bg-primary/5 ring-1 ring-primary"
-                            : "border-border hover:border-primary/30"
-                        }`}
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => updateQuantity(item.id, item.qty - 1)}
                       >
-                        <div className={`h-9 w-9 rounded-lg ${info.color} flex items-center justify-center shrink-0`}>
-                          <Icon className="h-4 w-4" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-semibold">{offer.name}</p>
-                          <p className="text-xs text-muted-foreground truncate">{offer.description}</p>
-                        </div>
-                        <div className="text-right shrink-0">
-                          <p className="text-xs font-semibold text-green-600">{discountLabel}</p>
-                          {offer.minOrderValue && (
-                            <p className="text-[10px] text-muted-foreground">Min ₹{offer.minOrderValue}</p>
+                        <Minus className="h-3 w-3" />
+                      </Button>
+                      <span className="w-6 text-center text-sm font-medium">
+                        {item.qty}
+                      </span>
+                      <Button
+                        variant="outline"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={() => updateQuantity(item.id, item.qty + 1)}
+                      >
+                        <Plus className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8 text-destructive"
+                        onClick={() => removeFromCart(item.id)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+
+            {/* Suggested Items */}
+            {suggestedItems.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Flame className="h-4 w-4 text-orange-500" />
+                  <h2 className="text-sm font-bold">Add More Items</h2>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {suggestedItems.map((sItem: {
+                    id: string;
+                    name: string;
+                    price: number;
+                    compareAtPrice: number | null;
+                    foodType: string;
+                    timeSlot: string;
+                    photos: { imageUrl: string }[];
+                    menu: { kitchenPartner: { kitchenAlias: { displayName: string } | null } | null };
+                  }) => {
+                    const kitchenName = sItem.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen";
+                    return (
+                      <Card key={sItem.id} className="overflow-hidden">
+                        <div className="relative aspect-square w-full bg-white p-2">
+                          {sItem.photos?.[0]?.imageUrl ? (
+                            <Image
+                              src={sItem.photos[0].imageUrl}
+                              alt={sItem.name}
+                              fill
+                              className="object-contain p-1"
+                              sizes="(max-width: 640px) 50vw, 25vw"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center bg-muted">
+                              <ShoppingBag className="h-6 w-6 text-muted-foreground/30" />
+                            </div>
                           )}
                         </div>
-                      </button>
+                        <CardContent className="p-2.5 space-y-1.5">
+                          <p className="text-xs font-bold leading-tight line-clamp-2">{sItem.name}</p>
+                          <div className="flex items-center justify-between">
+                            <span className="text-sm font-black text-foreground">₹{Number(sItem.price)}</span>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="h-6 rounded-md border-[#EE7005] text-[#EE7005] px-2 text-[10px] font-bold hover:text-[#EE7005]"
+                              onClick={() => handleShowSuggestionPopup({
+                                id: sItem.id,
+                                name: sItem.name,
+                                price: Number(sItem.price),
+                                compareAtPrice: sItem.compareAtPrice,
+                                foodType: sItem.foodType,
+                                timeSlot: sItem.timeSlot,
+                                kitchenName,
+                                imageUrl: sItem.photos?.[0]?.imageUrl ?? null,
+                              })}
+                            >
+                              Add
+                            </Button>
+                          </div>
+                        </CardContent>
+                      </Card>
                     );
-                  })
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Delivery Address - second on mobile, left column on desktop */}
+          <div className="lg:col-span-1 lg:order-1">
+            <div className="lg:sticky lg:top-24">
+              <DeliveryAddressCard />
+            </div>
+          </div>
+
+          {/* Payment Section - third on mobile, right column bottom on desktop */}
+          <div className="lg:col-span-2 lg:order-3 space-y-6">
+            <Separator className="my-5" />
+
+            <div className="space-y-5">
+              <OrderTypeSelector
+                selected={orderType}
+                onSelect={setOrderType}
+              />
+
+              <Separator />
+
+              {/* Coupon Offers Section */}
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={() => setShowCouponOffers(!showCouponOffers)}
+                  className="flex items-center justify-between w-full text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <Tag className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-semibold">View Coupon Offers</span>
+                  </div>
+                  <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform ${showCouponOffers ? "rotate-90" : ""}`} />
+                </button>
+
+                {showCouponOffers && (
+                  <Card className="p-3 space-y-2">
+                    {couponOffersLoading ? (
+                      <div className="flex items-center justify-center py-4">
+                        <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+                      </div>
+                    ) : couponOffers.length === 0 ? (
+                      <div className="text-center py-4">
+                        <Gift className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
+                        <p className="text-sm text-muted-foreground">No coupon offers available right now</p>
+                        <p className="text-xs text-muted-foreground/60 mt-1">Enter your own coupon code below</p>
+                      </div>
+                    ) : (
+                      couponOffers.map((offer) => (
+                        <button
+                          key={offer.code}
+                          type="button"
+                          onClick={() => handleApplyOfferCoupon(offer.code)}
+                          disabled={!!appliedCoupon}
+                          className="flex items-center gap-3 w-full rounded-xl border border-dashed border-primary/30 p-3 text-left hover:bg-primary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        >
+                          <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                            <Percent className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-bold text-primary">{offer.code}</p>
+                            <p className="text-xs text-muted-foreground truncate">{offer.description}</p>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <p className="text-xs font-semibold text-green-600">
+                              {offer.discountType === "PERCENTAGE" ? `${offer.discountValue}% OFF` : `₹${offer.discountValue} OFF`}
+                            </p>
+                            {offer.minOrderValue && (
+                              <p className="text-[10px] text-muted-foreground">Min ₹{offer.minOrderValue}</p>
+                            )}
+                          </div>
+                        </button>
+                      ))
+                    )}
+                    <CouponInput
+                      onApply={(coupon) => applyCoupon({
+                        code: coupon.code,
+                        discount: coupon.discount,
+                        type: coupon.type,
+                        description: coupon.description,
+                      })}
+                      onRemove={removeCoupon}
+                      appliedCoupon={appliedCoupon ? {
+                        code: appliedCoupon.code,
+                        discount: appliedCoupon.discount,
+                        type: appliedCoupon.type,
+                        description: appliedCoupon.description,
+                      } : null}
+                      cartTotal={total}
+                    />
+                  </Card>
                 )}
               </div>
-            )}
-          </div>
 
-          <Separator />
+              <Separator />
 
-          {/* Price Breakdown */}
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Subtotal ({itemCounts} items)</span>
-              <span>₹{total.toFixed(0)}</span>
-            </div>
-            {couponSavings > 0 && (
-              <div className="flex justify-between text-green-600">
-                <span>Coupon Savings</span>
-                <span>-₹{couponSavings.toFixed(0)}</span>
+              {/* Payment Offers Section */}
+              <div className="space-y-3">
+                <button
+                  type="button"
+                  onClick={() => setShowPaymentOffers(!showPaymentOffers)}
+                  className="flex items-center justify-between w-full text-left"
+                >
+                  <div className="flex items-center gap-2">
+                    <Wallet className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-semibold">Payment Offers</span>
+                  </div>
+                  <ChevronRight className={`h-4 w-4 text-muted-foreground transition-transform ${showPaymentOffers ? "rotate-90" : ""}`} />
+                </button>
+
+                {showPaymentOffers && (
+                  <div className="space-y-2">
+                    {paymentOffers.length === 0 ? (
+                      <div className="text-center py-4">
+                        <Wallet className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
+                        <p className="text-sm text-muted-foreground">No payment offers available</p>
+                      </div>
+                    ) : (
+                      paymentOffers.map((offer) => {
+                        const info = offerIcons[offer.offerType] ?? offerIcons.ALL;
+                        const Icon = info.icon;
+                        const isSelected = selectedPaymentOffer?.id === offer.id;
+                        const discountLabel = offer.discountType === "FLAT"
+                          ? `₹${offer.discountValue} off`
+                          : `${offer.discountValue}% off${offer.maxDiscount ? ` (up to ₹${offer.maxDiscount})` : ""}`;
+                        return (
+                          <button
+                            key={offer.id}
+                            type="button"
+                            onClick={() => setSelectedPaymentOffer(isSelected ? null : offer)}
+                            className={`flex items-center gap-3 w-full rounded-xl border p-3 text-left transition-all ${
+                              isSelected
+                                ? "border-primary bg-primary/5 ring-1 ring-primary"
+                                : "border-border hover:border-primary/30"
+                            }`}
+                          >
+                            <div className={`h-9 w-9 rounded-lg ${info.color} flex items-center justify-center shrink-0`}>
+                              <Icon className="h-4 w-4" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold">{offer.name}</p>
+                              <p className="text-xs text-muted-foreground truncate">{offer.description}</p>
+                            </div>
+                            <div className="text-right shrink-0">
+                              <p className="text-xs font-semibold text-green-600">{discountLabel}</p>
+                              {offer.minOrderValue && (
+                                <p className="text-[10px] text-muted-foreground">Min ₹{offer.minOrderValue}</p>
+                              )}
+                            </div>
+                          </button>
+                        );
+                      })
+                    )}
+                  </div>
+                )}
               </div>
-            )}
-            {paymentOfferSavings > 0 && (
-              <div className="flex justify-between text-green-600">
-                <span>Payment Offer</span>
-                <span>-₹{paymentOfferSavings.toFixed(0)}</span>
+
+              <Separator />
+
+              {/* Price Breakdown */}
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Subtotal ({itemCounts} items)</span>
+                  <span>₹{total.toFixed(0)}</span>
+                </div>
+                {couponSavings > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Coupon Savings</span>
+                    <span>-₹{couponSavings.toFixed(0)}</span>
+                  </div>
+                )}
+                {paymentOfferSavings > 0 && (
+                  <div className="flex justify-between text-green-600">
+                    <span>Payment Offer</span>
+                    <span>-₹{paymentOfferSavings.toFixed(0)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Delivery Fee</span>
+                  <span className="text-green-600 font-medium">Free</span>
+                </div>
+                <Separator />
+                <div className="flex justify-between text-lg font-bold">
+                  <span>Total</span>
+                  <span>₹{finalTotal.toFixed(0)}</span>
+                </div>
+                {savings > 0 && (
+                  <p className="text-xs text-green-600 text-right">You save ₹{savings.toFixed(0)} on this order!</p>
+                )}
               </div>
-            )}
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Delivery Fee</span>
-              <span className="text-green-600 font-medium">Free</span>
-            </div>
-            <Separator />
-            <div className="flex justify-between text-lg font-bold">
-              <span>Total</span>
-              <span>₹{finalTotal.toFixed(0)}</span>
-            </div>
-            {savings > 0 && (
-              <p className="text-xs text-green-600 text-right">You save ₹{savings.toFixed(0)} on this order!</p>
-            )}
-          </div>
 
-          <Separator />
+              <Separator />
 
-          <PaymentMethodSelector
-            selected={paymentMethod}
-            onSelect={setPaymentMethod}
-            codAvailable={true}
-          />
+              <PaymentMethodSelector
+                selected={paymentMethod}
+                onSelect={setPaymentMethod}
+                codAvailable={true}
+              />
 
-          <div className="flex gap-3">
-            <Button variant="outline" asChild className="flex-1">
-              <Link href="/menu">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Add More
-              </Link>
-            </Button>
-            <Button
-              className="flex-1"
-              onClick={handleCheckout}
-              disabled={isProcessing || codProcessing}
-            >
-              {isProcessing || codProcessing ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Processing…
-                </>
-              ) : paymentMethod === "CASH_ON_DELIVERY" ? (
-                <>
-                  <Banknote className="mr-2 h-4 w-4" />
-                  Place Order (COD)
-                </>
-              ) : (
-                <>
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Pay ₹{finalTotal.toFixed(0)}
-                </>
+              <div className="flex gap-3">
+                <Button variant="outline" asChild className="flex-1">
+                  <Link href="/menu">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Add More
+                  </Link>
+                </Button>
+                <Button
+                  className="flex-1"
+                  onClick={handleCheckout}
+                  disabled={isProcessing || codProcessing}
+                >
+                  {isProcessing || codProcessing ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Processing…
+                    </>
+                  ) : paymentMethod === "CASH_ON_DELIVERY" ? (
+                    <>
+                      <Banknote className="mr-2 h-4 w-4" />
+                      Place Order (COD)
+                    </>
+                  ) : (
+                    <>
+                      <CreditCard className="mr-2 h-4 w-4" />
+                      Pay ₹{finalTotal.toFixed(0)}
+                    </>
+                  )}
+                </Button>
+              </div>
+              {paymentResult && !paymentResult.success && (
+                <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive text-center">
+                  {paymentResult.error || "Payment failed. Please try again."}
+                </div>
               )}
-            </Button>
-          </div>
-          {paymentResult && !paymentResult.success && (
-            <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive text-center">
-              {paymentResult.error || "Payment failed. Please try again."}
             </div>
-          )}
-        </div>
+          </div>
       </div>
+      </div>
+
+      <AddToCartPopup
+        item={popupItem}
+        qty={1}
+        open={popupOpen}
+        onOpenChange={setPopupOpen}
+      />
     </main>
   );
 }

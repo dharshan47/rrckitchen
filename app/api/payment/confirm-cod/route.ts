@@ -5,7 +5,6 @@ import prisma from "@/lib/prisma";
 import { getAblyRest } from "@/lib/ably/server";
 import { redis } from "@/lib/redis";
 
-export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {

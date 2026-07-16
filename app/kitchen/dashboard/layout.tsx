@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation"
 import { useQuery } from "@tanstack/react-query"
 import { signOut } from "@/lib/auth-client"
 import { getKitchenDashboardData } from "@/actions/admin/dashboard"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import {
   SidebarProvider,
@@ -63,8 +63,63 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center" role="status" aria-label="Loading dashboard">
-        <Spinner className="size-8 text-muted-foreground" />
+      <div className="min-h-screen bg-gray-50 flex" role="status" aria-label="Loading dashboard">
+        <aside className="hidden lg:flex w-64 flex-col border-r border-border bg-white">
+          <div className="border-b border-border px-4 h-16 flex items-center gap-2">
+            <Skeleton className="h-6 w-6 rounded" />
+            <Skeleton className="h-5 w-28" />
+          </div>
+          <div className="flex-1 p-3 space-y-1">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <Skeleton key={i} className="h-9 w-full rounded-lg" />
+            ))}
+          </div>
+          <div className="border-t border-border p-3 space-y-3">
+            <Skeleton className="h-10 w-full rounded-lg" />
+            <Skeleton className="h-9 w-full rounded-lg" />
+          </div>
+        </aside>
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className="sticky top-0 z-30 bg-white border-b border-border">
+            <div className="flex items-center justify-between px-4 h-16">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-5 w-5 rounded" />
+                <Skeleton className="h-5 w-36" />
+              </div>
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="hidden sm:block h-5 w-16 rounded-full" />
+              </div>
+            </div>
+          </header>
+          <main className="flex-1 overflow-y-auto p-4 md:p-6">
+            <div className="space-y-6">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="rounded-xl border border-border bg-card p-4 space-y-2">
+                    <Skeleton className="h-3 w-24" />
+                    <Skeleton className="h-7 w-12" />
+                  </div>
+                ))}
+              </div>
+              <div className="rounded-xl border border-border bg-card p-6 space-y-4">
+                <Skeleton className="h-5 w-36" />
+                <div className="space-y-3">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="flex items-center gap-4 p-3 rounded-lg border border-border">
+                      <Skeleton className="h-10 w-10 rounded-lg" />
+                      <div className="flex-1 space-y-1.5">
+                        <Skeleton className="h-4 w-32" />
+                        <Skeleton className="h-3 w-20" />
+                      </div>
+                      <Skeleton className="h-5 w-16" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </main>
+        </div>
       </div>
     )
   }

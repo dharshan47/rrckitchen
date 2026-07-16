@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { WishlistButton } from "@/components/menu/wishlist-button";
+import { AddToCartPopup, type AddPopupItem } from "@/components/menu/add-to-cart-popup";
 
 interface MenuItemPhoto {
   id?: string;
@@ -56,6 +57,8 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
   const [passedContent, setPassedContent] = useState(false);
   const [atBottom, setAtBottom] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
+  const [popupItem, setPopupItem] = useState<AddPopupItem | null>(null);
+  const [popupOpen, setPopupOpen] = useState(false);
   const addToCart = useCartActions().addToCart;
   const deliveryAddress = useMenuDeliveryAddress();
   const imageSectionRef = useRef<HTMLDivElement>(null);
@@ -91,7 +94,18 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
       timeSlot: item.timeSlot,
       kitchenName,
     });
-  }, [addToCart, item, price, kitchenName]);
+    setPopupItem({
+      id: item.id,
+      name: item.name,
+      price,
+      compareAtPrice: item.compareAtPrice ?? null,
+      foodType: item.foodType,
+      imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
+      kitchenName,
+      timeSlot: item.timeSlot,
+    });
+    setPopupOpen(true);
+  }, [item, price, kitchenName, addToCart]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setTouchStart(e.touches[0].clientX);
@@ -443,10 +457,6 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                       <span className="text-muted-foreground">Seller Name</span>
                       <span className="font-medium text-foreground text-right max-w-[55%]">{kitchenName}</span>
                     </div>
-                    <div className="px-4 py-3">
-                      <span className="text-muted-foreground block mb-1">Seller Address</span>
-                      <span className="text-foreground text-xs leading-5">Prepared fresh in a home kitchen. Contact the kitchen for location details.</span>
-                    </div>
                     <div className="flex items-start justify-between px-4 py-3">
                       <span className="text-muted-foreground">Country of Origin</span>
                       <span className="font-medium text-foreground text-right">India</span>
@@ -580,6 +590,12 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
         </div>
       </div>
 
+      <AddToCartPopup
+        item={popupItem}
+        qty={1}
+        open={popupOpen}
+        onOpenChange={setPopupOpen}
+      />
       <LocationDialog open={locationOpen} onClose={() => setLocationOpen(false)} />
     </>
   );

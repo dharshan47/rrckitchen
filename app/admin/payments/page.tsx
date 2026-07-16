@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
   TableBody,
@@ -49,8 +49,30 @@ export default function AdminPaymentsPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-[50vh]">
-        <Spinner className="size-8" />
+      <div className="space-y-6 animate-pulse">
+        <div>
+          <Skeleton className="h-7 w-32 mb-1" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="rounded-xl border border-border bg-card">
+          <div className="p-6 space-y-2">
+            <Skeleton className="h-5 w-44" />
+          </div>
+          <div className="px-6 pb-6 space-y-3">
+            <div className="flex gap-6 pb-3 border-b border-border overflow-x-auto">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <Skeleton key={i} className="h-4 flex-1 min-w-16" />
+              ))}
+            </div>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="flex gap-6">
+                {Array.from({ length: 8 }).map((_, j) => (
+                  <Skeleton key={j} className="h-4 flex-1 min-w-16" />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     )
   }

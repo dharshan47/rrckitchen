@@ -4,10 +4,12 @@ import { createContext, useContext, useCallback, useMemo, type ReactNode } from 
 import { Button } from "@/components/ui/button";
 import { ProgressiveImage } from "@/components/patterns/progressive-image";
 import { WishlistButton as WishlistBtn } from "@/components/menu/wishlist-button";
+import { cn } from "@/lib/utils";
 
 
 interface MenuCardItem {
   id: string;
+  slug?: string;
   name: string;
   price: number;
   compareAtPrice?: number | null;
@@ -18,13 +20,16 @@ interface MenuCardItem {
   totalReviews?: number;
   description?: string | null;
   imageUrl?: string | null;
+  isBestseller?: boolean;
 }
 
 interface MenuCardContextValue {
   item: MenuCardItem;
   onAddToCart: (id: string) => void;
+  onShowAddPopup: ((item: MenuCardItem) => void) | null;
   onItemClick?: ((item: MenuCardItem) => void) | null;
   discount: number;
+  showKitchenMeta: boolean;
 }
 
 const MenuCardContext = createContext<MenuCardContextValue | null>(null);
@@ -37,14 +42,16 @@ function useMenuCardContext() {
 
 interface CompoundMenuCardProps {
   item: MenuCardContextValue["item"];
-  onAddToCart: (id: string) => void;
+  onAddToCart?: (id: string) => void;
+  onShowAddPopup?: (item: MenuCardContextValue["item"]) => void;
   onItemClick?: (item: MenuCardContextValue["item"]) => void;
+  showKitchenMeta?: boolean;
   children: ReactNode;
 }
 
 const DISCOUNT_MULTIPLIER = 1.35;
 
-function Root({ item, onAddToCart, onItemClick, children }: CompoundMenuCardProps) {
+function Root({ item, onAddToCart, onShowAddPopup, onItemClick, showKitchenMeta = true, children }: CompoundMenuCardProps) {
   const isClickable = !!onItemClick;
 
   const handleRootClick = useCallback(() => {
@@ -56,9 +63,14 @@ function Root({ item, onAddToCart, onItemClick, children }: CompoundMenuCardProp
     [item.price, item.compareAtPrice]
   );
 
+  const addToCartFallback = useCallback((id: string) => {
+    if (onShowAddPopup) onShowAddPopup(item);
+    else if (onAddToCart) onAddToCart(id);
+  }, [item, onShowAddPopup, onAddToCart]);
+
   const value = useMemo(
-    () => ({ item, onAddToCart, onItemClick: onItemClick ?? null, discount }),
-    [item, onAddToCart, onItemClick, discount]
+    () => ({ item, onAddToCart: onAddToCart ?? addToCartFallback, onShowAddPopup: onShowAddPopup ?? null, onItemClick: onItemClick ?? null, discount, showKitchenMeta }),
+    [item, onAddToCart, addToCartFallback, onShowAddPopup, onItemClick, discount, showKitchenMeta]
   );
 
   return (
@@ -130,32 +142,81 @@ function WishlistButton() {
   );
 }
 
+export function VegIcon({ className }: { className?: string }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className={cn(className)}>
+      <rect x="0.5" y="0.5" width="15" height="15" rx="3" fill="white" stroke="#22C55E" strokeWidth="1.5" />
+      <circle cx="8" cy="8" r="3.5" fill="#22C55E" />
+    </svg>
+  );
+}
+
+export function NonVegIcon({ className }: { className?: string }) {
+  return (
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className={cn(className)}>
+      <rect x="0.5" y="0.5" width="15" height="15" rx="3" fill="white" stroke="#EF4444" strokeWidth="1.5" />
+      <path d="M8 3.5L11.5 12.5H4.5L8 3.5Z" fill="#EF4444" />
+    </svg>
+  );
+}
+
+function FoodTypeIcon({ foodType }: { foodType: string }) {
+  if (foodType === "VEG") return <VegIcon className="h-3.5 w-3.5 shrink-0" />;
+  if (foodType === "NONVEG") return <NonVegIcon className="h-3.5 w-3.5 shrink-0" />;
+  return null;
+}
+
+function BestsellerBadge() {
+  return (
+    <span className="inline-flex items-center rounded-sm bg-orange-500/10 px-1 py-0.5 text-[9px] font-bold uppercase tracking-wider text-orange-600 shrink-0">
+      Bestseller
+    </span>
+  );
+}
+
+function RatingBadge({ rating, count }: { rating: number; count: number }) {
+  if (count <= 0) return null;
+  return (
+    <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-yellow-600 shrink-0">
+      <svg className="h-3 w-3 fill-yellow-400" viewBox="0 0 20 20">
+        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+      </svg>
+      {rating.toFixed(1)}
+      <span className="text-muted-foreground">({count})</span>
+    </span>
+  );
+}
+
 function Header() {
   const ctx = useMenuCardContext();
-  const { item, discount, onAddToCart } = ctx;
+  const { item, discount, onAddToCart, onShowAddPopup } = ctx;
+  const handleAddClick = onShowAddPopup
+    ? (e: React.MouseEvent) => { e.stopPropagation(); onShowAddPopup(item); }
+    : (e: React.MouseEvent) => { e.stopPropagation(); onAddToCart(item.id); };
   
   return (
     <div className="px-3 pb-4 pt-1.5">
       <div className="flex flex-col">
-        {/* Kitchen Name + Rating */}
-        <div className="flex items-center gap-1.5 mb-0.5">
-          <p className="text-xs font-medium text-muted-foreground truncate">
-            {item.kitchenName}
-          </p>
-          {item.kitchenRating != null && (
-            <span className="text-[10px] font-semibold text-yellow-600 flex items-center gap-0.5 shrink-0">
-              <svg className="h-3 w-3 fill-yellow-400" viewBox="0 0 20 20">
-                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-              </svg>
-              {Number(item.kitchenRating).toFixed(1)}
-            </span>
+        <div className="flex items-center justify-between mb-1.5">
+          <div className="flex items-center gap-1.5">
+            <FoodTypeIcon foodType={item.foodType} />
+            {item.isBestseller && <BestsellerBadge />}
+          </div>
+          {item.kitchenRating != null && item.totalReviews != null && item.totalReviews > 0 && (
+            <RatingBadge rating={item.kitchenRating} count={item.totalReviews} />
           )}
         </div>
-        {/* Name */}
+
+        {ctx.showKitchenMeta && (
+          <p className="text-xs font-medium text-muted-foreground truncate mb-0.5">
+            {item.kitchenName}
+          </p>
+        )}
+
         <h3 className="line-clamp-2 text-sm font-bold leading-snug text-foreground">
           {item.name}
         </h3>
-        
+
         {/* Price & Add Button Row */}
         <div className="mt-4 flex items-center justify-between gap-1.5">
           <div className="flex items-center gap-1.5 min-w-0 shrink">
@@ -175,13 +236,11 @@ function Header() {
             size="sm"
             variant="outline"
             className="h-7 shrink-0 rounded-lg font-bold border-[#EE7005] text-[#EE7005] px-2.5 text-xs hover:text-[#EE7005]"
-            onClick={(e) => { e.stopPropagation(); onAddToCart(item.id); }}
+            onClick={handleAddClick}
           >
             Add
           </Button>
         </div>
-        
-    
       </div>
     </div>
   );

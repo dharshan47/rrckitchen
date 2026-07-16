@@ -4,6 +4,7 @@ import { startOfDay, subMonths, format } from "date-fns"
 import { getSession } from "@/lib/auth-server"
 import prisma from "@/lib/prisma"
 import { requireAdmin } from "@/lib/auth-guards"
+import { uniqueSlug } from "@/lib/slug"
 
 function formatTimeSlot(slot: string): string {
   const map: Record<string, string> = {
@@ -316,8 +317,14 @@ export async function getKitchenDashboardData() {
   })
 
   if (!kitchenPartner) {
+    const existingSlugs = new Set(
+      (await prisma.kitchenPartner.findMany({ select: { slug: true } }))
+        .map(k => k.slug)
+        .filter(Boolean) as string[]
+    )
+    const slug = uniqueSlug(session.user.name ?? "kitchen", existingSlugs)
     kitchenPartner = await prisma.kitchenPartner.create({
-      data: { userId: session.user.id },
+      data: { userId: session.user.id, slug },
       include: { kitchenAlias: true, kitchenKyc: true, kitchenAddress: true, user: { select: { name: true, email: true } } },
     })
   }
@@ -695,10 +702,18 @@ export async function addKitchenMenuItem(formData: FormData) {
     })
   }
 
+  const existingItemSlugs = new Set(
+    (await prisma.menuItem.findMany({ select: { slug: true } }))
+      .map(i => i.slug)
+      .filter(Boolean) as string[]
+  )
+  const slug = uniqueSlug(name, existingItemSlugs)
+
   const menuItem = await prisma.menuItem.create({
     data: {
       menuId: menu.id,
       name,
+      slug,
       description,
       price,
       foodType: foodType.toUpperCase() as "VEG" | "NONVEG",

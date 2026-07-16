@@ -6,6 +6,9 @@
   "display": "standalone",
   "background_color": "#FFFFFF",
   "theme_color": "#EE7005",
+  "orientation": "portrait-primary",
+  "categories": ["food", "lifestyle"],
+  "lang": "en",
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
@@ -24,6 +27,20 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Tomorrow's Menu",
+      "short_name": "Menu",
+      "description": "Browse tomorrow's menu",
+      "url": "/menu"
+    },
+    {
+      "name": "My Cart",
+      "short_name": "Cart",
+      "description": "View your cart",
+      "url": "/cart"
     }
   ]
 }

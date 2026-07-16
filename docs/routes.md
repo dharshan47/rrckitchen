@@ -4,10 +4,11 @@
 
 | Route | Type | Description |
 |-------|------|-------------|
-| `/` | SSR | Home page with hero carousel, top-rated kitchens, menu by time slot (Breakfast/Lunch/Snacks/Dinner), offers, how-it-works |
+| `/` | SSR | Home page with hero carousel, top-rated kitchens, recently joined, menu by time slot (Breakfast/Lunch/Snacks/Dinner), offers, how-it-works |
 | `/menu` | Static | Tomorrow's menu grouped by time slot with filters |
 | `/menu/[id]` | ISR (1h) | Menu item detail with photos, badges, pricing, add-to-cart |
 | `/menu/category/[slug]` | Dynamic | Filtered menu by category (breakfast, lunch, evening-snacks, dinner) |
+| `/kitchen/[slug]` | Dynamic | Kitchen detail page with full menu, rating, image, cuisine tags, search/filter items |
 | `/search` | Static | Search page with autocomplete and kitchen results |
 | `/cart` | Static | Cart with order type selector, coupon input, payment method, Razorpay/COD checkout |
 | `/login` | Static | Phone OTP login |

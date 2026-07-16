@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { failPayment } from "@/actions/payments/payment";
 
-export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {

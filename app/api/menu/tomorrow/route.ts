@@ -2,8 +2,6 @@ import { NextResponse } from "next/server";
 import { getTomorrowMenu } from "@/actions/catalog/menu";
 import { redis } from "@/lib/redis";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
 
 const CACHE_TTL = 30;
 
@@ -13,8 +11,9 @@ export async function GET(request: Request) {
     const q = url.searchParams.get("q")?.trim() ?? "";
     const foodType = url.searchParams.get("foodType") ?? "ALL";
     const timeSlot = url.searchParams.get("timeSlot") ?? "ALL";
+    const bestseller = url.searchParams.get("bestseller") === "true";
 
-    const cacheKey = `menu:tomorrow:${foodType}:${timeSlot}:${q || "all"}`;
+    const cacheKey = `menu:tomorrow:${foodType}:${timeSlot}:${q || "all"}:bs${bestseller}`;
 
     const cached = await redis.get(cacheKey);
     if (cached) {
@@ -26,7 +25,7 @@ export async function GET(request: Request) {
       });
     }
 
-    const menuItems = await getTomorrowMenu({ query: q, foodType, timeSlot });
+    const menuItems = await getTomorrowMenu({ query: q, foodType, timeSlot, bestseller });
 
     await redis.set(cacheKey, JSON.parse(JSON.stringify(menuItems)), { ex: CACHE_TTL });
 

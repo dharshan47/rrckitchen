@@ -51,6 +51,7 @@ model User {
   adminProfile        AdminProfile?
   userCodEligibility  UserCodEligibility?
   wishlistItems       WishlistItem[]
+  kitchenWishlists    KitchenWishlist[]
 
   @@index([phoneNumber])
   @@map("user")
@@ -168,6 +169,7 @@ model Address {
 
 model KitchenPartner {
   id             String        @id @default(cuid())
+  slug           String        @unique
   userId         String        @unique
   status         PartnerStatus @default(PENDINGAPPROVAL)
   approvedAt     DateTime?
@@ -192,6 +194,7 @@ model KitchenPartner {
   serviceZone                ServiceZone?                       @relation(fields: [serviceZoneId], references: [id])
   coupons                    Coupon[]
   kitchenPayouts             KitchenPayout[]
+  kitchenWishlists           KitchenWishlist[]
 
   @@index([status])
   @@index([serviceZoneId])
@@ -276,6 +279,7 @@ model Menu {
 
 model MenuItem {
   id             String    @id @default(cuid())
+  slug           String?   @unique
   menuId         String
   name           String
   description    String?
@@ -1181,4 +1185,19 @@ model WishlistItem {
   @@unique([userId, menuItemId])
   @@index([userId])
   @@map("wishlist_item")
+}
+
+model KitchenWishlist {
+  id              String   @id @default(cuid())
+  userId          String
+  kitchenPartnerId String
+  createdAt       DateTime @default(now())
+
+  user           User           @relation(fields: [userId], references: [id])
+  kitchenPartner KitchenPartner @relation(fields: [kitchenPartnerId], references: [id])
+
+  @@unique([userId, kitchenPartnerId])
+  @@index([userId])
+  @@index([kitchenPartnerId])
+  @@map("kitchen_wishlist")
 }

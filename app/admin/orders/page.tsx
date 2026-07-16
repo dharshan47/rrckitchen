@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Table,
   TableBody,
@@ -168,8 +168,27 @@ export default function AdminOrdersPage() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Spinner className="size-8 text-muted-foreground" />
+      <div className="space-y-6 animate-pulse">
+        <div className="rounded-xl border border-border bg-card">
+          <div className="p-6 space-y-2">
+            <Skeleton className="h-5 w-36" />
+            <Skeleton className="h-4 w-64" />
+          </div>
+          <div className="px-6 pb-6 space-y-3">
+            <div className="flex gap-6 pb-3 border-b border-border">
+              {Array.from({ length: 9 }).map((_, i) => (
+                <Skeleton key={i} className="h-4 flex-1" />
+              ))}
+            </div>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="flex gap-6">
+                {Array.from({ length: 9 }).map((_, j) => (
+                  <Skeleton key={j} className="h-4 flex-1" />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     )
   }

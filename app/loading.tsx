@@ -7,14 +7,14 @@ export default function RootLoading() {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShow(true), 300);
+    const timer = setTimeout(() => setShow(true), 200);
     return () => clearTimeout(timer);
   }, []);
 
   if (!show) return null;
 
   return (
-    <div className="flex min-h-[40vh] items-center justify-center">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary">
       <Loader2 className="h-8 w-8 animate-spin text-primary" />
     </div>
   );

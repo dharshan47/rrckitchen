@@ -16,10 +16,12 @@ getTomorrowMenu(params)           // Get tomorrow's menu with filters
 ### `actions/catalog/home-data.ts`
 ```typescript
 getHomePageData(userId?: string)  // Get home page data
+getKitchenDetail(slug: string)    // Get kitchen detail with menu items
 ```
 - Top-rated kitchens (by average review rating)
 - Recently joined kitchens
 - Recent order kitchens (for logged-in users)
+- Kitchen detail with display name, image, rating, cuisine tags, and full menu items grouped by time slot
 
 ### `actions/catalog/cross-kitchen-search.ts`
 ```typescript
@@ -28,6 +30,13 @@ crossKitchenSearch(query: string) // Search across all kitchens
 - Searches kitchen names and menu items
 - Uses Redis for caching popular searches
 - Returns matched kitchens and items
+
+### `actions/catalog/explore.ts`
+```typescript
+exploreKitchens(category, page, limit)  // Paginated kitchen exploration
+getKitchenCategories()                   // Get all cuisine categories
+getTrendingKitchens()                    // Get trending/popular kitchens
+```
 
 ## Cart & Checkout Actions
 

@@ -308,6 +308,7 @@ export type UserWhereInput = {
   adminProfile?: Prisma.XOR<Prisma.AdminProfileNullableScalarRelationFilter, Prisma.AdminProfileWhereInput> | null
   userCodEligibility?: Prisma.XOR<Prisma.UserCodEligibilityNullableScalarRelationFilter, Prisma.UserCodEligibilityWhereInput> | null
   wishlistItems?: Prisma.WishlistItemListRelationFilter
+  kitchenWishlists?: Prisma.KitchenWishlistListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -351,6 +352,7 @@ export type UserOrderByWithRelationInput = {
   adminProfile?: Prisma.AdminProfileOrderByWithRelationInput
   userCodEligibility?: Prisma.UserCodEligibilityOrderByWithRelationInput
   wishlistItems?: Prisma.WishlistItemOrderByRelationAggregateInput
+  kitchenWishlists?: Prisma.KitchenWishlistOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -397,6 +399,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   adminProfile?: Prisma.XOR<Prisma.AdminProfileNullableScalarRelationFilter, Prisma.AdminProfileWhereInput> | null
   userCodEligibility?: Prisma.XOR<Prisma.UserCodEligibilityNullableScalarRelationFilter, Prisma.UserCodEligibilityWhereInput> | null
   wishlistItems?: Prisma.WishlistItemListRelationFilter
+  kitchenWishlists?: Prisma.KitchenWishlistListRelationFilter
 }, "id" | "phoneNumber" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -488,6 +491,7 @@ export type UserCreateInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -531,6 +535,7 @@ export type UserUncheckedCreateInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -574,6 +579,7 @@ export type UserUpdateInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -617,6 +623,7 @@ export type UserUncheckedUpdateInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -1091,6 +1098,20 @@ export type UserUpdateOneRequiredWithoutWishlistItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutWishlistItemsInput, Prisma.UserUpdateWithoutWishlistItemsInput>, Prisma.UserUncheckedUpdateWithoutWishlistItemsInput>
 }
 
+export type UserCreateNestedOneWithoutKitchenWishlistsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutKitchenWishlistsInput, Prisma.UserUncheckedCreateWithoutKitchenWishlistsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutKitchenWishlistsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutKitchenWishlistsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutKitchenWishlistsInput, Prisma.UserUncheckedCreateWithoutKitchenWishlistsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutKitchenWishlistsInput
+  upsert?: Prisma.UserUpsertWithoutKitchenWishlistsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutKitchenWishlistsInput, Prisma.UserUpdateWithoutKitchenWishlistsInput>, Prisma.UserUncheckedUpdateWithoutKitchenWishlistsInput>
+}
+
 export type UserCreateWithoutUserRolesInput = {
   id?: string
   phoneNumber?: string | null
@@ -1131,6 +1152,7 @@ export type UserCreateWithoutUserRolesInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUserRolesInput = {
@@ -1173,6 +1195,7 @@ export type UserUncheckedCreateWithoutUserRolesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUserRolesInput = {
@@ -1231,6 +1254,7 @@ export type UserUpdateWithoutUserRolesInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserRolesInput = {
@@ -1273,6 +1297,7 @@ export type UserUncheckedUpdateWithoutUserRolesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1315,6 +1340,7 @@ export type UserCreateWithoutSessionsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1357,6 +1383,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1415,6 +1442,7 @@ export type UserUpdateWithoutSessionsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1457,6 +1485,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -1499,6 +1528,7 @@ export type UserCreateWithoutAccountsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -1541,6 +1571,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1599,6 +1630,7 @@ export type UserUpdateWithoutAccountsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1641,6 +1673,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOtpCodesInput = {
@@ -1683,6 +1716,7 @@ export type UserCreateWithoutOtpCodesInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOtpCodesInput = {
@@ -1725,6 +1759,7 @@ export type UserUncheckedCreateWithoutOtpCodesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOtpCodesInput = {
@@ -1783,6 +1818,7 @@ export type UserUpdateWithoutOtpCodesInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOtpCodesInput = {
@@ -1825,6 +1861,7 @@ export type UserUncheckedUpdateWithoutOtpCodesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAddressesInput = {
@@ -1867,6 +1904,7 @@ export type UserCreateWithoutAddressesInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAddressesInput = {
@@ -1909,6 +1947,7 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAddressesInput = {
@@ -1967,6 +2006,7 @@ export type UserUpdateWithoutAddressesInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
@@ -2009,6 +2049,7 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutKitchenPartnerInput = {
@@ -2051,6 +2092,7 @@ export type UserCreateWithoutKitchenPartnerInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutKitchenPartnerInput = {
@@ -2093,6 +2135,7 @@ export type UserUncheckedCreateWithoutKitchenPartnerInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutKitchenPartnerInput = {
@@ -2151,6 +2194,7 @@ export type UserUpdateWithoutKitchenPartnerInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
@@ -2193,6 +2237,7 @@ export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDeliveryPartnerInput = {
@@ -2235,6 +2280,7 @@ export type UserCreateWithoutDeliveryPartnerInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
@@ -2277,6 +2323,7 @@ export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDeliveryPartnerInput = {
@@ -2335,6 +2382,7 @@ export type UserUpdateWithoutDeliveryPartnerInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
@@ -2377,6 +2425,7 @@ export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -2419,6 +2468,7 @@ export type UserCreateWithoutOrdersInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -2461,6 +2511,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -2519,6 +2570,7 @@ export type UserUpdateWithoutOrdersInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -2561,6 +2613,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -2603,6 +2656,7 @@ export type UserCreateWithoutReviewsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -2645,6 +2699,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -2703,6 +2758,7 @@ export type UserUpdateWithoutReviewsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -2745,6 +2801,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDeliveryReviewsInput = {
@@ -2787,6 +2844,7 @@ export type UserCreateWithoutDeliveryReviewsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeliveryReviewsInput = {
@@ -2829,6 +2887,7 @@ export type UserUncheckedCreateWithoutDeliveryReviewsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutDeliveryReviewsInput = {
@@ -2887,6 +2946,7 @@ export type UserUpdateWithoutDeliveryReviewsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeliveryReviewsInput = {
@@ -2929,6 +2989,7 @@ export type UserUncheckedUpdateWithoutDeliveryReviewsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMenuItemFeedbacksInput = {
@@ -2971,6 +3032,7 @@ export type UserCreateWithoutMenuItemFeedbacksInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMenuItemFeedbacksInput = {
@@ -3013,6 +3075,7 @@ export type UserUncheckedCreateWithoutMenuItemFeedbacksInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutMenuItemFeedbacksInput = {
@@ -3071,6 +3134,7 @@ export type UserUpdateWithoutMenuItemFeedbacksInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMenuItemFeedbacksInput = {
@@ -3113,6 +3177,7 @@ export type UserUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPushSubscriptionsInput = {
@@ -3155,6 +3220,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
@@ -3197,6 +3263,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutPushSubscriptionsInput = {
@@ -3255,6 +3322,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
@@ -3297,6 +3365,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationLogsInput = {
@@ -3339,6 +3408,7 @@ export type UserCreateWithoutNotificationLogsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationLogsInput = {
@@ -3381,6 +3451,7 @@ export type UserUncheckedCreateWithoutNotificationLogsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutNotificationLogsInput = {
@@ -3439,6 +3510,7 @@ export type UserUpdateWithoutNotificationLogsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationLogsInput = {
@@ -3481,6 +3553,7 @@ export type UserUncheckedUpdateWithoutNotificationLogsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSupportTicketsInput = {
@@ -3523,6 +3596,7 @@ export type UserCreateWithoutSupportTicketsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSupportTicketsInput = {
@@ -3565,6 +3639,7 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSupportTicketsInput = {
@@ -3623,6 +3698,7 @@ export type UserUpdateWithoutSupportTicketsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSupportTicketsInput = {
@@ -3665,6 +3741,7 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReferralsMadeInput = {
@@ -3707,6 +3784,7 @@ export type UserCreateWithoutReferralsMadeInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferralsMadeInput = {
@@ -3749,6 +3827,7 @@ export type UserUncheckedCreateWithoutReferralsMadeInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReferralsMadeInput = {
@@ -3796,6 +3875,7 @@ export type UserCreateWithoutReferralsUsedInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferralsUsedInput = {
@@ -3838,6 +3918,7 @@ export type UserUncheckedCreateWithoutReferralsUsedInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutReferralsUsedInput = {
@@ -3896,6 +3977,7 @@ export type UserUpdateWithoutReferralsMadeInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferralsMadeInput = {
@@ -3938,6 +4020,7 @@ export type UserUncheckedUpdateWithoutReferralsMadeInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutReferralsUsedInput = {
@@ -3991,6 +4074,7 @@ export type UserUpdateWithoutReferralsUsedInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferralsUsedInput = {
@@ -4033,6 +4117,7 @@ export type UserUncheckedUpdateWithoutReferralsUsedInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLoyaltyPointsInput = {
@@ -4075,6 +4160,7 @@ export type UserCreateWithoutLoyaltyPointsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLoyaltyPointsInput = {
@@ -4117,6 +4203,7 @@ export type UserUncheckedCreateWithoutLoyaltyPointsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLoyaltyPointsInput = {
@@ -4175,6 +4262,7 @@ export type UserUpdateWithoutLoyaltyPointsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLoyaltyPointsInput = {
@@ -4217,6 +4305,7 @@ export type UserUncheckedUpdateWithoutLoyaltyPointsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLoyaltyTransactionsInput = {
@@ -4259,6 +4348,7 @@ export type UserCreateWithoutLoyaltyTransactionsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLoyaltyTransactionsInput = {
@@ -4301,6 +4391,7 @@ export type UserUncheckedCreateWithoutLoyaltyTransactionsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutLoyaltyTransactionsInput = {
@@ -4359,6 +4450,7 @@ export type UserUpdateWithoutLoyaltyTransactionsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLoyaltyTransactionsInput = {
@@ -4401,6 +4493,7 @@ export type UserUncheckedUpdateWithoutLoyaltyTransactionsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAdminProfileInput = {
@@ -4443,6 +4536,7 @@ export type UserCreateWithoutAdminProfileInput = {
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAdminProfileInput = {
@@ -4485,6 +4579,7 @@ export type UserUncheckedCreateWithoutAdminProfileInput = {
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutAdminProfileInput = {
@@ -4543,6 +4638,7 @@ export type UserUpdateWithoutAdminProfileInput = {
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAdminProfileInput = {
@@ -4585,6 +4681,7 @@ export type UserUncheckedUpdateWithoutAdminProfileInput = {
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTwoFactorsInput = {
@@ -4627,6 +4724,7 @@ export type UserCreateWithoutTwoFactorsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTwoFactorsInput = {
@@ -4669,6 +4767,7 @@ export type UserUncheckedCreateWithoutTwoFactorsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutTwoFactorsInput = {
@@ -4727,6 +4826,7 @@ export type UserUpdateWithoutTwoFactorsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTwoFactorsInput = {
@@ -4769,6 +4869,7 @@ export type UserUncheckedUpdateWithoutTwoFactorsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutUserCodEligibilityInput = {
@@ -4811,6 +4912,7 @@ export type UserCreateWithoutUserCodEligibilityInput = {
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUserCodEligibilityInput = {
@@ -4853,6 +4955,7 @@ export type UserUncheckedCreateWithoutUserCodEligibilityInput = {
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUserCodEligibilityInput = {
@@ -4911,6 +5014,7 @@ export type UserUpdateWithoutUserCodEligibilityInput = {
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserCodEligibilityInput = {
@@ -4953,6 +5057,7 @@ export type UserUncheckedUpdateWithoutUserCodEligibilityInput = {
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutWishlistItemsInput = {
@@ -4995,6 +5100,7 @@ export type UserCreateWithoutWishlistItemsInput = {
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWishlistItemsInput = {
@@ -5037,6 +5143,7 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutWishlistItemsInput = {
@@ -5095,6 +5202,7 @@ export type UserUpdateWithoutWishlistItemsInput = {
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWishlistItemsInput = {
@@ -5137,6 +5245,195 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutKitchenWishlistsInput = {
+  id?: string
+  phoneNumber?: string | null
+  phoneNumberVerified?: boolean
+  role?: string
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  name?: string | null
+  fullName?: string | null
+  email?: string | null
+  emailVerified?: boolean
+  image?: string | null
+  isActive?: boolean
+  razorpayCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  twoFactorEnabled?: boolean | null
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
+  kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
+  twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
+  adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
+  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutKitchenWishlistsInput = {
+  id?: string
+  phoneNumber?: string | null
+  phoneNumberVerified?: boolean
+  role?: string
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  name?: string | null
+  fullName?: string | null
+  email?: string | null
+  emailVerified?: boolean
+  image?: string | null
+  isActive?: boolean
+  razorpayCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  twoFactorEnabled?: boolean | null
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
+  kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
+  deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
+  twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
+  adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
+  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutKitchenWishlistsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutKitchenWishlistsInput, Prisma.UserUncheckedCreateWithoutKitchenWishlistsInput>
+}
+
+export type UserUpsertWithoutKitchenWishlistsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutKitchenWishlistsInput, Prisma.UserUncheckedUpdateWithoutKitchenWishlistsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutKitchenWishlistsInput, Prisma.UserUncheckedCreateWithoutKitchenWishlistsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutKitchenWishlistsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutKitchenWishlistsInput, Prisma.UserUncheckedUpdateWithoutKitchenWishlistsInput>
+}
+
+export type UserUpdateWithoutKitchenWishlistsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
+  kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
+  twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
+  adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
+  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutKitchenWishlistsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
+  kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
+  twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
+  adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -5162,6 +5459,7 @@ export type UserCountOutputType = {
   notificationLogs: number
   twoFactors: number
   wishlistItems: number
+  kitchenWishlists: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -5182,6 +5480,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   notificationLogs?: boolean | UserCountOutputTypeCountNotificationLogsArgs
   twoFactors?: boolean | UserCountOutputTypeCountTwoFactorsArgs
   wishlistItems?: boolean | UserCountOutputTypeCountWishlistItemsArgs
+  kitchenWishlists?: boolean | UserCountOutputTypeCountKitchenWishlistsArgs
 }
 
 /**
@@ -5313,6 +5612,13 @@ export type UserCountOutputTypeCountWishlistItemsArgs<ExtArgs extends runtime.Ty
   where?: Prisma.WishlistItemWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountKitchenWishlistsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.KitchenWishlistWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -5355,6 +5661,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   adminProfile?: boolean | Prisma.User$adminProfileArgs<ExtArgs>
   userCodEligibility?: boolean | Prisma.User$userCodEligibilityArgs<ExtArgs>
   wishlistItems?: boolean | Prisma.User$wishlistItemsArgs<ExtArgs>
+  kitchenWishlists?: boolean | Prisma.User$kitchenWishlistsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -5445,6 +5752,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   adminProfile?: boolean | Prisma.User$adminProfileArgs<ExtArgs>
   userCodEligibility?: boolean | Prisma.User$userCodEligibilityArgs<ExtArgs>
   wishlistItems?: boolean | Prisma.User$wishlistItemsArgs<ExtArgs>
+  kitchenWishlists?: boolean | Prisma.User$kitchenWishlistsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -5475,6 +5783,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     adminProfile: Prisma.$AdminProfilePayload<ExtArgs> | null
     userCodEligibility: Prisma.$UserCodEligibilityPayload<ExtArgs> | null
     wishlistItems: Prisma.$WishlistItemPayload<ExtArgs>[]
+    kitchenWishlists: Prisma.$KitchenWishlistPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -5911,6 +6220,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   adminProfile<T extends Prisma.User$adminProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$adminProfileArgs<ExtArgs>>): Prisma.Prisma__AdminProfileClient<runtime.Types.Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   userCodEligibility<T extends Prisma.User$userCodEligibilityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userCodEligibilityArgs<ExtArgs>>): Prisma.Prisma__UserCodEligibilityClient<runtime.Types.Result.GetResult<Prisma.$UserCodEligibilityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   wishlistItems<T extends Prisma.User$wishlistItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$wishlistItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WishlistItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  kitchenWishlists<T extends Prisma.User$kitchenWishlistsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$kitchenWishlistsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenWishlistPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -6851,6 +7161,30 @@ export type User$wishlistItemsArgs<ExtArgs extends runtime.Types.Extensions.Inte
   take?: number
   skip?: number
   distinct?: Prisma.WishlistItemScalarFieldEnum | Prisma.WishlistItemScalarFieldEnum[]
+}
+
+/**
+ * User.kitchenWishlists
+ */
+export type User$kitchenWishlistsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the KitchenWishlist
+   */
+  select?: Prisma.KitchenWishlistSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the KitchenWishlist
+   */
+  omit?: Prisma.KitchenWishlistOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.KitchenWishlistInclude<ExtArgs> | null
+  where?: Prisma.KitchenWishlistWhereInput
+  orderBy?: Prisma.KitchenWishlistOrderByWithRelationInput | Prisma.KitchenWishlistOrderByWithRelationInput[]
+  cursor?: Prisma.KitchenWishlistWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.KitchenWishlistScalarFieldEnum | Prisma.KitchenWishlistScalarFieldEnum[]
 }
 
 /**

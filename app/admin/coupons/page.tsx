@@ -27,7 +27,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import {
@@ -503,8 +503,27 @@ export default function AdminCouponsPage() {
           </div>
 
           {isLoading ? (
-            <div className="flex justify-center py-12">
-              <Spinner className="size-6 text-muted-foreground" />
+            <div className="space-y-3 animate-pulse">
+              <div className="flex gap-4 pb-3 border-b border-border">
+                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-20" />
+                <Skeleton className="h-4 w-36" />
+                <Skeleton className="h-4 w-12" />
+                <Skeleton className="h-4 w-16" />
+                <Skeleton className="h-4 w-20" />
+              </div>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="flex gap-4 items-center">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-20" />
+                  <Skeleton className="h-4 w-36" />
+                  <Skeleton className="h-4 w-12" />
+                  <Skeleton className="h-5 w-14 rounded-full" />
+                  <Skeleton className="h-8 w-20 rounded-lg ml-auto" />
+                </div>
+              ))}
             </div>
           ) : filtered.length === 0 ? (
             <p className="py-12 text-center text-muted-foreground">No coupons found.</p>

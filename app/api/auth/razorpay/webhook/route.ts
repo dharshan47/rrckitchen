@@ -4,7 +4,6 @@ import { confirmPayment, failPayment } from "@/actions/payments/payment";
 import { processWebhookRefund } from "@/actions/payments/refund";
 import { processWebhookPayout } from "@/actions/payouts/delivery-payout";
 
-export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {

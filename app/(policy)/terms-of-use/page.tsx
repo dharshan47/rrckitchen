@@ -18,7 +18,7 @@ export default function TermsOfUsePage() {
 
       <div className="border-t border-border pt-6 mt-10">
         <p className="text-sm text-muted-foreground">
-          &copy; {new Date().getFullYear()} RRC Kitchen Marketplace Private Limited. All rights reserved.
+          &copy; 2026 RRC Kitchen Marketplace Private Limited. All rights reserved.
         </p>
       </div>
     </div>

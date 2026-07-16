@@ -14,11 +14,13 @@ interface MenuState {
   selectedTimeSlot: TimeSlotFilter;
   selectedTab: MenuTab;
   deliveryAddress: string;
+  bestsellerOnly: boolean;
   setSearchQuery: (value: string) => void;
   setSelectedFoodType: (value: FoodTypeFilter) => void;
   setSelectedTimeSlot: (value: TimeSlotFilter) => void;
   setSelectedTab: (value: MenuTab) => void;
   setDeliveryAddress: (value: string) => void;
+  setBestsellerOnly: (value: boolean) => void;
 }
 
 /** Selector returning the current search query. */
@@ -31,6 +33,8 @@ export const selectTimeSlot = (s: MenuState) => s.selectedTimeSlot;
 export const selectMenuTab = (s: MenuState) => s.selectedTab;
 /** Selector returning the delivery address. */
 export const selectDeliveryAddress = (s: MenuState) => s.deliveryAddress;
+/** Selector returning the bestseller filter. */
+export const selectBestsellerOnly = (s: MenuState) => s.bestsellerOnly;
 /** Selector returning all menu actions in a single object (stable reference via shallow). */
 export const selectMenuActions = (s: MenuState) => ({
   setSearchQuery: s.setSearchQuery,
@@ -38,6 +42,7 @@ export const selectMenuActions = (s: MenuState) => ({
   setSelectedTimeSlot: s.setSelectedTimeSlot,
   setSelectedTab: s.setSelectedTab,
   setDeliveryAddress: s.setDeliveryAddress,
+  setBestsellerOnly: s.setBestsellerOnly,
 });
 
 /**
@@ -52,6 +57,7 @@ export const menuStore = create<MenuState>()(
       selectedTimeSlot: "ALL",
       selectedTab: "menu",
       deliveryAddress: "",
+      bestsellerOnly: false,
       setSearchQuery: (value: string) => {
         set({ searchQuery: value });
         globalEventBus.emit(AppEvents.MENU_FILTER_CHANGED, { type: "search", value });
@@ -66,6 +72,10 @@ export const menuStore = create<MenuState>()(
       },
       setSelectedTab: (value: MenuTab) => set({ selectedTab: value }),
       setDeliveryAddress: (value: string) => set({ deliveryAddress: value }),
+      setBestsellerOnly: (value: boolean) => {
+        set({ bestsellerOnly: value });
+        globalEventBus.emit(AppEvents.MENU_FILTER_CHANGED, { type: "bestseller", value });
+      },
     }),
     {
       name: "rrc-menu-store",
@@ -93,6 +103,10 @@ export function useMenuTab() {
 /** Hook returning the delivery address. */
 export function useMenuDeliveryAddress() {
   return menuStore(selectDeliveryAddress);
+}
+/** Hook returning the bestseller filter. */
+export function useMenuBestsellerOnly() {
+  return menuStore(selectBestsellerOnly);
 }
 /** Hook returning all menu actions (stable reference). */
 export function useMenuActions() {

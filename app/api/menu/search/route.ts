@@ -44,6 +44,7 @@ export async function GET(request: Request) {
       },
       select: {
         id: true,
+        slug: true,
         name: true,
         price: true,
         compareAtPrice: true,
@@ -77,6 +78,7 @@ export async function GET(request: Request) {
       },
       select: {
         id: true,
+        slug: true,
         avgRating: true,
         totalReviews: true,
         kitchenAlias: { select: { displayName: true } },
@@ -129,6 +131,7 @@ export async function GET(request: Request) {
   const result = {
     dishes: dishes.map((item) => ({
       id: item.id,
+      slug: item.slug ?? undefined,
       name: item.name,
       price: Number(item.price),
       compareAtPrice: item.compareAtPrice ? Number(item.compareAtPrice) : null,
@@ -140,6 +143,7 @@ export async function GET(request: Request) {
     })),
     kitchens: kitchenRows.map((k) => ({
       id: k.id,
+      slug: k.slug,
       displayName: k.kitchenAlias?.displayName ?? "Unknown Kitchen",
       avgRating: Number(k.avgRating),
       totalReviews: k.totalReviews,

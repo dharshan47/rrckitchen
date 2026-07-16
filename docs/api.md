@@ -167,6 +167,16 @@ Response: { lat, lng, timestamp }
 ## Kitchen
 
 ```
+GET /api/kitchen/explore?category=&page=&limit=
+Query: category (optional), page (default 1), limit (default 20)
+Response: { kitchens: Kitchen[], total: number }
+
+GET /api/kitchen/trending
+Response: TrendingKitchen[]
+
+GET /api/kitchen/categories
+Response: Category[]
+
 POST /api/kitchen/stock
 Body: { menuItemId, stock }
 Response: { success }

@@ -50,13 +50,13 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
 
   return (
     <Card className="mx-auto w-full border-border/50 shadow-lg shadow-primary/5 backdrop-blur-sm bg-card">
-      <CardHeader className="px-6 py-8">
-        <CardTitle className="flex items-center gap-2 text-xl">
+      <CardHeader className="px-6 py-5">
+        <CardTitle className="relative flex items-center justify-center text-xl">
           {step !== "phone" && !verified && (
             <button
               type="button"
               onClick={() => window.location.reload()}
-              className="inline-flex items-center justify-center rounded-lg p-1 -ml-1 hover:bg-muted transition-colors"
+              className="absolute left-0 inline-flex items-center justify-center rounded-lg p-1 hover:bg-muted transition-colors"
               aria-label="Go back"
             >
               <ArrowLeft className="h-4 w-4" />
@@ -67,7 +67,7 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
           </span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="grid gap-5 px-6 pb-8">
+      <CardContent className="grid gap-4 px-6 pb-6">
         {step === "phone" && !verified && (
           <form onSubmit={phoneForm.handleSubmit((d) => sendOtp(d.phone))} className="grid gap-5">
             <div className="grid gap-2">

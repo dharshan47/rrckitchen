@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyPaymentSignature, confirmPayment } from "@/actions/payments/payment";
 
-export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {

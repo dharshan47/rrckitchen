@@ -14,7 +14,7 @@ import {
   getCoreRowModel,
   createColumnHelper,
 } from "@tanstack/react-table"
-import { Spinner } from "@/components/ui/spinner"
+import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
 import { useSession } from "@/lib/auth-client"
 import { getAdminDashboardData } from "@/actions/admin/dashboard"
@@ -158,8 +158,22 @@ export default function AdminCustomersPage() {
 
   if (dashboardLoading) {
     return (
-      <div className="flex items-center justify-center py-20">
-        <Spinner className="size-8 text-muted-foreground" />
+      <div className="space-y-6 animate-pulse">
+        <div>
+          <Skeleton className="h-6 w-44 mb-1" />
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="rounded-xl border border-border bg-card p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-4 w-4 rounded" />
+              </div>
+              <Skeleton className="h-6 w-12" />
+            </div>
+          ))}
+        </div>
       </div>
     )
   }

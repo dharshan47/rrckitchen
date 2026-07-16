@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function NotFound() {
+  const router = useRouter();
   useEffect(() => {
     const header = document.querySelector("header");
     const footer = document.querySelector("footer");
@@ -41,18 +42,18 @@ export default function NotFound() {
           </p>
 
           <div className="flex flex-col items-center justify-center gap-4 pt-4 sm:flex-row">
-            <Link
-              href="/"
+            <button
+              onClick={() => router.push("/")}
               className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-extrabold text-primary-foreground transition-all hover:brightness-110 active:scale-95 sm:w-auto"
             >
               GO TO HOME
-            </Link>
-            <Link
-              href="/menu"
+            </button>
+            <button
+              onClick={() => router.push("/categories")}
               className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-foreground px-8 py-3.5 text-base font-extrabold text-foreground transition-all hover:bg-foreground hover:text-white active:scale-95 sm:w-auto"
             >
-              BROWSE MENU
-            </Link>
+              BROWSE CATEGORIES
+            </button>
           </div>
         </div>
       </div>

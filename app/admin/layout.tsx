@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+import { Skeleton } from "@/components/ui/skeleton";
 import { SwUpdateBanner } from "@/components/patterns/sw-update-banner";
 import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init";
 import { useSession, signOut } from "@/lib/auth-client";
@@ -86,8 +86,86 @@ export default function AdminLayout({
 
   if (isPending) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center" role="status" aria-label="Loading admin dashboard">
-        <Spinner className="size-8 text-muted-foreground" />
+      <div className="min-h-screen bg-gray-50 flex" role="status" aria-label="Loading admin dashboard">
+        <aside className="hidden lg:flex w-64 flex-col border-r border-border bg-white">
+          <div className="border-b border-border px-4 h-16 flex items-center gap-2">
+            <Skeleton className="h-6 w-6 rounded" />
+            <Skeleton className="h-5 w-40" />
+          </div>
+          <div className="flex-1 p-3 space-y-1">
+            {Array.from({ length: 13 }).map((_, i) => (
+              <Skeleton key={i} className="h-9 w-full rounded-lg" />
+            ))}
+          </div>
+          <div className="border-t border-border p-3">
+            <Skeleton className="h-10 w-full rounded-lg" />
+          </div>
+        </aside>
+        <div className="flex-1 flex flex-col min-w-0">
+          <header className="sticky top-0 z-30 bg-white border-b border-border">
+            <div className="flex items-center justify-between px-4 h-16">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-5 w-5 rounded" />
+                <Skeleton className="h-5 w-36" />
+              </div>
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-5 w-16 rounded-full" />
+                <Skeleton className="hidden lg:block h-9 w-20 rounded-lg" />
+              </div>
+            </div>
+          </header>
+          <main className="flex-1 overflow-y-auto p-4 md:p-6">
+            <div className="space-y-6">
+              <div className="grid gap-3 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+                {Array.from({ length: 10 }).map((_, i) => (
+                  <div key={i} className="rounded-xl border border-border bg-card p-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Skeleton className="h-3 w-20" />
+                      <Skeleton className="h-4 w-4 rounded" />
+                    </div>
+                    <Skeleton className="h-6 w-16" />
+                  </div>
+                ))}
+              </div>
+              <div className="grid gap-6 lg:grid-cols-2">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="rounded-xl border border-border bg-card p-6 space-y-4">
+                    <Skeleton className="h-5 w-32" />
+                    <Skeleton className="h-4 w-48" />
+                    <Skeleton className="h-40 w-full rounded-lg" />
+                  </div>
+                ))}
+              </div>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="rounded-xl border border-border bg-card p-6 space-y-4">
+                    <Skeleton className="h-5 w-32" />
+                    <Skeleton className="h-4 w-36" />
+                    <Skeleton className="h-32 w-full rounded-lg" />
+                  </div>
+                ))}
+              </div>
+              <div className="grid gap-6 lg:grid-cols-2">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="rounded-xl border border-border bg-card p-6 space-y-4">
+                    <Skeleton className="h-5 w-36" />
+                    <Skeleton className="h-4 w-56" />
+                    <div className="space-y-2">
+                      {Array.from({ length: 4 }).map((_, j) => (
+                        <div key={j} className="flex gap-4">
+                          <Skeleton className="h-4 flex-1" />
+                          <Skeleton className="h-4 w-16" />
+                          <Skeleton className="h-4 w-16" />
+                          <Skeleton className="h-4 w-12" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </main>
+        </div>
       </div>
     );
   }

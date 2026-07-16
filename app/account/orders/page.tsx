@@ -19,7 +19,7 @@ import { useSession } from "@/lib/auth-client"
 import { getUserOrders, cancelOrder, type UserOrder } from "@/actions/orders/orders"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
-import { DeliveryRatingDialog } from "@/components/delivery/delivery-rating-dialog"
+import { DeliveryRatingDialog } from "@/components/delivery-partner/delivery-rating-dialog"
 import { RatingPrompt } from "@/components/order/rating-prompt"
 import { CravingsPopup } from "@/components/order/cravings-popup"
 

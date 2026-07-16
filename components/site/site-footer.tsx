@@ -16,7 +16,7 @@ export function SiteFooter() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10">
           <div className="sm:col-span-2 lg:col-span-1">
-            <Link href="/" className="text-2xl sm:text-3xl font-extrabold tracking-tighter text-foreground">
+            <Link href="/" className="text-2xl sm:text-3xl font-extrabold tracking-tighter text-primary">
               RRC Kitchen
             </Link>
             <p className="mt-3 text-sm text-muted-foreground leading-relaxed">
@@ -43,7 +43,7 @@ export function SiteFooter() {
                 Become a Delivery Partner
               </FooterLink>
               <FooterLink href={isKitchenPartner ? "/kitchen/dashboard" : "/kitchen"}>
-                Sell on RRC Kitchen
+                Become a Home Chef
               </FooterLink>
             </div>
           </div>

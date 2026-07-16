@@ -297,3 +297,8 @@ export type CodVariance = Prisma.CodVarianceModel
  * 
  */
 export type WishlistItem = Prisma.WishlistItemModel
+/**
+ * Model KitchenWishlist
+ * 
+ */
+export type KitchenWishlist = Prisma.KitchenWishlistModel

@@ -106,7 +106,8 @@ export const ModelName = {
   UserCodEligibility: 'UserCodEligibility',
   CashRemittance: 'CashRemittance',
   CodVariance: 'CodVariance',
-  WishlistItem: 'WishlistItem'
+  WishlistItem: 'WishlistItem',
+  KitchenWishlist: 'KitchenWishlist'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -245,6 +246,7 @@ export type AddressScalarFieldEnum = (typeof AddressScalarFieldEnum)[keyof typeo
 
 export const KitchenPartnerScalarFieldEnum = {
   id: 'id',
+  slug: 'slug',
   userId: 'userId',
   status: 'status',
   approvedAt: 'approvedAt',
@@ -324,6 +326,7 @@ export type MenuScalarFieldEnum = (typeof MenuScalarFieldEnum)[keyof typeof Menu
 
 export const MenuItemScalarFieldEnum = {
   id: 'id',
+  slug: 'slug',
   menuId: 'menuId',
   name: 'name',
   description: 'description',
@@ -922,6 +925,16 @@ export const WishlistItemScalarFieldEnum = {
 } as const
 
 export type WishlistItemScalarFieldEnum = (typeof WishlistItemScalarFieldEnum)[keyof typeof WishlistItemScalarFieldEnum]
+
+
+export const KitchenWishlistScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  kitchenPartnerId: 'kitchenPartnerId',
+  createdAt: 'createdAt'
+} as const
+
+export type KitchenWishlistScalarFieldEnum = (typeof KitchenWishlistScalarFieldEnum)[keyof typeof KitchenWishlistScalarFieldEnum]
 
 
 export const SortOrder = {

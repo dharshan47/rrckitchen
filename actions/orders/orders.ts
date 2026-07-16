@@ -313,11 +313,11 @@ export async function getOrderForTracking(orderId: string) {
       quantity: i.quantity,
       unitPrice: i.unitPrice.toString(),
       imageUrl: i.menuItem.photos[0]?.imageUrl ?? null,
-      kitchenName: i.kitchenPartner?.kitchenAlias?.displayName ?? "Kitchen",
+      kitchenName: i.kitchenPartner?.kitchenAlias?.displayName ?? "Home Kitchen",
     })),
     kitchenLat: kitchen?.kitchenAddress?.latitude ?? null,
     kitchenLng: kitchen?.kitchenAddress?.longitude ?? null,
-    kitchenName: kitchen?.kitchenAlias?.displayName ?? "Kitchen",
+    kitchenName: kitchen?.kitchenAlias?.displayName ?? "Home Kitchen",
     customerLat: order.address?.latitude ?? null,
     customerLng: order.address?.longitude ?? null,
     customerAddress: order.address

@@ -38,6 +38,7 @@ interface WishlistItem {
   menuItemId: string
   menuItem: {
     id: string
+    slug?: string
     name: string
     price: number
     foodType: string
@@ -357,7 +358,7 @@ export default function AccountProfilePage() {
             <div className="grid gap-3 sm:grid-cols-2">
               {wishlist.map((item) => (
                 <Card key={item.id} className="p-3 flex items-center gap-3">
-                  <Link href={`/menu/${item.menuItem.id}`} className="shrink-0">
+                  <Link href={`/menu/${item.menuItem.slug ?? item.menuItem.id}`} className="shrink-0">
                     <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center overflow-hidden">
                       {item.menuItem.photos[0]?.imageUrl ? (
                         <Image src={item.menuItem.photos[0].imageUrl} alt="" width={48} height={48} className="h-full w-full object-cover" />
@@ -366,7 +367,7 @@ export default function AccountProfilePage() {
                       )}
                     </div>
                   </Link>
-                  <Link href={`/menu/${item.menuItem.id}`} className="flex-1 min-w-0">
+                  <Link href={`/menu/${item.menuItem.slug ?? item.menuItem.id}`} className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{item.menuItem.name}</p>
                     <p className="text-xs text-muted-foreground">
                       ₹{item.menuItem.price} · {item.menuItem.foodType}

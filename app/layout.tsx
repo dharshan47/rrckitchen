@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import Script from "next/script";
+import { Suspense } from "react";
 import "./globals.css";
 import { Providers } from "@/providers/providers";
 import { AppShell } from "@/components/layout/app-shell";
@@ -59,10 +60,12 @@ export default function RootLayout({
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <Providers>
-          <AppShell>
-            {children}
-             <Toaster position="top-center" />
-          </AppShell>
+          <Suspense fallback={null}>
+            <AppShell>
+              {children}
+               <Toaster position="top-center" />
+            </AppShell>
+          </Suspense>
         </Providers>
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"

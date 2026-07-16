@@ -3,7 +3,6 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { createPaymentOrder } from "@/actions/payments/payment";
 
-export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {

@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { getAblyRest } from "@/lib/ably/server";
+import { awardPoints } from "@/actions/loyalty/loyalty";
 
 export async function confirmCodDelivery(orderId: string, enteredOtp: string, riderId: string, cashEntered: number) {
   const order = await prisma.order.findUniqueOrThrow({ where: { id: orderId } });
@@ -45,6 +46,8 @@ export async function confirmCodDelivery(orderId: string, enteredOtp: string, ri
 
   const ably = getAblyRest();
   await ably.channels.get(`order:${orderId}`).publish("order:status", { status: "COMPLETED" });
+
+  await awardPoints(orderId).catch(() => {});
 
   return { success: true, variance: variance !== 0 ? variance : undefined };
 }

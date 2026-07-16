@@ -7,9 +7,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { ChartBarLabel } from "@/components/charts/bar-chart"
-import { ChartLineDots } from "@/components/charts/line-chart"
-import { ChartPieDonut } from "@/components/charts/donut-chart"
+import { ChartBarLabel } from "@/components/ui/bar-chart"
+import { ChartLineDots } from "@/components/ui/line-chart"
+import { ChartPieDonut } from "@/components/ui/donut-chart"
 import type { ChartConfig } from "@/components/ui/chart"
 import { DollarSign, ShoppingBag, ChefHat, Utensils, TrendingUp, Users } from "lucide-react"
 
