@@ -28,7 +28,7 @@ const heroCards = [
 
 function MobileNavItem({ href, icon, label, active = false, badge }: { href: string; icon: React.ReactNode; label: string; active?: boolean; badge?: number }) {
   return (
-    <Link href={href} className={cn("flex flex-col items-center gap-0.5 px-3 py-0.5 relative min-h-11 min-w-11", active ? "text-[#B85300]" : "text-muted-foreground")}>
+     <Link href={href} className={cn("flex flex-col items-center gap-0.5 px-3 py-0.5 relative min-h-11 min-w-11", active ? "text-[#B85300]" : "text-muted-foreground")}>
       {icon}
       <span className="text-[9px] font-semibold uppercase tracking-wider">{label}</span>
       {badge !== undefined && badge > 0 && (
@@ -165,7 +165,7 @@ export function SiteHeader() {
 
   return (
     <>
-      <div className={`${showHero ? '' : 'hidden '} bg-[#C85A00]`}>
+      <div className={`${showHero ? '' : 'hidden '} bg-primary`}>
         <div className="hidden md:block">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 h-20">
             <div className="flex items-center gap-10">
@@ -337,9 +337,7 @@ export function SiteHeader() {
 
       {!hideNav && (
         <header className={`sticky top-0 z-50 md:hidden border-b border-border px-4 py-3 space-y-3 mb-4 ${
-          isHomePage ? 'bg-[#C85A00]' : 'bg-background'
-        } ${
-          isHomePage ? 'hidden' : ''
+          showHero ? 'hidden bg-primary' : 'bg-background'
         }`}>
           <div className="flex items-center justify-between">
             <button onClick={() => setLocationOpen(true)} className={`flex items-center gap-2 text-sm font-medium ${isHomePage ? 'text-white/90' : 'text-muted-foreground'}`}>

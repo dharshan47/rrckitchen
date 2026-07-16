@@ -25,7 +25,8 @@ export function KitchenWishlistButton({ kitchenPartnerId, className, size = "sm"
     queryFn: async () => {
       const res = await fetch("/api/kitchen/wishlist");
       if (!res.ok) return [];
-      return res.json();
+      const data = await res.json();
+      return (data.items ?? data).map((i: { kitchenPartnerId: string }) => i.kitchenPartnerId);
     },
     enabled: !!session?.user,
     staleTime: 30_000,

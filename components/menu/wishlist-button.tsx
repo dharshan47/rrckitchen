@@ -26,8 +26,8 @@ export function WishlistButton({ menuItemId, className, size = "sm", variant = "
     queryFn: async () => {
       const res = await fetch("/api/wishlist");
       if (!res.ok) return [];
-      const items = await res.json();
-      return items.map((i: { menuItemId: string }) => i.menuItemId);
+      const data = await res.json();
+      return (data.items ?? data).map((i: { menuItemId: string }) => i.menuItemId);
     },
     enabled: !!session?.user,
     staleTime: 30_000,

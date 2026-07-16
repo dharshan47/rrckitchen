@@ -91,7 +91,8 @@ export default function AccountProfilePage() {
     queryFn: async () => {
       const res = await fetch("/api/wishlist")
       if (!res.ok) return []
-      return res.json() as Promise<WishlistItem[]>
+      const data = await res.json()
+      return (data.items ?? data) as WishlistItem[]
     },
     enabled: !!session?.user,
   })
