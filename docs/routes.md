@@ -14,6 +14,8 @@
 | `/login` | Static | Phone OTP login |
 | `/signup` | Static | Registration form |
 | `/contact` | Static | Support ticket form |
+| `/support` | Static | Support page (shown in bottom nav) |
+| `/categories/[...slug]` | Dynamic | Category pages (shown in bottom nav) |
 | `/invite/[token]` | Dynamic | Admin invite acceptance |
 
 ## Customer Account Routes
@@ -21,6 +23,7 @@
 | Route | Type | Description |
 |-------|------|-------------|
 | `/account/profile` | Static | Edit name/email, manage addresses, referral code, loyalty points |
+| `/account/favourites` | Static | Saved/wishlisted menu items |
 | `/account/orders` | Static | Order history with status timeline, cancel, rate, cravings popup |
 | `/account/orders/[id]/track` | Dynamic | Live delivery tracking with map |
 

@@ -41,6 +41,7 @@ interface KitchenDetail {
 interface Props {
   kitchen: KitchenDetail;
   initialTimeSlot: string | null;
+  initialSearchQuery?: string | null;
 }
 
 const SLOT_CONFIG: Record<string, { label: string; icon: React.ComponentType<{ className?: string }> }> = {
@@ -52,10 +53,10 @@ const SLOT_CONFIG: Record<string, { label: string; icon: React.ComponentType<{ c
 
 const SLOT_ORDER = ["MORNING", "LUNCH", "EVENINGSNACKS", "DINNER"];
 
-export function KitchenDetailClient({ kitchen, initialTimeSlot }: Props) {
+export function KitchenDetailClient({ kitchen, initialTimeSlot, initialSearchQuery }: Props) {
   const router = useRouter();
   const { addToCart } = useCartActions();
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(initialSearchQuery ?? "");
   const [foodTypeFilter, setFoodTypeFilter] = useState<string | null>(null);
   const [bestsellerFilter, setBestsellerFilter] = useState(false);
   const [popupItem, setPopupItem] = useState<AddPopupItem | null>(null);
@@ -71,14 +72,10 @@ export function KitchenDetailClient({ kitchen, initialTimeSlot }: Props) {
     return types.size === 1 && types.has("VEG");
   }, [kitchen.items]);
 
-  const groupedItems = useMemo(() => {
+  const { groupedItems, highlightedItems } = useMemo(() => {
     let items = kitchen.items;
     if (initialTimeSlot && initialTimeSlot !== "ALL") {
       items = items.filter((i) => i.timeSlot === initialTimeSlot);
-    }
-    if (searchQuery.trim()) {
-      const q = searchQuery.trim().toLowerCase();
-      items = items.filter((i) => i.name.toLowerCase().includes(q));
     }
     if (foodTypeFilter) {
       items = items.filter((i) => i.foodType === foodTypeFilter);
@@ -87,20 +84,25 @@ export function KitchenDetailClient({ kitchen, initialTimeSlot }: Props) {
       items = items.filter((i) => i.isBestseller);
     }
 
+    const q = searchQuery.trim().toLowerCase();
+    const matched = q ? items.filter((i) => i.name.toLowerCase().includes(q)) : [];
+    const remaining = q ? items.filter((i) => !i.name.toLowerCase().includes(q)) : items;
+
     const groups: Record<string, KitchenItem[]> = {};
     for (const slot of SLOT_ORDER) {
-      const filtered = items.filter((i) => i.timeSlot === slot);
+      const filtered = remaining.filter((i) => i.timeSlot === slot);
       if (filtered.length > 0) groups[slot] = filtered;
     }
-    return groups;
+    return { groupedItems: groups, highlightedItems: matched };
   }, [kitchen.items, initialTimeSlot, searchQuery, foodTypeFilter, bestsellerFilter]);
 
-  const hasGroups = Object.keys(groupedItems).length > 0;
+  const hasGroups = Object.keys(groupedItems).length > 0 || highlightedItems.length > 0;
 
   const defaultOpen = useMemo(() => {
-    if (initialTimeSlot && initialTimeSlot !== "ALL") return [initialTimeSlot];
-    return SLOT_ORDER.filter((s) => groupedItems[s]);
-  }, [initialTimeSlot, groupedItems]);
+    const open = highlightedItems.length > 0 ? ["highlighted"] : []
+    if (initialTimeSlot && initialTimeSlot !== "ALL") return [...open, initialTimeSlot]
+    return [...open, ...SLOT_ORDER.filter((s) => groupedItems[s])]
+  }, [initialTimeSlot, groupedItems, highlightedItems]);
 
   const handleShowAddPopup = useCallback(
     (menuItem: { id: string; name: string; price: number; compareAtPrice?: number | null; foodType: string; imageUrl?: string | null; kitchenName: string; timeSlot: string }) => {
@@ -260,24 +262,22 @@ export function KitchenDetailClient({ kitchen, initialTimeSlot }: Props) {
               : "No menu items available."}
           </p>
         ) : (
-          <Accordion type="multiple" defaultValue={defaultOpen} className="max-w-4xl mx-auto">
-            {SLOT_ORDER.map((slotKey) => {
-              const config = SLOT_CONFIG[slotKey];
-              const items = groupedItems[slotKey];
-              if (!items) return null;
-
-              return (
-                <AccordionItem key={slotKey} value={slotKey}>
+          <div className="max-w-4xl mx-auto">
+            <Accordion type="multiple" defaultValue={defaultOpen} className="max-w-4xl mx-auto">
+              {highlightedItems.length > 0 && (
+                <AccordionItem value="highlighted">
                   <AccordionTrigger>
                     <div className="flex items-center gap-2">
-                      <config.icon className="h-5 w-5 text-primary" />
-                      <span className="text-base font-bold">{config.label}</span>
-                      <span className="text-xs text-muted-foreground">({items.length})</span>
+                      <Search className="h-5 w-5 text-primary" />
+                      <span className="text-base font-bold">Because you searched for &ldquo;{searchQuery}&rdquo;</span>
+                      <span className="text-xs text-muted-foreground">
+                        ({highlightedItems.length} {highlightedItems.length === 1 ? "item" : "items"})
+                      </span>
                     </div>
                   </AccordionTrigger>
                   <AccordionContent>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 pt-2">
-                      {items.map((item) => (
+                      {highlightedItems.map((item) => (
                         <CompoundMenuCard.Root
                           key={item.id}
                           item={{
@@ -310,9 +310,60 @@ export function KitchenDetailClient({ kitchen, initialTimeSlot }: Props) {
                     </div>
                   </AccordionContent>
                 </AccordionItem>
-              );
-            })}
-          </Accordion>
+              )}
+              {SLOT_ORDER.map((slotKey) => {
+                const config = SLOT_CONFIG[slotKey];
+                const items = groupedItems[slotKey];
+                if (!items) return null;
+
+                return (
+                  <AccordionItem key={slotKey} value={slotKey}>
+                    <AccordionTrigger>
+                      <div className="flex items-center gap-2">
+                        <config.icon className="h-5 w-5 text-primary" />
+                        <span className="text-base font-bold">{config.label}</span>
+                        <span className="text-xs text-muted-foreground">({items.length})</span>
+                      </div>
+                    </AccordionTrigger>
+                    <AccordionContent>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4 pt-2">
+                        {items.map((item) => (
+                          <CompoundMenuCard.Root
+                            key={item.id}
+                            item={{
+                              id: item.id,
+                              slug: item.slug,
+                              name: item.name,
+                              price: Number(item.price),
+                              compareAtPrice: item.compareAtPrice,
+                              foodType: item.foodType,
+                              timeSlot: item.timeSlot,
+                              kitchenName: item.kitchenName,
+                              kitchenRating: kitchen.avgRating,
+                              totalReviews: kitchen.totalReviews,
+                              description: item.description,
+                              imageUrl: item.imageUrl,
+                              isBestseller: item.isBestseller,
+                            }}
+                            showKitchenMeta={false}
+                            onShowAddPopup={handleShowAddPopup}
+                            onItemClick={handleItemClick}
+                          >
+                            <CompoundMenuCard.ImageSection>
+                              <CompoundMenuCard.BadgeRibbon />
+                              <CompoundMenuCard.WishlistButton />
+                            </CompoundMenuCard.ImageSection>
+                            <CompoundMenuCard.Header />
+                            <CompoundMenuCard.Footer />
+                          </CompoundMenuCard.Root>
+                        ))}
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                );
+              })}
+            </Accordion>
+          </div>
         )}
       </div>
 

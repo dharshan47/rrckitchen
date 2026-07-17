@@ -15,15 +15,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 interface Props {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ timeSlot?: string }>;
+  searchParams: Promise<{ timeSlot?: string; q?: string }>;
 }
 
 export default async function KitchenDetailPage({ params, searchParams }: Props) {
   const { slug } = await params;
-  const { timeSlot } = await searchParams;
+  const { timeSlot, q } = await searchParams;
 
   const kitchen = await getKitchenDetail(slug);
   if (!kitchen) notFound();
 
-  return <KitchenDetailClient kitchen={kitchen} initialTimeSlot={timeSlot ?? null} />;
+  return <KitchenDetailClient kitchen={kitchen} initialTimeSlot={timeSlot ?? null} initialSearchQuery={q ?? null} />;
 }

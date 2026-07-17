@@ -522,6 +522,9 @@ export async function getKitchenDashboardData() {
       address: kitchenPartner.kitchenAddress
         ? {
             lineOne: kitchenPartner.kitchenAddress.lineOne,
+            doorNo: kitchenPartner.kitchenAddress.doorNo,
+            area: kitchenPartner.kitchenAddress.area,
+            landmark: kitchenPartner.kitchenAddress.landmark,
             pincode: kitchenPartner.kitchenAddress.pincode,
             latitude: kitchenPartner.kitchenAddress.latitude,
             longitude: kitchenPartner.kitchenAddress.longitude,
@@ -650,6 +653,9 @@ export async function updateDeliveryPartnerBankDetails(data: {
 
 export async function updateKitchenAddress(data: {
   lineOne: string
+  doorNo?: string
+  area?: string
+  landmark?: string
   pincode: string
   latitude: number
   longitude: number
@@ -666,6 +672,9 @@ export async function updateKitchenAddress(data: {
     where: { kitchenPartnerId: kitchenPartner.id },
     update: {
       lineOne: data.lineOne,
+      doorNo: data.doorNo ?? null,
+      area: data.area ?? null,
+      landmark: data.landmark ?? null,
       pincode: data.pincode,
       latitude: data.latitude,
       longitude: data.longitude,
@@ -673,6 +682,9 @@ export async function updateKitchenAddress(data: {
     create: {
       kitchenPartnerId: kitchenPartner.id,
       lineOne: data.lineOne,
+      doorNo: data.doorNo ?? null,
+      area: data.area ?? null,
+      landmark: data.landmark ?? null,
       pincode: data.pincode,
       latitude: data.latitude,
       longitude: data.longitude,

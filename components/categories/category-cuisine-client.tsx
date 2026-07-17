@@ -95,8 +95,8 @@ export function CategoryCuisineClient({ categoryName, kitchens }: Props) {
         k.items.some((i) => i.foodType === "VEG")
       );
     } else if (vegFilter === "non-veg") {
-      result = result.filter((k) =>
-        k.items.some((i) => i.foodType === "NON_VEG")
+result = result.filter((k) =>
+    k.items.some((i) => i.foodType === "NONVEG")
       );
     }
 
@@ -180,7 +180,7 @@ export function CategoryCuisineClient({ categoryName, kitchens }: Props) {
                 role="button"
                 tabIndex={0}
                 onKeyDown={(e) => { if (e.key === "Enter") handleKitchenClick(kitchen.slug); }}
-                className="rounded-xl border border-border bg-card overflow-hidden cursor-pointer transition-shadow hover:shadow-md"
+                className="overflow-hidden cursor-pointer"
               >
                 {kitchen.items.length > 0 && kitchen.items[0].imageUrl ? (
                   <div className="relative w-full h-40 sm:h-48 bg-muted">

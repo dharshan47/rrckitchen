@@ -27,8 +27,10 @@ Admin login requires email/password first, then a TOTP challenge (6-digit code f
 
 Server-side auth guards (`lib/auth-guards.ts`) protect admin routes:
 - `requireAdmin()` — checks session exists, admin profile is active, 2FA is enabled. Returns 404 (not redirect) to hide admin existence from non-admins.
-- `requirePermission()` — checks granular permissions from `AdminProfile.permissions` bitfield (MANAGE_ORDERS, MANAGE_MENU, etc.)
+- `requirePermission()` — checks granular permissions from `AdminProfile.permissions` bitfield. Available permissions: `MANAGE_ORDERS`, `MANAGE_MENU`, `APPROVE_KYC`, `VIEW_FINANCIALS`, `MANAGE_COUPONS`, `MANAGE_PAYOUTS`, `BAN_USERS`, `MANAGE_SUPPORT`, `MANAGE_CMS`, `MANAGE_ADMINS`, `MANAGE_CATALOG`
 - `getPostLoginRedirect()` — checks user role hierarchy: Admin → Kitchen Partner → Delivery Partner → Home
+
+Client-side: `PermissionGate` component wraps children and shows a loading skeleton or "Access Restricted" fallback based on permission check via `getCurrentAdminPermissions`.
 
 ### Twilio SMS Strategy
 

@@ -985,6 +985,9 @@ model KitchenAddress {
   id               String         @id @default(cuid())
   kitchenPartnerId String         @unique
   lineOne          String
+  doorNo           String?
+  area             String?
+  landmark         String?
   pincode          String
   latitude         Float
   longitude        Float

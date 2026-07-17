@@ -22,7 +22,7 @@
 | `KitchenPartner` | id, userId, status (enum), avgRating | Core kitchen profile with status workflow |
 | `KitchenAlias` | id, displayName, sequenceNumber | Public kitchen display name |
 | `KitchenPartnerKyc` | id, panNumber, bankAccount, ifsc, upiId | KYC + bank/payout details |
-| `KitchenAddress` | id, addressLine, lat, lng, pincode | Geolocated kitchen address |
+| `KitchenAddress` | id, addressLine, lat, lng, pincode, doorNo?, area?, landmark? | Geolocated kitchen address with optional door number, area, landmark |
 | `Menu` | id, kitchenPartnerId, isActive | Menu grouping |
 | `MenuItem` | id, menuId, name, price, compareAtPrice, foodType (VEG/NONVEG), timeSlot (MORNING/LUNCH/EVENINGSNACKS/DINNER), dailyStock | Individual item |
 | `MenuItemPhoto` | id, menuItemId, imageUrl, sortOrder | Cloudinary images |

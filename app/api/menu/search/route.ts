@@ -72,9 +72,29 @@ export async function GET(request: Request) {
     prisma.kitchenPartner.findMany({
       where: {
         status: "APPROVED",
-        kitchenAlias: {
-          displayName: { contains: search, mode: "insensitive" },
-        },
+        OR: [
+          {
+            kitchenAlias: {
+              displayName: { contains: search, mode: "insensitive" },
+            },
+          },
+          {
+            menus: {
+              some: {
+                isActive: true,
+                menuItems: {
+                  some: {
+                    isAvailable: true,
+                    OR: [
+                      { name: { contains: search, mode: "insensitive" } },
+                      { description: { contains: search, mode: "insensitive" } },
+                    ],
+                  },
+                },
+              },
+            },
+          },
+        ],
       },
       select: {
         id: true,
@@ -141,14 +161,18 @@ export async function GET(request: Request) {
       kitchenId: item.menu?.kitchenPartner?.id ?? null,
       imageUrl: item.photos[0]?.imageUrl ?? null,
     })),
-    kitchens: kitchenRows.map((k) => ({
-      id: k.id,
-      slug: k.slug,
-      displayName: k.kitchenAlias?.displayName ?? "Unknown Kitchen",
-      avgRating: Number(k.avgRating),
-      totalReviews: k.totalReviews,
-      items: itemsByKitchen.get(k.id) ?? [],
-    })),
+    kitchens: kitchenRows.map((k) => {
+      const kitchenItems = itemsByKitchen.get(k.id) ?? []
+      return {
+        id: k.id,
+        slug: k.slug,
+        displayName: k.kitchenAlias?.displayName ?? "Unknown Kitchen",
+        avgRating: Number(k.avgRating),
+        totalReviews: k.totalReviews,
+        imageUrl: kitchenItems[0]?.imageUrl ?? null,
+        items: kitchenItems,
+      }
+    }),
   }
 
   await redis.set(cacheKey, result, { ex: CACHE_TTL })

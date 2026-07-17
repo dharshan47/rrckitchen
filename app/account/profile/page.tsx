@@ -7,13 +7,12 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { z } from "zod"
-import { User, Mail, Phone, MapPin, Plus, Trash2, LogOut, Package, ChevronRight, Pencil, X, Check, Loader2, ArrowLeft, Heart, Copy, Share2, Ticket, Star, Coins } from "lucide-react"
+import { User, Mail, Phone, MapPin, Plus, Trash2, LogOut, Package, ChevronRight, Pencil, X, Check, Loader2, ArrowLeft, Heart, Copy, Share2, Ticket, Coins } from "lucide-react"
 import { Button, Input, Card } from "@/components/ui"
 import { useSession, signOut } from "@/lib/auth-client"
 import { addAddress, deleteAddress, getUserAddresses } from "@/actions/cart-checkout/address"
 import { updateProfileNameEmail } from "@/actions/onboarding/profile"
 import { toast } from "sonner"
-import Image from "next/image"
 
 type UserProfile = { id: string; name: string; email: string; phoneNumber: string | null }
 
@@ -136,15 +135,6 @@ export default function AccountProfilePage() {
       queryClient.invalidateQueries({ queryKey: ["user-profile"] })
       refetchSession({ query: { disableCookieCache: true } })
       setEditingProfile(false)
-    },
-  })
-
-  const wishlistRemoveMutation = useMutation({
-    mutationFn: (menuItemId: string) =>
-      fetch(`/api/wishlist?menuItemId=${menuItemId}`, { method: "DELETE" }),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["wishlist"] })
-      toast.success("Removed from favourites")
     },
   })
 
@@ -333,67 +323,21 @@ export default function AccountProfilePage() {
         </Card>
 
         {/* Favourites / Wishlist Section */}
-        <div className="space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Heart className="h-5 w-5 text-primary" />
-              <h2 className="text-lg font-semibold">My Favourites</h2>
-            </div>
-            <div className="flex items-center gap-2">
-              <Link href="/account/favourites" className="text-sm font-semibold text-primary hover:text-primary/80">
-                View All
-              </Link>
-              {wishlist.length > 0 && (
-                <Link href="/menu" className="text-sm font-semibold text-primary hover:text-primary/80">
-                  Browse Menu
-                </Link>
-              )}
+        <Link
+          href="/account/favourites"
+          className="flex items-center justify-between rounded-xl border border-border p-4 hover:bg-muted/50 transition-colors"
+        >
+          <div className="flex items-center gap-3">
+            <Heart className="h-5 w-5 text-primary" />
+            <div>
+              <p className="font-medium text-sm">My Favourites</p>
+              <p className="text-xs text-muted-foreground">
+                {wishlist.length > 0 ? `${wishlist.length} saved items` : "No favourites yet"}
+              </p>
             </div>
           </div>
-
-          {wishlist.length === 0 ? (
-            <Card className="p-6 text-center">
-              <Heart className="h-8 w-8 mx-auto text-muted-foreground/40 mb-2" />
-              <p className="text-sm text-muted-foreground">No favourites yet</p>
-              <p className="text-xs text-muted-foreground/60 mt-1">Tap the heart icon on any menu item to save it here</p>
-              <Button asChild variant="outline" size="sm" className="mt-3">
-                <Link href="/menu">Browse Menu</Link>
-              </Button>
-            </Card>
-          ) : (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {wishlist.map((item) => (
-                <Card key={item.id} className="p-3 flex items-center gap-3">
-                  <Link href={`/menu/${item.menuItem.slug ?? item.menuItem.id}`} className="shrink-0">
-                    <div className="h-12 w-12 rounded-lg bg-muted flex items-center justify-center overflow-hidden">
-                      {item.menuItem.photos[0]?.imageUrl ? (
-                        <Image src={item.menuItem.photos[0].imageUrl} alt="" width={48} height={48} className="h-full w-full object-cover" />
-                      ) : (
-                        <Star className="h-5 w-5 text-muted-foreground/40" />
-                      )}
-                    </div>
-                  </Link>
-                  <Link href={`/menu/${item.menuItem.slug ?? item.menuItem.id}`} className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{item.menuItem.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      ₹{item.menuItem.price} · {item.menuItem.foodType}
-                    </p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {item.menuItem.menu?.kitchenPartner?.kitchenAlias?.displayName ?? ""}
-                    </p>
-                  </Link>
-                  <button
-                    onClick={() => wishlistRemoveMutation.mutate(item.menuItem.id)}
-                    className="shrink-0 p-1.5 text-muted-foreground hover:text-destructive transition-colors"
-                    aria-label="Remove from favourites"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </Link>
 
         {/* Addresses Section */}
         <div className="space-y-4">

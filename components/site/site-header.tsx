@@ -28,7 +28,7 @@ const heroCards = [
 
 function MobileNavItem({ href, icon, label, active = false, badge }: { href: string; icon: React.ReactNode; label: string; active?: boolean; badge?: number }) {
   return (
-     <Link href={href} className={cn("flex flex-col items-center gap-0.5 px-3 py-0.5 relative min-h-11 min-w-11", active ? "text-[#B85300]" : "text-muted-foreground")}>
+     <Link href={href} className={cn("flex flex-col items-center gap-0.5 px-3 py-0.5 relative min-h-11 min-w-11 ", active ? "text-primary" : "text-muted-foreground")}>
       {icon}
       <span className="text-[9px] font-semibold uppercase tracking-wider">{label}</span>
       {badge !== undefined && badge > 0 && (
@@ -53,7 +53,9 @@ export function SiteHeader() {
   const isSearchPage = pathname === "/search";
   const isCartPage = pathname === "/cart";
   const isHelpPage = pathname === "/help";
-  const hideNav = isMenuDetailPage || isAccountPage || isHelpPage;
+  const isSupportPage = pathname === "/support";
+  const isCategoriesPage = pathname.startsWith("/categories");
+  const hideNav = isMenuDetailPage || isAccountPage || isHelpPage || isSupportPage || isSearchPage || isCategoriesPage;
 
   const [pastHero, setPastHero] = useState(!isHomePage);
   const [categoryFilterActive, setCategoryFilterActive] = useState(false);
@@ -377,7 +379,7 @@ export function SiteHeader() {
         </header>
       )}
 
-      {!hideNav && (
+      {(!hideNav || isSupportPage || isCategoriesPage) && (
         <>
           <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-background border-t border-border px-2 py-1.5 flex items-center justify-around shadow-[0_-1px_6px_rgba(0,0,0,0.05)]">
             <MobileNavItem href="/" icon={<Home className="h-5 w-5" />} label="Home" active={pathname === "/"} />

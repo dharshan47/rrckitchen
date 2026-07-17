@@ -5375,6 +5375,9 @@ export const KitchenAddressScalarFieldEnum = {
   id: 'id',
   kitchenPartnerId: 'kitchenPartnerId',
   lineOne: 'lineOne',
+  doorNo: 'doorNo',
+  area: 'area',
+  landmark: 'landmark',
   pincode: 'pincode',
   latitude: 'latitude',
   longitude: 'longitude'

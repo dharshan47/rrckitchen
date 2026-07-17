@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import {
-  ArrowLeft, Ticket, MessageSquare, Loader2, Send, Plus,
+  ArrowLeft, Ticket, Loader2, Send, Plus,
   CheckCircle2, Clock, AlertCircle, X, Upload,
   ChevronRight, HelpCircle, Package, User, ChefHat,
   Truck, CreditCard, AlertTriangle, ShieldCheck, BookOpen,

@@ -9,6 +9,8 @@ import { useState, useMemo } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { SearchAutocomplete } from "@/components/search/search-autocomplete"
+import { getRecentKitchens, addRecentKitchen } from "@/lib/recent-searches"
+import { cn } from "@/lib/utils"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -34,6 +36,7 @@ interface SearchKitchen {
   id: string
   slug: string
   displayName: string
+  imageUrl: string | null
   avgRating: number
   totalReviews: number
   items: { id: string; name: string; price: number; imageUrl: string | null }[]
@@ -167,15 +170,10 @@ export function SearchPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
   const q = searchParams.get("q") ?? ""
+  const [activeTab, setActiveTab] = useState<"dishes" | "kitchens">("dishes")
   const [dishSort, setDishSort] = useState<DishSort>("relevance")
   const [kitchenSort, setKitchenSort] = useState<KitchenSort>("relevance")
-  const [recentKitchens] = useState<{ id: string; slug: string; name: string }[]>(() => {
-    try {
-      return JSON.parse(localStorage.getItem("recentlySearchedKitchens") || "[]")
-    } catch {
-      return []
-    }
-  })
+  const recentKitchens = useMemo(() => !q ? getRecentKitchens() : [], [q])
 
   const { data, isFetching } = useQuery<SearchResult>({
     queryKey: ["menu-search-page", q],
@@ -236,11 +234,11 @@ export function SearchPageContent() {
   }, [kitchens, kitchenSort])
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8">
+    <main className="mx-auto max-w-7xl px-4 py-8 bg-search-bar">
       <div className="mb-6">
         <SearchAutocomplete
           placeholder="Search meals..."
-          inputClassName="h-12 rounded-xl text-base pl-12 focus-visible:ring-1 bg-white border border-border"
+          inputClassName="h-12 rounded-xl text-base pl-12 focus-visible:ring-1 bg-search-bar border border-border"
         />
         {!q && recentKitchens.length > 0 && (
           <div className="mt-4">
@@ -274,22 +272,67 @@ export function SearchPageContent() {
           </p>
         </div>
       ) : (
-        <div className="space-y-10">
-          {dishGroups.length > 0 && (
-            <section>
-              <div className="flex items-center justify-between mb-4">
+        <div>
+          {hasResults && (
+            <div className="flex items-center gap-1 border-b border-border mb-6">
+              <button
+                onClick={() => setActiveTab("dishes")}
+                className={cn(
+                  "relative px-4 py-2.5 text-sm font-medium transition-colors",
+                  activeTab === "dishes"
+                    ? "text-foreground after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Dishes
+                <span className="ml-1.5 text-xs text-muted-foreground">({dishes.length})</span>
+              </button>
+              <button
+                onClick={() => setActiveTab("kitchens")}
+                className={cn(
+                  "relative px-4 py-2.5 text-sm font-medium transition-colors",
+                  activeTab === "kitchens"
+                    ? "text-foreground after:absolute after:bottom-0 after:left-0 after:right-0 after:h-0.5 after:bg-primary"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                Kitchens
+                <span className="ml-1.5 text-xs text-muted-foreground">({sortedKitchens.length})</span>
+              </button>
+            </div>
+          )}
+
+          {hasResults && (
+            <div className="flex items-center justify-between mb-4">
+              {activeTab === "dishes" ? (
                 <h2 className="text-lg font-bold flex items-center gap-2">
                   <UtensilsCrossed className="h-5 w-5 text-primary" />
                   Dishes
                   <span className="text-sm font-normal text-muted-foreground">({dishes.length})</span>
                 </h2>
+              ) : (
+                <h2 className="text-lg font-bold flex items-center gap-2">
+                  <UtensilsCrossed className="h-5 w-5 text-primary" />
+                  Kitchens
+                  <span className="text-sm font-normal text-muted-foreground">({sortedKitchens.length})</span>
+                </h2>
+              )}
+              {activeTab === "dishes" ? (
                 <DishSortDropdown sort={dishSort} onSortChange={setDishSort} />
-              </div>
+              ) : (
+                <KitchenSortDropdown sort={kitchenSort} onSortChange={setKitchenSort} />
+              )}
+            </div>
+          )}
+
+          {activeTab === "dishes" && dishGroups.length > 0 && (
+            <section>
               <div className="space-y-4">
                 {dishGroups.map((group) => (
                   <Link
                     key={group.kitchenId}
-                    href={`/kitchen/${group.slug}`}
+                    href={`/kitchen/${group.slug}${q ? `?q=${encodeURIComponent(q)}` : ""}`}
+                    onClick={() => addRecentKitchen({ id: group.kitchenId, slug: group.slug, name: group.kitchenName })}
                     className="block rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
                   >
                     <div className="p-4 pb-3">
@@ -340,21 +383,21 @@ export function SearchPageContent() {
             </section>
           )}
 
-          {sortedKitchens.length > 0 && (
+          {activeTab === "dishes" && dishGroups.length === 0 && dishes.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <UtensilsCrossed className="h-10 w-10 text-muted-foreground/40 mb-3" />
+              <p className="text-sm text-muted-foreground">No dishes found for this search</p>
+            </div>
+          )}
+
+          {activeTab === "kitchens" && sortedKitchens.length > 0 && (
             <section>
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-bold flex items-center gap-2">
-                  <UtensilsCrossed className="h-5 w-5 text-primary" />
-                  Kitchens
-                  <span className="text-sm font-normal text-muted-foreground">({sortedKitchens.length})</span>
-                </h2>
-                <KitchenSortDropdown sort={kitchenSort} onSortChange={setKitchenSort} />
-              </div>
               <div className="space-y-4">
                 {sortedKitchens.map((kitchen) => (
                   <Link
                     key={kitchen.id}
-                    href={`/kitchen/${kitchen.slug}`}
+                    href={`/kitchen/${kitchen.slug}${q ? `?q=${encodeURIComponent(q)}` : ""}`}
+                    onClick={() => addRecentKitchen({ id: kitchen.id, slug: kitchen.slug, name: kitchen.displayName })}
                     className="block rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
                   >
                     <div className="p-4 pb-3">
@@ -399,6 +442,13 @@ export function SearchPageContent() {
                 ))}
               </div>
             </section>
+          )}
+
+          {activeTab === "kitchens" && sortedKitchens.length === 0 && kitchens.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-16 text-center">
+              <UtensilsCrossed className="h-10 w-10 text-muted-foreground/40 mb-3" />
+              <p className="text-sm text-muted-foreground">No kitchens found for this search</p>
+            </div>
           )}
         </div>
       )}

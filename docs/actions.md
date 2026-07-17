@@ -22,6 +22,7 @@ getKitchenDetail(slug: string)    // Get kitchen detail with menu items
 - Recently joined kitchens
 - Recent order kitchens (for logged-in users)
 - Kitchen detail with display name, image, rating, cuisine tags, and full menu items grouped by time slot
+- Category search also matches menu item names/descriptions
 
 ### `actions/catalog/cross-kitchen-search.ts`
 ```typescript
@@ -115,8 +116,9 @@ resolveVariance(varianceId, resolution)
 ### `actions/admin/dashboard.ts`
 ```typescript
 getAdminDashboardData()            // Admin dashboard stats + charts
-getKitchenDashboardData()          // Kitchen dashboard data
+getKitchenDashboardData()          // Kitchen dashboard data (address now includes doorNo, area, landmark)
 getDeliveryDashboardData()         // Delivery dashboard data
+updateKitchenAddress(id, lineOne, lat, lng, pincode, doorNo?, area?, landmark?)  // Update kitchen address
 ```
 
 ### `actions/admin/admin-menu.ts`
@@ -142,6 +144,13 @@ getAllCoupons()                    // All coupons
 createCoupon(data)                 // Create coupon
 updateCoupon(id, data)             // Update coupon
 deleteCoupon(id)                   // Delete coupon
+```
+
+### `actions/admin/admin-cms.ts`
+```typescript
+getAllCategories()                 // Get all categories with kitchen count
+addCategory(data)                  // Create or reactivate a category
+toggleCategory(id, isActive)       // Toggle category active status
 ```
 
 ### `actions/admin/invites-actions.ts`

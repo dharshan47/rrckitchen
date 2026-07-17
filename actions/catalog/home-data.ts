@@ -257,16 +257,34 @@ export async function getKitchensByCategory(categoryName: string) {
 }
 
 async function _getKitchensByCategory(categoryName: string) {
-  'use cache';
-  cacheLife('hours');
   const kitchens = await prisma.kitchenPartner.findMany({
     where: {
       status: { in: ["APPROVED", "ACTIVE"] },
-      kitchenCategories: {
-        some: {
-          category: { name: { equals: categoryName, mode: "insensitive" } },
+      OR: [
+        {
+          kitchenCategories: {
+            some: {
+              category: { name: { equals: categoryName, mode: "insensitive" } },
+            },
+          },
         },
-      },
+        {
+          menus: {
+            some: {
+              isActive: true,
+              menuItems: {
+                some: {
+                  isAvailable: true,
+                  OR: [
+                    { name: { contains: categoryName, mode: "insensitive" } },
+                    { description: { contains: categoryName, mode: "insensitive" } },
+                  ],
+                },
+              },
+            },
+          },
+        },
+      ],
     },
     include: {
       kitchenAlias: true,

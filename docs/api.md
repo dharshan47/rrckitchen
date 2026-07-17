@@ -40,6 +40,7 @@ Response: MenuItem[]
 GET /api/menu/search?q=
 Query: q (search term)
 Response: { kitchens: Kitchen[], items: MenuItem[] }
+Note: Kitchen objects now include `imageUrl` (from first menu item); kitchen search also matches menu item names/descriptions
 ```
 
 ## Payments
@@ -130,6 +131,7 @@ Response: { token: string }
 ## Admin APIs
 
 ```
+POST /api/admin/backfill-slugs (no auth — dev utility to populate kitchen slugs)
 GET  /api/admin/cod-orders
 POST /api/admin/settle-cod
 POST /api/admin/record-remittance

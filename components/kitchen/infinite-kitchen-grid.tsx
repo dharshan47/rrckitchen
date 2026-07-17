@@ -157,7 +157,7 @@ export function InfiniteKitchenGrid({
       );
     } else if (vegFilter === "non-veg") {
       result = result.filter((k) =>
-        k.items.some((i) => i.foodType === "NON_VEG")
+        k.items.some((i) => i.foodType === "NONVEG")
       );
     }
 

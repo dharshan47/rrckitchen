@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
-import { useForm } from "react-hook-form"
+import { useState, useCallback } from "react"
+import dynamic from "next/dynamic"
+import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
@@ -15,7 +16,18 @@ import { toast } from "sonner"
 import { updateKitchenBankDetails, updateKitchenAddress } from "@/actions/admin/dashboard"
 import { updateProfileNameEmail } from "@/actions/onboarding/profile"
 import { LocationAutocomplete } from "@/components/location/location-autocomplete"
-import { MapPin } from "lucide-react"
+import { MapPin, Loader2 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+
+const ThanjavurMap = dynamic(
+  () => import("@/components/map/thanjavur-map").then((m) => m.ThanjavurMap),
+  { ssr: false },
+)
 
 const profileSchema = z.object({
   name: z.string().min(1, "Name is required"),
@@ -26,6 +38,9 @@ type ProfileForm = z.infer<typeof profileSchema>
 
 const addressSchema = z.object({
   lineOne: z.string().min(1, "Please select a location"),
+  doorNo: z.string().optional(),
+  area: z.string().optional(),
+  landmark: z.string().optional(),
   latitude: z.number(),
   longitude: z.number(),
   pincode: z.string(),
@@ -52,6 +67,7 @@ export default function ProfilePage() {
   const [editingBank, setEditingBank] = useState(false)
   const [editingAddress, setEditingAddress] = useState(false)
   const [editingProfile, setEditingProfile] = useState(false)
+  const [geocoding, setGeocoding] = useState(false)
 
   const profileForm = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
@@ -65,11 +81,36 @@ export default function ProfilePage() {
     resolver: zodResolver(addressSchema),
     defaultValues: {
       lineOne: kitchen.address?.lineOne ?? "",
+      doorNo: kitchen.address?.doorNo ?? "",
+      area: kitchen.address?.area ?? "",
+      landmark: kitchen.address?.landmark ?? "",
       latitude: kitchen.address?.latitude ?? 0,
       longitude: kitchen.address?.longitude ?? 0,
       pincode: "613001",
     },
   })
+
+  const formLat = useWatch({ control: addressForm.control, name: "latitude" })
+  const formLng = useWatch({ control: addressForm.control, name: "longitude" })
+
+  const handleMapSelect = useCallback(async (lat: number, lng: number) => {
+    addressForm.setValue("latitude", lat, { shouldValidate: true })
+    addressForm.setValue("longitude", lng, { shouldValidate: true })
+    setGeocoding(true)
+    try {
+      const res = await fetch(`/api/geocode/reverse?lat=${lat}&lon=${lng}`)
+      if (res.ok) {
+        const data = await res.json()
+        addressForm.setValue("lineOne", data.display_name ?? `Location at ${lat.toFixed(4)}, ${lng.toFixed(4)}`, { shouldValidate: true })
+      } else {
+        addressForm.setValue("lineOne", `Location at ${lat.toFixed(4)}, ${lng.toFixed(4)}`, { shouldValidate: true })
+      }
+    } catch {
+      addressForm.setValue("lineOne", `Location at ${lat.toFixed(4)}, ${lng.toFixed(4)}`, { shouldValidate: true })
+    } finally {
+      setGeocoding(false)
+    }
+  }, [addressForm])
 
   const bankForm = useForm<BankForm>({
     resolver: zodResolver(bankSchema),
@@ -88,6 +129,9 @@ export default function ProfilePage() {
     mutationFn: (data: AddressForm) =>
       updateKitchenAddress({
         lineOne: data.lineOne,
+        doorNo: data.doorNo || undefined,
+        area: data.area || undefined,
+        landmark: data.landmark || undefined,
         pincode: "613001",
         latitude: data.latitude,
         longitude: data.longitude,
@@ -206,67 +250,123 @@ export default function ProfilePage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Kitchen Address</CardTitle>
-          {!kitchen.address && (
-            <Button variant="outline" size="sm" onClick={() => setEditingAddress(true)}>
-              Add Address
-            </Button>
-          )}
+          <Button variant="outline" size="sm" onClick={() => {
+            if (kitchen.address) {
+              addressForm.reset({
+                lineOne: kitchen.address.lineOne,
+                doorNo: kitchen.address.doorNo ?? "",
+                area: kitchen.address.area ?? "",
+                landmark: kitchen.address.landmark ?? "",
+                latitude: kitchen.address.latitude,
+                longitude: kitchen.address.longitude,
+                pincode: "613001",
+              })
+            }
+            setEditingAddress(true)
+          }}>
+            {kitchen.address ? "Edit" : "Add Address"}
+          </Button>
         </CardHeader>
         <CardContent>
-          {editingAddress ? (
-            <form onSubmit={addressForm.handleSubmit((data) => addressMutation.mutate(data))} className="space-y-4">
-              <div className="grid gap-2">
-                <Label>Search your kitchen location</Label>
-                <LocationAutocomplete
-                  onPlaceSelect={(place) => {
-                    addressForm.setValue("lineOne", place.address, { shouldValidate: true })
-                    addressForm.setValue("latitude", place.lat, { shouldValidate: true })
-                    addressForm.setValue("longitude", place.lng, { shouldValidate: true })
-                  }}
-                  defaultValue={kitchen.address?.lineOne ?? ""}
+          {kitchen.address ? (
+            <div className="space-y-3">
+              <div className="rounded-xl overflow-hidden border border-border">
+                <ThanjavurMap
+                  height="180px"
+                  interactive={false}
+                  markerPosition={[kitchen.address.latitude, kitchen.address.longitude]}
                 />
               </div>
-              {addressForm.formState.errors.lineOne && (
-                <p className="text-xs text-destructive">{addressForm.formState.errors.lineOne.message}</p>
-              )}
-              <div className="flex gap-2">
-                <Button type="submit" disabled={addressMutation.isPending}>
-                  {addressMutation.isPending ? "Saving..." : "Save Address"}
-                </Button>
-                <Button type="button" variant="outline" onClick={() => { addressForm.reset(); setEditingAddress(false) }}>
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          ) : kitchen.address ? (
-            <div className="space-y-2">
               <div className="flex items-start gap-2">
                 <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground shrink-0" />
-                <div>
-                  <p className="font-medium">{kitchen.address.lineOne}</p>
-                  <p className="text-sm text-muted-foreground">Pincode: {kitchen.address.pincode}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {kitchen.address.latitude.toFixed(6)}, {kitchen.address.longitude.toFixed(6)}
-                  </p>
+                <div className="space-y-1">
+                  {[kitchen.address.doorNo, kitchen.address.area].filter(Boolean).length > 0 && (
+                    <p className="font-medium">
+                      {[kitchen.address.doorNo, kitchen.address.area].filter(Boolean).join(", ")}
+                    </p>
+                  )}
+                  <p className="text-sm">{kitchen.address.lineOne}</p>
+                  {kitchen.address.landmark && (
+                    <p className="text-xs text-muted-foreground">Near: {kitchen.address.landmark}</p>
+                  )}
+                  <p className="text-xs text-muted-foreground">Pincode: {kitchen.address.pincode}</p>
                 </div>
               </div>
-              <Button variant="outline" size="sm" onClick={() => {
-                addressForm.reset({
-                  lineOne: kitchen.address!.lineOne,
-                  latitude: kitchen.address!.latitude,
-                  longitude: kitchen.address!.longitude,
-                  pincode: "613001",
-                })
-                setEditingAddress(true)
-              }}>
-                Edit Address
-              </Button>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">No address set. Add your kitchen location for delivery pickup.</p>
+            <div className="space-y-3">
+              <div className="rounded-xl overflow-hidden border border-border">
+                <ThanjavurMap
+                  height="180px"
+                  interactive={false}
+                />
+              </div>
+              <p className="text-sm text-muted-foreground">No address set yet. Click &ldquo;Add Address&rdquo; to set your kitchen location.</p>
+            </div>
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={editingAddress} onOpenChange={(o) => { if (!o) { addressForm.reset(); setEditingAddress(false) } }}>
+        <DialogContent className="sm:max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{kitchen.address ? "Edit Address" : "Add Address"}</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={addressForm.handleSubmit((data) => addressMutation.mutate(data))} className="space-y-4">
+            <div className="rounded-xl overflow-hidden border border-border">
+              <ThanjavurMap
+                height="220px"
+                onLocationSelect={handleMapSelect}
+                interactive
+                markerPosition={formLat && formLng ? [formLat, formLng] : undefined}
+              />
+            </div>
+
+            <div className="grid gap-2">
+              <Label>Search your kitchen location</Label>
+              <LocationAutocomplete
+                onPlaceSelect={(place) => {
+                  addressForm.setValue("lineOne", place.address, { shouldValidate: true })
+                  addressForm.setValue("latitude", place.lat, { shouldValidate: true })
+                  addressForm.setValue("longitude", place.lng, { shouldValidate: true })
+                }}
+                defaultValue={kitchen.address?.lineOne ?? ""}
+              />
+            </div>
+            {addressForm.formState.errors.lineOne && (
+              <p className="text-xs text-destructive">{addressForm.formState.errors.lineOne.message}</p>
+            )}
+            {geocoding && (
+              <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Getting address...
+              </div>
+            )}
+            <div className="grid gap-3">
+              <Input
+                placeholder="Door / Flat No."
+                {...addressForm.register("doorNo")}
+              />
+              <Input
+                placeholder="Area"
+                {...addressForm.register("area")}
+              />
+              <Input
+                placeholder="Landmark (optional)"
+                {...addressForm.register("landmark")}
+              />
+            </div>
+            <div className="flex gap-2">
+              <Button type="submit" disabled={addressMutation.isPending || geocoding}>
+                {addressMutation.isPending ? "Saving..." : "Save Address"}
+              </Button>
+              <Button type="button" variant="outline" onClick={() => { addressForm.reset(); setEditingAddress(false) }}>
+                Cancel
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
 
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">

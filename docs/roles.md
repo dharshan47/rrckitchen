@@ -66,5 +66,6 @@
 9. Cash reconciliation
 10. Create coupons and payment offers
 11. Manage support tickets
+12. Manage CMS categories (add/toggle categories)
 12. Invite new admins (granular permissions)
 ```

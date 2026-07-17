@@ -7,6 +7,7 @@ import { Search, MapPin, UtensilsCrossed, ArrowLeft, Clock, X } from "lucide-rea
 import Image from "next/image"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { cn } from "@/lib/utils"
+import { getRecentKitchens, addRecentKitchen, removeRecentKitchen } from "@/lib/recent-searches"
 
 interface SearchItem {
   id: string
@@ -23,6 +24,7 @@ interface SearchKitchen {
   id: string
   slug: string
   displayName: string
+  imageUrl: string | null
   items: { id: string; name: string; price: number; imageUrl: string | null }[]
 }
 
@@ -38,28 +40,6 @@ interface SearchAutocompleteProps {
   onSearch?: (query: string) => void
   navigateOnFocus?: boolean
   mobileModal?: boolean
-}
-
-const RECENT_KEY = "recentlySearchedKitchens"
-const MAX_RECENT = 5
-
-function getRecentKitchens(): { id: string; slug: string; name: string }[] {
-  try {
-    return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]")
-  } catch {
-    return []
-  }
-}
-
-function addRecentKitchen(kitchen: { id: string; slug: string; name: string }) {
-  const list = getRecentKitchens().filter((k) => k.id !== kitchen.id)
-  list.unshift(kitchen)
-  localStorage.setItem(RECENT_KEY, JSON.stringify(list.slice(0, MAX_RECENT)))
-}
-
-function removeRecentKitchen(id: string) {
-  const list = getRecentKitchens().filter((k) => k.id !== id)
-  localStorage.setItem(RECENT_KEY, JSON.stringify(list))
 }
 
 export function SearchAutocomplete({
@@ -276,9 +256,6 @@ export function SearchAutocomplete({
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{item.name}</p>
-                      <p className="text-xs text-muted-foreground truncate">
-                        {item.kitchenName} · ₹{item.price}
-                      </p>
                     </div>
                   </button>
                 ))}
@@ -299,13 +276,19 @@ export function SearchAutocomplete({
                         selectedIndex === idx && "bg-muted/50"
                       )}
                     >
-                      <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                        <MapPin className="h-4 w-4 text-primary" />
+                      <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center shrink-0 overflow-hidden relative">
+                        {kitchen.imageUrl ? (
+                          <Image src={kitchen.imageUrl} alt={kitchen.displayName} fill className="object-cover" sizes="32px" />
+                        ) : (
+                          <MapPin className="h-4 w-4 text-primary" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{kitchen.displayName}</p>
                         <p className="text-xs text-muted-foreground truncate">
-                          {kitchen.items.map((mi) => mi.name).join(", ")}
+                          {kitchen.items.length > 0
+                            ? kitchen.items.map((mi) => mi.name).join(", ")
+                            : "No items available"}
                         </p>
                       </div>
                     </button>

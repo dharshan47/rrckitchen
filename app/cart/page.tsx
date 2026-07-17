@@ -612,80 +612,87 @@ function CartContent() {
     <main className="min-h-screen bg-background text-foreground">
       <div className="mx-auto max-w-6xl px-4 py-8 lg:px-8 pb-20 md:pb-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Side - Payment Related Only */}
+          {/* Left Side - Address, Order Type, Coupon, Payment Offers, Payment Method */}
           <div className="space-y-6">
-            <div className="lg:sticky lg:top-24">
-              <DeliveryAddressCard />
-            </div>
+            <DeliveryAddressCard />
+
             <Separator />
-            <div className="space-y-5">
-              <CouponOffersPanel
-                show={showCouponOffers}
-                loading={couponOffersLoading}
-                offers={couponOffers}
-                appliedCoupon={appliedCoupon}
-                onToggle={() => setShowCouponOffers((p) => !p)}
-                onApply={handleApplyOfferCoupon}
-                onApplyCoupon={(coupon) => applyCoupon({
-                  code: coupon.code, discount: coupon.discount,
-                  type: coupon.type, description: coupon.description,
-                })}
-                onRemoveCoupon={removeCoupon}
-                total={total}
-              />
-              <Separator />
-              <PaymentOffersPanel
-                show={showPaymentOffers}
-                offers={paymentOffers}
-                selectedId={selectedPaymentOffer?.id ?? null}
-                onToggle={() => setShowPaymentOffers((p) => !p)}
-                onSelect={setSelectedPaymentOffer}
-              />
-              <Separator />
-              <PaymentMethodSelector
-                selected={paymentMethod}
-                onSelect={setPaymentMethod}
-                codAvailable={true}
-              />
-              <div className="flex gap-3">
-                <Button variant="outline" asChild className="flex-1">
-                  <Link href="/menu">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Add More
-                  </Link>
-                </Button>
-                <Button
-                  className="flex-1"
-                  onClick={handleCheckout}
-                  disabled={isProcessing || codProcessing}
-                >
-                  {isProcessing || codProcessing ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Processing…
-                    </>
-                  ) : paymentMethod === "CASH_ON_DELIVERY" ? (
-                    <>
-                      <Banknote className="mr-2 h-4 w-4" />
-                      Place Order (COD)
-                    </>
-                  ) : (
-                    <>
-                      <CreditCard className="mr-2 h-4 w-4" />
-                      Pay ₹{finalTotal.toFixed(0)}
-                    </>
-                  )}
-                </Button>
-              </div>
-              {paymentResult && !paymentResult.success && (
-                <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive text-center">
-                  {paymentResult.error || "Payment failed. Please try again."}
-                </div>
-              )}
+
+            <OrderTypeSelector selected={orderType} onSelect={setOrderType} />
+
+            <Separator />
+
+            <CouponOffersPanel
+              show={showCouponOffers}
+              loading={couponOffersLoading}
+              offers={couponOffers}
+              appliedCoupon={appliedCoupon}
+              onToggle={() => setShowCouponOffers((p) => !p)}
+              onApply={handleApplyOfferCoupon}
+              onApplyCoupon={(coupon) => applyCoupon({
+                code: coupon.code, discount: coupon.discount,
+                type: coupon.type, description: coupon.description,
+              })}
+              onRemoveCoupon={removeCoupon}
+              total={total}
+            />
+
+            <Separator />
+
+            <PaymentOffersPanel
+              show={showPaymentOffers}
+              offers={paymentOffers}
+              selectedId={selectedPaymentOffer?.id ?? null}
+              onToggle={() => setShowPaymentOffers((p) => !p)}
+              onSelect={setSelectedPaymentOffer}
+            />
+
+            <Separator />
+
+            <PaymentMethodSelector
+              selected={paymentMethod}
+              onSelect={setPaymentMethod}
+              codAvailable={true}
+            />
+
+            <div className="flex gap-3">
+              <Button variant="outline" asChild className="flex-1">
+                <Link href="/menu">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Add More
+                </Link>
+              </Button>
+              <Button
+                className="flex-1"
+                onClick={handleCheckout}
+                disabled={isProcessing || codProcessing}
+              >
+                {isProcessing || codProcessing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing…
+                  </>
+                ) : paymentMethod === "CASH_ON_DELIVERY" ? (
+                  <>
+                    <Banknote className="mr-2 h-4 w-4" />
+                    Place Order (COD)
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Pay ₹{finalTotal.toFixed(0)}
+                  </>
+                )}
+              </Button>
             </div>
+            {paymentResult && !paymentResult.success && (
+              <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive text-center">
+                {paymentResult.error || "Payment failed. Please try again."}
+              </div>
+            )}
           </div>
 
-          {/* Right Side - Menu Items, Quantity, Order Type, Total */}
+          {/* Right Side - Cart Items, Suggested Items, Price Breakdown */}
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -708,7 +715,7 @@ function CartContent() {
             </div>
 
             <div className="space-y-3">
-              {cart.map((item, idx) => (
+              {cart.map((item) => (
                 <CartItemCard
                   key={item.id}
                   item={item}
@@ -735,10 +742,6 @@ function CartContent() {
                 </div>
               </div>
             )}
-
-            <Separator />
-
-            <OrderTypeSelector selected={orderType} onSelect={setOrderType} />
 
             <Separator />
 

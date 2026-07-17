@@ -218,7 +218,7 @@ function Header() {
         </h3>
 
         {/* Price & Add Button Row */}
-        <div className="mt-4 flex items-center justify-between gap-1.5">
+        <div className="mt-2 flex items-center justify-between gap-1.5">
           <div className="flex items-center gap-1.5 min-w-0 shrink">
             {item.compareAtPrice != null ? (
               <>

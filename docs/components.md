@@ -40,6 +40,7 @@
 - **MenuItemDetail** - Full item detail view with photos, badges, pricing, wishlist
 - **CategoryPageClient** - Category-filtered menu page
 - **WishlistButton** - Heart icon toggle with optimistic updates
+- **AddToCartPopup** - Auto-dismiss (3s) popup with veg/non-veg badge, item name, price/qty, larger image
 
 ### Order (`components/order/`)
 - **OrderTypeSelector** - Pre-book vs Order Now toggle
@@ -50,8 +51,8 @@
 - **OrderTimeline** - Order status progress tracker
 
 ### Search (`components/search/`)
-- **SearchPageContent** - Full search results page
-- **SearchAutocomplete** - Live search with suggestions
+- **SearchPageContent** - Full search results page with tabbed UI (Dishes/Kitchens), sort dropdowns (Relevance/Rating/Name) for each tab, empty states, recent kitchens tracking
+- **SearchAutocomplete** - Live search with suggestions, recent kitchens via `lib/recent-searches.ts`, kitchen image thumbnails
 
 ### Location (`components/location/`)
 - **LocationDialog** - Map-based location picker with autocomplete
@@ -71,15 +72,17 @@
 - **PushSubscriptionInit** - Push notification subscription
 
 ### Kitchen (`components/kitchen/`)
-- **KitchenDetailClient** - Kitchen detail page with image, rating, cuisine tags, menu items grouped by time slot, search/filter, add-to-cart with toast
+- **KitchenDetailClient** - Kitchen detail page with image, rating, cuisine tags, menu items grouped by time slot, search/filter, add-to-cart with toast; now accepts `initialSearchQuery` prop to pre-populate search and highlight matched items separately
 - **InfiniteKitchenGrid** - Scrollable grid of kitchen cards with lazy loading
 - **KitchenNavbar** - Kitchen portal navigation bar
 - **KitchenFooter** - Kitchen portal FAQ/footer section
 - **KitchenWishlistButton** - Kitchen-level wishlist toggle
 - **VegFilter / SortByDialog** - Menu filtering controls
+- Loading skeletons at `app/kitchen/loading.tsx` (hero + feature cards) and `app/kitchen/[slug]/loading.tsx` (skeleton nav, image, filters, menu cards)
 
 ### Admin (`components/admin/`)
 - **AcceptForm** - Admin invite acceptance form
+- **PermissionGate** - Client component that conditionally renders children based on admin permissions; shows fallback/loading skeleton if permission denied
 
 ### Charts (`components/charts/`)
 - **BarChart** - Recharts bar chart wrapper
