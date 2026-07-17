@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import slugify from "slugify";
 
 
 const PAGE_SIZE = 15;
@@ -52,7 +53,7 @@ export async function GET(request: Request) {
 
     const hasMore = kitchens.length > limit;
     const items = hasMore ? kitchens.slice(0, limit) : kitchens;
-    const nextCursor = hasMore ? items[items.length - 1].id : null;
+    const nextCursor = hasMore && items.length > 0 ? items[items.length - 1].id : null;
 
     const serialized = items.map((k) => {
       const avgRating =
@@ -72,7 +73,7 @@ export async function GET(request: Request) {
 
       return {
         id: k.id,
-        slug: k.slug ?? k.id,
+        slug: k.slug || slugify(k.kitchenAlias?.displayName ?? "home-kitchen", { lower: true, strict: true }),
         displayName: k.kitchenAlias?.displayName ?? "Home Kitchen",
         avgRating,
         totalReviews: k._count.reviews,

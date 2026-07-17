@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { ShoppingCart, ChevronRight, Check } from "lucide-react";
+import { ShoppingCart, Check } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export interface AddPopupItem {
@@ -56,17 +55,13 @@ export function AddToCartPopup({ item, qty = 1, open, onOpenChange }: AddToCartP
 
 function BadgeVeg({ foodType }: { foodType: string }) {
   return (
-    <span className={`inline-block h-2.5 w-2.5 rounded-[2px] border shrink-0 ${foodType === "NONVEG" ? "border-red-600 bg-red-600" : "border-green-600 bg-green-600"}`} />
+    <span className={`inline-block h-2.5 w-2.5 rounded-xs border shrink-0 ${foodType === "NONVEG" ? "border-red-600 bg-red-600" : "border-green-600 bg-green-600"}`} />
   );
 }
 
-function CardContent({ item, qty, onClose }: { item: AddPopupItem; qty: number; onClose: () => void }) {
+function CardContent({ item, qty }: { item: AddPopupItem; qty: number; onClose: () => void }) {
   return (
-    <Link
-      href="/cart"
-      onClick={onClose}
-      className="block rounded-lg bg-primary p-3 shadow-lg hover:brightness-110 transition-all border border-primary/50"
-    >
+    <div className="rounded-lg bg-primary p-3 shadow-lg border border-primary/50">
       <div className="flex items-center gap-2.5">
         <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-primary-foreground/20">
           {item.imageUrl ? (
@@ -90,8 +85,7 @@ function CardContent({ item, qty, onClose }: { item: AddPopupItem; qty: number; 
             ₹{item.price} · {qty} ITEM{qty > 1 ? "S" : ""}
           </p>
         </div>
-        <ChevronRight className="h-5 w-5 text-primary-foreground/60 shrink-0 ml-1" />
       </div>
-    </Link>
+    </div>
   );
 }

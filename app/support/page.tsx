@@ -303,12 +303,14 @@ export default function SupportPage() {
   return (
     <main className="min-h-screen bg-background text-foreground pb-20">
       <div className="mx-auto max-w-4xl px-4 lg:px-8 py-6">
-        <div className="flex items-center gap-3 mb-6">
-          <Button variant="ghost" size="sm" onClick={() => { if (view === "detail") { setView("list"); setSelectedTicket(null); } else { router.back(); } }} className="flex items-center gap-1.5 text-muted-foreground -ml-2 shrink-0">
-            <ArrowLeft className="h-4 w-4" /> Back
-          </Button>
+        <div className="mb-6">
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center">
+            <Button variant="ghost" size="sm" onClick={() => { if (view === "detail") { setView("list"); setSelectedTicket(null); } else { router.back(); } }} className="flex items-center gap-1.5 text-muted-foreground -ml-2 shrink-0 lg:ml-0">
+              <ArrowLeft className="h-4 w-4" /> Back
+            </Button>
+          </div>
+          <div className="flex items-center gap-3 mt-3 lg:mt-0">
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
               <Ticket className="h-6 w-6 text-primary" />
             </div>
             <div>

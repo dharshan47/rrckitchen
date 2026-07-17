@@ -188,7 +188,13 @@ async function _getKitchenDetail(kitchenSlug: string) {
   'use cache';
   cacheLife('hours');
   const kitchen = await prisma.kitchenPartner.findFirst({
-    where: { slug: kitchenSlug, status: { in: ["APPROVED", "ACTIVE"] } },
+    where: {
+      OR: [
+        { slug: kitchenSlug },
+        { kitchenAlias: { displayName: { equals: kitchenSlug.replace(/-/g, " "), mode: "insensitive" } } },
+      ],
+      status: { in: ["APPROVED", "ACTIVE"] },
+    },
     include: {
       kitchenAlias: true,
       menus: {

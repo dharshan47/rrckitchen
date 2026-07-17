@@ -40,6 +40,7 @@ interface SearchAutocompleteProps {
   onSearch?: (query: string) => void
   navigateOnFocus?: boolean
   mobileModal?: boolean
+  defaultValue?: string
 }
 
 export function SearchAutocomplete({
@@ -49,9 +50,10 @@ export function SearchAutocomplete({
   onSearch,
   navigateOnFocus,
   mobileModal,
+  defaultValue = "",
 }: SearchAutocompleteProps) {
   const router = useRouter()
-  const [query, setQuery] = useState("")
+  const [query, setQuery] = useState(defaultValue)
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const [dismissCount, setDismissCount] = useState(0)
   const [showMobileModal, setShowMobileModal] = useState(false)
@@ -72,6 +74,10 @@ export function SearchAutocomplete({
     placeholderData: keepPreviousData,
     staleTime: 30_000,
   })
+
+  useEffect(() => {
+    setQuery(defaultValue)
+  }, [defaultValue])
 
   useEffect(() => {
     if (showMobileModal) {
@@ -132,16 +138,22 @@ export function SearchAutocomplete({
   const handleSelect = useCallback(
     (type: "item" | "kitchen", id: string, slug?: string, kitchenName?: string, itemName?: string) => {
       if (type === "kitchen" && kitchenName) {
-        addRecentKitchen({ id, slug: slug ?? id, name: kitchenName })
+        const urlSlug = slug?.length === 25 && slug.startsWith("c")
+          ? kitchenName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+          : slug
+        addRecentKitchen({ id, slug: urlSlug ?? id, name: kitchenName })
       }
       setDismissCount(c => c + 1)
-      setQuery("")
       onNavigate?.()
-      if (mobileModal) setShowMobileModal(false)
       if (type === "item") {
         router.push(`/search?q=${encodeURIComponent(itemName ?? "")}`)
       } else {
-        router.push(`/kitchen/${slug ?? id}`)
+        setQuery("")
+        if (mobileModal) setShowMobileModal(false)
+        const urlSlug = slug?.length === 25 && slug.startsWith("c")
+          ? kitchenName!.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+          : slug
+        router.push(`/kitchen/${urlSlug ?? id}`)
       }
     },
     [router, onNavigate, mobileModal]
@@ -169,12 +181,12 @@ export function SearchAutocomplete({
           if (query.trim()) {
             setDismissCount(c => c + 1)
             onNavigate?.()
-            if (mobileModal) setShowMobileModal(false)
             if (onSearch) {
               onSearch(query.trim())
             } else {
               router.push(`/search?q=${encodeURIComponent(query.trim())}`)
             }
+            if (mobileModal) setShowMobileModal(false)
           }
         }
       } else if (e.key === "Escape") {
@@ -234,10 +246,10 @@ export function SearchAutocomplete({
           </div>
         ) : (
           <>
-            {results!.dishes.length > 0 && (
+            {results?.dishes.length > 0 && (
               <div>
                 <p className="px-4 pt-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Dishes</p>
-                {results!.dishes.map((item, i) => (
+                {results?.dishes.map((item, i) => (
                   <button
                     key={item.id}
                     onClick={() => handleSelect("item", item.id, item.slug, undefined, item.name)}
@@ -261,11 +273,11 @@ export function SearchAutocomplete({
                 ))}
               </div>
             )}
-            {results!.kitchens.length > 0 && (
+            {results?.kitchens.length > 0 && (
               <div>
                 <p className="px-4 pt-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kitchens</p>
-                {results!.kitchens.map((kitchen, i) => {
-                  const idx = (results!.dishes.length ?? 0) + i
+                {results?.kitchens.map((kitchen, i) => {
+                  const idx = (results?.dishes.length ?? 0) + i
                   return (
                     <button
                       key={kitchen.id}
@@ -286,9 +298,9 @@ export function SearchAutocomplete({
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-medium truncate">{kitchen.displayName}</p>
                         <p className="text-xs text-muted-foreground truncate">
-                          {kitchen.items.length > 0
-                            ? kitchen.items.map((mi) => mi.name).join(", ")
-                            : "No items available"}
+                            {kitchen.items?.length > 0
+                              ? kitchen.items.map((mi) => mi.name).join(", ")
+                              : "No items available"}
                         </p>
                       </div>
                     </button>
@@ -307,7 +319,7 @@ export function SearchAutocomplete({
       <>
         {input(inputRef)}
         {showMobileModal && (
-          <div className="fixed inset-0 z-50 bg-white flex flex-col md:hidden">
+           <div className="fixed inset-0 z-60 bg-white flex flex-col md:hidden">
             <div className="flex items-center gap-3 px-4 pt-4 pb-2 border-b border-border">
               <button onClick={closeMobileModal} className="p-1 -ml-1">
                 <ArrowLeft className="h-5 w-5 text-foreground" />
@@ -327,30 +339,34 @@ export function SearchAutocomplete({
                       Recently Searched Kitchens
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {recentKitchens.map((k) => (
-                        <div key={k.id} className="group relative">
-                          <button
-                            onClick={() => {
-                              handleSelect("kitchen", k.id, k.slug, k.name)
-                              closeMobileModal()
-                            }}
-                            className="flex items-center gap-1.5 rounded-full border border-border bg-muted/30 px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted/50 transition-colors pr-7"
-                          >
-                            <Clock className="h-3 w-3 text-muted-foreground" />
-                            {k.name}
-                          </button>
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation()
-                              removeRecentKitchen(k.id)
-                              setRecentKitchens(getRecentKitchens())
-                            }}
-                            className="absolute right-1.5 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center justify-center h-4 w-4 rounded-full bg-muted-foreground/20 hover:bg-muted-foreground/40"
-                          >
-                            <X className="h-2.5 w-2.5 text-muted-foreground" />
-                          </button>
-                        </div>
-                      ))}
+                      {recentKitchens.map((k) => {
+                        const urlSlug = k.slug?.length === 25 && k.slug.startsWith("c")
+                          ? k.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+                          : k.slug
+                        return (
+                          <div key={k.id} className="group relative">
+                            <button
+                              onClick={() => {
+                                handleSelect("kitchen", k.id, urlSlug, k.name)
+                              }}
+                              className="flex items-center gap-1.5 rounded-full border border-border bg-muted/30 px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted/50 transition-colors pr-7"
+                            >
+                              <Clock className="h-3 w-3 text-muted-foreground" />
+                              {k.name}
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                removeRecentKitchen(k.id)
+                                setRecentKitchens(getRecentKitchens())
+                              }}
+                              className="absolute right-1.5 top-1/2 -translate-y-1/2 hidden group-hover:flex items-center justify-center h-4 w-4 rounded-full bg-muted-foreground/20 hover:bg-muted-foreground/40"
+                            >
+                              <X className="h-2.5 w-2.5 text-muted-foreground" />
+                            </button>
+                          </div>
+                        )
+                      })}
                     </div>
                   </div>
                 )}

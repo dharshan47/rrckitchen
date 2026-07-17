@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
 
     const hasMore = items.length > limit;
     const result = hasMore ? items.slice(0, limit) : items;
-    const nextCursor = hasMore ? result[result.length - 1].id : null;
+    const nextCursor = hasMore && result.length > 0 ? result[result.length - 1].id : null;
 
     return NextResponse.json({ items: result, nextCursor });
   } catch (error) {

@@ -114,7 +114,7 @@ function KitchenCard({ item, onRemove, isRemoving }: { item: KitchenWishlistItem
   const address = kitchen.kitchenAddress;
   return (
     <div className="flex flex-col rounded-xl border border-border p-3 hover:border-primary/30 transition-colors">
-      <Link href={`/kitchen/${kitchen.slug ?? kitchen.id}`} className="flex flex-col items-center text-center mb-2">
+      <Link href={`/kitchen/${kitchen.slug || (alias?.displayName ?? kitchen.id).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`} className="flex flex-col items-center text-center mb-2">
         <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center mb-2">
           <ChefHat className="h-7 w-7 text-primary" />
         </div>
@@ -213,7 +213,7 @@ function VirtualGrid<T>({
     );
   }
 
-  if (items.length === 0) {
+  if (!items || items.length === 0) {
     return (
       <Card>
         <CardContent className="flex flex-col items-center py-16 text-center">

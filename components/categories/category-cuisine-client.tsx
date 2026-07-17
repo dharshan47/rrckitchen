@@ -88,15 +88,15 @@ export function CategoryCuisineClient({ categoryName, kitchens }: Props) {
 
     if (vegFilter === "pure-veg") {
       result = result.filter((k) =>
-        k.items.length > 0 && k.items.every((i) => i.foodType === "VEG")
+        k.items?.length > 0 && k.items.every((i) => i.foodType === "VEG")
       );
     } else if (vegFilter === "veg") {
       result = result.filter((k) =>
-        k.items.some((i) => i.foodType === "VEG")
+        k.items?.some((i) => i.foodType === "VEG")
       );
     } else if (vegFilter === "non-veg") {
 result = result.filter((k) =>
-    k.items.some((i) => i.foodType === "NONVEG")
+    k.items?.some((i) => i.foodType === "NONVEG")
       );
     }
 
@@ -106,14 +106,14 @@ result = result.filter((k) =>
       );
     } else if (sortOption === "cost-low") {
       result = [...result].sort((a, b) => {
-        const aMin = Math.min(...a.items.map((i) => i.price));
-        const bMin = Math.min(...b.items.map((i) => i.price));
+        const aMin = Math.min(...(a.items?.map((i) => i.price) ?? [0]));
+        const bMin = Math.min(...(b.items?.map((i) => i.price) ?? [0]));
         return aMin - bMin;
       });
     } else if (sortOption === "cost-high") {
       result = [...result].sort((a, b) => {
-        const aMin = Math.min(...a.items.map((i) => i.price));
-        const bMin = Math.min(...b.items.map((i) => i.price));
+        const aMin = Math.min(...(a.items?.map((i) => i.price) ?? [0]));
+        const bMin = Math.min(...(b.items?.map((i) => i.price) ?? [0]));
         return bMin - aMin;
       });
     }
@@ -182,7 +182,7 @@ result = result.filter((k) =>
                 onKeyDown={(e) => { if (e.key === "Enter") handleKitchenClick(kitchen.slug); }}
                 className="overflow-hidden cursor-pointer"
               >
-                {kitchen.items.length > 0 && kitchen.items[0].imageUrl ? (
+                {kitchen.items?.length > 0 && kitchen.items[0].imageUrl ? (
                   <div className="relative w-full h-40 sm:h-48 bg-muted">
                     <Image
                       src={kitchen.items[0].imageUrl}
@@ -230,7 +230,7 @@ result = result.filter((k) =>
                       ))}
                     </div>
                   )}
-                  {kitchen.items.length > 0 && (
+                  {kitchen.items?.length > 0 && (
                     <div className="mt-2 flex flex-wrap gap-1">
                       {kitchen.items.slice(0, 3).map((item) => (
                         <span key={item.id} className="text-[10px] text-muted-foreground truncate max-w-30">

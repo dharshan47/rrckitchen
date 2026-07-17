@@ -36,7 +36,7 @@ export function CravingsPopup({ orderId }: CravingsPopupProps) {
       (msg: { name: string; data: unknown }) => {
         if (msg.name === "order:cravings") {
           const data = msg.data as { items: CravingItem[]; message: string }
-          setItems(data.items)
+          setItems(data.items ?? [])
           setMessage(data.message)
           setOpen(true)
         }

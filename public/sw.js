@@ -141,15 +141,21 @@ async function networkFirst(request, cacheName) {
 async function staleWhileRevalidate(request, cacheName) {
   const cache = await caches.open(cacheName);
   const cached = await cache.match(request);
-  const fetchPromise = fetch(request)
-    .then((response) => {
-      if (response.ok) {
-        cache.put(request, response.clone());
-      }
-      return response;
-    })
-    .catch(() => cached);
-  return cached || fetchPromise;
+  if (cached) {
+    fetch(request)
+      .then((response) => {
+        if (response.ok) {
+          cache.put(request, response.clone());
+        }
+      })
+      .catch(() => {});
+    return cached;
+  }
+  try {
+    return await fetchAndCache(request, cacheName);
+  } catch {
+    return new Response("Offline", { status: 503 });
+  }
 }
 
 async function fetchAndCache(request, cacheName) {

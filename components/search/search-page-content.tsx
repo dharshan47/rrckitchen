@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 import { UtensilsCrossed, Star, ChevronRight, ArrowUpDown, Clock } from "lucide-react"
 import Image from 'next/image'
 import Link from "next/link"
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { SearchAutocomplete } from "@/components/search/search-autocomplete"
@@ -173,7 +173,11 @@ export function SearchPageContent() {
   const [activeTab, setActiveTab] = useState<"dishes" | "kitchens">("dishes")
   const [dishSort, setDishSort] = useState<DishSort>("relevance")
   const [kitchenSort, setKitchenSort] = useState<KitchenSort>("relevance")
-  const recentKitchens = useMemo(() => !q ? getRecentKitchens() : [], [q])
+  const [recentKitchens, setRecentKitchens] = useState<{ id: string; slug: string; name: string }[]>([])
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reads from localStorage (external system), correct pattern for hydration
+    if (!q) setRecentKitchens(getRecentKitchens())
+  }, [q])
 
   const { data, isFetching } = useQuery<SearchResult>({
     queryKey: ["menu-search-page", q],
@@ -197,12 +201,13 @@ export function SearchPageContent() {
       const kid = item.kitchenId ?? "unknown"
       if (!groups.has(kid)) {
         const k = kitchens.find((k) => k.id === kid)
+        const nameSlug = item.kitchenName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
         groups.set(kid, {
           kitchenId: kid,
           kitchenName: item.kitchenName,
           avgRating: k?.avgRating ?? 0,
           totalReviews: k?.totalReviews ?? 0,
-          slug: k?.slug ?? kid,
+          slug: k?.slug ?? nameSlug,
           items: [],
         })
       }
@@ -234,11 +239,12 @@ export function SearchPageContent() {
   }, [kitchens, kitchenSort])
 
   return (
-    <main className="mx-auto max-w-7xl px-4 py-8 bg-search-bar">
+    <main className="w-full px-4 py-8 lg:mx-auto lg:max-w-7xl">
       <div className="mb-6">
         <SearchAutocomplete
           placeholder="Search meals..."
           inputClassName="h-12 rounded-xl text-base pl-12 focus-visible:ring-1 bg-search-bar border border-border"
+          defaultValue={q}
         />
         {!q && recentKitchens.length > 0 && (
           <div className="mt-4">
@@ -246,16 +252,21 @@ export function SearchPageContent() {
               Recently Searched Kitchens
             </p>
             <div className="flex flex-wrap gap-2">
-              {recentKitchens.map((k) => (
-                <Link
-                  key={k.id}
-                  href={`/kitchen/${k.slug}`}
-                  className="flex items-center gap-1.5 rounded-full border border-border bg-muted/30 px-3 py-1.5 text-xs font-medium text-foreground hover:bg-muted/50 transition-colors"
-                >
-                  <Clock className="h-3 w-3 text-muted-foreground" />
-                  {k.name}
-                </Link>
-              ))}
+              {recentKitchens.map((k) => {
+                const urlSlug = k.slug?.length === 25 && k.slug.startsWith("c")
+                  ? k.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+                  : k.slug
+                return (
+                  <Link
+                    key={k.id}
+                    href={`/kitchen/${urlSlug}`}
+                    className="flex items-center gap-1.5 rounded-full border border-border bg-muted/30 px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/50 transition-colors"
+                  >
+                    <Clock className="h-4 w-4 text-muted-foreground" />
+                    {k.name}
+                  </Link>
+                )
+              })}
             </div>
           </div>
         )}
@@ -354,7 +365,7 @@ export function SearchPageContent() {
                         <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
                       </div>
                     </div>
-                    <div className="flex gap-2 px-4 pb-4 overflow-x-auto scrollbar-none">
+                    <div className="flex flex-wrap gap-3 px-4 pb-4 justify-center sm:justify-start">
                       {group.items.map((item) => (
                         <div
                           key={item.id}
@@ -363,17 +374,17 @@ export function SearchPageContent() {
                             e.stopPropagation()
                             router.push(`/menu/${item.slug ?? item.id}`)
                           }}
-                          className="flex flex-col items-center gap-1 shrink-0 cursor-pointer"
+                          className="flex flex-col items-center gap-1.5 cursor-pointer group"
                         >
-                          <div className="h-20 w-20 rounded-lg bg-muted flex items-center justify-center overflow-hidden relative">
+                          <div className="h-28 w-28 sm:h-32 sm:w-32 rounded-xl bg-muted flex items-center justify-center overflow-hidden relative group-hover:ring-2 group-hover:ring-primary transition-all">
                             {item.imageUrl ? (
-                              <Image src={item.imageUrl} alt={item.name} fill className="object-cover" sizes="80px" />
+                              <Image src={item.imageUrl} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform" sizes="128px" />
                             ) : (
-                              <UtensilsCrossed className="h-6 w-6 text-muted-foreground/40" />
+                              <UtensilsCrossed className="h-10 w-10 text-muted-foreground/40" />
                             )}
                           </div>
-                          <p className="text-[10px] font-medium text-center line-clamp-1 w-20">{item.name}</p>
-                          <p className="text-[10px] font-semibold text-primary">₹{item.price}</p>
+                          <p className="text-sm font-medium text-center line-clamp-1 w-28 sm:w-32">{item.name}</p>
+                          <p className="text-sm font-semibold text-primary">₹{item.price}</p>
                         </div>
                       ))}
                     </div>
@@ -419,21 +430,21 @@ export function SearchPageContent() {
                         <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
                       </div>
                     </div>
-                    {kitchen.items.length > 0 && (
-                      <div className="flex gap-2 px-4 pb-4 overflow-x-auto scrollbar-none">
+                    {kitchen.items?.length > 0 && (
+                      <div className="flex flex-wrap gap-3 px-4 pb-4 justify-center sm:justify-start">
                         {kitchen.items.map((mi) => (
                           <div
                             key={mi.id}
-                            className="flex flex-col items-center gap-1 shrink-0"
+                            className="flex flex-col items-center gap-1.5 group"
                           >
-                            <div className="h-20 w-20 rounded-lg bg-muted flex items-center justify-center overflow-hidden relative">
+                            <div className="h-28 w-28 sm:h-32 sm:w-32 rounded-xl bg-muted flex items-center justify-center overflow-hidden relative group-hover:ring-2 group-hover:ring-primary transition-all">
                               {mi.imageUrl ? (
-                                <Image src={mi.imageUrl} alt={mi.name} fill className="object-cover" sizes="80px" />
+                                <Image src={mi.imageUrl} alt={mi.name} fill className="object-cover group-hover:scale-105 transition-transform" sizes="128px" />
                               ) : (
-                                <UtensilsCrossed className="h-6 w-6 text-muted-foreground/40" />
+                                <UtensilsCrossed className="h-10 w-10 text-muted-foreground/40" />
                               )}
                             </div>
-                            <p className="text-[10px] font-medium text-center line-clamp-1 w-20">{mi.name}</p>
+                            <p className="text-sm font-medium text-center line-clamp-1 w-28 sm:w-32">{mi.name}</p>
                           </div>
                         ))}
                       </div>

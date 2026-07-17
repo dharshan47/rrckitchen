@@ -136,7 +136,7 @@ export default function AccountOrdersPage() {
                 key={order.id}
                 order={order}
                 onCancel={() => setCancellingOrder(order.id)}
-                onRateDelivery={() => setRatingOrder({ id: order.id, deliveryPartnerId: order.deliveryPartner!.id, deliveryPartnerName: order.deliveryPartner!.name })}
+                onRateDelivery={() => setRatingOrder({ id: order.id, deliveryPartnerId: order.deliveryPartner?.id ?? "", deliveryPartnerName: order.deliveryPartner?.name ?? "Delivery Partner" })}
                 onReview={() => setReviewOrder({
                   orderId: order.id,
                   kitchenId: order.items[0]?.kitchenId ?? order.kitchenPartnerId ?? "",

@@ -137,7 +137,7 @@ export function InfiniteKitchenGrid({
 
   const allKitchens = useMemo(() => {
     const seen = new Set<string>();
-    return (data?.pages.flatMap((page) => page.data) ?? []).filter((k) => {
+    return (data?.pages.flatMap((page) => page.data ?? []) ?? []).filter((k) => {
       if (seen.has(k.id)) return false;
       seen.add(k.id);
       return true;
@@ -149,21 +149,21 @@ export function InfiniteKitchenGrid({
 
     if (vegFilter === "pure-veg") {
       result = result.filter((k) =>
-        k.items.length > 0 && k.items.every((i) => i.foodType === "VEG")
+        k.items?.length > 0 && k.items.every((i) => i.foodType === "VEG")
       );
     } else if (vegFilter === "veg") {
       result = result.filter((k) =>
-        k.items.some((i) => i.foodType === "VEG")
+        k.items?.some((i) => i.foodType === "VEG")
       );
     } else if (vegFilter === "non-veg") {
       result = result.filter((k) =>
-        k.items.some((i) => i.foodType === "NONVEG")
+        k.items?.some((i) => i.foodType === "NONVEG")
       );
     }
 
     if (selectedCuisines.length > 0) {
       result = result.filter((k) =>
-        k.cuisineTags.some((tag) =>
+        k.cuisineTags?.some((tag) =>
           selectedCuisines.includes(
             categories.find((c) => c.name === tag)?.id ?? ""
           )
@@ -177,14 +177,14 @@ export function InfiniteKitchenGrid({
       );
     } else if (sortOption === "cost-low") {
       result = [...result].sort((a, b) => {
-        const aMin = Math.min(...a.items.map((i) => i.price));
-        const bMin = Math.min(...b.items.map((i) => i.price));
+        const aMin = Math.min(...(a.items?.map((i) => i.price) ?? [0]));
+        const bMin = Math.min(...(b.items?.map((i) => i.price) ?? [0]));
         return aMin - bMin;
       });
     } else if (sortOption === "cost-high") {
       result = [...result].sort((a, b) => {
-        const aMin = Math.min(...a.items.map((i) => i.price));
-        const bMin = Math.min(...b.items.map((i) => i.price));
+        const aMin = Math.min(...(a.items?.map((i) => i.price) ?? [0]));
+        const bMin = Math.min(...(b.items?.map((i) => i.price) ?? [0]));
         return bMin - aMin;
       });
     }

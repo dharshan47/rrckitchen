@@ -16,7 +16,7 @@ import { useCartCoupon, useCartOrderType, useCartActions, useMenuDeliveryAddress
 import { DeliveryAddressCard } from "@/components/cart/delivery-address-card";
 import { useEventCallback } from "@/hooks/useStableReference";
 import dynamic from "next/dynamic";
-import type { AddPopupItem } from "@/components/menu/add-to-cart-popup";
+import { AddToCartPopup, type AddPopupItem } from "@/components/menu/add-to-cart-popup";
 import type { PaymentMethod } from "@/components/order/payment-method-selector";
 import {
   Trash2, Minus, Plus, ShoppingBag, ArrowLeft, CreditCard,
@@ -27,7 +27,6 @@ import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 const CravingsPopup = dynamic(() => import("@/components/order/cravings-popup").then(m => m.CravingsPopup), { ssr: false });
-const AddToCartPopup = dynamic(() => import("@/components/menu/add-to-cart-popup").then(m => m.AddToCartPopup), { ssr: false });
 const CouponInput = dynamic(() => import("@/components/order/coupon-input").then(m => m.CouponInput), { ssr: false });
 const PaymentMethodSelector = dynamic(() => import("@/components/order/payment-method-selector").then(m => m.PaymentMethodSelector), { ssr: false });
 const OrderTypeSelector = dynamic(() => import("@/components/order/order-type-selector").then(m => m.OrderTypeSelector), { ssr: false });
@@ -162,6 +161,7 @@ const SuggestedItemCard = memo(function SuggestedItemCard({
         <div className="flex items-center justify-between">
           <span className="text-sm font-black text-foreground">₹{Number(item.price)}</span>
           <Button
+            type="button"
             size="sm"
             variant="outline"
             className="h-6 rounded-md border-[#EE7005] text-[#EE7005] px-2 text-[10px] font-bold hover:text-[#EE7005]"
@@ -539,7 +539,7 @@ function CartContent() {
           </div>
           <div className="flex gap-3">
             <Button asChild variant="outline" onClick={resetPayment}>
-              <Link href="/menu">Browse More</Link>
+              <Link href="/categories">Browse Categories</Link>
             </Button>
             <Button asChild onClick={resetPayment}>
               <Link href="/account/orders">View Orders</Link>
@@ -588,7 +588,7 @@ function CartContent() {
             <p className="mt-2 text-sm text-muted-foreground">Add items from the menu to get started.</p>
           </div>
           <Button asChild>
-            <Link href="/menu">Browse Menu</Link>
+            <Link href="/categories">Browse Categories</Link>
           </Button>
         </div>
       </main>
@@ -657,9 +657,9 @@ function CartContent() {
 
             <div className="flex gap-3">
               <Button variant="outline" asChild className="flex-1">
-                <Link href="/menu">
+                <Link href="/categories">
                   <ArrowLeft className="mr-2 h-4 w-4" />
-                  Add More
+                  Browse Categories
                 </Link>
               </Button>
               <Button
@@ -696,7 +696,7 @@ function CartContent() {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Link href="/menu" className="md:hidden p-1 -ml-1 text-muted-foreground hover:text-foreground">
+                <Link href="/categories" className="md:hidden p-1 -ml-1 text-muted-foreground hover:text-foreground">
                   <ArrowLeft className="h-5 w-5" />
                 </Link>
                 <div>

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import { redis } from "@/lib/redis"
+import slugify from "slugify"
 
 const CACHE_TTL = 45
 
@@ -163,10 +164,11 @@ export async function GET(request: Request) {
     })),
     kitchens: kitchenRows.map((k) => {
       const kitchenItems = itemsByKitchen.get(k.id) ?? []
+      const displayName = k.kitchenAlias?.displayName ?? "Unknown Kitchen"
       return {
         id: k.id,
-        slug: k.slug,
-        displayName: k.kitchenAlias?.displayName ?? "Unknown Kitchen",
+        slug: k.slug || slugify(displayName, { lower: true, strict: true }),
+        displayName,
         avgRating: Number(k.avgRating),
         totalReviews: k.totalReviews,
         imageUrl: kitchenItems[0]?.imageUrl ?? null,
