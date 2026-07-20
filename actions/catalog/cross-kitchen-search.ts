@@ -129,7 +129,7 @@ export async function searchAcrossKitchens(input: CrossKitchenSearchInput): Prom
         price: Number(item.price),
         foodType: item.foodType,
         timeSlot: item.timeSlot,
-        kitchenName: item.menu.kitchenPartner.kitchenAlias?.displayName ?? "Unknown Kitchen",
+        kitchenName: item.menu.kitchenPartner.kitchenAlias?.displayName ?? "",
         kitchenId: item.menu.kitchenPartnerId,
         distanceKm: kitchenDistances.get(item.menu.kitchenPartnerId) ?? null,
         avgRating: avgRating._avg.rating ? Math.round(avgRating._avg.rating * 10) / 10 : null,

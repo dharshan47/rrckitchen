@@ -222,7 +222,7 @@ export async function getAdminDashboardData() {
         ? k.reviews.reduce((sum, r) => sum + r.rating, 0) / k.reviews.length
         : 0
     return {
-      name: k.kitchenAlias?.displayName ?? "Unknown",
+      name: k.kitchenAlias?.displayName ?? "",
       orders: k._count.orderItems,
       revenue: totalRev,
       rating: Math.round(avgRating * 10) / 10,
@@ -242,7 +242,7 @@ export async function getAdminDashboardData() {
   })
 
   const recentOrders = recentOrdersData.map((o) => {
-    const kitchen = o.orderItems[0]?.kitchenPartner?.kitchenAlias?.displayName ?? "Unknown"
+    const kitchen = o.orderItems[0]?.kitchenPartner?.kitchenAlias?.displayName ?? ""
     return {
       id: o.id,
       customer: o.user?.name ?? "Unknown",
@@ -257,7 +257,7 @@ export async function getAdminDashboardData() {
   const kitchenPartnersList = kitchenPartnersData.map((k) => {
     const totalRev = k.orderItems.reduce((sum, oi) => sum + Number(oi.unitPrice) * oi.quantity, 0)
     return {
-      name: k.kitchenAlias?.displayName ?? "Unknown",
+      name: k.kitchenAlias?.displayName ?? "",
       status: k.status === "ACTIVE" || k.status === "APPROVED" ? "Active" : k.status,
       orders: k._count.orderItems,
       revenue: totalRev,
@@ -504,7 +504,7 @@ export async function getKitchenDashboardData() {
   return {
     kitchen: {
       id: kitchenPartner.id,
-      displayName: kitchenPartner.kitchenAlias?.displayName ?? "My Kitchen",
+      displayName: kitchenPartner.kitchenAlias?.displayName ?? "",
       status: kitchenPartner.status,
       avgRating: "avgRating" in kitchenPartner && typeof (kitchenPartner as Record<string, unknown>).avgRating === "number"
         ? Math.round(Number((kitchenPartner as Record<string, unknown>).avgRating) * 10) / 10
@@ -898,7 +898,7 @@ export async function getDeliveryDashboardData() {
 
   const recentAssignments = deliveryPartner.kitchenAssignments.slice(0, 10).map((a) => ({
     id: a.id,
-    kitchen: a.kitchenPartner?.kitchenAlias?.displayName ?? "Unknown",
+    kitchen: a.kitchenPartner?.kitchenAlias?.displayName ?? "",
     status: a.status === "DELIVERED" ? "Delivered" : a.status === "PENDING" ? "Pending" : "Cancelled",
     date: format(a.createdAt, "dd MMM yyyy"),
   }))
@@ -950,7 +950,7 @@ export async function getDeliveryDashboardData() {
         : "Address not set",
       customerLat: oi.order.address?.latitude ? Number(oi.order.address.latitude) : null,
       customerLng: oi.order.address?.longitude ? Number(oi.order.address.longitude) : null,
-      kitchenName: oi.kitchenPartner?.kitchenAlias?.displayName ?? "Home Kitchen",
+      kitchenName: oi.kitchenPartner?.kitchenAlias?.displayName ?? "",
       kitchenPhone: oi.kitchenPartner?.user?.phoneNumber ?? "-",
       kitchenAddress: ka
         ? `${ka.lineOne}, ${ka.pincode}`

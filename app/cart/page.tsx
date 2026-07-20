@@ -21,7 +21,7 @@ import type { PaymentMethod } from "@/components/order/payment-method-selector";
 import {
   Trash2, Minus, Plus, ShoppingBag, ArrowLeft, CreditCard,
   Loader2, Banknote, Tag, Percent, Gift, ChevronRight,
-  Wallet, Smartphone, Building2, Gem, Flame,
+  Wallet, Smartphone, Building2, Gem, Flame, MapPin,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -131,12 +131,44 @@ const CartItemCard = memo(function CartItemCard({
 
 const SuggestedItemCard = memo(function SuggestedItemCard({
   item,
+  qty,
   onAdd,
+  onUpdateQuantity,
+  onShowPopup,
 }: {
   item: SuggestedItem;
+  qty: number;
   onAdd: (item: { id: string; name: string; price: number; compareAtPrice: number | null; foodType: string; timeSlot: string; kitchenName: string; imageUrl?: string | null }) => void;
+  onUpdateQuantity: (id: string, qty: number) => void;
+  onShowPopup: (item: { id: string; name: string; price: number; compareAtPrice: number | null; foodType: string; timeSlot: string; kitchenName: string; imageUrl?: string | null }) => void;
 }) {
-  const kitchenName = item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen";
+  const kitchenName = item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "";
+  const itemData = {
+    id: item.id,
+    name: item.name,
+    price: Number(item.price),
+    compareAtPrice: item.compareAtPrice,
+    foodType: item.foodType,
+    timeSlot: item.timeSlot,
+    kitchenName,
+    imageUrl: item.photos?.[0]?.imageUrl ?? null,
+  };
+
+  const handleAdd = () => {
+    onAdd(itemData);
+    onShowPopup(itemData);
+  };
+
+  const handleIncrement = () => {
+    const newQty = qty + 1;
+    onUpdateQuantity(item.id, newQty);
+    onShowPopup(itemData);
+  };
+
+  const handleDecrement = () => {
+    onUpdateQuantity(item.id, qty - 1);
+  };
+
   return (
     <Card className="overflow-hidden">
       <div className="relative aspect-square w-full bg-white p-2">
@@ -160,24 +192,39 @@ const SuggestedItemCard = memo(function SuggestedItemCard({
         <p className="text-xs font-bold leading-tight line-clamp-2">{item.name}</p>
         <div className="flex items-center justify-between">
           <span className="text-sm font-black text-foreground">₹{Number(item.price)}</span>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            className="h-6 rounded-md border-[#EE7005] text-[#EE7005] px-2 text-[10px] font-bold hover:text-[#EE7005]"
-            onClick={() => onAdd({
-              id: item.id,
-              name: item.name,
-              price: Number(item.price),
-              compareAtPrice: item.compareAtPrice,
-              foodType: item.foodType,
-              timeSlot: item.timeSlot,
-              kitchenName,
-              imageUrl: item.photos?.[0]?.imageUrl ?? null,
-            })}
-          >
-            Add
-          </Button>
+          {qty === 0 ? (
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              className="h-6 rounded-md border-[#EE7005] text-[#EE7005] px-2 text-[10px] font-bold hover:text-[#EE7005]"
+              onClick={handleAdd}
+            >
+              Add
+            </Button>
+          ) : (
+            <div className="flex items-center gap-1">
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-6 w-6 rounded-full p-0 border-[#EE7005] text-[#EE7005]"
+                onClick={handleDecrement}
+              >
+                <Minus className="h-3 w-3" />
+              </Button>
+              <span className="w-5 text-center text-xs font-bold text-[#EE7005]">{qty}</span>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-6 w-6 rounded-full p-0 border-[#EE7005] text-[#EE7005]"
+                onClick={handleIncrement}
+              >
+                <Plus className="h-3 w-3" />
+              </Button>
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
@@ -606,94 +653,19 @@ function CartContent() {
     : 0;
   const savings = couponSavings + paymentOfferSavings;
   const finalTotal = Math.max(0, total - savings);
+  const itemQtyMap = new Map(cart.map(i => [i.id, i.qty]));
+
   const itemCounts = cart.reduce((acc, item) => acc + item.qty, 0);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-6xl px-4 py-8 lg:px-8 pb-20 md:pb-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left Side - Address, Order Type, Coupon, Payment Offers, Payment Method */}
-          <div className="space-y-6">
-            <DeliveryAddressCard />
+      <div className="mx-auto max-w-6xl px-4 py-8 lg:px-8 pb-24 md:pb-8">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-8">
+          {/* Mobile: Cart items first, then address/order/payment */}
+          {/* Desktop: Address/order/payment left, Cart items right */}
 
-            <Separator />
-
-            <OrderTypeSelector selected={orderType} onSelect={setOrderType} />
-
-            <Separator />
-
-            <CouponOffersPanel
-              show={showCouponOffers}
-              loading={couponOffersLoading}
-              offers={couponOffers}
-              appliedCoupon={appliedCoupon}
-              onToggle={() => setShowCouponOffers((p) => !p)}
-              onApply={handleApplyOfferCoupon}
-              onApplyCoupon={(coupon) => applyCoupon({
-                code: coupon.code, discount: coupon.discount,
-                type: coupon.type, description: coupon.description,
-              })}
-              onRemoveCoupon={removeCoupon}
-              total={total}
-            />
-
-            <Separator />
-
-            <PaymentOffersPanel
-              show={showPaymentOffers}
-              offers={paymentOffers}
-              selectedId={selectedPaymentOffer?.id ?? null}
-              onToggle={() => setShowPaymentOffers((p) => !p)}
-              onSelect={setSelectedPaymentOffer}
-            />
-
-            <Separator />
-
-            <PaymentMethodSelector
-              selected={paymentMethod}
-              onSelect={setPaymentMethod}
-              codAvailable={true}
-            />
-
-            <div className="flex gap-3">
-              <Button variant="outline" asChild className="flex-1">
-                <Link href="/categories">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Browse Categories
-                </Link>
-              </Button>
-              <Button
-                className="flex-1"
-                onClick={handleCheckout}
-                disabled={isProcessing || codProcessing}
-              >
-                {isProcessing || codProcessing ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processing…
-                  </>
-                ) : paymentMethod === "CASH_ON_DELIVERY" ? (
-                  <>
-                    <Banknote className="mr-2 h-4 w-4" />
-                    Place Order (COD)
-                  </>
-                ) : (
-                  <>
-                    <CreditCard className="mr-2 h-4 w-4" />
-                    Pay ₹{finalTotal.toFixed(0)}
-                  </>
-                )}
-              </Button>
-            </div>
-            {paymentResult && !paymentResult.success && (
-              <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive text-center">
-                {paymentResult.error || "Payment failed. Please try again."}
-              </div>
-            )}
-          </div>
-
-          {/* Right Side - Cart Items, Suggested Items, Price Breakdown */}
-          <div className="space-y-6">
+          {/* Cart Items, Suggested Items, Price Breakdown */}
+          <div className="order-1 lg:order-2 space-y-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <Link href="/categories" className="md:hidden p-1 -ml-1 text-muted-foreground hover:text-foreground">
@@ -736,7 +708,17 @@ function CartContent() {
                     <SuggestedItemCard
                       key={sItem.id}
                       item={sItem}
+                      qty={itemQtyMap.get(sItem.id) || 0}
                       onAdd={handleShowSuggestionPopup}
+                      onUpdateQuantity={updateQuantity}
+                      onShowPopup={(item) => {
+                        setPopupItem({
+                          id: item.id, name: item.name, price: Number(item.price),
+                          compareAtPrice: item.compareAtPrice ?? null, foodType: item.foodType,
+                          imageUrl: item.imageUrl ?? null, kitchenName: item.kitchenName, timeSlot: item.timeSlot,
+                        });
+                        setPopupOpen(true);
+                      }}
                     />
                   ))}
                 </div>
@@ -754,6 +736,119 @@ function CartContent() {
               finalTotal={finalTotal}
             />
           </div>
+
+          {/* Address, Order Type, Coupon, Payment Offers, Payment Method */}
+          <div className="order-2 lg:order-1 space-y-6">
+            <DeliveryAddressCard />
+
+            <Separator />
+
+            <OrderTypeSelector selected={orderType} onSelect={setOrderType} />
+
+            <Separator />
+
+            <CouponOffersPanel
+              show={showCouponOffers}
+              loading={couponOffersLoading}
+              offers={couponOffers}
+              appliedCoupon={appliedCoupon}
+              onToggle={() => setShowCouponOffers((p) => !p)}
+              onApply={handleApplyOfferCoupon}
+              onApplyCoupon={(coupon) => applyCoupon({
+                code: coupon.code, discount: coupon.discount,
+                type: coupon.type, description: coupon.description,
+              })}
+              onRemoveCoupon={removeCoupon}
+              total={total}
+            />
+
+            <Separator />
+
+            <PaymentOffersPanel
+              show={showPaymentOffers}
+              offers={paymentOffers}
+              selectedId={selectedPaymentOffer?.id ?? null}
+              onToggle={() => setShowPaymentOffers((p) => !p)}
+              onSelect={setSelectedPaymentOffer}
+            />
+
+            <Separator />
+
+            <PaymentMethodSelector
+              selected={paymentMethod}
+              onSelect={setPaymentMethod}
+              codAvailable={true}
+            />
+
+            {/* Desktop checkout buttons */}
+            <div className="hidden md:flex gap-3">
+              <Button variant="outline" asChild className="flex-1">
+                <Link href="/categories">
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Browse Categories
+                </Link>
+              </Button>
+              <Button
+                className="flex-1"
+                onClick={handleCheckout}
+                disabled={isProcessing || codProcessing}
+              >
+                {isProcessing || codProcessing ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Processing…
+                  </>
+                ) : paymentMethod === "CASH_ON_DELIVERY" ? (
+                  <>
+                    <Banknote className="mr-2 h-4 w-4" />
+                    Place Order (COD)
+                  </>
+                ) : (
+                  <>
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    Pay ₹{finalTotal.toFixed(0)}
+                  </>
+                )}
+              </Button>
+            </div>
+            {paymentResult && !paymentResult.success && (
+              <div className="rounded-lg border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm text-destructive text-center">
+                {paymentResult.error || "Payment failed. Please try again."}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile fixed bottom checkout bar */}
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background p-4 md:hidden">
+          <Button
+            className="w-full"
+            size="lg"
+            onClick={handleCheckout}
+            disabled={isProcessing || codProcessing}
+          >
+            {isProcessing || codProcessing ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing…
+              </>
+            ) : !deliveryAddress ? (
+              <>
+                <MapPin className="mr-2 h-4 w-4" />
+                Add Address to Proceed
+              </>
+            ) : paymentMethod === "CASH_ON_DELIVERY" ? (
+              <>
+                <Banknote className="mr-2 h-4 w-4" />
+                Place Order (COD) — ₹{finalTotal.toFixed(0)}
+              </>
+            ) : (
+              <>
+                <CreditCard className="mr-2 h-4 w-4" />
+                Pay ₹{finalTotal.toFixed(0)}
+              </>
+            )}
+          </Button>
         </div>
       </div>
 

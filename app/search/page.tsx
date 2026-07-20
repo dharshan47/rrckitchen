@@ -11,7 +11,7 @@ export default function SearchPage() {
 
 function SearchFallback() {
   return (
-    <main className="w-full px-4 py-8 lg:mx-auto lg:max-w-7xl">
+    <main className="w-full px-4 py-8 mx-auto max-w-5xl">
       <div className="animate-pulse space-y-6">
         <div className="h-8 w-48 bg-muted rounded-lg" />
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6">

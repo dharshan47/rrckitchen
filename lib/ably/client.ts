@@ -19,6 +19,17 @@ export function getAblyClient(params?: {
       authUrl: `/api/ably-token?${qs.toString()}`,
       authMethod: "GET",
     })
+
+    ablyClient.connection.on((stateChange) => {
+      if (stateChange.previous === "connecting" && stateChange.current === "disconnected") {
+        console.warn("[Ably] Connection failed, will retry on next request")
+      }
+      if (stateChange.current === "failed") {
+        console.error("[Ably] Connection failed permanently")
+        ablyClient?.close()
+        ablyClient = null
+      }
+    })
   }
   return ablyClient
 }

@@ -78,24 +78,48 @@ function KitchenSkeleton() {
 function MenuCard({ item, onRemove, isRemoving }: { item: MenuWishlistItem; onRemove: (id: string) => void; isRemoving: boolean }) {
   return (
     <div className="flex flex-col rounded-xl border border-border p-3 hover:border-primary/30 transition-colors">
-      <Link href={`/menu/${item.menuItem.slug ?? item.menuItem.id}`} className="shrink-0">
-        <div className="w-full aspect-square rounded-lg bg-muted flex items-center justify-center overflow-hidden mb-2">
-          {item.menuItem.photos[0]?.imageUrl ? (
-            <Image src={item.menuItem.photos[0].imageUrl} alt="" width={200} height={200} className="h-full w-full object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
-          ) : (
-            <UtensilsCrossed className="h-8 w-8 text-muted-foreground/40" />
-          )}
+      {item.menuItem.slug ? (
+        <Link href={`/menu/${item.menuItem.slug}`} className="shrink-0">
+          <div className="w-full aspect-square rounded-lg bg-muted flex items-center justify-center overflow-hidden mb-2">
+            {item.menuItem.photos[0]?.imageUrl ? (
+              <Image src={item.menuItem.photos[0].imageUrl} alt="" width={200} height={200} className="h-full w-full object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
+            ) : (
+              <UtensilsCrossed className="h-8 w-8 text-muted-foreground/40" />
+            )}
+          </div>
+        </Link>
+      ) : (
+        <div className="shrink-0">
+          <div className="w-full aspect-square rounded-lg bg-muted flex items-center justify-center overflow-hidden mb-2">
+            {item.menuItem.photos[0]?.imageUrl ? (
+              <Image src={item.menuItem.photos[0].imageUrl} alt="" width={200} height={200} className="h-full w-full object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
+            ) : (
+              <UtensilsCrossed className="h-8 w-8 text-muted-foreground/40" />
+            )}
+          </div>
         </div>
-      </Link>
-      <Link href={`/menu/${item.menuItem.slug ?? item.menuItem.id}`} className="flex-1 min-w-0">
-        <p className="text-sm font-medium truncate">{item.menuItem.name}</p>
-        <p className="text-xs text-muted-foreground">
-          <span className="font-semibold text-primary">₹{item.menuItem.price}</span> · {item.menuItem.foodType}
-        </p>
-        <p className="text-xs text-muted-foreground truncate mt-0.5">
-          {item.menuItem.menu?.kitchenPartner?.kitchenAlias?.displayName ?? ""}
-        </p>
-      </Link>
+      )}
+      {item.menuItem.slug ? (
+        <Link href={`/menu/${item.menuItem.slug}`} className="flex-1 min-w-0">
+          <p className="text-sm font-medium truncate">{item.menuItem.name}</p>
+          <p className="text-xs text-muted-foreground">
+            <span className="font-semibold text-primary">₹{item.menuItem.price}</span> · {item.menuItem.foodType}
+          </p>
+          <p className="text-xs text-muted-foreground truncate mt-0.5">
+            {item.menuItem.menu?.kitchenPartner?.kitchenAlias?.displayName ?? ""}
+          </p>
+        </Link>
+      ) : (
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-medium truncate">{item.menuItem.name}</p>
+          <p className="text-xs text-muted-foreground">
+            <span className="font-semibold text-primary">₹{item.menuItem.price}</span> · {item.menuItem.foodType}
+          </p>
+          <p className="text-xs text-muted-foreground truncate mt-0.5">
+            {item.menuItem.menu?.kitchenPartner?.kitchenAlias?.displayName ?? ""}
+          </p>
+        </div>
+      )}
       <button
         onClick={() => onRemove(item.menuItem.id)}
         disabled={isRemoving}
@@ -118,7 +142,7 @@ function KitchenCard({ item, onRemove, isRemoving }: { item: KitchenWishlistItem
         <div className="h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center mb-2">
           <ChefHat className="h-7 w-7 text-primary" />
         </div>
-        <p className="text-sm font-medium truncate w-full">{alias?.displayName ?? kitchen.user.name ?? "Kitchen"}</p>
+        <p className="text-sm font-medium truncate w-full">{alias?.displayName ?? kitchen.user.name ?? ""}</p>
         {address && (
           <p className="text-xs text-muted-foreground flex items-center gap-1 justify-center mt-0.5">
             <MapPin className="h-3 w-3 shrink-0" /> {address.lineOne}

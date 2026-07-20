@@ -56,12 +56,22 @@ export async function GET(req: Request) {
     capability[`user:${session.user.id}`] = ["subscribe"]
   }
 
-  const ably = getAblyRest()
-  const tokenRequest = await ably.auth.createTokenRequest({
-    clientId: session.user.id,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    capability: capability as any,
-  })
+  if (!process.env.ABLY_API_KEY) {
+    return new Response("Ably API key not configured", { status: 500 })
+  }
 
-  return Response.json(tokenRequest)
+  try {
+    const ably = getAblyRest()
+    const tokenRequest = await ably.auth.createTokenRequest({
+      clientId: session.user.id,
+      ttl: 15 * 60 * 1000,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      capability: capability as any,
+    })
+
+    return Response.json(tokenRequest)
+  } catch (error) {
+    console.error("[Ably Token] Failed to create token request:", error)
+    return new Response("Failed to create Ably token", { status: 500 })
+  }
 }

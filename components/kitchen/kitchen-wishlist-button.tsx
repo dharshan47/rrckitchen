@@ -86,11 +86,12 @@ export function KitchenWishlistButton({ kitchenPartnerId, className, size = "sm"
       <Heart
         className={cn(
           iconSizes[size],
-          "transition-all drop-shadow-sm",
+          "transition-all",
           isFavorite
             ? "fill-rose-500 text-rose-500"
-            : "text-white/80 hover:text-rose-400"
+            : "text-white hover:text-rose-400"
         )}
+        style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.75))" }}
       />
     </button>
   );

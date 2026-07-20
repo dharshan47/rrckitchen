@@ -38,7 +38,7 @@ export async function GET() {
       return {
         id: k.id,
         slug: k.slug,
-        displayName: k.kitchenAlias?.displayName ?? "Home Kitchen",
+        displayName: k.kitchenAlias?.displayName ?? "",
         imageUrl: firstItemPhoto,
         totalOrders: k._count.orderItems,
         itemCount: allItems.length,

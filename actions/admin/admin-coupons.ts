@@ -59,7 +59,7 @@ export async function getSimpleKitchenPartners() {
 
   return partners.map((p) => ({
     id: p.id,
-    name: p.kitchenAlias?.displayName ?? "Unknown",
+    name: p.kitchenAlias?.displayName ?? "",
   }))
 }
 

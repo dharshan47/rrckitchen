@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { ProgressiveImage } from "@/components/patterns/progressive-image";
 import { WishlistButton as WishlistBtn } from "@/components/menu/wishlist-button";
 import { cn } from "@/lib/utils";
+import { Minus, Plus } from "lucide-react";
+import { useCartItems, useCartActions } from "@/stores";
 
 
 interface MenuCardItem {
@@ -190,9 +192,28 @@ function RatingBadge({ rating, count }: { rating: number; count: number }) {
 function Header() {
   const ctx = useMenuCardContext();
   const { item, discount, onAddToCart, onShowAddPopup } = ctx;
+  const cartItems = useCartItems();
+  const { updateQuantity, removeFromCart } = useCartActions();
+
+  const cartItem = cartItems.find(ci => ci.id === item.id);
+
   const handleAddClick = onShowAddPopup
     ? (e: React.MouseEvent) => { e.stopPropagation(); onShowAddPopup(item); }
     : (e: React.MouseEvent) => { e.stopPropagation(); onAddToCart(item.id); };
+
+  const handleDecrement = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (cartItem!.qty <= 1) {
+      removeFromCart(item.id);
+    } else {
+      updateQuantity(item.id, cartItem!.qty - 1);
+    }
+  };
+
+  const handleIncrement = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    updateQuantity(item.id, cartItem!.qty + 1);
+  };
   
   return (
     <div className="px-3 pb-4 pt-1.5">
@@ -218,28 +239,48 @@ function Header() {
         </h3>
 
         {/* Price & Add Button Row */}
-        <div className="mt-2 flex items-center justify-between gap-1.5">
-          <div className="flex items-center gap-1.5 min-w-0 shrink">
+        <div className="mt-2 flex items-center justify-between gap-1">
+          <div className="flex items-center gap-1 shrink-0 min-w-0 max-w-[60%]">
             {item.compareAtPrice != null ? (
               <>
-                <div className="rounded-md bg-[#EE7005] px-1.5 py-0.5 text-xs font-black text-white shadow-sm shrink-0">
+                <div className="rounded-md bg-[#EE7005] px-1 py-0.5 text-[11px] font-black text-white shadow-sm whitespace-nowrap">
                   ₹{item.price}
                 </div>
-                <span className="text-xs font-medium text-muted-foreground line-through shrink-0">₹{discount}</span>
+                <span className="text-[11px] font-medium text-muted-foreground line-through whitespace-nowrap">₹{discount}</span>
               </>
             ) : (
-              <span className="text-sm font-black text-foreground">₹{item.price}</span>
+              <span className="text-sm font-black text-foreground truncate">₹{item.price}</span>
             )}
           </div>
-          
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-7 shrink-0 rounded-lg font-bold border-[#EE7005] text-[#EE7005] px-2.5 text-xs hover:text-[#EE7005]"
-            onClick={handleAddClick}
-          >
-            Add
-          </Button>
+
+          {cartItem ? (
+            <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+              <button
+                onClick={handleDecrement}
+                className="h-8 w-8 md:h-7 md:w-7 flex items-center justify-center rounded border border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                aria-label="Decrease quantity"
+              >
+                <Minus className="h-4 w-4 md:h-3 md:w-3" />
+              </button>
+              <span className="w-7 md:w-6 text-center text-sm md:text-xs font-bold text-[#EE7005]">{cartItem.qty}</span>
+              <button
+                onClick={handleIncrement}
+                className="h-8 w-8 md:h-7 md:w-7 flex items-center justify-center rounded border border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                aria-label="Increase quantity"
+              >
+                <Plus className="h-4 w-4 md:h-3 md:w-3" />
+              </button>
+            </div>
+          ) : (
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-8 md:h-7 shrink-0 rounded-lg font-bold border-[#EE7005] text-[#EE7005] px-3 md:px-2.5 text-xs hover:text-[#EE7005]"
+              onClick={handleAddClick}
+            >
+              Add
+            </Button>
+          )}
         </div>
       </div>
     </div>

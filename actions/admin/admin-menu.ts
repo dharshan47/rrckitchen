@@ -43,7 +43,7 @@ export async function getAllMenuItems() {
     isAvailable: item.isAvailable,
     photos: item.photos.map((p) => ({ id: p.id, imageUrl: p.imageUrl })),
     menuName: item.menu.name,
-    kitchenName: item.menu.kitchenPartner.kitchenAlias?.displayName ?? "Home Kitchen",
+    kitchenName: item.menu.kitchenPartner.kitchenAlias?.displayName ?? "",
     createdAt: item.createdAt,
   }))
 }

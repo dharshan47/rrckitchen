@@ -4,7 +4,7 @@ import { useState, useCallback, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ProgressiveImage } from "@/components/patterns/progressive-image";
-import { useCartActions, useMenuDeliveryAddress } from "@/stores";
+import { useCartActions, useCartItems, useMenuDeliveryAddress } from "@/stores";
 import { formatTimeSlot, createBadgeVariant } from "@/lib/patterns";
 import { LocationDialog } from "@/components/location";
 import {
@@ -19,6 +19,8 @@ import {
   Search,
   TruckIcon,
   Share2,
+  Minus,
+  Plus,
 } from "lucide-react";
 import Link from "next/link";
 import { WishlistButton } from "@/components/menu/wishlist-button";
@@ -59,7 +61,9 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
   const [touchStart, setTouchStart] = useState<number | null>(null);
   const [popupItem, setPopupItem] = useState<AddPopupItem | null>(null);
   const [popupOpen, setPopupOpen] = useState(false);
-  const addToCart = useCartActions().addToCart;
+  const { addToCart, updateQuantity, removeFromCart } = useCartActions();
+  const cartItems = useCartItems();
+  const cartItem = cartItems.find(ci => ci.id === item.id);
   const deliveryAddress = useMenuDeliveryAddress();
   const imageSectionRef = useRef<HTMLDivElement>(null);
   const howToOrderRef = useRef<HTMLDivElement>(null);
@@ -67,7 +71,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
 
   const showDesktopCompact = passedContent && !atBottom;
 
-  const kitchenName = item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen";
+  const kitchenName = item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "";
   const hasMultiplePhotos = item.photos?.length > 1;
   const price = Number(item.price);
   const hasDiscount = item.compareAtPrice != null;
@@ -106,6 +110,20 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
     });
     setPopupOpen(true);
   }, [item, price, kitchenName, addToCart]);
+
+  const handleDecrement = useCallback(() => {
+    if (!cartItem) return;
+    if (cartItem.qty <= 1) {
+      removeFromCart(item.id);
+    } else {
+      updateQuantity(item.id, cartItem.qty - 1);
+    }
+  }, [cartItem, item.id, updateQuantity, removeFromCart]);
+
+  const handleIncrement = useCallback(() => {
+    if (!cartItem) return;
+    updateQuantity(item.id, cartItem.qty + 1);
+  }, [cartItem, item.id, updateQuantity]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setTouchStart(e.touches[0].clientX);
@@ -330,14 +348,34 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">(incl. of all taxes)</p>
                 </div>
-                <Button
-                  size="default"
-                  className="rounded-full px-6 h-11 hidden md:inline-flex"
-                  onClick={handleAddToCart}
-                >
-                  <ShoppingCart className="h-4 w-4 mr-1.5" />
-                  Add to Cart
-                </Button>
+                {cartItem ? (
+                  <div className="hidden md:flex items-center gap-2">
+                    <button
+                      onClick={handleDecrement}
+                      className="h-9 w-9 flex items-center justify-center rounded-full border border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                      aria-label="Decrease quantity"
+                    >
+                      <Minus className="h-4 w-4" />
+                    </button>
+                    <span className="w-8 text-center text-base font-bold text-[#EE7005]">{cartItem.qty}</span>
+                    <button
+                      onClick={handleIncrement}
+                      className="h-9 w-9 flex items-center justify-center rounded-full border border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                      aria-label="Increase quantity"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <Button
+                    size="default"
+                    className="rounded-full px-6 h-11 hidden md:inline-flex"
+                    onClick={handleAddToCart}
+                  >
+                    <ShoppingCart className="h-4 w-4 mr-1.5" />
+                    Add to Cart
+                  </Button>
+                )}
               </div>
             </div>
 
@@ -551,14 +589,34 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
               >
                 <Share2 className="h-4 w-4" />
               </button>
-              <Button
-                size="default"
-                className="rounded-full px-6 h-10"
-                onClick={handleAddToCart}
-              >
-                <ShoppingCart className="h-4 w-4 mr-1.5" />
-                Add to Cart
-              </Button>
+              {cartItem ? (
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDecrement(); }}
+                    className="h-8 w-8 flex items-center justify-center rounded-full border border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                    aria-label="Decrease quantity"
+                  >
+                    <Minus className="h-4 w-4" />
+                  </button>
+                  <span className="w-6 text-center text-sm font-bold text-[#EE7005]">{cartItem.qty}</span>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleIncrement(); }}
+                    className="h-8 w-8 flex items-center justify-center rounded-full border border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                    aria-label="Increase quantity"
+                  >
+                    <Plus className="h-4 w-4" />
+                  </button>
+                </div>
+              ) : (
+                <Button
+                  size="default"
+                  className="rounded-full px-6 h-10"
+                  onClick={handleAddToCart}
+                >
+                  <ShoppingCart className="h-4 w-4 mr-1.5" />
+                  Add to Cart
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -579,14 +637,34 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
               )}
             </div>
           </div>
-          <Button
-            size="default"
-            className="rounded-full px-8 h-11 shrink-0"
-            onClick={handleAddToCart}
-          >
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            Add to Cart
-          </Button>
+          {cartItem ? (
+            <div className="flex items-center gap-3 shrink-0">
+              <button
+                onClick={handleDecrement}
+                className="h-10 w-10 flex items-center justify-center rounded-full border-2 border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                aria-label="Decrease quantity"
+              >
+                <Minus className="h-5 w-5" />
+              </button>
+              <span className="w-8 text-center text-lg font-bold text-[#EE7005]">{cartItem.qty}</span>
+              <button
+                onClick={handleIncrement}
+                className="h-10 w-10 flex items-center justify-center rounded-full border-2 border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                aria-label="Increase quantity"
+              >
+                <Plus className="h-5 w-5" />
+              </button>
+            </div>
+          ) : (
+            <Button
+              size="default"
+              className="rounded-full px-8 h-11 shrink-0"
+              onClick={handleAddToCart}
+            >
+              <ShoppingCart className="h-4 w-4 mr-2" />
+              Add to Cart
+            </Button>
+          )}
         </div>
       </div>
 

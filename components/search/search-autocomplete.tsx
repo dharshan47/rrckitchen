@@ -17,6 +17,7 @@ interface SearchItem {
   foodType: string
   kitchenName: string
   kitchenId: string | null
+  kitchenSlug?: string
   imageUrl: string | null
 }
 
@@ -77,6 +78,7 @@ export function SearchAutocomplete({
 
   useEffect(() => {
     setQuery(defaultValue)
+    if (defaultValue) setDismissCount(c => c + 1)
   }, [defaultValue])
 
   useEffect(() => {
@@ -146,6 +148,10 @@ export function SearchAutocomplete({
       setDismissCount(c => c + 1)
       onNavigate?.()
       if (type === "item") {
+        if (mobileModal) {
+          setShowMobileModal(false)
+          setQuery("")
+        }
         router.push(`/search?q=${encodeURIComponent(itemName ?? "")}`)
       } else {
         setQuery("")

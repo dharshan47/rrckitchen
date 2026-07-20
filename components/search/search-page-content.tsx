@@ -10,6 +10,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { SearchAutocomplete } from "@/components/search/search-autocomplete"
 import { getRecentKitchens, addRecentKitchen } from "@/lib/recent-searches"
+import { KitchenWishlistButton } from "@/components/kitchen/kitchen-wishlist-button"
 import { cn } from "@/lib/utils"
 import {
   DropdownMenu,
@@ -29,6 +30,7 @@ interface SearchItem {
   timeSlot: string
   kitchenName: string
   kitchenId: string | null
+  kitchenSlug?: string
   imageUrl: string | null
 }
 
@@ -39,6 +41,7 @@ interface SearchKitchen {
   imageUrl: string | null
   avgRating: number
   totalReviews: number
+  cuisineTags: string[]
   items: { id: string; name: string; price: number; imageUrl: string | null }[]
 }
 
@@ -201,13 +204,13 @@ export function SearchPageContent() {
       const kid = item.kitchenId ?? "unknown"
       if (!groups.has(kid)) {
         const k = kitchens.find((k) => k.id === kid)
-        const nameSlug = item.kitchenName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+        const slug = k?.slug ?? item.kitchenSlug ?? item.kitchenName.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
         groups.set(kid, {
           kitchenId: kid,
           kitchenName: item.kitchenName,
           avgRating: k?.avgRating ?? 0,
           totalReviews: k?.totalReviews ?? 0,
-          slug: k?.slug ?? nameSlug,
+          slug,
           items: [],
         })
       }
@@ -239,7 +242,7 @@ export function SearchPageContent() {
   }, [kitchens, kitchenSort])
 
   return (
-    <main className="w-full px-4 py-8 lg:mx-auto lg:max-w-7xl">
+    <main className="w-full px-4 py-8 mx-auto max-w-5xl">
       <div className="mb-6">
         <SearchAutocomplete
           placeholder="Search meals..."
@@ -324,7 +327,7 @@ export function SearchPageContent() {
               ) : (
                 <h2 className="text-lg font-bold flex items-center gap-2">
                   <UtensilsCrossed className="h-5 w-5 text-primary" />
-                  Kitchens
+                  Kitchens to explore
                   <span className="text-sm font-normal text-muted-foreground">({sortedKitchens.length})</span>
                 </h2>
               )}
@@ -372,18 +375,18 @@ export function SearchPageContent() {
                           onClick={(e) => {
                             e.preventDefault()
                             e.stopPropagation()
-                            router.push(`/menu/${item.slug ?? item.id}`)
+                            if (item.slug) router.push(`/menu/${item.slug}`)
                           }}
                           className="flex flex-col items-center gap-1.5 cursor-pointer group"
                         >
-                          <div className="h-28 w-28 sm:h-32 sm:w-32 rounded-xl bg-muted flex items-center justify-center overflow-hidden relative group-hover:ring-2 group-hover:ring-primary transition-all">
+                          <div className="h-24 w-24 sm:h-28 sm:w-28 lg:h-24 lg:w-24 rounded-xl bg-muted flex items-center justify-center overflow-hidden relative group-hover:ring-2 group-hover:ring-primary transition-all">
                             {item.imageUrl ? (
-                              <Image src={item.imageUrl} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform" sizes="128px" />
+                              <Image src={item.imageUrl} alt={item.name} fill className="object-cover group-hover:scale-105 transition-transform" sizes="112px" />
                             ) : (
-                              <UtensilsCrossed className="h-10 w-10 text-muted-foreground/40" />
+                              <UtensilsCrossed className="h-8 w-8 sm:h-10 sm:w-10 text-muted-foreground/40" />
                             )}
                           </div>
-                          <p className="text-sm font-medium text-center line-clamp-1 w-28 sm:w-32">{item.name}</p>
+                          <p className="text-sm font-medium text-center line-clamp-1 w-24 sm:w-28 lg:w-24">{item.name}</p>
                           <p className="text-sm font-semibold text-primary">₹{item.price}</p>
                         </div>
                       ))}
@@ -403,52 +406,53 @@ export function SearchPageContent() {
 
           {activeTab === "kitchens" && sortedKitchens.length > 0 && (
             <section>
-              <div className="space-y-4">
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {sortedKitchens.map((kitchen) => (
                   <Link
                     key={kitchen.id}
                     href={`/kitchen/${kitchen.slug}${q ? `?q=${encodeURIComponent(q)}` : ""}`}
                     onClick={() => addRecentKitchen({ id: kitchen.id, slug: kitchen.slug, name: kitchen.displayName })}
-                    className="block rounded-xl border border-border bg-card overflow-hidden hover:shadow-md transition-shadow"
+                    className="flex flex-col hover:opacity-80 transition-opacity"
                   >
-                    <div className="p-4 pb-3">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <h3 className="font-bold text-base">{kitchen.displayName}</h3>
-                          {kitchen.avgRating > 0 && (
-                            <div className="flex items-center gap-1.5 mt-1">
-                              <div className="flex items-center gap-0.5 rounded-sm bg-green-700 px-1 py-0.5">
-                                <Star className="h-3 w-3 fill-white text-white" />
-                                <span className="text-xs font-bold text-white">{Number(kitchen.avgRating).toFixed(1)}</span>
-                              </div>
-                              <span className="text-xs text-muted-foreground">
-                                {kitchen.totalReviews} ratings
-                              </span>
-                            </div>
-                          )}
+                    <div className="relative rounded-xl overflow-hidden">
+                      {kitchen.imageUrl ? (
+                        <div className="h-36 sm:h-44 w-full bg-muted">
+                          <Image src={kitchen.imageUrl} alt={kitchen.displayName} fill className="object-cover" sizes="(max-width: 768px) 50vw, 33vw" />
                         </div>
-                        <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
+                      ) : (
+                        <div className="h-20 w-full" />
+                      )}
+                      <div className="absolute top-2 right-2 z-10">
+                        <KitchenWishlistButton
+                          kitchenPartnerId={kitchen.id}
+                          className="p-0 min-h-0 min-w-0 bg-transparent"
+                          size="sm"
+                        />
                       </div>
                     </div>
-                    {kitchen.items?.length > 0 && (
-                      <div className="flex flex-wrap gap-3 px-4 pb-4 justify-center sm:justify-start">
-                        {kitchen.items.map((mi) => (
-                          <div
-                            key={mi.id}
-                            className="flex flex-col items-center gap-1.5 group"
-                          >
-                            <div className="h-28 w-28 sm:h-32 sm:w-32 rounded-xl bg-muted flex items-center justify-center overflow-hidden relative group-hover:ring-2 group-hover:ring-primary transition-all">
-                              {mi.imageUrl ? (
-                                <Image src={mi.imageUrl} alt={mi.name} fill className="object-cover group-hover:scale-105 transition-transform" sizes="128px" />
-                              ) : (
-                                <UtensilsCrossed className="h-10 w-10 text-muted-foreground/40" />
-                              )}
-                            </div>
-                            <p className="text-sm font-medium text-center line-clamp-1 w-28 sm:w-32">{mi.name}</p>
+                    <div className="pt-2 flex-1 flex flex-col gap-1">
+                      <h3 className="font-bold text-sm truncate">{kitchen.displayName}</h3>
+                      {kitchen.cuisineTags?.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {kitchen.cuisineTags.map((tag) => (
+                            <span key={tag} className="text-[11px] text-muted-foreground px-1.5 py-0.5">
+                              {tag}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {kitchen.avgRating > 0 && (
+                        <div className="flex items-center gap-1.5">
+                          <div className="flex items-center gap-0.5 rounded-sm bg-green-700 px-1 py-0.5">
+                            <Star className="h-3 w-3 fill-white text-white" />
+                            <span className="text-xs font-bold text-white">{Number(kitchen.avgRating).toFixed(1)}</span>
                           </div>
-                        ))}
-                      </div>
-                    )}
+                          <span className="text-xs text-muted-foreground whitespace-nowrap">
+                            {kitchen.totalReviews}
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </Link>
                 ))}
               </div>

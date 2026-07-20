@@ -56,6 +56,7 @@ export async function GET(request: Request) {
             kitchenPartner: {
               select: {
                 id: true,
+                slug: true,
                 kitchenAlias: { select: { displayName: true } },
               },
             },
@@ -72,7 +73,7 @@ export async function GET(request: Request) {
     }),
     prisma.kitchenPartner.findMany({
       where: {
-        status: "APPROVED",
+        status: { in: ["APPROVED", "ACTIVE"] },
         OR: [
           {
             kitchenAlias: {
@@ -103,6 +104,9 @@ export async function GET(request: Request) {
         avgRating: true,
         totalReviews: true,
         kitchenAlias: { select: { displayName: true } },
+        kitchenCategories: {
+          select: { category: { select: { name: true } } },
+        },
       },
       take: 5,
       orderBy: { avgRating: "desc" },
@@ -118,9 +122,14 @@ export async function GET(request: Request) {
             isActive: true,
             kitchenPartnerId: { in: kitchenIds },
           },
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { description: { contains: search, mode: "insensitive" } },
+          ],
         },
         select: {
           id: true,
+          slug: true,
           name: true,
           price: true,
           menu: { select: { kitchenPartnerId: true } },
@@ -134,7 +143,7 @@ export async function GET(request: Request) {
       })
     : []
 
-  const itemsByKitchen = new Map<string, { id: string; name: string; price: number; imageUrl: string | null }[]>()
+  const itemsByKitchen = new Map<string, { id: string; slug?: string; name: string; price: number; imageUrl: string | null }[]>()
   for (const mi of kitchenMenuItems) {
     const kid = mi.menu.kitchenPartnerId
     if (!itemsByKitchen.has(kid)) itemsByKitchen.set(kid, [])
@@ -142,6 +151,7 @@ export async function GET(request: Request) {
     if (arr.length < 4) {
       arr.push({
         id: mi.id,
+        slug: mi.slug ?? undefined,
         name: mi.name,
         price: Number(mi.price),
         imageUrl: mi.photos[0]?.imageUrl ?? null,
@@ -152,25 +162,27 @@ export async function GET(request: Request) {
   const result = {
     dishes: dishes.map((item) => ({
       id: item.id,
-      slug: item.slug ?? undefined,
+        slug: item.slug || slugify(item.name, { lower: true, strict: true }),
       name: item.name,
       price: Number(item.price),
       compareAtPrice: item.compareAtPrice ? Number(item.compareAtPrice) : null,
       foodType: item.foodType,
       timeSlot: item.timeSlot,
-      kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Local kitchen",
+      kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "",
       kitchenId: item.menu?.kitchenPartner?.id ?? null,
+      kitchenSlug: item.menu?.kitchenPartner?.slug ?? undefined,
       imageUrl: item.photos[0]?.imageUrl ?? null,
     })),
     kitchens: kitchenRows.map((k) => {
       const kitchenItems = itemsByKitchen.get(k.id) ?? []
-      const displayName = k.kitchenAlias?.displayName ?? "Unknown Kitchen"
+      const displayName = k.kitchenAlias?.displayName ?? ""
       return {
         id: k.id,
         slug: k.slug || slugify(displayName, { lower: true, strict: true }),
         displayName,
         avgRating: Number(k.avgRating),
         totalReviews: k.totalReviews,
+        cuisineTags: k.kitchenCategories.map((kc) => kc.category.name),
         imageUrl: kitchenItems[0]?.imageUrl ?? null,
         items: kitchenItems,
       }

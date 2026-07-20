@@ -140,7 +140,7 @@ export async function getMenuItemBySlug(slug: string) {
 async function _getMenuItemBySlug(slug: string) {
   'use cache';
   cacheLife('hours');
-  const item = await prisma.menuItem.findFirst({
+  let item = await prisma.menuItem.findFirst({
     where: {
       slug,
       isAvailable: true,
@@ -156,6 +156,25 @@ async function _getMenuItemBySlug(slug: string) {
       _count: { select: { orderItems: true } },
     },
   });
+
+  if (!item) {
+    item = await prisma.menuItem.findFirst({
+      where: {
+        id: slug,
+        isAvailable: true,
+        menu: { isActive: true },
+      },
+      include: {
+        menu: {
+          include: {
+            kitchenPartner: { include: { kitchenAlias: true } },
+          },
+        },
+        photos: { orderBy: { sortOrder: "asc" } },
+        _count: { select: { orderItems: true } },
+      },
+    });
+  }
 
   if (!item) return null;
 

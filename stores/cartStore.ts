@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
-import { subscribeWithSelector } from "zustand/middleware";
+import { subscribeWithSelector, persist } from "zustand/middleware";
 import { globalEventBus, AppEvents } from "@/lib/patterns/event-bus";
 
 export interface CartItem {
@@ -56,52 +56,57 @@ export const selectCartCoupon = (s: CartState) => s.appliedCoupon;
 export const selectCartOrderType = (s: CartState) => s.orderType;
 
 export const cartStore = create<CartState>()(
-  subscribeWithSelector((set) => ({
-    cart: [],
-    appliedCoupon: null,
-    orderType: "PREBOOK" as OrderType,
-    setOrderType: (type: OrderType) => set({ orderType: type }),
-    addToCart: (item: CartItem) => {
-      set((state) => {
-        const existing = state.cart.find((cartItem) => cartItem.id === item.id);
-        if (existing) {
-          return {
-            cart: state.cart.map((cartItem) =>
-              cartItem.id === item.id
-                ? { ...cartItem, qty: cartItem.qty + item.qty }
-                : cartItem
+  subscribeWithSelector(
+    persist(
+      (set) => ({
+        cart: [],
+        appliedCoupon: null,
+        orderType: "PREBOOK" as OrderType,
+        setOrderType: (type: OrderType) => set({ orderType: type }),
+        addToCart: (item: CartItem) => {
+          set((state) => {
+            const existing = state.cart.find((cartItem) => cartItem.id === item.id);
+            if (existing) {
+              return {
+                cart: state.cart.map((cartItem) =>
+                  cartItem.id === item.id
+                    ? { ...cartItem, qty: cartItem.qty + item.qty }
+                    : cartItem
+                ),
+              };
+            }
+            return { cart: [...state.cart, item] };
+          });
+          globalEventBus.emit(AppEvents.CART_UPDATED, { action: "add", item });
+        },
+        removeFromCart: (id: string) => {
+          set((state) => ({ cart: state.cart.filter((item) => item.id !== id) }));
+          globalEventBus.emit(AppEvents.CART_UPDATED, { action: "remove", id });
+        },
+        updateQuantity: (id: string, qty: number) => {
+          set((state) => ({
+            cart: state.cart.map((item) =>
+              item.id === id ? { ...item, qty: qty < 1 ? 1 : qty } : item
             ),
-          };
-        }
-        return { cart: [...state.cart, item] };
-      });
-      globalEventBus.emit(AppEvents.CART_UPDATED, { action: "add", item });
-    },
-    removeFromCart: (id: string) => {
-      set((state) => ({ cart: state.cart.filter((item) => item.id !== id) }));
-      globalEventBus.emit(AppEvents.CART_UPDATED, { action: "remove", id });
-    },
-    updateQuantity: (id: string, qty: number) => {
-      set((state) => ({
-        cart: state.cart.map((item) =>
-          item.id === id ? { ...item, qty: qty < 1 ? 1 : qty } : item
-        ),
-      }));
-      globalEventBus.emit(AppEvents.CART_UPDATED, { action: "update-qty", id, qty });
-    },
-    clearCart: () => {
-      set({ cart: [], appliedCoupon: null });
-      globalEventBus.emit(AppEvents.CART_UPDATED, { action: "clear" });
-    },
-    applyCoupon: (coupon: AppliedCoupon) => {
-      set({ appliedCoupon: coupon });
-      globalEventBus.emit(AppEvents.CART_UPDATED, { action: "apply-coupon", coupon });
-    },
-    removeCoupon: () => {
-      set({ appliedCoupon: null });
-      globalEventBus.emit(AppEvents.CART_UPDATED, { action: "remove-coupon" });
-    },
-  }))
+          }));
+          globalEventBus.emit(AppEvents.CART_UPDATED, { action: "update-qty", id, qty });
+        },
+        clearCart: () => {
+          set({ cart: [], appliedCoupon: null });
+          globalEventBus.emit(AppEvents.CART_UPDATED, { action: "clear" });
+        },
+        applyCoupon: (coupon: AppliedCoupon) => {
+          set({ appliedCoupon: coupon });
+          globalEventBus.emit(AppEvents.CART_UPDATED, { action: "apply-coupon", coupon });
+        },
+        removeCoupon: () => {
+          set({ appliedCoupon: null });
+          globalEventBus.emit(AppEvents.CART_UPDATED, { action: "remove-coupon" });
+        },
+      }),
+      { name: "rrc-cart" }
+    )
+  )
 );
 
 // Stable hooks with fine-grained selectors

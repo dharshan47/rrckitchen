@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { ShoppingCart, Check } from "lucide-react";
+import { ShoppingCart, Check, ChevronRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 export interface AddPopupItem {
@@ -59,9 +60,13 @@ function BadgeVeg({ foodType }: { foodType: string }) {
   );
 }
 
-function CardContent({ item, qty }: { item: AddPopupItem; qty: number; onClose: () => void }) {
+function CardContent({ item, qty, onClose }: { item: AddPopupItem; qty: number; onClose: () => void }) {
   return (
-    <div className="rounded-lg bg-primary p-3 shadow-lg border border-primary/50">
+    <Link
+      href="/cart"
+      onClick={onClose}
+      className="block rounded-lg bg-primary p-3 shadow-lg hover:brightness-110 transition-all border border-primary/50"
+    >
       <div className="flex items-center gap-2.5">
         <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md bg-primary-foreground/20">
           {item.imageUrl ? (
@@ -85,7 +90,8 @@ function CardContent({ item, qty }: { item: AddPopupItem; qty: number; onClose: 
             ₹{item.price} · {qty} ITEM{qty > 1 ? "S" : ""}
           </p>
         </div>
+        <ChevronRight className="h-5 w-5 text-primary-foreground/60 shrink-0 ml-1" />
       </div>
-    </div>
+    </Link>
   );
 }

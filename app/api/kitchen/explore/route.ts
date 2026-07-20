@@ -73,8 +73,8 @@ export async function GET(request: Request) {
 
       return {
         id: k.id,
-        slug: k.slug || slugify(k.kitchenAlias?.displayName ?? "home-kitchen", { lower: true, strict: true }),
-        displayName: k.kitchenAlias?.displayName ?? "Home Kitchen",
+        slug: k.slug || slugify(k.kitchenAlias?.displayName ?? k.id, { lower: true, strict: true }),
+        displayName: k.kitchenAlias?.displayName ?? "",
         avgRating,
         totalReviews: k._count.reviews,
         imageUrl: firstItemPhoto,

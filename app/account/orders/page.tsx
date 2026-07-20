@@ -315,6 +315,13 @@ function OrderCard({ order, onCancel, onRateDelivery, onReview }: { order: UserO
       <div className="flex items-center justify-between border-t border-border px-4 py-3 bg-muted/10">
         <div className="flex items-center gap-3">
           <p className="text-sm font-semibold">Total: ₹{order.totalAmount}</p>
+          {(order.status === "READYFORPICKUP" || order.status === "COMPLETED") && (
+            <Button size="sm" variant="outline" className="h-7 text-xs gap-1" asChild>
+              <Link href={`/account/orders/${order.id}/track`}>
+                <Package className="h-3 w-3" /> Track Order
+              </Link>
+            </Button>
+          )}
           {canCancel && (
             <Button size="sm" variant="ghost" className="h-7 text-xs text-red-600" onClick={onCancel}>
               Cancel Order

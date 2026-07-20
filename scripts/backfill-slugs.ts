@@ -8,7 +8,7 @@ async function main() {
     include: { kitchenAlias: true },
   });
   for (const kitchen of kitchens) {
-    const base = kitchen.kitchenAlias?.displayName ?? "kitchen";
+    const base = kitchen.kitchenAlias?.displayName ?? kitchen.id;
     const slug = uniqueSlug(base, existingSlugs);
     await prisma.kitchenPartner.update({
       where: { id: kitchen.id },

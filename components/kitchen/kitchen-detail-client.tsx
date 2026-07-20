@@ -131,7 +131,9 @@ export function KitchenDetailClient({ kitchen, initialTimeSlot, initialSearchQue
   );
 
   const handleItemClick = useCallback(
-    (item: { id: string; slug?: string }) => router.push(`/menu/${item.slug ?? item.id}`),
+    (item: { id: string; slug?: string }) => {
+      if (item.slug) router.push(`/menu/${item.slug}`);
+    },
     [router],
   );
 

@@ -67,15 +67,32 @@ function LocationDialogInner({ onClose }: { onClose: () => void }) {
     setBusy(true)
     setError("")
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
-        setBusy(false)
+      async (pos) => {
         const { latitude, longitude } = pos.coords
         if (!isServiceable(latitude, longitude)) {
+          setBusy(false)
           setError("We are not serviceable at this location. Please select a different location.")
           return
         }
-        setDeliveryAddress("Current Location")
-        onClose()
+        try {
+          const res = await fetch(
+            `/api/geocode/reverse?lat=${latitude}&lon=${longitude}`
+          )
+          if (res.ok) {
+            const data = await res.json()
+            const address = data?.display_name
+              ? data.display_name
+              : `Location at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
+            setDeliveryAddress(address)
+          } else {
+            setDeliveryAddress(`Location at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
+          }
+        } catch {
+          setDeliveryAddress(`Location at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
+        } finally {
+          setBusy(false)
+          onClose()
+        }
       },
       (err) => {
         setBusy(false)

@@ -64,7 +64,7 @@ async function _getKitchenData() {
       return {
         id: k.id,
         slug: k.slug,
-        displayName: k.kitchenAlias?.displayName ?? "Home Kitchen",
+        displayName: k.kitchenAlias?.displayName ?? "",
         avgRating: avgRating ? Math.round(avgRating * 10) / 10 : null,
         totalReviews: k._count.reviews,
         imageUrl: null,
@@ -76,7 +76,7 @@ async function _getKitchenData() {
   const newKitchens = newKitchensData.map((k) => ({
     id: k.id,
     slug: k.slug,
-    displayName: k.kitchenAlias?.displayName ?? "New Kitchen",
+    displayName: k.kitchenAlias?.displayName ?? "",
     createdAt: k.createdAt.toISOString(),
     imageUrl: null,
   }));
@@ -109,7 +109,7 @@ export async function getRecentOrderKitchens(userId?: string) {
       kitchens.push({
         id: kp.id,
         slug: kp.slug,
-        displayName: kp.kitchenAlias?.displayName ?? "Home Kitchen",
+        displayName: kp.kitchenAlias?.displayName ?? "",
         imageUrl: null,
       });
     }
@@ -161,7 +161,7 @@ async function _getAllKitchensWithItems() {
     return {
       id: k.id,
       slug: k.slug,
-      displayName: k.kitchenAlias?.displayName ?? "Home Kitchen",
+      displayName: k.kitchenAlias?.displayName ?? "",
       avgRating,
       totalReviews: k._count.reviews,
       imageUrl: firstItemPhoto,
@@ -235,7 +235,7 @@ async function _getKitchenDetail(kitchenSlug: string) {
   return {
     id: kitchen.id,
     slug: kitchen.slug,
-    displayName: kitchen.kitchenAlias?.displayName ?? "Home Kitchen",
+    displayName: kitchen.kitchenAlias?.displayName ?? "",
     avgRating,
     totalReviews: kitchen._count.reviews,
     imageUrl: firstPhoto,
@@ -251,7 +251,7 @@ async function _getKitchenDetail(kitchenSlug: string) {
       timeSlot: i.timeSlot,
       imageUrl: i.photos[0]?.imageUrl ?? null,
       photos: i.photos.map((p) => ({ imageUrl: p.imageUrl, sortOrder: p.sortOrder })),
-      kitchenName: kitchen.kitchenAlias?.displayName ?? "Home Kitchen",
+      kitchenName: kitchen.kitchenAlias?.displayName ?? "",
       orderCount: i._count.orderItems,
       isBestseller: isBestseller(i._count.orderItems),
     })),
@@ -326,7 +326,7 @@ async function _getKitchensByCategory(categoryName: string) {
   return {
       id: k.id,
       slug: k.slug,
-      displayName: k.kitchenAlias?.displayName ?? "Home Kitchen",
+      displayName: k.kitchenAlias?.displayName ?? "",
       avgRating,
       totalReviews: k._count.reviews,
       imageUrl: firstItemPhoto,

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { User, ShoppingCart, Home, LayoutGrid, MapPin, ChevronDown, LogOut, Package, Bell, Search, HelpCircle } from "lucide-react";
 import { Badge } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -12,6 +12,8 @@ import { useSession, signOut } from "@/lib/auth-client";
 import dynamic from "next/dynamic";
 const LocationDialog = dynamic(() => import("@/components/location").then(m => m.LocationDialog), { ssr: false });
 import { SearchAutocomplete } from "@/components/search/search-autocomplete";
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -21,9 +23,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 const heroCards = [
-  { image: "/banners/become-chef.png", href: "/kitchen/signup", alt: "Become a Chef" },
-  { image: "/banners/fresh-daily.png", href: "/", alt: "Fresh Daily" },
-  { image: "/banners/delivery-with-us.png", href: "/delivery-partner/signup", alt: "Deliver With Us" },
+  { image: "/banners/womenchef.png", href: "/kitchen/signup", alt: "Become a Chef", title: "Become a Chef", subject: "Start your home kitchen and earn" },
+  { image: "/banners/fresh-cooked.png", href: "/", alt: "Fresh Daily", title: "Fresh Daily", subject: "Home-cooked meals delivered fresh" },
+  { image: "/banners/delivery with us.png", href: "/delivery-partner/signup", alt: "Deliver With Us", title: "Deliver With Us", subject: "Join as a delivery partner" },
+  { image: "/banners/tiffin-carrier.png", href: "/", alt: "Eco-Friendly Delivery", title: "Eco-Friendly Delivery", subject: "We deliver food in carriers, not plastic bags" },
+  { image: "/banners/become-chef.png", href: "/kitchen/signup", alt: "Weekend Special", title: "Weekend Special", subject: "Exclusive dishes every weekend" },
+  { image: "/banners/fresh-daily.png", href: "/", alt: "Family Meals", title: "Family Meals", subject: "Feast for the whole family" },
+  { image: "/banners/delivery-with-us.png", href: "/delivery-partner/signup", alt: "Healthy Eats", title: "Healthy Eats", subject: "Nutritious and delicious" },
+  { image: "/banners/become-chef.png", href: "/kitchen/signup", alt: "Chef Specials", title: "Chef Specials", subject: "Signature dishes from top chefs" },
+  { image: "/banners/fresh-daily.png", href: "/", alt: "Quick Bites", title: "Quick Bites", subject: "Fast and tasty meals on the go" },
+  { image: "/banners/delivery-with-us.png", href: "/delivery-partner/signup", alt: "Party Platters", title: "Party Platters", subject: "Perfect for gatherings and events" },
 ];
 
 function MobileNavItem({ href, icon, label, active = false, badge }: { href: string; icon: React.ReactNode; label: string; active?: boolean; badge?: number }) {
@@ -45,6 +54,7 @@ export function SiteHeader() {
   const deliveryAddress = useMenuDeliveryAddress();
   const { data: session } = useSession();
   const isLoggedIn = !!session?.user;
+
   const cartHref = isLoggedIn ? "/cart" : "/login";
 
   const isHomePage = pathname === "/";
@@ -57,8 +67,16 @@ export function SiteHeader() {
   const isCategoriesPage = pathname.startsWith("/categories");
   const hideNav = isMenuDetailPage || isAccountPage || isHelpPage || isSupportPage || isSearchPage || isCategoriesPage;
 
-  const [pastHero, setPastHero] = useState(!isHomePage);
+  const [heroInView, setHeroInView] = useState(true);
+  const [prevPath, setPrevPath] = useState(pathname);
+  if (pathname !== prevPath) {
+    setPrevPath(pathname);
+    setHeroInView(isHomePage);
+  }
+  const pastHero = !isHomePage || !heroInView;
   const [categoryFilterActive, setCategoryFilterActive] = useState(false);
+  const [carouselApi, setCarouselApi] = useState<CarouselApi | null>(null);
+  const autoplayPlugin = useMemo(() => Autoplay({ delay: 4000, stopOnInteraction: false }), []);
   const [notifGranted, setNotifGranted] = useState(() => {
     if (typeof Notification !== "undefined") {
       return Notification.permission === "granted";
@@ -83,10 +101,14 @@ export function SiteHeader() {
 
   useEffect(() => {
     if (!isHomePage) return;
-    const el = document.getElementById("food-time-heading");
+
+    const el = document.getElementById("hero-sentinel");
     if (!el) return;
+
     const observer = new IntersectionObserver(
-      ([entry]) => setPastHero(!entry.isIntersecting),
+      ([entry]) => {
+        setHeroInView(entry.isIntersecting);
+      },
       { threshold: 0 }
     );
     observer.observe(el);
@@ -167,7 +189,7 @@ export function SiteHeader() {
 
   return (
     <>
-      <div className={`${showHero ? '' : 'hidden '} bg-primary`}>
+      <div className={`bg-primary ${showHero ? '' : 'hidden'}`}>
         <div className="hidden md:block">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 h-20">
             <div className="flex items-center gap-10">
@@ -200,11 +222,13 @@ export function SiteHeader() {
                   <span className="text-[11px] font-semibold uppercase tracking-wider text-white group-hover:text-white/70 transition-colors">Login</span>
                 </Link>
               )}
-              <Link href={cartHref} className="flex flex-col items-center gap-0.5 group relative" aria-label="Shopping cart">
+              <Link href={cartHref} className="flex flex-col items-center gap-0.5 group relative" aria-label="Cart">
                 <ShoppingCart className="h-6 w-6 text-white group-hover:text-white/70 transition-colors" />
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-white group-hover:text-white/70 transition-colors">Cart</span>
                 {cartCount > 0 && (
-                  <Badge className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center rounded-full p-0 text-[10px] font-bold">{cartCount}</Badge>
+                  <span className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center rounded-full bg-primary p-0 text-[10px] font-bold text-primary-foreground">
+                    {cartCount}
+                  </span>
                 )}
               </Link>
             </div>
@@ -212,7 +236,7 @@ export function SiteHeader() {
         </div>
 
         {!hideNav && (
-          <div className="md:hidden px-4 py-3 space-y-3">
+          <div className="md:hidden px-4 py-3">
             <div className="flex items-center justify-between">
               <button onClick={() => setLocationOpen(true)} className="flex items-center gap-2 text-sm font-medium text-white/80">
                 <MapPin className="h-4 w-4 text-white" />
@@ -251,48 +275,62 @@ export function SiteHeader() {
                 )}
               </div>
             </div>
-            <SearchAutocomplete mobileModal placeholder="Search meals..." inputClassName="h-10 rounded-lg text-sm pl-10 focus-visible:ring-1 bg-white text-foreground placeholder:text-muted-foreground border border-border" />
+          </div>
+        )}
+
+        {!hideNav && (
+          <div className="md:hidden px-4 pb-4">
+            <SearchAutocomplete
+              mobileModal
+              placeholder="Search meals..."
+              inputClassName="h-10 rounded-lg text-sm pl-10 focus-visible:ring-1 bg-white text-foreground placeholder:text-muted-foreground border border-border"
+            />
           </div>
         )}
 
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-1 sm:pb-10 lg:pb-14">
           <div className="text-center pt-4 sm:pt-6 lg:pt-8 mb-5 sm:mb-8 lg:mb-10">
-            <h1 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
+            <h1 id="food-time-heading" className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight tracking-tight">
               <span className="md:whitespace-nowrap">Order fresh home-cooked meals.</span>{' '}
               <span className="text-white/90 md:whitespace-nowrap">Discover local chefs near you.</span>
             </h1>
           </div>
 
-          <div className="hidden md:grid grid-cols-3 gap-3 sm:gap-5">
-            {heroCards.map((card) => (
-              <Link key={card.alt} href={card.href}>
-                <div className="relative w-full aspect-4/3">
-                  <Image src={card.image} alt={card.alt} fill className="object-contain" sizes="33vw" loading="eager" priority />
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          <div className="md:hidden mb-3">
-            <Link key={heroCards[1].alt} href={heroCards[1].href}>
-              <div className="relative w-full aspect-4/3">
-                  <Image src={heroCards[1].image} alt={heroCards[1].alt} fill className="object-contain" sizes="(max-width: 768px) calc(100vw - 32px)" loading="eager" priority />
-              </div>
-            </Link>
-          </div>
-          <div className="md:hidden grid grid-cols-2 gap-3">
-            {[heroCards[0], heroCards[2]].map((card) => (
-              <Link key={card.alt} href={card.href}>
-                <div className="relative w-full aspect-4/3">
-                  <Image src={card.image} alt={card.alt} fill className="object-contain" sizes="(max-width: 768px) calc(50vw - 22px)" loading="eager" />
-                </div>
-              </Link>
-            ))}
-          </div>
+          <Carousel
+            opts={{ align: "start", loop: true }}
+            plugins={[autoplayPlugin]}
+            setApi={setCarouselApi}
+            className="w-full"
+            onMouseEnter={() => carouselApi?.plugins()?.autoplay?.stop()}
+            onMouseLeave={() => carouselApi?.plugins()?.autoplay?.play()}
+          >
+            <CarouselContent>
+              {heroCards.map((card) => (
+                <CarouselItem key={card.alt} className="basis-1/2 md:basis-1/3 pl-3 sm:pl-5">
+                  <Link href={card.href}>
+                    <div className="bg-white rounded-xl overflow-hidden h-full">
+                      <div className="flex flex-col p-3 sm:p-4 lg:p-5 gap-1 min-h-28 sm:min-h-35 lg:min-h-48">
+                        <div className="flex-1">
+                          <h3 className="text-xs sm:text-sm lg:text-base font-bold text-gray-900 leading-tight">{card.title}</h3>
+                          <p className="text-[10px] sm:text-xs lg:text-sm text-gray-500 mt-0.5 leading-tight">{card.subject}</p>
+                        </div>
+                        <div className="flex justify-end">
+                          <div className="relative w-14 h-10 sm:w-20 sm:h-14 lg:w-36 lg:h-28">
+                            <Image src={card.image} alt={card.alt} fill className="object-contain" sizes="(max-width: 640px) 56px, (max-width: 768px) 80px, 112px" loading="eager" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+          </Carousel>
         </div>
       </div>
+      <div id="hero-sentinel" className="h-px" />
 
-      <header className={`sticky top-0 z-50 border-b border-border bg-background mb-0 lg:mb-6 ${
+      <header className={`sticky top-0 z-50 border-b border-border bg-background mb-0 lg:mb-6 transition-opacity duration-300 ${
         showHero ? 'hidden md:hidden' : 'hidden md:block'
       } ${categoryFilterActive ? 'hidden' : ''}`}>
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 h-20">
@@ -326,55 +364,25 @@ export function SiteHeader() {
                 <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground group-hover:text-primary transition-colors">Login</span>
               </Link>
             )}
-            <Link href={cartHref} className="flex flex-col items-center gap-0.5 group relative" aria-label="Shopping cart">
+            <Link href={cartHref} className="flex flex-col items-center gap-0.5 group relative" aria-label="Cart">
               <ShoppingCart className="h-6 w-6 text-foreground group-hover:text-primary transition-colors" />
               <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground group-hover:text-primary transition-colors">Cart</span>
               {cartCount > 0 && (
-                <Badge className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center rounded-full p-0 text-[10px] font-bold">{cartCount}</Badge>
+                <span className="absolute -top-1 -right-1 h-4 min-w-4 flex items-center justify-center rounded-full bg-primary p-0 text-[10px] font-bold text-primary-foreground">
+                  {cartCount}
+                </span>
               )}
             </Link>
           </div>
         </div>
       </header>
 
-      {!hideNav && (
-        <header className={`sticky top-0 z-50 md:hidden border-b border-border px-4 py-3 space-y-3 mb-4 ${
-          showHero ? 'hidden bg-primary' : 'bg-background'
-        }`}>
-          <div className="flex items-center justify-between">
-            <button onClick={() => setLocationOpen(true)} className={`flex items-center gap-2 text-sm font-medium ${isHomePage ? 'text-white/90' : 'text-muted-foreground'}`}>
-              <MapPin className={`h-4 w-4 ${isHomePage ? 'text-white' : 'text-[#B85300]'}`} />
-              <span className="truncate max-w-40">{deliveryAddress || "Select location"}</span>
-              <ChevronDown className="h-3.5 w-3.5" />
-            </button>
-            {isLoggedIn ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button aria-label="User menu" className={`h-8 w-8 flex items-center justify-center rounded-full border transition-colors ${isHomePage ? 'border-white/30 text-white hover:bg-white/10' : 'border-border hover:bg-muted'}`}><User className="h-5 w-5" /></button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="min-w-40">
-                  <DropdownMenuItem asChild><Link href="/account/profile" className="flex items-center gap-2 cursor-pointer"><User className="h-4 w-4" />Profile</Link></DropdownMenuItem>
-                  <DropdownMenuItem asChild><Link href="/account/orders" className="flex items-center gap-2 cursor-pointer"><Package className="h-4 w-4" />My Orders</Link></DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={requestNotification} className="flex items-center gap-2 cursor-pointer">
-                    <Bell className={`h-4 w-4 ${notifGranted ? "fill-current" : ""}`} />
-                    {notifGranted ? "Notifications On" : "Enable Notifications"}
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOut()} variant="destructive" className="flex items-center gap-2 cursor-pointer"><LogOut className="h-4 w-4" />Sign Out</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Link href="/login" className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-bold transition-colors ${isHomePage ? 'border-white/30 text-white hover:bg-white/10' : 'border-border text-foreground hover:bg-muted'}`}>
-                <User className="h-4 w-4" />
-                Login
-              </Link>
-            )}
-          </div>
+      {!hideNav && !showHero && (
+        <header className="sticky top-0 z-50 md:hidden bg-white border-b px-4 py-3">
           <SearchAutocomplete
             mobileModal
             placeholder="Search meals..."
-            inputClassName="h-10 rounded-lg text-sm pl-10 focus-visible:ring-1 bg-white text-foreground placeholder:text-muted-foreground border border-border"
+            inputClassName="h-10 rounded-lg text-sm pl-10 focus-visible:ring-1 bg-search-bar text-foreground placeholder:text-muted-foreground border border-border"
           />
         </header>
       )}

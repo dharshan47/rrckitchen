@@ -91,9 +91,10 @@ export function WishlistButton({ menuItemId, className, size = "sm", variant = "
         <Heart
           className={cn(
             iconSizes[size],
-            "transition-colors drop-shadow-sm",
-            isFavorite ? "fill-red-500 text-red-500" : "text-foreground/70 hover:text-red-400"
+            "transition-colors",
+            isFavorite ? "fill-red-500 text-red-500" : "text-white hover:text-red-400"
           )}
+          style={{ filter: "drop-shadow(0 1px 3px rgba(0,0,0,0.75))" }}
         />
       </button>
     );

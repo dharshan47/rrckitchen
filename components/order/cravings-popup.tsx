@@ -15,6 +15,7 @@ import Link from "next/link"
 
 interface CravingItem {
   id: string
+  slug?: string
   name: string
   description: string
   price: number
@@ -63,7 +64,7 @@ export function CravingsPopup({ orderId }: CravingsPopupProps) {
           {items.map((item) => (
             <Link
               key={item.id}
-              href={`/menu?highlight=${item.id}`}
+              href={`/menu/${item.slug ?? item.id}`}
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/50 hover:bg-muted/30 transition-colors no-underline"
             >

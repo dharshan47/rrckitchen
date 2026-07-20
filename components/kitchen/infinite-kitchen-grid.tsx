@@ -46,7 +46,7 @@ function KitchenCard({
           />
           <KitchenWishlistButton
             kitchenPartnerId={kitchen.id}
-            className="absolute top-2 right-2"
+            className="absolute top-2 right-2 z-10"
             size="sm"
           />
         </div>
@@ -55,7 +55,7 @@ function KitchenCard({
           <ChefHat className="h-10 w-10 text-muted-foreground/40" />
           <KitchenWishlistButton
             kitchenPartnerId={kitchen.id}
-            className="absolute top-2 right-2"
+            className="absolute top-2 right-2 z-10"
             size="sm"
           />
         </div>

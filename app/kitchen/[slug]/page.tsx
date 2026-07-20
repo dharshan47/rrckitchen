@@ -1,4 +1,4 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { getKitchenDetail } from "@/actions/catalog/home-data";
 import { KitchenDetailClient } from "@/components/kitchen/kitchen-detail-client";
 import type { Metadata } from "next";
@@ -23,7 +23,10 @@ export default async function KitchenDetailPage({ params, searchParams }: Props)
   const { timeSlot, q } = await searchParams;
 
   const kitchen = await getKitchenDetail(slug);
-  if (!kitchen) notFound();
+  if (!kitchen) {
+    if (q) redirect(`/search?q=${encodeURIComponent(q)}`);
+    notFound();
+  }
 
   return <KitchenDetailClient kitchen={kitchen} initialTimeSlot={timeSlot ?? null} initialSearchQuery={q ?? null} />;
 }

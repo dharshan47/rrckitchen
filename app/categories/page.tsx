@@ -1,16 +1,24 @@
 "use client";
 
+import { useState, useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useKitchenCategories } from "@/hooks/useExploreKitchens";
 import { getCategoryImageUrl } from "@/lib/category-images";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Search, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 
 export default function CategoriesPage() {
   const { data: categories = [] } = useKitchenCategories();
   const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredCategories = useMemo(() => {
+    if (!searchQuery.trim()) return categories;
+    const q = searchQuery.trim().toLowerCase();
+    return categories.filter((cat) => cat.name.toLowerCase().includes(q));
+  }, [categories, searchQuery]);
 
   return (
     <main className="min-h-screen bg-background text-foreground pb-20">
@@ -28,6 +36,26 @@ export default function CategoriesPage() {
           <h1 className="text-xl font-bold">All Cuisines</h1>
         </div>
 
+        {/* Search bar */}
+        <div className="relative mb-4">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search cuisines..."
+            className="w-full h-10 pl-9 pr-8 rounded-lg border border-border bg-background text-sm outline-none focus-visible:ring-2 focus-visible:ring-primary placeholder:text-muted-foreground"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery("")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 p-0.5 rounded-full text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
+
         {categories.length === 0 ? (
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-4">
             {Array.from({ length: 14 }).map((_, i) => (
@@ -37,9 +65,13 @@ export default function CategoriesPage() {
               </div>
             ))}
           </div>
+        ) : filteredCategories.length === 0 ? (
+          <p className="text-center text-sm text-muted-foreground py-12">
+            No cuisines found for &ldquo;{searchQuery}&rdquo;
+          </p>
         ) : (
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-4">
-            {categories.map((cat) => {
+            {filteredCategories.map((cat) => {
               const imageUrl = getCategoryImageUrl(cat.name);
               return (
                 <Link

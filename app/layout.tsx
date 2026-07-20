@@ -1,10 +1,17 @@
 import type { Metadata, Viewport } from "next";
+import { Inter } from "next/font/google";
 import Script from "next/script";
 import { Suspense } from "react";
 import "./globals.css";
 import { Providers } from "@/providers/providers";
 import { AppShell } from "@/components/layout/app-shell";
 import { Toaster } from "@/components/ui/sonner"
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
+  weight: ["300", "400", "500", "600", "700", "800"],
+});
 
 export const viewport: Viewport = {
   themeColor: "#EE7005",
@@ -34,23 +41,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className="h-full antialiased font-sans"
-    >
-      <head>
-        <link rel="preconnect" href="https://checkout.razorpay.com" />
-        <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
-        <link rel="preconnect" href="https://res.cloudinary.com" />
-        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" crossOrigin="anonymous" />
-        <link rel="preconnect" href="https://*.r2.dev" />
-        <link rel="dns-prefetch" href="https://*.r2.dev" />
-        <link rel="preconnect" href="https://*.cloudfront.net" />
-        <link rel="dns-prefetch" href="https://*.cloudfront.net" />
-        <link rel="preload" as="image" href="/icons/icon-192x192.png" />
-      </head>
+      <html
+        lang="en"
+        className={`h-full antialiased ${inter.variable}`}
+      >
+        <head>
+          <link rel="preconnect" href="https://checkout.razorpay.com" />
+          <link rel="dns-prefetch" href="https://checkout.razorpay.com" />
+          <link rel="preconnect" href="https://res.cloudinary.com" />
+          <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+          <link rel="preconnect" href="https://*.r2.dev" />
+          <link rel="dns-prefetch" href="https://*.r2.dev" />
+          <link rel="preconnect" href="https://*.cloudfront.net" />
+          <link rel="dns-prefetch" href="https://*.cloudfront.net" />
+          <link rel="preload" as="image" href="/icons/icon-192x192.png" />
+        </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <Providers>
           <Suspense fallback={null}>
