@@ -40,10 +40,11 @@ interface SignupFormProps {
   nameLabel?: string;
   accountLinkHref?: string;
   accountLinkLabel?: string;
+  referralCode?: string | null;
 }
 
-function SignupFormInner({ role = "customer", title, subtitle, nameLabel = "Full Name", accountLinkHref, accountLinkLabel }: SignupFormProps) {
-  const { step, errorMessage, isLoading, resendCooldown, sendOtp, verifyOtp, completeSignup, resendOtp } = useSignUp(role);
+function SignupFormInner({ role = "customer", title, subtitle, nameLabel = "Full Name", accountLinkHref, accountLinkLabel, referralCode }: SignupFormProps) {
+  const { step, errorMessage, isLoading, resendCooldown, sendOtp, verifyOtp, completeSignup, resendOtp } = useSignUp(role, referralCode ?? undefined);
 
   const phoneForm = useForm<PhoneForm>({ resolver: zodResolver(phoneSchema) });
   const otpForm = useForm<OtpForm>({ resolver: zodResolver(otpSchema) });
@@ -209,8 +210,8 @@ function SignupFormInner({ role = "customer", title, subtitle, nameLabel = "Full
   );
 }
 
-const SignupForm = memo(function SignupForm({ role = "customer", title, subtitle, nameLabel, accountLinkHref, accountLinkLabel }: SignupFormProps) {
-  return <SignupFormInner key={role} role={role} title={title} subtitle={subtitle} nameLabel={nameLabel} accountLinkHref={accountLinkHref} accountLinkLabel={accountLinkLabel} />;
+const SignupForm = memo(function SignupForm({ role = "customer", title, subtitle, nameLabel, accountLinkHref, accountLinkLabel, referralCode }: SignupFormProps) {
+  return <SignupFormInner key={role} role={role} title={title} subtitle={subtitle} nameLabel={nameLabel} accountLinkHref={accountLinkHref} accountLinkLabel={accountLinkLabel} referralCode={referralCode} />;
 });
 
 export default SignupForm;

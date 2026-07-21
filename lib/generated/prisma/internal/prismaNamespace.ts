@@ -423,6 +423,8 @@ export const ModelName = {
   Referral: 'Referral',
   LoyaltyPoints: 'LoyaltyPoints',
   LoyaltyTransaction: 'LoyaltyTransaction',
+  LoyaltyCoupon: 'LoyaltyCoupon',
+  LoyaltyCouponPurchase: 'LoyaltyCouponPurchase',
   Coupon: 'Coupon',
   CouponRedemption: 'CouponRedemption',
   PaymentOffer: 'PaymentOffer',
@@ -456,7 +458,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "menuItemFeedback" | "deliveryAssignment" | "deliveryLocation" | "payment" | "pushSubscription" | "deliverySlot" | "notificationLog" | "supportTicket" | "ticketMessage" | "referral" | "loyaltyPoints" | "loyaltyTransaction" | "coupon" | "couponRedemption" | "paymentOffer" | "refund" | "kitchenPayout" | "deliveryPartnerPayout" | "kitchenAddress" | "menuItemDailyStock" | "adminProfile" | "adminInvite" | "adminApprovalRequest" | "adminAuditLog" | "twoFactor" | "userCodEligibility" | "cashRemittance" | "codVariance" | "wishlistItem" | "kitchenWishlist"
+    modelProps: "user" | "role" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "menuItemFeedback" | "deliveryAssignment" | "deliveryLocation" | "payment" | "pushSubscription" | "deliverySlot" | "notificationLog" | "supportTicket" | "ticketMessage" | "referral" | "loyaltyPoints" | "loyaltyTransaction" | "loyaltyCoupon" | "loyaltyCouponPurchase" | "coupon" | "couponRedemption" | "paymentOffer" | "refund" | "kitchenPayout" | "deliveryPartnerPayout" | "kitchenAddress" | "menuItemDailyStock" | "adminProfile" | "adminInvite" | "adminApprovalRequest" | "adminAuditLog" | "twoFactor" | "userCodEligibility" | "cashRemittance" | "codVariance" | "wishlistItem" | "kitchenWishlist"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -3346,6 +3348,154 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    LoyaltyCoupon: {
+      payload: Prisma.$LoyaltyCouponPayload<ExtArgs>
+      fields: Prisma.LoyaltyCouponFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LoyaltyCouponFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LoyaltyCouponFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPayload>
+        }
+        findFirst: {
+          args: Prisma.LoyaltyCouponFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LoyaltyCouponFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPayload>
+        }
+        findMany: {
+          args: Prisma.LoyaltyCouponFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPayload>[]
+        }
+        create: {
+          args: Prisma.LoyaltyCouponCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPayload>
+        }
+        createMany: {
+          args: Prisma.LoyaltyCouponCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LoyaltyCouponCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPayload>[]
+        }
+        delete: {
+          args: Prisma.LoyaltyCouponDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPayload>
+        }
+        update: {
+          args: Prisma.LoyaltyCouponUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPayload>
+        }
+        deleteMany: {
+          args: Prisma.LoyaltyCouponDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LoyaltyCouponUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LoyaltyCouponUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPayload>[]
+        }
+        upsert: {
+          args: Prisma.LoyaltyCouponUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPayload>
+        }
+        aggregate: {
+          args: Prisma.LoyaltyCouponAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLoyaltyCoupon>
+        }
+        groupBy: {
+          args: Prisma.LoyaltyCouponGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LoyaltyCouponGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LoyaltyCouponCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LoyaltyCouponCountAggregateOutputType> | number
+        }
+      }
+    }
+    LoyaltyCouponPurchase: {
+      payload: Prisma.$LoyaltyCouponPurchasePayload<ExtArgs>
+      fields: Prisma.LoyaltyCouponPurchaseFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.LoyaltyCouponPurchaseFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPurchasePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.LoyaltyCouponPurchaseFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPurchasePayload>
+        }
+        findFirst: {
+          args: Prisma.LoyaltyCouponPurchaseFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPurchasePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.LoyaltyCouponPurchaseFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPurchasePayload>
+        }
+        findMany: {
+          args: Prisma.LoyaltyCouponPurchaseFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPurchasePayload>[]
+        }
+        create: {
+          args: Prisma.LoyaltyCouponPurchaseCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPurchasePayload>
+        }
+        createMany: {
+          args: Prisma.LoyaltyCouponPurchaseCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.LoyaltyCouponPurchaseCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPurchasePayload>[]
+        }
+        delete: {
+          args: Prisma.LoyaltyCouponPurchaseDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPurchasePayload>
+        }
+        update: {
+          args: Prisma.LoyaltyCouponPurchaseUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPurchasePayload>
+        }
+        deleteMany: {
+          args: Prisma.LoyaltyCouponPurchaseDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.LoyaltyCouponPurchaseUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.LoyaltyCouponPurchaseUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPurchasePayload>[]
+        }
+        upsert: {
+          args: Prisma.LoyaltyCouponPurchaseUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$LoyaltyCouponPurchasePayload>
+        }
+        aggregate: {
+          args: Prisma.LoyaltyCouponPurchaseAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateLoyaltyCouponPurchase>
+        }
+        groupBy: {
+          args: Prisma.LoyaltyCouponPurchaseGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LoyaltyCouponPurchaseGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.LoyaltyCouponPurchaseCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.LoyaltyCouponPurchaseCountAggregateOutputType> | number
+        }
+      }
+    }
     Coupon: {
       payload: Prisma.$CouponPayload<ExtArgs>
       fields: Prisma.CouponFieldRefs
@@ -4845,6 +4995,7 @@ export const KitchenPartnerScalarFieldEnum = {
   serviceZoneId: 'serviceZoneId',
   avgRating: 'avgRating',
   totalReviews: 'totalReviews',
+  operatingHours: 'operatingHours',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -5273,6 +5424,39 @@ export const LoyaltyTransactionScalarFieldEnum = {
 export type LoyaltyTransactionScalarFieldEnum = (typeof LoyaltyTransactionScalarFieldEnum)[keyof typeof LoyaltyTransactionScalarFieldEnum]
 
 
+export const LoyaltyCouponScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  discountType: 'discountType',
+  discountValue: 'discountValue',
+  maxDiscount: 'maxDiscount',
+  minOrderValue: 'minOrderValue',
+  pointsCost: 'pointsCost',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+} as const
+
+export type LoyaltyCouponScalarFieldEnum = (typeof LoyaltyCouponScalarFieldEnum)[keyof typeof LoyaltyCouponScalarFieldEnum]
+
+
+export const LoyaltyCouponPurchaseScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  loyaltyCouponId: 'loyaltyCouponId',
+  couponCode: 'couponCode',
+  discountType: 'discountType',
+  discountValue: 'discountValue',
+  maxDiscount: 'maxDiscount',
+  minOrderValue: 'minOrderValue',
+  used: 'used',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type LoyaltyCouponPurchaseScalarFieldEnum = (typeof LoyaltyCouponPurchaseScalarFieldEnum)[keyof typeof LoyaltyCouponPurchaseScalarFieldEnum]
+
+
 export const CouponScalarFieldEnum = {
   id: 'id',
   code: 'code',
@@ -5684,6 +5868,20 @@ export type ListDecimalFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaMo
 
 
 /**
+ * Reference to a field of type 'Json'
+ */
+export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
+    
+
+
+/**
+ * Reference to a field of type 'QueryMode'
+ */
+export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
+    
+
+
+/**
  * Reference to a field of type 'FoodType'
  */
 export type EnumFoodTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FoodType'>
@@ -5964,20 +6162,6 @@ export type ListEnumAdminActionTypeFieldRefInput<$PrismaModel> = FieldRefInputTy
 
 
 /**
- * Reference to a field of type 'Json'
- */
-export type JsonFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Json'>
-    
-
-
-/**
- * Reference to a field of type 'QueryMode'
- */
-export type EnumQueryModeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'QueryMode'>
-    
-
-
-/**
  * Reference to a field of type 'AdminApprovalStatus'
  */
 export type EnumAdminApprovalStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'AdminApprovalStatus'>
@@ -6167,6 +6351,8 @@ export type GlobalOmitConfig = {
   referral?: Prisma.ReferralOmit
   loyaltyPoints?: Prisma.LoyaltyPointsOmit
   loyaltyTransaction?: Prisma.LoyaltyTransactionOmit
+  loyaltyCoupon?: Prisma.LoyaltyCouponOmit
+  loyaltyCouponPurchase?: Prisma.LoyaltyCouponPurchaseOmit
   coupon?: Prisma.CouponOmit
   couponRedemption?: Prisma.CouponRedemptionOmit
   paymentOffer?: Prisma.PaymentOfferOmit

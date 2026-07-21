@@ -76,6 +76,7 @@ export type KitchenPartnerCountAggregateOutputType = {
   serviceZoneId: number
   avgRating: number
   totalReviews: number
+  operatingHours: number
   createdAt: number
   updatedAt: number
   deletedAt: number
@@ -133,6 +134,7 @@ export type KitchenPartnerCountAggregateInputType = {
   serviceZoneId?: true
   avgRating?: true
   totalReviews?: true
+  operatingHours?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
@@ -235,6 +237,7 @@ export type KitchenPartnerGroupByOutputType = {
   serviceZoneId: string | null
   avgRating: runtime.Decimal
   totalReviews: number
+  operatingHours: runtime.JsonValue | null
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
@@ -273,6 +276,7 @@ export type KitchenPartnerWhereInput = {
   serviceZoneId?: Prisma.StringNullableFilter<"KitchenPartner"> | string | null
   avgRating?: Prisma.DecimalFilter<"KitchenPartner"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFilter<"KitchenPartner"> | number
+  operatingHours?: Prisma.JsonNullableFilter<"KitchenPartner">
   createdAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"KitchenPartner"> | Date | string | null
@@ -302,6 +306,7 @@ export type KitchenPartnerOrderByWithRelationInput = {
   serviceZoneId?: Prisma.SortOrderInput | Prisma.SortOrder
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
+  operatingHours?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -334,6 +339,7 @@ export type KitchenPartnerWhereUniqueInput = Prisma.AtLeast<{
   serviceZoneId?: Prisma.StringNullableFilter<"KitchenPartner"> | string | null
   avgRating?: Prisma.DecimalFilter<"KitchenPartner"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFilter<"KitchenPartner"> | number
+  operatingHours?: Prisma.JsonNullableFilter<"KitchenPartner">
   createdAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"KitchenPartner"> | Date | string | null
@@ -363,6 +369,7 @@ export type KitchenPartnerOrderByWithAggregationInput = {
   serviceZoneId?: Prisma.SortOrderInput | Prisma.SortOrder
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
+  operatingHours?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -386,6 +393,7 @@ export type KitchenPartnerScalarWhereWithAggregatesInput = {
   serviceZoneId?: Prisma.StringNullableWithAggregatesFilter<"KitchenPartner"> | string | null
   avgRating?: Prisma.DecimalWithAggregatesFilter<"KitchenPartner"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntWithAggregatesFilter<"KitchenPartner"> | number
+  operatingHours?: Prisma.JsonNullableWithAggregatesFilter<"KitchenPartner">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"KitchenPartner"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"KitchenPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"KitchenPartner"> | Date | string | null
@@ -399,6 +407,7 @@ export type KitchenPartnerCreateInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -428,6 +437,7 @@ export type KitchenPartnerUncheckedCreateInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -453,6 +463,7 @@ export type KitchenPartnerUpdateInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -482,6 +493,7 @@ export type KitchenPartnerUncheckedUpdateInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -509,6 +521,7 @@ export type KitchenPartnerCreateManyInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -522,6 +535,7 @@ export type KitchenPartnerUpdateManyMutationInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -537,6 +551,7 @@ export type KitchenPartnerUncheckedUpdateManyInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -557,6 +572,7 @@ export type KitchenPartnerCountOrderByAggregateInput = {
   serviceZoneId?: Prisma.SortOrder
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
+  operatingHours?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
@@ -881,6 +897,7 @@ export type KitchenPartnerCreateWithoutUserInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -908,6 +925,7 @@ export type KitchenPartnerUncheckedCreateWithoutUserInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -949,6 +967,7 @@ export type KitchenPartnerUpdateWithoutUserInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -976,6 +995,7 @@ export type KitchenPartnerUncheckedUpdateWithoutUserInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1001,6 +1021,7 @@ export type KitchenPartnerCreateWithoutKitchenKycInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1029,6 +1050,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenKycInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1069,6 +1091,7 @@ export type KitchenPartnerUpdateWithoutKitchenKycInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1097,6 +1120,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenKycInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1121,6 +1145,7 @@ export type KitchenPartnerCreateWithoutKitchenAliasInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1149,6 +1174,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAliasInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1189,6 +1215,7 @@ export type KitchenPartnerUpdateWithoutKitchenAliasInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1217,6 +1244,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAliasInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1241,6 +1269,7 @@ export type KitchenPartnerCreateWithoutKitchenCategoriesInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1269,6 +1298,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenCategoriesInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1309,6 +1339,7 @@ export type KitchenPartnerUpdateWithoutKitchenCategoriesInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1337,6 +1368,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenCategoriesInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1361,6 +1393,7 @@ export type KitchenPartnerCreateWithoutKitchenAvailabilityInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1389,6 +1422,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAvailabilityInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1429,6 +1463,7 @@ export type KitchenPartnerUpdateWithoutKitchenAvailabilityInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1457,6 +1492,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAvailabilityInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1481,6 +1517,7 @@ export type KitchenPartnerCreateWithoutMenusInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1509,6 +1546,7 @@ export type KitchenPartnerUncheckedCreateWithoutMenusInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1549,6 +1587,7 @@ export type KitchenPartnerUpdateWithoutMenusInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1577,6 +1616,7 @@ export type KitchenPartnerUncheckedUpdateWithoutMenusInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1601,6 +1641,7 @@ export type KitchenPartnerCreateWithoutDeliveryPartnerAssignmentsInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1629,6 +1670,7 @@ export type KitchenPartnerUncheckedCreateWithoutDeliveryPartnerAssignmentsInput 
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1669,6 +1711,7 @@ export type KitchenPartnerUpdateWithoutDeliveryPartnerAssignmentsInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1697,6 +1740,7 @@ export type KitchenPartnerUncheckedUpdateWithoutDeliveryPartnerAssignmentsInput 
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1721,6 +1765,7 @@ export type KitchenPartnerCreateWithoutServiceZoneInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1748,6 +1793,7 @@ export type KitchenPartnerUncheckedCreateWithoutServiceZoneInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1804,6 +1850,7 @@ export type KitchenPartnerScalarWhereInput = {
   serviceZoneId?: Prisma.StringNullableFilter<"KitchenPartner"> | string | null
   avgRating?: Prisma.DecimalFilter<"KitchenPartner"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFilter<"KitchenPartner"> | number
+  operatingHours?: Prisma.JsonNullableFilter<"KitchenPartner">
   createdAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"KitchenPartner"> | Date | string | null
@@ -1817,6 +1864,7 @@ export type KitchenPartnerCreateWithoutOrderItemsInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1845,6 +1893,7 @@ export type KitchenPartnerUncheckedCreateWithoutOrderItemsInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1885,6 +1934,7 @@ export type KitchenPartnerUpdateWithoutOrderItemsInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1913,6 +1963,7 @@ export type KitchenPartnerUncheckedUpdateWithoutOrderItemsInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1937,6 +1988,7 @@ export type KitchenPartnerCreateWithoutReviewsInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -1965,6 +2017,7 @@ export type KitchenPartnerUncheckedCreateWithoutReviewsInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2005,6 +2058,7 @@ export type KitchenPartnerUpdateWithoutReviewsInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2033,6 +2087,7 @@ export type KitchenPartnerUncheckedUpdateWithoutReviewsInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2057,6 +2112,7 @@ export type KitchenPartnerCreateWithoutCouponsInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2085,6 +2141,7 @@ export type KitchenPartnerUncheckedCreateWithoutCouponsInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2125,6 +2182,7 @@ export type KitchenPartnerUpdateWithoutCouponsInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2153,6 +2211,7 @@ export type KitchenPartnerUncheckedUpdateWithoutCouponsInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2177,6 +2236,7 @@ export type KitchenPartnerCreateWithoutKitchenPayoutsInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2205,6 +2265,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenPayoutsInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2245,6 +2306,7 @@ export type KitchenPartnerUpdateWithoutKitchenPayoutsInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2273,6 +2335,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenPayoutsInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2297,6 +2360,7 @@ export type KitchenPartnerCreateWithoutKitchenAddressInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2325,6 +2389,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAddressInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2365,6 +2430,7 @@ export type KitchenPartnerUpdateWithoutKitchenAddressInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2393,6 +2459,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAddressInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2417,6 +2484,7 @@ export type KitchenPartnerCreateWithoutKitchenWishlistsInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2445,6 +2513,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenWishlistsInput = {
   serviceZoneId?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2485,6 +2554,7 @@ export type KitchenPartnerUpdateWithoutKitchenWishlistsInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2513,6 +2583,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenWishlistsInput = {
   serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2538,6 +2609,7 @@ export type KitchenPartnerCreateManyServiceZoneInput = {
   rejectedReason?: string | null
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
@@ -2551,6 +2623,7 @@ export type KitchenPartnerUpdateWithoutServiceZoneInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2578,6 +2651,7 @@ export type KitchenPartnerUncheckedUpdateWithoutServiceZoneInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2604,6 +2678,7 @@ export type KitchenPartnerUncheckedUpdateManyWithoutServiceZoneInput = {
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2722,6 +2797,7 @@ export type KitchenPartnerSelect<ExtArgs extends runtime.Types.Extensions.Intern
   serviceZoneId?: boolean
   avgRating?: boolean
   totalReviews?: boolean
+  operatingHours?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -2752,6 +2828,7 @@ export type KitchenPartnerSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   serviceZoneId?: boolean
   avgRating?: boolean
   totalReviews?: boolean
+  operatingHours?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -2769,6 +2846,7 @@ export type KitchenPartnerSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   serviceZoneId?: boolean
   avgRating?: boolean
   totalReviews?: boolean
+  operatingHours?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
@@ -2786,12 +2864,13 @@ export type KitchenPartnerSelectScalar = {
   serviceZoneId?: boolean
   avgRating?: boolean
   totalReviews?: boolean
+  operatingHours?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type KitchenPartnerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "userId" | "status" | "approvedAt" | "rejectedReason" | "serviceZoneId" | "avgRating" | "totalReviews" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["kitchenPartner"]>
+export type KitchenPartnerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "userId" | "status" | "approvedAt" | "rejectedReason" | "serviceZoneId" | "avgRating" | "totalReviews" | "operatingHours" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["kitchenPartner"]>
 export type KitchenPartnerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   kitchenAlias?: boolean | Prisma.KitchenPartner$kitchenAliasArgs<ExtArgs>
@@ -2846,6 +2925,7 @@ export type $KitchenPartnerPayload<ExtArgs extends runtime.Types.Extensions.Inte
     serviceZoneId: string | null
     avgRating: runtime.Decimal
     totalReviews: number
+    operatingHours: runtime.JsonValue | null
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
@@ -3295,6 +3375,7 @@ export interface KitchenPartnerFieldRefs {
   readonly serviceZoneId: Prisma.FieldRef<"KitchenPartner", 'String'>
   readonly avgRating: Prisma.FieldRef<"KitchenPartner", 'Decimal'>
   readonly totalReviews: Prisma.FieldRef<"KitchenPartner", 'Int'>
+  readonly operatingHours: Prisma.FieldRef<"KitchenPartner", 'Json'>
   readonly createdAt: Prisma.FieldRef<"KitchenPartner", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"KitchenPartner", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"KitchenPartner", 'DateTime'>

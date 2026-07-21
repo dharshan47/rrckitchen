@@ -96,6 +96,26 @@ export default function AccountProfilePage() {
     enabled: !!session?.user,
   })
 
+  const { data: referralCode } = useQuery({
+    queryKey: ["referral-code"],
+    queryFn: async () => {
+      const res = await fetch("/api/referral/code")
+      if (!res.ok) return null
+      return res.json() as Promise<string>
+    },
+    enabled: !!session?.user,
+  })
+
+  const { data: referralStats } = useQuery({
+    queryKey: ["referral-stats"],
+    queryFn: async () => {
+      const res = await fetch("/api/referral/stats")
+      if (!res.ok) return null
+      return res.json() as Promise<{ totalReferrals: number; totalPointsEarned: number }>
+    },
+    enabled: !!session?.user,
+  })
+
   const {
     register,
     handleSubmit,
@@ -150,12 +170,13 @@ export default function AccountProfilePage() {
     profileMutation.mutate({ name: data.name, email: data.email || undefined })
   }
 
-  const referralCode = session?.user?.id?.slice(0, 8).toUpperCase() || ""
-  const referralLink = `https://rrckitchen.com/signup?ref=${referralCode}`
+  const referralLink = referralCode ? `https://rrckitchen.com/signup?ref=${referralCode}` : ""
 
   const copyReferral = () => {
-    navigator.clipboard.writeText(referralLink)
-    toast.success("Referral link copied!")
+    if (referralLink) {
+      navigator.clipboard.writeText(referralLink)
+      toast.success("Referral link copied!")
+    }
   }
 
   if (isPending) {
@@ -256,21 +277,24 @@ export default function AccountProfilePage() {
 
         {/* Loyalty Points */}
         {loyaltyPoints && (
-          <Card className="p-6">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                <Coins className="h-6 w-6 text-primary" />
-              </div>
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h2 className="font-semibold">Loyalty Points</h2>
-                  <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase">{loyaltyPoints.tier}</span>
+          <Link href="/account/loyalty">
+            <Card className="p-6 hover:bg-muted/50 transition-colors cursor-pointer">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                  <Coins className="h-6 w-6 text-primary" />
                 </div>
-                <p className="text-2xl font-bold mt-1">{loyaltyPoints.points} pts</p>
-                <p className="text-xs text-muted-foreground mt-0.5">{loyaltyPoints.lifetimePoints} lifetime points earned</p>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <h2 className="font-semibold">Loyalty Points</h2>
+                    <span className="text-xs font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full uppercase">{loyaltyPoints.tier}</span>
+                  </div>
+                  <p className="text-2xl font-bold mt-1">{loyaltyPoints.points} pts</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{loyaltyPoints.lifetimePoints} lifetime points earned</p>
+                </div>
+                <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0" />
               </div>
-            </div>
-          </Card>
+            </Card>
+          </Link>
         )}
 
         {/* Quick Links */}
@@ -320,6 +344,18 @@ export default function AccountProfilePage() {
               <Copy className="h-4 w-4" />
             </Button>
           </div>
+          {referralStats && (
+            <div className="flex gap-4 mt-3 text-sm">
+              <div>
+                <span className="font-bold">{referralStats.totalReferrals}</span>
+                <span className="text-muted-foreground ml-1">referrals</span>
+              </div>
+              <div>
+                <span className="font-bold">{referralStats.totalPointsEarned}</span>
+                <span className="text-muted-foreground ml-1">pts earned</span>
+              </div>
+            </div>
+          )}
         </Card>
 
         {/* Favourites / Wishlist Section */}

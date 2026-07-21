@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { UserRole } from "@/stores";
 import { assignUserRole, updateUserName } from "@/actions/onboarding/auth";
+import { processReferralOnSignup } from "@/actions/referral/referral";
 import { normalizePhone } from "@/lib/phone";
 
 type SignUpRole = Exclude<UserRole, "admin">;
@@ -19,7 +20,7 @@ const roleToDbName: Record<SignUpRole, "CUSTOMER" | "DELIVERYPARTNER" | "KITCHEN
   kitchen: "KITCHENPARTNER",
 };
 
-export function useSignUp(role: SignUpRole) {
+export function useSignUp(role: SignUpRole, referralCode?: string) {
   const [step, setStep] = useState<"phone" | "otp" | "name">("phone");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -108,13 +109,21 @@ export function useSignUp(role: SignUpRole) {
       await updateUserName(name.trim(), email.trim());
       await assignUserRole(roleToDbName[role]);
 
+      if (referralCode) {
+        const res = await fetch("/api/auth/session");
+        const session = await res.json();
+        if (session?.user?.id) {
+          await processReferralOnSignup(referralCode, session.user.id);
+        }
+      }
+
       window.location.href = roleToRoute[role];
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Something went wrong. Try again.");
     } finally {
       setIsLoading(false);
     }
-  }, [role]);
+  }, [role, referralCode]);
 
   const resendOtp = useCallback(async () => {
     if (resendCooldown > 0) return;

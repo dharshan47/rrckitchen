@@ -45,6 +45,7 @@ model User {
   referralsUsed       Referral[]           @relation("referred")
   loyaltyPoints       LoyaltyPoints?
   loyaltyTransactions LoyaltyTransaction[]
+  loyaltyCouponPurchases LoyaltyCouponPurchase[]
   notificationLogs    NotificationLog[]
   twoFactorEnabled    Boolean?
   twoFactors          TwoFactor[]
@@ -177,6 +178,7 @@ model KitchenPartner {
   serviceZoneId  String?
   avgRating      Decimal       @default(0)
   totalReviews   Int           @default(0)
+  operatingHours Json?
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
   deletedAt      DateTime?
@@ -820,6 +822,45 @@ model LoyaltyTransaction {
 
   @@index([userId])
   @@map("loyalty_transaction")
+}
+
+// ============ LOYALTY COUPONS (purchasable with points) ============
+
+model LoyaltyCoupon {
+  id            String       @id @default(cuid())
+  name          String
+  description   String?
+  discountType  DiscountType
+  discountValue Decimal
+  maxDiscount   Decimal?
+  minOrderValue Decimal?
+  pointsCost    Int
+  isActive      Boolean      @default(true)
+  createdAt     DateTime     @default(now())
+
+  purchases LoyaltyCouponPurchase[]
+
+  @@map("loyalty_coupon")
+}
+
+model LoyaltyCouponPurchase {
+  id              String   @id @default(cuid())
+  userId          String
+  loyaltyCouponId String
+  couponCode      String   @unique
+  discountType    DiscountType
+  discountValue   Decimal
+  maxDiscount     Decimal?
+  minOrderValue   Decimal?
+  used            Boolean  @default(false)
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+
+  user          User          @relation(fields: [userId], references: [id])
+  loyaltyCoupon LoyaltyCoupon @relation(fields: [loyaltyCouponId], references: [id])
+
+  @@index([userId])
+  @@map("loyalty_coupon_purchase")
 }
 
 // ============ COUPONS & PROMOTIONS ============

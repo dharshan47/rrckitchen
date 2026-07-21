@@ -303,6 +303,7 @@ export type UserWhereInput = {
   referralsUsed?: Prisma.ReferralListRelationFilter
   loyaltyPoints?: Prisma.XOR<Prisma.LoyaltyPointsNullableScalarRelationFilter, Prisma.LoyaltyPointsWhereInput> | null
   loyaltyTransactions?: Prisma.LoyaltyTransactionListRelationFilter
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseListRelationFilter
   notificationLogs?: Prisma.NotificationLogListRelationFilter
   twoFactors?: Prisma.TwoFactorListRelationFilter
   adminProfile?: Prisma.XOR<Prisma.AdminProfileNullableScalarRelationFilter, Prisma.AdminProfileWhereInput> | null
@@ -347,6 +348,7 @@ export type UserOrderByWithRelationInput = {
   referralsUsed?: Prisma.ReferralOrderByRelationAggregateInput
   loyaltyPoints?: Prisma.LoyaltyPointsOrderByWithRelationInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionOrderByRelationAggregateInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseOrderByRelationAggregateInput
   notificationLogs?: Prisma.NotificationLogOrderByRelationAggregateInput
   twoFactors?: Prisma.TwoFactorOrderByRelationAggregateInput
   adminProfile?: Prisma.AdminProfileOrderByWithRelationInput
@@ -394,6 +396,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   referralsUsed?: Prisma.ReferralListRelationFilter
   loyaltyPoints?: Prisma.XOR<Prisma.LoyaltyPointsNullableScalarRelationFilter, Prisma.LoyaltyPointsWhereInput> | null
   loyaltyTransactions?: Prisma.LoyaltyTransactionListRelationFilter
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseListRelationFilter
   notificationLogs?: Prisma.NotificationLogListRelationFilter
   twoFactors?: Prisma.TwoFactorListRelationFilter
   adminProfile?: Prisma.XOR<Prisma.AdminProfileNullableScalarRelationFilter, Prisma.AdminProfileWhereInput> | null
@@ -486,6 +489,7 @@ export type UserCreateInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -530,6 +534,7 @@ export type UserUncheckedCreateInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -574,6 +579,7 @@ export type UserUpdateInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -618,6 +624,7 @@ export type UserUncheckedUpdateInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -1042,6 +1049,20 @@ export type UserUpdateOneRequiredWithoutLoyaltyTransactionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLoyaltyTransactionsInput, Prisma.UserUpdateWithoutLoyaltyTransactionsInput>, Prisma.UserUncheckedUpdateWithoutLoyaltyTransactionsInput>
 }
 
+export type UserCreateNestedOneWithoutLoyaltyCouponPurchasesInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLoyaltyCouponPurchasesInput, Prisma.UserUncheckedCreateWithoutLoyaltyCouponPurchasesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLoyaltyCouponPurchasesInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutLoyaltyCouponPurchasesNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutLoyaltyCouponPurchasesInput, Prisma.UserUncheckedCreateWithoutLoyaltyCouponPurchasesInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutLoyaltyCouponPurchasesInput
+  upsert?: Prisma.UserUpsertWithoutLoyaltyCouponPurchasesInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutLoyaltyCouponPurchasesInput, Prisma.UserUpdateWithoutLoyaltyCouponPurchasesInput>, Prisma.UserUncheckedUpdateWithoutLoyaltyCouponPurchasesInput>
+}
+
 export type UserCreateNestedOneWithoutAdminProfileInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutAdminProfileInput, Prisma.UserUncheckedCreateWithoutAdminProfileInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutAdminProfileInput
@@ -1147,6 +1168,7 @@ export type UserCreateWithoutUserRolesInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -1190,6 +1212,7 @@ export type UserUncheckedCreateWithoutUserRolesInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -1249,6 +1272,7 @@ export type UserUpdateWithoutUserRolesInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -1292,6 +1316,7 @@ export type UserUncheckedUpdateWithoutUserRolesInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -1335,6 +1360,7 @@ export type UserCreateWithoutSessionsInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -1378,6 +1404,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -1437,6 +1464,7 @@ export type UserUpdateWithoutSessionsInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -1480,6 +1508,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -1523,6 +1552,7 @@ export type UserCreateWithoutAccountsInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -1566,6 +1596,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -1625,6 +1656,7 @@ export type UserUpdateWithoutAccountsInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -1668,6 +1700,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -1711,6 +1744,7 @@ export type UserCreateWithoutOtpCodesInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -1754,6 +1788,7 @@ export type UserUncheckedCreateWithoutOtpCodesInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -1813,6 +1848,7 @@ export type UserUpdateWithoutOtpCodesInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -1856,6 +1892,7 @@ export type UserUncheckedUpdateWithoutOtpCodesInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -1899,6 +1936,7 @@ export type UserCreateWithoutAddressesInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -1942,6 +1980,7 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -2001,6 +2040,7 @@ export type UserUpdateWithoutAddressesInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -2044,6 +2084,7 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -2087,6 +2128,7 @@ export type UserCreateWithoutKitchenPartnerInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -2130,6 +2172,7 @@ export type UserUncheckedCreateWithoutKitchenPartnerInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -2189,6 +2232,7 @@ export type UserUpdateWithoutKitchenPartnerInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -2232,6 +2276,7 @@ export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -2275,6 +2320,7 @@ export type UserCreateWithoutDeliveryPartnerInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -2318,6 +2364,7 @@ export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -2377,6 +2424,7 @@ export type UserUpdateWithoutDeliveryPartnerInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -2420,6 +2468,7 @@ export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -2463,6 +2512,7 @@ export type UserCreateWithoutOrdersInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -2506,6 +2556,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -2565,6 +2616,7 @@ export type UserUpdateWithoutOrdersInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -2608,6 +2660,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -2651,6 +2704,7 @@ export type UserCreateWithoutReviewsInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -2694,6 +2748,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -2753,6 +2808,7 @@ export type UserUpdateWithoutReviewsInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -2796,6 +2852,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -2839,6 +2896,7 @@ export type UserCreateWithoutDeliveryReviewsInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -2882,6 +2940,7 @@ export type UserUncheckedCreateWithoutDeliveryReviewsInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -2941,6 +3000,7 @@ export type UserUpdateWithoutDeliveryReviewsInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -2984,6 +3044,7 @@ export type UserUncheckedUpdateWithoutDeliveryReviewsInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -3027,6 +3088,7 @@ export type UserCreateWithoutMenuItemFeedbacksInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -3070,6 +3132,7 @@ export type UserUncheckedCreateWithoutMenuItemFeedbacksInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -3129,6 +3192,7 @@ export type UserUpdateWithoutMenuItemFeedbacksInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -3172,6 +3236,7 @@ export type UserUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -3215,6 +3280,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -3258,6 +3324,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -3317,6 +3384,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -3360,6 +3428,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -3404,6 +3473,7 @@ export type UserCreateWithoutNotificationLogsInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
@@ -3447,6 +3517,7 @@ export type UserUncheckedCreateWithoutNotificationLogsInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
@@ -3506,6 +3577,7 @@ export type UserUpdateWithoutNotificationLogsInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
@@ -3549,6 +3621,7 @@ export type UserUncheckedUpdateWithoutNotificationLogsInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
@@ -3591,6 +3664,7 @@ export type UserCreateWithoutSupportTicketsInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -3634,6 +3708,7 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -3693,6 +3768,7 @@ export type UserUpdateWithoutSupportTicketsInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -3736,6 +3812,7 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -3779,6 +3856,7 @@ export type UserCreateWithoutReferralsMadeInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -3822,6 +3900,7 @@ export type UserUncheckedCreateWithoutReferralsMadeInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -3870,6 +3949,7 @@ export type UserCreateWithoutReferralsUsedInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -3913,6 +3993,7 @@ export type UserUncheckedCreateWithoutReferralsUsedInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -3972,6 +4053,7 @@ export type UserUpdateWithoutReferralsMadeInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -4015,6 +4097,7 @@ export type UserUncheckedUpdateWithoutReferralsMadeInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -4069,6 +4152,7 @@ export type UserUpdateWithoutReferralsUsedInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -4112,6 +4196,7 @@ export type UserUncheckedUpdateWithoutReferralsUsedInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -4155,6 +4240,7 @@ export type UserCreateWithoutLoyaltyPointsInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -4198,6 +4284,7 @@ export type UserUncheckedCreateWithoutLoyaltyPointsInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -4257,6 +4344,7 @@ export type UserUpdateWithoutLoyaltyPointsInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -4300,6 +4388,7 @@ export type UserUncheckedUpdateWithoutLoyaltyPointsInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -4343,6 +4432,7 @@ export type UserCreateWithoutLoyaltyTransactionsInput = {
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -4386,6 +4476,7 @@ export type UserUncheckedCreateWithoutLoyaltyTransactionsInput = {
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -4445,6 +4536,7 @@ export type UserUpdateWithoutLoyaltyTransactionsInput = {
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -4488,6 +4580,199 @@ export type UserUncheckedUpdateWithoutLoyaltyTransactionsInput = {
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
+  notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
+  twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
+  adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutLoyaltyCouponPurchasesInput = {
+  id?: string
+  phoneNumber?: string | null
+  phoneNumberVerified?: boolean
+  role?: string
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  name?: string | null
+  fullName?: string | null
+  email?: string | null
+  emailVerified?: boolean
+  image?: string | null
+  isActive?: boolean
+  razorpayCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  twoFactorEnabled?: boolean | null
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
+  kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
+  twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
+  adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
+  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutLoyaltyCouponPurchasesInput = {
+  id?: string
+  phoneNumber?: string | null
+  phoneNumberVerified?: boolean
+  role?: string
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  name?: string | null
+  fullName?: string | null
+  email?: string | null
+  emailVerified?: boolean
+  image?: string | null
+  isActive?: boolean
+  razorpayCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  twoFactorEnabled?: boolean | null
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
+  kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
+  deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
+  twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
+  adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
+  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutLoyaltyCouponPurchasesInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutLoyaltyCouponPurchasesInput, Prisma.UserUncheckedCreateWithoutLoyaltyCouponPurchasesInput>
+}
+
+export type UserUpsertWithoutLoyaltyCouponPurchasesInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutLoyaltyCouponPurchasesInput, Prisma.UserUncheckedUpdateWithoutLoyaltyCouponPurchasesInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutLoyaltyCouponPurchasesInput, Prisma.UserUncheckedCreateWithoutLoyaltyCouponPurchasesInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutLoyaltyCouponPurchasesInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutLoyaltyCouponPurchasesInput, Prisma.UserUncheckedUpdateWithoutLoyaltyCouponPurchasesInput>
+}
+
+export type UserUpdateWithoutLoyaltyCouponPurchasesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
+  kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
+  twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
+  adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
+  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutLoyaltyCouponPurchasesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
+  kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -4532,6 +4817,7 @@ export type UserCreateWithoutAdminProfileInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
@@ -4575,6 +4861,7 @@ export type UserUncheckedCreateWithoutAdminProfileInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
@@ -4634,6 +4921,7 @@ export type UserUpdateWithoutAdminProfileInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
@@ -4677,6 +4965,7 @@ export type UserUncheckedUpdateWithoutAdminProfileInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
@@ -4720,6 +5009,7 @@ export type UserCreateWithoutTwoFactorsInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
@@ -4763,6 +5053,7 @@ export type UserUncheckedCreateWithoutTwoFactorsInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
@@ -4822,6 +5113,7 @@ export type UserUpdateWithoutTwoFactorsInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
@@ -4865,6 +5157,7 @@ export type UserUncheckedUpdateWithoutTwoFactorsInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
@@ -4908,6 +5201,7 @@ export type UserCreateWithoutUserCodEligibilityInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -4951,6 +5245,7 @@ export type UserUncheckedCreateWithoutUserCodEligibilityInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -5010,6 +5305,7 @@ export type UserUpdateWithoutUserCodEligibilityInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -5053,6 +5349,7 @@ export type UserUncheckedUpdateWithoutUserCodEligibilityInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -5096,6 +5393,7 @@ export type UserCreateWithoutWishlistItemsInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -5139,6 +5437,7 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -5198,6 +5497,7 @@ export type UserUpdateWithoutWishlistItemsInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -5241,6 +5541,7 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -5284,6 +5585,7 @@ export type UserCreateWithoutKitchenWishlistsInput = {
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
@@ -5327,6 +5629,7 @@ export type UserUncheckedCreateWithoutKitchenWishlistsInput = {
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
@@ -5386,6 +5689,7 @@ export type UserUpdateWithoutKitchenWishlistsInput = {
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
@@ -5429,6 +5733,7 @@ export type UserUncheckedUpdateWithoutKitchenWishlistsInput = {
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
@@ -5456,6 +5761,7 @@ export type UserCountOutputType = {
   referralsMade: number
   referralsUsed: number
   loyaltyTransactions: number
+  loyaltyCouponPurchases: number
   notificationLogs: number
   twoFactors: number
   wishlistItems: number
@@ -5477,6 +5783,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   referralsMade?: boolean | UserCountOutputTypeCountReferralsMadeArgs
   referralsUsed?: boolean | UserCountOutputTypeCountReferralsUsedArgs
   loyaltyTransactions?: boolean | UserCountOutputTypeCountLoyaltyTransactionsArgs
+  loyaltyCouponPurchases?: boolean | UserCountOutputTypeCountLoyaltyCouponPurchasesArgs
   notificationLogs?: boolean | UserCountOutputTypeCountNotificationLogsArgs
   twoFactors?: boolean | UserCountOutputTypeCountTwoFactorsArgs
   wishlistItems?: boolean | UserCountOutputTypeCountWishlistItemsArgs
@@ -5594,6 +5901,13 @@ export type UserCountOutputTypeCountLoyaltyTransactionsArgs<ExtArgs extends runt
 /**
  * UserCountOutputType without action
  */
+export type UserCountOutputTypeCountLoyaltyCouponPurchasesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.LoyaltyCouponPurchaseWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
 export type UserCountOutputTypeCountNotificationLogsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.NotificationLogWhereInput
 }
@@ -5656,6 +5970,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   referralsUsed?: boolean | Prisma.User$referralsUsedArgs<ExtArgs>
   loyaltyPoints?: boolean | Prisma.User$loyaltyPointsArgs<ExtArgs>
   loyaltyTransactions?: boolean | Prisma.User$loyaltyTransactionsArgs<ExtArgs>
+  loyaltyCouponPurchases?: boolean | Prisma.User$loyaltyCouponPurchasesArgs<ExtArgs>
   notificationLogs?: boolean | Prisma.User$notificationLogsArgs<ExtArgs>
   twoFactors?: boolean | Prisma.User$twoFactorsArgs<ExtArgs>
   adminProfile?: boolean | Prisma.User$adminProfileArgs<ExtArgs>
@@ -5747,6 +6062,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   referralsUsed?: boolean | Prisma.User$referralsUsedArgs<ExtArgs>
   loyaltyPoints?: boolean | Prisma.User$loyaltyPointsArgs<ExtArgs>
   loyaltyTransactions?: boolean | Prisma.User$loyaltyTransactionsArgs<ExtArgs>
+  loyaltyCouponPurchases?: boolean | Prisma.User$loyaltyCouponPurchasesArgs<ExtArgs>
   notificationLogs?: boolean | Prisma.User$notificationLogsArgs<ExtArgs>
   twoFactors?: boolean | Prisma.User$twoFactorsArgs<ExtArgs>
   adminProfile?: boolean | Prisma.User$adminProfileArgs<ExtArgs>
@@ -5778,6 +6094,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     referralsUsed: Prisma.$ReferralPayload<ExtArgs>[]
     loyaltyPoints: Prisma.$LoyaltyPointsPayload<ExtArgs> | null
     loyaltyTransactions: Prisma.$LoyaltyTransactionPayload<ExtArgs>[]
+    loyaltyCouponPurchases: Prisma.$LoyaltyCouponPurchasePayload<ExtArgs>[]
     notificationLogs: Prisma.$NotificationLogPayload<ExtArgs>[]
     twoFactors: Prisma.$TwoFactorPayload<ExtArgs>[]
     adminProfile: Prisma.$AdminProfilePayload<ExtArgs> | null
@@ -6215,6 +6532,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   referralsUsed<T extends Prisma.User$referralsUsedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$referralsUsedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReferralPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   loyaltyPoints<T extends Prisma.User$loyaltyPointsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$loyaltyPointsArgs<ExtArgs>>): Prisma.Prisma__LoyaltyPointsClient<runtime.Types.Result.GetResult<Prisma.$LoyaltyPointsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   loyaltyTransactions<T extends Prisma.User$loyaltyTransactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$loyaltyTransactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LoyaltyTransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  loyaltyCouponPurchases<T extends Prisma.User$loyaltyCouponPurchasesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$loyaltyCouponPurchasesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LoyaltyCouponPurchasePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notificationLogs<T extends Prisma.User$notificationLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   twoFactors<T extends Prisma.User$twoFactorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$twoFactorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TwoFactorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   adminProfile<T extends Prisma.User$adminProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$adminProfileArgs<ExtArgs>>): Prisma.Prisma__AdminProfileClient<runtime.Types.Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
@@ -7051,6 +7369,30 @@ export type User$loyaltyTransactionsArgs<ExtArgs extends runtime.Types.Extension
   take?: number
   skip?: number
   distinct?: Prisma.LoyaltyTransactionScalarFieldEnum | Prisma.LoyaltyTransactionScalarFieldEnum[]
+}
+
+/**
+ * User.loyaltyCouponPurchases
+ */
+export type User$loyaltyCouponPurchasesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the LoyaltyCouponPurchase
+   */
+  select?: Prisma.LoyaltyCouponPurchaseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the LoyaltyCouponPurchase
+   */
+  omit?: Prisma.LoyaltyCouponPurchaseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.LoyaltyCouponPurchaseInclude<ExtArgs> | null
+  where?: Prisma.LoyaltyCouponPurchaseWhereInput
+  orderBy?: Prisma.LoyaltyCouponPurchaseOrderByWithRelationInput | Prisma.LoyaltyCouponPurchaseOrderByWithRelationInput[]
+  cursor?: Prisma.LoyaltyCouponPurchaseWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.LoyaltyCouponPurchaseScalarFieldEnum | Prisma.LoyaltyCouponPurchaseScalarFieldEnum[]
 }
 
 /**

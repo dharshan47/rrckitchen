@@ -213,6 +213,16 @@ export type LoyaltyPoints = Prisma.LoyaltyPointsModel
  */
 export type LoyaltyTransaction = Prisma.LoyaltyTransactionModel
 /**
+ * Model LoyaltyCoupon
+ * 
+ */
+export type LoyaltyCoupon = Prisma.LoyaltyCouponModel
+/**
+ * Model LoyaltyCouponPurchase
+ * 
+ */
+export type LoyaltyCouponPurchase = Prisma.LoyaltyCouponPurchaseModel
+/**
  * Model Coupon
  * 
  */

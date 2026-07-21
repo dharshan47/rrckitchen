@@ -90,6 +90,8 @@ export const ModelName = {
   Referral: 'Referral',
   LoyaltyPoints: 'LoyaltyPoints',
   LoyaltyTransaction: 'LoyaltyTransaction',
+  LoyaltyCoupon: 'LoyaltyCoupon',
+  LoyaltyCouponPurchase: 'LoyaltyCouponPurchase',
   Coupon: 'Coupon',
   CouponRedemption: 'CouponRedemption',
   PaymentOffer: 'PaymentOffer',
@@ -254,6 +256,7 @@ export const KitchenPartnerScalarFieldEnum = {
   serviceZoneId: 'serviceZoneId',
   avgRating: 'avgRating',
   totalReviews: 'totalReviews',
+  operatingHours: 'operatingHours',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
@@ -680,6 +683,39 @@ export const LoyaltyTransactionScalarFieldEnum = {
 } as const
 
 export type LoyaltyTransactionScalarFieldEnum = (typeof LoyaltyTransactionScalarFieldEnum)[keyof typeof LoyaltyTransactionScalarFieldEnum]
+
+
+export const LoyaltyCouponScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  discountType: 'discountType',
+  discountValue: 'discountValue',
+  maxDiscount: 'maxDiscount',
+  minOrderValue: 'minOrderValue',
+  pointsCost: 'pointsCost',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
+} as const
+
+export type LoyaltyCouponScalarFieldEnum = (typeof LoyaltyCouponScalarFieldEnum)[keyof typeof LoyaltyCouponScalarFieldEnum]
+
+
+export const LoyaltyCouponPurchaseScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  loyaltyCouponId: 'loyaltyCouponId',
+  couponCode: 'couponCode',
+  discountType: 'discountType',
+  discountValue: 'discountValue',
+  maxDiscount: 'maxDiscount',
+  minOrderValue: 'minOrderValue',
+  used: 'used',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type LoyaltyCouponPurchaseScalarFieldEnum = (typeof LoyaltyCouponPurchaseScalarFieldEnum)[keyof typeof LoyaltyCouponPurchaseScalarFieldEnum]
 
 
 export const CouponScalarFieldEnum = {
