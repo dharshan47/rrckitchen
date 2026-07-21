@@ -1,6 +1,8 @@
 import prisma from "@/lib/prisma";
 import { cached } from "@/lib/server-cache";
 import { cacheLife } from "next/cache";
+import { toTitleCase } from "@/lib/utils";
+import type { OperatingHours } from "@/components/kitchen/kitchen-timing-display";
 
 export interface HomePageData {
   topRatedKitchens: Array<{
@@ -64,7 +66,7 @@ async function _getKitchenData() {
       return {
         id: k.id,
         slug: k.slug,
-        displayName: k.kitchenAlias?.displayName ?? "",
+      displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
         avgRating: avgRating ? Math.round(avgRating * 10) / 10 : null,
         totalReviews: k._count.reviews,
         imageUrl: null,
@@ -76,7 +78,7 @@ async function _getKitchenData() {
   const newKitchens = newKitchensData.map((k) => ({
     id: k.id,
     slug: k.slug,
-    displayName: k.kitchenAlias?.displayName ?? "",
+    displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
     createdAt: k.createdAt.toISOString(),
     imageUrl: null,
   }));
@@ -109,7 +111,7 @@ export async function getRecentOrderKitchens(userId?: string) {
       kitchens.push({
         id: kp.id,
         slug: kp.slug,
-        displayName: kp.kitchenAlias?.displayName ?? "",
+        displayName: toTitleCase(kp.kitchenAlias?.displayName ?? kp.slug),
         imageUrl: null,
       });
     }
@@ -156,12 +158,12 @@ async function _getAllKitchensWithItems() {
     const allItems = k.menus.flatMap((m) => m.menuItems);
     const firstItemPhoto = allItems.find((i) => i.photos.length > 0)?.photos[0]?.imageUrl ?? null;
     const timeSlots = [...new Set(allItems.map((i) => i.timeSlot))];
-    const cuisineTags = k.kitchenCategories.map((kc) => kc.category.name);
+    const cuisineTags = k.kitchenCategories.map((kc) => toTitleCase(kc.category.name));
 
     return {
       id: k.id,
       slug: k.slug,
-      displayName: k.kitchenAlias?.displayName ?? "",
+      displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
       avgRating,
       totalReviews: k._count.reviews,
       imageUrl: firstItemPhoto,
@@ -230,19 +232,20 @@ async function _getKitchenDetail(kitchenSlug: string) {
   const bestsellerThreshold = sortedByOrders.length > 0 ? sortedByOrders[0]._count.orderItems : 0;
   const isBestseller = (orderCount: number) => orderCount > 0 && orderCount >= bestsellerThreshold * 0.6;
 
-  const cuisineTags = kitchen.kitchenCategories.map((kc) => kc.category.name);
+  const cuisineTags = kitchen.kitchenCategories.map((kc) => toTitleCase(kc.category.name));
 
   return {
     id: kitchen.id,
     slug: kitchen.slug,
-    displayName: kitchen.kitchenAlias?.displayName ?? "",
+    displayName: toTitleCase(kitchen.kitchenAlias?.displayName ?? kitchen.slug),
     avgRating,
     totalReviews: kitchen._count.reviews,
     imageUrl: firstPhoto,
     cuisineTags,
+    operatingHours: kitchen.operatingHours as OperatingHours | null,
       items: allItems.map((i) => ({
       id: i.id,
-      slug: i.slug ?? undefined,
+      slug: i.slug ?? i.id,
       name: i.name,
       description: i.description,
       price: Number(i.price),
@@ -251,7 +254,7 @@ async function _getKitchenDetail(kitchenSlug: string) {
       timeSlot: i.timeSlot,
       imageUrl: i.photos[0]?.imageUrl ?? null,
       photos: i.photos.map((p) => ({ imageUrl: p.imageUrl, sortOrder: p.sortOrder })),
-      kitchenName: kitchen.kitchenAlias?.displayName ?? "",
+      kitchenName: toTitleCase(kitchen.kitchenAlias?.displayName ?? kitchen.slug),
       orderCount: i._count.orderItems,
       isBestseller: isBestseller(i._count.orderItems),
     })),
@@ -321,12 +324,12 @@ async function _getKitchensByCategory(categoryName: string) {
 
     const allItems = k.menus.flatMap((m) => m.menuItems);
     const firstItemPhoto = allItems.find((i) => i.photos.length > 0)?.photos[0]?.imageUrl ?? null;
-    const cuisineTags = k.kitchenCategories.map((kc) => kc.category.name);
+    const cuisineTags = k.kitchenCategories.map((kc) => toTitleCase(kc.category.name));
 
   return {
       id: k.id,
       slug: k.slug,
-      displayName: k.kitchenAlias?.displayName ?? "",
+      displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
       avgRating,
       totalReviews: k._count.reviews,
       imageUrl: firstItemPhoto,
@@ -342,6 +345,79 @@ async function _getKitchensByCategory(categoryName: string) {
       })),
       timeSlots: [...new Set(allItems.map((i) => i.timeSlot))],
     };
+  });
+}
+
+export interface RelatedKitchen {
+  id: string;
+  slug: string;
+  displayName: string;
+  avgRating: number | null;
+  totalReviews: number;
+  imageUrl: string | null;
+  cuisineTags: string[];
+  timeSlots: string[];
+}
+
+export async function getRelatedKitchens(excludeKitchenId: string, cuisineTags: string[]) {
+  return cached(`getRelatedKitchens:${excludeKitchenId}`, 60_000, () => _getRelatedKitchens(excludeKitchenId, cuisineTags));
+}
+
+async function _getRelatedKitchens(excludeKitchenId: string, cuisineTags: string[]) {
+  if (!cuisineTags.length) return [];
+
+  const kitchens = await prisma.kitchenPartner.findMany({
+    where: {
+      id: { not: excludeKitchenId },
+      status: { in: ["APPROVED", "ACTIVE"] },
+      kitchenCategories: {
+        some: {
+          category: { name: { in: cuisineTags, mode: "insensitive" } },
+        },
+      },
+    },
+    take: 8,
+    include: {
+      kitchenAlias: true,
+      menus: {
+        where: { isActive: true },
+        include: {
+          menuItems: {
+            where: { isAvailable: true },
+            include: {
+              photos: { orderBy: { sortOrder: "asc" }, take: 1 },
+            },
+            orderBy: { name: "asc" },
+          },
+        },
+      },
+      kitchenCategories: { include: { category: true } },
+      _count: { select: { reviews: true } },
+      reviews: { select: { rating: true } },
+    },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return kitchens.map((k) => {
+    const avgRating =
+      k.reviews.length > 0
+        ? Math.round((k.reviews.reduce((s, r) => s + r.rating, 0) / k.reviews.length) * 10) / 10
+        : null;
+    const allItems = k.menus.flatMap((m) => m.menuItems);
+    const firstItemPhoto = allItems.find((i) => i.photos.length > 0)?.photos[0]?.imageUrl ?? null;
+    const timeSlots = [...new Set(allItems.map((i) => i.timeSlot))];
+    const tags = k.kitchenCategories.map((kc) => toTitleCase(kc.category.name));
+
+    return {
+      id: k.id,
+      slug: k.slug,
+      displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
+      avgRating,
+      totalReviews: k._count.reviews,
+      imageUrl: firstItemPhoto,
+      cuisineTags: tags,
+      timeSlots,
+    } satisfies RelatedKitchen;
   });
 }
 

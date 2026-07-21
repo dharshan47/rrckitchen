@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import slugify from "slugify";
+import { toTitleCase } from "@/lib/utils";
 
 
 const PAGE_SIZE = 15;
@@ -69,12 +70,12 @@ export async function GET(request: Request) {
       const firstItemPhoto =
         allItems.find((i) => i.photos.length > 0)?.photos[0]?.imageUrl ?? null;
       const timeSlots = [...new Set(allItems.map((i) => i.timeSlot))];
-      const cuisineTags = k.kitchenCategories.map((kc) => kc.category.name);
+      const cuisineTags = k.kitchenCategories.map((kc) => toTitleCase(kc.category.name));
 
       return {
         id: k.id,
         slug: k.slug || slugify(k.kitchenAlias?.displayName ?? k.id, { lower: true, strict: true }),
-        displayName: k.kitchenAlias?.displayName ?? "",
+        displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
         avgRating,
         totalReviews: k._count.reviews,
         imageUrl: firstItemPhoto,

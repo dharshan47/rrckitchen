@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import prisma from "@/lib/prisma";
-import { razorpayClient } from "@/lib/razorpay";
+import { getRazorpayClient } from "@/lib/razorpay";
 import { getAblyRest } from "@/lib/ably/server";
 import { redis } from "@/lib/redis";
 import { awardPoints } from "@/actions/loyalty/loyalty";
@@ -184,7 +184,7 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
     };
   }
 
-  const razorpayOrder = await razorpayClient.orders.create({
+  const razorpayOrder = await getRazorpayClient().orders.create({
     amount: Math.round(totalAmount * 100),
     currency: "INR",
     receipt: order.id,
@@ -225,7 +225,7 @@ export async function refundOrder(orderId: string, reason: RefundReasonType = "O
   let refundStatus: "INITIATED" | "FAILED" = "FAILED";
   if (payment.providerPaymentId) {
     try {
-      const refund = await razorpayClient.payments.refund(payment.providerPaymentId, {
+      const refund = await getRazorpayClient().payments.refund(payment.providerPaymentId, {
         amount: Math.round(Number(order.totalAmount) * 100),
         notes: { reason },
       });
@@ -290,7 +290,7 @@ export async function confirmPayment(
 
   if (!paymentMethod) {
     try {
-      const rpPayment = await razorpayClient.payments.fetch(razorpayPaymentId);
+      const rpPayment = await getRazorpayClient().payments.fetch(razorpayPaymentId);
       paymentMethod = rpPayment.method;
     } catch {
       // fallback - method stays undefined

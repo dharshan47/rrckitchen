@@ -56,14 +56,14 @@ export function FastDeliveryCarousel() {
         <CarouselContent>
           {kitchens.map((kitchen) => (
             <CarouselItem key={kitchen.id} className="basis-1/2 md:basis-1/3 xl:basis-1/4 pl-3">
-              <Link href={`/kitchen/${kitchen.slug}`} className="block group">
+              <Link href={`/kitchen/${kitchen.slug}`} className="block hover:scale-[0.97] transition-transform duration-300">
                 <div className="relative aspect-4/3 rounded-xl overflow-hidden">
                   {kitchen.imageUrl ? (
                     <Image
                       src={kitchen.imageUrl}
                       alt={kitchen.displayName}
                       fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      className="object-cover"
                       sizes="(max-width: 768px) 50vw, (max-width: 1280px) 33vw, 25vw"
                     />
                   ) : (

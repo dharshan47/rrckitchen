@@ -9,12 +9,13 @@ interface PaymentMethodSelectorProps {
   onSelect: (method: PaymentMethod) => void;
   codAvailable?: boolean;
   codReason?: string | null;
+  razorpayAvailable?: boolean;
 }
 
-export function PaymentMethodSelector({ selected, onSelect, codAvailable = true, codReason }: PaymentMethodSelectorProps) {
-  const methods: { id: PaymentMethod; label: string; desc: string; icon: typeof CreditCard; disabled?: boolean }[] = [
-    { id: "RAZORPAY", label: "Pay Online", desc: "Credit/Debit card, UPI, Net Banking", icon: CreditCard },
-    { id: "CASH_ON_DELIVERY", label: "Cash on Delivery", desc: "Pay with cash when your order arrives", icon: Banknote, disabled: !codAvailable },
+export function PaymentMethodSelector({ selected, onSelect, codAvailable = true, codReason, razorpayAvailable = true }: PaymentMethodSelectorProps) {
+  const methods: { id: PaymentMethod; label: string; desc: string; icon: typeof CreditCard; disabled?: boolean; disabledReason?: string }[] = [
+    { id: "RAZORPAY", label: "Pay Online", desc: "Credit/Debit card, UPI, Net Banking", icon: CreditCard, disabled: !razorpayAvailable, disabledReason: !razorpayAvailable ? "Online payment coming soon" : undefined },
+    { id: "CASH_ON_DELIVERY", label: "Cash on Delivery", desc: "Pay with cash when your order arrives", icon: Banknote, disabled: !codAvailable, disabledReason: codReason ?? undefined },
   ];
 
   return (
@@ -45,8 +46,8 @@ export function PaymentMethodSelector({ selected, onSelect, codAvailable = true,
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold">{method.label}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">{method.desc}</p>
-                {method.disabled && codReason && (
-                  <p className="text-xs text-amber-600 mt-0.5">{codReason}</p>
+                {method.disabled && method.disabledReason && (
+                  <p className="text-xs text-amber-600 mt-0.5">{method.disabledReason}</p>
                 )}
               </div>
               <div className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border-2 ${

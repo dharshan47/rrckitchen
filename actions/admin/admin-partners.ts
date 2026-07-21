@@ -22,6 +22,7 @@ export async function getAdminKitchenPartners() {
     include: {
       kitchenAlias: true,
       kitchenKyc: true,
+      kitchenCategories: { include: { category: true } },
       user: { select: { name: true, phoneNumber: true, email: true } },
       _count: { select: { orderItems: true, menus: true } },
       orderItems: { select: { unitPrice: true, quantity: true } },
@@ -38,6 +39,7 @@ export async function getAdminKitchenPartners() {
     orders: p._count.orderItems,
     menuCount: p._count.menus,
     revenue: p.orderItems.reduce((sum, oi) => sum + Number(oi.unitPrice) * oi.quantity, 0),
+    cuisines: p.kitchenCategories.map((kc) => ({ id: kc.category.id, name: kc.category.name })),
     kyc: p.kitchenKyc
       ? {
           bankName: p.kitchenKyc.bankName,
@@ -119,6 +121,41 @@ export async function updateKitchenPartnerStatus(id: string, status: string) {
     return { success: true }
   } catch {
     return { success: false, error: "Failed to update status" }
+  }
+}
+
+export async function updateKitchenCuisines(kitchenId: string, categoryIds: string[]) {
+  let session
+  try { const result = await requirePermission("MANAGE_CMS"); session = result.session } catch {
+    return { success: false, error: "Unauthorized" }
+  }
+
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.kitchenCategory.deleteMany({ where: { kitchenPartnerId: kitchenId } })
+
+      if (categoryIds.length > 0) {
+        await tx.kitchenCategory.createMany({
+          data: categoryIds.map((categoryId) => ({
+            kitchenPartnerId: kitchenId,
+            categoryId,
+          })),
+        })
+      }
+    })
+
+    await logAdminAction({
+      actorUserId: session.user.id,
+      action: "UPDATE_KITCHEN_CUISINES",
+      targetType: "KitchenPartner",
+      targetId: kitchenId,
+      metadata: { categoryIds },
+    })
+
+    return { success: true }
+  } catch (error) {
+    console.error("[Admin] Failed to update kitchen cuisines:", error)
+    return { success: false, error: "Failed to update cuisines" }
   }
 }
 

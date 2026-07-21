@@ -33,7 +33,7 @@ export function HomeClient() {
 
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <div className="mx-auto max-w-360 px-4 lg:px-12 pb-16 pt-1 lg:pt-8 space-y-6 lg:space-y-20">
+      <div className="mx-auto max-w-360 px-4 lg:px-12 pb-16 pt-0 lg:pt-4 space-y-4 lg:space-y-12">
         <ErrorBoundary>
           {/* Fast Delivery - Nearby Kitchens */}
           <FastDeliveryCarousel />
@@ -90,7 +90,7 @@ export function HomeClient() {
           </section>
 
           {/* Explore Kitchens Section */}
-          <section className="space-y-6 lg:space-y-10 pt-4 lg:pt-10 border-t border-gray-100">
+          <section className="space-y-4 lg:space-y-6 pt-3 lg:pt-6 border-t border-gray-100">
             <InfiniteKitchenGrid
               selectedCategory={selectedCategory}
               onCategorySelect={setSelectedCategory}

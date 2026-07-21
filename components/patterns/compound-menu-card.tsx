@@ -213,6 +213,7 @@ function Header() {
   const handleIncrement = (e: React.MouseEvent) => {
     e.stopPropagation();
     updateQuantity(item.id, cartItem!.qty + 1);
+    if (onShowAddPopup) onShowAddPopup(item);
   };
   
   return (
@@ -254,18 +255,18 @@ function Header() {
           </div>
 
           {cartItem ? (
-            <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center rounded-lg border border-[#EE7005] overflow-hidden bg-[#FFF5EB]" onClick={e => e.stopPropagation()}>
               <button
                 onClick={handleDecrement}
-                className="h-8 w-8 md:h-7 md:w-7 flex items-center justify-center rounded border border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                className="h-8 w-8 md:h-7 md:w-7 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
                 aria-label="Decrease quantity"
               >
                 <Minus className="h-4 w-4 md:h-3 md:w-3" />
               </button>
-              <span className="w-7 md:w-6 text-center text-sm md:text-xs font-bold text-[#EE7005]">{cartItem.qty}</span>
+              <span className="w-7 md:w-6 text-center text-sm md:text-xs font-bold text-[#EE7005] leading-none py-0.5">{cartItem.qty}</span>
               <button
                 onClick={handleIncrement}
-                className="h-8 w-8 md:h-7 md:w-7 flex items-center justify-center rounded border border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                className="h-8 w-8 md:h-7 md:w-7 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
                 aria-label="Increase quantity"
               >
                 <Plus className="h-4 w-4 md:h-3 md:w-3" />

@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma"
 import { redis } from "@/lib/redis"
+import { toTitleCase } from "@/lib/utils"
 
 export interface NearbyKitchen {
   id: string
@@ -105,11 +106,11 @@ export async function getNearbyKitchens(
       return {
         id: k.id,
         slug: k.slug,
-        displayName: k.kitchenAlias?.displayName ?? "",
+        displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
         avgRating,
         totalReviews: k._count.reviews,
         imageUrl: firstItemPhoto,
-        cuisineTags: k.kitchenCategories.map((kc) => kc.category.name),
+        cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
         distanceKm: kitchenDistances.get(k.id) ?? null,
       }
     })

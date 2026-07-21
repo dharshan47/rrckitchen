@@ -6,6 +6,8 @@ import { Search, Eye, Ban, CheckCircle, XCircle, Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Checkbox } from "@/components/ui/checkbox"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import {
   Table,
@@ -22,7 +24,8 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { getAdminKitchenPartners, updateKitchenPartnerStatus } from "@/actions/admin/admin-partners"
+import { getAdminKitchenPartners, updateKitchenPartnerStatus, updateKitchenCuisines } from "@/actions/admin/admin-partners"
+import { getAllCategories } from "@/actions/admin/admin-cms"
 import { Skeleton } from "@/components/ui/skeleton"
 
 const statusStyles: Record<string, string> = {
@@ -38,6 +41,9 @@ export default function AdminKitchensPage() {
   const [search, setSearch] = useState("")
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selected, setSelected] = useState<any>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [cuisineEditTarget, setCuisineEditTarget] = useState<any>(null)
+  const [selectedCuisineIds, setSelectedCuisineIds] = useState<string[]>([])
 
   const { data: partners, isLoading } = useQuery({
     queryKey: ["admin-kitchen-partners"],
@@ -52,6 +58,26 @@ export default function AdminKitchensPage() {
       (k.phoneNumber ?? "").includes(search) ||
       (k.email ?? "").toLowerCase().includes(search.toLowerCase())
   )
+
+  const { data: categories = [] } = useQuery({
+    queryKey: ["admin-categories"],
+    queryFn: getAllCategories,
+  })
+
+  const cuisineMutation = useMutation({
+    mutationFn: ({ kitchenId, categoryIds }: { kitchenId: string; categoryIds: string[] }) =>
+      updateKitchenCuisines(kitchenId, categoryIds),
+    onSuccess: (result) => {
+      if (result.success) {
+        toast.success("Cuisines updated")
+        setCuisineEditTarget(null)
+        queryClient.invalidateQueries({ queryKey: ["admin-kitchen-partners"] })
+      } else {
+        toast.error(result.error ?? "Failed to update cuisines")
+      }
+    },
+    onError: () => toast.error("Failed to update cuisines"),
+  })
 
   const actionMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) =>
@@ -105,7 +131,7 @@ export default function AdminKitchensPage() {
               </div>
               {Array.from({ length: 6 }).map((_, i) => (
                 <div key={i} className="flex gap-4 items-center">
-                  <Skeleton className="h-4 flex-1 max-w-[200px]" />
+                  <Skeleton className="h-4 flex-1 max-w-50" />
                   <Skeleton className="h-4 w-28" />
                   <Skeleton className="h-5 w-20 rounded-full" />
                   <Skeleton className="h-4 w-16" />
@@ -152,6 +178,7 @@ export default function AdminKitchensPage() {
                 <TableRow>
                   <TableHead>Kitchen Name</TableHead>
                   <TableHead>Contact</TableHead>
+                  <TableHead>Cuisines</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Orders</TableHead>
                   <TableHead>Revenue</TableHead>
@@ -165,6 +192,29 @@ export default function AdminKitchensPage() {
                     <TableCell className="font-medium">{k.name}</TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {k.phoneNumber ?? "—"}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1 max-w-50">
+                        {k.cuisines && k.cuisines.length > 0 ? (
+                          k.cuisines.slice(0, 2).map((c: { id: string; name: string }) => (
+                            <span key={c.id} className="inline-flex items-center rounded-full bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                              {c.name}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs text-muted-foreground">—</span>
+                        )}
+                        {k.cuisines && k.cuisines.length > 2 && (
+                          <span className="text-xs text-muted-foreground">+{k.cuisines.length - 2}</span>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => { setCuisineEditTarget(k); setSelectedCuisineIds(k.cuisines?.map((c: { id: string }) => c.id) ?? []) }}
+                          className="ml-1 text-xs text-primary hover:underline"
+                        >
+                          Edit
+                        </button>
+                      </div>
                     </TableCell>
                     <TableCell>
                       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[k.status] ?? "bg-gray-100 text-gray-700"}`}>
@@ -274,6 +324,55 @@ export default function AdminKitchensPage() {
           ) : (
             <p className="text-sm text-muted-foreground py-4 text-center">No KYC details submitted yet.</p>
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!cuisineEditTarget} onOpenChange={(open) => { if (!open) setCuisineEditTarget(null) }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Cuisines — {cuisineEditTarget?.name}</DialogTitle>
+            <DialogDescription>Select the cuisine types for this kitchen</DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="max-h-[60vh] pr-4">
+            <div className="space-y-3 py-2">
+              {categories.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">No cuisines available. Add them in CMS first.</p>
+              ) : (
+                categories.filter((c) => c.isActive).map((cat) => (
+                  <label
+                    key={cat.id}
+                    className="flex items-center gap-3 rounded-lg border border-border p-3 cursor-pointer hover:bg-muted/50 transition-colors"
+                  >
+                    <Checkbox
+                      checked={selectedCuisineIds.includes(cat.id)}
+                      onCheckedChange={(checked) => {
+                        setSelectedCuisineIds(checked
+                          ? [...selectedCuisineIds, cat.id]
+                          : selectedCuisineIds.filter((id) => id !== cat.id)
+                        )
+                      }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium">{cat.name}</p>
+                      <p className="text-xs text-muted-foreground">{cat.description ?? cat.name}</p>
+                    </div>
+                  </label>
+                ))
+              )}
+            </div>
+          </ScrollArea>
+          <div className="flex justify-end gap-2 pt-2 border-t">
+            <Button variant="outline" onClick={() => setCuisineEditTarget(null)}>Cancel</Button>
+            <Button
+              onClick={() => {
+                if (!cuisineEditTarget) return
+                cuisineMutation.mutate({ kitchenId: cuisineEditTarget.id, categoryIds: selectedCuisineIds })
+              }}
+              disabled={cuisineMutation.isPending}
+            >
+              {cuisineMutation.isPending ? <><Loader2 className="h-4 w-4 mr-1 animate-spin" /> Saving...</> : "Save"}
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

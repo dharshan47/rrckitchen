@@ -2,7 +2,8 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useCartActions } from "@/stores";
+import Link from "next/link";
+import { useCartActions, useCartItems } from "@/stores";
 import { CompoundMenuCard, VegIcon, NonVegIcon } from "@/components/patterns/compound-menu-card";
 import { Input } from "@/components/ui/input";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
@@ -11,6 +12,10 @@ import { Search, Star, ArrowLeft, Coffee, UtensilsCrossed, Pizza, Moon, Flame } 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AddToCartPopup, type AddPopupItem } from "@/components/menu/add-to-cart-popup";
+import { RelatedKitchensCarousel } from "@/components/kitchen/related-kitchens-carousel";
+import { KitchenAboutSection } from "@/components/kitchen/kitchen-about-section";
+import { KitchenTimingDisplay, type OperatingHours } from "@/components/kitchen/kitchen-timing-display";
+import type { RelatedKitchen } from "@/actions/catalog/home-data";
 
 interface KitchenItem {
   id: string;
@@ -36,12 +41,14 @@ interface KitchenDetail {
   imageUrl: string | null;
   cuisineTags: string[];
   items: KitchenItem[];
+  operatingHours: OperatingHours | null;
 }
 
 interface Props {
   kitchen: KitchenDetail;
   initialTimeSlot: string | null;
   initialSearchQuery?: string | null;
+  relatedKitchens?: RelatedKitchen[];
 }
 
 const SLOT_CONFIG: Record<string, { label: string; icon: React.ComponentType<{ className?: string }> }> = {
@@ -53,14 +60,23 @@ const SLOT_CONFIG: Record<string, { label: string; icon: React.ComponentType<{ c
 
 const SLOT_ORDER = ["MORNING", "LUNCH", "EVENINGSNACKS", "DINNER"];
 
-export function KitchenDetailClient({ kitchen, initialTimeSlot, initialSearchQuery }: Props) {
+export function KitchenDetailClient({ kitchen, initialTimeSlot, initialSearchQuery, relatedKitchens }: Props) {
   const router = useRouter();
   const { addToCart } = useCartActions();
+  const cartItems = useCartItems();
   const [searchQuery, setSearchQuery] = useState(initialSearchQuery ?? "");
   const [foodTypeFilter, setFoodTypeFilter] = useState<string | null>(null);
   const [bestsellerFilter, setBestsellerFilter] = useState(false);
   const [popupItem, setPopupItem] = useState<AddPopupItem | null>(null);
   const [popupOpen, setPopupOpen] = useState(false);
+
+  const bestSellers = useMemo(() => {
+    return [...kitchen.items]
+      .filter((i) => i.isBestseller || (i.orderCount ?? 0) > 0)
+      .sort((a, b) => (b.orderCount ?? 0) - (a.orderCount ?? 0))
+      .slice(0, 5)
+      .map((i) => ({ name: i.name, description: i.description, orderCount: i.orderCount ?? 0 }));
+  }, [kitchen.items]);
 
   const hasBothTypes = useMemo(() => {
     const types = new Set(kitchen.items.map((i) => i.foodType));
@@ -106,15 +122,18 @@ export function KitchenDetailClient({ kitchen, initialTimeSlot, initialSearchQue
 
   const handleShowAddPopup = useCallback(
     (menuItem: { id: string; name: string; price: number; compareAtPrice?: number | null; foodType: string; imageUrl?: string | null; kitchenName: string; timeSlot: string }) => {
-      addToCart({
-        id: menuItem.id,
-        name: menuItem.name,
-        price: Number(menuItem.price),
-        qty: 1,
-        foodType: menuItem.foodType,
-        timeSlot: menuItem.timeSlot,
-        kitchenName: menuItem.kitchenName,
-      });
+      const existing = cartItems.find(ci => ci.id === menuItem.id);
+      if (!existing) {
+        addToCart({
+          id: menuItem.id,
+          name: menuItem.name,
+          price: Number(menuItem.price),
+          qty: 1,
+          foodType: menuItem.foodType,
+          timeSlot: menuItem.timeSlot,
+          kitchenName: menuItem.kitchenName,
+        });
+      }
       setPopupItem({
         id: menuItem.id,
         name: menuItem.name,
@@ -127,12 +146,12 @@ export function KitchenDetailClient({ kitchen, initialTimeSlot, initialSearchQue
       });
       setPopupOpen(true);
     },
-    [addToCart],
+    [cartItems, addToCart],
   );
 
   const handleItemClick = useCallback(
     (item: { id: string; slug?: string }) => {
-      if (item.slug) router.push(`/menu/${item.slug}`);
+      router.push(`/menu/${item.slug ?? item.id}`);
     },
     [router],
   );
@@ -153,16 +172,14 @@ export function KitchenDetailClient({ kitchen, initialTimeSlot, initialSearchQue
           </Button>
         </div>
 
-        {/* Content centered: name -> image -> rating -> cuisine tags */}
-        <div className="flex flex-col items-center gap-4">
+        {/* Content: name -> image -> rating -> cuisine tags -> timing */}
+        <div className="flex flex-col gap-3">
           {/* Kitchen Name */}
-          <div className="text-center">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">{kitchen.displayName}</h1>
-          </div>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">{kitchen.displayName}</h1>
 
           {/* Kitchen Image */}
           {kitchen.imageUrl && (
-            <div className="relative w-full max-w-3xl aspect-[16/9] sm:aspect-[16/7] rounded-lg overflow-hidden bg-muted">
+            <div className="relative w-full max-w-3xl aspect-video sm:aspect-16/7 rounded-lg overflow-hidden bg-muted">
               <Image
                 src={kitchen.imageUrl}
                 alt={kitchen.displayName}
@@ -175,7 +192,7 @@ export function KitchenDetailClient({ kitchen, initialTimeSlot, initialSearchQue
 
           {/* Rating */}
           {kitchen.avgRating != null && kitchen.avgRating > 0 && (
-            <div className="flex items-center gap-1.5 justify-center">
+            <div className="flex items-center gap-1.5">
               <Star className="h-5 w-5 fill-yellow-400 text-yellow-400" />
               <span className="text-lg font-bold">{kitchen.avgRating.toFixed(1)}</span>
               <span className="text-sm text-muted-foreground">
@@ -186,17 +203,23 @@ export function KitchenDetailClient({ kitchen, initialTimeSlot, initialSearchQue
 
           {/* Cuisine Tags */}
           {kitchen.cuisineTags && kitchen.cuisineTags.length > 0 && (
-            <div className="flex flex-wrap items-center justify-center gap-1.5">
-              {kitchen.cuisineTags.map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded-full px-3 py-1 text-xs font-medium bg-primary/10 text-primary"
-                >
-                  {tag}
+            <div className="flex flex-wrap items-center gap-1">
+              {kitchen.cuisineTags.map((tag, i) => (
+                <span key={tag}>
+                  <Link
+                    href={`/categories/${tag.toLowerCase().replace(/\s+/g, "-")}`}
+                    className="text-primary hover:underline"
+                  >
+                    {tag}
+                  </Link>
+                  {i < kitchen.cuisineTags.length - 1 && <span className="text-primary ml-1">,</span>}
                 </span>
               ))}
             </div>
           )}
+
+          {/* Timing */}
+          <KitchenTimingDisplay operatingHours={kitchen.operatingHours} />
         </div>
 
         <div className="relative max-w-md mx-auto">
@@ -367,11 +390,24 @@ export function KitchenDetailClient({ kitchen, initialTimeSlot, initialSearchQue
             </Accordion>
           </div>
         )}
+
+        {relatedKitchens && (
+          <RelatedKitchensCarousel
+            kitchenName={kitchen.displayName}
+            kitchens={relatedKitchens}
+          />
+        )}
+
+        <KitchenAboutSection
+          displayName={kitchen.displayName}
+          cuisineTags={kitchen.cuisineTags}
+          bestSellers={bestSellers}
+        />
       </div>
 
       <AddToCartPopup
         item={popupItem}
-        qty={1}
+        qty={popupItem ? (cartItems.find(ci => ci.id === popupItem.id)?.qty ?? 1) : 1}
         open={popupOpen}
         onOpenChange={setPopupOpen}
       />

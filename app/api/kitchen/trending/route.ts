@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { toTitleCase } from "@/lib/utils";
 
 
 export async function GET() {
@@ -38,7 +39,7 @@ export async function GET() {
       return {
         id: k.id,
         slug: k.slug,
-        displayName: k.kitchenAlias?.displayName ?? "",
+        displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
         imageUrl: firstItemPhoto,
         totalOrders: k._count.orderItems,
         itemCount: allItems.length,

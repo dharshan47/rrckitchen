@@ -88,16 +88,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
     setImageIndex((i) => (i < sortedPhotos.length - 1 ? i + 1 : 0));
   }, [sortedPhotos.length]);
 
-  const handleAddToCart = useCallback(() => {
-    addToCart({
-      id: item.id,
-      name: item.name,
-      price,
-      qty: 1,
-      foodType: item.foodType,
-      timeSlot: item.timeSlot,
-      kitchenName,
-    });
+  const showPopupForItem = useCallback(() => {
     setPopupItem({
       id: item.id,
       name: item.name,
@@ -109,7 +100,23 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
       timeSlot: item.timeSlot,
     });
     setPopupOpen(true);
-  }, [item, price, kitchenName, addToCart]);
+  }, [item, price, kitchenName]);
+
+  const handleAddToCart = useCallback(() => {
+    const existing = cartItems.find(ci => ci.id === item.id);
+    if (!existing) {
+      addToCart({
+        id: item.id,
+        name: item.name,
+        price,
+        qty: 1,
+        foodType: item.foodType,
+        timeSlot: item.timeSlot,
+        kitchenName,
+      });
+    }
+    showPopupForItem();
+  }, [item, price, kitchenName, cartItems, addToCart, showPopupForItem]);
 
   const handleDecrement = useCallback(() => {
     if (!cartItem) return;
@@ -123,7 +130,8 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
   const handleIncrement = useCallback(() => {
     if (!cartItem) return;
     updateQuantity(item.id, cartItem.qty + 1);
-  }, [cartItem, item.id, updateQuantity]);
+    showPopupForItem();
+  }, [cartItem, item.id, updateQuantity, showPopupForItem]);
 
   const handleTouchStart = useCallback((e: React.TouchEvent) => {
     setTouchStart(e.touches[0].clientX);
@@ -349,21 +357,21 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                   <p className="text-xs text-muted-foreground mt-1">(incl. of all taxes)</p>
                 </div>
                 {cartItem ? (
-                  <div className="hidden md:flex items-center gap-2">
+                  <div className="hidden md:flex items-center rounded-lg border border-[#EE7005] overflow-hidden bg-[#FFF5EB]">
                     <button
                       onClick={handleDecrement}
-                      className="h-9 w-9 flex items-center justify-center rounded-full border border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                      className="h-10 w-10 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
                       aria-label="Decrease quantity"
                     >
-                      <Minus className="h-4 w-4" />
+                      <Minus className="h-5 w-5" />
                     </button>
-                    <span className="w-8 text-center text-base font-bold text-[#EE7005]">{cartItem.qty}</span>
+                    <span className="w-9 text-center text-base font-bold text-[#EE7005] leading-none py-1">{cartItem.qty}</span>
                     <button
                       onClick={handleIncrement}
-                      className="h-9 w-9 flex items-center justify-center rounded-full border border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                      className="h-10 w-10 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
                       aria-label="Increase quantity"
                     >
-                      <Plus className="h-4 w-4" />
+                      <Plus className="h-5 w-5" />
                     </button>
                   </div>
                 ) : (
@@ -590,18 +598,18 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                 <Share2 className="h-4 w-4" />
               </button>
               {cartItem ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center rounded-lg border border-[#EE7005] overflow-hidden bg-[#FFF5EB]">
                   <button
                     onClick={(e) => { e.stopPropagation(); handleDecrement(); }}
-                    className="h-8 w-8 flex items-center justify-center rounded-full border border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                    className="h-9 w-9 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
                     aria-label="Decrease quantity"
                   >
                     <Minus className="h-4 w-4" />
                   </button>
-                  <span className="w-6 text-center text-sm font-bold text-[#EE7005]">{cartItem.qty}</span>
+                  <span className="w-7 text-center text-sm font-bold text-[#EE7005] leading-none py-1">{cartItem.qty}</span>
                   <button
                     onClick={(e) => { e.stopPropagation(); handleIncrement(); }}
-                    className="h-8 w-8 flex items-center justify-center rounded-full border border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                    className="h-9 w-9 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
                     aria-label="Increase quantity"
                   >
                     <Plus className="h-4 w-4" />
@@ -638,18 +646,18 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
             </div>
           </div>
           {cartItem ? (
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex items-center rounded-lg border-2 border-[#EE7005] overflow-hidden shrink-0 bg-[#FFF5EB]">
               <button
                 onClick={handleDecrement}
-                className="h-10 w-10 flex items-center justify-center rounded-full border-2 border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                className="h-11 w-11 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
                 aria-label="Decrease quantity"
               >
                 <Minus className="h-5 w-5" />
               </button>
-              <span className="w-8 text-center text-lg font-bold text-[#EE7005]">{cartItem.qty}</span>
+              <span className="w-9 text-center text-lg font-bold text-[#EE7005] leading-none py-1">{cartItem.qty}</span>
               <button
                 onClick={handleIncrement}
-                className="h-10 w-10 flex items-center justify-center rounded-full border-2 border-[#EE7005] text-[#EE7005] hover:bg-[#EE7005] hover:text-white transition-colors"
+                className="h-11 w-11 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
                 aria-label="Increase quantity"
               >
                 <Plus className="h-5 w-5" />
@@ -670,7 +678,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
 
       <AddToCartPopup
         item={popupItem}
-        qty={1}
+        qty={popupItem ? (cartItems.find(ci => ci.id === popupItem.id)?.qty ?? 1) : 1}
         open={popupOpen}
         onOpenChange={setPopupOpen}
       />

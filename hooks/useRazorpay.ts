@@ -87,7 +87,7 @@ export function useRazorpay() {
 
   const initiateCheckout = useCallback(async (items: CartItem[], total: number, phoneNumber: string, couponCode?: string) => {
     if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
-      setPaymentResult({ success: false, error: "Payment is not configured. Please contact support." });
+      setPaymentResult({ success: false, error: "Online payment is temporarily unavailable. Please use Cash on Delivery." });
       return;
     }
 

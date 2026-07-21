@@ -1,7 +1,7 @@
 "use server"
 
 import prisma from "@/lib/prisma"
-import { razorpayClient } from "@/lib/razorpay"
+import { getRazorpayClient } from "@/lib/razorpay"
 import { getAblyRest } from "@/lib/ably/server"
 import { redis } from "@/lib/redis"
 
@@ -26,7 +26,7 @@ export async function refundOrderItem(
 
   let razorpayRefundId: string | null = null
   try {
-    const rzpRefund = await razorpayClient.payments.refund(payment.providerPaymentId, {
+    const rzpRefund = await getRazorpayClient().payments.refund(payment.providerPaymentId, {
       amount: Math.round(refundAmount * 100),
       speed: "normal",
       notes: { reason, orderItemId, orderId: orderItem.orderId },
@@ -123,7 +123,7 @@ export async function retryRefund(refundRowId: string) {
   if (!refund.payment.providerPaymentId) throw new Error("Payment has no provider payment ID")
 
   try {
-    const rzpRefund = await razorpayClient.payments.refund(refund.payment.providerPaymentId, {
+    const rzpRefund = await getRazorpayClient().payments.refund(refund.payment.providerPaymentId, {
       amount: Math.round(Number(refund.amount) * 100),
       speed: "normal",
       notes: { reason: refund.reason, refundRowId },

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import prisma from "@/lib/prisma"
 import { redis } from "@/lib/redis"
 import slugify from "slugify"
+import { toTitleCase } from "@/lib/utils"
 
 const CACHE_TTL = 45
 
@@ -168,21 +169,21 @@ export async function GET(request: Request) {
       compareAtPrice: item.compareAtPrice ? Number(item.compareAtPrice) : null,
       foodType: item.foodType,
       timeSlot: item.timeSlot,
-      kitchenName: item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "",
+      kitchenName: toTitleCase(item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? ""),
       kitchenId: item.menu?.kitchenPartner?.id ?? null,
       kitchenSlug: item.menu?.kitchenPartner?.slug ?? undefined,
       imageUrl: item.photos[0]?.imageUrl ?? null,
     })),
     kitchens: kitchenRows.map((k) => {
       const kitchenItems = itemsByKitchen.get(k.id) ?? []
-      const displayName = k.kitchenAlias?.displayName ?? ""
+      const displayName = toTitleCase(k.kitchenAlias?.displayName ?? k.slug)
       return {
         id: k.id,
         slug: k.slug || slugify(displayName, { lower: true, strict: true }),
         displayName,
         avgRating: Number(k.avgRating),
         totalReviews: k.totalReviews,
-        cuisineTags: k.kitchenCategories.map((kc) => kc.category.name),
+        cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
         imageUrl: kitchenItems[0]?.imageUrl ?? null,
         items: kitchenItems,
       }

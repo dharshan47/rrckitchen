@@ -1,5 +1,5 @@
 import { notFound, redirect } from "next/navigation";
-import { getKitchenDetail } from "@/actions/catalog/home-data";
+import { getKitchenDetail, getRelatedKitchens } from "@/actions/catalog/home-data";
 import { KitchenDetailClient } from "@/components/kitchen/kitchen-detail-client";
 import type { Metadata } from "next";
 
@@ -28,5 +28,14 @@ export default async function KitchenDetailPage({ params, searchParams }: Props)
     notFound();
   }
 
-  return <KitchenDetailClient kitchen={kitchen} initialTimeSlot={timeSlot ?? null} initialSearchQuery={q ?? null} />;
+  const relatedKitchens = await getRelatedKitchens(kitchen.id, kitchen.cuisineTags);
+
+  return (
+    <KitchenDetailClient
+      kitchen={kitchen}
+      initialTimeSlot={timeSlot ?? null}
+      initialSearchQuery={q ?? null}
+      relatedKitchens={relatedKitchens}
+    />
+  );
 }

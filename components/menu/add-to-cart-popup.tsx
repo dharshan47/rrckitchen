@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect } from "react";
 import { ShoppingCart, Check, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -25,12 +24,6 @@ interface AddToCartPopupProps {
 }
 
 export function AddToCartPopup({ item, qty = 1, open, onOpenChange }: AddToCartPopupProps) {
-  useEffect(() => {
-    if (!open) return;
-    const timer = setTimeout(() => onOpenChange(false), 3000);
-    return () => clearTimeout(timer);
-  }, [open, item?.id, onOpenChange]);
-
   if (!item || !open) return null;
 
   return (

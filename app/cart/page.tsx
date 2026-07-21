@@ -456,13 +456,15 @@ function CartContent() {
   const appliedCoupon = useCartCoupon();
   const orderType = useCartOrderType();
   const { addToCart, applyCoupon, removeCoupon, setOrderType } = useCartActions();
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("RAZORPAY");
+  const razorpayConfigured = typeof process !== "undefined" && !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(razorpayConfigured ? "RAZORPAY" : "CASH_ON_DELIVERY");
   const [codProcessing, setCodProcessing] = useState(false);
   const [showCouponOffers, setShowCouponOffers] = useState(false);
   const [showPaymentOffers, setShowPaymentOffers] = useState(false);
   const [selectedPaymentOffer, setSelectedPaymentOffer] = useState<PaymentOfferData | null>(null);
   const [popupItem, setPopupItem] = useState<AddPopupItem | null>(null);
   const [popupOpen, setPopupOpen] = useState(false);
+  const [addressSheetOpen, setAddressSheetOpen] = useState(false);
 
   const bucketedTotal = useMemo(() => Math.round(total / 50) * 50, [total]);
 
@@ -530,6 +532,10 @@ function CartContent() {
   const handleCheckout = useEventCallback(async () => {
     if (!deliveryAddress) {
       toast.error("Please select a delivery location before placing your order");
+      return;
+    }
+    if (!razorpayConfigured && paymentMethod === "RAZORPAY") {
+      toast.error("Online payment is not available. Please select Cash on Delivery.");
       return;
     }
     if (paymentMethod === "CASH_ON_DELIVERY") {
@@ -739,7 +745,9 @@ function CartContent() {
 
           {/* Address, Order Type, Coupon, Payment Offers, Payment Method */}
           <div className="order-2 lg:order-1 space-y-6">
-            <DeliveryAddressCard />
+            <div className="hidden md:block">
+              <DeliveryAddressCard open={addressSheetOpen} onOpenChange={setAddressSheetOpen} />
+            </div>
 
             <Separator />
 
@@ -776,8 +784,9 @@ function CartContent() {
 
             <PaymentMethodSelector
               selected={paymentMethod}
-              onSelect={setPaymentMethod}
+              onSelect={(m) => { if (m === "RAZORPAY" && !razorpayConfigured) return; setPaymentMethod(m) }}
               codAvailable={true}
+              razorpayAvailable={razorpayConfigured}
             />
 
             {/* Desktop checkout buttons */}
@@ -820,35 +829,47 @@ function CartContent() {
         </div>
 
         {/* Mobile fixed bottom checkout bar */}
-        <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background p-4 md:hidden">
-          <Button
-            className="w-full"
-            size="lg"
-            onClick={handleCheckout}
-            disabled={isProcessing || codProcessing}
-          >
-            {isProcessing || codProcessing ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing…
-              </>
-            ) : !deliveryAddress ? (
-              <>
-                <MapPin className="mr-2 h-4 w-4" />
-                Add Address to Proceed
-              </>
-            ) : paymentMethod === "CASH_ON_DELIVERY" ? (
-              <>
-                <Banknote className="mr-2 h-4 w-4" />
-                Place Order (COD) — ₹{finalTotal.toFixed(0)}
-              </>
-            ) : (
-              <>
-                <CreditCard className="mr-2 h-4 w-4" />
-                Pay ₹{finalTotal.toFixed(0)}
-              </>
-            )}
-          </Button>
+        <div className="fixed bottom-0 left-0 right-0 z-50 border-t bg-background p-4 md:hidden space-y-2">
+          {!deliveryAddress && (
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />
+              <span>You seem to be in a new location</span>
+            </div>
+          )}
+          {!deliveryAddress ? (
+            <Button
+              className="w-full"
+              size="lg"
+              onClick={() => setAddressSheetOpen(true)}
+            >
+              <MapPin className="mr-2 h-4 w-4" />
+              Add Address to Proceed
+            </Button>
+          ) : (
+            <Button
+              className="w-full"
+              size="lg"
+              onClick={handleCheckout}
+              disabled={isProcessing || codProcessing}
+            >
+              {isProcessing || codProcessing ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Processing…
+                </>
+              ) : paymentMethod === "CASH_ON_DELIVERY" ? (
+                <>
+                  <Banknote className="mr-2 h-4 w-4" />
+                  Place Order (COD) — ₹{finalTotal.toFixed(0)}
+                </>
+              ) : (
+                <>
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  Pay ₹{finalTotal.toFixed(0)}
+                </>
+              )}
+            </Button>
+          )}
         </div>
       </div>
 

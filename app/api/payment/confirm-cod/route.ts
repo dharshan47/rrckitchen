@@ -31,12 +31,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid payment method" }, { status: 400 });
     }
 
-    if (order.payment.provider === "CASH_ON_DELIVERY") {
-      return NextResponse.json({ orderId: order.id });
-    }
-
     if (order.payment.status !== "PENDING") {
-      return NextResponse.json({ orderId: order.id });
+      return NextResponse.json({ orderId: order.id, alreadyProcessed: true });
     }
 
     await prisma.payment.update({

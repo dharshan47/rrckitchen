@@ -38,10 +38,20 @@ const addressSchema = z.object({
 
 type AddressForm = z.infer<typeof addressSchema>
 
-export function DeliveryAddressCard() {
+interface DeliveryAddressCardProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function DeliveryAddressCard({ open: externalOpen, onOpenChange: externalOnOpenChange }: DeliveryAddressCardProps) {
   const deliveryAddress = useMenuDeliveryAddress()
   const { setDeliveryAddress } = useMenuActions()
-  const [open, setOpen] = useState(false)
+  const [internalOpen, setInternalOpen] = useState(false)
+  const open = externalOpen ?? internalOpen
+  const setOpen = useCallback((val: boolean) => {
+    if (externalOnOpenChange) externalOnOpenChange(val)
+    else setInternalOpen(val)
+  }, [externalOnOpenChange])
   const [selectedLat, setSelectedLat] = useState<number | null>(null)
   const [selectedLng, setSelectedLng] = useState<number | null>(null)
   const [selectedAddress, setSelectedAddress] = useState("")
@@ -109,7 +119,7 @@ export function DeliveryAddressCard() {
     } finally {
       setSaving(false)
     }
-  }, [selectedAddress, form, setDeliveryAddress])
+  }, [selectedAddress, form, setDeliveryAddress, setOpen])
 
   const label = useWatch({ control: form.control, name: "label" })
 
