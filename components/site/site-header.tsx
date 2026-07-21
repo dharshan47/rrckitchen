@@ -326,16 +326,16 @@ export function SiteHeader() {
                 {heroCards.map((card) => (
                   <CarouselItem key={card.alt} className="pl-0">
                     <Link href={card.href} className="block">
-                        <div className="flex flex-col md:flex-row items-center max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-                        <div className="w-full md:w-1/2 py-6 md:py-10 lg:py-14 md:pr-8 lg:pr-12">
-                          <h2 className="text-white text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight uppercase">
+                      <div className="flex flex-col md:flex-row items-center max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+                        <div className="w-full md:w-1/2 py-6 md:py-10 lg:py-14 md:pr-8 lg:pr-12 min-w-0">
+                          <h2 className="text-white text-xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight uppercase break-words">
                             {card.title}
                           </h2>
-                          <p className="text-white/80 text-sm sm:text-lg md:text-xl lg:text-2xl mt-2 sm:mt-3 font-semibold">
+                          <p className="text-white/80 text-sm sm:text-lg md:text-xl lg:text-2xl mt-2 sm:mt-3 font-semibold break-words">
                             {card.subject}
                           </p>
                         </div>
-                        <div className="w-full md:w-1/2 relative h-50 sm:h-62.5 md:h-70 lg:h-87.5">
+                        <div className="w-full md:w-1/2 relative h-40 sm:h-60 md:h-72 lg:h-96">
                           <Image
                             src={card.image}
                             alt={card.alt}
