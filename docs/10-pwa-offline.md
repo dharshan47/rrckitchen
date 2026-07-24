@@ -9,18 +9,19 @@
 ## 1. PWA Overview
 
 ```mermaid
-graph TB
+%%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true}}}%%
+flowchart TB
     subgraph "Browser"
-        SW["Service Worker<br/>Workbox v6"]
-        CS["Cache Storage<br/>Static: Cache API<br/>Dynamic: IndexedDB"]
+        SW["Service Worker Workbox v6"]
+        CS["Cache Storage Static: Cache API Dynamic: IndexedDB"]
         PM["Push Manager"]
         BS["Background Sync"]
     end
 
     subgraph "Server"
-        Assets["Static Assets<br/>_next/static/*"]
-        Pages["Pages + API<br/>SSR + API Routes"]
-        Push["Push Endpoint<br/>POST /api/push"]
+        Assets["Static Assets _next/static/*"]
+        Pages["Pages + API SSR + API Routes"]
+        Push["Push Endpoint POST /api/push"]
     end
 
     subgraph "Installability"

@@ -23,41 +23,95 @@ const DAY_LABELS: Record<string, string> = {
   sunday: "Sunday",
 }
 
-function getTodayKey(): string {
+export function getTodayKey(): string {
   const day = new Date().getDay()
   return DAYS[day === 0 ? 6 : day - 1]
 }
 
-function isCurrentlyOpen(hours: OperatingHours): { open: boolean; closeTime: string } {
-  const todayKey = getTodayKey()
-  const today = hours[todayKey]
-  if (!today) return { open: false, closeTime: "" }
+export type KitchenStatus = {
+  isOpen: boolean;
+  closeTime: string | null;
+  opensNextAt: { time: string; day: string } | null;
+};
 
-  const now = new Date()
-  const [openHour, openMin] = today.open.replace(/\s?[APap][Mm]/g, "").split(":").map(Number)
-  const openIsPM = today.open.toUpperCase().includes("PM")
-  const open24 = openIsPM && openHour !== 12 ? openHour + 12 : !openIsPM && openHour === 12 ? 0 : openHour
-
-  const closeIsMidnight = today.close.toLowerCase() === "midnight"
-
-  if (closeIsMidnight) {
-    const nowMinutes = now.getHours() * 60 + now.getMinutes()
-    const openMinutes = open24 * 60 + (openMin || 0)
-    return { open: nowMinutes >= openMinutes, closeTime: "Midnight" }
+export function getKitchenStatus(hours: OperatingHours | null): KitchenStatus {
+  if (!hours || Object.keys(hours).length === 0) {
+    return { isOpen: true, closeTime: null, opensNextAt: null };
   }
 
-  const [closeHour, closeMin] = today.close.replace(/\s?[APap][Mm]/g, "").split(":").map(Number)
-  const closeIsPM = today.close.toUpperCase().includes("PM")
-  const close24 = closeIsPM && closeHour !== 12 ? closeHour + 12 : !closeIsPM && closeHour === 12 ? 0 : closeHour
+  const now = new Date();
+  const currentDayIndex = now.getDay() === 0 ? 6 : now.getDay() - 1;
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
 
-  const nowMinutes = now.getHours() * 60 + now.getMinutes()
-  const openMinutes = open24 * 60 + (openMin || 0)
-  const closeMinutes = close24 * 60 + (closeMin || 0)
+  const parseTime = (timeStr: string) => {
+    if (timeStr.toLowerCase() === "midnight") return 24 * 60;
+    const [hourStr, minStr] = timeStr.replace(/\s?[APap][Mm]/g, "").split(":");
+    let hour = parseInt(hourStr, 10);
+    const min = minStr ? parseInt(minStr, 10) : 0;
+    const isPM = timeStr.toUpperCase().includes("PM");
+    if (isPM && hour !== 12) hour += 12;
+    if (!isPM && hour === 12) hour = 0;
+    return hour * 60 + min;
+  };
 
-  if (closeMinutes > openMinutes) {
-    return { open: nowMinutes >= openMinutes && nowMinutes < closeMinutes, closeTime: today.close }
+  const todayKey = DAYS[currentDayIndex];
+  const todayHours = hours[todayKey];
+
+  let isOpen = false;
+  let closeTime: string | null = null;
+
+  if (todayHours) {
+    const openMinutes = parseTime(todayHours.open);
+    const closeMinutes = parseTime(todayHours.close);
+    
+    // Handle wrap-around (e.g. 10 AM to 2 AM)
+    if (closeMinutes < openMinutes) {
+      if (nowMinutes >= openMinutes || nowMinutes < closeMinutes) {
+        isOpen = true;
+        closeTime = todayHours.close;
+      }
+    } else {
+      if (nowMinutes >= openMinutes && nowMinutes < closeMinutes) {
+        isOpen = true;
+        closeTime = todayHours.close;
+      }
+    }
   }
-  return { open: nowMinutes >= openMinutes || nowMinutes < closeMinutes, closeTime: today.close }
+
+  if (isOpen) {
+    return { isOpen: true, closeTime, opensNextAt: null };
+  }
+
+  // Find next open time
+  let opensNextAt: { time: string; day: string } | null = null;
+  
+  for (let i = 0; i <= 7; i++) {
+    const checkDayIndex = (currentDayIndex + i) % 7;
+    const checkDayKey = DAYS[checkDayIndex];
+    const checkHours = hours[checkDayKey];
+    
+    if (checkHours) {
+      const openMinutes = parseTime(checkHours.open);
+      
+      if (i === 0) {
+        // Today
+        if (nowMinutes < openMinutes) {
+          opensNextAt = { time: checkHours.open, day: "Today" };
+          break;
+        }
+      } else if (i === 1) {
+        // Tomorrow
+        opensNextAt = { time: checkHours.open, day: "Tomorrow" };
+        break;
+      } else {
+        // Later this week
+        opensNextAt = { time: checkHours.open, day: `on ${DAY_LABELS[checkDayKey]}` };
+        break;
+      }
+    }
+  }
+
+  return { isOpen: false, closeTime: null, opensNextAt };
 }
 
 interface Props {
@@ -69,23 +123,34 @@ export function KitchenTimingDisplay({ operatingHours }: Props) {
 
   if (!operatingHours || Object.keys(operatingHours).length === 0) return null
 
-  const status = isCurrentlyOpen(operatingHours)
+  const status = getKitchenStatus(operatingHours)
   const todayKey = getTodayKey()
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="flex items-center gap-1.5 text-sm">
-          {status.open ? (
-            <span className="text-green-600 font-semibold">Open now</span>
+        <button
+          type="button"
+          className="group flex items-center gap-0 text-left cursor-pointer py-0.5"
+          onClick={(e) => {
+            e.stopPropagation()
+            setOpen(true)
+          }}
+        >
+          {status.isOpen ? (
+            <span className="text-[14px] font-bold text-[#3AB757]">Open now</span>
           ) : (
-            <span className="text-red-500 font-semibold">Closed</span>
+            <span className="text-[14px] font-bold text-[#E23744]">Closed</span>
           )}
-          <span className="text-muted-foreground">•</span>
-          <span className="text-muted-foreground">
-            {status.closeTime ? `Closes ${status.closeTime}` : "See timings"}
+          <span className="text-[#93959f] text-[14px] mx-2">·</span>
+          <span className="text-[14px] font-normal text-[#93959f]">
+            {status.isOpen && status.closeTime
+              ? `Closes ${status.closeTime}`
+              : status.opensNextAt
+                ? `Opens ${status.opensNextAt.time}`
+                : "See timings"}
           </span>
-          <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+          <ChevronDown className="h-3 w-3 text-[#E23744] ml-1 group-hover:translate-y-0.5 transition-transform" />
         </button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-sm">

@@ -35,7 +35,7 @@ export async function getActiveAdmins() {
     return admins.map((a) => ({
       id: a.id,
       userId: a.userId,
-      name: a.user.name ?? "Unknown",
+      name: a.user.name ?? "",
       email: a.user.email,
       phoneNumber: a.user.phoneNumber,
       permissions: a.permissions,

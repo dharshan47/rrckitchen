@@ -62,6 +62,8 @@ async function _getTomorrowMenu({ query, foodType, timeSlot, bestseller }: MenuF
         timeSlot: true,
         isAvailable: true,
         menuId: true,
+        avgRating: true,
+        totalReviews: true,
         menu: {
           select: {
             kitchenPartner: {
@@ -69,8 +71,6 @@ async function _getTomorrowMenu({ query, foodType, timeSlot, bestseller }: MenuF
                 kitchenAlias: {
                   select: { displayName: true },
                 },
-                avgRating: true,
-                totalReviews: true,
               },
             },
           },
@@ -103,6 +103,8 @@ async function _getTomorrowMenu({ query, foodType, timeSlot, bestseller }: MenuF
       timeSlot: true,
       isAvailable: true,
       menuId: true,
+      avgRating: true,
+      totalReviews: true,
       menu: {
         select: {
           kitchenPartner: {
@@ -110,8 +112,6 @@ async function _getTomorrowMenu({ query, foodType, timeSlot, bestseller }: MenuF
               kitchenAlias: {
                 select: { displayName: true },
               },
-              avgRating: true,
-              totalReviews: true,
             },
           },
         },
@@ -178,13 +178,64 @@ async function _getMenuItemBySlug(slug: string) {
 
   if (!item) return null;
 
-  const kitchenPartnerId = item.menu?.kitchenPartnerId;
-  const avgRating = kitchenPartnerId
-    ? await prisma.review.aggregate({ where: { kitchenPartnerId }, _avg: { rating: true } })
-    : null;
-  const totalReviews = kitchenPartnerId
-    ? await prisma.review.count({ where: { kitchenPartnerId } })
-    : 0;
+  return {
+    id: item.id,
+    slug: item.slug,
+    name: item.name,
+    description: item.description,
+    price: Number(item.price),
+    compareAtPrice: item.compareAtPrice ? Number(item.compareAtPrice) : null,
+    foodType: item.foodType,
+    timeSlot: item.timeSlot,
+    isAvailable: item.isAvailable,
+    avgRating: item.avgRating ? Number(item.avgRating) : null,
+    totalReviews: item.totalReviews,
+    menu: item.menu
+      ? {
+          kitchenPartner: item.menu.kitchenPartner
+            ? {
+                kitchenAlias: item.menu.kitchenPartner.kitchenAlias
+                  ? { displayName: item.menu.kitchenPartner.kitchenAlias.displayName }
+                  : null,
+              }
+            : null,
+        }
+      : null,
+    photos: item.photos.map((p) => ({ id: p.id, imageUrl: p.imageUrl, sortOrder: p.sortOrder })),
+  };
+}
+
+export async function getMenuItemByIdentifier(kitchenSlug: string, shortId: string) {
+  return cached(`getMenuItemByIdentifier:${kitchenSlug}:${shortId}`, 30_000, () => _getMenuItemByIdentifier(kitchenSlug, shortId));
+}
+
+async function _getMenuItemByIdentifier(kitchenSlug: string, shortId: string) {
+  'use cache';
+  cacheLife('hours');
+  const item = await prisma.menuItem.findFirst({
+    where: {
+      id: { startsWith: shortId },
+      isAvailable: true,
+      menu: {
+        isActive: true,
+        kitchenPartner: {
+          slug: kitchenSlug,
+          status: { in: ["APPROVED", "ACTIVE"] },
+        },
+      },
+    },
+    include: {
+      menu: {
+        include: {
+          kitchenPartner: { include: { kitchenAlias: true } },
+        },
+      },
+      photos: { orderBy: { sortOrder: "asc" } },
+      _count: { select: { orderItems: true } },
+    },
+  });
+
+  if (!item) return null;
 
   return {
     id: item.id,
@@ -196,8 +247,8 @@ async function _getMenuItemBySlug(slug: string) {
     foodType: item.foodType,
     timeSlot: item.timeSlot,
     isAvailable: item.isAvailable,
-    avgRating: avgRating?._avg.rating ? Math.round(avgRating._avg.rating * 10) / 10 : null,
-    totalReviews,
+    avgRating: item.avgRating ? Number(item.avgRating) : null,
+    totalReviews: item.totalReviews,
     menu: item.menu
       ? {
           kitchenPartner: item.menu.kitchenPartner
@@ -245,19 +296,6 @@ async function _getMenuItemById(id: string) {
 
   if (!item) return null;
 
-  const kitchenPartnerId = item.menu?.kitchenPartnerId;
-  const avgRating = kitchenPartnerId
-    ? await prisma.review.aggregate({
-        where: { kitchenPartnerId },
-        _avg: { rating: true },
-      })
-    : null;
-  const totalReviews = kitchenPartnerId
-    ? await prisma.review.count({
-        where: { kitchenPartnerId },
-      })
-    : 0;
-
   return {
     id: item.id,
     slug: item.slug,
@@ -268,8 +306,8 @@ async function _getMenuItemById(id: string) {
     foodType: item.foodType,
     timeSlot: item.timeSlot,
     isAvailable: item.isAvailable,
-    avgRating: avgRating?._avg.rating ? Math.round(avgRating._avg.rating * 10) / 10 : null,
-    totalReviews,
+    avgRating: item.avgRating ? Number(item.avgRating) : null,
+    totalReviews: item.totalReviews,
     menu: item.menu
       ? {
           kitchenPartner: item.menu.kitchenPartner

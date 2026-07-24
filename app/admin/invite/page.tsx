@@ -3,7 +3,7 @@
 /* eslint-disable react-hooks/incompatible-library */
 import { useState, useMemo } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { UserPlus, Link2, Check, Loader2, Copy, ShieldBan, Users } from "lucide-react"
+import { UserPlus, Link2, Check, Loader2, Copy, ShieldBan, Users, Eye, EyeOff } from "lucide-react"
 import { Button, Card, Label, Badge } from "@/components/ui"
 import { Skeleton } from "@/components/ui/skeleton"
 import { DataTable } from "@/components/ui/data-table"
@@ -67,6 +67,7 @@ export default function AdminInvitePage() {
   const queryClient = useQueryClient()
   const [selectedPermissions, setSelectedPermissions] = useState<AdminPermission[]>([])
   const [inviteLink, setInviteLink] = useState<string | null>(null)
+  const [revealedTokens, setRevealedTokens] = useState<Set<string>>(new Set())
 
   const { data: permissions = [] } = useQuery({
     queryKey: ["admin-permissions"],
@@ -253,11 +254,31 @@ export default function AdminInvitePage() {
               <p className="py-8 text-center text-sm text-muted-foreground">No pending invites</p>
             ) : (
               <div className="space-y-3">
-                {invites.map((inv: { id: string; token: string; permissions: AdminPermission[]; createdAt: string; consumedAt: string | null; revokedAt: string | null }) => (
+                {invites.map((inv: { id: string; token: string; permissions: AdminPermission[]; createdAt: string; consumedAt: string | null; revokedAt: string | null }) => {
+                  const isRevealed = revealedTokens.has(inv.id)
+                  const isActive = !inv.consumedAt && !inv.revokedAt
+                  return (
                   <div key={inv.id} className="flex items-center justify-between p-3 rounded-lg border border-border">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
-                        <code className="text-xs font-mono text-muted-foreground">{inv.token.slice(0, 16)}...</code>
+                        <code className="text-xs font-mono text-muted-foreground">
+                          {isRevealed ? inv.token : `${inv.token.slice(0, 16)}...`}
+                        </code>
+                        {isActive && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-5 w-5 p-0"
+                            onClick={() => setRevealedTokens((prev) => {
+                              const next = new Set(prev)
+                              if (next.has(inv.id)) next.delete(inv.id)
+                              else next.add(inv.id)
+                              return next
+                            })}
+                          >
+                            {isRevealed ? <EyeOff className="h-3.5 w-3.5 text-muted-foreground" /> : <Eye className="h-3.5 w-3.5 text-muted-foreground" />}
+                          </Button>
+                        )}
                         {inv.consumedAt ? (
                           <Badge variant="secondary" className="text-[10px]">Consumed</Badge>
                         ) : inv.revokedAt ? (
@@ -276,7 +297,8 @@ export default function AdminInvitePage() {
                       </p>
                     </div>
                   </div>
-                ))}
+                  )
+                })}
               </div>
             )}
           </Card>
@@ -307,7 +329,7 @@ export default function AdminInvitePage() {
                 <Skeleton className="h-7 w-7 rounded-md ml-auto" />
               </div>
             ))}
-          </div>
+              </div>
         ) : activeAdmins.length === 0 ? (
           <p className="py-8 text-center text-sm text-muted-foreground">No active admins</p>
         ) : (

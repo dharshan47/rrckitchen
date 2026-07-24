@@ -40,6 +40,7 @@ import {
   Percent,
   CreditCard,
   UserPlus,
+  Coins,
 } from "lucide-react";
 import type { AdminPermission } from "@/lib/generated/prisma/client";
 
@@ -60,6 +61,7 @@ const navItems: NavItem[] = [
   { href: "/admin/delivery", label: "Delivery Management", icon: Truck },
   { href: "/admin/payments", label: "Payments", icon: HandCoins, permission: "VIEW_FINANCIALS" },
   { href: "/admin/coupons", label: "Coupon Codes", icon: Percent, permission: "MANAGE_COUPONS" },
+  { href: "/admin/loyalty-coupons", label: "Loyalty Coupons", icon: Coins, permission: "MANAGE_COUPONS" },
   { href: "/admin/payment-offers", label: "Payment Offers", icon: CreditCard, permission: "MANAGE_COUPONS" },
   { href: "/admin/cash-reconciliation", label: "Cash Reconciliation", icon: Wallet, permission: "MANAGE_PAYOUTS" },
   { href: "/admin/customers", label: "Customers", icon: Users, permission: "BAN_USERS" },
@@ -73,6 +75,7 @@ const routePermissionMap: Record<string, AdminPermission | undefined> = {
   "/admin/kitchens": "APPROVE_KYC",
   "/admin/payments": "VIEW_FINANCIALS",
   "/admin/coupons": "MANAGE_COUPONS",
+  "/admin/loyalty-coupons": "MANAGE_COUPONS",
   "/admin/payment-offers": "MANAGE_COUPONS",
   "/admin/cash-reconciliation": "MANAGE_PAYOUTS",
   "/admin/customers": "BAN_USERS",

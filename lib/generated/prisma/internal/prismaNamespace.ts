@@ -412,6 +412,7 @@ export const ModelName = {
   Review: 'Review',
   DeliveryReview: 'DeliveryReview',
   MenuItemFeedback: 'MenuItemFeedback',
+  MenuItemReview: 'MenuItemReview',
   DeliveryAssignment: 'DeliveryAssignment',
   DeliveryLocation: 'DeliveryLocation',
   Payment: 'Payment',
@@ -458,7 +459,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "menuItemFeedback" | "deliveryAssignment" | "deliveryLocation" | "payment" | "pushSubscription" | "deliverySlot" | "notificationLog" | "supportTicket" | "ticketMessage" | "referral" | "loyaltyPoints" | "loyaltyTransaction" | "loyaltyCoupon" | "loyaltyCouponPurchase" | "coupon" | "couponRedemption" | "paymentOffer" | "refund" | "kitchenPayout" | "deliveryPartnerPayout" | "kitchenAddress" | "menuItemDailyStock" | "adminProfile" | "adminInvite" | "adminApprovalRequest" | "adminAuditLog" | "twoFactor" | "userCodEligibility" | "cashRemittance" | "codVariance" | "wishlistItem" | "kitchenWishlist"
+    modelProps: "user" | "role" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "menuItemFeedback" | "menuItemReview" | "deliveryAssignment" | "deliveryLocation" | "payment" | "pushSubscription" | "deliverySlot" | "notificationLog" | "supportTicket" | "ticketMessage" | "referral" | "loyaltyPoints" | "loyaltyTransaction" | "loyaltyCoupon" | "loyaltyCouponPurchase" | "coupon" | "couponRedemption" | "paymentOffer" | "refund" | "kitchenPayout" | "deliveryPartnerPayout" | "kitchenAddress" | "menuItemDailyStock" | "adminProfile" | "adminInvite" | "adminApprovalRequest" | "adminAuditLog" | "twoFactor" | "userCodEligibility" | "cashRemittance" | "codVariance" | "wishlistItem" | "kitchenWishlist"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -2531,6 +2532,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.MenuItemFeedbackCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.MenuItemFeedbackCountAggregateOutputType> | number
+        }
+      }
+    }
+    MenuItemReview: {
+      payload: Prisma.$MenuItemReviewPayload<ExtArgs>
+      fields: Prisma.MenuItemReviewFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.MenuItemReviewFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MenuItemReviewPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.MenuItemReviewFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MenuItemReviewPayload>
+        }
+        findFirst: {
+          args: Prisma.MenuItemReviewFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MenuItemReviewPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.MenuItemReviewFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MenuItemReviewPayload>
+        }
+        findMany: {
+          args: Prisma.MenuItemReviewFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MenuItemReviewPayload>[]
+        }
+        create: {
+          args: Prisma.MenuItemReviewCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MenuItemReviewPayload>
+        }
+        createMany: {
+          args: Prisma.MenuItemReviewCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.MenuItemReviewCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MenuItemReviewPayload>[]
+        }
+        delete: {
+          args: Prisma.MenuItemReviewDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MenuItemReviewPayload>
+        }
+        update: {
+          args: Prisma.MenuItemReviewUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MenuItemReviewPayload>
+        }
+        deleteMany: {
+          args: Prisma.MenuItemReviewDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.MenuItemReviewUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.MenuItemReviewUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MenuItemReviewPayload>[]
+        }
+        upsert: {
+          args: Prisma.MenuItemReviewUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$MenuItemReviewPayload>
+        }
+        aggregate: {
+          args: Prisma.MenuItemReviewAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateMenuItemReview>
+        }
+        groupBy: {
+          args: Prisma.MenuItemReviewGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MenuItemReviewGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.MenuItemReviewCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.MenuItemReviewCountAggregateOutputType> | number
         }
       }
     }
@@ -5081,7 +5156,9 @@ export const MenuItemScalarFieldEnum = {
   dailyStock: 'dailyStock',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  avgRating: 'avgRating',
+  totalReviews: 'totalReviews'
 } as const
 
 export type MenuItemScalarFieldEnum = (typeof MenuItemScalarFieldEnum)[keyof typeof MenuItemScalarFieldEnum]
@@ -5273,6 +5350,20 @@ export const MenuItemFeedbackScalarFieldEnum = {
 export type MenuItemFeedbackScalarFieldEnum = (typeof MenuItemFeedbackScalarFieldEnum)[keyof typeof MenuItemFeedbackScalarFieldEnum]
 
 
+export const MenuItemReviewScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  orderItemId: 'orderItemId',
+  userId: 'userId',
+  menuItemId: 'menuItemId',
+  rating: 'rating',
+  comment: 'comment',
+  createdAt: 'createdAt'
+} as const
+
+export type MenuItemReviewScalarFieldEnum = (typeof MenuItemReviewScalarFieldEnum)[keyof typeof MenuItemReviewScalarFieldEnum]
+
+
 export const DeliveryAssignmentScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
@@ -5363,8 +5454,10 @@ export const SupportTicketScalarFieldEnum = {
   orderId: 'orderId',
   subject: 'subject',
   description: 'description',
-  status: 'status',
+  category: 'category',
   priority: 'priority',
+  status: 'status',
+  mediaUrls: 'mediaUrls',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
@@ -6022,20 +6115,6 @@ export type ListEnumPaymentStatusFieldRefInput<$PrismaModel> = FieldRefInputType
 
 
 /**
- * Reference to a field of type 'TicketStatus'
- */
-export type EnumTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketStatus'>
-    
-
-
-/**
- * Reference to a field of type 'TicketStatus[]'
- */
-export type ListEnumTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketStatus[]'>
-    
-
-
-/**
  * Reference to a field of type 'TicketPriority'
  */
 export type EnumTicketPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketPriority'>
@@ -6046,6 +6125,20 @@ export type EnumTicketPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$P
  * Reference to a field of type 'TicketPriority[]'
  */
 export type ListEnumTicketPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketPriority[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TicketStatus'
+ */
+export type EnumTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'TicketStatus[]'
+ */
+export type ListEnumTicketStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TicketStatus[]'>
     
 
 
@@ -6340,6 +6433,7 @@ export type GlobalOmitConfig = {
   review?: Prisma.ReviewOmit
   deliveryReview?: Prisma.DeliveryReviewOmit
   menuItemFeedback?: Prisma.MenuItemFeedbackOmit
+  menuItemReview?: Prisma.MenuItemReviewOmit
   deliveryAssignment?: Prisma.DeliveryAssignmentOmit
   deliveryLocation?: Prisma.DeliveryLocationOmit
   payment?: Prisma.PaymentOmit

@@ -11,10 +11,7 @@ import { ChartBarLabel } from "@/components/ui/bar-chart"
 import { ChartLineDots } from "@/components/ui/line-chart"
 import { ChartPieDonut } from "@/components/ui/donut-chart"
 import type { ChartConfig } from "@/components/ui/chart"
-import { DollarSign, ShoppingBag, ChefHat, Utensils, TrendingUp, Users, Ticket } from "lucide-react"
-import Link from "next/link"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
+import { DollarSign, ShoppingBag, ChefHat, Utensils, TrendingUp, Users, Star } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export default function DashboardPage() {
@@ -152,47 +149,51 @@ export default function DashboardPage() {
         />
       </div>
 
-      <section aria-label="Support tickets">
+      <section aria-label="Customer reviews">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Ticket className="h-5 w-5 text-primary" />
-              Support Tickets
+              <Star className="h-5 w-5 text-yellow-400" />
+              Customer Reviews
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {data.supportTickets.length === 0 ? (
-              <p className="py-6 text-center text-sm text-muted-foreground">No support tickets yet</p>
+            {data.reviews.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted-foreground">No reviews yet</p>
             ) : (
-              <div className="space-y-2">
-                {data.supportTickets.slice(0, 5).map((ticket: { id: string; subject: string; status: string; priority: string; createdAt: Date }) => {
-                  const statusStyles: Record<string, { label: string; color: string }> = {
-                    OPEN: { label: "Open", color: "text-blue-600 bg-blue-100" },
-                    INPROGRESS: { label: "In Progress", color: "text-amber-600 bg-amber-100" },
-                    RESOLVED: { label: "Resolved", color: "text-green-600 bg-green-100" },
-                    CLOSED: { label: "Closed", color: "text-gray-600 bg-gray-100" },
-                  }
-                  const s = statusStyles[ticket.status] ?? { label: ticket.status, color: "text-gray-600 bg-gray-100" }
+              <div className="space-y-3">
+                {data.reviews.slice(0, 10).map((review: { id: string; customerName: string; itemName: string; rating: number; tasteRating: number | null; packagingRating: number | null; portionSizeRating: number | null; comment: string | null; createdAt: string }) => {
+                  const avgRating = review.tasteRating || review.rating
                   return (
-                    <div key={ticket.id} className="flex items-center justify-between gap-3 rounded-lg border border-border p-3">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium truncate">{ticket.subject}</p>
-                        <p className="text-xs text-muted-foreground">{new Date(ticket.createdAt).toLocaleDateString("en-IN")}</p>
+                    <div key={review.id} className="rounded-lg border border-border p-3 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-semibold">{review.customerName || "Customer"}</span>
+                          <span className="text-[10px] text-muted-foreground">on {review.itemName}</span>
+                        </div>
+                        <div className="flex items-center gap-0.5">
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <Star key={i} className={cn("h-3 w-3", i < avgRating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/20")} />
+                          ))}
+                        </div>
                       </div>
-                      <Badge className={cn("text-xs shrink-0", s.color)}>{s.label}</Badge>
+                      <div className="flex gap-3 text-[10px] text-muted-foreground">
+                        {review.tasteRating != null && <span>Taste: {review.tasteRating}/5</span>}
+                        {review.packagingRating != null && <span>Packaging: {review.packagingRating}/5</span>}
+                        {review.portionSizeRating != null && <span>Portion: {review.portionSizeRating}/5</span>}
+                      </div>
+                      {review.comment && <p className="text-xs text-muted-foreground italic">&ldquo;{review.comment}&rdquo;</p>}
+                      <p className="text-[10px] text-muted-foreground">{new Date(review.createdAt).toLocaleDateString("en-IN")}</p>
                     </div>
                   )
                 })}
               </div>
             )}
-            <div className="mt-3">
-              <Button variant="ghost" size="sm" className="w-full text-xs" asChild>
-                <Link href="/support">View All Tickets</Link>
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </section>
+
+
     </div>
   )
 }

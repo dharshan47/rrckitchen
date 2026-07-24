@@ -78,7 +78,7 @@ export function ProgressiveImage({
           }`}
           onLoad={handleLoad}
           onError={handleError}
-          priority={priority}
+          preload={priority}
           sizes={fill ? "(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" : undefined}
           loading={priority ? "eager" : "lazy"}
         />

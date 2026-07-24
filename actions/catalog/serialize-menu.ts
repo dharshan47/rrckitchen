@@ -5,16 +5,14 @@ export function serializeMenuItems(items: Awaited<ReturnType<typeof getTomorrowM
     ...item,
     price: Number(item.price),
     compareAtPrice: item.compareAtPrice ? Number(item.compareAtPrice) : null,
+    avgRating: item.avgRating ? Number(item.avgRating) : null,
+    totalReviews: item.totalReviews,
     menu: item.menu
       ? {
           ...item.menu,
           kitchenPartner: item.menu.kitchenPartner
             ? {
                 ...item.menu.kitchenPartner,
-                avgRating: item.menu.kitchenPartner.avgRating
-                  ? Number(item.menu.kitchenPartner.avgRating)
-                  : null,
-                totalReviews: item.menu.kitchenPartner.totalReviews,
               }
             : null,
         }

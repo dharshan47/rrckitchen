@@ -1,15 +1,16 @@
 "use client"
 
-import { use, useCallback } from "react"
+import { use, useCallback, useState } from "react"
 import Link from "next/link"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { ArrowLeft, Package, Check, ChefHat, Bike, Loader2, ShieldCheck, XCircle } from "lucide-react"
+import { ArrowLeft, Package, Check, ChefHat, Bike, Loader2, ShieldCheck, XCircle, MapPin, Star, User, Truck } from "lucide-react"
 import { Button, Card, Badge } from "@/components/ui"
 import { useSession } from "@/lib/auth-client"
 import { getOrderForTracking } from "@/actions/orders/orders"
 import { LiveOrderTrackingMap } from "@/components/map/live-order-tracking-map"
 import { cn } from "@/lib/utils"
 import { useAblyOrderChannel } from "@/hooks/useAblySubscribe"
+import { DeliveryRatingDialog } from "@/components/delivery-partner/delivery-rating-dialog"
 
 const statusFlow: { key: string; label: string; icon: typeof Check }[] = [
   { key: "CONFIRMED", label: "Confirmed", icon: Check },
@@ -27,6 +28,24 @@ const statusColors: Record<string, string> = {
   REFUNDED: "text-purple-600 bg-purple-100",
 }
 
+const deliveryStatusLabels: Record<string, string> = {
+  ASSIGNED: "Delivery Partner Assigned",
+  ACCEPTED: "Delivery Partner Accepted",
+  PICKEDUP: "Order Picked Up",
+  INTRANSIT: "Out for Delivery",
+  DELIVERED: "Delivered",
+  FAILED: "Delivery Failed",
+}
+
+const deliveryStatusIcons: Record<string, typeof Bike> = {
+  ASSIGNED: User,
+  ACCEPTED: Bike,
+  PICKEDUP: Package,
+  INTRANSIT: Truck,
+  DELIVERED: Check,
+  FAILED: XCircle,
+}
+
 function getStatusIndex(status: string): number {
   return statusFlow.findIndex((s) => s.key === status)
 }
@@ -35,6 +54,7 @@ export default function OrderTrackingPage({ params }: { params: Promise<{ id: st
   const { id: orderId } = use(params)
   const { data: session, isPending: sessionLoading } = useSession()
   const queryClient = useQueryClient()
+  const [ratingOrder, setRatingOrder] = useState<{ id: string; deliveryPartnerId: string; deliveryPartnerName: string } | null>(null)
 
   const { data: order, isLoading, isError, refetch } = useQuery({
     queryKey: ["order-tracking", orderId],
@@ -46,7 +66,7 @@ export default function OrderTrackingPage({ params }: { params: Promise<{ id: st
   useAblyOrderChannel(
     orderId,
     useCallback((msg) => {
-      if (msg.name === "order:confirmation-code") {
+      if (msg.name === "order:confirmation-code" || msg.name === "order:status" || msg.name === "delivery:status") {
         queryClient.invalidateQueries({ queryKey: ["order-tracking", orderId] })
       }
     }, [orderId, queryClient]),
@@ -81,6 +101,9 @@ export default function OrderTrackingPage({ params }: { params: Promise<{ id: st
   const isCancelled = order.status === "CANCELLED" || order.status === "REFUNDED"
   const currentIdx = isCancelled ? 0 : getStatusIndex(order.status)
   const showOtp = order.status === "READYFORPICKUP" && order.deliveryOtp
+  const isDelivered = order.status === "COMPLETED"
+  const deliveryStatus = order.deliveryStatus || order.deliveryAssignmentStatus
+  const DeliveryIcon = deliveryStatus ? (deliveryStatusIcons[deliveryStatus] ?? Bike) : Bike
 
   return (
     <main className="min-h-screen bg-background">
@@ -91,12 +114,61 @@ export default function OrderTrackingPage({ params }: { params: Promise<{ id: st
           </Link>
           <div>
             <h1 className="text-2xl font-bold">Live Tracking</h1>
-            <p className="text-sm text-muted-foreground">#{orderId.slice(0, 8)}</p>
+            <p className="text-sm text-muted-foreground break-all">#{orderId}</p>
           </div>
           <Badge className={cn("text-xs font-semibold ml-auto", statusColors[order.status] || "")}>
             {order.status === "READYFORPICKUP" ? "Ready for Pickup" : order.status.charAt(0) + order.status.slice(1).toLowerCase()}
           </Badge>
         </div>
+
+        {isDelivered && (
+          <Card className="border-green-200 bg-green-50">
+            <div className="p-4 text-center space-y-1">
+              <Check className="h-6 w-6 text-green-600 mx-auto" />
+              <p className="text-sm font-semibold text-green-700">Order Delivered!</p>
+              <p className="text-xs text-green-600">Enjoy your meal! Share your feedback below.</p>
+            </div>
+          </Card>
+        )}
+
+        {!isCancelled && !isDelivered && deliveryStatus && (
+          <Card className="border-primary/20">
+            <div className="p-4 flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                <DeliveryIcon className="h-5 w-5 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold">{deliveryStatusLabels[deliveryStatus] || deliveryStatus}</p>
+                {order.deliveryPersonName && (
+                  <p className="text-xs text-muted-foreground">
+                    Delivery partner: <span className="font-medium">{order.deliveryPersonName}</span>
+                  </p>
+                )}
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {order.deliveryPersonName && (
+          <Card>
+            <div className="p-4 flex items-center gap-3">
+              <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <User className="h-6 w-6 text-primary" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium">{order.deliveryPersonName}</p>
+                <p className="text-xs text-muted-foreground">
+                  {deliveryStatus ? deliveryStatusLabels[deliveryStatus] || deliveryStatus : "Delivery Partner"}
+                </p>
+              </div>
+              {!isDelivered && !isCancelled && (
+                <Badge variant="secondary" className="bg-green-100 text-green-700 text-xs">
+                  <MapPin className="h-3 w-3 mr-1" /> Live
+                </Badge>
+              )}
+            </div>
+          </Card>
+        )}
 
         {order.kitchenLat != null && order.kitchenLng != null && (
           <LiveOrderTrackingMap
@@ -206,10 +278,34 @@ export default function OrderTrackingPage({ params }: { params: Promise<{ id: st
 
           <div className="flex items-center justify-between border-t border-border px-4 py-3 bg-muted/10">
             <p className="text-sm font-semibold">Total: ₹{order.totalAmount}</p>
-            <p className="text-xs text-muted-foreground">{order.customerAddress}</p>
+            <div className="flex items-center gap-2">
+              {isDelivered && (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="h-7 text-xs gap-1"
+                  onClick={() => setRatingOrder({
+                    id: order.deliveryPartner?.id ? orderId : "",
+                    deliveryPartnerId: order.deliveryPartner?.id ?? "",
+                    deliveryPartnerName: order.deliveryPersonName ?? "Delivery Partner",
+                  })}
+                >
+                  <Star className="h-3 w-3" /> Rate Delivery
+                </Button>
+              )}
+              <p className="text-xs text-muted-foreground truncate max-w-32">{order.customerAddress}</p>
+            </div>
           </div>
         </Card>
       </div>
+
+      <DeliveryRatingDialog
+        open={!!ratingOrder && !!ratingOrder.deliveryPartnerId}
+        onOpenChange={(open) => { if (!open) setRatingOrder(null) }}
+        orderId={ratingOrder?.id ?? ""}
+        deliveryPartnerId={ratingOrder?.deliveryPartnerId ?? ""}
+        deliveryPartnerName={ratingOrder?.deliveryPartnerName ?? "Delivery Partner"}
+      />
     </main>
   )
 }

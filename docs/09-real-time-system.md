@@ -9,12 +9,13 @@
 ## 1. Real-Time Infrastructure
 
 ```mermaid
-graph TB
+%%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true}}}%%
+flowchart TB
     subgraph "Ably Platform"
         A["Ably Edge Network"]
         CM["Channel Management"]
         PH["Presence Handler"]
-        HR["History Retention<br/>24 hours"]
+        HR["History Retention 24 hours"]
     end
 
     subgraph "Server-Side Publisher"
@@ -38,10 +39,6 @@ graph TB
     A -->|"WebSocket"| KP
     A -->|"WebSocket"| DP
     A -->|"WebSocket"| AP
-
-    CP -->|"Subscribe"| CM
-    KP -->|"Subscribe + Presence"| CM
-    DP -->|"Subscribe + Publish"| CM
 ```
 
 ---
@@ -329,7 +326,7 @@ sequenceDiagram
 
     par Cravings Logic
         Action->>Action: Check: is customer eligible for cravings?
-        Note over Action: Criteria: order > ₹200, kitchen has active items, customer has ordered before
+        Note over Action: Criteria: order > Rs 200, kitchen has active items, customer has ordered before
     end
 
     alt Eligible
@@ -337,7 +334,7 @@ sequenceDiagram
         Action->>Ably: Publish "order:{orderId}" event "cravings:show"
         Ably-->>Customer: Receive cravings popup payload
 
-        Customer->>CartPage: "Add Butter Chicken for ₹199?"
+        Customer->>CartPage: "Add Butter Chicken for Rs 199?"
         Customer->>Action: addToCart(itemId, quantity)
         Action->>CartPage: { success: true }
 

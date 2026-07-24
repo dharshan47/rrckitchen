@@ -90,6 +90,7 @@ export async function GET(request: Request) {
           imageUrl: i.photos[0]?.imageUrl ?? null,
         })),
         timeSlots,
+        operatingHours: k.operatingHours as Record<string, { open: string; close: string }> | null,
       };
     });
 

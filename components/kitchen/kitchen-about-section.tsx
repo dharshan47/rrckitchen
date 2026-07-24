@@ -1,5 +1,8 @@
 "use client"
 
+import { useState } from "react"
+import { ChevronDown, ChevronUp } from "lucide-react"
+import { cn } from "@/lib/utils"
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion"
 
 interface KitchenAboutItem {
@@ -15,94 +18,162 @@ interface Props {
 }
 
 export function KitchenAboutSection({ displayName, cuisineTags, bestSellers }: Props) {
-  const cuisineLabel = cuisineTags.length > 0 ? cuisineTags.join(", ") : "delicious"
-  const topItems = bestSellers.slice(0, 4)
+  const [isExpanded, setIsExpanded] = useState(false)
+  const cuisineLabel = cuisineTags.length > 0 ? cuisineTags.join(", ") : "indian"
+  const topItems = bestSellers.slice(0, 2)
+
+  const firstItem = topItems[0]
+  const otherItems = topItems.slice(1)
 
   return (
-    <section className="py-6 sm:py-8 max-w-4xl mx-auto">
-      <div className="space-y-6">
-        <div className="text-center">
-          <h2 className="text-base sm:text-lg font-extrabold text-foreground">
-            About {displayName}
-          </h2>
-        </div>
+    <section className="space-y-10">
+      {/* About Section */}
+      <div>
+         <h2 className="text-[19px] sm:text-[21px] font-extrabold text-foreground tracking-tight mb-4 px-1">
+           About {displayName}
+         </h2>
+         <div className="bg-white rounded-[1.25rem] border border-gray-100/80 shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-5 sm:p-6">
+            <div className="space-y-5">
+              {/* Always visible part 1 */}
+              <div>
+                <h3 className="font-extrabold text-foreground text-[15.5px] mb-1.5 tracking-tight">
+                  Best-Selling Dishes at {displayName}
+                </h3>
+                <p className="text-[14px] text-[#555] leading-[1.6]">
+                  {displayName} is a popular food destination in Kumbakonam, known for serving delicious {cuisineLabel.toLowerCase()} food. Customers can order from {displayName} for fresh preparation, satisfying portions, and flavorful dishes.
+                </p>
+              </div>
 
-        <div className="space-y-4 text-sm text-muted-foreground leading-relaxed text-center max-w-3xl mx-auto">
-          <p>
-            {displayName} is a kitchen known for serving delicious {cuisineLabel.toLowerCase()} food.
-            Customers can order from {displayName} for fresh preparation, satisfying portions, and flavorful dishes.
-          </p>
+              {/* Always visible part 2 (first item) */}
+              {firstItem && (
+                <div>
+                  <h3 className="font-extrabold text-foreground text-[15.5px] mb-1.5 tracking-tight">
+                    {firstItem.name}
+                  </h3>
+                  <p className={cn("text-[14px] text-[#555] leading-[1.6]", !isExpanded && "line-clamp-2")}>
+                    {firstItem.name} is one of the popular dishes at {displayName}. It is prepared with quality ingredients and offers a satisfying taste for customers ordering from Kumbakonam.
+                  </p>
+                  
+                  {!isExpanded && (
+                    <button 
+                      onClick={() => setIsExpanded(true)}
+                      className="text-[14px] font-bold text-[#EE7005] hover:text-[#EE7005]/90 flex items-center gap-0.5 transition-colors mt-2"
+                    >
+                      See more <ChevronDown className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+              )}
 
-          {topItems.length > 0 && (
-            <div className="space-y-3">
-              <h3 className="font-bold text-foreground text-base">Best-Selling Dishes</h3>
-              <div className="grid grid-cols-2 gap-3">
-                {topItems.map((item) => (
-                  <div key={item.name} className="rounded-xl border border-border bg-card p-3 text-left">
-                    <span className="font-semibold text-foreground text-sm block">{item.name}</span>
-                    <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-                      {item.name} is one of the popular dishes at {displayName}, prepared with quality ingredients.
+              {/* Expanded content */}
+              {isExpanded && (
+                <div className="space-y-5 animate-in fade-in slide-in-from-top-1 duration-300">
+                  {/* Rest of the items */}
+                  {otherItems.map((item) => (
+                    <div key={item.name}>
+                      <h3 className="font-extrabold text-foreground text-[15.5px] mb-1.5 tracking-tight">
+                        {item.name}
+                      </h3>
+                      <p className="text-[14px] text-[#555] leading-[1.6]">
+                        {item.name} is another preferred item from the menu. It is a good choice for customers looking to enjoy tasty {cuisineLabel.toLowerCase()} food in Kumbakonam.
+                      </p>
+                    </div>
+                  ))}
+
+                  {/* Why Customers Love... */}
+                  <div>
+                    <h3 className="font-extrabold text-foreground text-[15.5px] mb-1.5 tracking-tight">
+                      Why Customers Love Ordering from {displayName}
+                    </h3>
+                    <p className="text-[14px] text-[#555] leading-[1.6]">
+                      Customers prefer {displayName} for its tasty food, reliable service, quick preparation, and menu choices. The restaurant serves {cuisineLabel.toLowerCase()} dishes along with options such as beverages, making it suitable for different food preferences.
                     </p>
                   </div>
-                ))}
-              </div>
+
+                  {/* Enjoy Food... */}
+                  <div>
+                    <h3 className="font-extrabold text-foreground text-[15.5px] mb-1.5 tracking-tight">
+                      Enjoy Food from {displayName} at Home with RRC Kitchen
+                    </h3>
+                    <p className="text-[14px] text-[#555] leading-[1.6]">
+                      RRC Kitchen makes it easy to order food from {displayName} in Kumbakonam. Customers can browse the menu, choose their favorite dishes, place an order online, make secure payments, track the order live, and enjoy doorstep delivery from {displayName}.
+                    </p>
+                  </div>
+
+                  {/* Discover More... */}
+                  <div>
+                    <h3 className="font-extrabold text-foreground text-[15.5px] mb-1.5 tracking-tight">
+                      Discover More Restaurants in Kumbakonam
+                    </h3>
+                    <p className="text-[14px] text-[#555] leading-[1.6]">
+                      Kumbakonam has many restaurants offering different cuisines, snacks, meals, desserts, and beverages. Customers exploring food delivery in Kumbakonam can discover more restaurants and order their favorite food online through RRC Kitchen.
+                    </p>
+                  </div>
+
+                  <button 
+                    onClick={() => setIsExpanded(false)}
+                    className="text-[14px] font-bold text-[#EE7005] hover:text-[#EE7005]/90 flex items-center gap-0.5 transition-colors mt-2"
+                  >
+                    See less <ChevronUp className="h-4 w-4" />
+                  </button>
+                </div>
+              )}
             </div>
-          )}
-
-          <div className="rounded-xl bg-muted/50 p-4 sm:p-6 space-y-2">
-            <h3 className="font-bold text-foreground text-base">Why Customers Love {displayName}</h3>
-            <p>
-              Customers prefer {displayName} for its tasty food, reliable service, quick preparation,
-              and diverse menu choices. The kitchen serves {cuisineLabel.toLowerCase()} dishes,
-              making it suitable for different food preferences.
-            </p>
-          </div>
-
-          <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="more" className="border rounded-xl px-4">
-              <AccordionTrigger className="text-primary font-semibold text-sm py-3">
-                Discover more about {displayName}
-              </AccordionTrigger>
-              <AccordionContent className="text-left space-y-3 pb-4">
-                <p>RRC Kitchen makes it easy to order food from {displayName}. Customers can browse the menu, choose their favorite dishes, place an order online, make secure payments, track the order live, and enjoy doorstep delivery from {displayName}.</p>
-                <p>Thanjavur has many kitchens offering different cuisines, snacks, meals, desserts, and beverages. Customers exploring food delivery in Thanjavur can discover more kitchens and order their favorite food online through RRC Kitchen.</p>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </div>
+         </div>
       </div>
 
-      <div className="space-y-3 mt-8">
-        <h2 className="text-base sm:text-lg font-extrabold text-foreground text-center">
-          FAQs about {displayName}
-        </h2>
+      {/* FAQs Section */}
+      <div>
+         <h2 className="text-[19px] sm:text-[21px] font-extrabold text-foreground tracking-tight mb-4 px-1">
+           FAQs about {displayName}
+         </h2>
+         
+         <Accordion type="multiple" className="w-full space-y-3.5">
+            <AccordionItem value="delivery" className="bg-white rounded-[1rem] border border-gray-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] px-5">
+              <AccordionTrigger className="text-foreground font-bold text-[15px] py-4.5 hover:no-underline [&_svg]:text-[#EE7005]">
+                Does {displayName} deliver food in Kumbakonam on RRC Kitchen?
+              </AccordionTrigger>
+              <AccordionContent className="text-[#666] leading-[1.6] text-[14px] pb-5 pr-4 pt-1">
+                Yes, {displayName} delivers food in Kumbakonam through RRC Kitchen. Customers can order their favorite dishes online and enjoy doorstep delivery.
+              </AccordionContent>
+            </AccordionItem>
+            
+            <AccordionItem value="known-for" className="bg-white rounded-[1rem] border border-gray-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] px-5">
+              <AccordionTrigger className="text-foreground font-bold text-[15px] py-4.5 hover:no-underline [&_svg]:text-[#EE7005]">
+                What is {displayName} known for?
+              </AccordionTrigger>
+              <AccordionContent className="text-[#666] leading-[1.6] text-[14px] pb-5 pr-4 pt-1">
+                {displayName} is highly regarded for its {cuisineLabel.toLowerCase()} specialties. We focus on quality ingredients, authentic recipes, and consistent taste.
+              </AccordionContent>
+            </AccordionItem>
 
-        <Accordion type="multiple" className="w-full text-sm space-y-2">
-          <AccordionItem value="delivery" className="border rounded-xl px-4">
-            <AccordionTrigger className="font-semibold text-foreground text-sm py-3">
-              Does {displayName} deliver food in Thanjavur?
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground pb-3">
-              Yes, {displayName} delivers food in Thanjavur through RRC Kitchen. Customers can order their favorite dishes online and enjoy doorstep delivery.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="known-for" className="border rounded-xl px-4">
-            <AccordionTrigger className="font-semibold text-foreground text-sm py-3">
-              What is {displayName} known for?
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground pb-3">
-              {displayName} is known for serving delicious {cuisineLabel.toLowerCase()} food with quality ingredients and satisfying portions.
-            </AccordionContent>
-          </AccordionItem>
-          <AccordionItem value="popular" className="border rounded-xl px-4">
-            <AccordionTrigger className="font-semibold text-foreground text-sm py-3">
-              What are the most popular dishes at {displayName}?
-            </AccordionTrigger>
-            <AccordionContent className="text-muted-foreground pb-3">
-              {topItems.length > 0 ? topItems.map(i => i.name).join(", ") : "Various dishes"} are among the most popular items at {displayName}.
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
+            <AccordionItem value="popular" className="bg-white rounded-[1rem] border border-gray-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] px-5">
+              <AccordionTrigger className="text-foreground font-bold text-[15px] py-4.5 hover:no-underline [&_svg]:text-[#EE7005]">
+                What are the most popular dishes at {displayName}?
+              </AccordionTrigger>
+              <AccordionContent className="text-[#666] leading-[1.6] text-[14px] pb-5 pr-4 pt-1">
+                {topItems.length > 0 ? topItems.map(i => i.name).join(", ") : "Our signature dishes"} are highly recommended by our regular customers for their exceptional taste.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="veg" className="bg-white rounded-[1rem] border border-gray-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] px-5">
+              <AccordionTrigger className="text-foreground font-bold text-[15px] py-4.5 hover:no-underline [&_svg]:text-[#EE7005]">
+                Does {displayName} offer vegetarian options?
+              </AccordionTrigger>
+              <AccordionContent className="text-[#666] leading-[1.6] text-[14px] pb-5 pr-4 pt-1">
+                Yes, {displayName} offers a variety of vegetarian dishes prepared with fresh ingredients and authentic flavors.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="order" className="bg-white rounded-[1rem] border border-gray-200/80 shadow-[0_2px_8px_rgba(0,0,0,0.02)] px-5">
+              <AccordionTrigger className="text-foreground font-bold text-[15px] py-4.5 hover:no-underline [&_svg]:text-[#EE7005]">
+                How can I order from {displayName} online?
+              </AccordionTrigger>
+              <AccordionContent className="text-[#666] leading-[1.6] text-[14px] pb-5 pr-4 pt-1">
+                You can easily order online through RRC Kitchen. Just browse the menu, add your items to the cart, and proceed to checkout for quick delivery.
+              </AccordionContent>
+            </AccordionItem>
+         </Accordion>
       </div>
     </section>
   )

@@ -21,21 +21,22 @@
 ## 2. Testing Pyramid
 
 ```mermaid
-graph TB
+%%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true}}}%%
+flowchart TB
     subgraph "E2E Tests (~5%)"
-        ET["Playwright<br/>Critical user journeys<br/>Place order, auth, payment"]
+        ET["Playwright Critical user journeys Place order, auth, payment"]
     end
 
     subgraph "Integration Tests (~15%)"
-        IT["Server Actions<br/>API Routes<br/>Database operations<br/>External service mocks"]
+        IT["Server Actions API Routes Database operations External service mocks"]
     end
 
     subgraph "Unit Tests (~60%)"
-        UT["Pure functions<br/>Zod schemas<br/>Utility functions<br/>Selectors<br/>Reducers"]
+        UT["Pure functions Zod schemas Utility functions Selectors Reducers"]
     end
 
     subgraph "Component Tests (~20%)"
-        CT["React Testing Library<br/>Storybook<br/>Accessibility tests<br/>Visual regression"]
+        CT["React Testing Library Storybook Accessibility tests Visual regression"]
     end
 
     CT --> ET

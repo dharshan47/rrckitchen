@@ -16,10 +16,19 @@ import Link from "next/link"
 interface CravingItem {
   id: string
   slug?: string
+  kitchenSlug?: string
   name: string
   description: string
   price: number
   foodType: string
+}
+
+function cravingItemUrl(item: CravingItem): string {
+  if (item.kitchenSlug && item.slug) {
+    const shortId = item.id.slice(0, 8)
+    return `/menu/${item.kitchenSlug}/${item.slug}-${shortId}`
+  }
+  return "/search"
 }
 
 interface CravingsPopupProps {
@@ -64,7 +73,7 @@ export function CravingsPopup({ orderId }: CravingsPopupProps) {
           {items.map((item) => (
             <Link
               key={item.id}
-              href={`/menu/${item.slug ?? item.id}`}
+              href={cravingItemUrl(item)}
               onClick={() => setOpen(false)}
               className="flex items-center gap-3 p-3 rounded-xl border border-border hover:border-primary/50 hover:bg-muted/30 transition-colors no-underline"
             >

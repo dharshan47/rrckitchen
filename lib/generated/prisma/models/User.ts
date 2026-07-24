@@ -298,6 +298,7 @@ export type UserWhereInput = {
   deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
   pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
   menuItemFeedbacks?: Prisma.MenuItemFeedbackListRelationFilter
+  menuItemReviews?: Prisma.MenuItemReviewListRelationFilter
   supportTickets?: Prisma.SupportTicketListRelationFilter
   referralsMade?: Prisma.ReferralListRelationFilter
   referralsUsed?: Prisma.ReferralListRelationFilter
@@ -343,6 +344,7 @@ export type UserOrderByWithRelationInput = {
   deliveryPartner?: Prisma.DeliveryPartnerOrderByWithRelationInput
   pushSubscriptions?: Prisma.PushSubscriptionOrderByRelationAggregateInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackOrderByRelationAggregateInput
+  menuItemReviews?: Prisma.MenuItemReviewOrderByRelationAggregateInput
   supportTickets?: Prisma.SupportTicketOrderByRelationAggregateInput
   referralsMade?: Prisma.ReferralOrderByRelationAggregateInput
   referralsUsed?: Prisma.ReferralOrderByRelationAggregateInput
@@ -391,6 +393,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
   pushSubscriptions?: Prisma.PushSubscriptionListRelationFilter
   menuItemFeedbacks?: Prisma.MenuItemFeedbackListRelationFilter
+  menuItemReviews?: Prisma.MenuItemReviewListRelationFilter
   supportTickets?: Prisma.SupportTicketListRelationFilter
   referralsMade?: Prisma.ReferralListRelationFilter
   referralsUsed?: Prisma.ReferralListRelationFilter
@@ -484,6 +487,7 @@ export type UserCreateInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -529,6 +533,7 @@ export type UserUncheckedCreateInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -574,6 +579,7 @@ export type UserUpdateInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -619,6 +625,7 @@ export type UserUncheckedUpdateInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -949,6 +956,20 @@ export type UserUpdateOneRequiredWithoutMenuItemFeedbacksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMenuItemFeedbacksInput, Prisma.UserUpdateWithoutMenuItemFeedbacksInput>, Prisma.UserUncheckedUpdateWithoutMenuItemFeedbacksInput>
 }
 
+export type UserCreateNestedOneWithoutMenuItemReviewsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMenuItemReviewsInput, Prisma.UserUncheckedCreateWithoutMenuItemReviewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMenuItemReviewsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutMenuItemReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutMenuItemReviewsInput, Prisma.UserUncheckedCreateWithoutMenuItemReviewsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutMenuItemReviewsInput
+  upsert?: Prisma.UserUpsertWithoutMenuItemReviewsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutMenuItemReviewsInput, Prisma.UserUpdateWithoutMenuItemReviewsInput>, Prisma.UserUncheckedUpdateWithoutMenuItemReviewsInput>
+}
+
 export type UserCreateNestedOneWithoutPushSubscriptionsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutPushSubscriptionsInput, Prisma.UserUncheckedCreateWithoutPushSubscriptionsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutPushSubscriptionsInput
@@ -1163,6 +1184,7 @@ export type UserCreateWithoutUserRolesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -1207,6 +1229,7 @@ export type UserUncheckedCreateWithoutUserRolesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -1267,6 +1290,7 @@ export type UserUpdateWithoutUserRolesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -1311,6 +1335,7 @@ export type UserUncheckedUpdateWithoutUserRolesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -1355,6 +1380,7 @@ export type UserCreateWithoutSessionsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -1399,6 +1425,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -1459,6 +1486,7 @@ export type UserUpdateWithoutSessionsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -1503,6 +1531,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -1547,6 +1576,7 @@ export type UserCreateWithoutAccountsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -1591,6 +1621,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -1651,6 +1682,7 @@ export type UserUpdateWithoutAccountsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -1695,6 +1727,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -1739,6 +1772,7 @@ export type UserCreateWithoutOtpCodesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -1783,6 +1817,7 @@ export type UserUncheckedCreateWithoutOtpCodesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -1843,6 +1878,7 @@ export type UserUpdateWithoutOtpCodesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -1887,6 +1923,7 @@ export type UserUncheckedUpdateWithoutOtpCodesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -1931,6 +1968,7 @@ export type UserCreateWithoutAddressesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -1975,6 +2013,7 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -2035,6 +2074,7 @@ export type UserUpdateWithoutAddressesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -2079,6 +2119,7 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -2123,6 +2164,7 @@ export type UserCreateWithoutKitchenPartnerInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -2167,6 +2209,7 @@ export type UserUncheckedCreateWithoutKitchenPartnerInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -2227,6 +2270,7 @@ export type UserUpdateWithoutKitchenPartnerInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -2271,6 +2315,7 @@ export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -2315,6 +2360,7 @@ export type UserCreateWithoutDeliveryPartnerInput = {
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -2359,6 +2405,7 @@ export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -2419,6 +2466,7 @@ export type UserUpdateWithoutDeliveryPartnerInput = {
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -2463,6 +2511,7 @@ export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -2507,6 +2556,7 @@ export type UserCreateWithoutOrdersInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -2551,6 +2601,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -2611,6 +2662,7 @@ export type UserUpdateWithoutOrdersInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -2655,6 +2707,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -2699,6 +2752,7 @@ export type UserCreateWithoutReviewsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -2743,6 +2797,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -2803,6 +2858,7 @@ export type UserUpdateWithoutReviewsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -2847,6 +2903,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -2891,6 +2948,7 @@ export type UserCreateWithoutDeliveryReviewsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -2935,6 +2993,7 @@ export type UserUncheckedCreateWithoutDeliveryReviewsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -2995,6 +3054,7 @@ export type UserUpdateWithoutDeliveryReviewsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -3039,6 +3099,7 @@ export type UserUncheckedUpdateWithoutDeliveryReviewsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -3083,6 +3144,7 @@ export type UserCreateWithoutMenuItemFeedbacksInput = {
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -3127,6 +3189,7 @@ export type UserUncheckedCreateWithoutMenuItemFeedbacksInput = {
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -3187,6 +3250,7 @@ export type UserUpdateWithoutMenuItemFeedbacksInput = {
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -3231,6 +3295,203 @@ export type UserUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
+  notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
+  twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
+  adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutMenuItemReviewsInput = {
+  id?: string
+  phoneNumber?: string | null
+  phoneNumberVerified?: boolean
+  role?: string
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  name?: string | null
+  fullName?: string | null
+  email?: string | null
+  emailVerified?: boolean
+  image?: string | null
+  isActive?: boolean
+  razorpayCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  twoFactorEnabled?: boolean | null
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
+  kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
+  notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
+  twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
+  adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
+  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutMenuItemReviewsInput = {
+  id?: string
+  phoneNumber?: string | null
+  phoneNumberVerified?: boolean
+  role?: string
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  name?: string | null
+  fullName?: string | null
+  email?: string | null
+  emailVerified?: boolean
+  image?: string | null
+  isActive?: boolean
+  razorpayCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  twoFactorEnabled?: boolean | null
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
+  kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
+  deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
+  notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
+  twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
+  adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
+  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutMenuItemReviewsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutMenuItemReviewsInput, Prisma.UserUncheckedCreateWithoutMenuItemReviewsInput>
+}
+
+export type UserUpsertWithoutMenuItemReviewsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutMenuItemReviewsInput, Prisma.UserUncheckedUpdateWithoutMenuItemReviewsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutMenuItemReviewsInput, Prisma.UserUncheckedCreateWithoutMenuItemReviewsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutMenuItemReviewsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutMenuItemReviewsInput, Prisma.UserUncheckedUpdateWithoutMenuItemReviewsInput>
+}
+
+export type UserUpdateWithoutMenuItemReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
+  kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
+  notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
+  twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
+  adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
+  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutMenuItemReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
+  kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -3275,6 +3536,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -3319,6 +3581,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -3379,6 +3642,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -3423,6 +3687,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -3468,6 +3733,7 @@ export type UserCreateWithoutNotificationLogsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -3512,6 +3778,7 @@ export type UserUncheckedCreateWithoutNotificationLogsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -3572,6 +3839,7 @@ export type UserUpdateWithoutNotificationLogsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -3616,6 +3884,7 @@ export type UserUncheckedUpdateWithoutNotificationLogsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -3660,6 +3929,7 @@ export type UserCreateWithoutSupportTicketsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
@@ -3704,6 +3974,7 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
@@ -3764,6 +4035,7 @@ export type UserUpdateWithoutSupportTicketsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
@@ -3808,6 +4080,7 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
@@ -3852,6 +4125,7 @@ export type UserCreateWithoutReferralsMadeInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
@@ -3896,6 +4170,7 @@ export type UserUncheckedCreateWithoutReferralsMadeInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
@@ -3945,6 +4220,7 @@ export type UserCreateWithoutReferralsUsedInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
@@ -3989,6 +4265,7 @@ export type UserUncheckedCreateWithoutReferralsUsedInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
@@ -4049,6 +4326,7 @@ export type UserUpdateWithoutReferralsMadeInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
@@ -4093,6 +4371,7 @@ export type UserUncheckedUpdateWithoutReferralsMadeInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
@@ -4148,6 +4427,7 @@ export type UserUpdateWithoutReferralsUsedInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
@@ -4192,6 +4472,7 @@ export type UserUncheckedUpdateWithoutReferralsUsedInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
@@ -4236,6 +4517,7 @@ export type UserCreateWithoutLoyaltyPointsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -4280,6 +4562,7 @@ export type UserUncheckedCreateWithoutLoyaltyPointsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -4340,6 +4623,7 @@ export type UserUpdateWithoutLoyaltyPointsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -4384,6 +4668,7 @@ export type UserUncheckedUpdateWithoutLoyaltyPointsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -4428,6 +4713,7 @@ export type UserCreateWithoutLoyaltyTransactionsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -4472,6 +4758,7 @@ export type UserUncheckedCreateWithoutLoyaltyTransactionsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -4532,6 +4819,7 @@ export type UserUpdateWithoutLoyaltyTransactionsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -4576,6 +4864,7 @@ export type UserUncheckedUpdateWithoutLoyaltyTransactionsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -4620,6 +4909,7 @@ export type UserCreateWithoutLoyaltyCouponPurchasesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -4664,6 +4954,7 @@ export type UserUncheckedCreateWithoutLoyaltyCouponPurchasesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -4724,6 +5015,7 @@ export type UserUpdateWithoutLoyaltyCouponPurchasesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -4768,6 +5060,7 @@ export type UserUncheckedUpdateWithoutLoyaltyCouponPurchasesInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -4812,6 +5105,7 @@ export type UserCreateWithoutAdminProfileInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -4856,6 +5150,7 @@ export type UserUncheckedCreateWithoutAdminProfileInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -4916,6 +5211,7 @@ export type UserUpdateWithoutAdminProfileInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -4960,6 +5256,7 @@ export type UserUncheckedUpdateWithoutAdminProfileInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -5004,6 +5301,7 @@ export type UserCreateWithoutTwoFactorsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -5048,6 +5346,7 @@ export type UserUncheckedCreateWithoutTwoFactorsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -5108,6 +5407,7 @@ export type UserUpdateWithoutTwoFactorsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -5152,6 +5452,7 @@ export type UserUncheckedUpdateWithoutTwoFactorsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -5196,6 +5497,7 @@ export type UserCreateWithoutUserCodEligibilityInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -5240,6 +5542,7 @@ export type UserUncheckedCreateWithoutUserCodEligibilityInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -5300,6 +5603,7 @@ export type UserUpdateWithoutUserCodEligibilityInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -5344,6 +5648,7 @@ export type UserUncheckedUpdateWithoutUserCodEligibilityInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -5388,6 +5693,7 @@ export type UserCreateWithoutWishlistItemsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -5432,6 +5738,7 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -5492,6 +5799,7 @@ export type UserUpdateWithoutWishlistItemsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -5536,6 +5844,7 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -5580,6 +5889,7 @@ export type UserCreateWithoutKitchenWishlistsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
@@ -5624,6 +5934,7 @@ export type UserUncheckedCreateWithoutKitchenWishlistsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
   referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
   referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
@@ -5684,6 +5995,7 @@ export type UserUpdateWithoutKitchenWishlistsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
@@ -5728,6 +6040,7 @@ export type UserUncheckedUpdateWithoutKitchenWishlistsInput = {
   deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
   pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
   referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
   referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
@@ -5757,6 +6070,7 @@ export type UserCountOutputType = {
   deliveryReviews: number
   pushSubscriptions: number
   menuItemFeedbacks: number
+  menuItemReviews: number
   supportTickets: number
   referralsMade: number
   referralsUsed: number
@@ -5779,6 +6093,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   deliveryReviews?: boolean | UserCountOutputTypeCountDeliveryReviewsArgs
   pushSubscriptions?: boolean | UserCountOutputTypeCountPushSubscriptionsArgs
   menuItemFeedbacks?: boolean | UserCountOutputTypeCountMenuItemFeedbacksArgs
+  menuItemReviews?: boolean | UserCountOutputTypeCountMenuItemReviewsArgs
   supportTickets?: boolean | UserCountOutputTypeCountSupportTicketsArgs
   referralsMade?: boolean | UserCountOutputTypeCountReferralsMadeArgs
   referralsUsed?: boolean | UserCountOutputTypeCountReferralsUsedArgs
@@ -5868,6 +6183,13 @@ export type UserCountOutputTypeCountPushSubscriptionsArgs<ExtArgs extends runtim
  */
 export type UserCountOutputTypeCountMenuItemFeedbacksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.MenuItemFeedbackWhereInput
+}
+
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountMenuItemReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MenuItemReviewWhereInput
 }
 
 /**
@@ -5965,6 +6287,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   deliveryPartner?: boolean | Prisma.User$deliveryPartnerArgs<ExtArgs>
   pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs>
   menuItemFeedbacks?: boolean | Prisma.User$menuItemFeedbacksArgs<ExtArgs>
+  menuItemReviews?: boolean | Prisma.User$menuItemReviewsArgs<ExtArgs>
   supportTickets?: boolean | Prisma.User$supportTicketsArgs<ExtArgs>
   referralsMade?: boolean | Prisma.User$referralsMadeArgs<ExtArgs>
   referralsUsed?: boolean | Prisma.User$referralsUsedArgs<ExtArgs>
@@ -6057,6 +6380,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   deliveryPartner?: boolean | Prisma.User$deliveryPartnerArgs<ExtArgs>
   pushSubscriptions?: boolean | Prisma.User$pushSubscriptionsArgs<ExtArgs>
   menuItemFeedbacks?: boolean | Prisma.User$menuItemFeedbacksArgs<ExtArgs>
+  menuItemReviews?: boolean | Prisma.User$menuItemReviewsArgs<ExtArgs>
   supportTickets?: boolean | Prisma.User$supportTicketsArgs<ExtArgs>
   referralsMade?: boolean | Prisma.User$referralsMadeArgs<ExtArgs>
   referralsUsed?: boolean | Prisma.User$referralsUsedArgs<ExtArgs>
@@ -6089,6 +6413,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     deliveryPartner: Prisma.$DeliveryPartnerPayload<ExtArgs> | null
     pushSubscriptions: Prisma.$PushSubscriptionPayload<ExtArgs>[]
     menuItemFeedbacks: Prisma.$MenuItemFeedbackPayload<ExtArgs>[]
+    menuItemReviews: Prisma.$MenuItemReviewPayload<ExtArgs>[]
     supportTickets: Prisma.$SupportTicketPayload<ExtArgs>[]
     referralsMade: Prisma.$ReferralPayload<ExtArgs>[]
     referralsUsed: Prisma.$ReferralPayload<ExtArgs>[]
@@ -6527,6 +6852,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   deliveryPartner<T extends Prisma.User$deliveryPartnerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$deliveryPartnerArgs<ExtArgs>>): Prisma.Prisma__DeliveryPartnerClient<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   pushSubscriptions<T extends Prisma.User$pushSubscriptionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$pushSubscriptionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PushSubscriptionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   menuItemFeedbacks<T extends Prisma.User$menuItemFeedbacksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$menuItemFeedbacksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MenuItemFeedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  menuItemReviews<T extends Prisma.User$menuItemReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$menuItemReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MenuItemReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   supportTickets<T extends Prisma.User$supportTicketsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$supportTicketsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   referralsMade<T extends Prisma.User$referralsMadeArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$referralsMadeArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReferralPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   referralsUsed<T extends Prisma.User$referralsUsedArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$referralsUsedArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReferralPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -7254,6 +7580,30 @@ export type User$menuItemFeedbacksArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.MenuItemFeedbackScalarFieldEnum | Prisma.MenuItemFeedbackScalarFieldEnum[]
+}
+
+/**
+ * User.menuItemReviews
+ */
+export type User$menuItemReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MenuItemReview
+   */
+  select?: Prisma.MenuItemReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MenuItemReview
+   */
+  omit?: Prisma.MenuItemReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MenuItemReviewInclude<ExtArgs> | null
+  where?: Prisma.MenuItemReviewWhereInput
+  orderBy?: Prisma.MenuItemReviewOrderByWithRelationInput | Prisma.MenuItemReviewOrderByWithRelationInput[]
+  cursor?: Prisma.MenuItemReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MenuItemReviewScalarFieldEnum | Prisma.MenuItemReviewScalarFieldEnum[]
 }
 
 /**

@@ -9,7 +9,8 @@
 ## 1. Component Architecture Layers
 
 ```mermaid
-graph TB
+%%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true}}}%%
+flowchart TB
     subgraph "Layer 0: Primitives"
         Button
         Input
@@ -22,29 +23,29 @@ graph TB
     end
 
     subgraph "Layer 1: Patterns (Composed Primitives)"
-        CP["CompoundMenuCard<br/>Root → ImageSection → Header → Actions"]
-        CP2["CartItemRow<br/>Image → Details → Quantity → Remove"]
-        CP3["AddressCard<br/>Details → Actions → Default badge"]
+        CP["CompoundMenuCard Root ImageSection Header Actions"]
+        CP2["CartItemRow Image Details Quantity Remove"]
+        CP3["AddressCard Details Actions Default badge"]
     end
 
     subgraph "Layer 2: Features (Business Logic)"
-        KC["KitchenDetail<br/>Client"]
-        MP["MenuPage<br/>Search + Filters + Grid"]
-        CP4["CartPage<br/>Items + Summary + Checkout"]
-        AP["AuthPage<br/>Phone → OTP → Profile"]
+        KC["KitchenDetail Client"]
+        MP["MenuPage Search + Filters + Grid"]
+        CP4["CartPage Items + Summary + Checkout"]
+        AP["AuthPage Phone OTP Profile"]
     end
 
     subgraph "Layer 3: Layouts (Page Structure)"
-        SL["SiteLayout<br/>Header + Main + Footer"]
-        DL["DashboardLayout<br/>Sidebar + Content"]
-        AL["AdminLayout<br/>Nav + Content"]
+        SL["SiteLayout Header Main Footer"]
+        DL["DashboardLayout Sidebar Content"]
+        AL["AdminLayout Nav Content"]
     end
 
     subgraph "Layer 4: Pages (Routes)"
         HP["Home Page"]
-        KP["Kitchen Page<br/>/[slug]"]
-        MP2["Menu Page<br/>/menu"]
-        CP5["Cart Page<br/>/cart"]
+        KP["Kitchen Page /[slug]"]
+        MP2["Menu Page /menu"]
+        CP5["Cart Page /cart"]
     end
 
     HP --> SL

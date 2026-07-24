@@ -1,14 +1,9 @@
 "use client"
 
-import { useState, useCallback } from "react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useDeliveryData } from "./layout"
-import { Bike, DollarSign, MapPin, Star, TrendingUp, Trophy, Users, Package, Phone, MapPinHouse, CheckCircle, XCircle, Truck, HandCoins, Wallet, Ticket } from "lucide-react"
-import Link from "next/link"
+import { Bike, DollarSign, MapPin, Star, TrendingUp, Trophy, Users, Wallet, Heart } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
 import {
   Table,
   TableBody,
@@ -17,45 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { toast } from "sonner"
-import { LiveOrderTrackingMap } from "@/components/map/live-order-tracking-map"
-import { CodConfirmationDialog } from "@/components/delivery-partner/cod-confirmation-dialog"
 
 export default function DeliveryPartnerDashboard() {
   const data = useDeliveryData()
   const s = data.stats
-  const queryClient = useQueryClient()
-  const [trackingOrder, setTrackingOrder] = useState<string | null>(null)
-  const [codConfirmOrder, setCodConfirmOrder] = useState<string | null>(null)
-
-  const statusMutation = useMutation({
-    mutationFn: async ({ orderId, status, cashCollected }: { orderId: string; status: string; cashCollected?: boolean }) => {
-      const res = await fetch("/api/delivery/order-status", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderId, status, cashCollected }),
-      })
-      if (!res.ok) {
-        const err = await res.json().catch(() => ({ error: "Failed to update" }))
-        throw new Error(err.error || "Failed to update order status")
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["delivery-dashboard"] })
-      toast.success("Order status updated")
-    },
-    onError: (err) => {
-      toast.error(err.message)
-    },
-  })
-
-  const handleCodSuccess = useCallback(() => {
-    queryClient.invalidateQueries({ queryKey: ["delivery-dashboard"] })
-  }, [queryClient])
-
-  const activeDeliveryOrders = data.deliveryOrders.filter(
-    (o: Record<string, unknown>) => o.orderStatus !== "COMPLETED" && o.orderStatus !== "CANCELLED"
-  )
 
   const stats = [
     { title: "Total Deliveries", value: s.totalAssignments.toString(), icon: Bike, color: "text-blue-600" },
@@ -88,214 +48,6 @@ export default function DeliveryPartnerDashboard() {
             </Card>
           ))}
         </div>
-      </section>
-
-      <section aria-label="Delivery orders with customer and kitchen details">
-        <Card>
-          <CardHeader>
-            <CardTitle>Active Deliveries</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {activeDeliveryOrders.length === 0 ? (
-              <p className="py-8 text-center text-muted-foreground">No active deliveries</p>
-            ) : (
-              <div className="space-y-4">
-                {activeDeliveryOrders.map((d: Record<string, unknown>, i: number) => (
-                  <Card key={`${d.id}-${i}`} className="border-primary/20">
-                    <CardContent className="p-4 space-y-3">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <Package className="h-4 w-4 text-primary shrink-0" />
-                            <span className="font-semibold truncate">{d.itemName as string}</span>
-                            <Badge variant="secondary" className="text-[10px]">Qty: {d.quantity as number}</Badge>
-                          </div>
-                          <p className="text-xs text-muted-foreground mt-1">{d.timeSlot as string}</p>
-                        </div>
-                        <Badge className={
-                          d.orderStatus === "PREPARING" ? "bg-amber-100 text-amber-700" :
-                          d.orderStatus === "READYFORPICKUP" ? "bg-blue-100 text-blue-700" :
-                          d.orderStatus === "CONFIRMED" ? "bg-purple-100 text-purple-700" :
-                          "bg-gray-100 text-gray-700"
-                        }>
-                          {d.orderStatus === "READYFORPICKUP" ? "Ready" : (d.orderStatus as string)}
-                        </Badge>
-                      </div>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                        <div className="space-y-1.5 p-3 rounded-lg bg-muted/30">
-                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                            <MapPin className="h-3 w-3" /> Customer
-                          </p>
-                          <p className="font-medium">{d.customerName as string}</p>
-                          <a href={`tel:${d.customerPhone}`} className="flex items-center gap-1 text-primary hover:underline text-xs">
-                            <Phone className="h-3 w-3" /> {d.customerPhone as string}
-                          </a>
-                          <p className="text-xs text-muted-foreground truncate">{d.customerAddress as string}</p>
-                        </div>
-                        <div className="space-y-1.5 p-3 rounded-lg bg-muted/30">
-                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
-                            <MapPinHouse className="h-3 w-3" /> Kitchen
-                          </p>
-                          <p className="font-medium">{d.kitchenName as string}</p>
-                          <a href={`tel:${d.kitchenPhone}`} className="flex items-center gap-1 text-primary hover:underline text-xs">
-                            <Phone className="h-3 w-3" /> {d.kitchenPhone as string}
-                          </a>
-                          <p className="text-xs text-muted-foreground truncate">{d.kitchenAddress as string}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex flex-wrap gap-2">
-                        {d.orderStatus === "READYFORPICKUP" && (
-                          <Button size="sm" variant="outline" className="text-xs gap-1"
-                            onClick={() => statusMutation.mutate({ orderId: d.id as string, status: "PICKEDUP" })}
-                            disabled={statusMutation.isPending}
-                          >
-                            <Truck className="h-3 w-3" /> Picked Up
-                          </Button>
-                        )}
-                        {d.orderStatus === "PICKEDUP" && (
-                          <Button size="sm" variant="outline" className="text-xs gap-1"
-                            onClick={() => statusMutation.mutate({ orderId: d.id as string, status: "INTRANSIT" })}
-                            disabled={statusMutation.isPending}
-                          >
-                            <Truck className="h-3 w-3" /> In Transit
-                          </Button>
-                        )}
-                        {(d.orderStatus === "INTRANSIT" || d.orderStatus === "PICKEDUP") && (
-                          <>
-                            <Button size="sm" variant="default" className="text-xs gap-1 bg-green-600 hover:bg-green-700"
-                              onClick={() => statusMutation.mutate({
-                                orderId: d.id as string,
-                                status: "DELIVERED",
-                                cashCollected: d.paymentProvider === "CASH_ON_DELIVERY",
-                              })}
-                              disabled={statusMutation.isPending}
-                            >
-                              <CheckCircle className="h-3 w-3" /> Delivered
-                            </Button>
-                            {d.paymentProvider === "CASH_ON_DELIVERY" && (
-                              <Button size="sm" variant="default" className="text-xs gap-1 bg-amber-600 hover:bg-amber-700"
-                                onClick={() => setCodConfirmOrder(d.id as string)}
-                                disabled={statusMutation.isPending}
-                              >
-                                <HandCoins className="h-3 w-3" /> COD Confirm
-                              </Button>
-                            )}
-                            <Button size="sm" variant="destructive" className="text-xs gap-1"
-                              onClick={() => statusMutation.mutate({ orderId: d.id as string, status: "FAILED" })}
-                              disabled={statusMutation.isPending}
-                            >
-                              <XCircle className="h-3 w-3" /> Failed
-                            </Button>
-                          </>
-                        )}
-                        {(d.kitchenLat && d.kitchenLng) ? (
-                          <Button size="sm" variant="secondary" className="text-xs gap-1"
-                            onClick={() => setTrackingOrder(trackingOrder === d.id ? null : d.id as string)}
-                          >
-                            <MapPin className="h-3 w-3" /> {trackingOrder === d.id ? "Hide Map" : "Show Map"}
-                          </Button>
-                        ) : null}
-                      </div>
-
-                      {(() => {
-                        const oid = d.id as string;
-                        const klat = d.kitchenLat;
-                        const klng = d.kitchenLng;
-                        if (trackingOrder !== oid || !klat || !klng) return null;
-                        return (
-                          <LiveOrderTrackingMap
-                            orderId={oid}
-                            kitchenLat={Number(klat)}
-                            kitchenLng={Number(klng)}
-                            customerLat={d.customerLat ? Number(d.customerLat) : undefined}
-                            customerLng={d.customerLng ? Number(d.customerLng) : undefined}
-                          />
-                        );
-                      })()}
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-      </section>
-
-      <section aria-label="All delivery orders">
-        <Card>
-          <CardHeader>
-            <CardTitle>All Deliveries</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {data.deliveryOrders.length === 0 ? (
-              <p className="py-8 text-center text-muted-foreground">No deliveries assigned yet</p>
-            ) : (
-              <div className="overflow-x-auto">
-                <Table aria-label="Delivery orders table">
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead scope="col">Menu Item</TableHead>
-                      <TableHead scope="col">Qty</TableHead>
-                      <TableHead scope="col">Time Slot</TableHead>
-                      <TableHead scope="col">Customer Name</TableHead>
-                      <TableHead scope="col">Customer Phone</TableHead>
-                      <TableHead scope="col">Delivery Address</TableHead>
-                      <TableHead scope="col">Kitchen Name</TableHead>
-                      <TableHead scope="col">Kitchen Phone</TableHead>
-                      <TableHead scope="col">Kitchen Address</TableHead>
-                      <TableHead scope="col">Status</TableHead>
-                      <TableHead scope="col">Payment</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {data.deliveryOrders.map((d: Record<string, unknown>, i: number) => (
-                      <TableRow key={`${d.id}-${i}`}>
-                        <TableCell className="font-medium">{d.itemName as string}</TableCell>
-                        <TableCell>{d.quantity as number}</TableCell>
-                        <TableCell>{d.timeSlot as string}</TableCell>
-                        <TableCell>{d.customerName as string}</TableCell>
-                        <TableCell>
-                          <a href={`tel:${d.customerPhone}`} className="text-primary hover:underline">
-                            {d.customerPhone as string}
-                          </a>
-                        </TableCell>
-                        <TableCell className="max-w-xs truncate">{d.customerAddress as string}</TableCell>
-                        <TableCell>{d.kitchenName as string}</TableCell>
-                        <TableCell>
-                          <a href={`tel:${d.kitchenPhone}`} className="text-primary hover:underline">
-                            {d.kitchenPhone as string}
-                          </a>
-                        </TableCell>
-                        <TableCell className="max-w-xs truncate">{d.kitchenAddress as string}</TableCell>
-                        <TableCell>
-                          <Badge className={
-                            d.orderStatus === "COMPLETED" ? "bg-green-100 text-green-700" :
-                            d.orderStatus === "CANCELLED" ? "bg-red-100 text-red-700" :
-                            "bg-blue-100 text-blue-700"
-                          }>
-                            {d.orderStatus === "READYFORPICKUP" ? "Ready" : (d.orderStatus as string)}
-                          </Badge>
-                        </TableCell>
-                        <TableCell className="text-xs">
-                          {d.paymentProvider === "CASH_ON_DELIVERY" ? (
-                            <span className="flex items-center gap-1">
-                              <HandCoins className="h-3 w-3 text-amber-600" /> COD
-                              {d.paymentStatus === "SUCCESS" ? " ✓" : ""}
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground">Online</span>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </div>
-            )}
-          </CardContent>
-        </Card>
       </section>
 
       <section aria-label="Kitchen assignments">
@@ -338,54 +90,49 @@ export default function DeliveryPartnerDashboard() {
         </Card>
       </section>
 
-      <section aria-label="Support tickets">
+      <section aria-label="Customer reviews">
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Ticket className="h-5 w-5 text-primary" />
-              Support Tickets
+              <Star className="h-5 w-5 text-yellow-400" />
+              Customer Reviews
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {data.supportTickets.length === 0 ? (
-              <p className="py-6 text-center text-sm text-muted-foreground">No support tickets yet</p>
+            {data.reviews.length === 0 ? (
+              <p className="py-6 text-center text-sm text-muted-foreground">No reviews yet</p>
             ) : (
-              <div className="space-y-2">
-                {data.supportTickets.slice(0, 5).map((ticket: { id: string; subject: string; status: string; priority: string; createdAt: Date }) => {
-                  const statusStyles: Record<string, { label: string; color: string }> = {
-                    OPEN: { label: "Open", color: "text-blue-600 bg-blue-100" },
-                    INPROGRESS: { label: "In Progress", color: "text-amber-600 bg-amber-100" },
-                    RESOLVED: { label: "Resolved", color: "text-green-600 bg-green-100" },
-                    CLOSED: { label: "Closed", color: "text-gray-600 bg-gray-100" },
-                  }
-                  const s = statusStyles[ticket.status] ?? { label: ticket.status, color: "text-gray-600 bg-gray-100" }
-                  return (
-                    <div key={ticket.id} className="flex items-center justify-between gap-3 rounded-lg border border-border p-3">
-                      <div className="min-w-0 flex-1">
-                        <p className="text-sm font-medium truncate">{ticket.subject}</p>
-                        <p className="text-xs text-muted-foreground">{new Date(ticket.createdAt).toLocaleDateString("en-IN")}</p>
+              <div className="space-y-3">
+                {data.reviews.slice(0, 10).map((review: { id: string; rating: number; speedRating: number | null; behaviorHygiene: boolean | null; comment: string | null; itemName: string; createdAt: string }) => (
+                  <div key={review.id} className="rounded-lg border border-border p-3 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold">Delivery for {review.itemName || "an order"}</span>
+                      <div className="flex items-center gap-0.5">
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <Star key={i} className={cn("h-3 w-3", i < review.rating ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground/20")} />
+                        ))}
                       </div>
-                      <Badge className={cn("text-xs shrink-0", s.color)}>{s.label}</Badge>
                     </div>
-                  )
-                })}
+                    <div className="flex gap-3 text-[10px] text-muted-foreground">
+                      {review.speedRating != null && <span>Speed: {review.speedRating}/5</span>}
+                      {review.behaviorHygiene != null && (
+                        <span className="flex items-center gap-1">
+                          <Heart className="h-3 w-3" />
+                          {review.behaviorHygiene ? "Good" : "Needs Improvement"}
+                        </span>
+                      )}
+                    </div>
+                    {review.comment && <p className="text-xs text-muted-foreground italic">&ldquo;{review.comment}&rdquo;</p>}
+                    <p className="text-[10px] text-muted-foreground">{new Date(review.createdAt).toLocaleDateString("en-IN")}</p>
+                  </div>
+                ))}
               </div>
             )}
-            <div className="mt-3">
-              <Button variant="ghost" size="sm" className="w-full text-xs" asChild>
-                <Link href="/support">View All Tickets</Link>
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </section>
 
-      <CodConfirmationDialog
-        open={!!codConfirmOrder}
-        onOpenChange={(open) => { if (!open) setCodConfirmOrder(null) }}
-        orderId={codConfirmOrder ?? ""}
-        onSuccess={handleCodSuccess}
-      />
+
     </div>
   )
 }

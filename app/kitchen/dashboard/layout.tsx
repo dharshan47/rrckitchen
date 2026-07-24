@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/sidebar"
 import { SwUpdateBanner } from "@/components/patterns/sw-update-banner"
 import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init"
-import { ChefHat, LayoutDashboard, ShoppingBag, Utensils, Wallet, UserCircle, LogOut } from "lucide-react"
+import { ChefHat, LayoutDashboard, ShoppingBag, Utensils, Wallet, UserCircle, LogOut, Ticket } from "lucide-react"
 
 const DataContext = createContext<Awaited<ReturnType<typeof getKitchenDashboardData>>>(null)
 
@@ -37,6 +37,7 @@ const navItems = [
   { href: "/kitchen/dashboard/menu", label: "Menu", icon: Utensils },
   { href: "/kitchen/dashboard/orders", label: "Orders", icon: ShoppingBag },
   { href: "/kitchen/dashboard/payments", label: "Payments", icon: Wallet },
+  { href: "/kitchen/dashboard/support", label: "Support", icon: Ticket },
   { href: "/kitchen/dashboard/profile", label: "Profile", icon: UserCircle },
 ]
 
@@ -70,7 +71,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Skeleton className="h-5 w-28" />
           </div>
           <div className="flex-1 p-3 space-y-1">
-            {Array.from({ length: 5 }).map((_, i) => (
+            {Array.from({ length: 6 }).map((_, i) => (
               <Skeleton key={i} className="h-9 w-full rounded-lg" />
             ))}
           </div>

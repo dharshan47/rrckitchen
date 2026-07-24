@@ -158,6 +158,11 @@ export type DeliveryReview = Prisma.DeliveryReviewModel
  */
 export type MenuItemFeedback = Prisma.MenuItemFeedbackModel
 /**
+ * Model MenuItemReview
+ * 
+ */
+export type MenuItemReview = Prisma.MenuItemReviewModel
+/**
  * Model DeliveryAssignment
  * 
  */

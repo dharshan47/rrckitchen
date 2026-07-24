@@ -12,6 +12,8 @@ import { useCartItems, useCartActions } from "@/stores";
 interface MenuCardItem {
   id: string;
   slug?: string;
+  shortId?: string;
+  kitchenSlug?: string;
   name: string;
   price: number;
   compareAtPrice?: number | null;
@@ -19,6 +21,7 @@ interface MenuCardItem {
   timeSlot: string;
   kitchenName: string;
   kitchenRating?: number | null;
+  avgRating?: number | null;
   totalReviews?: number;
   description?: string | null;
   imageUrl?: string | null;
@@ -82,7 +85,7 @@ function Root({ item, onAddToCart, onShowAddPopup, onItemClick, showKitchenMeta 
         role={isClickable ? "button" : undefined}
         tabIndex={isClickable ? 0 : undefined}
         onKeyDown={isClickable ? (e) => { if (e.key === "Enter") handleRootClick(); } : undefined}
-        className={`overflow-hidden rounded-xl border border-border bg-card transition-shadow hover:shadow-sm ${isClickable ? "cursor-pointer" : ""}`}
+        className={`flex flex-col gap-2 w-full transition-all duration-300 ${isClickable ? "cursor-pointer hover:scale-[0.97] active:scale-95 md:hover:scale-100 md:active:scale-100" : ""}`}
       >
         {children}
       </div>
@@ -92,57 +95,43 @@ function Root({ item, onAddToCart, onShowAddPopup, onItemClick, showKitchenMeta 
 
 function ImageSection({ children }: { children?: ReactNode }) {
   const { item } = useMenuCardContext();
-  if (!item.imageUrl) return null;
   return (
-    <div className="relative aspect-square w-full overflow-hidden bg-white p-3">
-      <div className="relative h-full w-full">
+    <div className="relative w-full overflow-hidden rounded-[18px] bg-muted shadow-sm" style={{ aspectRatio: "1 / 1" }}>
+      {item.imageUrl ? (
         <ProgressiveImage
           src={item.imageUrl}
           alt={item.name}
           fill
-          className="object-contain"
+          className="object-cover"
         />
+      ) : (
+        <div className="h-full w-full flex items-center justify-center bg-linear-to-br from-primary/10 to-muted">
+          <span className="text-muted-foreground/20 text-4xl font-black">
+            {item.name.charAt(0)}
+          </span>
+        </div>
+      )}
+      <div className="absolute top-2 right-2 z-10" onClick={e => e.stopPropagation()}>
+        <WishlistBtn menuItemId={item.id} size="sm" variant="overlay" />
       </div>
       {children}
     </div>
   );
 }
 
-function BadgeRibbon() {
-  const { item, discount } = useMenuCardContext();
-  if (item.compareAtPrice == null) return null;
-
-  const savingsPercent = Math.round(((discount - item.price) / discount) * 100);
-
-  if (savingsPercent <= 0) return null;
-
-  return (
-    <div className="absolute left-2 top-0 z-10">
-      <div
-        className="flex h-9 w-9 flex-col items-center justify-center bg-[#1B2F45] text-center text-white shadow-sm"
-        style={{
-          clipPath: "polygon(0% 0%, 100% 0%, 100% 100%, 83% 92%, 66% 100%, 50% 92%, 33% 100%, 16% 92%, 0% 100%)",
-        }}
-      >
-        <span className="text-[11px] font-black leading-none">{savingsPercent}%</span>
-        <span className="text-[8px] font-black leading-none uppercase tracking-tighter">Off</span>
-      </div>
-    </div>
-  );
-}
-
-function AddButtonOverlay() {
-  return null;
-}
-
+// Kept as empty components for backwards compatibility in case they are referenced
+function BadgeRibbon() { return null; }
+function AddButtonOverlay() { return null; }
 function WishlistButton() {
   const { item } = useMenuCardContext();
   return (
-    <div className="absolute right-2 top-2 z-10">
-      <WishlistBtn menuItemId={item.id} size="sm" />
+    <div className="absolute top-2 right-2 z-10" onClick={e => e.stopPropagation()}>
+      <WishlistBtn menuItemId={item.id} size="sm" variant="overlay" />
     </div>
   );
 }
+function FoodTypeOverlay() { return null; }
+function RatingOverlay() { return null; }
 
 export function VegIcon({ className }: { className?: string }) {
   return (
@@ -159,33 +148,6 @@ export function NonVegIcon({ className }: { className?: string }) {
       <rect x="0.5" y="0.5" width="15" height="15" rx="3" fill="white" stroke="#EF4444" strokeWidth="1.5" />
       <path d="M8 3.5L11.5 12.5H4.5L8 3.5Z" fill="#EF4444" />
     </svg>
-  );
-}
-
-function FoodTypeIcon({ foodType }: { foodType: string }) {
-  if (foodType === "VEG") return <VegIcon className="h-3.5 w-3.5 shrink-0" />;
-  if (foodType === "NONVEG") return <NonVegIcon className="h-3.5 w-3.5 shrink-0" />;
-  return null;
-}
-
-function BestsellerBadge() {
-  return (
-    <span className="inline-flex items-center rounded-sm bg-orange-500/10 px-1 py-0.5 text-[9px] font-bold uppercase tracking-wider text-orange-600 shrink-0">
-      Bestseller
-    </span>
-  );
-}
-
-function RatingBadge({ rating, count }: { rating: number; count: number }) {
-  if (count <= 0) return null;
-  return (
-    <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-yellow-600 shrink-0">
-      <svg className="h-3 w-3 fill-yellow-400" viewBox="0 0 20 20">
-        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-      </svg>
-      {rating.toFixed(1)}
-      <span className="text-muted-foreground">({count})</span>
-    </span>
   );
 }
 
@@ -215,74 +177,84 @@ function Header() {
     updateQuantity(item.id, cartItem!.qty + 1);
     if (onShowAddPopup) onShowAddPopup(item);
   };
-  
+
+  const hasDiscount = item.compareAtPrice != null;
+
   return (
-    <div className="px-3 pb-4 pt-1.5">
-      <div className="flex flex-col">
-        <div className="flex items-center justify-between mb-1.5">
-          <div className="flex items-center gap-1.5">
-            <FoodTypeIcon foodType={item.foodType} />
-            {item.isBestseller && <BestsellerBadge />}
-          </div>
-          {item.kitchenRating != null && item.totalReviews != null && item.totalReviews > 0 && (
-            <RatingBadge rating={item.kitchenRating} count={item.totalReviews} />
-          )}
+    <div className="pt-1 pb-2 flex flex-col gap-1.5">
+      {/* Row 1: Veg/NonVeg and Rating */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          {item.foodType === "VEG" ? (
+            <VegIcon className="h-3.75 w-3.75" />
+          ) : item.foodType === "NONVEG" ? (
+            <NonVegIcon className="h-3.75 w-3.75" />
+          ) : null}
         </div>
-
-        {ctx.showKitchenMeta && (
-          <p className="text-xs font-medium text-muted-foreground truncate mb-0.5">
-            {item.kitchenName}
-          </p>
-        )}
-
-        <h3 className="line-clamp-2 text-sm font-bold leading-snug text-foreground">
-          {item.name}
-        </h3>
-
-        {/* Price & Add Button Row */}
-        <div className="mt-2 flex items-center justify-between gap-1">
-          <div className="flex items-center gap-1 shrink-0 min-w-0 max-w-[60%]">
-            {item.compareAtPrice != null ? (
-              <>
-                <div className="rounded-md bg-[#EE7005] px-1 py-0.5 text-[11px] font-black text-white shadow-sm whitespace-nowrap">
-                  ₹{item.price}
-                </div>
-                <span className="text-[11px] font-medium text-muted-foreground line-through whitespace-nowrap">₹{discount}</span>
-              </>
-            ) : (
-              <span className="text-sm font-black text-foreground truncate">₹{item.price}</span>
-            )}
+        {(item.avgRating ?? item.kitchenRating) ? (
+          <div className="flex items-center gap-0.5 bg-[#E8F8F0] px-1.5 py-0.75 rounded text-[11px] font-extrabold text-[#118A42]">
+            <svg className="h-2.5 w-2.5 fill-[#118A42] shrink-0" viewBox="0 0 20 20">
+              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+            </svg>
+            <span>{(item.avgRating ?? item.kitchenRating)!.toFixed(1)}</span>
+            {item.totalReviews ? <span className="font-bold opacity-80">({item.totalReviews})</span> : null}
           </div>
+        ) : null}
+      </div>
 
-          {cartItem ? (
-            <div className="flex items-center rounded-lg border border-[#EE7005] overflow-hidden bg-[#FFF5EB]" onClick={e => e.stopPropagation()}>
-              <button
-                onClick={handleDecrement}
-                className="h-8 w-8 md:h-7 md:w-7 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
-                aria-label="Decrease quantity"
-              >
-                <Minus className="h-4 w-4 md:h-3 md:w-3" />
-              </button>
-              <span className="w-7 md:w-6 text-center text-sm md:text-xs font-bold text-[#EE7005] leading-none py-0.5">{cartItem.qty}</span>
-              <button
-                onClick={handleIncrement}
-                className="h-8 w-8 md:h-7 md:w-7 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
-                aria-label="Increase quantity"
-              >
-                <Plus className="h-4 w-4 md:h-3 md:w-3" />
-              </button>
-            </div>
+      {/* Row 2: Item Name */}
+      <h3 className="line-clamp-2 text-[15px] font-bold leading-tight text-gray-800">
+        {item.name}
+      </h3>
+
+      {/* Row 3: Price & Add Button */}
+      <div className="flex items-end justify-between gap-2 mt-0.5">
+        <div className="flex flex-col min-w-0 pb-0.5">
+          {hasDiscount ? (
+            <>
+              <span className="text-[12px] font-semibold text-gray-500 line-through leading-none mb-1">
+                ₹{discount}
+              </span>
+              <div className="bg-primary border-b-2 border-r-2 border-black rounded-[3px] px-1.5 py-0.75 inline-flex items-center self-start shadow-xs">
+                <span className="text-[13px] font-black leading-none text-primary-foreground tracking-tight">₹{item.price}</span>
+              </div>
+            </>
           ) : (
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-8 md:h-7 shrink-0 rounded-lg font-bold border-[#EE7005] text-[#EE7005] px-3 md:px-2.5 text-xs hover:text-[#EE7005]"
-              onClick={handleAddClick}
-            >
-              Add
-            </Button>
+            <span className="text-[14px] font-black text-gray-800 tracking-tight">₹{item.price}</span>
           )}
         </div>
+
+        {cartItem ? (
+          <div
+            className="flex items-center rounded-lg border border-[#118A42] bg-white shrink-0 shadow-xs"
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              onClick={handleDecrement}
+              className="h-7.5 w-7 flex items-center justify-center text-[#118A42] hover:bg-[#118A42]/10 transition-colors rounded-l-lg"
+              aria-label="Decrease quantity"
+            >
+              <Minus className="h-3 w-3 stroke-3" />
+            </button>
+            <span className="w-5 text-center text-[13px] font-black text-[#118A42] leading-none">{cartItem.qty}</span>
+            <button
+              onClick={handleIncrement}
+              className="h-7.5 w-7 flex items-center justify-center text-[#118A42] hover:bg-[#118A42]/10 transition-colors rounded-r-lg"
+              aria-label="Increase quantity"
+            >
+              <Plus className="h-3 w-3 stroke-3" />
+            </button>
+          </div>
+        ) : (
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-8 shrink-0 rounded-lg font-black border-gray-200 text-[#118A42] px-7 text-sm hover:bg-gray-50 transition-colors shadow-xs"
+            onClick={handleAddClick}
+          >
+            ADD
+          </Button>
+        )}
       </div>
     </div>
   );
@@ -292,5 +264,6 @@ function Footer() {
   return null; // Merged into Header for the combined design look
 }
 
-export const CompoundMenuCard = { Root, ImageSection, BadgeRibbon, AddButtonOverlay, WishlistButton, Header, Footer };
+export const CompoundMenuCard = { Root, ImageSection, BadgeRibbon, AddButtonOverlay, WishlistButton, FoodTypeOverlay, RatingOverlay, Header, Footer };
 export type { MenuCardItem };
+

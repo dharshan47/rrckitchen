@@ -24,7 +24,7 @@ import {
 import { SwUpdateBanner } from "@/components/patterns/sw-update-banner"
 import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init"
 import { DeliveryPersonLocationBroadcaster } from "@/components/delivery-partner/location-broadcaster"
-import { Bike, LayoutDashboard, UserCircle, Wallet, LogOut, Wifi, WifiOff } from "lucide-react"
+import { Bike, LayoutDashboard, UserCircle, Wallet, LogOut, Wifi, WifiOff, Truck, Ticket } from "lucide-react"
 import { toast } from "sonner"
 
 const DataContext = createContext<Awaited<ReturnType<typeof getDeliveryDashboardData>>>(null)
@@ -37,6 +37,8 @@ export function useDeliveryData() {
 
 const navItems = [
   { href: "/delivery-partner/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/delivery-partner/dashboard/deliveries", label: "Deliveries", icon: Truck },
+  { href: "/delivery-partner/dashboard/support", label: "Support", icon: Ticket },
   { href: "/delivery-partner/dashboard/profile", label: "Profile", icon: UserCircle },
   { href: "/delivery-partner/dashboard/bank-details", label: "Bank Details", icon: Wallet },
 ]
@@ -99,7 +101,7 @@ export default function DeliveryDashboardLayout({ children }: { children: React.
             <Skeleton className="h-5 w-28" />
           </div>
           <div className="flex-1 p-3 space-y-1">
-            {Array.from({ length: 3 }).map((_, i) => (
+            {Array.from({ length: 5 }).map((_, i) => (
               <Skeleton key={i} className="h-9 w-full rounded-lg" />
             ))}
           </div>

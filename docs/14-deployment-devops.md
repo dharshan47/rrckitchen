@@ -9,9 +9,10 @@
 ## 1. CI/CD Pipeline
 
 ```mermaid
-graph LR
+%%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true}}}%%
+flowchart LR
     subgraph "Development"
-        DEV["Developer pushes<br/>to feature branch"]
+        DEV["Developer pushes to feature branch"]
     end
 
     subgraph "CI (GitHub Actions)"
@@ -24,15 +25,15 @@ graph LR
     end
 
     subgraph "Preview"
-        PREV["Vercel Preview<br/>Deployment"]
-        E2E["E2E Tests<br/>(Playwright)"]
-        VISUAL["Visual Regression<br/>(Chromatic)"]
+        PREV["Vercel Preview Deployment"]
+        E2E["E2E Tests (Playwright)"]
+        VISUAL["Visual Regression (Chromatic)"]
     end
 
     subgraph "Production"
         APPROVE["Manual Approval"]
-        DEPLOY["Vercel Production<br/>Deployment"]
-        POST["Post-Deploy<br/>Health Checks"]
+        DEPLOY["Vercel Production Deployment"]
+        POST["Post-Deploy Health Checks"]
     end
 
     DEV --> LINT
@@ -57,9 +58,9 @@ graph LR
 | Environment | URL | Purpose | Database | Data |
 |-------------|-----|---------|----------|------|
 | **Development** | `localhost:3000` | Local development | Local PostgreSQL | Fake data (factories) |
-| **Preview** | `{branch}.rrc-kitchen.vercel.app` | Feature branch testing | Shared staging DB | Anonymized production |
-| **Staging** | `staging.rrc-kitchen.vercel.app` | Pre-release validation | Shared staging DB | Weekly prod sync |
-| **Production** | `rrc-kitchen.vercel.app` | Live platform | Production DB | Real data |
+| **Preview** | `{branch}.rrckitchen.vercel.app` | Feature branch testing | Shared staging DB | Anonymized production |
+| **Staging** | `staging.rrckitchen.vercel.app` | Pre-release validation | Shared staging DB | Weekly prod sync |
+| **Production** | `rrckitchen.vercel.app` | Live platform | Production DB | Real data |
 
 ### Environment Variables
 

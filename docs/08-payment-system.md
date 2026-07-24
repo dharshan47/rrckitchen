@@ -9,7 +9,8 @@
 ## 1. Payment System Overview
 
 ```mermaid
-graph TB
+%%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true, 'nodeSpacing': 50, 'rankSpacing': 50}}}%%
+flowchart TB
     subgraph "Payment Methods"
         Online["Online Payment"]
         COD["Cash on Delivery"]
@@ -78,7 +79,7 @@ sequenceDiagram
     FE->>FE: Validate cart (items available, stock ok)
     FE->>Action: createRazorpayOrder({ amount })
     Action->>DB: Calculate final amount (subtotal - coupon + tax + delivery)
-    Note over Action: Amount in paise (₹199 = 19900)
+    Note over Action: Amount in paise (19900 = Rs 199)
     Action->>Razorpay: POST /v1/orders { amount, currency: "INR", receipt }
     Razorpay-->>Action: { id: "order_xxxx", amount, status: "created" }
     Action->>DB: Create Payment record (status: "initiated")
@@ -254,7 +255,7 @@ sequenceDiagram
     Delivery->>Platform: Confirm delivery (OTP)
 
     Platform->>Platform: Mark order "delivered"
-    Platform->>Platform: Record COD receivable: ₹amount
+    Platform->>Platform: Record COD receivable: amount
 
     Note over Delivery: End of day: collect all COD cash
     Delivery->>Platform: Remit COD amount
@@ -320,8 +321,8 @@ graph TD
 
     E --> F{"Variance amount?"}
 
-    F -->|"≤ ₹50"| G["Auto write-off<br/>(small variance)"]
-    F -->|"> ₹50"| H["Flag for admin review"]
+    F -->|"Small (&le;50)"| G["Auto write-off(small variance)"]
+    F -->|"Large (&gt;50)"| H["Flag for admin review"]
 
     H --> I["Admin investigates"]
     I --> J["Adjustment or<br/>write-off approved"]
@@ -412,28 +413,27 @@ stateDiagram-v2
 ## 8. Accounting Impact
 
 ```mermaid
-graph LR
+%%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true}}}%%
+flowchart LR
     subgraph "Per Order (Online)"
-        A["Customer pays ₹100"]
-        B["Platform fee: ₹5<br/>(commission + payment gateway)"]
-        C["Kitchen payout: ₹95"]
-        D["Razorpay fee: ~2%"]
+        A["Customer pays 100"]
+        B["Platform fee: 5"]
+        C["Kitchen payout: 95"]
     end
 
     subgraph "Per Order (COD)"
-        E["Customer pays ₹100 cash"]
-        F["Cash handling cost: ₹3<br/>(reconciliation + banking)"]
-        G["Kitchen payout: ₹97"]
+        E["Customer pays Rs 100 cash"]
+        F["Cash handling cost: Rs 3"]
+        G["Kitchen payout: Rs 97"]
     end
 
     subgraph "Platform Revenue"
-        H["Online: ₹5 - Razorpay fee"]
-        I["COD: ₹3"]
+        H["Online: Rs 5 - Razorpay fee"]
+        I["COD: Rs 3"]
     end
 
     A --> B
     A --> C
-    A --> D
     E --> F
     E --> G
     B --> H

@@ -60,8 +60,8 @@ export default function CategoriesPage() {
           <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-7 gap-4">
             {Array.from({ length: 14 }).map((_, i) => (
               <div key={i} className="flex flex-col items-center gap-2">
-                <div className="w-full aspect-square md:rounded-2xl bg-muted animate-pulse" />
-                <div className="h-3 w-16 bg-muted animate-pulse rounded" />
+                <div className="w-full aspect-square md:rounded-2xl animate-pulse bg-gray-100" />
+                <div className="h-3 w-16 animate-pulse rounded bg-gray-100" />
               </div>
             ))}
           </div>
@@ -79,7 +79,7 @@ export default function CategoriesPage() {
                   href={`/categories/${cat.name.toLowerCase().replace(/\s+/g, "-")}`}
                   className="flex flex-col items-center gap-2 group"
                 >
-                  <div className="relative w-full aspect-square md:rounded-2xl md:overflow-hidden md:bg-muted md:shadow-sm md:group-hover:shadow-md md:transition-shadow">
+                  <div className="relative w-full aspect-square md:rounded-2xl md:overflow-hidden md:shadow-sm md:group-hover:shadow-md md:transition-shadow">
                     {imageUrl ? (
                       <Image
                         src={imageUrl}
@@ -89,7 +89,7 @@ export default function CategoriesPage() {
                         className="object-contain scale-110 p-2"
                       />
                     ) : (
-                      <div className="flex h-full w-full items-center justify-center bg-muted md:rounded-2xl">
+                      <div className="flex h-full w-full items-center justify-center md:rounded-2xl">
                         <span className="text-3xl font-bold text-muted-foreground/30">
                           {cat.name.charAt(0)}
                         </span>

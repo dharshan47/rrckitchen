@@ -63,7 +63,7 @@ Open [http://localhost:3000](http://localhost:3000).
 ### Public
 - `/` — Home page with hero carousel, top-rated kitchens, menu by time slot
 - `/menu` — Tomorrow's menu grouped by time slot with filters
-- `/menu/[id]` — Menu item detail with photos, pricing, add-to-cart
+- `/menu/[kitchenSlug]/[itemSlug]-[shortId]` — Menu item detail by kitchen + item
 - `/menu/category/[slug]` — Category-filtered menu
 - `/kitchen/[slug]` — Kitchen detail page with full menu
 - `/search` — Search with autocomplete

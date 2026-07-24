@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { DeliveryRatingDialog } from "@/components/delivery-partner/delivery-rating-dialog"
 import { RatingPrompt } from "@/components/order/rating-prompt"
+import { RatingOverviewDialog } from "@/components/order/rating-overview-dialog"
 import { CravingsPopup } from "@/components/order/cravings-popup"
 
 const statusFlow: { key: UserOrder["status"]; label: string; icon: typeof Check }[] = [
@@ -51,6 +52,7 @@ export default function AccountOrdersPage() {
   const [ratingOrder, setRatingOrder] = useState<{ id: string; deliveryPartnerId: string; deliveryPartnerName: string } | null>(null)
   const [reviewOrder, setReviewOrder] = useState<{ orderId: string; kitchenId: string; deliveryPersonId?: string } | null>(null)
   const [activeOrderId] = useState<string | null>(null)
+  const [viewRatingOrder, setViewRatingOrder] = useState<string | null>(null)
 
   const { data: orders = [], isLoading, isError, error, refetch } = useQuery({
     queryKey: ["orders"],
@@ -132,17 +134,18 @@ export default function AccountOrdersPage() {
         ) : (
           <div className="space-y-6">
             {orders.map((order) => (
-              <OrderCard
-                key={order.id}
-                order={order}
-                onCancel={() => setCancellingOrder(order.id)}
-                onRateDelivery={() => setRatingOrder({ id: order.id, deliveryPartnerId: order.deliveryPartner?.id ?? "", deliveryPartnerName: order.deliveryPartner?.name ?? "Delivery Partner" })}
-                onReview={() => setReviewOrder({
-                  orderId: order.id,
-                  kitchenId: order.items[0]?.kitchenId ?? order.kitchenPartnerId ?? "",
-                  deliveryPersonId: order.deliveryPartner?.id,
-                })}
-              />
+                <OrderCard
+                  key={order.id}
+                  order={order}
+                  onCancel={() => setCancellingOrder(order.id)}
+                  onRateDelivery={() => setRatingOrder({ id: order.id, deliveryPartnerId: order.deliveryPartner?.id ?? "", deliveryPartnerName: order.deliveryPartner?.name ?? "Delivery Partner" })}
+                  onReview={() => setReviewOrder({
+                    orderId: order.id,
+                    kitchenId: order.items[0]?.kitchenId ?? order.kitchenPartnerId ?? "",
+                    deliveryPersonId: order.deliveryPartner?.id,
+                  })}
+                  onViewRating={() => setViewRatingOrder(order.id)}
+                />
             ))}
           </div>
         )}
@@ -204,12 +207,20 @@ export default function AccountOrdersPage() {
         </DialogContent>
       </Dialog>
 
+      <RatingOverviewDialog
+        open={!!viewRatingOrder}
+        onOpenChange={(open) => { if (!open) setViewRatingOrder(null) }}
+        kitchenReview={orders.find(o => o.id === viewRatingOrder)?.kitchenReview ?? null}
+        deliveryReview={orders.find(o => o.id === viewRatingOrder)?.deliveryReview ?? null}
+        deliveryPartnerName={orders.find(o => o.id === viewRatingOrder)?.deliveryPartner?.name ?? null}
+      />
+
       {activeOrderId && <CravingsPopup orderId={activeOrderId} />}
     </main>
   )
 }
 
-function OrderCard({ order, onCancel, onRateDelivery, onReview }: { order: UserOrder; onCancel: () => void; onRateDelivery: () => void; onReview: () => void }) {
+function OrderCard({ order, onCancel, onRateDelivery, onReview, onViewRating }: { order: UserOrder; onCancel: () => void; onRateDelivery: () => void; onReview: () => void; onViewRating: () => void }) {
   const isCancelled = order.status === "CANCELLED" || order.status === "REFUNDED"
   const canCancel = !isCancelled && (order.status === "CONFIRMED" || order.status === "PREPARING")
   const currentIdx = isCancelled ? 0 : getStatusIndex(order.status)
@@ -222,7 +233,7 @@ function OrderCard({ order, onCancel, onRateDelivery, onReview }: { order: UserO
           <p className="text-xs text-muted-foreground">
             {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
           </p>
-          <p className="text-xs font-mono text-muted-foreground">#{order.id.slice(0, 8)}</p>
+          <p className="text-xs font-mono text-muted-foreground break-all">#{order.id}</p>
         </div>
         <Badge className={cn("text-xs font-semibold", statusColors[order.status] || "")}>
           {order.status === "READYFORPICKUP" ? "Ready for Pickup" : order.status.charAt(0) + order.status.slice(1).toLowerCase()}
@@ -312,46 +323,46 @@ function OrderCard({ order, onCancel, onRateDelivery, onReview }: { order: UserO
         </div>
       )}
 
-      <div className="flex items-center justify-between border-t border-border px-4 py-3 bg-muted/10">
-        <div className="flex items-center gap-3">
-          <p className="text-sm font-semibold">Total: ₹{order.totalAmount}</p>
-          {(order.status === "READYFORPICKUP" || order.status === "COMPLETED") && (
-            <Button size="sm" variant="outline" className="h-7 text-xs gap-1" asChild>
-              <Link href={`/account/orders/${order.id}/track`}>
-                <Package className="h-3 w-3" /> Track Order
-              </Link>
-            </Button>
-          )}
-          {canCancel && (
-            <Button size="sm" variant="ghost" className="h-7 text-xs text-red-600" onClick={onCancel}>
-              Cancel Order
-            </Button>
-          )}
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border px-4 py-3 bg-muted/10">
+          <div className="flex items-center gap-3">
+            <p className="text-sm font-semibold">Total: ₹{order.totalAmount}</p>
+            {order.status === "READYFORPICKUP" && (
+              <Button size="sm" variant="outline" className="h-7 text-xs gap-1" asChild>
+                <Link href={`/account/orders/${order.id}/track`}>
+                  <Package className="h-3 w-3" /> Track Order
+                </Link>
+              </Button>
+            )}
+            {canCancel && (
+              <Button size="sm" variant="ghost" className="h-7 text-xs text-red-600" onClick={onCancel}>
+                Cancel Order
+              </Button>
+            )}
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            {order.deliveryPartner && order.status !== "COMPLETED" && order.status !== "CANCELLED" && order.status !== "REFUNDED" && (
+              <span className="text-xs text-muted-foreground flex items-center gap-1">
+                <Bike className="h-3 w-3" /> {order.deliveryPartner.name}
+              </span>
+            )}
+            {order.status === "COMPLETED" && !order.kitchenReview && (
+              <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={onReview}>
+                <Star className="h-3 w-3" /> Rate Order
+              </Button>
+            )}
+            {(order.kitchenReview || order.deliveryReview) && (
+              <Button size="sm" variant="ghost" className="h-7 text-xs gap-1" onClick={onViewRating}>
+                <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" /> View Ratings
+              </Button>
+            )}
+            {order.status === "COMPLETED" && order.deliveryPartner && !order.deliveryReview && (
+              <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={onRateDelivery}>
+                <Star className="h-3 w-3" /> Rate Delivery
+              </Button>
+            )}
+            {order.address && <p className="text-xs text-muted-foreground truncate max-w-32">{order.address}</p>}
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          {order.status === "COMPLETED" && !order.kitchenReview && (
-            <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={onReview}>
-              <Star className="h-3 w-3" /> Rate Order
-            </Button>
-          )}
-          {order.kitchenReview && (
-            <span className="text-xs text-muted-foreground flex items-center gap-1" title="Food rating">
-              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" /> {order.kitchenReview.rating}/5
-            </span>
-          )}
-          {order.status === "COMPLETED" && order.deliveryPartner && !order.deliveryReview && (
-            <Button size="sm" variant="outline" className="h-7 text-xs gap-1" onClick={onRateDelivery}>
-              <Star className="h-3 w-3" /> Rate Delivery
-            </Button>
-          )}
-          {order.deliveryReview && (
-            <span className="text-xs text-muted-foreground flex items-center gap-1" title="Delivery rating">
-              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" /> {order.deliveryReview.rating}/5
-            </span>
-          )}
-          {order.address && <p className="text-xs text-muted-foreground truncate max-w-48">{order.address}</p>}
-        </div>
-      </div>
     </Card>
   )
 }

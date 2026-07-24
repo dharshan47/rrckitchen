@@ -71,7 +71,7 @@ export async function getAdminDeliveryPartners() {
   return partners.map((p) => ({
     id: p.id,
     userId: p.userId,
-    name: p.user?.name ?? "Unknown",
+    name: p.user?.name ?? "",
     phoneNumber: p.user?.phoneNumber ?? null,
     email: p.user?.email ?? null,
     status: p.status,

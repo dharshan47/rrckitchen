@@ -40,6 +40,7 @@ model User {
   deliveryPartner     DeliveryPartner?
   pushSubscriptions   PushSubscription[]
   menuItemFeedbacks   MenuItemFeedback[]
+  menuItemReviews     MenuItemReview[]
   supportTickets      SupportTicket[]
   referralsMade       Referral[]           @relation("referrer")
   referralsUsed       Referral[]           @relation("referred")
@@ -300,8 +301,11 @@ model MenuItem {
   photos            MenuItemPhoto[]
   orderItems        OrderItem[]
   menuItemFeedbacks MenuItemFeedback[]
+  menuItemReviews   MenuItemReview[]
   dailyStockEntries MenuItemDailyStock[]
   wishlistItems     WishlistItem[]
+  avgRating         Decimal              @default(0)
+  totalReviews      Int                  @default(0)
 
   @@index([menuId, timeSlot, foodType])
   @@index([isAvailable, timeSlot, foodType])
@@ -463,6 +467,7 @@ model Order {
   review                 Review?
   deliveryReview         DeliveryReview?
   menuItemFeedbacks      MenuItemFeedback[]
+  menuItemReviews        MenuItemReview[]
   deliveryLocations      DeliveryLocation[]
   deliveryAssignment     DeliveryAssignment?
   refunds                Refund[]
@@ -520,9 +525,10 @@ model OrderItem {
   packagingFee     Decimal         @default(0)
   status           OrderItemStatus @default(CONFIRMED)
 
-  order          Order          @relation(fields: [orderId], references: [id])
-  menuItem       MenuItem       @relation(fields: [menuItemId], references: [id])
-  kitchenPartner KitchenPartner @relation(fields: [kitchenPartnerId], references: [id])
+  order            Order            @relation(fields: [orderId], references: [id])
+  menuItem         MenuItem         @relation(fields: [menuItemId], references: [id])
+  kitchenPartner   KitchenPartner   @relation(fields: [kitchenPartnerId], references: [id])
+  menuItemReviews  MenuItemReview[]
 
   @@index([orderId])
   @@index([kitchenPartnerId])
@@ -604,6 +610,27 @@ model MenuItemFeedback {
   @@unique([orderId, orderItemId])
   @@index([menuItemId])
   @@index([orderId])
+}
+
+// ============ MENU ITEM REVIEW (STAR RATING) ============
+
+model MenuItemReview {
+  id          String   @id @default(cuid())
+  orderId     String
+  orderItemId String
+  userId      String
+  menuItemId  String
+  rating      Int
+  comment     String?
+  createdAt   DateTime @default(now())
+
+  order     Order     @relation(fields: [orderId], references: [id])
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id])
+  menuItem  MenuItem  @relation(fields: [menuItemId], references: [id])
+  user      User      @relation(fields: [userId], references: [id])
+
+  @@unique([orderId, orderItemId])
+  @@index([menuItemId])
 }
 
 // ============ DELIVERY ASSIGNMENT ============
@@ -731,8 +758,10 @@ model SupportTicket {
   orderId     String?
   subject     String
   description String
-  status      TicketStatus   @default(OPEN)
+  category    String         @default("other")
   priority    TicketPriority @default(MEDIUM)
+  status      TicketStatus   @default(OPEN)
+  mediaUrls   String[]
   createdAt   DateTime       @default(now())
   updatedAt   DateTime       @updatedAt
 
@@ -742,6 +771,7 @@ model SupportTicket {
 
   @@index([userId])
   @@index([status])
+  @@index([category])
   @@map("support_ticket")
 }
 
@@ -1195,7 +1225,7 @@ model CashRemittance {
   @@index([deliveryPartnerId, status])
 }
 
-// Swiggy's own documented concept — when a rider enters less than what was
+// When a rider enters less than what was
 // actually collected (whether by honest error or deliberate under-reporting)
 model CodVariance {
   id                String    @id @default(cuid())

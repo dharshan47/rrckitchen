@@ -33,15 +33,15 @@ export default async function CashReconciliationPage() {
     <CashReconciliationClient
       ridersWithCash={ridersWithCash.map((r) => ({
         id: r.id,
-        name: r.user?.name ?? "Unknown",
-        phone: r.user?.phoneNumber ?? "-",
+        name: r.user?.name ?? "",
+        phone: r.user?.phoneNumber ?? "",
         cashInHand: Number(r.cashInHand),
         codEligible: r.codEligible,
       }))}
       openVariances={openVariances.map((v) => ({
         id: v.id,
         orderId: v.order.id,
-        riderName: v.deliveryPartner.user?.name ?? "Unknown",
+        riderName: v.deliveryPartner.user?.name ?? "",
         expectedAmount: Number(v.expectedAmount),
         enteredAmount: Number(v.enteredAmount),
         varianceAmount: Number(v.varianceAmount),
@@ -49,7 +49,7 @@ export default async function CashReconciliationPage() {
       }))}
       remittances={remittances.map((r) => ({
         id: r.id,
-        riderName: r.deliveryPartner.user?.name ?? "Unknown",
+        riderName: r.deliveryPartner.user?.name ?? "",
         amount: Number(r.amount),
         method: r.method,
         referenceId: r.referenceId,

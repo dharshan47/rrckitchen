@@ -13,6 +13,16 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSession } from "@/lib/auth-client";
 import { toast } from "sonner";
 
+function menuItemUrl(item: MenuWishlistItem["menuItem"]): string {
+  const kitchenSlug = item.menu?.kitchenPartner?.slug;
+  const itemSlug = item.slug;
+  const shortId = item.id.slice(0, 8);
+  if (kitchenSlug && itemSlug) {
+    return `/menu/${kitchenSlug}/${itemSlug}-${shortId}`;
+  }
+  return "/search";
+}
+
 interface MenuWishlistItem {
   id: string;
   menuItem: {
@@ -26,9 +36,10 @@ interface MenuWishlistItem {
     photos: { imageUrl: string }[];
     menu: {
       kitchenPartner: {
+        slug?: string;
         kitchenAlias: { displayName: string } | null;
-      };
-    };
+      } | null;
+    } | null;
   };
 }
 
@@ -79,7 +90,7 @@ function MenuCard({ item, onRemove, isRemoving }: { item: MenuWishlistItem; onRe
   return (
     <div className="flex flex-col rounded-xl border border-border p-3 hover:border-primary/30 transition-colors">
       {item.menuItem.slug ? (
-        <Link href={`/menu/${item.menuItem.slug}`} className="shrink-0">
+        <Link href={menuItemUrl(item.menuItem)} className="shrink-0">
           <div className="w-full aspect-square rounded-lg bg-muted flex items-center justify-center overflow-hidden mb-2">
             {item.menuItem.photos[0]?.imageUrl ? (
               <Image src={item.menuItem.photos[0].imageUrl} alt="" width={200} height={200} className="h-full w-full object-cover" sizes="(max-width: 768px) 50vw, 25vw" />
@@ -100,7 +111,7 @@ function MenuCard({ item, onRemove, isRemoving }: { item: MenuWishlistItem; onRe
         </div>
       )}
       {item.menuItem.slug ? (
-        <Link href={`/menu/${item.menuItem.slug}`} className="flex-1 min-w-0">
+        <Link href={menuItemUrl(item.menuItem)} className="flex-1 min-w-0">
           <p className="text-sm font-medium truncate">{item.menuItem.name}</p>
           <p className="text-xs text-muted-foreground">
             <span className="font-semibold text-primary">₹{item.menuItem.price}</span> · {item.menuItem.foodType}

@@ -8,6 +8,7 @@ import Image from "next/image"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { cn } from "@/lib/utils"
 import { getRecentKitchens, addRecentKitchen, removeRecentKitchen } from "@/lib/recent-searches"
+import { getKitchenStatus } from "@/components/kitchen/kitchen-timing-display"
 
 interface SearchItem {
   id: string
@@ -27,6 +28,7 @@ interface SearchKitchen {
   displayName: string
   imageUrl: string | null
   items: { id: string; name: string; price: number; imageUrl: string | null }[]
+  operatingHours?: Record<string, { open: string; close: string }> | null
 }
 
 interface SearchResult {
@@ -284,6 +286,9 @@ export function SearchAutocomplete({
                 <p className="px-4 pt-3 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Kitchens</p>
                 {results?.kitchens.map((kitchen, i) => {
                   const idx = (results?.dishes.length ?? 0) + i
+                  const status = getKitchenStatus(kitchen.operatingHours ?? null);
+                  const isClosed = !status.isOpen;
+                  
                   return (
                     <button
                       key={kitchen.id}
@@ -291,18 +296,26 @@ export function SearchAutocomplete({
                       onMouseEnter={() => setSelectedIndex(idx)}
                       className={cn(
                         "w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-muted/50 transition-colors",
-                        selectedIndex === idx && "bg-muted/50"
+                        selectedIndex === idx && "bg-muted/50",
+                        isClosed && "opacity-75"
                       )}
                     >
                       <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center shrink-0 overflow-hidden relative">
                         {kitchen.imageUrl ? (
-                          <Image src={kitchen.imageUrl} alt={kitchen.displayName} fill className="object-cover" sizes="32px" />
+                          <Image src={kitchen.imageUrl} alt={kitchen.displayName} fill className={cn("object-cover", isClosed && "grayscale")} sizes="32px" />
                         ) : (
                           <MapPin className="h-4 w-4 text-primary" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium truncate">{kitchen.displayName}</p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium truncate">{kitchen.displayName}</p>
+                          {isClosed && status.opensNextAt && (
+                            <span className="text-[9px] font-bold text-[#EE7005] uppercase bg-orange-50 px-1.5 py-0.5 rounded-sm shrink-0 whitespace-nowrap hidden sm:inline-block">
+                              OPENS {status.opensNextAt.time} {status.opensNextAt.day}
+                            </span>
+                          )}
+                        </div>
                         <p className="text-xs text-muted-foreground truncate">
                             {kitchen.items?.length > 0
                               ? kitchen.items.map((mi) => mi.name).join(", ")

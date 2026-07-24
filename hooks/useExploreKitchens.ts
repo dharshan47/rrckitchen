@@ -10,8 +10,9 @@ export interface KitchenData {
   totalReviews: number;
   imageUrl: string | null;
   cuisineTags: string[];
-  items: { id: string; name: string; price: number; timeSlot: string; foodType: string }[];
+  items: { id: string; name: string; price: number; compareAtPrice?: number | null; timeSlot: string; foodType: string }[];
   timeSlots: string[];
+  operatingHours: Record<string, { open: string; close: string }> | null;
 }
 
 interface ExploreResponse {

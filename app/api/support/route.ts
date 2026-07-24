@@ -10,10 +10,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { subject, description, orderId } = await req.json();
+    const { subject, description, orderId, category, priority, mediaUrls } = await req.json();
     if (!subject?.trim() || !description?.trim()) {
       return NextResponse.json({ error: "Subject and description are required" }, { status: 400 });
     }
+
+    const validCategory = ["order", "delivery", "food", "payment", "account", "kitchen", "menu", "delivery-partner", "customer-order", "kitchen-partner", "delivery-issue", "cod", "ingredient", "equipment", "safety", "other"].includes(category) ? category : "other";
 
     const ticket = await prisma.supportTicket.create({
       data: {
@@ -21,8 +23,9 @@ export async function POST(req: NextRequest) {
         orderId: orderId || null,
         subject: subject.trim(),
         description: description.trim(),
-        status: "OPEN",
-        priority: "MEDIUM",
+        category: validCategory,
+        priority: priority || "MEDIUM",
+        mediaUrls: mediaUrls || [],
       },
     });
 

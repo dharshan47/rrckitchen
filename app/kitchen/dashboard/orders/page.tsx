@@ -71,6 +71,19 @@ export default function OrdersPage() {
                       <MapPin className="h-3 w-3" aria-hidden="true" />
                       <span>{order.customerAddress}</span>
                     </div>
+                    {order.deliveryPartner && (
+                      <>
+                        <div className="w-px h-4 bg-border self-center" />
+                        <span className="font-medium text-foreground">Delivery:</span>
+                        <span>{order.deliveryPartner.name}</span>
+                        {order.deliveryPartner.phone && (
+                          <a href={`tel:${order.deliveryPartner.phone}`} className="text-primary hover:underline">
+                            <Phone className="h-3 w-3 inline mr-0.5" />
+                            {order.deliveryPartner.phone}
+                          </a>
+                        )}
+                      </>
+                    )}
                   </div>
                 </div>
               ))}

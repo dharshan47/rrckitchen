@@ -33,11 +33,11 @@ export async function GET() {
 
     const data = orders.map((o) => ({
       id: o.id,
-      customerName: o.user?.name ?? "Unknown",
+      customerName: o.user?.name ?? "",
       totalAmount: o.totalAmount.toString(),
       paymentStatus: o.payment?.status ?? "PENDING",
       orderStatus: o.status,
-      deliveryPartnerName: o.deliveryPartner?.user?.name ?? null,
+      deliveryPartnerName: o.deliveryPartner?.user?.name ?? "",
       payoutStatus: payoutMap.get(o.id) ?? null,
     }));
 

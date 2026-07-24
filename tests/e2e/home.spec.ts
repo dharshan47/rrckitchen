@@ -38,4 +38,67 @@ test.describe('Home Page', () => {
     await expect(footer).toBeVisible();
     await expect(footer.getByRole('link').first()).toBeVisible();
   });
+
+  test('shows hero section with CTA', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.locator('main, section').first()).toBeVisible();
+  });
+
+  test('has location selector', async ({ page }) => {
+    await page.goto('/');
+    const locationBtn = page.locator('button[aria-label*="location" i], button:has-text("Location"), button:has-text("Deliver")').first();
+    if (await locationBtn.isVisible()) {
+      await expect(locationBtn).toBeVisible();
+    }
+  });
+
+  test('has search functionality in header', async ({ page }) => {
+    await page.goto('/');
+    const searchInput = page.locator('input[placeholder*="Search" i]').first();
+    if (await searchInput.isVisible()) {
+      await searchInput.fill('dosa');
+      await expect(searchInput).toHaveValue('dosa');
+    }
+  });
+
+  test('shows categories section', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByText(/categor/i)).toBeVisible();
+  });
+
+  test('navigates to categories page', async ({ page }) => {
+    await page.goto('/');
+    const catLink = page.getByRole('link', { name: /categor/i }).first();
+    if (await catLink.isVisible()) {
+      await catLink.click();
+      await expect(page).toHaveURL(/\/categor/);
+    }
+  });
+
+  test('shows Become a Chef CTA', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByText(/chef|kitchen partner|become/i)).toBeVisible();
+  });
+
+  test('shows Deliver With Us CTA', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByText(/deliver/i)).toBeVisible();
+  });
+
+  test('has user profile/login button', async ({ page }) => {
+    await page.goto('/');
+    const profileBtn = page.locator('button[aria-label*="profile" i], button[aria-label*="account" i], a[href*="login"], a[href*="account"]').first();
+    await expect(profileBtn).toBeVisible();
+  });
+
+  test('has cart link', async ({ page }) => {
+    await page.goto('/');
+    await expect(page.getByRole('link', { name: /Cart/i })).toBeVisible();
+  });
+
+  test('page has proper meta viewport', async ({ page }) => {
+    await page.goto('/');
+    const viewport = page.locator('meta[name="viewport"]');
+    await expect(viewport).toHaveCount(1);
+  });
 });

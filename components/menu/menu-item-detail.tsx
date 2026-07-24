@@ -360,7 +360,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                   <div className="hidden md:flex items-center rounded-lg border border-[#EE7005] overflow-hidden bg-[#FFF5EB]">
                     <button
                       onClick={handleDecrement}
-                      className="h-10 w-10 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
+                      className="h-10 w-10 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] transition-colors"
                       aria-label="Decrease quantity"
                     >
                       <Minus className="h-5 w-5" />
@@ -368,7 +368,7 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
                     <span className="w-9 text-center text-base font-bold text-[#EE7005] leading-none py-1">{cartItem.qty}</span>
                     <button
                       onClick={handleIncrement}
-                      className="h-10 w-10 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
+                      className="h-10 w-10 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB]  transition-colors"
                       aria-label="Increase quantity"
                     >
                       <Plus className="h-5 w-5" />

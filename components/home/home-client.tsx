@@ -7,90 +7,112 @@ import { InfiniteKitchenGrid } from "@/components/kitchen/infinite-kitchen-grid"
 import type { SortOption } from "@/components/kitchen/sort-by-dialog";
 import type { VegFilterValue } from "@/components/kitchen/veg-filter";
 import { ArrowRight } from "lucide-react";
-import { useSession } from "@/lib/auth-client";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { WhatsOnYourMind } from "@/components/home/whats-on-your-mind";
 import { FastDeliveryCarousel } from "@/components/home/fast-delivery-carousel";
-
-const recipes = [
-  { name: "Dosa", slug: "dosa" },
-  { name: "Biryani", slug: "biryani" },
-  { name: "Idli", slug: "idli" },
-  { name: "Vada", slug: "vada" },
-  { name: "Momos", slug: "momos" },
-  { name: "Parotta", slug: "parotta" },
-  { name: "Noodles", slug: "noodles" },
-  { name: "Pancake", slug: "pancake" },
-  { name: "Sandwich", slug: "sandwich" },
-];
+import { SearchAutocomplete } from "@/components/search/search-autocomplete";
+import { KitchenFilters } from "@/components/kitchen/kitchen-filters";
+import { useKitchenCategories } from "@/hooks/useExploreKitchens";
+import { cn } from "@/lib/utils";
 
 export function HomeClient() {
-  const { data: session } = useSession();
-  const userName = session?.user?.name;
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [sortOption, setSortOption] = useState<SortOption | null>(null);
   const [vegFilter, setVegFilter] = useState<VegFilterValue>(null);
   const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
+  const { data: categories = [] } = useKitchenCategories();
+
+  const kitchenSectionRef = useRef<HTMLElement>(null);
+  const [isPastHeader, setIsPastHeader] = useState(false);
+  const [inKitchenSection, setInKitchenSection] = useState(false);
+  const [isPastInlineFilters, setIsPastInlineFilters] = useState(false);
+  const [scrollDirection, setScrollDirection] = useState<"up" | "down">("up");
+
+  useEffect(() => {
+    let lastScrollY = window.scrollY;
+    
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      
+      // Update scroll direction with a small threshold to avoid jitter
+      if (currentScrollY > lastScrollY + 5) {
+        setScrollDirection("down"); // Downward scroll time
+      } else if (currentScrollY < lastScrollY - 5) {
+        setScrollDirection("up"); // Upward scroll time
+      }
+      lastScrollY = currentScrollY > 0 ? currentScrollY : 0;
+
+      // Check if we passed the static header
+      setIsPastHeader(currentScrollY > 120);
+
+      // Check kitchen section boundaries
+      if (kitchenSectionRef.current) {
+        const rect = kitchenSectionRef.current.getBoundingClientRect();
+        // If the top of the section is less than 0, we've scrolled past the inline filters at its top
+        setIsPastInlineFilters(rect.top < 0);
+        // We are in the section as long as the bottom is still in view
+        setInKitchenSection(rect.bottom > 80);
+      }
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll(); // Initial check
+    
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
+    <main className="min-h-screen bg-background text-foreground relative">
+      {/* ===== Custom Mobile Sticky Header (Two phases) ===== */}
+      <div
+        className={cn(
+          "fixed top-0 left-0 right-0 z-40 md:hidden bg-white shadow-sm transition-transform duration-300",
+          isPastHeader ? "translate-y-0" : "-translate-y-full"
+        )}
+      >
+        {/* Search Bar - Shown when scrolling DOWN */}
+        <div
+          className={cn(
+            "transition-all duration-300 overflow-hidden px-4",
+            scrollDirection === "down" ? "max-h-20 py-3 opacity-100" : "max-h-0 py-0 opacity-0"
+          )}
+        >
+          <SearchAutocomplete
+            mobileModal
+            placeholder="Search meals..."
+            inputClassName="h-10 rounded-none text-sm pl-10 focus-visible:ring-1 bg-white text-foreground placeholder:text-muted-foreground border border-black shadow-md"
+          />
+        </div>
+
+        {/* Filters - Shown only when past inline filters and inside the Kitchen Section */}
+        <div
+          className={cn(
+            "transition-all duration-300 overflow-hidden bg-white px-4 shadow-[0_4px_12px_rgba(0,0,0,0.05)]",
+            (isPastInlineFilters && inKitchenSection) ? "max-h-20 py-2 opacity-100 border-t border-gray-100" : "max-h-0 py-0 opacity-0"
+          )}
+        >
+          <KitchenFilters
+            categories={categories}
+            selectedCategory={selectedCategory}
+            onCategorySelect={setSelectedCategory}
+            sortOption={sortOption}
+            onSortChange={setSortOption}
+            vegFilter={vegFilter}
+            onVegFilterChange={setVegFilter}
+            selectedCuisines={selectedCuisines}
+            onCuisinesChange={setSelectedCuisines}
+          />
+        </div>
+      </div>
+
       <div className="mx-auto max-w-360 px-4 lg:px-12 pb-16 pt-0 lg:pt-4 space-y-4 lg:space-y-12">
         <ErrorBoundary>
-          {/* Fast Delivery - Nearby Kitchens */}
+          <WhatsOnYourMind />
+
           <FastDeliveryCarousel />
 
-          {/* What's on Your Mind - Recipe Navigation */}
-          <section>
-            <h2 className="text-base font-extrabold mb-2 lg:mb-6 tracking-tight text-foreground/90">
-              {userName ? `${userName}, What` : "What"}&apos;s on your mind?
-            </h2>
-            <div className="hidden lg:grid grid-cols-7 gap-x-6 gap-y-8">
-              {recipes.slice(0, 7).map((recipe) => (
-                <Link
-                  key={recipe.slug}
-                  href={`/search?q=${recipe.slug}`}
-                  className="flex flex-col items-center gap-0 group transition-all"
-                >
-                  <div className="relative w-full aspect-square rounded-full overflow-hidden">
-                    <Image
-                      src="/categories/idli.png"
-                      alt={recipe.name}
-                      fill
-                      sizes="(min-width: 1024px) calc(100vw / 7 - 48px), 64px"
-                      className="object-contain scale-110 drop-shadow-md p-3"
-                    />
-                  </div>
-                  <span className="text-sm font-bold text-center text-foreground/70 group-hover:text-[#EE7005] transition-colors leading-tight mt-2">
-                    {recipe.name}
-                  </span>
-                </Link>
-              ))}
-            </div>
-            <div className="lg:hidden flex gap-3 overflow-x-auto pb-3 scrollbar-none -mx-4 px-4 touch-pan-x">
-              {recipes.map((recipe) => (
-                <Link
-                  key={recipe.slug}
-                  href={`/search?q=${recipe.slug}`}
-                  className="flex flex-col items-center gap-1 shrink-0 w-20 group"
-                >
-                  <div className="relative w-16 h-16 rounded-full overflow-hidden">
-                    <Image
-                      src="/categories/idli.png"
-                      alt={recipe.name}
-                      fill
-                      sizes="64px"
-                      className="object-contain scale-110 drop-shadow-md p-2"
-                    />
-                  </div>
-                  <span className="text-[11px] font-bold text-center text-muted-foreground leading-tight truncate w-full">
-                    {recipe.name}
-                  </span>
-                </Link>
-              ))}
-            </div>
-          </section>
-
           {/* Explore Kitchens Section */}
-          <section className="space-y-4 lg:space-y-6 pt-3 lg:pt-6 border-t border-gray-100">
+          <section ref={kitchenSectionRef} className="space-y-4 lg:space-y-6 pt-3 lg:pt-6 border-t border-gray-100">
             <InfiniteKitchenGrid
               selectedCategory={selectedCategory}
               onCategorySelect={setSelectedCategory}
@@ -131,7 +153,6 @@ export function HomeClient() {
                 className="object-cover object-bottom-right"
                 sizes="(max-width: 1024px) 100vw, 28vw"
                 priority
-                fetchPriority="high"
               />
             </div>
           </section>

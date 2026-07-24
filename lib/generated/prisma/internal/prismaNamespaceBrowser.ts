@@ -79,6 +79,7 @@ export const ModelName = {
   Review: 'Review',
   DeliveryReview: 'DeliveryReview',
   MenuItemFeedback: 'MenuItemFeedback',
+  MenuItemReview: 'MenuItemReview',
   DeliveryAssignment: 'DeliveryAssignment',
   DeliveryLocation: 'DeliveryLocation',
   Payment: 'Payment',
@@ -342,7 +343,9 @@ export const MenuItemScalarFieldEnum = {
   dailyStock: 'dailyStock',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
-  deletedAt: 'deletedAt'
+  deletedAt: 'deletedAt',
+  avgRating: 'avgRating',
+  totalReviews: 'totalReviews'
 } as const
 
 export type MenuItemScalarFieldEnum = (typeof MenuItemScalarFieldEnum)[keyof typeof MenuItemScalarFieldEnum]
@@ -534,6 +537,20 @@ export const MenuItemFeedbackScalarFieldEnum = {
 export type MenuItemFeedbackScalarFieldEnum = (typeof MenuItemFeedbackScalarFieldEnum)[keyof typeof MenuItemFeedbackScalarFieldEnum]
 
 
+export const MenuItemReviewScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  orderItemId: 'orderItemId',
+  userId: 'userId',
+  menuItemId: 'menuItemId',
+  rating: 'rating',
+  comment: 'comment',
+  createdAt: 'createdAt'
+} as const
+
+export type MenuItemReviewScalarFieldEnum = (typeof MenuItemReviewScalarFieldEnum)[keyof typeof MenuItemReviewScalarFieldEnum]
+
+
 export const DeliveryAssignmentScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
@@ -624,8 +641,10 @@ export const SupportTicketScalarFieldEnum = {
   orderId: 'orderId',
   subject: 'subject',
   description: 'description',
-  status: 'status',
+  category: 'category',
   priority: 'priority',
+  status: 'status',
+  mediaUrls: 'mediaUrls',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const

@@ -30,7 +30,7 @@ export function AddToCartPopup({ item, qty = 1, open, onOpenChange }: AddToCartP
     <>
       {/* Desktop: top center */}
       <div className={cn(
-        "hidden md:flex fixed top-24 left-1/2 -translate-x-1/2 z-[60",
+        "hidden md:flex fixed top-24 left-1/2 -translate-x-1/2 z-[999 w-[420px]",
         "animate-in fade-in slide-in-from-top-2 duration-300"
       )}>
         <CardContent item={item} qty={qty} onClose={() => onOpenChange(false)} />
@@ -38,7 +38,7 @@ export function AddToCartPopup({ item, qty = 1, open, onOpenChange }: AddToCartP
 
       {/* Mobile: above bottom nav */}
       <div className={cn(
-        "md:hidden fixed bottom-20 left-3 right-3 z-[60",
+        "md:hidden fixed bottom-20 left-3 right-3 z-[999",
         "animate-in fade-in slide-in-from-bottom-2 duration-300"
       )}>
         <CardContent item={item} qty={qty} onClose={() => onOpenChange(false)} />

@@ -456,7 +456,7 @@ function CartContent() {
   const appliedCoupon = useCartCoupon();
   const orderType = useCartOrderType();
   const { addToCart, applyCoupon, removeCoupon, setOrderType } = useCartActions();
-  const razorpayConfigured = typeof process !== "undefined" && !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+  const razorpayConfigured = !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>(razorpayConfigured ? "RAZORPAY" : "CASH_ON_DELIVERY");
   const [codProcessing, setCodProcessing] = useState(false);
   const [showCouponOffers, setShowCouponOffers] = useState(false);
@@ -745,9 +745,7 @@ function CartContent() {
 
           {/* Address, Order Type, Coupon, Payment Offers, Payment Method */}
           <div className="order-2 lg:order-1 space-y-6">
-            <div className="hidden md:block">
-              <DeliveryAddressCard open={addressSheetOpen} onOpenChange={setAddressSheetOpen} />
-            </div>
+            <DeliveryAddressCard open={addressSheetOpen} onOpenChange={setAddressSheetOpen} />
 
             <Separator />
 

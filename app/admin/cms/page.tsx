@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
@@ -19,9 +20,16 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Textarea } from "@/components/ui/textarea"
-import { ToggleLeft, ToggleRight, Plus } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { ToggleLeft, ToggleRight, Plus, Pencil } from "lucide-react"
 import { toast } from "sonner"
-import { getAllCategories, addCategory, toggleCategory } from "@/actions/admin/admin-cms"
+import { getAllCategories, addCategory, updateCategory, toggleCategory } from "@/actions/admin/admin-cms"
 
 const categorySchema = z.object({
   name: z.string().min(1, "Category name is required"),
@@ -32,8 +40,11 @@ type CategoryForm = z.infer<typeof categorySchema>
 
 export default function AdminCMSPage() {
   const queryClient = useQueryClient()
+  const [editingCat, setEditingCat] = useState<{ id: string; name: string; description: string | null } | null>(null)
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<CategoryForm>({
+  const {
+    register, handleSubmit, reset, setValue, formState: { errors },
+  } = useForm<CategoryForm>({
     resolver: zodResolver(categorySchema),
   })
 
@@ -41,6 +52,8 @@ export default function AdminCMSPage() {
     queryKey: ["admin-categories"],
     queryFn: getAllCategories,
   })
+
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
 
   const addMutation = useMutation({
     mutationFn: addCategory,
@@ -56,6 +69,19 @@ export default function AdminCMSPage() {
     onError: () => toast.error("Something went wrong"),
   })
 
+  const editMutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: { name?: string; description?: string | null } }) =>
+      updateCategory(id, data),
+    onSuccess: () => {
+      toast.success("Category updated")
+      queryClient.invalidateQueries({ queryKey: ["admin-categories"] })
+      setEditingCat(null)
+      setEditDialogOpen(false)
+      reset()
+    },
+    onError: () => toast.error("Something went wrong"),
+  })
+
   const toggleMutation = useMutation({
     mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) => toggleCategory(id, isActive),
     onSuccess: () => {
@@ -64,6 +90,13 @@ export default function AdminCMSPage() {
     },
     onError: () => toast.error("Something went wrong"),
   })
+
+  const openEdit = (cat: { id: string; name: string; description: string | null }) => {
+    setEditingCat(cat)
+    setValue("name", cat.name)
+    setValue("description", cat.description ?? "")
+    setEditDialogOpen(true)
+  }
 
   if (isLoading) {
     return (
@@ -114,8 +147,16 @@ export default function AdminCMSPage() {
     )
   }
 
-  const onSubmit = (formData: CategoryForm) => {
+  const onAdd = (formData: CategoryForm) => {
     addMutation.mutate(formData)
+  }
+
+  const onEdit = (formData: CategoryForm) => {
+    if (!editingCat) return
+    editMutation.mutate({
+      id: editingCat.id,
+      data: { name: formData.name, description: formData.description || null },
+    })
   }
 
   return (
@@ -158,18 +199,53 @@ export default function AdminCMSPage() {
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => toggleMutation.mutate({ id: cat.id, isActive: !cat.isActive })}
-                        disabled={toggleMutation.isPending}
-                      >
-                        {cat.isActive ? (
-                          <ToggleRight className="h-4 w-4 text-green-600" />
-                        ) : (
-                          <ToggleLeft className="h-4 w-4 text-muted-foreground" />
-                        )}
-                      </Button>
+                      <div className="flex items-center justify-end gap-1">
+                        <Dialog open={editDialogOpen} onOpenChange={(open) => { if (!open) { setEditDialogOpen(false); setEditingCat(null) } }}>
+                          <DialogTrigger asChild>
+                            <Button variant="ghost" size="sm" onClick={() => openEdit(cat)}>
+                              <Pencil className="h-4 w-4 text-muted-foreground" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Edit Category</DialogTitle>
+                            </DialogHeader>
+                            <form onSubmit={handleSubmit(onEdit)} className="grid gap-4">
+                              <div className="grid gap-2">
+                                <Label htmlFor="edit-name">Category Name</Label>
+                                <Input id="edit-name" {...register("name")} />
+                                {errors.name && (
+                                  <p className="text-xs text-destructive">{errors.name.message}</p>
+                                )}
+                              </div>
+                              <div className="grid gap-2">
+                                <Label htmlFor="edit-description">Description</Label>
+                                <Textarea id="edit-description" {...register("description")} />
+                              </div>
+                              <div className="flex justify-end gap-2">
+                                <Button type="button" variant="outline" onClick={() => { setEditingCat(null); setEditDialogOpen(false) }}>
+                                  Cancel
+                                </Button>
+                                <Button type="submit" disabled={editMutation.isPending}>
+                                  {editMutation.isPending ? "Saving..." : "Save"}
+                                </Button>
+                              </div>
+                            </form>
+                          </DialogContent>
+                        </Dialog>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => toggleMutation.mutate({ id: cat.id, isActive: !cat.isActive })}
+                          disabled={toggleMutation.isPending}
+                        >
+                          {cat.isActive ? (
+                            <ToggleRight className="h-4 w-4 text-green-600" />
+                          ) : (
+                            <ToggleLeft className="h-4 w-4 text-muted-foreground" />
+                          )}
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -184,7 +260,7 @@ export default function AdminCMSPage() {
           <CardTitle>Add New Category</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4 max-w-md">
+          <form onSubmit={handleSubmit(onAdd)} className="grid gap-4 max-w-md">
             <div className="grid gap-2">
               <Label htmlFor="name">Category Name</Label>
               <Input id="name" placeholder="e.g. South Indian" {...register("name")} />

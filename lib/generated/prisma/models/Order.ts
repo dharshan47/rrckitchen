@@ -362,6 +362,7 @@ export type OrderWhereInput = {
   review?: Prisma.XOR<Prisma.ReviewNullableScalarRelationFilter, Prisma.ReviewWhereInput> | null
   deliveryReview?: Prisma.XOR<Prisma.DeliveryReviewNullableScalarRelationFilter, Prisma.DeliveryReviewWhereInput> | null
   menuItemFeedbacks?: Prisma.MenuItemFeedbackListRelationFilter
+  menuItemReviews?: Prisma.MenuItemReviewListRelationFilter
   deliveryLocations?: Prisma.DeliveryLocationListRelationFilter
   deliveryAssignment?: Prisma.XOR<Prisma.DeliveryAssignmentNullableScalarRelationFilter, Prisma.DeliveryAssignmentWhereInput> | null
   refunds?: Prisma.RefundListRelationFilter
@@ -402,6 +403,7 @@ export type OrderOrderByWithRelationInput = {
   review?: Prisma.ReviewOrderByWithRelationInput
   deliveryReview?: Prisma.DeliveryReviewOrderByWithRelationInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackOrderByRelationAggregateInput
+  menuItemReviews?: Prisma.MenuItemReviewOrderByRelationAggregateInput
   deliveryLocations?: Prisma.DeliveryLocationOrderByRelationAggregateInput
   deliveryAssignment?: Prisma.DeliveryAssignmentOrderByWithRelationInput
   refunds?: Prisma.RefundOrderByRelationAggregateInput
@@ -445,6 +447,7 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   review?: Prisma.XOR<Prisma.ReviewNullableScalarRelationFilter, Prisma.ReviewWhereInput> | null
   deliveryReview?: Prisma.XOR<Prisma.DeliveryReviewNullableScalarRelationFilter, Prisma.DeliveryReviewWhereInput> | null
   menuItemFeedbacks?: Prisma.MenuItemFeedbackListRelationFilter
+  menuItemReviews?: Prisma.MenuItemReviewListRelationFilter
   deliveryLocations?: Prisma.DeliveryLocationListRelationFilter
   deliveryAssignment?: Prisma.XOR<Prisma.DeliveryAssignmentNullableScalarRelationFilter, Prisma.DeliveryAssignmentWhereInput> | null
   refunds?: Prisma.RefundListRelationFilter
@@ -536,6 +539,7 @@ export type OrderCreateInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -573,6 +577,7 @@ export type OrderUncheckedCreateInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -610,6 +615,7 @@ export type OrderUpdateInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -647,6 +653,7 @@ export type OrderUncheckedUpdateInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -1039,6 +1046,20 @@ export type OrderUpdateOneRequiredWithoutMenuItemFeedbacksNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutMenuItemFeedbacksInput, Prisma.OrderUpdateWithoutMenuItemFeedbacksInput>, Prisma.OrderUncheckedUpdateWithoutMenuItemFeedbacksInput>
 }
 
+export type OrderCreateNestedOneWithoutMenuItemReviewsInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutMenuItemReviewsInput, Prisma.OrderUncheckedCreateWithoutMenuItemReviewsInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutMenuItemReviewsInput
+  connect?: Prisma.OrderWhereUniqueInput
+}
+
+export type OrderUpdateOneRequiredWithoutMenuItemReviewsNestedInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutMenuItemReviewsInput, Prisma.OrderUncheckedCreateWithoutMenuItemReviewsInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutMenuItemReviewsInput
+  upsert?: Prisma.OrderUpsertWithoutMenuItemReviewsInput
+  connect?: Prisma.OrderWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutMenuItemReviewsInput, Prisma.OrderUpdateWithoutMenuItemReviewsInput>, Prisma.OrderUncheckedUpdateWithoutMenuItemReviewsInput>
+}
+
 export type OrderCreateNestedOneWithoutDeliveryAssignmentInput = {
   create?: Prisma.XOR<Prisma.OrderCreateWithoutDeliveryAssignmentInput, Prisma.OrderUncheckedCreateWithoutDeliveryAssignmentInput>
   connectOrCreate?: Prisma.OrderCreateOrConnectWithoutDeliveryAssignmentInput
@@ -1194,6 +1215,7 @@ export type OrderCreateWithoutUserInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -1230,6 +1252,7 @@ export type OrderUncheckedCreateWithoutUserInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -1318,6 +1341,7 @@ export type OrderCreateWithoutAddressInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -1354,6 +1378,7 @@ export type OrderUncheckedCreateWithoutAddressInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -1416,6 +1441,7 @@ export type OrderCreateWithoutDeliveryPartnerInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -1452,6 +1478,7 @@ export type OrderUncheckedCreateWithoutDeliveryPartnerInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -1514,6 +1541,7 @@ export type OrderCreateWithoutOrderItemsInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -1550,6 +1578,7 @@ export type OrderUncheckedCreateWithoutOrderItemsInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -1602,6 +1631,7 @@ export type OrderUpdateWithoutOrderItemsInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -1638,6 +1668,7 @@ export type OrderUncheckedUpdateWithoutOrderItemsInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -1674,6 +1705,7 @@ export type OrderCreateWithoutStatusHistoryInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -1710,6 +1742,7 @@ export type OrderUncheckedCreateWithoutStatusHistoryInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -1762,6 +1795,7 @@ export type OrderUpdateWithoutStatusHistoryInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -1798,6 +1832,7 @@ export type OrderUncheckedUpdateWithoutStatusHistoryInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -1834,6 +1869,7 @@ export type OrderCreateWithoutReviewInput = {
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -1870,6 +1906,7 @@ export type OrderUncheckedCreateWithoutReviewInput = {
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -1922,6 +1959,7 @@ export type OrderUpdateWithoutReviewInput = {
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -1958,6 +1996,7 @@ export type OrderUncheckedUpdateWithoutReviewInput = {
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -1994,6 +2033,7 @@ export type OrderCreateWithoutDeliveryReviewInput = {
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -2030,6 +2070,7 @@ export type OrderUncheckedCreateWithoutDeliveryReviewInput = {
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -2082,6 +2123,7 @@ export type OrderUpdateWithoutDeliveryReviewInput = {
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -2118,6 +2160,7 @@ export type OrderUncheckedUpdateWithoutDeliveryReviewInput = {
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -2154,6 +2197,7 @@ export type OrderCreateWithoutMenuItemFeedbacksInput = {
   couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -2190,6 +2234,7 @@ export type OrderUncheckedCreateWithoutMenuItemFeedbacksInput = {
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -2242,6 +2287,7 @@ export type OrderUpdateWithoutMenuItemFeedbacksInput = {
   couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -2278,6 +2324,171 @@ export type OrderUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
+  deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
+  refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
+  kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
+  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
+  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+}
+
+export type OrderCreateWithoutMenuItemReviewsInput = {
+  id?: string
+  serviceDate: Date | string
+  serviceDateType?: $Enums.ServiceDateType
+  timeSlot: $Enums.TimeSlot
+  status?: $Enums.OrderStatus
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  commissionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  source?: $Enums.OrderSource
+  deliveryStatus?: $Enums.DeliveryStatus | null
+  idempotencyKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deliveryOtp?: string | null
+  deliveryOtpVerifiedAt?: Date | string | null
+  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user: Prisma.UserCreateNestedOneWithoutOrdersInput
+  address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
+  statusHistory?: Prisma.OrderStatusHistoryCreateNestedManyWithoutOrderInput
+  payment?: Prisma.PaymentCreateNestedOneWithoutOrderInput
+  couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
+  deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
+  deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
+  refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
+  kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
+  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
+  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+}
+
+export type OrderUncheckedCreateWithoutMenuItemReviewsInput = {
+  id?: string
+  userId: string
+  addressId?: string | null
+  serviceDate: Date | string
+  serviceDateType?: $Enums.ServiceDateType
+  timeSlot: $Enums.TimeSlot
+  status?: $Enums.OrderStatus
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  commissionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  source?: $Enums.OrderSource
+  deliveryPartnerId?: string | null
+  deliveryStatus?: $Enums.DeliveryStatus | null
+  idempotencyKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deliveryOtp?: string | null
+  deliveryOtpVerifiedAt?: Date | string | null
+  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
+  statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
+  payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
+  couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
+  deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
+  deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
+  refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
+  kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
+  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
+  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+}
+
+export type OrderCreateOrConnectWithoutMenuItemReviewsInput = {
+  where: Prisma.OrderWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrderCreateWithoutMenuItemReviewsInput, Prisma.OrderUncheckedCreateWithoutMenuItemReviewsInput>
+}
+
+export type OrderUpsertWithoutMenuItemReviewsInput = {
+  update: Prisma.XOR<Prisma.OrderUpdateWithoutMenuItemReviewsInput, Prisma.OrderUncheckedUpdateWithoutMenuItemReviewsInput>
+  create: Prisma.XOR<Prisma.OrderCreateWithoutMenuItemReviewsInput, Prisma.OrderUncheckedCreateWithoutMenuItemReviewsInput>
+  where?: Prisma.OrderWhereInput
+}
+
+export type OrderUpdateToOneWithWhereWithoutMenuItemReviewsInput = {
+  where?: Prisma.OrderWhereInput
+  data: Prisma.XOR<Prisma.OrderUpdateWithoutMenuItemReviewsInput, Prisma.OrderUncheckedUpdateWithoutMenuItemReviewsInput>
+}
+
+export type OrderUpdateWithoutMenuItemReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  commissionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
+  address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
+  statusHistory?: Prisma.OrderStatusHistoryUpdateManyWithoutOrderNestedInput
+  payment?: Prisma.PaymentUpdateOneWithoutOrderNestedInput
+  couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
+  deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
+  deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
+  refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
+  kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
+  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
+  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+}
+
+export type OrderUncheckedUpdateWithoutMenuItemReviewsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  commissionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+  statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
+  payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
+  couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
+  deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -2315,6 +2526,7 @@ export type OrderCreateWithoutDeliveryAssignmentInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
@@ -2351,6 +2563,7 @@ export type OrderUncheckedCreateWithoutDeliveryAssignmentInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
@@ -2403,6 +2616,7 @@ export type OrderUpdateWithoutDeliveryAssignmentInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
@@ -2439,6 +2653,7 @@ export type OrderUncheckedUpdateWithoutDeliveryAssignmentInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
@@ -2475,6 +2690,7 @@ export type OrderCreateWithoutDeliveryLocationsInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
@@ -2511,6 +2727,7 @@ export type OrderUncheckedCreateWithoutDeliveryLocationsInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
@@ -2563,6 +2780,7 @@ export type OrderUpdateWithoutDeliveryLocationsInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
@@ -2599,6 +2817,7 @@ export type OrderUncheckedUpdateWithoutDeliveryLocationsInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
@@ -2634,6 +2853,7 @@ export type OrderCreateWithoutPaymentInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -2670,6 +2890,7 @@ export type OrderUncheckedCreateWithoutPaymentInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -2722,6 +2943,7 @@ export type OrderUpdateWithoutPaymentInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -2758,6 +2980,7 @@ export type OrderUncheckedUpdateWithoutPaymentInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -2795,6 +3018,7 @@ export type OrderCreateWithoutSupportTicketsInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -2831,6 +3055,7 @@ export type OrderUncheckedCreateWithoutSupportTicketsInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -2883,6 +3108,7 @@ export type OrderUpdateWithoutSupportTicketsInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -2919,6 +3145,7 @@ export type OrderUncheckedUpdateWithoutSupportTicketsInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -2954,6 +3181,7 @@ export type OrderCreateWithoutCouponRedemptionInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -2990,6 +3218,7 @@ export type OrderUncheckedCreateWithoutCouponRedemptionInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -3042,6 +3271,7 @@ export type OrderUpdateWithoutCouponRedemptionInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -3078,6 +3308,7 @@ export type OrderUncheckedUpdateWithoutCouponRedemptionInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -3115,6 +3346,7 @@ export type OrderCreateWithoutRefundsInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
@@ -3151,6 +3383,7 @@ export type OrderUncheckedCreateWithoutRefundsInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
@@ -3203,6 +3436,7 @@ export type OrderUpdateWithoutRefundsInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
@@ -3239,6 +3473,7 @@ export type OrderUncheckedUpdateWithoutRefundsInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
@@ -3275,6 +3510,7 @@ export type OrderCreateWithoutKitchenPayoutsInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -3311,6 +3547,7 @@ export type OrderUncheckedCreateWithoutKitchenPayoutsInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -3363,6 +3600,7 @@ export type OrderUpdateWithoutKitchenPayoutsInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -3399,6 +3637,7 @@ export type OrderUncheckedUpdateWithoutKitchenPayoutsInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -3435,6 +3674,7 @@ export type OrderCreateWithoutDeliveryPartnerPayoutsInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -3471,6 +3711,7 @@ export type OrderUncheckedCreateWithoutDeliveryPartnerPayoutsInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -3523,6 +3764,7 @@ export type OrderUpdateWithoutDeliveryPartnerPayoutsInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -3559,6 +3801,7 @@ export type OrderUncheckedUpdateWithoutDeliveryPartnerPayoutsInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -3595,6 +3838,7 @@ export type OrderCreateWithoutCodVarianceInput = {
   review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
@@ -3631,6 +3875,7 @@ export type OrderUncheckedCreateWithoutCodVarianceInput = {
   review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
@@ -3683,6 +3928,7 @@ export type OrderUpdateWithoutCodVarianceInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -3719,6 +3965,7 @@ export type OrderUncheckedUpdateWithoutCodVarianceInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -3776,6 +4023,7 @@ export type OrderUpdateWithoutUserInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -3812,6 +4060,7 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -3892,6 +4141,7 @@ export type OrderUpdateWithoutAddressInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -3928,6 +4178,7 @@ export type OrderUncheckedUpdateWithoutAddressInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -4008,6 +4259,7 @@ export type OrderUpdateWithoutDeliveryPartnerInput = {
   review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
@@ -4044,6 +4296,7 @@ export type OrderUncheckedUpdateWithoutDeliveryPartnerInput = {
   review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
   deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
@@ -4084,6 +4337,7 @@ export type OrderCountOutputType = {
   orderItems: number
   statusHistory: number
   menuItemFeedbacks: number
+  menuItemReviews: number
   deliveryLocations: number
   refunds: number
   kitchenPayouts: number
@@ -4095,6 +4349,7 @@ export type OrderCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   orderItems?: boolean | OrderCountOutputTypeCountOrderItemsArgs
   statusHistory?: boolean | OrderCountOutputTypeCountStatusHistoryArgs
   menuItemFeedbacks?: boolean | OrderCountOutputTypeCountMenuItemFeedbacksArgs
+  menuItemReviews?: boolean | OrderCountOutputTypeCountMenuItemReviewsArgs
   deliveryLocations?: boolean | OrderCountOutputTypeCountDeliveryLocationsArgs
   refunds?: boolean | OrderCountOutputTypeCountRefundsArgs
   kitchenPayouts?: boolean | OrderCountOutputTypeCountKitchenPayoutsArgs
@@ -4131,6 +4386,13 @@ export type OrderCountOutputTypeCountStatusHistoryArgs<ExtArgs extends runtime.T
  */
 export type OrderCountOutputTypeCountMenuItemFeedbacksArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.MenuItemFeedbackWhereInput
+}
+
+/**
+ * OrderCountOutputType without action
+ */
+export type OrderCountOutputTypeCountMenuItemReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.MenuItemReviewWhereInput
 }
 
 /**
@@ -4200,6 +4462,7 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   review?: boolean | Prisma.Order$reviewArgs<ExtArgs>
   deliveryReview?: boolean | Prisma.Order$deliveryReviewArgs<ExtArgs>
   menuItemFeedbacks?: boolean | Prisma.Order$menuItemFeedbacksArgs<ExtArgs>
+  menuItemReviews?: boolean | Prisma.Order$menuItemReviewsArgs<ExtArgs>
   deliveryLocations?: boolean | Prisma.Order$deliveryLocationsArgs<ExtArgs>
   deliveryAssignment?: boolean | Prisma.Order$deliveryAssignmentArgs<ExtArgs>
   refunds?: boolean | Prisma.Order$refundsArgs<ExtArgs>
@@ -4297,6 +4560,7 @@ export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   review?: boolean | Prisma.Order$reviewArgs<ExtArgs>
   deliveryReview?: boolean | Prisma.Order$deliveryReviewArgs<ExtArgs>
   menuItemFeedbacks?: boolean | Prisma.Order$menuItemFeedbacksArgs<ExtArgs>
+  menuItemReviews?: boolean | Prisma.Order$menuItemReviewsArgs<ExtArgs>
   deliveryLocations?: boolean | Prisma.Order$deliveryLocationsArgs<ExtArgs>
   deliveryAssignment?: boolean | Prisma.Order$deliveryAssignmentArgs<ExtArgs>
   refunds?: boolean | Prisma.Order$refundsArgs<ExtArgs>
@@ -4330,6 +4594,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     review: Prisma.$ReviewPayload<ExtArgs> | null
     deliveryReview: Prisma.$DeliveryReviewPayload<ExtArgs> | null
     menuItemFeedbacks: Prisma.$MenuItemFeedbackPayload<ExtArgs>[]
+    menuItemReviews: Prisma.$MenuItemReviewPayload<ExtArgs>[]
     deliveryLocations: Prisma.$DeliveryLocationPayload<ExtArgs>[]
     deliveryAssignment: Prisma.$DeliveryAssignmentPayload<ExtArgs> | null
     refunds: Prisma.$RefundPayload<ExtArgs>[]
@@ -4763,6 +5028,7 @@ export interface Prisma__OrderClient<T, Null = never, ExtArgs extends runtime.Ty
   review<T extends Prisma.Order$reviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$reviewArgs<ExtArgs>>): Prisma.Prisma__ReviewClient<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   deliveryReview<T extends Prisma.Order$deliveryReviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$deliveryReviewArgs<ExtArgs>>): Prisma.Prisma__DeliveryReviewClient<runtime.Types.Result.GetResult<Prisma.$DeliveryReviewPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   menuItemFeedbacks<T extends Prisma.Order$menuItemFeedbacksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$menuItemFeedbacksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MenuItemFeedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  menuItemReviews<T extends Prisma.Order$menuItemReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$menuItemReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MenuItemReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deliveryLocations<T extends Prisma.Order$deliveryLocationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$deliveryLocationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deliveryAssignment<T extends Prisma.Order$deliveryAssignmentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$deliveryAssignmentArgs<ExtArgs>>): Prisma.Prisma__DeliveryAssignmentClient<runtime.Types.Result.GetResult<Prisma.$DeliveryAssignmentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   refunds<T extends Prisma.Order$refundsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$refundsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -5403,6 +5669,30 @@ export type Order$menuItemFeedbacksArgs<ExtArgs extends runtime.Types.Extensions
   take?: number
   skip?: number
   distinct?: Prisma.MenuItemFeedbackScalarFieldEnum | Prisma.MenuItemFeedbackScalarFieldEnum[]
+}
+
+/**
+ * Order.menuItemReviews
+ */
+export type Order$menuItemReviewsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the MenuItemReview
+   */
+  select?: Prisma.MenuItemReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the MenuItemReview
+   */
+  omit?: Prisma.MenuItemReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.MenuItemReviewInclude<ExtArgs> | null
+  where?: Prisma.MenuItemReviewWhereInput
+  orderBy?: Prisma.MenuItemReviewOrderByWithRelationInput | Prisma.MenuItemReviewOrderByWithRelationInput[]
+  cursor?: Prisma.MenuItemReviewWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.MenuItemReviewScalarFieldEnum | Prisma.MenuItemReviewScalarFieldEnum[]
 }
 
 /**

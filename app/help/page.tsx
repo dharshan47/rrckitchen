@@ -106,14 +106,14 @@ const tabs = [
           <h2 className="text-lg font-bold">Delivery &amp; COD</h2>
           <Accordion type="multiple" className="w-full">
             <AccordionItem value="cod-otp">
-              <AccordionTrigger>What is COD OTP and how does it work?</AccordionTrigger>
+              <AccordionTrigger>What is delivery OTP and how does it work?</AccordionTrigger>
               <AccordionContent>
-                <p className="text-sm text-muted-foreground">For Cash on Delivery (COD) orders, you will receive a one-time password (OTP) via SMS on your registered mobile number once the delivery partner arrives at your location.</p>
+                <p className="text-sm text-muted-foreground">For all orders (including Cash on Delivery), a 4-digit delivery code is generated once the kitchen marks your order as ready. You will see this code on your order tracking page.</p>
                 <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground mt-2">
-                  <li>You must share this OTP with the delivery partner to confirm delivery.</li>
-                  <li>The OTP ensures that the order is delivered to the correct person at the correct address.</li>
-                  <li>Please do not share the OTP with anyone except the delivery partner at your doorstep.</li>
-                  <li>If you did not receive the OTP, check your SMS inbox or request a resend from the order tracking page.</li>
+                  <li>Share this code with the delivery partner when they arrive at your doorstep.</li>
+                  <li>The code ensures that the order is delivered to the correct person at the correct address.</li>
+                  <li>Please do not share the code with anyone except the delivery partner at your doorstep.</li>
+                  <li>If you cannot find the code, open your order details page — it is displayed inside a highlighted box.</li>
                 </ul>
               </AccordionContent>
             </AccordionItem>
@@ -338,7 +338,7 @@ const tabs = [
                 <li>Use the in-app navigation for accurate directions.</li>
                 <li>Maintain proper hygiene — use a clean delivery bag.</li>
                 <li>Communicate with customers if there are any delays.</li>
-                <li>Confirm the COD OTP from the customer before completing delivery.</li>
+                <li>Confirm the delivery code from the customer before completing delivery.</li>
               </ul>
             </AccordionContent>
           </AccordionItem>

@@ -28,28 +28,29 @@
 ## 2. Caching Architecture
 
 ```mermaid
-graph TB
+%%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true}}}%%
+flowchart TB
     subgraph "CDN Layer (Vercel Edge)"
-        EC["Edge Cache<br/>Static assets: 30d<br/>HTML (ISR): stale-while-revalidate"]
+        EC["Edge Cache Static assets: 30d HTML (ISR): stale-while-revalidate"]
     end
 
     subgraph "Next.js Layer"
-        RSC["React Server Components<br/>No JS for static content"]
-        ISR["Incremental Static Regeneration<br/>Kitchen pages: revalidate 60s"]
-        SW["Service Worker<br/>Cache-first: static<br/>Network-first: pages"]
+        RSC["React Server Components No JS for static content"]
+        ISR["Incremental Static Regeneration Kitchen pages: revalidate 60s"]
+        SW["Service Worker Cache-first: static Network-first: pages"]
     end
 
     subgraph "Application Cache"
-        RC["Redis (Upstash)<br/>Kitchen detail: 60s TTL<br/>Menu items: 30s TTL<br/>User profile: 300s TTL<br/>OTP rate limits: 60s TTL"]
-        TQ["TanStack Query Cache<br/>Menu data: staleTime 30s<br/>Wishlist: staleTime 30s<br/>Profile: staleTime Infinity"]
+        RC["Redis (Upstash) Kitchen detail: 60s TTL Menu items: 30s TTL User profile: 300s TTL OTP rate limits: 60s TTL"]
+        TQ["TanStack Query Cache Menu data: staleTime 30s Wishlist: staleTime 30s Profile: staleTime Infinity"]
     end
 
     subgraph "Database Layer"
-        PG["PostgreSQL<br/>Prisma Data Proxy pool"]
+        PG["PostgreSQL Prisma Data Proxy pool"]
     end
 
     subgraph "External CDN"
-        CI["Cloudinary CDN<br/>f_auto + q_auto<br/>Responsive breakpoints"]
+        CI["Cloudinary CDN f_auto + q_auto Responsive breakpoints"]
     end
 
     User["Client Browser"] --> EC

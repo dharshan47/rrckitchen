@@ -135,7 +135,15 @@ async function _getAllKitchensWithItems() {
         include: {
           menuItems: {
             where: { isAvailable: true },
-            include: {
+            select: {
+              id: true,
+              name: true,
+              price: true,
+              compareAtPrice: true,
+              foodType: true,
+              timeSlot: true,
+              avgRating: true,
+              totalReviews: true,
               photos: { orderBy: { sortOrder: "asc" }, take: 1 },
             },
             orderBy: { name: "asc" },
@@ -176,6 +184,8 @@ async function _getAllKitchensWithItems() {
         foodType: i.foodType,
         timeSlot: i.timeSlot,
         imageUrl: i.photos[0]?.imageUrl ?? null,
+        avgRating: i.avgRating ? Number(i.avgRating) : null,
+        totalReviews: i.totalReviews,
       })),
       timeSlots,
     };
@@ -204,7 +214,17 @@ async function _getKitchenDetail(kitchenSlug: string) {
         include: {
           menuItems: {
             where: { isAvailable: true },
-            include: {
+            select: {
+              id: true,
+              slug: true,
+              name: true,
+              description: true,
+              price: true,
+              compareAtPrice: true,
+              foodType: true,
+              timeSlot: true,
+              avgRating: true,
+              totalReviews: true,
               photos: { orderBy: { sortOrder: "asc" } },
               _count: { select: { orderItems: true } },
             },
@@ -246,6 +266,8 @@ async function _getKitchenDetail(kitchenSlug: string) {
       items: allItems.map((i) => ({
       id: i.id,
       slug: i.slug ?? i.id,
+      shortId: i.id.substring(0, 8),
+      kitchenSlug: kitchen.slug,
       name: i.name,
       description: i.description,
       price: Number(i.price),
@@ -257,6 +279,8 @@ async function _getKitchenDetail(kitchenSlug: string) {
       kitchenName: toTitleCase(kitchen.kitchenAlias?.displayName ?? kitchen.slug),
       orderCount: i._count.orderItems,
       isBestseller: isBestseller(i._count.orderItems),
+      avgRating: i.avgRating ? Number(i.avgRating) : null,
+      totalReviews: i.totalReviews,
     })),
   };
 }

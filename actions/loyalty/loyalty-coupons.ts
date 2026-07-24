@@ -10,6 +10,25 @@ export async function getAvailableLoyaltyCoupons() {
   })
 }
 
+export async function getAllLoyaltyCoupons() {
+  const coupons = await prisma.loyaltyCoupon.findMany({
+    orderBy: { createdAt: "desc" },
+  })
+  return coupons.map((c) => ({
+    id: c.id,
+    name: c.name,
+    description: c.description,
+    discountType: c.discountType,
+    discountValue: Number(c.discountValue),
+    maxDiscount: c.maxDiscount ? Number(c.maxDiscount) : null,
+    minOrderValue: c.minOrderValue ? Number(c.minOrderValue) : null,
+    pointsCost: c.pointsCost,
+    isActive: c.isActive,
+    createdAt: c.createdAt.toISOString(),
+    purchaseCount: 0,
+  }))
+}
+
 export async function purchaseCouponWithPoints(loyaltyCouponId: string) {
   const session = await getSession()
   if (!session?.user?.id) throw new Error("Not authenticated")

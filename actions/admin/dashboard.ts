@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma"
 import { requireAdmin } from "@/lib/auth-guards"
 import { uniqueSlug } from "@/lib/slug"
 
+
 function formatTimeSlot(slot: string): string {
   const map: Record<string, string> = {
     MORNING: "Breakfast",
@@ -211,7 +212,7 @@ export async function getAdminDashboardData() {
     }))
 
   const topSelling = topSellingData.map((item) => ({
-    item: itemNameMap.get(item.menuItemId) ?? "Unknown",
+    item: itemNameMap.get(item.menuItemId) ?? "",
     orders: item._count.id,
   }))
 
@@ -235,7 +236,7 @@ export async function getAdminDashboardData() {
         ? s.reviews.reduce((sum, r) => sum + r.rating, 0) / s.reviews.length
         : 0
     return {
-      name: s.user?.name ?? "Delivery Partner",
+      name: s.user?.name ?? "",
       deliveries: s._count.kitchenAssignments,
       rating: Math.round(avgRating * 10) / 10,
     }
@@ -245,7 +246,7 @@ export async function getAdminDashboardData() {
     const kitchen = o.orderItems[0]?.kitchenPartner?.kitchenAlias?.displayName ?? ""
     return {
       id: o.id,
-      customer: o.user?.name ?? "Unknown",
+      customer: o.user?.name ?? "",
       kitchen,
       date: format(o.createdAt, "dd MMM yyyy"),
       amount: Number(o.totalAmount),
@@ -265,8 +266,8 @@ export async function getAdminDashboardData() {
   })
 
   const deliveryPartnersList = deliveryPartnersData.map((s) => ({
-    name: s.user?.name ?? "Unknown",
-    vehicle: "-",
+    name: s.user?.name ?? "",
+    vehicle: "",
     orders: s._count.kitchenAssignments,
     status: s.status === "ACTIVE" || s.status === "APPROVED" ? "Active" : s.status === "PENDINGAPPROVAL" ? "Pending Approval" : s.status,
     docs: s.kyc?.verifiedAt ? "Verified" : "Pending",
@@ -351,6 +352,7 @@ export async function getKitchenDashboardData() {
     tomorrowAvailability,
     payoutAgg,
     supportTickets,
+    kitchenReviews,
   ] = await Promise.all([
     prisma.orderItem.count({
       where: { kitchenPartnerId: kitchenPartner.id, order: { createdAt: { gte: todayStart, lt: todayEnd } } },
@@ -394,6 +396,9 @@ export async function getKitchenDashboardData() {
             payment: { select: { status: true } },
             user: { select: { name: true, phoneNumber: true } },
             address: true,
+            deliveryPartner: {
+              include: { user: { select: { name: true, phoneNumber: true } } },
+            },
           },
         },
         menuItem: { select: { name: true, timeSlot: true } },
@@ -430,10 +435,19 @@ export async function getKitchenDashboardData() {
       take: 5,
       select: { id: true, subject: true, status: true, priority: true, createdAt: true },
     }),
+    prisma.review.findMany({
+      where: { kitchenPartnerId: kitchenPartner.id },
+      include: {
+        user: { select: { name: true } },
+        order: { select: { orderItems: { take: 1, include: { menuItem: { select: { name: true } } } } } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    }),
   ])
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const allMenuItems = menus.flatMap((menu: any) =>
+  const allMenuItems = menus.flatMap((menu: any) => 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     menu.menuItems.map((mi: any) => ({
       id: mi.id,
@@ -458,7 +472,7 @@ export async function getKitchenDashboardData() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const popularFood = popularItemsData.map((i: any) => ({
-    item: popularNameMap.get(i.menuItemId) ?? "Unknown",
+    item: popularNameMap.get(i.menuItemId) ?? "",
     orders: i._count.id,
   }))
 
@@ -471,11 +485,17 @@ export async function getKitchenDashboardData() {
     amount: Number(oi.unitPrice) * oi.quantity,
     status: formatOrderStatus(oi.order.status),
     time: format(oi.order.createdAt, "hh:mm a"),
-    customerName: oi.order.user?.name ?? "Unknown",
-    customerPhone: oi.order.user?.phoneNumber ?? "-",
+    customerName: oi.order.user?.name ?? "",
+    customerPhone: oi.order.user?.phoneNumber ?? "",
     customerAddress: oi.order.address
       ? `${oi.order.address.lineOne}${oi.order.address.lineTwo ? ", " + oi.order.address.lineTwo : ""}, ${oi.order.address.pincode}`
-      : "Address not set",
+      : "",
+    deliveryPartner: oi.order.deliveryPartner
+      ? {
+          name: oi.order.deliveryPartner.user?.name ?? "",
+          phone: oi.order.deliveryPartner.user?.phoneNumber ?? null,
+        }
+      : null,
   }))
 
   const dayNames = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
@@ -557,6 +577,19 @@ export async function getKitchenDashboardData() {
       status: t.status,
       priority: t.priority,
       createdAt: t.createdAt,
+    })),
+    reviews: (kitchenReviews as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => ({
+      id: r.id as string,
+      rating: r.rating as number,
+      tasteRating: r.tasteRating as number | null,
+      packagingRating: r.packagingRating as number | null,
+      portionSizeRating: r.portionSizeRating as number | null,
+      comment: r.comment as string | null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      customerName: (r.user as any)?.name ?? "",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      itemName: ((r.order as any)?.orderItems?.[0]?.menuItem?.name as string) ?? "",
+      createdAt: (r.createdAt as Date).toISOString(),
     })),
   }
 }
@@ -830,7 +863,13 @@ export async function getDeliveryDashboardData() {
         },
         orderBy: { createdAt: "desc" },
       },
-      reviews: { select: { rating: true } },
+      reviews: {
+        include: {
+          order: { select: { id: true, orderItems: { take: 1, include: { menuItem: { select: { name: true } } } } } },
+        },
+        orderBy: { createdAt: "desc" },
+        take: 20,
+      },
     },
   })
 
@@ -846,7 +885,13 @@ export async function getDeliveryDashboardData() {
           },
           orderBy: { createdAt: "desc" },
         },
-        reviews: { select: { rating: true } },
+        reviews: {
+          include: {
+            order: { select: { id: true, orderItems: { take: 1, include: { menuItem: { select: { name: true } } } } } },
+          },
+          orderBy: { createdAt: "desc" },
+          take: 20,
+        },
       },
     })
   }
@@ -943,15 +988,15 @@ export async function getDeliveryDashboardData() {
       itemName: oi.menuItem.name,
       timeSlot: formatTimeSlot(oi.menuItem.timeSlot),
       quantity: oi.quantity,
-      customerName: oi.order.user?.name ?? "Unknown",
-      customerPhone: oi.order.user?.phoneNumber ?? "-",
+      customerName: oi.order.user?.name ?? "",
+      customerPhone: oi.order.user?.phoneNumber ?? "",
       customerAddress: oi.order.address
         ? `${oi.order.address.lineOne}${oi.order.address.lineTwo ? ", " + oi.order.address.lineTwo : ""}, ${oi.order.address.pincode}`
-        : "Address not set",
+        : "",
       customerLat: oi.order.address?.latitude ? Number(oi.order.address.latitude) : null,
       customerLng: oi.order.address?.longitude ? Number(oi.order.address.longitude) : null,
       kitchenName: oi.kitchenPartner?.kitchenAlias?.displayName ?? "",
-      kitchenPhone: oi.kitchenPartner?.user?.phoneNumber ?? "-",
+      kitchenPhone: oi.kitchenPartner?.user?.phoneNumber ?? "",
       kitchenAddress: ka
         ? `${ka.lineOne}, ${ka.pincode}`
         : "Address not set",
@@ -1005,6 +1050,16 @@ export async function getDeliveryDashboardData() {
       status: t.status,
       priority: t.priority,
       createdAt: t.createdAt,
+    })),
+    reviews: (deliveryPartner.reviews as Array<Record<string, unknown>>).map((r: Record<string, unknown>) => ({
+      id: r.id as string,
+      rating: r.rating as number,
+      speedRating: r.speedRating as number | null,
+      behaviorHygiene: r.behaviorHygiene as boolean | null,
+      comment: r.comment as string | null,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      itemName: ((r.order as any)?.orderItems?.[0]?.menuItem?.name as string) ?? "",
+      createdAt: (r.createdAt as Date).toISOString(),
     })),
   }
 }

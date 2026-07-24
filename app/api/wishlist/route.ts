@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
               select: {
                 kitchenPartner: {
                   select: {
+                    slug: true,
                     kitchenAlias: { select: { displayName: true } },
                   },
                 },

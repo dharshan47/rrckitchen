@@ -141,7 +141,7 @@ export default function AdminCustomersPage() {
               variant="ghost"
               className="h-7 text-destructive"
               disabled={row.original.id === session?.user?.id}
-              onClick={() => setBanModal({ userId: row.original.id, name: row.original.name ?? "Unknown" })}
+              onClick={() => setBanModal({ userId: row.original.id, name: row.original.name ?? "" })}
             >
               <Ban className="h-3.5 w-3.5 mr-1" /> Ban
             </Button>

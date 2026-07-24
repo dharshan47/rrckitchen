@@ -215,31 +215,32 @@ sequenceDiagram
 ## 6. Deployment Diagram
 
 ```mermaid
-graph TB
+%%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true}}}%%
+flowchart TB
     subgraph "Vercel Edge Network"
         CDN["Vercel CDN (Edge)"]
-        MW["Edge Middleware<br/>Auth redirects<br/>i18n detection"]
+        MW["Edge Middleware Auth redirects i18n detection"]
     end
 
     subgraph "Vercel Serverless"
-        SSR["Server Components<br/>Lambda@Edge"]
-        API["API Routes<br/>Node.js 20.x"]
-        ISR["ISR Cache<br/>Stale-while-revalidate"]
+        SSR["Server Components Lambda@Edge"]
+        API["API Routes Node.js 20.x"]
+        ISR["ISR Cache Stale-while-revalidate"]
     end
 
     subgraph "Client Browser"
-        SW["Service Worker<br/>Cache-first: static<br/>Network-first: API"]
-        Cache["Cache Storage<br/>API: IndexedDB<br/>Static: Cache API"]
-        Push["Push Manager<br/>Web Push API"]
+        SW["Service Worker Cache-first: static Network-first: API"]
+        Cache["Cache Storage API: IndexedDB Static: Cache API"]
+        Push["Push Manager Web Push API"]
     end
 
     subgraph "External Services"
-        PG[("PostgreSQL<br/>via Prisma Data Proxy")]
-        RS[("Upstash Redis<br/>Global replication")]
-        Ably["Ably WebSocket<br/>Channels: order.*, delivery.*"]
-        RZ["Razorpay<br/>Payment Gateway"]
-        CL["Cloudinary<br/>Image CDN"]
-        TW["Twilio<br/>SMS Gateway"]
+        PG[("PostgreSQL via Prisma Data Proxy")]
+        RS[("Upstash Redis Global replication")]
+        Ably["Ably WebSocket Channels: order.*, delivery.*"]
+        RZ["Razorpay Payment Gateway"]
+        CL["Cloudinary Image CDN"]
+        TW["Twilio SMS Gateway"]
     end
 
     CDN --> MW

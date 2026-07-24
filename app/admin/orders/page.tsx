@@ -213,6 +213,7 @@ export default function AdminOrdersPage() {
                   <TableHead>Items</TableHead>
                   <TableHead>Amount</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead>Delivery Partner</TableHead>
                   <TableHead>Payment</TableHead>
                   <TableHead>Method</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -221,7 +222,7 @@ export default function AdminOrdersPage() {
               <TableBody>
                 {orders.map((order) => (
                   <TableRow key={order.id}>
-                    <TableCell className="font-mono text-xs">{order.id.slice(0, 8)}...</TableCell>
+                    <TableCell className="font-mono text-xs max-w-28 truncate" title={order.id}>{order.id}</TableCell>
                     <TableCell className="font-medium">{order.customer}</TableCell>
                     <TableCell className="text-sm">{order.kitchen}</TableCell>
                     <TableCell className="text-xs text-muted-foreground max-w-40 truncate">
@@ -232,6 +233,20 @@ export default function AdminOrdersPage() {
                       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${statusStyles[order.status] ?? "bg-gray-100 text-gray-700"}`}>
                         {order.status === "READYFORPICKUP" ? "Ready" : order.status.charAt(0) + order.status.slice(1).toLowerCase()}
                       </span>
+                    </TableCell>
+                    <TableCell>
+                      {order.deliveryPartner ? (
+                        <div className="text-xs space-y-0.5">
+                          <p className="font-medium">{order.deliveryPartner.name}</p>
+                          {order.deliveryPartner.phone && (
+                            <a href={`tel:${order.deliveryPartner.phone}`} className="text-primary hover:underline block">
+                              {order.deliveryPartner.phone}
+                            </a>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">Not assigned</span>
+                      )}
                     </TableCell>
                     <TableCell>
                       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${paymentStyles[order.payment] ?? "bg-gray-100 text-gray-700"}`}>

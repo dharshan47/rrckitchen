@@ -8,6 +8,9 @@ import crypto from "crypto"
 import { sendPushToDeliveryPartners } from "@/lib/notification"
 import { getAblyRest } from "@/lib/ably/server"
 import { requireAdmin } from "@/lib/auth-guards"
+import { redis } from "@/lib/redis"
+
+const CASH_IN_HAND_CAP = 3000
 
 
 export async function getUserOrders() {
@@ -44,13 +47,13 @@ export async function getUserOrders() {
               id: true,
               kitchenAlias: { select: { displayName: true } },
               deliveryPartnerAssignments: {
-                where: { status: "DELIVERED" },
                 select: {
                   deliveryPartner: {
                     select: { id: true, user: { select: { name: true } } },
                   },
                 },
                 take: 1,
+                orderBy: { createdAt: "desc" },
               },
             },
           },
@@ -58,8 +61,8 @@ export async function getUserOrders() {
       },
       address: { select: { lineOne: true, lineTwo: true, pincode: true } },
       payment: { select: { status: true, provider: true } },
-      deliveryReview: { select: { id: true, rating: true, comment: true } },
-      review: { select: { id: true, rating: true } },
+      deliveryReview: { select: { id: true, rating: true, speedRating: true, behaviorHygiene: true, safetyContactless: true, comment: true } },
+      review: { select: { id: true, rating: true, tasteRating: true, packagingRating: true, portionSizeRating: true, comment: true } },
     },
     orderBy: { createdAt: "desc" },
     take: 20,
@@ -120,6 +123,7 @@ export async function getAdminOrders() {
         },
       },
       payment: { select: { status: true, provider: true, paymentMethod: true, providerOrderId: true } },
+      deliveryPartner: { include: { user: { select: { name: true, phoneNumber: true } } } },
     },
     orderBy: { createdAt: "desc" },
     take: 50,
@@ -127,7 +131,7 @@ export async function getAdminOrders() {
 
   return orders.map((o) => ({
     id: o.id,
-    customer: o.user?.name ?? "Unknown",
+    customer: o.user?.name ?? "",
     kitchen: o.orderItems[0]?.kitchenPartner?.kitchenAlias?.displayName ?? "",
     items: o.orderItems.map((i) => i.menuItem.name),
     date: o.createdAt.toISOString(),
@@ -137,6 +141,13 @@ export async function getAdminOrders() {
     paymentProvider: o.payment?.provider ?? null,
     paymentMethod: o.payment?.paymentMethod ?? null,
     providerOrderId: o.payment?.providerOrderId ?? null,
+    deliveryPartner: o.deliveryPartner
+      ? {
+          id: o.deliveryPartner.id,
+          name: o.deliveryPartner.user?.name ?? "",
+          phone: o.deliveryPartner.user?.phoneNumber ?? null,
+        }
+      : null,
   }))
 }
 
@@ -198,6 +209,111 @@ export async function updateOrderStatus(orderId: string, status: string) {
           "An order is ready for pickup from your assigned kitchen partner.",
           `/delivery-partner/dashboard`
         )
+      }
+
+      // Auto-assign nearest delivery partner
+      try {
+        const firstKitchenId = orderItems[0]?.kitchenPartnerId
+        if (firstKitchenId) {
+          const kitchenPartner = await prisma.kitchenPartner.findUnique({
+            where: { id: firstKitchenId },
+            include: {
+              kitchenAddress: { select: { latitude: true, longitude: true } },
+            },
+          })
+          const kitchenLat = kitchenPartner?.kitchenAddress?.latitude
+          const kitchenLng = kitchenPartner?.kitchenAddress?.longitude
+
+          const orderPay = await prisma.order.findUnique({
+            where: { id: orderId },
+            select: { payment: { select: { provider: true } } },
+          })
+          const isCodOrder = orderPay?.payment?.provider === "CASH_ON_DELIVERY"
+
+          let assigned = false
+
+          // Step 1: Try nearby delivery partners (within 5km of kitchen)
+          if (kitchenLat != null && kitchenLng != null) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const geoMembers = await (redis as any).geosearch(
+              "deliveryPersons:live",
+              { longitude: kitchenLng, latitude: kitchenLat },
+              { radius: 5, unit: "km", SORT: "ASC", COUNT: 20 },
+            )
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const nearbyMembers = Array.isArray(geoMembers) ? geoMembers.map((r: any) => String(r.member ?? r)) : []
+
+            for (const member of nearbyMembers) {
+              const deliveryPersonId = typeof member === "string" ? member : String(member)
+              const person = await prisma.deliveryPartner.findUnique({
+                where: { id: deliveryPersonId },
+                select: { id: true, isOnline: true, codEligible: true, cashInHand: true },
+              })
+              if (!person?.isOnline) continue
+              if (isCodOrder && (!person.codEligible || Number(person.cashInHand) >= CASH_IN_HAND_CAP)) continue
+
+              const existing = await prisma.deliveryAssignment.findFirst({
+                where: { deliveryPartnerId: deliveryPersonId, status: "PENDING" },
+              })
+              if (existing) continue
+
+              await prisma.deliveryAssignment.create({
+                data: { orderId, deliveryPartnerId: deliveryPersonId, assignedByAdminId: "system", status: "PENDING" },
+              })
+              await prisma.order.update({
+                where: { id: orderId },
+                data: { deliveryPartnerId: deliveryPersonId, deliveryStatus: "ASSIGNED" },
+              })
+
+              const ablyAssign = getAblyRest()
+              await Promise.all([
+                ablyAssign.channels.get(`deliveryPartner:${deliveryPersonId}`).publish("delivery:offer", { orderId, kitchenLat, kitchenLng }),
+                ablyAssign.channels.get(`order:${orderId}`).publish("order:status", { status: "DELIVERY_ASSIGNED" }),
+              ])
+              assigned = true
+              break
+            }
+          }
+
+          // Step 2: If no nearby partner found, try ANY available online partner
+          if (!assigned) {
+            const allOnline = await prisma.deliveryPartner.findMany({
+              where: { isOnline: true, status: { in: ["APPROVED", "ACTIVE"] } },
+              select: { id: true, codEligible: true, cashInHand: true },
+            })
+
+            for (const person of allOnline) {
+              if (isCodOrder && (!person.codEligible || Number(person.cashInHand) >= CASH_IN_HAND_CAP)) continue
+
+              const existing = await prisma.deliveryAssignment.findFirst({
+                where: { deliveryPartnerId: person.id, status: "PENDING" },
+              })
+              if (existing) continue
+
+              await prisma.deliveryAssignment.create({
+                data: { orderId, deliveryPartnerId: person.id, assignedByAdminId: "system", status: "PENDING" },
+              })
+              await prisma.order.update({
+                where: { id: orderId },
+                data: { deliveryPartnerId: person.id, deliveryStatus: "ASSIGNED" },
+              })
+
+              const ablyAssign = getAblyRest()
+              await Promise.all([
+                ablyAssign.channels.get(`deliveryPartner:${person.id}`).publish("delivery:offer", { orderId }),
+                ablyAssign.channels.get(`order:${orderId}`).publish("order:status", { status: "DELIVERY_ASSIGNED" }),
+              ])
+              assigned = true
+              break
+            }
+          }
+
+          if (!assigned) {
+            console.error("No available delivery partners found for order", orderId)
+          }
+        }
+      } catch (assignError) {
+        console.error("Auto-assignment failed:", assignError)
       }
     }
 
@@ -290,7 +406,7 @@ export async function getOrderForTracking(orderId: string) {
       address: { select: { latitude: true, longitude: true, lineOne: true, lineTwo: true, pincode: true } },
       payment: { select: { provider: true, status: true } },
       deliveryLocations: { orderBy: { updatedAt: "desc" }, take: 1 },
-      deliveryPartner: { select: { user: { select: { name: true } } } },
+      deliveryPartner: { select: { id: true, user: { select: { name: true } } } },
       deliveryAssignment: { select: { status: true } },
     },
   })
@@ -329,6 +445,12 @@ export async function getOrderForTracking(orderId: string) {
     deliveryAssignmentStatus: order.deliveryAssignment?.status ?? null,
     paymentProvider: order.payment?.provider ?? null,
     paymentStatus: order.payment?.status ?? null,
+    deliveryPartner: order.deliveryPartner
+      ? {
+          id: order.deliveryPartner.id,
+          name: order.deliveryPartner.user?.name ?? "Delivery Partner",
+        }
+      : null,
   }
 }
 

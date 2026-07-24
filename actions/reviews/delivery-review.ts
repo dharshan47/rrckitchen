@@ -3,10 +3,15 @@
 import prisma from "@/lib/prisma"
 import { getSession } from "@/lib/auth-server"
 
+const RECENCY_WEIGHT = 0.15
+
 export async function createDeliveryReview(data: {
   orderId: string
   deliveryPartnerId: string
   rating: number
+  speedRating?: number
+  behaviorHygiene?: boolean
+  safetyContactless?: boolean
   comment?: string
 }) {
   const session = await getSession()
@@ -25,21 +30,37 @@ export async function createDeliveryReview(data: {
   if (order.userId !== session.user.id) return { success: false, error: "Unauthorized" }
   if (order.deliveryReview) return { success: false, error: "Already reviewed" }
 
-  const partner = await prisma.deliveryPartner.findUnique({
-    where: { id: data.deliveryPartnerId },
-    select: { id: true },
-  })
-  if (!partner) return { success: false, error: "Delivery partner not found" }
-
   try {
-    await prisma.deliveryReview.create({
-      data: {
-        orderId: data.orderId,
-        userId: session.user.id,
-        deliveryPartnerId: data.deliveryPartnerId,
-        rating: data.rating,
-        comment: data.comment ?? null,
-      },
+    await prisma.$transaction(async (tx) => {
+      await tx.deliveryReview.create({
+        data: {
+          orderId: data.orderId,
+          userId: session.user.id,
+          deliveryPartnerId: data.deliveryPartnerId,
+          rating: data.rating,
+          speedRating: data.speedRating ?? null,
+          behaviorHygiene: data.behaviorHygiene ?? null,
+          safetyContactless: data.safetyContactless ?? null,
+          comment: data.comment ?? null,
+        },
+      })
+
+      const partner = await tx.deliveryPartner.findUniqueOrThrow({
+        where: { id: data.deliveryPartnerId },
+        select: { avgRating: true },
+      })
+
+      const newAvg = partner.avgRating
+        ? Number(partner.avgRating) * (1 - RECENCY_WEIGHT) + data.rating * RECENCY_WEIGHT
+        : data.rating
+
+      await tx.deliveryPartner.update({
+        where: { id: data.deliveryPartnerId },
+        data: {
+          avgRating: newAvg,
+          totalReviews: { increment: 1 },
+        },
+      })
     })
     return { success: true }
   } catch {

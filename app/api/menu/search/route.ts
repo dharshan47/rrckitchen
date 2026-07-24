@@ -108,6 +108,7 @@ export async function GET(request: Request) {
         kitchenCategories: {
           select: { category: { select: { name: true } } },
         },
+        operatingHours: true,
       },
       take: 5,
       orderBy: { avgRating: "desc" },
@@ -186,6 +187,7 @@ export async function GET(request: Request) {
         cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
         imageUrl: kitchenItems[0]?.imageUrl ?? null,
         items: kitchenItems,
+        operatingHours: k.operatingHours as Record<string, { open: string; close: string }> | null,
       }
     }),
   }

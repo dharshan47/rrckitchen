@@ -15,7 +15,7 @@
 | `/` | `app/page.tsx` | Home page — featured kitchens, search | Indexed |
 | `/kitchen/[slug]` | `app/kitchen/[slug]/page.tsx` | Kitchen detail + menu | Indexed |
 | `/menu` | `app/menu/page.tsx` | Global menu search | Indexed |
-| `/menu/[slug]` | `app/menu/[slug]/page.tsx` | Menu item detail | Indexed |
+| `/menu/[kitchenSlug]/[itemIdentifier]` | `app/menu/[kitchenSlug]/[itemIdentifier]/page.tsx` | Menu item detail (by kitchen + item slug + shortId) | Indexed |
 
 ### 1.2 Auth Routes
 
@@ -172,21 +172,22 @@ export const config = {
 ## 3. Route Guard Composition
 
 ```mermaid
-graph TB
+%%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true, 'nodeSpacing': 80, 'rankSpacing': 60}}}%%
+flowchart TB
     subgraph "Middleware (Edge)"
-        MW["Edge Middleware<br/>→ Check session cookie<br/>→ Redirect if missing"]
+        MW["Edge Middleware Check session cookie Redirect if missing"]
     end
 
     subgraph "Layout (Server Component)"
-        LL["Dashboard Layout<br/>→ Fetch session server-side<br/>→ Validate role<br/>→ 403 if unauthorized"]
+        LL["Dashboard Layout Fetch session server-side Validate role 403 if unauthorized"]
     end
 
     subgraph "Page (Client Component)"
-        PG["PermissionGate<br/>→ Check permissions via hook<br/>→ Show skeleton or 403"]
+        PG["PermissionGate Check permissions via hook Show skeleton or 403"]
     end
 
     subgraph "Server Action"
-        SA["Action<br/>→ requireAdmin()<br/>→ requirePermission(bit)<br/>→ Return error if unauthorized"]
+        SA["Action requireAdmin() requirePermission(bit) Return error if unauthorized"]
     end
 
     Request["HTTP Request"] --> MW

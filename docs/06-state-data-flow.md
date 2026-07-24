@@ -9,35 +9,36 @@
 ## 1. State Management Layers
 
 ```mermaid
-graph TB
+%%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true}}}%%
+flowchart TB
     subgraph "Layer 1: Server State (TanStack Query)"
-        MQ["Menu Queries<br/>staleTime: 30s<br/>cacheTime: 5min"]
-        WQ["Wishlist Queries<br/>staleTime: 30s<br/>gcTime: 5min"]
-        PQ["Profile Queries<br/>staleTime: Infinity<br/>gcTime: 30min"]
-        OQ["Order Queries<br/>staleTime: 0<br/>gcTime: 10min"]
+        MQ["Menu Queries staleTime: 30s cacheTime: 5min"]
+        WQ["Wishlist Queries staleTime: 30s gcTime: 5min"]
+        PQ["Profile Queries staleTime: Infinity gcTime: 30min"]
+        OQ["Order Queries staleTime: 0 gcTime: 10min"]
     end
 
     subgraph "Layer 2: Client State (Zustand)"
-        CS["Cart Store<br/>persist: localStorage<br/>optimistic updates"]
-        MS["Menu Store<br/>search, filters, view"]
-        AS["Auth Store<br/>session, role, UI step"]
-        US["UI Store<br/>modals, toasts, sidebar"]
+        CS["Cart Store persist: localStorage optimistic updates"]
+        MS["Menu Store search, filters, view"]
+        AS["Auth Store session, role, UI step"]
+        US["UI Store modals, toasts, sidebar"]
     end
 
     subgraph "Layer 3: Form State (React Hook Form)"
-        SF["Signup Form<br/>RHF + Zod validation"]
-        CF["Checkout Form<br/>RHF + address selector"]
-        AF["Admin Forms<br/>RHF + permission grids"]
+        SF["Signup Form RHF + Zod validation"]
+        CF["Checkout Form RHF + address selector"]
+        AF["Admin Forms RHF + permission grids"]
     end
 
     subgraph "Layer 4: URL State (next/navigation)"
-        RS["Route State<br/>searchParams, path"]
-        QS["Query State<br/>useSearchParams"]
+        RS["Route State searchParams, path"]
+        QS["Query State useSearchParams"]
     end
 
     subgraph "Layer 5: Real-time State (Ably)"
-        OS["Order State<br/>status updates, location"]
-        KS["Kitchen State<br/>incoming orders"]
+        OS["Order State status updates, location"]
+        KS["Kitchen State incoming orders"]
     end
 
     UI["React Components"] --> MQ

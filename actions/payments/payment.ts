@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import crypto from "crypto";
 import prisma from "@/lib/prisma";
 import { getRazorpayClient } from "@/lib/razorpay";
 import { getAblyRest } from "@/lib/ably/server";
@@ -157,6 +158,15 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
     });
     return created;
   });
+
+  if (couponCode && appliedDiscount > 0) {
+    const coupon = await prisma.coupon.findUnique({ where: { code: couponCode } });
+    if (coupon) {
+      await prisma.couponRedemption.create({
+        data: { couponId: coupon.id, userId, orderId: order.id, discountAmount: appliedDiscount },
+      }).catch(() => {});
+    }
+  }
 
   if (paymentProvider === "CASH_ON_DELIVERY") {
     await prisma.payment.create({
@@ -418,6 +428,15 @@ async function getSuggestedItems(menuItemIds: string[], limit = 6) {
         isAvailable: true,
         id: { notIn: menuItemIds },
       },
+      include: {
+        menu: {
+          select: {
+            kitchenPartner: {
+              select: { slug: true },
+            },
+          },
+        },
+      },
       take: limit,
       orderBy: { createdAt: "desc" },
     });
@@ -425,6 +444,8 @@ async function getSuggestedItems(menuItemIds: string[], limit = 6) {
     if (popular.length > 0) {
       return popular.map((p) => ({
         id: p.id,
+        slug: p.slug ?? undefined,
+        kitchenSlug: p.menu?.kitchenPartner?.slug ?? undefined,
         name: p.name,
         description: p.description,
         price: Number(p.price),
@@ -436,12 +457,23 @@ async function getSuggestedItems(menuItemIds: string[], limit = 6) {
   // Last fallback: any available menu items
   const anyItems = await prisma.menuItem.findMany({
     where: { deletedAt: null, isAvailable: true, id: { notIn: menuItemIds } },
+    include: {
+      menu: {
+        select: {
+          kitchenPartner: {
+            select: { slug: true },
+          },
+        },
+      },
+    },
     take: limit,
     orderBy: { createdAt: "desc" },
   });
 
   return anyItems.map((p) => ({
     id: p.id,
+    slug: p.slug ?? undefined,
+    kitchenSlug: p.menu?.kitchenPartner?.slug ?? undefined,
     name: p.name,
     description: p.description,
     price: Number(p.price),
@@ -449,7 +481,6 @@ async function getSuggestedItems(menuItemIds: string[], limit = 6) {
   }));
 }
 
-import crypto from "crypto";
 function cryptoCreateHmac(body: string) {
   return crypto
     .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
