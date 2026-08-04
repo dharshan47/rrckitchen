@@ -1,7 +1,7 @@
 # Performance & Scaling Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [System Architecture](01-system-architecture.md), [PWA & Offline](10-pwa-offline.md), [Observability](12-observability.md)
 
 ---
@@ -41,7 +41,7 @@ flowchart TB
     end
 
     subgraph "Application Cache"
-        RC["Redis (Upstash) Kitchen detail: 60s TTL Menu items: 30s TTL User profile: 300s TTL OTP rate limits: 60s TTL"]
+        RC["Redis (Upstash) Kitchen detail: 60s TTL Menu items: 30s TTL Delivery location: lastLoc Live partners: deliveryPersons:live Order events: order-events stream OTP rate limits: 60s TTL"]
         TQ["TanStack Query Cache Menu data: staleTime 30s Wishlist: staleTime 30s Profile: staleTime Infinity"]
     end
 
@@ -74,17 +74,21 @@ flowchart TB
 | **CDN** | Static assets | File hash in URL | 30 days | URL change on rebuild |
 | **CDN** | HTML (ISR) | Kitchen slug | 60s SWR | `revalidatePath()` on menu change |
 | **Redis** | Kitchen detail | `kitchen:{slug}:detail` | 60s | Manual invalidation on menu update |
-| **Redis** | Menu items | `menu:{aliasId}:items` | 30s | Manual invalidation on item CRUD |
-| **Redis** | User profile | `user:{id}:profile` | 300s | Manual invalidation on profile update |
-| **Redis** | Coupon | `coupon:{code}` | 120s | Manual invalidation on coupon edit |
-| **Redis** | Avg rating | `rating:{aliasId}` | 300s | Manual invalidation on new review |
+| **Redis** | Menu items | `menu:{kitchenId}:items` | 30s | Manual invalidation on item CRUD |
+| **Redis** | Delivery location | `deliveryOrder:{id}:lastLoc` | ephemeral | Written on every heartbeat |
+| **Redis** | Live partners | `deliveryPersons:live` | ephemeral | Updated on availability toggle |
+| **Redis** | Order events | `order-events` (stream) | 7 days | Drained by cron `process-order-events` |
+| **Redis** | OTP limits | `otp:cooldown:{phone}`, `otp:ip:{ip}` | 60s | Expiry |
+| **Redis** | Menu (prebook) | `menu:cache` | — | Menu prebooking bundle |
 | **TanStack** | Menu data | Query key object | 30s stale | `invalidateQueries()` on mutation |
 | **TanStack** | Wishlist | `['wishlist']` | 30s stale | `invalidateQueries()` on toggle |
 | **TanStack** | Profile | `['profile']` | Infinity | `invalidateQueries()` on update |
 | **TanStack** | Orders | `['orders']` | 0 (always fresh) | Manual refetch |
 | **SW (Cache)** | JS/CSS | URL | 30 days | SW update on build |
-| **SW (Cache)** | HTML | Page URL | 24h | Network-first always tries network |
+| **SW (Cache)** | HTML | Page URL | network-first | Network-first always tries network |
 | **Cloudinary** | Images | Public ID | 30 days | Purge on Cloudinary dashboard |
+
+> Generic user profile, coupon and rating caches are **not** implemented — those reads hit Postgres directly (covered by indexes below).
 
 ---
 
@@ -154,34 +158,33 @@ pie title Initial JS Bundle (~140KB gzipped)
 
 ```typescript
 // ❌ N+1: Fetch kitchen, then menu items in loop
-const kitchen = await prisma.kitchenAlias.findUnique({ where: { slug } });
+const kitchen = await prisma.kitchenPartner.findUnique({ where: { slug } });
 const menuItems = await prisma.menuItem.findMany({
-  where: { kitchenAliasId: kitchen.id },
+  where: { kitchenPartnerId: kitchen.id },
 });
 
 // ✅ Optimized: Single query with includes
-const kitchenWithMenu = await prisma.kitchenAlias.findUnique({
+const kitchenWithMenu = await prisma.kitchenPartner.findUnique({
   where: { slug },
   include: {
-    menuItems: {
-      where: { isAvailable: true },
-      orderBy: { createdAt: 'desc' },
-      include: { photos: { take: 1, orderBy: { sortOrder: 'asc' } } },
+    kitchenAlias: true,
+    kitchenAddress: true,
+    reviews: {
+      include: { user: { select: { name: true } }, photos: true },
     },
-    timeSlots: { orderBy: { sortOrder: 'asc' } },
-    _count: { select: { reviews: true, menuItems: true } },
+    menus: {
+      include: {
+        menuItems: {
+          where: { isAvailable: true },
+          include: {
+            photos: { take: 1, orderBy: { sortOrder: 'asc' } },
+          },
+        },
+      },
+    },
+    _count: { select: { reviews: true } },
   },
 });
-
-// ✅ Batch stock query
-const stockItems = await prisma.kitchenDailyStock.findMany({
-  where: {
-    menuItemId: { in: menuItemIds },
-    date: today,
-  },
-});
-// Convert to Map for O(1) lookup
-const stockMap = new Map(stockItems.map(s => [s.menuItemId, s]));
 ```
 
 ### Connection Pool
@@ -199,14 +202,15 @@ const stockMap = new Map(stockItems.map(s => [s.menuItemId, s]));
 
 | Query | Target | Current p95 | Index Used |
 |-------|--------|-------------|------------|
-| Kitchen detail page | <50ms | ~35ms | `idx_ka_slug` (unique) |
-| Menu items by kitchen | <30ms | ~15ms | `idx_mi_kitchenAliasId` |
-| Order history (user) | <100ms | ~45ms | `idx_order_userId` |
-| Kitchen dashboard orders | <100ms | ~60ms | `idx_order_kitchen_status` |
+| Kitchen detail page | <50ms | ~35ms | `KitchenAlias.slug` (unique) |
+| Menu items by kitchen | <30ms | ~15ms | `MenuItem.kitchenAliasId` |
+| Order history (user) | <100ms | ~45ms | `Order.userId` |
+| Kitchen dashboard orders | <100ms | ~60ms | `Order.kitchenPartnerId` |
 | Search menu items | <200ms | ~120ms | `idx_menu_item_search` (GIN) |
-| Review aggregation | <50ms | ~20ms | `idx_rev_kitchenAliasId` |
-| Stock availability | <30ms | ~10ms | `idx_kds_menuItem_date` |
-| Coupon validation | <20ms | ~5ms | `idx_coupon_code` (unique) |
+| Review aggregation | <50ms | ~20ms | `Review.kitchenPartnerId` |
+| Payment by order | <30ms | ~10ms | `Payment.orderId` (unique) |
+| Coupon validation | <20ms | ~5ms | `Coupon.code` (unique) |
+| Public code allocation | <20ms | ~5ms | `PublicIdCounter.prefix` (unique) |
 
 ---
 

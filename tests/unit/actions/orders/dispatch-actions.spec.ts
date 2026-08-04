@@ -1,16 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   deliveryPartner: { findUnique: vi.fn(), update: vi.fn(), findMany: vi.fn() },
   order: { findMany: vi.fn(), findUnique: vi.fn() },
   deliveryAssignment: { create: vi.fn(), findFirst: vi.fn() },
   deliveryLocation: { create: vi.fn() },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 vi.mock("@/lib/ably/server", () => ({ getAblyRest: () => ({ channels: { get: () => ({ publish: vi.fn() }) } }) }))
 
-const mockSession = { user: { id: "dp-1", role: "DELIVERY_PARTNER" } }
+const mockSession = vi.hoisted(() => ({ user: { id: "dp-1", role: "DELIVERY_PARTNER" } }))
 vi.mock("@/lib/auth-server", () => ({ getSession: vi.fn(() => mockSession) }))
 
 import { goOnline, goOffline, getPendingOrders } from "@/actions/orders/dispatch-actions"
@@ -59,9 +59,17 @@ describe("dispatch-actions", () => {
         {
           id: "order-1", status: "READYFORPICKUP", totalAmount: 500, createdAt: new Date(),
           orderItems: [
-            { id: "oi1", menuItem: { name: "Dosa", imageUrl: "/dosa.jpg" }, quantity: 2, unitPrice: 100, kitchenPartner: { name: "Tasty Kitchen", address: "Addr", lat: 12.34, lng: 56.78 } },
+            {
+              id: "oi1", quantity: 2, unitPrice: 100,
+              menuItem: { name: "Dosa", photos: [{ imageUrl: "/dosa.jpg" }] },
+              kitchenPartner: {
+                kitchenAlias: { displayName: "Tasty Kitchen" },
+                kitchenAddress: { lineOne: "Addr", pincode: "560001", latitude: 12.34, longitude: 56.78 },
+              },
+            },
           ],
-          user: { phoneNumber: "9999999999", address: [{ id: "a1", fullAddress: "Home", lat: 12.35, lng: 56.79 }] },
+          user: { phoneNumber: "9999999999" },
+          address: { lineOne: "Home", lineTwo: null, pincode: "560002", latitude: 12.35, longitude: 56.79 },
         },
       ])
 
@@ -70,6 +78,8 @@ describe("dispatch-actions", () => {
       expect(result).toHaveLength(1)
       expect(result[0].id).toBe("order-1")
       expect(result[0].items[0].kitchenName).toBe("Tasty Kitchen")
+      expect(result[0].items[0].kitchenAddress).toBe("Addr, 560001")
+      expect(result[0].customerPhone).toBe("9999999999")
     })
 
     it("returns empty array when none", async () => {

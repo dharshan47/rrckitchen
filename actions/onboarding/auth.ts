@@ -37,7 +37,7 @@ export async function assignUserRole(roleName: AllowedRole) {
         .map(k => k.slug)
         .filter(Boolean) as string[]
     )
-    const slug = uniqueSlug(session.user.name ?? "kitchen", existingSlugs)
+    const slug = uniqueSlug(session.user.name ?? session.user.id, existingSlugs)
     await prisma.kitchenPartner.upsert({
       where: { userId: session.user.id },
       create: { userId: session.user.id, slug },

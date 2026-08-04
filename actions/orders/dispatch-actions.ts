@@ -49,19 +49,19 @@ export interface PendingOrderItem {
   totalAmount: number
   createdAt: Date
   items: Array<{
-    kitchenName: string
+    kitchenName: string | null | undefined
     itemName: string
-    imageUrl: string | null
+    imageUrl: string | null | undefined
     quantity: number
     unitPrice: number
-    kitchenAddress: string
-    kitchenLat: number
-    kitchenLng: number
+    kitchenAddress: string | null | undefined
+    kitchenLat: number | null | undefined
+    kitchenLng: number | null | undefined
   }>
-  customerPhone: string
-  customerAddress: string
-  customerLat: number
-  customerLng: number
+  customerPhone: string | null | undefined
+  customerAddress: string | null | undefined
+  customerLat: number | null | undefined
+  customerLng: number | null | undefined
 }
 
 export async function getPendingOrders(): Promise<PendingOrderItem[]> {
@@ -103,23 +103,23 @@ export async function getPendingOrders(): Promise<PendingOrderItem[]> {
       totalAmount: Number(o.totalAmount),
       createdAt: o.createdAt,
       items: o.orderItems.map((i) => ({
-        kitchenName: i.kitchenPartner?.kitchenAlias?.displayName ?? "",
+        kitchenName: i.kitchenPartner?.kitchenAlias?.displayName,
         itemName: i.menuItem.name,
-        imageUrl: i.menuItem.photos?.[0]?.imageUrl ?? null,
+        imageUrl: i.menuItem.photos?.[0]?.imageUrl,
         quantity: i.quantity,
         unitPrice: Number(i.unitPrice),
         kitchenAddress: i.kitchenPartner?.kitchenAddress
           ? `${i.kitchenPartner.kitchenAddress.lineOne}, ${i.kitchenPartner.kitchenAddress.pincode}`
-          : "",
-        kitchenLat: i.kitchenPartner?.kitchenAddress?.latitude ?? 0,
-        kitchenLng: i.kitchenPartner?.kitchenAddress?.longitude ?? 0,
+          : undefined,
+        kitchenLat: i.kitchenPartner?.kitchenAddress?.latitude,
+        kitchenLng: i.kitchenPartner?.kitchenAddress?.longitude,
       })),
-      customerPhone: o.user?.phoneNumber ?? "",
+      customerPhone: o.user?.phoneNumber,
       customerAddress: o.address
         ? `${o.address.lineOne}${o.address.lineTwo ? ", " + o.address.lineTwo : ""}, ${o.address.pincode}`
-        : "",
-      customerLat: o.address?.latitude ?? 0,
-      customerLng: o.address?.longitude ?? 0,
+        : undefined,
+      customerLat: o.address?.latitude,
+      customerLng: o.address?.longitude,
     }
   })
 }

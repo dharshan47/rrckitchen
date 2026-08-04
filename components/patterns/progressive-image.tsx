@@ -3,9 +3,11 @@
 import { useState, useCallback } from "react";
 import Image from "next/image";
 import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
+import { useProgressiveImage } from "@/hooks";
 
 interface ProgressiveImageProps {
-  src: string;
+  highResUrl: string;
+  lowResUrl?: string;
   alt: string;
   width?: number;
   height?: number;
@@ -17,7 +19,8 @@ interface ProgressiveImageProps {
 }
 
 export function ProgressiveImage({
-  src,
+  highResUrl,
+  lowResUrl,
   alt,
   width,
   height,
@@ -34,6 +37,11 @@ export function ProgressiveImage({
     enabled: !priority,
   });
 
+  const { src, isLoaded: isSrcReady, isError: isSrcError } = useProgressiveImage({
+    highResUrl,
+    lowResUrl,
+  });
+
   const shouldLoad = priority || isIntersecting;
 
   const handleLoad = useCallback(() => {
@@ -45,7 +53,7 @@ export function ProgressiveImage({
     setIsError(true);
   }, []);
 
-  if (isError) {
+  if (isError || isSrcError) {
     return (
       <div
         ref={ref}
@@ -68,7 +76,7 @@ export function ProgressiveImage({
         height: fill ? "100%" : height,
       }}
     >
-      {shouldLoad && (
+      {shouldLoad && src && (
         <Image
           src={src}
           alt={alt}
@@ -83,7 +91,7 @@ export function ProgressiveImage({
           loading={priority ? "eager" : "lazy"}
         />
       )}
-      {!isLoaded && !isError && shouldLoad && (
+      {(!isLoaded || !isSrcReady) && !isError && shouldLoad && (
         <div className="absolute inset-0 animate-pulse bg-slate-200" />
       )}
     </div>

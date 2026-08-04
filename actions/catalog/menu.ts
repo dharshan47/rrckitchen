@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
-import { FoodType, TimeSlot } from "@/lib/generated/prisma/enums";
+import { AvailableFor, FoodType, TimeSlot } from "@/lib/generated/prisma/enums";
 import { cached } from "@/lib/server-cache";
-import { cacheLife } from "next/cache";
+import { cacheLife, cacheTag } from "next/cache";
 
 interface MenuFilterOptions {
   query?: string;
@@ -18,6 +18,7 @@ export async function getTomorrowMenu({ query, foodType, timeSlot, bestseller }:
 async function _getTomorrowMenu({ query, foodType, timeSlot, bestseller }: MenuFilterOptions = {}) {
   'use cache';
   cacheLife('hours');
+  cacheTag('menu-items');
   const search = query?.trim().toLowerCase();
 
   const searchCondition = search
@@ -40,6 +41,7 @@ async function _getTomorrowMenu({ query, foodType, timeSlot, bestseller }: MenuF
 
   const where = {
     isAvailable: true,
+    availableFor: { in: ["TOMORROW", "BOTH"] satisfies AvailableFor[] },
     menu: {
       isActive: true,
     },
@@ -133,6 +135,21 @@ export async function getMenuItemById(id: string) {
   return cached(`getMenuItemById:${id}`, 30_000, () => _getMenuItemById(id));
 }
 
+async function fetchRelatedItems(ids: string[]) {
+  if (!ids.length) return [];
+  return prisma.menuItem.findMany({
+    where: { id: { in: ids }, isAvailable: true, deletedAt: null },
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      price: true,
+      avgRating: true,
+      photos: { take: 1, select: { imageUrl: true } },
+    },
+  });
+}
+
 export async function getMenuItemBySlug(slug: string) {
   return cached(`getMenuItemBySlug:${slug}`, 30_000, () => _getMenuItemBySlug(slug));
 }
@@ -140,6 +157,7 @@ export async function getMenuItemBySlug(slug: string) {
 async function _getMenuItemBySlug(slug: string) {
   'use cache';
   cacheLife('hours');
+  cacheTag('menu-items');
   let item = await prisma.menuItem.findFirst({
     where: {
       slug,
@@ -149,7 +167,7 @@ async function _getMenuItemBySlug(slug: string) {
     include: {
       menu: {
         include: {
-          kitchenPartner: { include: { kitchenAlias: true } },
+          kitchenPartner: { include: { kitchenAlias: true, _count: { select: { reviews: true, orderItems: true } } } },
         },
       },
       photos: { orderBy: { sortOrder: "asc" } },
@@ -167,7 +185,7 @@ async function _getMenuItemBySlug(slug: string) {
       include: {
         menu: {
           include: {
-            kitchenPartner: { include: { kitchenAlias: true } },
+            kitchenPartner: { include: { kitchenAlias: true, _count: { select: { reviews: true, orderItems: true } } } },
           },
         },
         photos: { orderBy: { sortOrder: "asc" } },
@@ -177,6 +195,8 @@ async function _getMenuItemBySlug(slug: string) {
   }
 
   if (!item) return null;
+
+  const [relatedItems] = await Promise.all([fetchRelatedItems(item.relatedItemIds ?? [])]);
 
   return {
     id: item.id,
@@ -190,6 +210,23 @@ async function _getMenuItemBySlug(slug: string) {
     isAvailable: item.isAvailable,
     avgRating: item.avgRating ? Number(item.avgRating) : null,
     totalReviews: item.totalReviews,
+    orderCount: item._count.orderItems,
+    bestseller: item.bestseller,
+    cuisine: item.cuisine,
+    highlights: Array.isArray(item.highlights)
+      ? (item.highlights as unknown as { title: string; description: string; enabled: boolean }[])
+      : [],
+    aboutTitle: item.aboutTitle,
+    aboutDescription: item.aboutDescription,
+    serves: item.serves,
+    portionSize: item.portionSize,
+    shelfLife: item.shelfLife,
+    allergens: item.allergens,
+    deliveryTimeMin: item.deliveryTimeMin,
+    deliveryTimeMax: item.deliveryTimeMax,
+    deliveryFee: item.deliveryFee ? Number(item.deliveryFee) : null,
+    freeDelivery: item.freeDelivery,
+    packagingType: item.packagingType,
     menu: item.menu
       ? {
           kitchenPartner: item.menu.kitchenPartner
@@ -201,7 +238,24 @@ async function _getMenuItemBySlug(slug: string) {
             : null,
         }
       : null,
+    kitchen: item.menu?.kitchenPartner
+      ? {
+          name: item.menu.kitchenPartner.kitchenAlias?.displayName ?? item.menu.kitchenPartner.slug,
+          slug: item.menu.kitchenPartner.slug,
+          imageUrl: item.menu.kitchenPartner.kitchenAlias?.imageUrl ?? null,
+          avgRating: item.menu.kitchenPartner.avgRating ? Number(item.menu.kitchenPartner.avgRating) : null,
+          totalReviews: item.menu.kitchenPartner.totalReviews,
+          orderCount: item.menu.kitchenPartner._count.orderItems,
+        }
+      : null,
     photos: item.photos.map((p) => ({ id: p.id, imageUrl: p.imageUrl, sortOrder: p.sortOrder })),
+    relatedItems: relatedItems.map((r) => ({
+      id: r.id,
+      name: r.name,
+      price: Number(r.price),
+      avgRating: r.avgRating ? Number(r.avgRating) : null,
+      imageUrl: r.photos[0]?.imageUrl ?? null,
+    })),
   };
 }
 
@@ -212,6 +266,7 @@ export async function getMenuItemByIdentifier(kitchenSlug: string, shortId: stri
 async function _getMenuItemByIdentifier(kitchenSlug: string, shortId: string) {
   'use cache';
   cacheLife('hours');
+  cacheTag('menu-items');
   const item = await prisma.menuItem.findFirst({
     where: {
       id: { startsWith: shortId },
@@ -227,7 +282,7 @@ async function _getMenuItemByIdentifier(kitchenSlug: string, shortId: string) {
     include: {
       menu: {
         include: {
-          kitchenPartner: { include: { kitchenAlias: true } },
+          kitchenPartner: { include: { kitchenAlias: true, _count: { select: { reviews: true, orderItems: true } } } },
         },
       },
       photos: { orderBy: { sortOrder: "asc" } },
@@ -236,6 +291,8 @@ async function _getMenuItemByIdentifier(kitchenSlug: string, shortId: string) {
   });
 
   if (!item) return null;
+
+  const [relatedItems] = await Promise.all([fetchRelatedItems(item.relatedItemIds ?? [])]);
 
   return {
     id: item.id,
@@ -249,6 +306,23 @@ async function _getMenuItemByIdentifier(kitchenSlug: string, shortId: string) {
     isAvailable: item.isAvailable,
     avgRating: item.avgRating ? Number(item.avgRating) : null,
     totalReviews: item.totalReviews,
+    orderCount: item._count.orderItems,
+    bestseller: item.bestseller,
+    cuisine: item.cuisine,
+    highlights: Array.isArray(item.highlights)
+      ? (item.highlights as unknown as { title: string; description: string; enabled: boolean }[])
+      : [],
+    aboutTitle: item.aboutTitle,
+    aboutDescription: item.aboutDescription,
+    serves: item.serves,
+    portionSize: item.portionSize,
+    shelfLife: item.shelfLife,
+    allergens: item.allergens,
+    deliveryTimeMin: item.deliveryTimeMin,
+    deliveryTimeMax: item.deliveryTimeMax,
+    deliveryFee: item.deliveryFee ? Number(item.deliveryFee) : null,
+    freeDelivery: item.freeDelivery,
+    packagingType: item.packagingType,
     menu: item.menu
       ? {
           kitchenPartner: item.menu.kitchenPartner
@@ -260,13 +334,31 @@ async function _getMenuItemByIdentifier(kitchenSlug: string, shortId: string) {
             : null,
         }
       : null,
+    kitchen: item.menu?.kitchenPartner
+      ? {
+          name: item.menu.kitchenPartner.kitchenAlias?.displayName ?? item.menu.kitchenPartner.slug,
+          slug: item.menu.kitchenPartner.slug,
+          imageUrl: item.menu.kitchenPartner.kitchenAlias?.imageUrl ?? null,
+          avgRating: item.menu.kitchenPartner.avgRating ? Number(item.menu.kitchenPartner.avgRating) : null,
+          totalReviews: item.menu.kitchenPartner.totalReviews,
+          orderCount: item.menu.kitchenPartner._count.orderItems,
+        }
+      : null,
     photos: item.photos.map((p) => ({ id: p.id, imageUrl: p.imageUrl, sortOrder: p.sortOrder })),
+    relatedItems: relatedItems.map((r) => ({
+      id: r.id,
+      name: r.name,
+      price: Number(r.price),
+      avgRating: r.avgRating ? Number(r.avgRating) : null,
+      imageUrl: r.photos[0]?.imageUrl ?? null,
+    })),
   };
 }
 
 async function _getMenuItemById(id: string) {
   'use cache';
   cacheLife('hours');
+  cacheTag('menu-items');
   const item = await prisma.menuItem.findFirst({
     where: {
       id,
@@ -281,6 +373,7 @@ async function _getMenuItemById(id: string) {
           kitchenPartner: {
             include: {
               kitchenAlias: true,
+              _count: { select: { reviews: true, orderItems: true } },
             },
           },
         },
@@ -296,6 +389,8 @@ async function _getMenuItemById(id: string) {
 
   if (!item) return null;
 
+  const [relatedItems] = await Promise.all([fetchRelatedItems(item.relatedItemIds ?? [])]);
+
   return {
     id: item.id,
     slug: item.slug,
@@ -308,6 +403,23 @@ async function _getMenuItemById(id: string) {
     isAvailable: item.isAvailable,
     avgRating: item.avgRating ? Number(item.avgRating) : null,
     totalReviews: item.totalReviews,
+    orderCount: item._count.orderItems,
+    bestseller: item.bestseller,
+    cuisine: item.cuisine,
+    highlights: Array.isArray(item.highlights)
+      ? (item.highlights as unknown as { title: string; description: string; enabled: boolean }[])
+      : [],
+    aboutTitle: item.aboutTitle,
+    aboutDescription: item.aboutDescription,
+    serves: item.serves,
+    portionSize: item.portionSize,
+    shelfLife: item.shelfLife,
+    allergens: item.allergens,
+    deliveryTimeMin: item.deliveryTimeMin,
+    deliveryTimeMax: item.deliveryTimeMax,
+    deliveryFee: item.deliveryFee ? Number(item.deliveryFee) : null,
+    freeDelivery: item.freeDelivery,
+    packagingType: item.packagingType,
     menu: item.menu
       ? {
           kitchenPartner: item.menu.kitchenPartner
@@ -319,10 +431,27 @@ async function _getMenuItemById(id: string) {
             : null,
         }
       : null,
+    kitchen: item.menu?.kitchenPartner
+      ? {
+          name: item.menu.kitchenPartner.kitchenAlias?.displayName ?? item.menu.kitchenPartner.slug,
+          slug: item.menu.kitchenPartner.slug,
+          imageUrl: item.menu.kitchenPartner.kitchenAlias?.imageUrl ?? null,
+          avgRating: item.menu.kitchenPartner.avgRating ? Number(item.menu.kitchenPartner.avgRating) : null,
+          totalReviews: item.menu.kitchenPartner.totalReviews,
+          orderCount: item.menu.kitchenPartner._count.orderItems,
+        }
+      : null,
     photos: item.photos.map((p) => ({
       id: p.id,
       imageUrl: p.imageUrl,
       sortOrder: p.sortOrder,
+    })),
+    relatedItems: relatedItems.map((r) => ({
+      id: r.id,
+      name: r.name,
+      price: Number(r.price),
+      avgRating: r.avgRating ? Number(r.avgRating) : null,
+      imageUrl: r.photos[0]?.imageUrl ?? null,
     })),
   };
 }

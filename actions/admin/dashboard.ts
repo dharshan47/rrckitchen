@@ -1,10 +1,11 @@
 "use server"
 
-import { startOfDay, subMonths, format } from "date-fns"
+import { startOfDay, subMonths, format, differenceInCalendarDays } from "date-fns"
 import { getSession } from "@/lib/auth-server"
 import prisma from "@/lib/prisma"
 import { requireAdmin } from "@/lib/auth-guards"
 import { uniqueSlug } from "@/lib/slug"
+import { allocatePublicCode, PUBLIC_ID_SPECS } from "@/lib/public-id"
 
 
 function formatTimeSlot(slot: string): string {
@@ -29,7 +30,8 @@ function formatOrderStatus(status: string): string {
   return map[status] ?? status
 }
 
-function formatPaymentStatus(status: string): string {
+function formatPaymentStatus(status?: string): string | undefined {
+  if (!status) return undefined
   const map: Record<string, string> = {
     PENDING: "Pending",
     SUCCESS: "Paid",
@@ -51,7 +53,7 @@ export async function getAdminDashboardData() {
   const now = new Date()
   const todayStart = startOfDay(now)
   const todayEnd = new Date(todayStart.getTime() + 86400000)
-  void subMonths(now, 5)
+  const sixMonthsAgo = startOfDay(subMonths(now, 5))
 
   const [
     totalRevenueAgg,
@@ -64,6 +66,11 @@ export async function getAdminDashboardData() {
     kitchenPartnerCount,
     deliveryPartnerCount,
     menuItemCount,
+    pendingKycKitchens,
+    pendingKycDelivery,
+    openSupportTickets,
+    lowStockItems,
+    monthlyOrders,
   ] = await Promise.all([
     prisma.payment.aggregate({ where: { status: "SUCCESS" }, _sum: { amount: true } }),
     prisma.order.count({ where: { createdAt: { gte: todayStart, lt: todayEnd } } }),
@@ -78,6 +85,14 @@ export async function getAdminDashboardData() {
     prisma.kitchenPartner.count({ where: { status: { in: ["APPROVED", "ACTIVE"] } } }),
     prisma.deliveryPartner.count({ where: { status: { in: ["APPROVED", "ACTIVE"] } } }),
     prisma.menuItem.count({ where: { deletedAt: null } }),
+    prisma.kitchenPartner.count({ where: { status: "PENDINGAPPROVAL" } }),
+    prisma.deliveryPartner.count({ where: { status: "PENDINGAPPROVAL" } }),
+    prisma.supportTicket.count({ where: { status: "OPEN" } }),
+    prisma.menuItem.count({ where: { isAvailable: false, deletedAt: null } }),
+    prisma.order.findMany({
+      where: { createdAt: { gte: sixMonthsAgo }, payment: { status: "SUCCESS" } },
+      select: { totalAmount: true, createdAt: true },
+    }),
   ])
 
   const [
@@ -179,6 +194,14 @@ export async function getAdminDashboardData() {
       orders: 0,
     })
   }
+  for (const order of monthlyOrders) {
+    const monthsAgo = (nowMonth - order.createdAt.getMonth() + 12) % 12
+    const idx = 5 - monthsAgo
+    if (idx >= 0 && idx < 6) {
+      monthlyRevenue[idx].revenue += Number(order.totalAmount)
+      monthlyRevenue[idx].orders += 1
+    }
+  }
 
   const ordersByTimeSlotMap: Record<string, number> = { MORNING: 0, LUNCH: 0, EVENINGSNACKS: 0, DINNER: 0 }
   for (const row of ordersByTimeSlotData) {
@@ -212,7 +235,7 @@ export async function getAdminDashboardData() {
     }))
 
   const topSelling = topSellingData.map((item) => ({
-    item: itemNameMap.get(item.menuItemId) ?? "",
+    item: itemNameMap.get(item.menuItemId),
     orders: item._count.id,
   }))
 
@@ -223,7 +246,7 @@ export async function getAdminDashboardData() {
         ? k.reviews.reduce((sum, r) => sum + r.rating, 0) / k.reviews.length
         : 0
     return {
-      name: k.kitchenAlias?.displayName ?? "",
+      name: k.kitchenAlias?.displayName,
       orders: k._count.orderItems,
       revenue: totalRev,
       rating: Math.round(avgRating * 10) / 10,
@@ -236,29 +259,29 @@ export async function getAdminDashboardData() {
         ? s.reviews.reduce((sum, r) => sum + r.rating, 0) / s.reviews.length
         : 0
     return {
-      name: s.user?.name ?? "",
+      name: s.user?.name,
       deliveries: s._count.kitchenAssignments,
       rating: Math.round(avgRating * 10) / 10,
     }
   })
 
   const recentOrders = recentOrdersData.map((o) => {
-    const kitchen = o.orderItems[0]?.kitchenPartner?.kitchenAlias?.displayName ?? ""
+    const kitchen = o.orderItems[0]?.kitchenPartner?.kitchenAlias?.displayName
     return {
       id: o.id,
-      customer: o.user?.name ?? "",
+      customer: o.user?.name,
       kitchen,
       date: format(o.createdAt, "dd MMM yyyy"),
       amount: Number(o.totalAmount),
       status: formatOrderStatus(o.status),
-      payment: formatPaymentStatus(o.payment?.status ?? "PENDING"),
+      payment: formatPaymentStatus(o.payment?.status),
     }
   })
 
   const kitchenPartnersList = kitchenPartnersData.map((k) => {
     const totalRev = k.orderItems.reduce((sum, oi) => sum + Number(oi.unitPrice) * oi.quantity, 0)
     return {
-      name: k.kitchenAlias?.displayName ?? "",
+      name: k.kitchenAlias?.displayName,
       status: k.status === "ACTIVE" || k.status === "APPROVED" ? "Active" : k.status,
       orders: k._count.orderItems,
       revenue: totalRev,
@@ -266,8 +289,7 @@ export async function getAdminDashboardData() {
   })
 
   const deliveryPartnersList = deliveryPartnersData.map((s) => ({
-    name: s.user?.name ?? "",
-    vehicle: "",
+    name: s.user?.name,
     orders: s._count.kitchenAssignments,
     status: s.status === "ACTIVE" || s.status === "APPROVED" ? "Active" : s.status === "PENDINGAPPROVAL" ? "Pending Approval" : s.status,
     docs: s.kyc?.verifiedAt ? "Verified" : "Pending",
@@ -285,6 +307,9 @@ export async function getAdminDashboardData() {
       kitchenPartners: kitchenPartnerCount,
       deliveryPartners: deliveryPartnerCount,
       menuItems: menuItemCount,
+      pendingKyc: pendingKycKitchens + pendingKycDelivery,
+      openSupportTickets,
+      lowStockItems,
     },
     revenueTrend: monthlyRevenue,
     ordersByTimeSlot,
@@ -313,6 +338,9 @@ export async function getKitchenDashboardData() {
       kitchenAlias: true,
       kitchenKyc: true,
       kitchenAddress: true,
+      kitchenCategories: {
+        include: { category: { select: { id: true, name: true } } },
+      },
       user: { select: { name: true, email: true } },
     },
   })
@@ -323,26 +351,51 @@ export async function getKitchenDashboardData() {
         .map(k => k.slug)
         .filter(Boolean) as string[]
     )
-    const slug = uniqueSlug(session.user.name ?? "kitchen", existingSlugs)
-    kitchenPartner = await prisma.kitchenPartner.create({
-      data: { userId: session.user.id, slug },
-      include: { kitchenAlias: true, kitchenKyc: true, kitchenAddress: true, user: { select: { name: true, email: true } } },
+    const slug = uniqueSlug(session.user.name ?? session.user.id, existingSlugs)
+    kitchenPartner = await prisma.$transaction(async (tx) => {
+      const created = await tx.kitchenPartner.create({
+        data: {
+          publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.KITCHEN_PARTNER),
+          userId: session.user.id,
+          slug,
+        },
+        include: {
+          kitchenAlias: true,
+          kitchenKyc: true,
+          kitchenAddress: true,
+          kitchenCategories: {
+            include: { category: { select: { id: true, name: true } } },
+          },
+          user: { select: { name: true, email: true } },
+        },
+      })
+      return created
     })
+  }
+
+  if (!kitchenPartner) {
+    return null
   }
 
   const now = new Date()
   const todayStart = startOfDay(now)
-  const todayEnd = new Date(todayStart.getTime() + 86400000)
-  void subMonths(now, 5)
+  const sixMonthsAgo = startOfDay(subMonths(now, 5))
+  const weekStart = startOfDay(new Date(now.getTime() - 6 * 86400000))
   const monthStart = startOfDay(new Date(now.getFullYear(), now.getMonth(), 1))
   const tomorrowStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1))
+
+  const todayServiceDate = todayStart
+  const tomorrowServiceDate = tomorrowStart
 
   const [
     todayOrdersCount,
     todayCompletedCount,
     todayPendingCount,
     todayRevenueAgg,
+    preOrderCount,
+    preOrderRevenueAgg,
     monthRevenueAgg,
+    todayAvailability,
     totalCustomerData,
     menus,
     recentOrderItems,
@@ -350,26 +403,42 @@ export async function getKitchenDashboardData() {
     vegCount,
     nonVegCount,
     tomorrowAvailability,
-    payoutAgg,
+    monthlyOrderItems,
+    payoutRows,
     supportTickets,
     kitchenReviews,
   ] = await Promise.all([
     prisma.orderItem.count({
-      where: { kitchenPartnerId: kitchenPartner.id, order: { createdAt: { gte: todayStart, lt: todayEnd } } },
+      where: { kitchenPartnerId: kitchenPartner.id, order: { serviceDate: todayServiceDate } },
     }),
     prisma.orderItem.count({
-      where: { kitchenPartnerId: kitchenPartner.id, order: { createdAt: { gte: todayStart, lt: todayEnd }, status: "COMPLETED" } },
+      where: { kitchenPartnerId: kitchenPartner.id, order: { serviceDate: todayServiceDate, status: "COMPLETED" } },
     }),
     prisma.orderItem.count({
-      where: { kitchenPartnerId: kitchenPartner.id, order: { createdAt: { gte: todayStart, lt: todayEnd }, status: "CONFIRMED" } },
+      where: { kitchenPartnerId: kitchenPartner.id, order: { serviceDate: todayServiceDate, status: "CONFIRMED" } },
     }),
     prisma.orderItem.aggregate({
-      where: { kitchenPartnerId: kitchenPartner.id, order: { createdAt: { gte: todayStart, lt: todayEnd } } },
+      where: { kitchenPartnerId: kitchenPartner.id, order: { serviceDate: todayServiceDate } },
+      _sum: { unitPrice: true },
+    }),
+    prisma.orderItem.count({
+      where: { kitchenPartnerId: kitchenPartner.id, order: { serviceDate: tomorrowServiceDate } },
+    }),
+    prisma.orderItem.aggregate({
+      where: { kitchenPartnerId: kitchenPartner.id, order: { serviceDate: tomorrowServiceDate } },
       _sum: { unitPrice: true },
     }),
     prisma.orderItem.aggregate({
       where: { kitchenPartnerId: kitchenPartner.id, order: { createdAt: { gte: monthStart } } },
       _sum: { unitPrice: true },
+    }),
+    prisma.kitchenAvailability.findUnique({
+      where: {
+        kitchenPartnerId_serviceDate: {
+          kitchenPartnerId: kitchenPartner.id,
+          serviceDate: todayServiceDate,
+        },
+      },
     }),
     prisma.orderItem.groupBy({
       by: ["orderId"],
@@ -388,14 +457,19 @@ export async function getKitchenDashboardData() {
     }),
     prisma.orderItem.findMany({
       where: { kitchenPartnerId: kitchenPartner.id },
-      take: 10,
+      take: 20,
       orderBy: { order: { createdAt: "desc" } },
       include: {
         order: {
-          include: {
-            payment: { select: { status: true } },
+          select: {
+            id: true,
+            status: true,
+            createdAt: true,
+            serviceDate: true,
+            serviceDateType: true,
             user: { select: { name: true, phoneNumber: true } },
             address: true,
+            payment: { select: { status: true } },
             deliveryPartner: {
               include: { user: { select: { name: true, phoneNumber: true } } },
             },
@@ -425,9 +499,19 @@ export async function getKitchenDashboardData() {
         },
       },
     }),
-    prisma.kitchenPayout.aggregate({
-      where: { kitchenPartnerId: kitchenPartner.id, status: { in: ["PENDING", "SETTLED"] } },
-      _sum: { netAmount: true },
+    prisma.orderItem.findMany({
+      where: { kitchenPartnerId: kitchenPartner.id, order: { createdAt: { gte: sixMonthsAgo } } },
+      select: {
+        orderId: true,
+        unitPrice: true,
+        quantity: true,
+        order: { select: { createdAt: true } },
+      },
+    }),
+    prisma.kitchenPayout.findMany({
+      where: { kitchenPartnerId: kitchenPartner.id },
+      orderBy: { createdAt: "desc" },
+      take: 10,
     }),
     prisma.supportTicket.findMany({
       where: { userId: session.user.id },
@@ -453,11 +537,13 @@ export async function getKitchenDashboardData() {
       id: mi.id,
       name: mi.name,
       price: Number(mi.price),
+      description: mi.description,
       foodType: mi.foodType,
       timeSlot: formatTimeSlot(mi.timeSlot),
       isAvailable: mi.isAvailable,
+      availableFor: mi.availableFor,
       menuName: menu.name,
-      image: mi.photos[0]?.imageUrl ?? null,
+      image: mi.photos[0]?.imageUrl,
     }))
   )
 
@@ -472,7 +558,7 @@ export async function getKitchenDashboardData() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const popularFood = popularItemsData.map((i: any) => ({
-    item: popularNameMap.get(i.menuItemId) ?? "",
+    item: popularNameMap.get(i.menuItemId),
     orders: i._count.id,
   }))
 
@@ -484,16 +570,18 @@ export async function getKitchenDashboardData() {
     quantity: oi.quantity,
     amount: Number(oi.unitPrice) * oi.quantity,
     status: formatOrderStatus(oi.order.status),
+    serviceDateType: oi.order.serviceDateType,
+    paymentStatus: formatPaymentStatus(oi.order.payment?.status),
     time: format(oi.order.createdAt, "hh:mm a"),
-    customerName: oi.order.user?.name ?? "",
-    customerPhone: oi.order.user?.phoneNumber ?? "",
+    customerName: oi.order.user?.name,
+    customerPhone: oi.order.user?.phoneNumber,
     customerAddress: oi.order.address
       ? `${oi.order.address.lineOne}${oi.order.address.lineTwo ? ", " + oi.order.address.lineTwo : ""}, ${oi.order.address.pincode}`
-      : "",
+      : undefined,
     deliveryPartner: oi.order.deliveryPartner
       ? {
-          name: oi.order.deliveryPartner.user?.name ?? "",
-          phone: oi.order.deliveryPartner.user?.phoneNumber ?? null,
+          name: oi.order.deliveryPartner.user?.name,
+          phone: oi.order.deliveryPartner.user?.phoneNumber,
         }
       : null,
   }))
@@ -502,8 +590,13 @@ export async function getKitchenDashboardData() {
   const weeklySales = dayNames.map((day) => ({
     day,
     sales: 0,
-    target: 5000,
   }))
+  for (const oi of monthlyOrderItems) {
+    const dayIdx = differenceInCalendarDays(oi.order.createdAt, weekStart)
+    if (dayIdx >= 0 && dayIdx < 7) {
+      weeklySales[dayIdx].sales += Number(oi.unitPrice) * oi.quantity
+    }
+  }
 
   const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
   const monthlyRevenue: { period: string; revenue: number; orders: number }[] = []
@@ -516,29 +609,49 @@ export async function getKitchenDashboardData() {
       orders: 0,
     })
   }
+  const orderIdsSeen = new Set<string>()
+  for (const oi of monthlyOrderItems) {
+    const monthsAgo = (nowMonth - oi.order.createdAt.getMonth() + 12) % 12
+    const idx = 5 - monthsAgo
+    if (idx >= 0 && idx < 6) {
+      monthlyRevenue[idx].revenue += Number(oi.unitPrice) * oi.quantity
+      if (!orderIdsSeen.has(oi.orderId)) {
+        orderIdsSeen.add(oi.orderId)
+        monthlyRevenue[idx].orders += 1
+      }
+    }
+  }
 
   const todayRevenue = Number(todayRevenueAgg._sum.unitPrice ?? 0)
   const monthRevenue = Number(monthRevenueAgg._sum.unitPrice ?? 0)
   const uniqueCustomers = totalCustomerData.length
+  const preOrderRevenue = Number(preOrderRevenueAgg._sum.unitPrice ?? 0)
 
   return {
     kitchen: {
       id: kitchenPartner.id,
-      displayName: kitchenPartner.kitchenAlias?.displayName ?? "",
+      slug: kitchenPartner.slug,
+      displayName: kitchenPartner.kitchenAlias?.displayName,
+      imageUrl: kitchenPartner.kitchenAlias?.imageUrl,
+      description: kitchenPartner.kitchenAlias?.description,
       status: kitchenPartner.status,
       avgRating: "avgRating" in kitchenPartner && typeof (kitchenPartner as Record<string, unknown>).avgRating === "number"
         ? Math.round(Number((kitchenPartner as Record<string, unknown>).avgRating) * 10) / 10
         : null,
       totalReviews: (kitchenPartner as Record<string, unknown>).totalReviews as number | undefined,
-      bankName: kitchenPartner.kitchenKyc?.bankName ?? null,
-      bankAccountNumber: kitchenPartner.kitchenKyc?.bankAccountNumber ?? null,
-      ifscCode: kitchenPartner.kitchenKyc?.ifscCode ?? null,
-      accountHolderName: kitchenPartner.kitchenKyc?.accountHolderName ?? null,
-      upiId: kitchenPartner.kitchenKyc?.upiId ?? null,
-      gpayNumber: kitchenPartner.kitchenKyc?.gpayNumber ?? null,
-      phoneNumber: kitchenPartner.kitchenKyc?.phoneNumber ?? null,
-      userName: kitchenPartner.user?.name ?? null,
-      email: kitchenPartner.user?.email ?? null,
+      bankName: kitchenPartner.kitchenKyc?.bankName,
+      bankAccountNumber: kitchenPartner.kitchenKyc?.bankAccountNumber,
+      ifscCode: kitchenPartner.kitchenKyc?.ifscCode,
+      accountHolderName: kitchenPartner.kitchenKyc?.accountHolderName,
+      upiId: kitchenPartner.kitchenKyc?.upiId,
+      gpayNumber: kitchenPartner.kitchenKyc?.gpayNumber,
+      phoneNumber: kitchenPartner.kitchenKyc?.phoneNumber,
+      userName: kitchenPartner.user?.name,
+      email: kitchenPartner.user?.email,
+      operatingHours: kitchenPartner.operatingHours as Record<string, { open: string; close: string }> | null,
+      estimatedPrepTime: kitchenPartner.estimatedPrepTime,
+      cuisineIds: kitchenPartner.kitchenCategories.map((kc) => kc.categoryId),
+      cuisines: kitchenPartner.kitchenCategories.map((kc) => kc.category.name),
       address: kitchenPartner.kitchenAddress
         ? {
             lineOne: kitchenPartner.kitchenAddress.lineOne,
@@ -559,18 +672,28 @@ export async function getKitchenDashboardData() {
       monthRevenue,
       customers: uniqueCustomers,
       menuItems: allMenuItems.length,
+      preOrderCount,
+      preOrderRevenue,
     },
     menuItems: allMenuItems,
     orders: orderList,
+    todayAvailability,
     tomorrowAvailability,
     monthlyRevenue,
     weeklySales,
     popularFood,
     vegCount,
     nonVegCount,
-    settlements: payoutAgg._sum.netAmount
-      ? [{ period: format(now, "MMMM yyyy"), gross: monthRevenue, commission: Math.round(monthRevenue * 0.15), net: monthRevenue - Math.round(monthRevenue * 0.15), status: "Pending" }]
-      : [],
+    settlements: payoutRows.map((p) => ({
+      id: p.id,
+      period: format(p.createdAt, "MMMM yyyy"),
+      gross: Number(p.grossAmount),
+      commission: Number(p.commissionAmount),
+      net: Number(p.netAmount),
+      status: p.status === "SETTLED" ? "Paid" : "Pending",
+      payoutDate: p.status === "SETTLED" && p.settledAt ? format(p.settledAt, "dd MMM yyyy") : null,
+      transactionId: p.razorpayPayoutId,
+    })),
     supportTickets: supportTickets.map((t: { id: string; subject: string; status: string; priority: string; createdAt: Date }) => ({
       id: t.id,
       subject: t.subject,
@@ -586,9 +709,9 @@ export async function getKitchenDashboardData() {
       portionSizeRating: r.portionSizeRating as number | null,
       comment: r.comment as string | null,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      customerName: (r.user as any)?.name ?? "",
+      customerName: (r.user as any)?.name,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      itemName: ((r.order as any)?.orderItems?.[0]?.menuItem?.name as string) ?? "",
+      itemName: ((r.order as any)?.orderItems?.[0]?.menuItem?.name as string),
       createdAt: (r.createdAt as Date).toISOString(),
     })),
   }
@@ -633,6 +756,26 @@ export async function updateKitchenBankDetails(data: {
       phoneNumber: data.phoneNumber || null,
     },
   })
+
+  return { success: true }
+}
+
+export async function updateKitchenPhoto(imageUrl: string | null) {
+  const session = await getSession()
+  if (!session?.user) return { success: false, error: "Unauthorized" }
+
+  const kitchenPartner = await prisma.kitchenPartner.findUnique({
+    where: { userId: session.user.id },
+    include: { kitchenAlias: { select: { id: true } } },
+  })
+  if (!kitchenPartner) return { success: false, error: "Kitchen partner not found" }
+
+  if (kitchenPartner.kitchenAlias) {
+    await prisma.kitchenAlias.update({
+      where: { id: kitchenPartner.kitchenAlias.id },
+      data: { imageUrl },
+    })
+  }
 
   return { success: true }
 }
@@ -745,6 +888,7 @@ export async function addKitchenMenuItem(formData: FormData) {
   const price = parseFloat(formData.get("price") as string)
   const description = (formData.get("description") as string) || ""
   const isAvailable = formData.get("isAvailable") === "true"
+  const availableFor = (formData.get("availableFor") as string) || "BOTH"
   const imagesRaw = (formData.get("images") as string) || "[]"
 
   if (!name || !category || !foodType || !timeSlot || !price) {
@@ -768,17 +912,22 @@ export async function addKitchenMenuItem(formData: FormData) {
   )
   const slug = uniqueSlug(name, existingItemSlugs)
 
-  const menuItem = await prisma.menuItem.create({
-    data: {
-      menuId: menu.id,
-      name,
-      slug,
-      description,
-      price,
-      foodType: foodType.toUpperCase() as "VEG" | "NONVEG",
-      timeSlot: timeSlot.toUpperCase() as "MORNING" | "LUNCH" | "EVENINGSNACKS" | "DINNER",
-      isAvailable,
-    },
+  const menuItem = await prisma.$transaction(async (tx) => {
+    const created = await tx.menuItem.create({
+      data: {
+        publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.MENU_ITEM),
+        menuId: menu.id,
+        name,
+        slug,
+        description,
+        price,
+        foodType: foodType.toUpperCase() as "VEG" | "NONVEG",
+        timeSlot: timeSlot.toUpperCase() as "MORNING" | "LUNCH" | "EVENINGSNACKS" | "DINNER",
+        isAvailable,
+        availableFor: availableFor as "TODAY" | "TOMORROW" | "BOTH",
+      },
+    })
+    return created
   })
 
   let images: { secure_url: string; public_id: string }[] = []
@@ -814,7 +963,7 @@ export async function toggleMenuItemAvailability(itemId: string, isAvailable: bo
   return { success: true }
 }
 
-export async function setKitchenAvailability(isAvailable: boolean) {
+export async function setKitchenAvailability(isAvailable: boolean, serviceDateType?: "TODAY" | "TOMORROW") {
   const session = await getSession()
   if (!session?.user) return { success: false, error: "Unauthorized" }
 
@@ -824,19 +973,24 @@ export async function setKitchenAvailability(isAvailable: boolean) {
   if (!kitchenPartner) return { success: false, error: "Kitchen partner not found" }
 
   const now = new Date()
-  const tomorrow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1))
+  let serviceDate: Date
+  if (serviceDateType === "TODAY") {
+    serviceDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
+  } else {
+    serviceDate = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1))
+  }
 
   await prisma.kitchenAvailability.upsert({
     where: {
       kitchenPartnerId_serviceDate: {
         kitchenPartnerId: kitchenPartner.id,
-        serviceDate: tomorrow,
+        serviceDate,
       },
     },
     update: { isAvailable },
     create: {
       kitchenPartnerId: kitchenPartner.id,
-      serviceDate: tomorrow,
+      serviceDate,
       isAvailable,
     },
   })
@@ -855,7 +1009,7 @@ export async function getDeliveryDashboardData() {
   let deliveryPartner = await prisma.deliveryPartner.findUnique({
     where: { userId: session.user.id },
     include: {
-      user: { select: { name: true, phoneNumber: true, email: true } },
+      user: { select: { name: true, phoneNumber: true, email: true, image: true } },
       kyc: true,
       kitchenAssignments: {
         include: {
@@ -874,25 +1028,31 @@ export async function getDeliveryDashboardData() {
   })
 
   if (!deliveryPartner) {
-    deliveryPartner = await prisma.deliveryPartner.create({
-      data: { userId: session.user.id },
-      include: {
-        user: { select: { name: true, phoneNumber: true, email: true } },
-        kyc: true,
-        kitchenAssignments: {
-          include: {
-            kitchenPartner: { include: { kitchenAlias: true } },
-          },
-          orderBy: { createdAt: "desc" },
+    deliveryPartner = await prisma.$transaction(async (tx) => {
+      const created = await tx.deliveryPartner.create({
+        data: {
+          publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.DELIVERY_PARTNER),
+          userId: session.user.id,
         },
-        reviews: {
-          include: {
-            order: { select: { id: true, orderItems: { take: 1, include: { menuItem: { select: { name: true } } } } } },
+        include: {
+          user: { select: { name: true, phoneNumber: true, email: true, image: true } },
+          kyc: true,
+          kitchenAssignments: {
+            include: {
+              kitchenPartner: { include: { kitchenAlias: true } },
+            },
+            orderBy: { createdAt: "desc" },
           },
-          orderBy: { createdAt: "desc" },
-          take: 20,
+          reviews: {
+            include: {
+              order: { select: { id: true, orderItems: { take: 1, include: { menuItem: { select: { name: true } } } } } },
+            },
+            orderBy: { createdAt: "desc" },
+            take: 20,
+          },
         },
-      },
+      })
+      return created
     })
   }
 
@@ -907,12 +1067,17 @@ export async function getDeliveryDashboardData() {
       : 0
 
   const now = new Date()
+  const todayStart = startOfDay(now)
+  const weekStart = startOfDay(new Date(Date.now() - 6 * 86400000))
+  const yesterdayStart = startOfDay(new Date(Date.now() - 86400000))
+  const prevMonthStart = new Date(now.getFullYear(), now.getMonth() - 1, 1)
+  const prevMonthEnd = new Date(now.getFullYear(), now.getMonth(), 1)
 
-  const [todayPayouts, weekPayouts, monthPayouts, supportTickets] = await Promise.all([
+  const [todayPayouts, weekPayouts, monthPayouts, yesterdayPayouts, lastMonthPayouts, weekPayoutRows, ratingDist, supportTickets] = await Promise.all([
     prisma.deliveryPartnerPayout.aggregate({
       where: {
         deliveryPartnerId: deliveryPartner.id,
-        createdAt: { gte: startOfDay(new Date()) },
+        createdAt: { gte: todayStart },
         status: { in: ["PENDING", "SETTLED"] },
       },
       _sum: { amount: true },
@@ -933,6 +1098,35 @@ export async function getDeliveryDashboardData() {
       },
       _sum: { amount: true },
     }),
+    prisma.deliveryPartnerPayout.aggregate({
+      where: {
+        deliveryPartnerId: deliveryPartner.id,
+        createdAt: { gte: yesterdayStart, lt: todayStart },
+        status: { in: ["PENDING", "SETTLED"] },
+      },
+      _sum: { amount: true },
+    }),
+    prisma.deliveryPartnerPayout.aggregate({
+      where: {
+        deliveryPartnerId: deliveryPartner.id,
+        createdAt: { gte: prevMonthStart, lt: prevMonthEnd },
+        status: { in: ["PENDING", "SETTLED"] },
+      },
+      _sum: { amount: true },
+    }),
+    prisma.deliveryPartnerPayout.findMany({
+      where: {
+        deliveryPartnerId: deliveryPartner.id,
+        createdAt: { gte: weekStart },
+        status: { in: ["PENDING", "SETTLED"] },
+      },
+      select: { amount: true, createdAt: true },
+    }),
+    prisma.deliveryReview.groupBy({
+      by: ["rating"],
+      where: { deliveryPartnerId: deliveryPartner.id },
+      _count: { id: true },
+    }),
     prisma.supportTicket.findMany({
       where: { userId: session.user.id },
       orderBy: { createdAt: "desc" },
@@ -941,9 +1135,31 @@ export async function getDeliveryDashboardData() {
     }),
   ])
 
+  const weeklyEarningsTrend = Array.from({ length: 7 }, (_, i) => ({
+    name: format(new Date(Date.now() - (6 - i) * 86400000), "EEE"),
+    value: 0,
+  }))
+  for (const row of weekPayoutRows) {
+    const idx = differenceInCalendarDays(row.createdAt, weekStart)
+    if (idx >= 0 && idx < 7) {
+      weeklyEarningsTrend[idx].value += Number(row.amount)
+    }
+  }
+
+  const weeklyTrips = deliveryPartner.kitchenAssignments.filter((a) => a.createdAt >= weekStart).length
+
+  const ratingDistMap: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
+  for (const row of ratingDist) {
+    ratingDistMap[row.rating] = row._count.id
+  }
+  const ratingDistribution = [5, 4, 3, 2, 1].map((stars) => ({
+    stars,
+    count: ratingDistMap[stars],
+  }))
+
   const recentAssignments = deliveryPartner.kitchenAssignments.slice(0, 10).map((a) => ({
     id: a.id,
-    kitchen: a.kitchenPartner?.kitchenAlias?.displayName ?? "",
+    kitchen: a.kitchenPartner?.kitchenAlias?.displayName,
     status: a.status === "DELIVERED" ? "Delivered" : a.status === "PENDING" ? "Pending" : "Cancelled",
     date: format(a.createdAt, "dd MMM yyyy"),
   }))
@@ -962,7 +1178,10 @@ export async function getDeliveryDashboardData() {
         include: {
           menuItem: { select: { name: true, timeSlot: true } },
           order: {
-            include: {
+            select: {
+              id: true,
+              publicCode: true,
+              status: true,
               address: { select: { lineOne: true, lineTwo: true, pincode: true, latitude: true, longitude: true } },
               payment: { select: { status: true, provider: true } },
               user: { select: { name: true, phoneNumber: true, id: true } },
@@ -985,26 +1204,29 @@ export async function getDeliveryDashboardData() {
     const ka = oi.kitchenPartner?.kitchenAddress
     return {
       id: oi.order.id,
+      publicCode: oi.order.publicCode,
       itemName: oi.menuItem.name,
       timeSlot: formatTimeSlot(oi.menuItem.timeSlot),
       quantity: oi.quantity,
-      customerName: oi.order.user?.name ?? "",
-      customerPhone: oi.order.user?.phoneNumber ?? "",
+      amount: Number(oi.unitPrice) * oi.quantity,
+      customerName: oi.order.user?.name,
+      customerPhone: oi.order.user?.phoneNumber,
       customerAddress: oi.order.address
         ? `${oi.order.address.lineOne}${oi.order.address.lineTwo ? ", " + oi.order.address.lineTwo : ""}, ${oi.order.address.pincode}`
-        : "",
+        : undefined,
       customerLat: oi.order.address?.latitude ? Number(oi.order.address.latitude) : null,
       customerLng: oi.order.address?.longitude ? Number(oi.order.address.longitude) : null,
-      kitchenName: oi.kitchenPartner?.kitchenAlias?.displayName ?? "",
-      kitchenPhone: oi.kitchenPartner?.user?.phoneNumber ?? "",
+      kitchenName: oi.kitchenPartner?.kitchenAlias?.displayName,
+      kitchenImageUrl: oi.kitchenPartner?.kitchenAlias?.imageUrl,
+      kitchenPhone: oi.kitchenPartner?.user?.phoneNumber,
       kitchenAddress: ka
         ? `${ka.lineOne}, ${ka.pincode}`
-        : "Address not set",
+        : undefined,
       kitchenLat: ka?.latitude ? Number(ka.latitude) : null,
       kitchenLng: ka?.longitude ? Number(ka.longitude) : null,
       orderStatus: oi.order.status,
-      paymentProvider: oi.order.payment?.provider ?? null,
-      paymentStatus: oi.order.payment?.status ?? null,
+      paymentProvider: oi.order.payment?.provider,
+      paymentStatus: oi.order.payment?.status,
     }
   })
 
@@ -1013,19 +1235,18 @@ export async function getDeliveryDashboardData() {
   return {
     profile: {
       id: deliveryPartner.id,
-      name: deliveryPartner.user?.name ?? "Delivery Person",
-      phone: deliveryPartner.user?.phoneNumber ?? "-",
-      email: deliveryPartner.user?.email ?? null,
-      bankName: kyc?.bankName ?? null,
-      bankAccount: kyc?.bankAccountNumber ?? null,
-      bankIfsc: kyc?.ifscCode ?? null,
-      accountHolderName: kyc?.accountHolderName ?? null,
-      upi: kyc?.upiId ?? null,
-      googlePayNumber: kyc?.googlePayNumber ?? null,
-      phonePeNumber: kyc?.phonePeNumber ?? null,
+      name: deliveryPartner.user?.name,
+      imageUrl: deliveryPartner.user?.image,
+      phone: deliveryPartner.user?.phoneNumber,
+      email: deliveryPartner.user?.email,
+      bankName: kyc?.bankName,
+      bankAccount: kyc?.bankAccountNumber,
+      bankIfsc: kyc?.ifscCode,
+      accountHolderName: kyc?.accountHolderName,
+      upi: kyc?.upiId,
+      googlePayNumber: kyc?.googlePayNumber,
+      phonePeNumber: kyc?.phonePeNumber,
       isOnline: (deliveryPartner as Record<string, unknown>).isOnline ?? false,
-      cashInHand: Number((deliveryPartner as Record<string, unknown>).cashInHand ?? 0),
-      codEligible: (deliveryPartner as Record<string, unknown>).codEligible ?? true,
       avgRating: "avgRating" in deliveryPartner && typeof (deliveryPartner as Record<string, unknown>).avgRating === "number"
         ? Math.round(Number((deliveryPartner as Record<string, unknown>).avgRating) * 10) / 10
         : null,
@@ -1039,9 +1260,14 @@ export async function getDeliveryDashboardData() {
       todayEarnings: Number(todayPayouts._sum.amount ?? 0),
       weeklyEarnings: Number(weekPayouts._sum.amount ?? 0),
       monthlyEarnings: Number(monthPayouts._sum.amount ?? 0),
+      yesterdayEarnings: Number(yesterdayPayouts._sum.amount ?? 0),
+      lastMonthEarnings: Number(lastMonthPayouts._sum.amount ?? 0),
+      weeklyTrips,
       rating: Math.round(avgRating * 10) / 10,
       distanceTravelled: 0,
     },
+    weeklyEarningsTrend,
+    ratingDistribution,
     assignments: recentAssignments,
     deliveryOrders: deliveryOrderList,
     supportTickets: supportTickets.map((t: { id: string; subject: string; status: string; priority: string; createdAt: Date }) => ({
@@ -1058,7 +1284,7 @@ export async function getDeliveryDashboardData() {
       behaviorHygiene: r.behaviorHygiene as boolean | null,
       comment: r.comment as string | null,
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      itemName: ((r.order as any)?.orderItems?.[0]?.menuItem?.name as string) ?? "",
+      itemName: ((r.order as any)?.orderItems?.[0]?.menuItem?.name as string),
       createdAt: (r.createdAt as Date).toISOString(),
     })),
   }

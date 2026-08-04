@@ -12,16 +12,23 @@ const InstallPrompt = dynamic(() => import("@/components/patterns/install-prompt
 
 const HIDE_HEADER_FOOTER_PATHS = [
   "/login", "/signup", "/admin", "/kitchen", "/delivery-partner",
-  "/privacy-policy", "/terms-of-use", "/contact",
+  "/privacy-policy", "/terms-of-use",
 ];
+
+const HIDE_FOOTER_ON_LARGE_SCREEN_PATHS = ["/contact"];
 
 function shouldHideShell(pathname: string) {
   return HIDE_HEADER_FOOTER_PATHS.some((p) => pathname.startsWith(p));
 }
 
+function shouldHideFooterOnLargeScreen(pathname: string) {
+  return HIDE_FOOTER_ON_LARGE_SCREEN_PATHS.some((p) => pathname.startsWith(p));
+}
+
 export const AppShell = memo(function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const hideShell = useMemo(() => shouldHideShell(pathname), [pathname]);
+  const hideFooterOnLargeScreen = useMemo(() => shouldHideFooterOnLargeScreen(pathname), [pathname]);
   const isCartPage = pathname === "/cart";
   const isSearchPage = pathname === "/search";
 
@@ -31,7 +38,13 @@ export const AppShell = memo(function AppShell({ children }: { children: React.R
     <>
       <SiteHeader />
       {children}
-      {!isCartPage && !isSearchPage && <SiteFooter />}
+      {!isCartPage && !isSearchPage && (
+        hideFooterOnLargeScreen ? (
+          <div className="lg:hidden"><SiteFooter /></div>
+        ) : (
+          <SiteFooter />
+        )
+      )}
       <SwUpdateBanner />
       <PushSubscriptionInit />
       <InstallPrompt />

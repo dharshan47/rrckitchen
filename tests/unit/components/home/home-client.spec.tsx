@@ -4,11 +4,15 @@ import { HomeClient } from "@/components/home/home-client"
 import { useSession } from "@/lib/auth-client"
 
 vi.mock("next/link", () => ({
-  default: ({ children, href }: { children: React.ReactNode; href: string }) => <a href={href}>{children}</a>,
+  default: ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  ),
 }))
 
 vi.mock("next/image", () => ({
-  default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
+  default: ({ src, alt }: { src: string; alt: string }) => (
+    <img src={src} alt={alt} />
+  ),
 }))
 
 vi.mock("@/lib/auth-client", () => ({
@@ -16,17 +20,25 @@ vi.mock("@/lib/auth-client", () => ({
 }))
 
 vi.mock("@/components/patterns/error-boundary", () => ({
-  ErrorBoundary: ({ children }: { children: React.ReactNode }) => <div data-testid="error-boundary">{children}</div>,
-}))
-
-vi.mock("@/components/kitchen/infinite-kitchen-grid", () => ({
-  InfiniteKitchenGrid: () => (
-    <div data-testid="infinite-kitchen-grid" />
+  ErrorBoundary: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid="error-boundary">{children}</div>
   ),
 }))
 
-vi.mock("@/components/home/fast-delivery-carousel", () => ({
-  FastDeliveryCarousel: () => <div data-testid="fast-delivery-carousel" />,
+vi.mock("@/components/kitchen/infinite-kitchen-grid", () => ({
+  InfiniteKitchenGrid: () => <div data-testid="infinite-kitchen-grid" />,
+}))
+
+vi.mock("@/components/search/search-autocomplete", () => ({
+  SearchAutocomplete: () => <div data-testid="search-autocomplete" />,
+}))
+
+vi.mock("@/components/kitchen/kitchen-filters", () => ({
+  KitchenFilters: () => <div data-testid="kitchen-filters" />,
+}))
+
+vi.mock("@/hooks/useExploreKitchens", () => ({
+  useKitchenCategories: vi.fn(() => ({ data: [] })),
 }))
 
 describe("HomeClient", () => {
@@ -34,51 +46,36 @@ describe("HomeClient", () => {
     vi.clearAllMocks()
   })
 
-  it("renders the home page", () => {
+  it("renders the category section heading", () => {
     vi.mocked(useSession).mockReturnValue({ data: null } as never)
     render(<HomeClient />)
-    expect(screen.getByText("What's on your mind?")).toBeInTheDocument()
+    expect(
+      screen.getByText("What Would You Like To Eat?")
+    ).toBeInTheDocument()
   })
 
-  it("renders with user name when session exists", () => {
-    vi.mocked(useSession).mockReturnValue({ data: { user: { name: "Ravi" } } } as never)
-    render(<HomeClient />)
-    expect(screen.getByText("Ravi, What's on your mind?")).toBeInTheDocument()
-  })
-
-  it("renders recipe navigation links", () => {
+  it("renders all 12 food categories", () => {
     vi.mocked(useSession).mockReturnValue({ data: null } as never)
     render(<HomeClient />)
-    expect(screen.getByText("Dosa")).toBeInTheDocument()
-    expect(screen.getByText("Biryani")).toBeInTheDocument()
-    expect(screen.getByText("Idli")).toBeInTheDocument()
+    expect(screen.getByText("Breakfast")).toBeInTheDocument()
+    expect(screen.getByText("Lunch")).toBeInTheDocument()
+    expect(screen.getByText("Dinner")).toBeInTheDocument()
+    expect(screen.getByText("Veg Meals")).toBeInTheDocument()
+    expect(screen.getByText("Non Veg Meals")).toBeInTheDocument()
+    expect(screen.getByText("South Indian")).toBeInTheDocument()
+    expect(screen.getByText("North Indian")).toBeInTheDocument()
+    expect(screen.getByText("Healthy Meals")).toBeInTheDocument()
+    expect(screen.getByText("Kids Meals")).toBeInTheDocument()
+    expect(screen.getByText("Snacks")).toBeInTheDocument()
+    expect(screen.getByText("Desserts")).toBeInTheDocument()
+    expect(screen.getByText("Beverages")).toBeInTheDocument()
   })
 
-  it("links recipes to search page", () => {
+  it("links categories to search page", () => {
     vi.mocked(useSession).mockReturnValue({ data: null } as never)
     render(<HomeClient />)
-    const dosaLink = screen.getByText("Dosa").closest("a")
-    expect(dosaLink).toHaveAttribute("href", "/search?q=dosa")
-  })
-
-  it("renders all 9 recipes", () => {
-    vi.mocked(useSession).mockReturnValue({ data: null } as never)
-    render(<HomeClient />)
-    expect(screen.getByText("Dosa")).toBeInTheDocument()
-    expect(screen.getByText("Biryani")).toBeInTheDocument()
-    expect(screen.getByText("Idli")).toBeInTheDocument()
-    expect(screen.getByText("Vada")).toBeInTheDocument()
-    expect(screen.getByText("Momos")).toBeInTheDocument()
-    expect(screen.getByText("Parotta")).toBeInTheDocument()
-    expect(screen.getByText("Noodles")).toBeInTheDocument()
-    expect(screen.getByText("Pancake")).toBeInTheDocument()
-    expect(screen.getByText("Sandwich")).toBeInTheDocument()
-  })
-
-  it("renders FastDeliveryCarousel", () => {
-    vi.mocked(useSession).mockReturnValue({ data: null } as never)
-    render(<HomeClient />)
-    expect(screen.getByTestId("fast-delivery-carousel")).toBeInTheDocument()
+    const breakfastLink = screen.getByText("Breakfast").closest("a")
+    expect(breakfastLink).toHaveAttribute("href", "/search?q=breakfast")
   })
 
   it("renders InfiniteKitchenGrid", () => {
@@ -93,42 +90,55 @@ describe("HomeClient", () => {
     expect(screen.getByTestId("error-boundary")).toBeInTheDocument()
   })
 
+  it("renders Why Tiffin Carrier section", () => {
+    vi.mocked(useSession).mockReturnValue({ data: null } as never)
+    render(<HomeClient />)
+    expect(screen.getByText("Why Tiffin Carrier?")).toBeInTheDocument()
+    expect(
+      screen.getByText("Not Plastic, Not Aluminium. Authentic Stainless Steel.")
+    ).toBeInTheDocument()
+  })
+
   it("renders Become a Home Chef CTA", () => {
     vi.mocked(useSession).mockReturnValue({ data: null } as never)
     render(<HomeClient />)
-    expect(screen.getByText("Become a Home Chef")).toBeInTheDocument()
+    expect(screen.getByText("Become a")).toBeInTheDocument()
+    expect(screen.getByText("Home Chef")).toBeInTheDocument()
   })
 
-  it("renders CTA description text", () => {
+  it("renders Join Now link to kitchen signup", () => {
     vi.mocked(useSession).mockReturnValue({ data: null } as never)
     render(<HomeClient />)
-    expect(screen.getByText(/Turn your passion into profession/)).toBeInTheDocument()
-  })
-
-  it("renders Join the Kitchen link", () => {
-    vi.mocked(useSession).mockReturnValue({ data: null } as never)
-    render(<HomeClient />)
-    const link = screen.getByText("Join the Kitchen").closest("a")
+    const link = screen.getByText("Join Now").closest("a")
     expect(link).toHaveAttribute("href", "/kitchen/signup")
   })
 
-  it("renders without session (logged out)", () => {
+  it("renders testimonials section", () => {
     vi.mocked(useSession).mockReturnValue({ data: null } as never)
     render(<HomeClient />)
-    expect(screen.getByText("What's on your mind?")).toBeInTheDocument()
+    expect(
+      screen.getByText("Loved by Thousands of Families")
+    ).toBeInTheDocument()
+    expect(screen.getByText("Priya S.")).toBeInTheDocument()
   })
 
-  it("renders mobile recipe grid (smaller items)", () => {
+  it("renders How It Works section", () => {
     vi.mocked(useSession).mockReturnValue({ data: null } as never)
-    const { container } = render(<HomeClient />)
-    const mobileRecipes = container.querySelectorAll(".lg\\:hidden a")
-    expect(mobileRecipes.length).toBe(9)
+    render(<HomeClient />)
+    expect(screen.getByText("How It Works")).toBeInTheDocument()
+    expect(screen.getByText("Choose Location")).toBeInTheDocument()
   })
 
-  it("renders desktop recipe grid", () => {
+  it("renders Today's Specials section", () => {
     vi.mocked(useSession).mockReturnValue({ data: null } as never)
-    const { container } = render(<HomeClient />)
-    const desktopRecipes = container.querySelectorAll(".hidden.lg\\:grid a")
-    expect(desktopRecipes.length).toBe(7)
+    render(<HomeClient />)
+    expect(screen.getByText("Today's Specials")).toBeInTheDocument()
+  })
+
+  it("renders Meet Our Home Chefs section", () => {
+    vi.mocked(useSession).mockReturnValue({ data: null } as never)
+    render(<HomeClient />)
+    expect(screen.getByText("Meet Our Home Chefs")).toBeInTheDocument()
+    expect(screen.getByText("Lakshmi Devi")).toBeInTheDocument()
   })
 })

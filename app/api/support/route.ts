@@ -15,7 +15,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Subject and description are required" }, { status: 400 });
     }
 
-    const validCategory = ["order", "delivery", "food", "payment", "account", "kitchen", "menu", "delivery-partner", "customer-order", "kitchen-partner", "delivery-issue", "cod", "ingredient", "equipment", "safety", "other"].includes(category) ? category : "other";
+    const validCategory = ["order", "delivery", "food", "payment", "account", "kitchen", "menu", "delivery-partner", "customer-order", "kitchen-partner", "delivery-issue", "ingredient", "equipment", "safety", "other"].includes(category) ? category : "other";
 
     const ticket = await prisma.supportTicket.create({
       data: {

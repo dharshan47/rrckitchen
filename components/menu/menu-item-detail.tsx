@@ -1,27 +1,30 @@
 "use client";
 
-import { useState, useCallback, useRef, useEffect } from "react";
+import { useState, useCallback, useMemo, useRef, useEffect } from "react";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ProgressiveImage } from "@/components/patterns/progressive-image";
 import { useCartActions, useCartItems, useMenuDeliveryAddress } from "@/stores";
-import { formatTimeSlot, createBadgeVariant } from "@/lib/patterns";
+import { formatTimeSlot } from "@/lib/patterns";
 import { LocationDialog } from "@/components/location";
+import { getMenuItemByIdentifierClient } from "@/actions/menu-client-actions";
+import { getMenuItemReviews } from "@/actions/catalog/menu-reviews";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
 import {
-  ChevronLeft,
-  ChevronRight,
-  Star,
-  RefreshCw,
-  Truck,
-  MapPin,
-  ShoppingCart,
-  Package,
-  Search,
-  TruckIcon,
-  Share2,
-  Minus,
-  Plus,
+  ChevronLeft, ChevronRight, Star, MapPin,
+  Share2, Minus, Plus, Heart, Leaf, Flame, Utensils,
+  ShieldCheck, CheckCircle2, Truck, Timer, Info, Clock,
+  Package, ShoppingCart, Users, Scale, AlertTriangle,
+  ChevronRightIcon, Sparkles, Loader2, User,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { WishlistButton } from "@/components/menu/wishlist-button";
 import { AddToCartPopup, type AddPopupItem } from "@/components/menu/add-to-cart-popup";
@@ -32,8 +35,23 @@ interface MenuItemPhoto {
   sortOrder: number;
 }
 
+interface MenuItemHighlight {
+  title: string;
+  description: string;
+  enabled: boolean;
+}
+
+interface RelatedMenuItem {
+  id: string;
+  name: string;
+  price: number;
+  avgRating: number | null;
+  imageUrl: string | null;
+}
+
 interface MenuItem {
   id: string;
+  slug?: string | null;
   name: string;
   description: string | null;
   price: number;
@@ -43,42 +61,235 @@ interface MenuItem {
   isAvailable: boolean;
   avgRating: number | null;
   totalReviews: number;
+  orderCount?: number;
+  bestseller?: boolean;
+  cuisine?: string | null;
+  highlights?: MenuItemHighlight[];
+  aboutTitle?: string | null;
+  aboutDescription?: string | null;
+  serves?: number | null;
+  portionSize?: string | null;
+  shelfLife?: string | null;
+  allergens?: string | null;
+  deliveryTimeMin?: number | null;
+  deliveryTimeMax?: number | null;
+  deliveryFee?: number | null;
+  freeDelivery?: boolean;
+  packagingType?: string | null;
+  relatedItems?: RelatedMenuItem[];
   menu: { kitchenPartner: { kitchenAlias: { displayName: string } | null } | null } | null;
+  kitchen?: {
+    name: string;
+    slug: string;
+    imageUrl: string | null;
+    avgRating: number | null;
+    totalReviews: number;
+    orderCount: number;
+  } | null;
   photos: MenuItemPhoto[];
 }
 
 interface MenuItemDetailProps {
   item: MenuItem;
+  kitchenSlug?: string;
+  itemIdentifier?: string;
 }
 
-export function MenuItemDetail({ item }: MenuItemDetailProps) {
+const HIGHLIGHT_ICONS: Record<string, React.ElementType> = {
+  heart: Heart,
+  leaf: Leaf,
+  shield: ShieldCheck,
+  shieldcheck: ShieldCheck,
+  package: Package,
+  users: Users,
+  sparkles: Sparkles,
+  timer: Timer,
+  truck: Truck,
+  flame: Flame,
+};
+
+function highlightIcon(title: string): React.ElementType {
+  const key = title.toLowerCase().replace(/[^a-z]/g, "");
+  for (const [token, icon] of Object.entries(HIGHLIGHT_ICONS)) {
+    if (key.includes(token)) return icon;
+  }
+  return Heart;
+}
+
+function formatCompact(value: number) {
+  return new Intl.NumberFormat("en-IN", { notation: "compact", maximumFractionDigits: 1 }).format(value);
+}
+
+function formatReviewDate(iso: string) {
+  return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+}
+
+function ReviewStars({ rating }: { rating: number }) {
+  return (
+    <div className="flex items-center gap-0.5">
+      {[1, 2, 3, 4, 5].map((s) => (
+        <Star
+          key={s}
+          className={`h-3.5 w-3.5 ${s <= rating ? "fill-orange-400 text-orange-400" : "text-slate-200"}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function MenuItemDetailSkeleton() {
+  return (
+    <div className="min-h-screen bg-gray-50/30 pb-24 md:pb-10 pt-20 animate-pulse">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="py-4">
+          <Skeleton className="h-4 w-64" />
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-5 space-y-4">
+            <Skeleton className="aspect-video lg:aspect-square rounded-2xl" />
+            <div className="flex gap-3">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <Skeleton key={i} className="h-20 w-20 rounded-xl" />
+              ))}
+            </div>
+          </div>
+          <div className="lg:col-span-7 flex flex-col xl:flex-row gap-6">
+            <div className="flex-1 space-y-5">
+              <div className="space-y-2">
+                <Skeleton className="h-8 w-24" />
+                <Skeleton className="h-9 w-72" />
+              </div>
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6" />
+              <div className="flex gap-2">
+                <Skeleton className="h-6 w-28 rounded-full" />
+                <Skeleton className="h-6 w-20 rounded-full" />
+                <Skeleton className="h-6 w-24 rounded-full" />
+              </div>
+              <Skeleton className="h-9 w-40" />
+              <Skeleton className="h-12 w-44 rounded-lg" />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
+                <Skeleton className="h-16 rounded-lg" />
+                <Skeleton className="h-16 rounded-lg" />
+                <Skeleton className="h-16 rounded-lg sm:col-span-2" />
+              </div>
+            </div>
+            <div className="w-full xl:w-80 shrink-0">
+              <Skeleton className="h-80 rounded-xl" />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface KitchenProfileProps {
+  kitchenName: string;
+  imageUrl: string | null;
+  avgRating: number | null;
+  totalReviews: number;
+  orderCount: number;
+  kitchenSlug?: string;
+}
+
+function KitchenProfile({ kitchenName, imageUrl, avgRating, totalReviews, orderCount, kitchenSlug }: KitchenProfileProps) {
+  return (
+    <div className="p-6">
+      <div className="flex items-center gap-4 mb-6">
+        <div className="h-16 w-16 bg-green-800 text-white rounded-full flex flex-col items-center justify-center text-center shadow-inner shrink-0 relative overflow-hidden">
+          {imageUrl ? (
+            <Image src={imageUrl} alt={kitchenName} fill sizes="64px" className="object-cover" />
+          ) : (
+            <span className="text-sm font-bold">{kitchenName.slice(0, 2).toUpperCase()}</span>
+          )}
+        </div>
+        <div>
+          <h3 className="font-bold text-lg flex items-center gap-1.5">
+            {kitchenName}
+            <CheckCircle2 className="h-4 w-4 text-green-600" />
+          </h3>
+          <div className="flex items-center gap-1 mt-1 text-sm font-medium text-muted-foreground">
+            {avgRating != null ? (
+              <>
+                <Star className="h-4 w-4 fill-green-600 text-green-600" />
+                <span className="text-foreground">{avgRating.toFixed(1)}</span>
+                <span>({formatCompact(totalReviews)} reviews)</span>
+              </>
+            ) : (
+              <span>New on RRC Kitchen</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 divide-x text-center mb-6 border-y py-4">
+         <div>
+           <p className="font-bold text-lg">{orderCount > 0 ? `${formatCompact(orderCount)}+` : "—"}</p>
+           <p className="text-xs text-muted-foreground font-medium">Orders</p>
+         </div>
+         <div>
+           <p className="font-bold text-lg">{totalReviews > 0 ? formatCompact(totalReviews) : "—"}</p>
+           <p className="text-xs text-muted-foreground font-medium">Reviews</p>
+         </div>
+      </div>
+
+      <div className="space-y-1">
+        {kitchenSlug && (
+          <Link href={`/kitchens/${kitchenSlug}`} className="w-full flex items-center justify-between p-3 hover:bg-muted/50 rounded-lg transition-colors text-sm font-medium group">
+            <span className="flex items-center gap-3"><Utensils className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" /> View Kitchen Menu</span>
+            <ChevronRightIcon className="h-4 w-4 text-muted-foreground" />
+          </Link>
+        )}
+      </div>
+    </div>
+  );
+}
+
+export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDetailProps) {
+  const { data: currentItem, isPending, isFetching } = useQuery({
+    queryKey: ["menu-item", kitchenSlug, itemIdentifier],
+    queryFn: async () => {
+      if (kitchenSlug && itemIdentifier) {
+        const result = await getMenuItemByIdentifierClient(kitchenSlug, itemIdentifier);
+        return result as unknown as MenuItem | null;
+      }
+      return null;
+    },
+    initialData: item,
+    enabled: !!kitchenSlug && !!itemIdentifier,
+    refetchInterval: 30_000,
+    staleTime: 15_000,
+  });
+
+  const displayItem = currentItem || item;
+
   const [imageIndex, setImageIndex] = useState(0);
-  const [showPrevCarousel, setShowPrevCarousel] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
-  const [showMobileSticky, setShowMobileSticky] = useState(false);
-  const [passedContent, setPassedContent] = useState(false);
-  const [atBottom, setAtBottom] = useState(false);
-  const [touchStart, setTouchStart] = useState<number | null>(null);
   const [popupItem, setPopupItem] = useState<AddPopupItem | null>(null);
-  const [popupOpen, setPopupOpen] = useState(false);
+  
   const { addToCart, updateQuantity, removeFromCart } = useCartActions();
   const cartItems = useCartItems();
-  const cartItem = cartItems.find(ci => ci.id === item.id);
+  const cartItem = cartItems.find(ci => ci.id === displayItem.id);
   const deliveryAddress = useMenuDeliveryAddress();
-  const imageSectionRef = useRef<HTMLDivElement>(null);
-  const howToOrderRef = useRef<HTMLDivElement>(null);
-  const pageBottomRef = useRef<HTMLDivElement>(null);
 
-  const showDesktopCompact = passedContent && !atBottom;
-
-  const kitchenName = item.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "";
-  const hasMultiplePhotos = item.photos?.length > 1;
-  const price = Number(item.price);
-  const hasDiscount = item.compareAtPrice != null;
-  const mrp = item.compareAtPrice ?? Math.round(price * 1.35);
+  const kitchen = displayItem.kitchen ?? null;
+  const kitchenName = kitchen?.name ?? displayItem.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "Kitchen";
+  const price = Number(displayItem.price);
+  const hasDiscount = displayItem.compareAtPrice != null && displayItem.compareAtPrice > price;
+  const mrp = displayItem.compareAtPrice ?? price;
   const offAmount = mrp - price;
+  const discountPercent = Math.round((offAmount / mrp) * 100);
 
-  const sortedPhotos = [...(item.photos ?? [])].sort((a, b) => a.sortOrder - b.sortOrder);
+  const highlights = useMemo(
+    () => (displayItem.highlights ?? []).filter((h) => h.enabled && h.title),
+    [displayItem.highlights]
+  );
+
+  const sortedPhotos = useMemo(
+    () => [...(displayItem.photos ?? [])].sort((a, b) => a.sortOrder - b.sortOrder),
+    [displayItem.photos]
+  );
 
   const handlePrevImage = useCallback(() => {
     setImageIndex((i) => (i > 0 ? i - 1 : sortedPhotos.length - 1));
@@ -90,683 +301,612 @@ export function MenuItemDetail({ item }: MenuItemDetailProps) {
 
   const showPopupForItem = useCallback(() => {
     setPopupItem({
-      id: item.id,
-      name: item.name,
+      id: displayItem.id,
+      name: displayItem.name,
       price,
-      compareAtPrice: item.compareAtPrice ?? null,
-      foodType: item.foodType,
-      imageUrl: item.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
+      compareAtPrice: displayItem.compareAtPrice ?? null,
+      foodType: displayItem.foodType,
+      imageUrl: displayItem.photos?.find((p) => p.imageUrl)?.imageUrl ?? null,
       kitchenName,
-      timeSlot: item.timeSlot,
+      timeSlot: displayItem.timeSlot,
     });
-    setPopupOpen(true);
-  }, [item, price, kitchenName]);
+  }, [displayItem, price, kitchenName]);
 
-  const handleAddToCart = useCallback(() => {
-    const existing = cartItems.find(ci => ci.id === item.id);
-    if (!existing) {
+  const handleAdd = () => {
+    if (!displayItem.isAvailable) return;
+    if (cartItem) {
+      updateQuantity(displayItem.id, cartItem.qty + 1);
+    } else {
       addToCart({
-        id: item.id,
-        name: item.name,
+        id: displayItem.id,
+        name: displayItem.name,
         price,
         qty: 1,
-        foodType: item.foodType,
-        timeSlot: item.timeSlot,
+        foodType: displayItem.foodType,
+        imageUrl: displayItem.photos?.find((p) => p.imageUrl)?.imageUrl ?? undefined,
         kitchenName,
+        timeSlot: displayItem.timeSlot,
       });
     }
     showPopupForItem();
-  }, [item, price, kitchenName, cartItems, addToCart, showPopupForItem]);
+  };
 
-  const handleDecrement = useCallback(() => {
-    if (!cartItem) return;
-    if (cartItem.qty <= 1) {
-      removeFromCart(item.id);
-    } else {
-      updateQuantity(item.id, cartItem.qty - 1);
+  const handleRemove = () => {
+    if (cartItem && cartItem.qty > 1) {
+      updateQuantity(displayItem.id, cartItem.qty - 1);
+    } else if (cartItem) {
+      removeFromCart(displayItem.id);
     }
-  }, [cartItem, item.id, updateQuantity, removeFromCart]);
+  };
 
-  const handleIncrement = useCallback(() => {
-    if (!cartItem) return;
-    updateQuantity(item.id, cartItem.qty + 1);
-    showPopupForItem();
-  }, [cartItem, item.id, updateQuantity, showPopupForItem]);
+  const deliveryTime =
+    displayItem.deliveryTimeMin != null
+      ? `${displayItem.deliveryTimeMin}${displayItem.deliveryTimeMax ? ` - ${displayItem.deliveryTimeMax}` : ""} mins`
+      : "—";
 
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    setTouchStart(e.touches[0].clientX);
-  }, []);
+  const deliveryFeeLabel =
+    displayItem.freeDelivery
+      ? "Free delivery"
+      : displayItem.deliveryFee != null
+        ? `₹${displayItem.deliveryFee} flat fee`
+        : "—";
 
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    if (touchStart === null) return;
-    const diff = e.changedTouches[0].clientX - touchStart;
-    const SWIPE_THRESHOLD = 50;
-    if (Math.abs(diff) > SWIPE_THRESHOLD) {
-      if (diff > 0) {
-        handlePrevImage();
-      } else {
-        handleNextImage();
-      }
-    }
-    setTouchStart(null);
-  }, [touchStart, handlePrevImage, handleNextImage]);
+  const aboutTitle = displayItem.aboutTitle ?? `About ${displayItem.name}`;
+  const aboutDescription = displayItem.aboutDescription ?? "";
+
+  const totalReviews = displayItem.totalReviews > 0 ? displayItem.totalReviews : 0;
+  const orderCount = displayItem.orderCount ?? 0;
+
+  const kitchenAvgRating = kitchen?.avgRating ?? displayItem.avgRating;
+  const kitchenTotalReviews = kitchen?.totalReviews ?? totalReviews;
+  const kitchenOrderCount = kitchen?.orderCount ?? orderCount;
 
   const handleShare = useCallback(async () => {
     const url = window.location.href;
-    if (navigator.share) {
-      await navigator.share({ title: item.name, text: item.name, url });
-    } else {
-      await navigator.clipboard.writeText(url);
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: displayItem.name,
+          text: `${displayItem.name} — ${kitchenName} on RRC Kitchen`,
+          url,
+        });
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast.success("Link copied to clipboard");
+      }
+    } catch {
+      // user dismissed the share sheet
     }
-  }, [item.name]);
+  }, [displayItem.name, kitchenName]);
 
-  // Mobile: show sticky top bar when image section scrolls past
+  const reviewsQuery = useInfiniteQuery({
+    queryKey: ["menu-item-reviews", displayItem.id],
+    queryFn: ({ pageParam }) => getMenuItemReviews(displayItem.id, pageParam),
+    initialPageParam: null as string | null,
+    getNextPageParam: (last) => last.nextCursor,
+  });
+
+  const allReviews = useMemo(
+    () => reviewsQuery.data?.pages.flatMap((p) => p.reviews) ?? [],
+    [reviewsQuery.data]
+  );
+
+  const reviewsScrollRef = useRef<HTMLDivElement>(null);
+  const reviewsSentinelRef = useRef<HTMLDivElement>(null);
+
+  const reviewVirtualizer = useVirtualizer({
+    count: allReviews.length,
+    getScrollElement: () => reviewsScrollRef.current,
+    estimateSize: () => 120,
+    overscan: 6,
+  });
+
   useEffect(() => {
-    const el = imageSectionRef.current;
-    if (!el) return;
+    const sentinel = reviewsSentinelRef.current;
+    if (!sentinel || !reviewsQuery.hasNextPage) return;
     const observer = new IntersectionObserver(
-      ([entry]) => setShowMobileSticky(!entry.isIntersecting),
-      { threshold: 0 }
+      (entries) => {
+        if (entries[0]?.isIntersecting && !reviewsQuery.isFetchingNextPage) {
+          reviewsQuery.fetchNextPage();
+        }
+      },
+      { root: reviewsScrollRef.current, rootMargin: "200px" }
     );
-    observer.observe(el);
+    observer.observe(sentinel);
     return () => observer.disconnect();
-  }, []);
+  }, [reviewsQuery, allReviews.length]);
 
-  // Desktop: show compact bar when image/details section is scrolled past
-  // (i.e., when How to Order section is in view)
-  useEffect(() => {
-    const el = imageSectionRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setPassedContent(!entry.isIntersecting),
-      { threshold: 0 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  // Desktop: hide bar when near footer
-  useEffect(() => {
-    const el = pageBottomRef.current;
-    if (!el) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setAtBottom(entry.isIntersecting),
-      { threshold: 0 }
-    );
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
-  // Thumbnail Carousel: Toggle Previous button based on scroll
-  useEffect(() => {
-    const el = document.getElementById("thumb-scroll");
-    if (!el) return;
-    const handleScroll = () => {
-      setShowPrevCarousel(el.scrollLeft > 50);
-    };
-    el.addEventListener("scroll", handleScroll);
-    return () => el.removeEventListener("scroll", handleScroll);
-  }, []);
+  if (isPending && !displayItem) {
+    return <MenuItemDetailSkeleton />;
+  }
 
   return (
-    <>
-      <div className="min-h-screen bg-background text-foreground">
-        {/* Mobile: Location Prompt */}
-        {!deliveryAddress && (
-          <div className="md:hidden">
-            <LocationPrompt onClick={() => setLocationOpen(true)} />
-          </div>
-        )}
-
-        <div className="mx-auto max-w-7xl px-4 lg:px-10 py-6 lg:py-10">
-          {/* Top Section: Side by side on desktop */}
-          <div className="flex flex-col lg:flex-row lg:gap-10">
-            {/* Left Column - Image Gallery + Price + Add to Cart */}
-            <div
-              ref={imageSectionRef}
-              className="lg:w-[55%] lg:sticky lg:top-28 lg:self-start"
-            >
-              {/* Main Image Container */}
-              <div
-                className="relative overflow-hidden bg-white"
-                onTouchStart={handleTouchStart}
-                onTouchEnd={handleTouchEnd}
-              >
-                <div className="relative aspect-square w-full overflow-hidden border border-border/40 bg-slate-50 shadow-sm">
-                  {sortedPhotos.length > 0 ? (
-                    <>
-                      <ProgressiveImage
-                        src={sortedPhotos[imageIndex]?.imageUrl}
-                        alt={item.name}
-                        fill
-                        priority
-                        className="object-contain p-4"
-                      />
-                      <button
-                        onClick={() => window.history.back()}
-                        className="md:hidden absolute top-4 left-4 h-9 w-9 rounded-full bg-white/90 text-foreground flex items-center justify-center shadow-md"
-                        aria-label="Go back"
-                      >
-                        <ChevronLeft className="h-5 w-5" />
-                      </button>
-                      <WishlistButton menuItemId={item.id} size="md" className="md:hidden absolute top-4 right-16" />
-                      <button
-                        onClick={handleShare}
-                        className="md:hidden absolute top-4 right-4 h-9 w-9 rounded-full bg-white/90 text-foreground flex items-center justify-center shadow-md"
-                        aria-label="Share"
-                      >
-                        <Share2 className="h-5 w-5" />
-                      </button>
-                    </>
-                  ) : (
-                    <div className="h-full flex items-center justify-center">
-                      <span className="text-8xl font-bold text-muted-foreground/15">
-                        {item.name.charAt(0)}
-                      </span>
-                    </div>
-                  )}
-                </div>
-
-                {/* Mobile: dot indicators */}
-                {hasMultiplePhotos && (
-                  <div className="md:hidden flex items-center justify-center gap-1.5 mt-3">
-                    {sortedPhotos.map((_, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setImageIndex(i)}
-                        className={`rounded-full transition-all ${
-                          i === imageIndex
-                            ? "h-2 w-5 bg-primary"
-                            : "h-2 w-2 bg-muted-foreground/30"
-                        }`}
-                        aria-label={`View image ${i + 1}`}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                {/* Desktop Thumbnail carousel - centered below image */}
-                {hasMultiplePhotos && (
-                  <div className="hidden md:flex items-center justify-center gap-2 mt-8 px-10 relative group/carousel">
-                    {/* Previous Button - only if scrolled past first page */}
-                    {showPrevCarousel && (
-                      <button
-                        className="absolute left-0 h-10 w-10 rounded-full bg-white text-foreground flex items-center justify-center shadow-lg border border-border hover:scale-110 transition-transform z-10"
-                        onClick={() => {
-                          const el = document.getElementById("thumb-scroll");
-                          if (el) el.scrollBy({ left: -400, behavior: "smooth" });
-                        }}
-                      >
-                        <ChevronLeft className="h-5 w-5" />
-                      </button>
-                    )}
-
-                    <div 
-                      id="thumb-scroll"
-                      className="flex gap-3 overflow-x-auto scrollbar-none snap-x snap-mandatory px-1"
-                      style={{ maxWidth: "600px" }}
-                    >
-                      {sortedPhotos.map((photo, i) => (
-                        <button
-                          key={photo.id ?? `thumb-${i}`}
-                          onClick={() => setImageIndex(i)}
-                          className={`snap-start shrink-0 relative overflow-hidden border-2 transition-all shadow-sm ${
-                            i === imageIndex
-                              ? "border-[#1a6a32] ring-1 ring-[#1a6a32]"
-                              : "border-transparent opacity-80 hover:opacity-100 hover:border-border"
-                          } w-20 h-20 lg:w-24 lg:h-24`}
-                        >
-                          <ProgressiveImage 
-                            src={photo.imageUrl} 
-                            alt="" 
-                            fill 
-                            className="object-contain p-1.5"
-                          />
-                        </button>
-                      ))}
-                    </div>
-
-                    {/* Next Button - visible if more images exist */}
-                    <button
-                      className="absolute right-0 h-10 w-10 rounded-full bg-white text-foreground flex items-center justify-center shadow-lg border border-border hover:scale-110 transition-transform z-10"
-                      onClick={() => {
-                        const el = document.getElementById("thumb-scroll");
-                        if (el) el.scrollBy({ left: 400, behavior: "smooth" });
-                      }}
-                    >
-                      <ChevronRight className="h-5 w-5" />
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {/* Price + Add to Cart row below image section */}
-              <div className="mt-4 lg:mt-6 flex items-center justify-between">
-                <div>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-2xl lg:text-3xl font-bold text-foreground">₹{price}</span>
-                    {hasDiscount && (
-                      <>
-                        <span className="text-sm lg:text-base text-muted-foreground line-through">₹{mrp}</span>
-                        <span className="text-xs font-semibold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">
-                          ₹{offAmount} OFF
-                        </span>
-                      </>
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">(incl. of all taxes)</p>
-                </div>
-                {cartItem ? (
-                  <div className="hidden md:flex items-center rounded-lg border border-[#EE7005] overflow-hidden bg-[#FFF5EB]">
-                    <button
-                      onClick={handleDecrement}
-                      className="h-10 w-10 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] transition-colors"
-                      aria-label="Decrease quantity"
-                    >
-                      <Minus className="h-5 w-5" />
-                    </button>
-                    <span className="w-9 text-center text-base font-bold text-[#EE7005] leading-none py-1">{cartItem.qty}</span>
-                    <button
-                      onClick={handleIncrement}
-                      className="h-10 w-10 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB]  transition-colors"
-                      aria-label="Increase quantity"
-                    >
-                      <Plus className="h-5 w-5" />
-                    </button>
-                  </div>
+    <div className="min-h-screen bg-gray-50/30 pb-24 md:pb-10 pt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        
+        {/* Breadcrumb */}
+        <div className="py-4">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                {kitchenSlug ? (
+                  <BreadcrumbLink href={`/kitchens/${kitchenSlug}`}>{kitchenName}</BreadcrumbLink>
                 ) : (
-                  <Button
-                    size="default"
-                    className="rounded-full px-6 h-11 hidden md:inline-flex"
-                    onClick={handleAddToCart}
-                  >
-                    <ShoppingCart className="h-4 w-4 mr-1.5" />
-                    Add to Cart
-                  </Button>
+                  <BreadcrumbPage>{kitchenName}</BreadcrumbPage>
                 )}
-              </div>
-            </div>
-
-            {/* Right Column - Info Only */}
-            <div className="lg:w-[45%] mt-8 lg:mt-0">
-              {/* Breadcrumb */}
-              <nav className="hidden lg:flex items-center gap-2 text-sm text-muted-foreground mb-6">
-                <Link href="/menu" className="hover:text-foreground transition-colors">
-                  Menu
-                </Link>
-                <span>/</span>
-                <span className="text-foreground font-medium truncate max-w-50">
-                  {item.name}
-                </span>
-              </nav>
-
-              <div className="space-y-6">
-                {/* Product Name & Badge */}
-                <div className="flex items-start justify-between gap-3">
-                  <h1 className="text-2xl lg:text-3xl font-bold text-foreground leading-tight">
-                    {item.name}
-                  </h1>
-                  <div className="flex items-center gap-2 shrink-0 mt-1">
-                    <Badge
-                      variant={createBadgeVariant(item.foodType)}
-                      className={item.foodType === "VEG" ? "bg-green-100 text-green-700 hover:bg-green-100" : ""}
-                    >
-                      {item.foodType}
-                    </Badge>
-                    <WishlistButton menuItemId={item.id} size="sm" variant="inline" className="hidden lg:flex" />
-                    <button
-                      onClick={handleShare}
-                      className="hidden lg:flex h-8 w-8 rounded-full bg-muted items-center justify-center hover:bg-muted/80 transition-colors"
-                      aria-label="Share"
-                    >
-                      <Share2 className="h-4 w-4" />
-                    </button>
-                  </div>
-                </div>
-
-                {/* Net Qty & Rating */}
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1">
-                    <Package className="h-4 w-4" />
-                    Net Qty: 1 Serving
-                  </span>
-                  <span className="text-muted-foreground/40">•</span>
-                  {item.avgRating && (
-                    <span className="flex items-center gap-1">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-foreground font-medium">{item.avgRating}</span>
-                      ({item.totalReviews}+)
-                    </span>
-                  )}
-                </div>
-
-                {/* Delivery Info Badges */}
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="flex items-center gap-3 rounded-xl bg-green-50 border border-green-200 p-3">
-                    <RefreshCw className="h-5 w-5 text-green-600 shrink-0" />
-                    <p className="text-sm font-medium text-green-700">Freshly Prepared</p>
-                  </div>
-                  <div className="flex items-center gap-3 rounded-xl bg-orange-50 border border-orange-200 p-3">
-                    <Truck className="h-5 w-5 text-orange-600 shrink-0" />
-                    <p className="text-sm font-medium text-orange-700">Fast Delivery</p>
-                  </div>
-                </div>
-
-                {/* Highlights */}
-                <div className="space-y-3">
-                  <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                    Highlights
-                  </h3>
-                  <div className="rounded-xl border border-border divide-y divide-border text-sm">
-                    <div className="flex items-start justify-between px-4 py-3">
-                      <span className="text-muted-foreground">Brand</span>
-                      <span className="font-medium text-foreground text-right max-w-[60%]">{kitchenName}</span>
-                    </div>
-                    <div className="px-4 py-3">
-                      <span className="text-muted-foreground block mb-1">Allergen Information</span>
-                      <span className="text-foreground">Contains: Home-cooked ingredients. Please consult the kitchen for specific allergen details.</span>
-                    </div>
-                    {item.description && (
-                      <div className="px-4 py-3">
-                        <span className="text-muted-foreground block mb-1">About</span>
-                        <span className="text-foreground leading-6">{item.description}</span>
-                      </div>
-                    )}
-                    <div className="flex items-start justify-between px-4 py-3">
-                      <span className="text-muted-foreground">Time Slot</span>
-                      <span className="font-medium text-foreground text-right">{formatTimeSlot(item.timeSlot)}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Information */}
-                <div className="space-y-3">
-                  <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-                    Information
-                  </h3>
-                  <div className="rounded-xl border border-border divide-y divide-border text-sm">
-                    <div className="px-4 py-3">
-                      <span className="text-muted-foreground block mb-1">Disclaimer</span>
-                      <span className="text-foreground text-xs leading-5">
-                        All images are for representational purposes only. It is advised that you read the batch and manufacturing details, directions for use, allergen information, health and nutritional claims (wherever applicable), and other details mentioned on the label before consuming the product. For combo items, individual prices can be viewed on the page.
-                      </span>
-                    </div>
-                    <div className="px-4 py-3">
-                      <span className="text-muted-foreground block mb-1">Customer Care Details</span>
-                      <span className="text-foreground text-xs leading-5">
-                        In case of any issue, contact us
-                        <br />
-                        E-mail address: support@rrckitchen.com
-                      </span>
-                    </div>
-                    <div className="flex items-start justify-between px-4 py-3">
-                      <span className="text-muted-foreground">Seller Name</span>
-                      <span className="font-medium text-foreground text-right max-w-[55%]">{kitchenName}</span>
-                    </div>
-                    <div className="flex items-start justify-between px-4 py-3">
-                      <span className="text-muted-foreground">Country of Origin</span>
-                      <span className="font-medium text-foreground text-right">India</span>
-                    </div>
-                    <div className="flex items-start justify-between px-4 py-3">
-                      <span className="text-muted-foreground">Shelf Life</span>
-                      <span className="font-medium text-foreground text-right">Consume within 24 hours</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Full Width How to Order */}
-          <div ref={howToOrderRef} className="mt-10 lg:mt-16">
-            <HowToBuySection itemName={item.name} />
-          </div>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-primary font-medium">{displayItem.name}</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
         </div>
 
-        {/* Mobile bottom spacing for fixed bars */}
-        <div className="md:hidden h-20" />
-
-        {/* Bottom sentinel at end of component (bar hides when footer is near) */}
-        <div ref={pageBottomRef} className="h-1" />
-      </div>
-
-      {/* Mobile: Sticky Top Bar (appears when image section scrolls past) */}
-      {showMobileSticky && (
-        <div className="md:hidden fixed top-0 left-0 right-0 z-40 bg-background border-b border-border shadow-sm animate-in slide-in-from-top duration-200">
-          <div className="flex items-center gap-3 px-4 h-14">
-            <button
-              onClick={() => window.history.back()}
-              className="shrink-0 text-foreground"
-              aria-label="Go back"
-            >
-              <ChevronLeft className="h-6 w-6" />
-            </button>
-            <div className="flex-1 flex items-center gap-2 min-w-0">
-              {sortedPhotos[0] && (
-                <div className="h-8 w-8 overflow-hidden bg-slate-100 shrink-0">
-                  <ProgressiveImage src={sortedPhotos[0].imageUrl} alt="" fill />
-                </div>
-              )}
-              <div className="min-w-0">
-                <p className="text-sm font-semibold text-foreground truncate">{item.name}</p>
-                <p className="text-xs font-medium text-primary">₹{price}</p>
-              </div>
-            </div>
-            <WishlistButton menuItemId={item.id} size="sm" variant="inline" />
-            <button
-              onClick={handleShare}
-              className="shrink-0 text-foreground"
-              aria-label="Share"
-            >
-              <Share2 className="h-5 w-5" />
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Desktop: Compact Top Bar (attached to navbar, appears when scrolled past) */}
-      {showDesktopCompact && (
-        <div className="hidden lg:flex fixed top-20 left-0 right-0 z-40 bg-background border-b border-border shadow-sm animate-in slide-in-from-top duration-200">
-          <div className="mx-auto max-w-7xl w-full px-10 h-16 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              {sortedPhotos[0] && (
-                <div className="h-10 w-10 overflow-hidden bg-slate-100 shrink-0">
-                  <ProgressiveImage src={sortedPhotos[0].imageUrl} alt="" fill />
-                </div>
-              )}
-              <div>
-                <p className="text-sm font-bold text-foreground">{item.name}</p>
-                  <div className="flex items-baseline gap-1.5">
-                    <span className="text-base font-bold text-primary">₹{price}</span>
-                    {hasDiscount && (
-                      <>
-                        <span className="text-xs text-muted-foreground line-through">₹{mrp}</span>
-                        <span className="text-[10px] font-semibold text-green-600 bg-green-50 px-1 py-0.5 rounded">
-                          ₹{offAmount} OFF
-                        </span>
-                      </>
-                    )}
-                  </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <button
-                onClick={handleShare}
-                className="h-9 w-9 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
-                aria-label="Share"
-              >
-                <Share2 className="h-4 w-4" />
-              </button>
-              {cartItem ? (
-                <div className="flex items-center rounded-lg border border-[#EE7005] overflow-hidden bg-[#FFF5EB]">
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleDecrement(); }}
-                    className="h-9 w-9 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
-                    aria-label="Decrease quantity"
-                  >
-                    <Minus className="h-4 w-4" />
-                  </button>
-                  <span className="w-7 text-center text-sm font-bold text-[#EE7005] leading-none py-1">{cartItem.qty}</span>
-                  <button
-                    onClick={(e) => { e.stopPropagation(); handleIncrement(); }}
-                    className="h-9 w-9 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
-                    aria-label="Increase quantity"
-                  >
-                    <Plus className="h-4 w-4" />
-                  </button>
-                </div>
+        {/* Top Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          
+          {/* Left Col - Images */}
+          <div className="lg:col-span-5 space-y-4">
+            <div className="relative aspect-video lg:aspect-square rounded-2xl overflow-hidden bg-muted group">
+              {sortedPhotos.length > 0 ? (
+                <ProgressiveImage
+                  highResUrl={sortedPhotos[imageIndex].imageUrl}
+                  alt={displayItem.name}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  priority
+                />
               ) : (
-                <Button
-                  size="default"
-                  className="rounded-full px-6 h-10"
-                  onClick={handleAddToCart}
-                >
-                  <ShoppingCart className="h-4 w-4 mr-1.5" />
-                  Add to Cart
-                </Button>
+                <div className="flex items-center justify-center h-full text-muted-foreground">No image</div>
               )}
-            </div>
-          </div>
-        </div>
-      )}
+              
+              {displayItem.bestseller && (
+                <div className="absolute top-4 left-4">
+                  <Badge className="bg-[#ff4500] hover:bg-[#ff4500]/90 text-white border-none shadow-sm px-3 py-1 text-sm font-semibold rounded-md">Bestseller</Badge>
+                </div>
+              )}
+              <div className="absolute top-4 right-4">
+                <WishlistButton menuItemId={displayItem.id} size="md" className="h-10 w-10 rounded-full bg-black/20 backdrop-blur-md text-white hover:bg-black/40 border-none shadow-sm" />
+              </div>
 
-      {/* Mobile: Fixed Bottom Add to Cart */}
-      <div className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-background border-t border-border px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)]">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-foreground truncate">{item.name}</p>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-base font-bold text-primary">₹{price}</span>
-              {hasDiscount && (
+              {sortedPhotos.length > 1 && (
                 <>
-                  <span className="text-xs text-muted-foreground line-through">₹{mrp}</span>
-                  <span className="text-[10px] font-semibold text-green-600">₹{offAmount} OFF</span>
+                  <button onClick={handlePrevImage} className="absolute left-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/80 shadow flex items-center justify-center hover:bg-white text-black transition-colors">
+                    <ChevronLeft className="h-5 w-5" />
+                  </button>
+                  <button onClick={handleNextImage} className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full bg-white/80 shadow flex items-center justify-center hover:bg-white text-black transition-colors">
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                  <div className="absolute bottom-4 right-4 bg-black/60 text-white text-xs font-medium px-2 py-1 rounded-md backdrop-blur-sm">
+                    {imageIndex + 1} / {sortedPhotos.length}
+                  </div>
                 </>
               )}
             </div>
+
+            {/* Thumbnails */}
+            {sortedPhotos.length > 1 && (
+              <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                {sortedPhotos.map((photo, idx) => (
+                  <button
+                    key={photo.id || idx}
+                    onClick={() => setImageIndex(idx)}
+                    className={`relative w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 transition-all ${imageIndex === idx ? 'ring-2 ring-primary ring-offset-2' : 'opacity-70 hover:opacity-100'}`}
+                  >
+                    <ProgressiveImage highResUrl={photo.imageUrl} alt="" fill className="object-cover" />
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-          {cartItem ? (
-            <div className="flex items-center rounded-lg border-2 border-[#EE7005] overflow-hidden shrink-0 bg-[#FFF5EB]">
-              <button
-                onClick={handleDecrement}
-                className="h-11 w-11 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
-                aria-label="Decrease quantity"
-              >
-                <Minus className="h-5 w-5" />
-              </button>
-              <span className="w-9 text-center text-lg font-bold text-[#EE7005] leading-none py-1">{cartItem.qty}</span>
-              <button
-                onClick={handleIncrement}
-                className="h-11 w-11 flex items-center justify-center text-[#EE7005] bg-[#FFF5EB] hover:bg-[#EE7005] hover:text-white transition-colors"
-                aria-label="Increase quantity"
-              >
-                <Plus className="h-5 w-5" />
-              </button>
-            </div>
-          ) : (
-            <Button
-              size="default"
-              className="rounded-full px-8 h-11 shrink-0"
-              onClick={handleAddToCart}
-            >
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Add to Cart
-            </Button>
-          )}
-        </div>
-      </div>
 
-      <AddToCartPopup
-        item={popupItem}
-        qty={popupItem ? (cartItems.find(ci => ci.id === popupItem.id)?.qty ?? 1) : 1}
-        open={popupOpen}
-        onOpenChange={setPopupOpen}
-      />
-      <LocationDialog open={locationOpen} onClose={() => setLocationOpen(false)} />
-    </>
-  );
-}
-
-function LocationPrompt({ onClick }: { onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="w-full flex items-center gap-3 bg-blue-50 border-b border-blue-200 px-4 py-3 text-left"
-    >
-      <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
-        <MapPin className="h-4 w-4 text-blue-600" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-blue-800">Select your delivery location</p>
-        <p className="text-xs text-blue-600">Enter an address to see availability</p>
-      </div>
-      <ChevronRight className="h-4 w-4 text-blue-400 shrink-0" />
-    </button>
-  );
-}
-
-function HowToBuySection({ itemName }: { itemName: string }) {
-  const steps = [
-    {
-      icon: Search,
-      title: "Search for the item",
-      description: `Search for "${itemName}" in the RRC Kitchen app or browse through the menu section to find it.`,
-    },
-    {
-      icon: Star,
-      title: "View details & ratings",
-      description: "Check the price, available time slots, kitchen information, and customer ratings to make your choice.",
-    },
-    {
-      icon: ShoppingCart,
-      title: "Add to cart & checkout",
-      description: "Add the item to your cart and proceed to checkout with secure payment options including Razorpay.",
-    },
-    {
-      icon: TruckIcon,
-      title: "Get fresh delivery",
-      description: "Your order will be prepared fresh by the kitchen and delivered to your doorstep by the next meal time.",
-    },
-  ];
-
-  return (
-    <div className="space-y-5 pt-4">
-      <div className="flex items-center gap-3">
-        <div className="h-8 w-1 bg-primary rounded-full" />
-        <h2 className="text-lg font-bold text-foreground">
-          How to Buy <span className="text-primary">{itemName}</span>
-        </h2>
-      </div>
-      <p className="text-sm text-muted-foreground -mt-2 ml-4">
-        Step-by-step guide to order online
-      </p>
-      <div className="space-y-0">
-        {steps.map((step, i) => {
-          const Icon = step.icon;
-          return (
-            <div key={i} className="flex gap-4">
-              <div className="flex flex-col items-center">
-                <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <Icon className="h-5 w-5 text-primary" />
+          {/* Right Col - Details */}
+          <div className="lg:col-span-7 flex flex-col xl:flex-row gap-6">
+            
+            {/* Info Section */}
+            <div className="flex-1 space-y-6">
+              {/* Header */}
+              <div>
+                <div className="flex items-center gap-3 mb-3">
+                  {displayItem.avgRating != null && (
+                    <>
+                      <div className="flex items-center gap-1 bg-green-700 text-white px-2 py-0.5 rounded text-sm font-semibold">
+                        <span>{displayItem.avgRating.toFixed(1)}</span>
+                        <Star className="h-3 w-3 fill-current" />
+                      </div>
+                      <span className="text-sm text-muted-foreground underline decoration-dashed underline-offset-4 cursor-pointer hover:text-foreground transition-colors">({formatCompact(totalReviews)} reviews)</span>
+                    </>
+                  )}
+                  {orderCount > 0 && (
+                    <>
+                      <span className="text-muted-foreground text-sm">|</span>
+                      <span className="text-sm font-medium text-muted-foreground">{formatCompact(orderCount)} orders</span>
+                    </>
+                  )}
+                  {isFetching && (
+                    <span className="flex items-center gap-1 text-xs font-medium text-primary">
+                      <Loader2 className="h-3 w-3 animate-spin" /> Updating
+                    </span>
+                  )}
                 </div>
-                {i < steps.length - 1 && (
-                  <div className="w-px flex-1 bg-border my-1" />
-                )}
+                <div className="flex items-start justify-between">
+                  <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">{displayItem.name}</h1>
+                  <button onClick={handleShare} className="hidden md:flex items-center gap-2 text-primary hover:bg-primary/5 px-3 py-1.5 rounded-full border border-primary/20 transition-colors text-sm font-medium">
+                    <Share2 className="h-4 w-4" /> Share
+                  </button>
+                </div>
               </div>
-              <div className="pb-6 flex-1">
-                <h3 className="text-sm font-semibold text-foreground">
-                  Step {i + 1}: {step.title}
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1 leading-6">
-                  {step.description}
+
+              {displayItem.description && (
+                <p className="text-muted-foreground text-base leading-relaxed">
+                  {displayItem.description}
                 </p>
+              )}
+
+              {/* Tags */}
+              <div className="flex flex-wrap gap-2">
+                {displayItem.cuisine && (
+                  <Badge variant="outline" className="bg-green-50/50 text-green-700 border-green-200 gap-1.5 py-1 px-3 text-xs font-medium rounded-full">
+                    <Utensils className="h-3 w-3" /> {displayItem.cuisine}
+                  </Badge>
+                )}
+                <Badge variant="outline" className={`gap-1.5 py-1 px-3 text-xs font-medium rounded-full ${displayItem.foodType === 'NON_VEG' || displayItem.foodType === 'NONVEG' ? 'bg-red-50/50 text-red-700 border-red-200' : 'bg-green-50/50 text-green-700 border-green-200'}`}>
+                  {displayItem.foodType === 'NON_VEG' || displayItem.foodType === 'NONVEG' ? <Flame className="h-3 w-3" /> : <Leaf className="h-3 w-3" />}
+                  {displayItem.foodType === 'NON_VEG' || displayItem.foodType === 'NONVEG' ? 'Non-Veg' : 'Veg'}
+                </Badge>
+                <Badge variant="outline" className="bg-blue-50/50 text-blue-700 border-blue-200 gap-1.5 py-1 px-3 text-xs font-medium rounded-full">
+                  <Clock className="h-3 w-3" /> {formatTimeSlot(displayItem.timeSlot)}
+                </Badge>
+              </div>
+
+              {/* Pricing & Add to Cart */}
+              <div className="pt-4 border-t border-dashed">
+                <div className="flex items-center gap-3 mb-1">
+                  <span className="text-3xl font-bold tracking-tight text-[#ff4500]">₹{price}</span>
+                  {hasDiscount && (
+                    <>
+                      <span className="text-lg text-muted-foreground line-through decoration-muted-foreground/50">₹{mrp}</span>
+                      <Badge className="bg-green-100 text-green-700 hover:bg-green-100 border-none font-bold text-xs">{discountPercent}% OFF</Badge>
+                    </>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground mb-6">Inclusive of all taxes</p>
+
+                <div className="flex items-center gap-4">
+                  {cartItem ? (
+                    <div className="flex items-center border border-[#ff4500] rounded-lg overflow-hidden h-12 w-32 shrink-0">
+                      <button onClick={handleRemove} aria-label="Decrease quantity" className="flex-1 flex items-center justify-center text-[#ff4500] hover:bg-[#ff4500]/10 transition-colors h-full">
+                        <Minus className="h-4 w-4" />
+                      </button>
+                      <span className="font-semibold text-lg w-10 text-center text-[#ff4500]">{cartItem.qty}</span>
+                      <button onClick={handleAdd} aria-label="Increase quantity" className="flex-1 flex items-center justify-center text-[#ff4500] hover:bg-[#ff4500]/10 transition-colors h-full">
+                        <Plus className="h-4 w-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <Button onClick={handleAdd} disabled={!displayItem.isAvailable} className="h-12 px-8 bg-[#ff4500] hover:bg-[#ff4500]/90 text-white font-semibold text-lg rounded-lg shadow-md hover:shadow-lg transition-all min-w-[160px]">
+                      <ShoppingCart className="h-5 w-5 mr-2" />
+                      {displayItem.isAvailable ? "Add to Cart" : "Currently Unavailable"}
+                    </Button>
+                  )}
+                </div>
+              </div>
+
+              {/* Features List */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-6">
+                {orderCount > 0 && (
+                  <div className="flex items-center gap-3 p-3 rounded-lg bg-emerald-50/50 border border-emerald-100">
+                    <Users className="h-5 w-5 text-emerald-600" />
+                    <div className="text-sm">
+                      <span className="font-medium text-emerald-900 block">{formatCompact(orderCount)} orders</span>
+                      <span className="text-emerald-700/80 text-xs">placed for this dish</span>
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-orange-50/50 border border-orange-100">
+                  <Truck className="h-5 w-5 text-orange-600" />
+                  <div className="text-sm">
+                    <span className="font-medium text-orange-900 block">{deliveryFeeLabel}</span>
+                    <span className="text-orange-700/80 text-xs">{displayItem.freeDelivery ? "on all orders" : "calculated at checkout"}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 p-3 rounded-lg bg-blue-50/50 border border-blue-100 sm:col-span-2">
+                  <Package className="h-5 w-5 text-blue-600" />
+                  <div className="text-sm flex-1">
+                    <span className="font-medium text-blue-900 block">{displayItem.packagingType || "—"}</span>
+                  </div>
+                </div>
               </div>
             </div>
-          );
-        })}
+
+            {/* Delivery Card */}
+            <div className="w-full xl:w-80 shrink-0">
+              <Card className="shadow-sm border-muted/60 sticky top-24">
+                <CardContent className="p-5 space-y-6">
+                  <div>
+                    <h3 className="font-semibold text-lg text-green-800 mb-4 flex items-center gap-2">
+                      <Truck className="h-5 w-5" /> Delivery Details
+                    </h3>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <Clock className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium">Delivery Time</p>
+                      <p className="text-base font-semibold">{deliveryTime}</p>
+                      <p className="text-xs text-primary font-medium mt-0.5">Delivery estimate</p>
+                    </div>
+                  </div>
+                  
+                  <Separator />
+
+                  <div className="flex items-start gap-3">
+                    <MapPin className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium">Deliver to</p>
+                      <p className="text-sm text-muted-foreground truncate">{deliveryAddress || "Add delivery location"}</p>
+                    </div>
+                    <button onClick={() => setLocationOpen(true)} className="text-xs font-semibold text-primary hover:underline shrink-0 pt-0.5">Change</button>
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex items-start gap-3">
+                    <Truck className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">Delivery Fee</p>
+                      <p className="text-sm text-muted-foreground">{deliveryFeeLabel}</p>
+                    </div>
+                    {displayItem.freeDelivery && (
+                      <span className="text-xs font-semibold text-green-600 bg-green-50 px-2 py-1 rounded-md shrink-0">Free delivery</span>
+                    )}
+                  </div>
+
+                  <Separator />
+
+                  <div className="flex items-start gap-3">
+                    <Utensils className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium mb-1">Available</p>
+                      <div className="flex flex-wrap gap-2 text-xs font-medium">
+                        <span className="bg-muted px-2 py-1 rounded-md">{formatTimeSlot(displayItem.timeSlot)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </CardContent>
+              </Card>
+            </div>
+
+          </div>
+        </div>
+
+        {/* Feature Banner - Highlights */}
+        {highlights.length > 0 && (
+          <div className="my-10 bg-white border rounded-xl p-4 sm:p-6 shadow-sm flex flex-wrap justify-between items-center gap-6 overflow-x-auto">
+            {highlights.map((h, i) => {
+              const Icon = highlightIcon(h.title);
+              return (
+                <div key={i} className="flex items-center gap-3 min-w-[max-content]">
+                  <Icon className="h-8 w-8 text-green-600 p-1.5 bg-green-50 rounded-full" />
+                  <div>
+                    <p className="font-semibold text-sm">{h.title}</p>
+                    <p className="text-xs text-muted-foreground">{h.description}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Bottom Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Tabs Section */}
+          <div className="lg:col-span-2">
+            <Tabs defaultValue="overview" className="w-full">
+              <TabsList className="w-full justify-start h-auto p-0 bg-transparent border-b rounded-none flex-nowrap overflow-x-auto scrollbar-hide">
+                <TabsTrigger value="overview" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-medium flex items-center gap-2 text-muted-foreground data-[state=active]:text-foreground">
+                  <Info className="h-4 w-4" /> Overview
+                </TabsTrigger>
+                <TabsTrigger value="reviews" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-medium flex items-center gap-2 text-muted-foreground data-[state=active]:text-foreground">
+                  <Star className="h-4 w-4" /> Reviews ({formatCompact(totalReviews)})
+                </TabsTrigger>
+                <TabsTrigger value="kitchen" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none px-6 py-3 font-medium flex items-center gap-2 text-muted-foreground data-[state=active]:text-foreground lg:hidden">
+                  <Package className="h-4 w-4" /> Kitchen Info
+                </TabsTrigger>
+              </TabsList>
+              
+              <TabsContent value="overview" className="pt-6 space-y-8 animate-in fade-in duration-300">
+                {/* About this dish */}
+                {aboutTitle && (
+                  <div>
+                    <h3 className="text-xl font-bold mb-4">{aboutTitle}</h3>
+                    {aboutDescription && (
+                      <p className="text-muted-foreground leading-relaxed">{aboutDescription}</p>
+                    )}
+                  </div>
+                )}
+                
+                {/* Stats Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-white border rounded-xl p-4 flex flex-col items-center justify-center text-center gap-2 shadow-sm">
+                    <Users className="h-6 w-6 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground font-medium">Serves</p>
+                      <p className="font-semibold text-sm">{displayItem.serves != null ? `${displayItem.serves} Person${displayItem.serves > 1 ? "s" : ""}` : "—"}</p>
+                    </div>
+                  </div>
+                  <div className="bg-white border rounded-xl p-4 flex flex-col items-center justify-center text-center gap-2 shadow-sm">
+                    <Scale className="h-6 w-6 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground font-medium">Portion Size</p>
+                      <p className="font-semibold text-sm">{displayItem.portionSize || "—"}</p>
+                    </div>
+                  </div>
+                  <div className="bg-white border rounded-xl p-4 flex flex-col items-center justify-center text-center gap-2 shadow-sm">
+                    <Timer className="h-6 w-6 text-primary" />
+                    <div>
+                      <p className="text-xs text-muted-foreground font-medium">Shelf Life</p>
+                      <p className="font-semibold text-sm">{displayItem.shelfLife || "—"}</p>
+                    </div>
+                  </div>
+                  <div className="bg-white border rounded-xl p-4 flex flex-col items-center justify-center text-center gap-2 shadow-sm">
+                    <AlertTriangle className="h-6 w-6 text-[#ff4500]" />
+                    <div>
+                      <p className="text-xs text-muted-foreground font-medium">Allergens</p>
+                      <p className="font-semibold text-sm text-[#ff4500]">{displayItem.allergens || "—"}</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* You may also like */}
+                {(displayItem.relatedItems ?? []).length > 0 && (
+                  <div>
+                    <h3 className="text-xl font-bold mb-4">You may also like</h3>
+                    <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                      {displayItem.relatedItems!.map((sim) => (
+                        <Card key={sim.id} className="min-w-[160px] max-w-[160px] flex-shrink-0 cursor-pointer hover:shadow-md transition-shadow overflow-hidden group">
+                          <div className="relative h-28 bg-muted w-full">
+                            {sim.imageUrl && <ProgressiveImage highResUrl={sim.imageUrl} alt={sim.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />}
+                          </div>
+                          <CardContent className="p-3">
+                            <h4 className="font-semibold text-sm mb-1 truncate">{sim.name}</h4>
+                            <div className="flex justify-between items-center">
+                              <span className="font-bold text-sm">₹{sim.price}</span>
+                              {sim.avgRating != null && (
+                                <div className="flex items-center gap-1 text-xs font-medium text-green-700 bg-green-50 px-1.5 py-0.5 rounded">
+                                  <span>{sim.avgRating.toFixed(1)}</span>
+                                  <Star className="h-3 w-3 fill-current" />
+                                </div>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
+              <TabsContent value="kitchen" className="pt-6 animate-in fade-in duration-300">
+                <Card className="shadow-sm border-muted/60 overflow-hidden">
+                  <CardContent className="p-0">
+                    <KitchenProfile
+                      kitchenName={kitchenName}
+                      imageUrl={kitchen?.imageUrl ?? null}
+                      avgRating={kitchenAvgRating}
+                      totalReviews={kitchenTotalReviews}
+                      orderCount={kitchenOrderCount}
+                      kitchenSlug={kitchenSlug}
+                    />
+                  </CardContent>
+                </Card>
+              </TabsContent>
+              <TabsContent value="reviews" className="pt-6 animate-in fade-in duration-300">
+                {reviewsQuery.isLoading ? (
+                  <div className="space-y-4">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <div key={i} className="flex gap-3 p-4 bg-white border rounded-xl shadow-sm animate-pulse">
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <div className="flex-1 space-y-2 pt-1">
+                          <Skeleton className="h-3 w-32" />
+                          <Skeleton className="h-3 w-full" />
+                          <Skeleton className="h-3 w-2/3" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : allReviews.length === 0 ? (
+                  <div className="flex flex-col items-center gap-3 py-14 text-center">
+                    <Star className="h-10 w-10 text-slate-300" />
+                    <p className="font-semibold text-slate-900">No reviews yet</p>
+                    <p className="text-sm text-muted-foreground max-w-xs">Be the first to review this dish after your order.</p>
+                  </div>
+                ) : (
+                  <div ref={reviewsScrollRef} className="relative max-h-[640px] overflow-y-auto pr-1 custom-scrollbar">
+                    <div className="relative" style={{ height: reviewVirtualizer.getTotalSize() }}>
+                      {reviewVirtualizer.getVirtualItems().map((virtualRow) => {
+                        const review = allReviews[virtualRow.index];
+                        return (
+                          <div
+                            key={review.id}
+                            className="absolute left-0 right-0"
+                            style={{ transform: `translateY(${virtualRow.start}px)` }}
+                          >
+                            <div className="flex items-start gap-3 p-4 bg-white border rounded-xl shadow-sm mb-3">
+                              <div className="h-10 w-10 rounded-full bg-green-800 text-white flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden relative">
+                                {review.user.image ? (
+                                  <Image src={review.user.image} alt={review.user.name ?? "Reviewer"} fill sizes="40px" className="object-cover" />
+                                ) : review.user.name ? (
+                                  <span>{review.user.name.slice(0, 2).toUpperCase()}</span>
+                                ) : (
+                                  <User className="h-4 w-4" />
+                                )}
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between gap-2 flex-wrap">
+                                  {review.user.name && <p className="font-semibold text-sm truncate">{review.user.name}</p>}
+                                  <span className="text-xs text-muted-foreground">{formatReviewDate(review.createdAt)}</span>
+                                </div>
+                                <div className="mt-1">
+                                  <ReviewStars rating={review.rating} />
+                                </div>
+                                {review.comment && (
+                                  <p className="text-sm text-slate-600 mt-2 leading-relaxed">{review.comment}</p>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                    <div ref={reviewsSentinelRef} className="h-1" />
+                    {reviewsQuery.isFetchingNextPage && (
+                      <div className="flex items-start gap-3 p-4 bg-white border rounded-xl shadow-sm mb-3 animate-pulse">
+                        <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+                        <div className="flex-1 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <Skeleton className="h-4 w-24" />
+                            <Skeleton className="h-3 w-16" />
+                          </div>
+                          <Skeleton className="h-3 w-20" />
+                          <Skeleton className="h-3 w-full" />
+                          <Skeleton className="h-3 w-3/4" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
+
+          {/* Kitchen Profile (Desktop Right) */}
+          <div className="lg:col-span-1 hidden lg:block">
+            <Card className="sticky top-24 shadow-sm border-muted/60 overflow-hidden">
+              <CardContent className="p-0">
+                <KitchenProfile
+                  kitchenName={kitchenName}
+                  imageUrl={kitchen?.imageUrl ?? null}
+                  avgRating={kitchenAvgRating}
+                  totalReviews={kitchenTotalReviews}
+                  orderCount={kitchenOrderCount}
+                  kitchenSlug={kitchenSlug}
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
       </div>
+
+      <LocationDialog open={locationOpen} onClose={() => setLocationOpen(false)} />
+      {popupItem && <AddToCartPopup item={popupItem} open={true} onOpenChange={(open) => !open && setPopupItem(null)} />}
     </div>
   );
 }
-
-

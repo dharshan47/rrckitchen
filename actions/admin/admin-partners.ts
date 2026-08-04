@@ -1,7 +1,9 @@
 "use server"
 
 import prisma from "@/lib/prisma"
+import { Prisma } from "@/lib/generated/prisma/client"
 import { requireAdmin, requirePermission, logAdminAction } from "@/lib/auth-guards"
+import { getAblyRest } from "@/lib/ably/server"
 
 export async function getAdminKitchenPartners() {
   try { await requireAdmin() } catch { return [] }
@@ -22,6 +24,7 @@ export async function getAdminKitchenPartners() {
     include: {
       kitchenAlias: true,
       kitchenKyc: true,
+      kitchenAddress: true,
       kitchenCategories: { include: { category: true } },
       user: { select: { name: true, phoneNumber: true, email: true } },
       _count: { select: { orderItems: true, menus: true } },
@@ -32,13 +35,18 @@ export async function getAdminKitchenPartners() {
   return partners.map((p) => ({
     id: p.id,
     userId: p.userId,
-    name: p.kitchenAlias?.displayName ?? p.user?.name ?? "",
-    phoneNumber: p.user?.phoneNumber ?? null,
-    email: p.user?.email ?? null,
+    name: p.kitchenAlias?.displayName ?? p.user?.name,
+    phoneNumber: p.user?.phoneNumber,
+    email: p.user?.email,
+    imageUrl: p.kitchenAlias?.imageUrl,
+    customOfferText: p.kitchenAlias?.customOfferText,
+    displayName: p.kitchenAlias?.displayName ?? p.user?.name,
     status: p.status,
     orders: p._count.orderItems,
     menuCount: p._count.menus,
     revenue: p.orderItems.reduce((sum, oi) => sum + Number(oi.unitPrice) * oi.quantity, 0),
+    estimatedPrepTime: p.estimatedPrepTime,
+    address: p.kitchenAddress,
     cuisines: p.kitchenCategories.map((kc) => ({ id: kc.category.id, name: kc.category.name })),
     kyc: p.kitchenKyc
       ? {
@@ -76,6 +84,9 @@ export async function getAdminDeliveryPartners() {
     email: p.user?.email ?? null,
     status: p.status,
     orders: p._count.kitchenAssignments,
+    avgRating: Number(p.avgRating),
+    totalReviews: p.totalReviews,
+    isOnline: p.isOnline,
     kyc: p.kyc
       ? {
           bankName: p.kyc.bankName,
@@ -152,10 +163,154 @@ export async function updateKitchenCuisines(kitchenId: string, categoryIds: stri
       metadata: { categoryIds },
     })
 
+    await publishKitchenUpdate(kitchenId, "cuisines-updated", { categoryIds })
+
     return { success: true }
   } catch (error) {
     console.error("[Admin] Failed to update kitchen cuisines:", error)
     return { success: false, error: "Failed to update cuisines" }
+  }
+}
+
+async function publishKitchenUpdate(kitchenId: string, event: string, data: Record<string, unknown>) {
+  try {
+    const ably = getAblyRest()
+    const channel = ably.channels.get(`kitchen:${kitchenId}`)
+    await channel.publish(event, data)
+  } catch {
+    // Ably not configured — skip real-time publish
+  }
+}
+
+export async function updateKitchenDetails(
+  kitchenId: string,
+  details: {
+    estimatedPrepTime?: number | null
+    lineOne?: string
+    doorNo?: string
+    area?: string
+    landmark?: string
+    pincode?: string
+    latitude?: number
+    longitude?: number
+    displayName?: string
+    operatingHours?: Record<string, { open: string; close: string }> | null
+  },
+) {
+  let session
+  try { const result = await requirePermission("MANAGE_CMS"); session = result.session } catch {
+    return { success: false, error: "Unauthorized" }
+  }
+
+  try {
+    const { estimatedPrepTime, displayName, operatingHours, ...addressFields } = details
+
+    if (estimatedPrepTime !== undefined || operatingHours !== undefined) {
+      await prisma.kitchenPartner.update({
+        where: { id: kitchenId },
+        data: {
+          ...(estimatedPrepTime !== undefined ? { estimatedPrepTime } : {}),
+          ...(operatingHours !== undefined ? { operatingHours: operatingHours as object } : {}),
+        },
+      })
+    }
+
+    if (displayName) {
+      await prisma.kitchenAlias.update({
+        where: { kitchenPartnerId: kitchenId },
+        data: { displayName },
+      })
+    }
+
+    const hasAddressFields = Object.values(addressFields).some((v) => v !== undefined)
+    if (hasAddressFields) {
+      const addressData: Prisma.KitchenAddressUncheckedUpdateInput = {}
+      if (addressFields.lineOne !== undefined) addressData.lineOne = addressFields.lineOne
+      if (addressFields.doorNo !== undefined) addressData.doorNo = addressFields.doorNo
+      if (addressFields.area !== undefined) addressData.area = addressFields.area
+      if (addressFields.landmark !== undefined) addressData.landmark = addressFields.landmark
+      if (addressFields.pincode !== undefined) addressData.pincode = addressFields.pincode
+      if (addressFields.latitude !== undefined) addressData.latitude = addressFields.latitude
+      if (addressFields.longitude !== undefined) addressData.longitude = addressFields.longitude
+
+      await prisma.kitchenAddress.upsert({
+        where: { kitchenPartnerId: kitchenId },
+        create: {
+          kitchenPartnerId: kitchenId,
+          lineOne: addressFields.lineOne ?? "",
+          pincode: addressFields.pincode ?? "",
+          latitude: addressFields.latitude ?? 0,
+          longitude: addressFields.longitude ?? 0,
+          ...addressData,
+        } as Prisma.KitchenAddressUncheckedCreateInput,
+        update: addressData,
+      })
+    }
+
+    await logAdminAction({
+      actorUserId: session.user.id,
+      action: "UPDATE_KITCHEN_DETAILS",
+      targetType: "KitchenPartner",
+      targetId: kitchenId,
+      metadata: details,
+    })
+
+    await publishKitchenUpdate(kitchenId, "details-updated", details as Record<string, unknown>)
+
+    return { success: true }
+  } catch (error) {
+    console.error("[Admin] Failed to update kitchen details:", error)
+    return { success: false, error: "Failed to update kitchen details" }
+  }
+}
+
+export async function updateKitchenImage(kitchenId: string, imageUrl: string | null) {
+  let session
+  try { const result = await requirePermission("MANAGE_CMS"); session = result.session } catch {
+    return { success: false, error: "Unauthorized" }
+  }
+
+  try {
+    await prisma.kitchenAlias.update({
+      where: { kitchenPartnerId: kitchenId },
+      data: { imageUrl },
+    })
+    await logAdminAction({
+      actorUserId: session.user.id,
+      action: "UPDATE_KITCHEN_IMAGE",
+      targetType: "KitchenAlias",
+      targetId: kitchenId,
+      metadata: { imageUrl },
+    })
+    await publishKitchenUpdate(kitchenId, "image-updated", { imageUrl })
+    return { success: true }
+  } catch {
+    return { success: false, error: "Failed to update kitchen image" }
+  }
+}
+
+export async function updateKitchenOfferText(kitchenId: string, customOfferText: string | null) {
+  let session
+  try { const result = await requirePermission("MANAGE_CMS"); session = result.session } catch {
+    return { success: false, error: "Unauthorized" }
+  }
+
+  try {
+    await prisma.kitchenAlias.update({
+      where: { kitchenPartnerId: kitchenId },
+      data: { customOfferText },
+    })
+    await logAdminAction({
+      actorUserId: session.user.id,
+      action: "UPDATE_KITCHEN_OFFER_TEXT",
+      targetType: "KitchenAlias",
+      targetId: kitchenId,
+      metadata: { customOfferText },
+    })
+    await publishKitchenUpdate(kitchenId, "offer-text-updated", { customOfferText })
+    return { success: true }
+  } catch {
+    return { success: false, error: "Failed to update offer text" }
   }
 }
 

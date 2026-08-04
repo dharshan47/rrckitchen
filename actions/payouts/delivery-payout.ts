@@ -62,7 +62,7 @@ export async function settleDeliveryPayout(deliveryPayoutId: string) {
           payout.deliveryPartnerId,
           kyc.bankAccountNumber!,
           kyc.ifscCode!,
-          kyc.accountHolderName ?? "Delivery Partner",
+          kyc.accountHolderName ?? kyc.upiId ?? "",
         )
 
     const rzpPayout = await razorpayX.payouts.create({

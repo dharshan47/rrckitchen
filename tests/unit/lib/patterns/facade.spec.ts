@@ -116,7 +116,7 @@ describe('MenuFacade', () => {
       const result = await facade.checkout({
         items: [],
         address: '123 Main St',
-        paymentMethod: 'cod',
+        paymentMethod: 'razorpay',
       });
       expect(result.success).toBe(true);
       expect(result.orderId).toMatch(/^ORD-/);

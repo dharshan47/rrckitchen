@@ -13,6 +13,7 @@ export async function getAvailableLoyaltyCoupons() {
 export async function getAllLoyaltyCoupons() {
   const coupons = await prisma.loyaltyCoupon.findMany({
     orderBy: { createdAt: "desc" },
+    include: { _count: { select: { purchases: true } } },
   })
   return coupons.map((c) => ({
     id: c.id,
@@ -25,7 +26,7 @@ export async function getAllLoyaltyCoupons() {
     pointsCost: c.pointsCost,
     isActive: c.isActive,
     createdAt: c.createdAt.toISOString(),
-    purchaseCount: 0,
+    purchaseCount: c._count.purchases,
   }))
 }
 

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   adminApprovalRequest: {
     create: vi.fn(),
     findUniqueOrThrow: vi.fn(),
@@ -13,7 +13,7 @@ const mockPrisma = {
   kitchenPayout: { update: vi.fn() },
   deliveryPartnerPayout: { update: vi.fn() },
   user: { update: vi.fn() },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 vi.mock("@/lib/auth-guards", () => ({
@@ -261,7 +261,7 @@ describe("approval-actions", () => {
       })
     })
 
-    it("approves BAN_USER with default reason when payload has no reason", async () => {
+    it("approves BAN_USER with null reason when payload has no reason", async () => {
       mockPrisma.adminApprovalRequest.findUniqueOrThrow.mockResolvedValue({
         id: "req-5",
         requestedByUserId: "admin-2",
@@ -278,7 +278,7 @@ describe("approval-actions", () => {
 
       expect(mockPrisma.user.update).toHaveBeenCalledWith({
         where: { id: "user-to-ban" },
-        data: { banned: true, banReason: "Banned by admin" },
+        data: { banned: true, banReason: null },
       })
     })
   })

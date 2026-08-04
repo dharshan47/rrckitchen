@@ -28,7 +28,7 @@ export async function getAllCoupons() {
     minOrderValue: c.minOrderValue ? Number(c.minOrderValue) : null,
     scope: c.scope,
     kitchenPartnerId: c.kitchenPartnerId,
-    kitchenName: c.kitchenPartner?.kitchenAlias?.displayName ?? null,
+    kitchenName: c.kitchenPartner?.kitchenAlias?.displayName,
     validFrom: c.validFrom.toISOString(),
     validTo: c.validTo.toISOString(),
     usageLimitTotal: c.usageLimitTotal,
@@ -59,7 +59,7 @@ export async function getSimpleKitchenPartners() {
 
   return partners.map((p) => ({
     id: p.id,
-    name: p.kitchenAlias?.displayName ?? "",
+    name: p.kitchenAlias?.displayName,
   }))
 }
 

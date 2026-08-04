@@ -29,15 +29,18 @@ export type AggregateKitchenPartner = {
 export type KitchenPartnerAvgAggregateOutputType = {
   avgRating: runtime.Decimal | null
   totalReviews: number | null
+  estimatedPrepTime: number | null
 }
 
 export type KitchenPartnerSumAggregateOutputType = {
   avgRating: runtime.Decimal | null
   totalReviews: number | null
+  estimatedPrepTime: number | null
 }
 
 export type KitchenPartnerMinAggregateOutputType = {
   id: string | null
+  publicCode: string | null
   slug: string | null
   userId: string | null
   status: $Enums.PartnerStatus | null
@@ -47,12 +50,14 @@ export type KitchenPartnerMinAggregateOutputType = {
   avgRating: runtime.Decimal | null
   totalReviews: number | null
   createdAt: Date | null
+  estimatedPrepTime: number | null
   updatedAt: Date | null
   deletedAt: Date | null
 }
 
 export type KitchenPartnerMaxAggregateOutputType = {
   id: string | null
+  publicCode: string | null
   slug: string | null
   userId: string | null
   status: $Enums.PartnerStatus | null
@@ -62,12 +67,14 @@ export type KitchenPartnerMaxAggregateOutputType = {
   avgRating: runtime.Decimal | null
   totalReviews: number | null
   createdAt: Date | null
+  estimatedPrepTime: number | null
   updatedAt: Date | null
   deletedAt: Date | null
 }
 
 export type KitchenPartnerCountAggregateOutputType = {
   id: number
+  publicCode: number
   slug: number
   userId: number
   status: number
@@ -78,6 +85,7 @@ export type KitchenPartnerCountAggregateOutputType = {
   totalReviews: number
   operatingHours: number
   createdAt: number
+  estimatedPrepTime: number
   updatedAt: number
   deletedAt: number
   _all: number
@@ -87,15 +95,18 @@ export type KitchenPartnerCountAggregateOutputType = {
 export type KitchenPartnerAvgAggregateInputType = {
   avgRating?: true
   totalReviews?: true
+  estimatedPrepTime?: true
 }
 
 export type KitchenPartnerSumAggregateInputType = {
   avgRating?: true
   totalReviews?: true
+  estimatedPrepTime?: true
 }
 
 export type KitchenPartnerMinAggregateInputType = {
   id?: true
+  publicCode?: true
   slug?: true
   userId?: true
   status?: true
@@ -105,12 +116,14 @@ export type KitchenPartnerMinAggregateInputType = {
   avgRating?: true
   totalReviews?: true
   createdAt?: true
+  estimatedPrepTime?: true
   updatedAt?: true
   deletedAt?: true
 }
 
 export type KitchenPartnerMaxAggregateInputType = {
   id?: true
+  publicCode?: true
   slug?: true
   userId?: true
   status?: true
@@ -120,12 +133,14 @@ export type KitchenPartnerMaxAggregateInputType = {
   avgRating?: true
   totalReviews?: true
   createdAt?: true
+  estimatedPrepTime?: true
   updatedAt?: true
   deletedAt?: true
 }
 
 export type KitchenPartnerCountAggregateInputType = {
   id?: true
+  publicCode?: true
   slug?: true
   userId?: true
   status?: true
@@ -136,6 +151,7 @@ export type KitchenPartnerCountAggregateInputType = {
   totalReviews?: true
   operatingHours?: true
   createdAt?: true
+  estimatedPrepTime?: true
   updatedAt?: true
   deletedAt?: true
   _all?: true
@@ -229,6 +245,7 @@ export type KitchenPartnerGroupByArgs<ExtArgs extends runtime.Types.Extensions.I
 
 export type KitchenPartnerGroupByOutputType = {
   id: string
+  publicCode: string | null
   slug: string
   userId: string
   status: $Enums.PartnerStatus
@@ -239,6 +256,7 @@ export type KitchenPartnerGroupByOutputType = {
   totalReviews: number
   operatingHours: runtime.JsonValue | null
   createdAt: Date
+  estimatedPrepTime: number | null
   updatedAt: Date
   deletedAt: Date | null
   _count: KitchenPartnerCountAggregateOutputType | null
@@ -268,6 +286,7 @@ export type KitchenPartnerWhereInput = {
   OR?: Prisma.KitchenPartnerWhereInput[]
   NOT?: Prisma.KitchenPartnerWhereInput | Prisma.KitchenPartnerWhereInput[]
   id?: Prisma.StringFilter<"KitchenPartner"> | string
+  publicCode?: Prisma.StringNullableFilter<"KitchenPartner"> | string | null
   slug?: Prisma.StringFilter<"KitchenPartner"> | string
   userId?: Prisma.StringFilter<"KitchenPartner"> | string
   status?: Prisma.EnumPartnerStatusFilter<"KitchenPartner"> | $Enums.PartnerStatus
@@ -278,6 +297,7 @@ export type KitchenPartnerWhereInput = {
   totalReviews?: Prisma.IntFilter<"KitchenPartner"> | number
   operatingHours?: Prisma.JsonNullableFilter<"KitchenPartner">
   createdAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
+  estimatedPrepTime?: Prisma.IntNullableFilter<"KitchenPartner"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"KitchenPartner"> | Date | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -290,14 +310,17 @@ export type KitchenPartnerWhereInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentListRelationFilter
   orderItems?: Prisma.OrderItemListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
+  rrcKitchenReview?: Prisma.XOR<Prisma.RrcKitchenReviewNullableScalarRelationFilter, Prisma.RrcKitchenReviewWhereInput> | null
   serviceZone?: Prisma.XOR<Prisma.ServiceZoneNullableScalarRelationFilter, Prisma.ServiceZoneWhereInput> | null
   coupons?: Prisma.CouponListRelationFilter
   kitchenPayouts?: Prisma.KitchenPayoutListRelationFilter
   kitchenWishlists?: Prisma.KitchenWishlistListRelationFilter
+  cravingsTriggerRules?: Prisma.CravingsRuleListRelationFilter
 }
 
 export type KitchenPartnerOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -308,6 +331,7 @@ export type KitchenPartnerOrderByWithRelationInput = {
   totalReviews?: Prisma.SortOrder
   operatingHours?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  estimatedPrepTime?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -320,14 +344,17 @@ export type KitchenPartnerOrderByWithRelationInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentOrderByRelationAggregateInput
   orderItems?: Prisma.OrderItemOrderByRelationAggregateInput
   reviews?: Prisma.ReviewOrderByRelationAggregateInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewOrderByWithRelationInput
   serviceZone?: Prisma.ServiceZoneOrderByWithRelationInput
   coupons?: Prisma.CouponOrderByRelationAggregateInput
   kitchenPayouts?: Prisma.KitchenPayoutOrderByRelationAggregateInput
   kitchenWishlists?: Prisma.KitchenWishlistOrderByRelationAggregateInput
+  cravingsTriggerRules?: Prisma.CravingsRuleOrderByRelationAggregateInput
 }
 
 export type KitchenPartnerWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  publicCode?: string
   slug?: string
   userId?: string
   AND?: Prisma.KitchenPartnerWhereInput | Prisma.KitchenPartnerWhereInput[]
@@ -341,6 +368,7 @@ export type KitchenPartnerWhereUniqueInput = Prisma.AtLeast<{
   totalReviews?: Prisma.IntFilter<"KitchenPartner"> | number
   operatingHours?: Prisma.JsonNullableFilter<"KitchenPartner">
   createdAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
+  estimatedPrepTime?: Prisma.IntNullableFilter<"KitchenPartner"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"KitchenPartner"> | Date | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -353,14 +381,17 @@ export type KitchenPartnerWhereUniqueInput = Prisma.AtLeast<{
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentListRelationFilter
   orderItems?: Prisma.OrderItemListRelationFilter
   reviews?: Prisma.ReviewListRelationFilter
+  rrcKitchenReview?: Prisma.XOR<Prisma.RrcKitchenReviewNullableScalarRelationFilter, Prisma.RrcKitchenReviewWhereInput> | null
   serviceZone?: Prisma.XOR<Prisma.ServiceZoneNullableScalarRelationFilter, Prisma.ServiceZoneWhereInput> | null
   coupons?: Prisma.CouponListRelationFilter
   kitchenPayouts?: Prisma.KitchenPayoutListRelationFilter
   kitchenWishlists?: Prisma.KitchenWishlistListRelationFilter
-}, "id" | "slug" | "userId">
+  cravingsTriggerRules?: Prisma.CravingsRuleListRelationFilter
+}, "id" | "publicCode" | "slug" | "userId">
 
 export type KitchenPartnerOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -371,6 +402,7 @@ export type KitchenPartnerOrderByWithAggregationInput = {
   totalReviews?: Prisma.SortOrder
   operatingHours?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  estimatedPrepTime?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.KitchenPartnerCountOrderByAggregateInput
@@ -385,6 +417,7 @@ export type KitchenPartnerScalarWhereWithAggregatesInput = {
   OR?: Prisma.KitchenPartnerScalarWhereWithAggregatesInput[]
   NOT?: Prisma.KitchenPartnerScalarWhereWithAggregatesInput | Prisma.KitchenPartnerScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"KitchenPartner"> | string
+  publicCode?: Prisma.StringNullableWithAggregatesFilter<"KitchenPartner"> | string | null
   slug?: Prisma.StringWithAggregatesFilter<"KitchenPartner"> | string
   userId?: Prisma.StringWithAggregatesFilter<"KitchenPartner"> | string
   status?: Prisma.EnumPartnerStatusWithAggregatesFilter<"KitchenPartner"> | $Enums.PartnerStatus
@@ -395,12 +428,14 @@ export type KitchenPartnerScalarWhereWithAggregatesInput = {
   totalReviews?: Prisma.IntWithAggregatesFilter<"KitchenPartner"> | number
   operatingHours?: Prisma.JsonNullableWithAggregatesFilter<"KitchenPartner">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"KitchenPartner"> | Date | string
+  estimatedPrepTime?: Prisma.IntNullableWithAggregatesFilter<"KitchenPartner"> | number | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"KitchenPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"KitchenPartner"> | Date | string | null
 }
 
 export type KitchenPartnerCreateInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -409,6 +444,7 @@ export type KitchenPartnerCreateInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -421,14 +457,17 @@ export type KitchenPartnerCreateInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -439,6 +478,7 @@ export type KitchenPartnerUncheckedCreateInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -450,13 +490,16 @@ export type KitchenPartnerUncheckedCreateInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -465,6 +508,7 @@ export type KitchenPartnerUpdateInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -477,14 +521,17 @@ export type KitchenPartnerUpdateInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -495,6 +542,7 @@ export type KitchenPartnerUncheckedUpdateInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -506,13 +554,16 @@ export type KitchenPartnerUncheckedUpdateInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateManyInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -523,12 +574,14 @@ export type KitchenPartnerCreateManyInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
 }
 
 export type KitchenPartnerUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -537,12 +590,14 @@ export type KitchenPartnerUpdateManyMutationInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type KitchenPartnerUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -553,6 +608,7 @@ export type KitchenPartnerUncheckedUpdateManyInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -564,6 +620,7 @@ export type KitchenPartnerNullableScalarRelationFilter = {
 
 export type KitchenPartnerCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -574,6 +631,7 @@ export type KitchenPartnerCountOrderByAggregateInput = {
   totalReviews?: Prisma.SortOrder
   operatingHours?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  estimatedPrepTime?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
 }
@@ -581,10 +639,12 @@ export type KitchenPartnerCountOrderByAggregateInput = {
 export type KitchenPartnerAvgOrderByAggregateInput = {
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
+  estimatedPrepTime?: Prisma.SortOrder
 }
 
 export type KitchenPartnerMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -594,12 +654,14 @@ export type KitchenPartnerMaxOrderByAggregateInput = {
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  estimatedPrepTime?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
 }
 
 export type KitchenPartnerMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -609,6 +671,7 @@ export type KitchenPartnerMinOrderByAggregateInput = {
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
+  estimatedPrepTime?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
 }
@@ -616,6 +679,7 @@ export type KitchenPartnerMinOrderByAggregateInput = {
 export type KitchenPartnerSumOrderByAggregateInput = {
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
+  estimatedPrepTime?: Prisma.SortOrder
 }
 
 export type KitchenPartnerScalarRelationFilter = {
@@ -675,6 +739,14 @@ export type DecimalFieldUpdateOperationsInput = {
   decrement?: runtime.Decimal | runtime.DecimalJsLike | number | string
   multiply?: runtime.Decimal | runtime.DecimalJsLike | number | string
   divide?: runtime.Decimal | runtime.DecimalJsLike | number | string
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
 }
 
 export type KitchenPartnerCreateNestedOneWithoutKitchenKycInput = {
@@ -831,6 +903,20 @@ export type KitchenPartnerUpdateOneRequiredWithoutReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenPartnerUpdateToOneWithWhereWithoutReviewsInput, Prisma.KitchenPartnerUpdateWithoutReviewsInput>, Prisma.KitchenPartnerUncheckedUpdateWithoutReviewsInput>
 }
 
+export type KitchenPartnerCreateNestedOneWithoutRrcKitchenReviewInput = {
+  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutRrcKitchenReviewInput, Prisma.KitchenPartnerUncheckedCreateWithoutRrcKitchenReviewInput>
+  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutRrcKitchenReviewInput
+  connect?: Prisma.KitchenPartnerWhereUniqueInput
+}
+
+export type KitchenPartnerUpdateOneRequiredWithoutRrcKitchenReviewNestedInput = {
+  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutRrcKitchenReviewInput, Prisma.KitchenPartnerUncheckedCreateWithoutRrcKitchenReviewInput>
+  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutRrcKitchenReviewInput
+  upsert?: Prisma.KitchenPartnerUpsertWithoutRrcKitchenReviewInput
+  connect?: Prisma.KitchenPartnerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenPartnerUpdateToOneWithWhereWithoutRrcKitchenReviewInput, Prisma.KitchenPartnerUpdateWithoutRrcKitchenReviewInput>, Prisma.KitchenPartnerUncheckedUpdateWithoutRrcKitchenReviewInput>
+}
+
 export type KitchenPartnerCreateNestedOneWithoutCouponsInput = {
   create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutCouponsInput, Prisma.KitchenPartnerUncheckedCreateWithoutCouponsInput>
   connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutCouponsInput
@@ -889,8 +975,23 @@ export type KitchenPartnerUpdateOneRequiredWithoutKitchenWishlistsNestedInput = 
   update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenPartnerUpdateToOneWithWhereWithoutKitchenWishlistsInput, Prisma.KitchenPartnerUpdateWithoutKitchenWishlistsInput>, Prisma.KitchenPartnerUncheckedUpdateWithoutKitchenWishlistsInput>
 }
 
+export type KitchenPartnerCreateNestedOneWithoutCravingsTriggerRulesInput = {
+  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutCravingsTriggerRulesInput, Prisma.KitchenPartnerUncheckedCreateWithoutCravingsTriggerRulesInput>
+  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutCravingsTriggerRulesInput
+  connect?: Prisma.KitchenPartnerWhereUniqueInput
+}
+
+export type KitchenPartnerUpdateOneRequiredWithoutCravingsTriggerRulesNestedInput = {
+  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutCravingsTriggerRulesInput, Prisma.KitchenPartnerUncheckedCreateWithoutCravingsTriggerRulesInput>
+  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutCravingsTriggerRulesInput
+  upsert?: Prisma.KitchenPartnerUpsertWithoutCravingsTriggerRulesInput
+  connect?: Prisma.KitchenPartnerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenPartnerUpdateToOneWithWhereWithoutCravingsTriggerRulesInput, Prisma.KitchenPartnerUpdateWithoutCravingsTriggerRulesInput>, Prisma.KitchenPartnerUncheckedUpdateWithoutCravingsTriggerRulesInput>
+}
+
 export type KitchenPartnerCreateWithoutUserInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -899,6 +1000,7 @@ export type KitchenPartnerCreateWithoutUserInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasCreateNestedOneWithoutKitchenPartnerInput
@@ -910,14 +1012,17 @@ export type KitchenPartnerCreateWithoutUserInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutUserInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -927,6 +1032,7 @@ export type KitchenPartnerUncheckedCreateWithoutUserInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -938,9 +1044,11 @@ export type KitchenPartnerUncheckedCreateWithoutUserInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutUserInput = {
@@ -961,6 +1069,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutUserInput = {
 
 export type KitchenPartnerUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -969,6 +1078,7 @@ export type KitchenPartnerUpdateWithoutUserInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUpdateOneWithoutKitchenPartnerNestedInput
@@ -980,14 +1090,17 @@ export type KitchenPartnerUpdateWithoutUserInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -997,6 +1110,7 @@ export type KitchenPartnerUncheckedUpdateWithoutUserInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1008,13 +1122,16 @@ export type KitchenPartnerUncheckedUpdateWithoutUserInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenKycInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -1023,6 +1140,7 @@ export type KitchenPartnerCreateWithoutKitchenKycInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1034,14 +1152,17 @@ export type KitchenPartnerCreateWithoutKitchenKycInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenKycInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -1052,6 +1173,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenKycInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1062,9 +1184,11 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenKycInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenKycInput = {
@@ -1085,6 +1209,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutKitchenKycInput = {
 
 export type KitchenPartnerUpdateWithoutKitchenKycInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1093,6 +1218,7 @@ export type KitchenPartnerUpdateWithoutKitchenKycInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1104,14 +1230,17 @@ export type KitchenPartnerUpdateWithoutKitchenKycInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenKycInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -1122,6 +1251,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenKycInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1132,13 +1262,16 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenKycInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenAliasInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -1147,6 +1280,7 @@ export type KitchenPartnerCreateWithoutKitchenAliasInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1158,14 +1292,17 @@ export type KitchenPartnerCreateWithoutKitchenAliasInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenAliasInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -1176,6 +1313,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAliasInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenKyc?: Prisma.KitchenPartnerKycUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1186,9 +1324,11 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAliasInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenAliasInput = {
@@ -1209,6 +1349,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutKitchenAliasInput = {
 
 export type KitchenPartnerUpdateWithoutKitchenAliasInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1217,6 +1358,7 @@ export type KitchenPartnerUpdateWithoutKitchenAliasInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1228,14 +1370,17 @@ export type KitchenPartnerUpdateWithoutKitchenAliasInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenAliasInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -1246,6 +1391,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAliasInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenKyc?: Prisma.KitchenPartnerKycUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1256,13 +1402,16 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAliasInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenCategoriesInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -1271,6 +1420,7 @@ export type KitchenPartnerCreateWithoutKitchenCategoriesInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1282,14 +1432,17 @@ export type KitchenPartnerCreateWithoutKitchenCategoriesInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenCategoriesInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -1300,6 +1453,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenCategoriesInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1310,9 +1464,11 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenCategoriesInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenCategoriesInput = {
@@ -1333,6 +1489,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutKitchenCategoriesInput = {
 
 export type KitchenPartnerUpdateWithoutKitchenCategoriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1341,6 +1498,7 @@ export type KitchenPartnerUpdateWithoutKitchenCategoriesInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1352,14 +1510,17 @@ export type KitchenPartnerUpdateWithoutKitchenCategoriesInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenCategoriesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -1370,6 +1531,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenCategoriesInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1380,13 +1542,16 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenCategoriesInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenAvailabilityInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -1395,6 +1560,7 @@ export type KitchenPartnerCreateWithoutKitchenAvailabilityInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1406,14 +1572,17 @@ export type KitchenPartnerCreateWithoutKitchenAvailabilityInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenAvailabilityInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -1424,6 +1593,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAvailabilityInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1434,9 +1604,11 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAvailabilityInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenAvailabilityInput = {
@@ -1457,6 +1629,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutKitchenAvailabilityInput = 
 
 export type KitchenPartnerUpdateWithoutKitchenAvailabilityInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1465,6 +1638,7 @@ export type KitchenPartnerUpdateWithoutKitchenAvailabilityInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1476,14 +1650,17 @@ export type KitchenPartnerUpdateWithoutKitchenAvailabilityInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenAvailabilityInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -1494,6 +1671,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAvailabilityInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1504,13 +1682,16 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAvailabilityInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutMenusInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -1519,6 +1700,7 @@ export type KitchenPartnerCreateWithoutMenusInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1530,14 +1712,17 @@ export type KitchenPartnerCreateWithoutMenusInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutMenusInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -1548,6 +1733,7 @@ export type KitchenPartnerUncheckedCreateWithoutMenusInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1558,9 +1744,11 @@ export type KitchenPartnerUncheckedCreateWithoutMenusInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutMenusInput = {
@@ -1581,6 +1769,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutMenusInput = {
 
 export type KitchenPartnerUpdateWithoutMenusInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1589,6 +1778,7 @@ export type KitchenPartnerUpdateWithoutMenusInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1600,14 +1790,17 @@ export type KitchenPartnerUpdateWithoutMenusInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutMenusInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -1618,6 +1811,7 @@ export type KitchenPartnerUncheckedUpdateWithoutMenusInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1628,13 +1822,16 @@ export type KitchenPartnerUncheckedUpdateWithoutMenusInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutDeliveryPartnerAssignmentsInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -1643,6 +1840,7 @@ export type KitchenPartnerCreateWithoutDeliveryPartnerAssignmentsInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1654,14 +1852,17 @@ export type KitchenPartnerCreateWithoutDeliveryPartnerAssignmentsInput = {
   menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutDeliveryPartnerAssignmentsInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -1672,6 +1873,7 @@ export type KitchenPartnerUncheckedCreateWithoutDeliveryPartnerAssignmentsInput 
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1682,9 +1884,11 @@ export type KitchenPartnerUncheckedCreateWithoutDeliveryPartnerAssignmentsInput 
   menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutDeliveryPartnerAssignmentsInput = {
@@ -1705,6 +1909,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutDeliveryPartnerAssignmentsI
 
 export type KitchenPartnerUpdateWithoutDeliveryPartnerAssignmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1713,6 +1918,7 @@ export type KitchenPartnerUpdateWithoutDeliveryPartnerAssignmentsInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1724,14 +1930,17 @@ export type KitchenPartnerUpdateWithoutDeliveryPartnerAssignmentsInput = {
   menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutDeliveryPartnerAssignmentsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -1742,6 +1951,7 @@ export type KitchenPartnerUncheckedUpdateWithoutDeliveryPartnerAssignmentsInput 
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1752,13 +1962,16 @@ export type KitchenPartnerUncheckedUpdateWithoutDeliveryPartnerAssignmentsInput 
   menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutServiceZoneInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -1767,6 +1980,7 @@ export type KitchenPartnerCreateWithoutServiceZoneInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1779,13 +1993,16 @@ export type KitchenPartnerCreateWithoutServiceZoneInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutServiceZoneInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -1795,6 +2012,7 @@ export type KitchenPartnerUncheckedCreateWithoutServiceZoneInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1806,9 +2024,11 @@ export type KitchenPartnerUncheckedCreateWithoutServiceZoneInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutServiceZoneInput = {
@@ -1842,6 +2062,7 @@ export type KitchenPartnerScalarWhereInput = {
   OR?: Prisma.KitchenPartnerScalarWhereInput[]
   NOT?: Prisma.KitchenPartnerScalarWhereInput | Prisma.KitchenPartnerScalarWhereInput[]
   id?: Prisma.StringFilter<"KitchenPartner"> | string
+  publicCode?: Prisma.StringNullableFilter<"KitchenPartner"> | string | null
   slug?: Prisma.StringFilter<"KitchenPartner"> | string
   userId?: Prisma.StringFilter<"KitchenPartner"> | string
   status?: Prisma.EnumPartnerStatusFilter<"KitchenPartner"> | $Enums.PartnerStatus
@@ -1852,12 +2073,14 @@ export type KitchenPartnerScalarWhereInput = {
   totalReviews?: Prisma.IntFilter<"KitchenPartner"> | number
   operatingHours?: Prisma.JsonNullableFilter<"KitchenPartner">
   createdAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
+  estimatedPrepTime?: Prisma.IntNullableFilter<"KitchenPartner"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"KitchenPartner"> | Date | string | null
 }
 
 export type KitchenPartnerCreateWithoutOrderItemsInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -1866,6 +2089,7 @@ export type KitchenPartnerCreateWithoutOrderItemsInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1877,14 +2101,17 @@ export type KitchenPartnerCreateWithoutOrderItemsInput = {
   menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutOrderItemsInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -1895,6 +2122,7 @@ export type KitchenPartnerUncheckedCreateWithoutOrderItemsInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1905,9 +2133,11 @@ export type KitchenPartnerUncheckedCreateWithoutOrderItemsInput = {
   menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutOrderItemsInput = {
@@ -1928,6 +2158,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutOrderItemsInput = {
 
 export type KitchenPartnerUpdateWithoutOrderItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -1936,6 +2167,7 @@ export type KitchenPartnerUpdateWithoutOrderItemsInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1947,14 +2179,17 @@ export type KitchenPartnerUpdateWithoutOrderItemsInput = {
   menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutOrderItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -1965,6 +2200,7 @@ export type KitchenPartnerUncheckedUpdateWithoutOrderItemsInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1975,13 +2211,16 @@ export type KitchenPartnerUncheckedUpdateWithoutOrderItemsInput = {
   menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutReviewsInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -1990,6 +2229,7 @@ export type KitchenPartnerCreateWithoutReviewsInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2001,14 +2241,17 @@ export type KitchenPartnerCreateWithoutReviewsInput = {
   menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutReviewsInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -2019,6 +2262,7 @@ export type KitchenPartnerUncheckedCreateWithoutReviewsInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -2029,9 +2273,11 @@ export type KitchenPartnerUncheckedCreateWithoutReviewsInput = {
   menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutReviewsInput = {
@@ -2052,6 +2298,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutReviewsInput = {
 
 export type KitchenPartnerUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2060,6 +2307,7 @@ export type KitchenPartnerUpdateWithoutReviewsInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -2071,14 +2319,17 @@ export type KitchenPartnerUpdateWithoutReviewsInput = {
   menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -2089,6 +2340,7 @@ export type KitchenPartnerUncheckedUpdateWithoutReviewsInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -2099,13 +2351,16 @@ export type KitchenPartnerUncheckedUpdateWithoutReviewsInput = {
   menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
-export type KitchenPartnerCreateWithoutCouponsInput = {
+export type KitchenPartnerCreateWithoutRrcKitchenReviewInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -2114,6 +2369,7 @@ export type KitchenPartnerCreateWithoutCouponsInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2127,12 +2383,15 @@ export type KitchenPartnerCreateWithoutCouponsInput = {
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
+  coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
-export type KitchenPartnerUncheckedCreateWithoutCouponsInput = {
+export type KitchenPartnerUncheckedCreateWithoutRrcKitchenReviewInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -2143,6 +2402,7 @@ export type KitchenPartnerUncheckedCreateWithoutCouponsInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -2154,8 +2414,150 @@ export type KitchenPartnerUncheckedCreateWithoutCouponsInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+}
+
+export type KitchenPartnerCreateOrConnectWithoutRrcKitchenReviewInput = {
+  where: Prisma.KitchenPartnerWhereUniqueInput
+  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutRrcKitchenReviewInput, Prisma.KitchenPartnerUncheckedCreateWithoutRrcKitchenReviewInput>
+}
+
+export type KitchenPartnerUpsertWithoutRrcKitchenReviewInput = {
+  update: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutRrcKitchenReviewInput, Prisma.KitchenPartnerUncheckedUpdateWithoutRrcKitchenReviewInput>
+  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutRrcKitchenReviewInput, Prisma.KitchenPartnerUncheckedCreateWithoutRrcKitchenReviewInput>
+  where?: Prisma.KitchenPartnerWhereInput
+}
+
+export type KitchenPartnerUpdateToOneWithWhereWithoutRrcKitchenReviewInput = {
+  where?: Prisma.KitchenPartnerWhereInput
+  data: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutRrcKitchenReviewInput, Prisma.KitchenPartnerUncheckedUpdateWithoutRrcKitchenReviewInput>
+}
+
+export type KitchenPartnerUpdateWithoutRrcKitchenReviewInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
+  kitchenAlias?: Prisma.KitchenAliasUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenKyc?: Prisma.KitchenPartnerKycUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenAddress?: Prisma.KitchenAddressUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
+  menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
+  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
+  coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+}
+
+export type KitchenPartnerUncheckedUpdateWithoutRrcKitchenReviewInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenAddress?: Prisma.KitchenAddressUncheckedUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+}
+
+export type KitchenPartnerCreateWithoutCouponsInput = {
+  id?: string
+  publicCode?: string | null
+  slug: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  rejectedReason?: string | null
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  estimatedPrepTime?: number | null
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
+  kitchenAlias?: Prisma.KitchenAliasCreateNestedOneWithoutKitchenPartnerInput
+  kitchenKyc?: Prisma.KitchenPartnerKycCreateNestedOneWithoutKitchenPartnerInput
+  kitchenAddress?: Prisma.KitchenAddressCreateNestedOneWithoutKitchenPartnerInput
+  kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
+  kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
+  menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
+  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
+  serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
+  kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+}
+
+export type KitchenPartnerUncheckedCreateWithoutCouponsInput = {
+  id?: string
+  publicCode?: string | null
+  slug: string
+  userId: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  rejectedReason?: string | null
+  serviceZoneId?: string | null
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  estimatedPrepTime?: number | null
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
+  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedCreateNestedOneWithoutKitchenPartnerInput
+  kitchenAddress?: Prisma.KitchenAddressUncheckedCreateNestedOneWithoutKitchenPartnerInput
+  kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
+  kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutCouponsInput = {
@@ -2176,6 +2578,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutCouponsInput = {
 
 export type KitchenPartnerUpdateWithoutCouponsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2184,6 +2587,7 @@ export type KitchenPartnerUpdateWithoutCouponsInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -2196,13 +2600,16 @@ export type KitchenPartnerUpdateWithoutCouponsInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutCouponsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -2213,6 +2620,7 @@ export type KitchenPartnerUncheckedUpdateWithoutCouponsInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -2224,12 +2632,15 @@ export type KitchenPartnerUncheckedUpdateWithoutCouponsInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenPayoutsInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -2238,6 +2649,7 @@ export type KitchenPartnerCreateWithoutKitchenPayoutsInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2250,13 +2662,16 @@ export type KitchenPartnerCreateWithoutKitchenPayoutsInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenPayoutsInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -2267,6 +2682,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenPayoutsInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -2278,8 +2694,10 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenPayoutsInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenPayoutsInput = {
@@ -2300,6 +2718,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutKitchenPayoutsInput = {
 
 export type KitchenPartnerUpdateWithoutKitchenPayoutsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2308,6 +2727,7 @@ export type KitchenPartnerUpdateWithoutKitchenPayoutsInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -2320,13 +2740,16 @@ export type KitchenPartnerUpdateWithoutKitchenPayoutsInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenPayoutsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -2337,6 +2760,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenPayoutsInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -2348,12 +2772,15 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenPayoutsInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenAddressInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -2362,6 +2789,7 @@ export type KitchenPartnerCreateWithoutKitchenAddressInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2373,14 +2801,17 @@ export type KitchenPartnerCreateWithoutKitchenAddressInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenAddressInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -2391,6 +2822,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAddressInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -2401,9 +2833,11 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAddressInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenAddressInput = {
@@ -2424,6 +2858,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutKitchenAddressInput = {
 
 export type KitchenPartnerUpdateWithoutKitchenAddressInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2432,6 +2867,7 @@ export type KitchenPartnerUpdateWithoutKitchenAddressInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -2443,14 +2879,17 @@ export type KitchenPartnerUpdateWithoutKitchenAddressInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenAddressInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -2461,6 +2900,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAddressInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -2471,13 +2911,16 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAddressInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenWishlistsInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
@@ -2486,6 +2929,7 @@ export type KitchenPartnerCreateWithoutKitchenWishlistsInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2498,13 +2942,16 @@ export type KitchenPartnerCreateWithoutKitchenWishlistsInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
   serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenWishlistsInput = {
   id?: string
+  publicCode?: string | null
   slug: string
   userId: string
   status?: $Enums.PartnerStatus
@@ -2515,6 +2962,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenWishlistsInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -2526,8 +2974,10 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenWishlistsInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
   reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenWishlistsInput = {
@@ -2548,6 +2998,7 @@ export type KitchenPartnerUpdateToOneWithWhereWithoutKitchenWishlistsInput = {
 
 export type KitchenPartnerUpdateWithoutKitchenWishlistsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2556,6 +3007,7 @@ export type KitchenPartnerUpdateWithoutKitchenWishlistsInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -2568,13 +3020,16 @@ export type KitchenPartnerUpdateWithoutKitchenWishlistsInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenWishlistsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -2585,6 +3040,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenWishlistsInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -2596,14 +3052,16 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenWishlistsInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
-export type KitchenPartnerCreateManyServiceZoneInput = {
+export type KitchenPartnerCreateWithoutCravingsTriggerRulesInput = {
   id?: string
+  publicCode?: string | null
   slug: string
-  userId: string
   status?: $Enums.PartnerStatus
   approvedAt?: Date | string | null
   rejectedReason?: string | null
@@ -2611,12 +3069,76 @@ export type KitchenPartnerCreateManyServiceZoneInput = {
   totalReviews?: number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
+  estimatedPrepTime?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
+  kitchenAlias?: Prisma.KitchenAliasCreateNestedOneWithoutKitchenPartnerInput
+  kitchenKyc?: Prisma.KitchenPartnerKycCreateNestedOneWithoutKitchenPartnerInput
+  kitchenAddress?: Prisma.KitchenAddressCreateNestedOneWithoutKitchenPartnerInput
+  kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
+  kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
+  menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
+  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
+  serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
+  coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
+  kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
 }
 
-export type KitchenPartnerUpdateWithoutServiceZoneInput = {
+export type KitchenPartnerUncheckedCreateWithoutCravingsTriggerRulesInput = {
+  id?: string
+  publicCode?: string | null
+  slug: string
+  userId: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  rejectedReason?: string | null
+  serviceZoneId?: string | null
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  estimatedPrepTime?: number | null
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
+  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedCreateNestedOneWithoutKitchenPartnerInput
+  kitchenAddress?: Prisma.KitchenAddressUncheckedCreateNestedOneWithoutKitchenPartnerInput
+  kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
+  coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+}
+
+export type KitchenPartnerCreateOrConnectWithoutCravingsTriggerRulesInput = {
+  where: Prisma.KitchenPartnerWhereUniqueInput
+  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutCravingsTriggerRulesInput, Prisma.KitchenPartnerUncheckedCreateWithoutCravingsTriggerRulesInput>
+}
+
+export type KitchenPartnerUpsertWithoutCravingsTriggerRulesInput = {
+  update: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutCravingsTriggerRulesInput, Prisma.KitchenPartnerUncheckedUpdateWithoutCravingsTriggerRulesInput>
+  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutCravingsTriggerRulesInput, Prisma.KitchenPartnerUncheckedCreateWithoutCravingsTriggerRulesInput>
+  where?: Prisma.KitchenPartnerWhereInput
+}
+
+export type KitchenPartnerUpdateToOneWithWhereWithoutCravingsTriggerRulesInput = {
+  where?: Prisma.KitchenPartnerWhereInput
+  data: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutCravingsTriggerRulesInput, Prisma.KitchenPartnerUncheckedUpdateWithoutCravingsTriggerRulesInput>
+}
+
+export type KitchenPartnerUpdateWithoutCravingsTriggerRulesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -2625,6 +3147,7 @@ export type KitchenPartnerUpdateWithoutServiceZoneInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -2637,22 +3160,27 @@ export type KitchenPartnerUpdateWithoutServiceZoneInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
+  serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
 }
 
-export type KitchenPartnerUncheckedUpdateWithoutServiceZoneInput = {
+export type KitchenPartnerUncheckedUpdateWithoutCravingsTriggerRulesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
   approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -2664,13 +3192,63 @@ export type KitchenPartnerUncheckedUpdateWithoutServiceZoneInput = {
   deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
 }
 
-export type KitchenPartnerUncheckedUpdateManyWithoutServiceZoneInput = {
+export type KitchenPartnerCreateManyServiceZoneInput = {
+  id?: string
+  publicCode?: string | null
+  slug: string
+  userId: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  rejectedReason?: string | null
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  estimatedPrepTime?: number | null
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+}
+
+export type KitchenPartnerUpdateWithoutServiceZoneInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
+  kitchenAlias?: Prisma.KitchenAliasUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenKyc?: Prisma.KitchenPartnerKycUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenAddress?: Prisma.KitchenAddressUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
+  menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
+  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
+  coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+}
+
+export type KitchenPartnerUncheckedUpdateWithoutServiceZoneInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.StringFieldUpdateOperationsInput | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
@@ -2680,6 +3258,38 @@ export type KitchenPartnerUncheckedUpdateManyWithoutServiceZoneInput = {
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenAddress?: Prisma.KitchenAddressUncheckedUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
+  coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+}
+
+export type KitchenPartnerUncheckedUpdateManyWithoutServiceZoneInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -2699,6 +3309,7 @@ export type KitchenPartnerCountOutputType = {
   coupons: number
   kitchenPayouts: number
   kitchenWishlists: number
+  cravingsTriggerRules: number
 }
 
 export type KitchenPartnerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2711,6 +3322,7 @@ export type KitchenPartnerCountOutputTypeSelect<ExtArgs extends runtime.Types.Ex
   coupons?: boolean | KitchenPartnerCountOutputTypeCountCouponsArgs
   kitchenPayouts?: boolean | KitchenPartnerCountOutputTypeCountKitchenPayoutsArgs
   kitchenWishlists?: boolean | KitchenPartnerCountOutputTypeCountKitchenWishlistsArgs
+  cravingsTriggerRules?: boolean | KitchenPartnerCountOutputTypeCountCravingsTriggerRulesArgs
 }
 
 /**
@@ -2786,9 +3398,17 @@ export type KitchenPartnerCountOutputTypeCountKitchenWishlistsArgs<ExtArgs exten
   where?: Prisma.KitchenWishlistWhereInput
 }
 
+/**
+ * KitchenPartnerCountOutputType without action
+ */
+export type KitchenPartnerCountOutputTypeCountCravingsTriggerRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CravingsRuleWhereInput
+}
+
 
 export type KitchenPartnerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   slug?: boolean
   userId?: boolean
   status?: boolean
@@ -2799,6 +3419,7 @@ export type KitchenPartnerSelect<ExtArgs extends runtime.Types.Extensions.Intern
   totalReviews?: boolean
   operatingHours?: boolean
   createdAt?: boolean
+  estimatedPrepTime?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -2811,15 +3432,18 @@ export type KitchenPartnerSelect<ExtArgs extends runtime.Types.Extensions.Intern
   deliveryPartnerAssignments?: boolean | Prisma.KitchenPartner$deliveryPartnerAssignmentsArgs<ExtArgs>
   orderItems?: boolean | Prisma.KitchenPartner$orderItemsArgs<ExtArgs>
   reviews?: boolean | Prisma.KitchenPartner$reviewsArgs<ExtArgs>
+  rrcKitchenReview?: boolean | Prisma.KitchenPartner$rrcKitchenReviewArgs<ExtArgs>
   serviceZone?: boolean | Prisma.KitchenPartner$serviceZoneArgs<ExtArgs>
   coupons?: boolean | Prisma.KitchenPartner$couponsArgs<ExtArgs>
   kitchenPayouts?: boolean | Prisma.KitchenPartner$kitchenPayoutsArgs<ExtArgs>
   kitchenWishlists?: boolean | Prisma.KitchenPartner$kitchenWishlistsArgs<ExtArgs>
+  cravingsTriggerRules?: boolean | Prisma.KitchenPartner$cravingsTriggerRulesArgs<ExtArgs>
   _count?: boolean | Prisma.KitchenPartnerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["kitchenPartner"]>
 
 export type KitchenPartnerSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   slug?: boolean
   userId?: boolean
   status?: boolean
@@ -2830,6 +3454,7 @@ export type KitchenPartnerSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   totalReviews?: boolean
   operatingHours?: boolean
   createdAt?: boolean
+  estimatedPrepTime?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -2838,6 +3463,7 @@ export type KitchenPartnerSelectCreateManyAndReturn<ExtArgs extends runtime.Type
 
 export type KitchenPartnerSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   slug?: boolean
   userId?: boolean
   status?: boolean
@@ -2848,6 +3474,7 @@ export type KitchenPartnerSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   totalReviews?: boolean
   operatingHours?: boolean
   createdAt?: boolean
+  estimatedPrepTime?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -2856,6 +3483,7 @@ export type KitchenPartnerSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
 
 export type KitchenPartnerSelectScalar = {
   id?: boolean
+  publicCode?: boolean
   slug?: boolean
   userId?: boolean
   status?: boolean
@@ -2866,11 +3494,12 @@ export type KitchenPartnerSelectScalar = {
   totalReviews?: boolean
   operatingHours?: boolean
   createdAt?: boolean
+  estimatedPrepTime?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type KitchenPartnerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "userId" | "status" | "approvedAt" | "rejectedReason" | "serviceZoneId" | "avgRating" | "totalReviews" | "operatingHours" | "createdAt" | "updatedAt" | "deletedAt", ExtArgs["result"]["kitchenPartner"]>
+export type KitchenPartnerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicCode" | "slug" | "userId" | "status" | "approvedAt" | "rejectedReason" | "serviceZoneId" | "avgRating" | "totalReviews" | "operatingHours" | "createdAt" | "estimatedPrepTime" | "updatedAt" | "deletedAt", ExtArgs["result"]["kitchenPartner"]>
 export type KitchenPartnerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   kitchenAlias?: boolean | Prisma.KitchenPartner$kitchenAliasArgs<ExtArgs>
@@ -2882,10 +3511,12 @@ export type KitchenPartnerInclude<ExtArgs extends runtime.Types.Extensions.Inter
   deliveryPartnerAssignments?: boolean | Prisma.KitchenPartner$deliveryPartnerAssignmentsArgs<ExtArgs>
   orderItems?: boolean | Prisma.KitchenPartner$orderItemsArgs<ExtArgs>
   reviews?: boolean | Prisma.KitchenPartner$reviewsArgs<ExtArgs>
+  rrcKitchenReview?: boolean | Prisma.KitchenPartner$rrcKitchenReviewArgs<ExtArgs>
   serviceZone?: boolean | Prisma.KitchenPartner$serviceZoneArgs<ExtArgs>
   coupons?: boolean | Prisma.KitchenPartner$couponsArgs<ExtArgs>
   kitchenPayouts?: boolean | Prisma.KitchenPartner$kitchenPayoutsArgs<ExtArgs>
   kitchenWishlists?: boolean | Prisma.KitchenPartner$kitchenWishlistsArgs<ExtArgs>
+  cravingsTriggerRules?: boolean | Prisma.KitchenPartner$cravingsTriggerRulesArgs<ExtArgs>
   _count?: boolean | Prisma.KitchenPartnerCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type KitchenPartnerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2910,13 +3541,16 @@ export type $KitchenPartnerPayload<ExtArgs extends runtime.Types.Extensions.Inte
     deliveryPartnerAssignments: Prisma.$DeliveryPartnerKitchenAssignmentPayload<ExtArgs>[]
     orderItems: Prisma.$OrderItemPayload<ExtArgs>[]
     reviews: Prisma.$ReviewPayload<ExtArgs>[]
+    rrcKitchenReview: Prisma.$RrcKitchenReviewPayload<ExtArgs> | null
     serviceZone: Prisma.$ServiceZonePayload<ExtArgs> | null
     coupons: Prisma.$CouponPayload<ExtArgs>[]
     kitchenPayouts: Prisma.$KitchenPayoutPayload<ExtArgs>[]
     kitchenWishlists: Prisma.$KitchenWishlistPayload<ExtArgs>[]
+    cravingsTriggerRules: Prisma.$CravingsRulePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    publicCode: string | null
     slug: string
     userId: string
     status: $Enums.PartnerStatus
@@ -2927,6 +3561,7 @@ export type $KitchenPartnerPayload<ExtArgs extends runtime.Types.Extensions.Inte
     totalReviews: number
     operatingHours: runtime.JsonValue | null
     createdAt: Date
+    estimatedPrepTime: number | null
     updatedAt: Date
     deletedAt: Date | null
   }, ExtArgs["result"]["kitchenPartner"]>
@@ -3333,10 +3968,12 @@ export interface Prisma__KitchenPartnerClient<T, Null = never, ExtArgs extends r
   deliveryPartnerAssignments<T extends Prisma.KitchenPartner$deliveryPartnerAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$deliveryPartnerAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerKitchenAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orderItems<T extends Prisma.KitchenPartner$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   reviews<T extends Prisma.KitchenPartner$reviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$reviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  rrcKitchenReview<T extends Prisma.KitchenPartner$rrcKitchenReviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$rrcKitchenReviewArgs<ExtArgs>>): Prisma.Prisma__RrcKitchenReviewClient<runtime.Types.Result.GetResult<Prisma.$RrcKitchenReviewPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   serviceZone<T extends Prisma.KitchenPartner$serviceZoneArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$serviceZoneArgs<ExtArgs>>): Prisma.Prisma__ServiceZoneClient<runtime.Types.Result.GetResult<Prisma.$ServiceZonePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   coupons<T extends Prisma.KitchenPartner$couponsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$couponsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CouponPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitchenPayouts<T extends Prisma.KitchenPartner$kitchenPayoutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$kitchenPayoutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenPayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitchenWishlists<T extends Prisma.KitchenPartner$kitchenWishlistsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$kitchenWishlistsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenWishlistPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cravingsTriggerRules<T extends Prisma.KitchenPartner$cravingsTriggerRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$cravingsTriggerRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CravingsRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3367,6 +4004,7 @@ export interface Prisma__KitchenPartnerClient<T, Null = never, ExtArgs extends r
  */
 export interface KitchenPartnerFieldRefs {
   readonly id: Prisma.FieldRef<"KitchenPartner", 'String'>
+  readonly publicCode: Prisma.FieldRef<"KitchenPartner", 'String'>
   readonly slug: Prisma.FieldRef<"KitchenPartner", 'String'>
   readonly userId: Prisma.FieldRef<"KitchenPartner", 'String'>
   readonly status: Prisma.FieldRef<"KitchenPartner", 'PartnerStatus'>
@@ -3377,6 +4015,7 @@ export interface KitchenPartnerFieldRefs {
   readonly totalReviews: Prisma.FieldRef<"KitchenPartner", 'Int'>
   readonly operatingHours: Prisma.FieldRef<"KitchenPartner", 'Json'>
   readonly createdAt: Prisma.FieldRef<"KitchenPartner", 'DateTime'>
+  readonly estimatedPrepTime: Prisma.FieldRef<"KitchenPartner", 'Int'>
   readonly updatedAt: Prisma.FieldRef<"KitchenPartner", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"KitchenPartner", 'DateTime'>
 }
@@ -3981,6 +4620,25 @@ export type KitchenPartner$reviewsArgs<ExtArgs extends runtime.Types.Extensions.
 }
 
 /**
+ * KitchenPartner.rrcKitchenReview
+ */
+export type KitchenPartner$rrcKitchenReviewArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RrcKitchenReview
+   */
+  select?: Prisma.RrcKitchenReviewSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RrcKitchenReview
+   */
+  omit?: Prisma.RrcKitchenReviewOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RrcKitchenReviewInclude<ExtArgs> | null
+  where?: Prisma.RrcKitchenReviewWhereInput
+}
+
+/**
  * KitchenPartner.serviceZone
  */
 export type KitchenPartner$serviceZoneArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4069,6 +4727,30 @@ export type KitchenPartner$kitchenWishlistsArgs<ExtArgs extends runtime.Types.Ex
   take?: number
   skip?: number
   distinct?: Prisma.KitchenWishlistScalarFieldEnum | Prisma.KitchenWishlistScalarFieldEnum[]
+}
+
+/**
+ * KitchenPartner.cravingsTriggerRules
+ */
+export type KitchenPartner$cravingsTriggerRulesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CravingsRule
+   */
+  select?: Prisma.CravingsRuleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CravingsRule
+   */
+  omit?: Prisma.CravingsRuleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CravingsRuleInclude<ExtArgs> | null
+  where?: Prisma.CravingsRuleWhereInput
+  orderBy?: Prisma.CravingsRuleOrderByWithRelationInput | Prisma.CravingsRuleOrderByWithRelationInput[]
+  cursor?: Prisma.CravingsRuleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CravingsRuleScalarFieldEnum | Prisma.CravingsRuleScalarFieldEnum[]
 }
 
 /**

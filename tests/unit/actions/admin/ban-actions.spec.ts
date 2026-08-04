@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   user: {
     update: vi.fn(),
     findMany: vi.fn(),
     count: vi.fn(),
     findUnique: vi.fn(),
   },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 vi.mock("@/lib/auth-guards", () => ({
@@ -56,7 +56,7 @@ describe("ban-actions", () => {
       })
     })
 
-    it("uses default reason when empty string", async () => {
+    it("stores no reason when empty string", async () => {
       vi.mocked(requirePermission).mockResolvedValue({ session: adminSession } as never)
       mockPrisma.user.update.mockResolvedValue({})
       vi.mocked(logAdminAction).mockResolvedValue(undefined as never)
@@ -65,7 +65,7 @@ describe("ban-actions", () => {
 
       expect(mockPrisma.user.update).toHaveBeenCalledWith({
         where: { id: "user-1" },
-        data: { banned: true, banReason: "Banned by admin", banExpires: null },
+        data: { banned: true, banReason: null, banExpires: null },
       })
     })
 

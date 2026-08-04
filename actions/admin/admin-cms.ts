@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma"
 import { requirePermission } from "@/lib/auth-guards"
 import { getCategoryImageUrl } from "@/lib/category-images"
+import { getAblyRest } from "@/lib/ably/server"
 
 export async function getAllCategories() {
   await requirePermission("MANAGE_CMS")
@@ -20,8 +21,32 @@ export async function getAllCategories() {
     description: c.description,
     isActive: c.isActive,
     kitchenCount: c._count.kitchenCategories,
-    imageUrl: getCategoryImageUrl(c.name),
+    imageUrl: c.imageUrl ?? getCategoryImageUrl(c.name),
+    createdAt: c.createdAt.toISOString(),
   }))
+}
+
+export async function updateCategoryImage(id: string, imageUrl: string | null) {
+  await requirePermission("MANAGE_CMS")
+
+  await prisma.category.update({
+    where: { id },
+    data: { imageUrl },
+  })
+
+  await publishCategoryUpdate(id, "image-updated", { imageUrl })
+
+  return { success: true }
+}
+
+async function publishCategoryUpdate(categoryId: string, event: string, data: Record<string, unknown>) {
+  try {
+    const ably = getAblyRest()
+    const channel = ably.channels.get(`category:${categoryId}`)
+    await channel.publish(event, data)
+  } catch {
+    // skip
+  }
 }
 
 export async function addCategory(data: { name: string; description?: string }) {

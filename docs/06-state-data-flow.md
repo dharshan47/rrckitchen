@@ -1,7 +1,7 @@
 # State Management & Data Flow Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [System Architecture](01-system-architecture.md), [API Design](04-api-design.md), [Component System](07-component-system.md)
 
 ---
@@ -83,7 +83,7 @@ interface CartState {
   items: CartItem[];
   couponCode: string | null;
   couponDiscount: number;
-  orderType: 'prebook' | 'instant' | null;
+  orderType: 'prebook' | null;
   deliveryAddressId: string | null;
   scheduledAt: string | null; // ISO 8601 (for prebook)
   notes: string;
@@ -96,7 +96,7 @@ interface CartState {
   removeItem: (itemId: string) => void;
   updateQuantity: (itemId: string, quantity: number) => void;
   clearCart: () => void;
-  setOrderType: (type: 'prebook' | 'instant') => void;
+  setOrderType: (type: 'prebook') => void;
   setCoupon: (code: string, discount: number) => void;
   removeCoupon: () => void;
   setDeliveryAddress: (id: string) => void;
@@ -167,7 +167,22 @@ interface AuthState {
 }
 ```
 
-### 2.2 Store Boundaries & Guidelines
+### 2.2 Store Inventory
+
+`stores/` contains **42 feature-scoped Zustand stores** plus a barrel `index.ts`. Naming: camelCase file, `Store`-suffixed export (`stores/cartStore.ts` → `useCartStore`). Notable examples:
+
+| Area | Stores |
+|------|--------|
+| Cart / menu | `cartStore`, `menuStore`, `favouritesStore` |
+| Admin screens | `adminStore`, `adminOrdersStore`, `adminKitchensStore`, `adminPaymentsStore`, `adminCouponsStore`, `adminLoyaltyCouponsStore`, `adminPaymentOffersStore`, `adminCustomersStore`, `adminDeliveryStore`, `adminSupportStore`, `adminInvitesStore`, `adminMenuStore`, `adminCategoriesStore`, `adminTwoFactorStore`, `adminTwoFactorSetupStore` |
+| CMS editors | `categoryPageStore`, `categoryPageEditorStore`, `kitchenSearchPageStore`, `searchEditorStore`, `menuEditorStore`, `cravingsPopupStore` |
+| Discovery | `kitchenDetailStore`, `kitchenReviewsStore`, `kitchensGridStore`, `locationDialogStore`, `locationSearchStore`, `thanjavurMapStore`, `loyaltyStore` |
+| Orders / account | `orderTrackingStore`, `orderTrackingMapStore`, `ratingStore`, `userOrdersStore`, `userProfileStore`, `supportStore`, `helpStore` |
+| Dashboards | `deliveryDashboardStore`, `kitchenDashboardStore`, `acceptInviteStore` |
+
+**Convention:** TanStack Query owns server data; a `useEffect` syncs query results into the zustand store; components read via selectors. See [17-cravings-popup](17-cravings-popup.md) §4 for the canonical example of this pattern.
+
+### 2.3 Store Boundaries & Guidelines
 
 | Guideline | Rationale |
 |-----------|-----------|
@@ -192,15 +207,15 @@ sequenceDiagram
     participant Redis
     participant Client
 
-    Browser->>Server: GET /kitchen/[slug]
-    Server->>Server: Server Component: getKitchenDetail(slug)
+    Browser->>Server: GET /kitchens/[slug]
+    Server->>Server: Server Component: getKitchenDetailLive(slug)
 
     Server->>Redis: GET kitchen:{slug}:detail
     alt Cache Hit
         Redis-->>Server: Cached data
     else Cache Miss
-        Server->>Prisma: findUnique kitchenAlias
-        Prisma->>PG: SQL query (kitchen + menus + reviews + timeslots)
+        Server->>Prisma: findUnique kitchenPartner (slug)
+        Prisma->>PG: SQL query (kitchen + alias + menus + reviews)
         PG-->>Prisma: Full join result
         Prisma-->>Server: Typed result
         Server->>Redis: SET kitchen:{slug}:detail TTL 60s
@@ -274,57 +289,36 @@ sequenceDiagram
     Store-->>CartPage: Re-render with totals
 
     User->>CartPage: Select address
-    User->>CartPage: Select order type (prebook/instant)
+    User->>CartPage: Select service date (TOMORROW default)
     User->>CartPage: Apply coupon (optional)
 
-    alt Online Payment
-        User->>CartPage: Click "Place Order"
-        CartPage->>Action: createRazorpayOrder(subtotal)
-        Action->>Razorpay: POST /v1/orders
-        Razorpay-->>Action: { order_id, amount }
-        Action-->>CartPage: { razorpayOrderId, amount, key }
+    User->>CartPage: Click "Place Order"
+    CartPage->>Action: createPaymentOrder(items, idempotencyKey, coupon)
+    Action->>Action: Idempotency + slot cutoff checks
+    Action->>PG: Create Order (CONFIRMED) + OrderItems + Payment (PENDING) + publicCode
+    Action->>Razorpay: POST /v1/orders
+    Razorpay-->>Action: { order_id, amount }
+    Action-->>CartPage: { razorpayOrderId, amount, keyId, orderId }
 
-        CartPage->>Razorpay: Open checkout modal
-        User->>Razorpay: Complete payment
-        Razorpay-->>CartPage: { razorpay_payment_id, signature }
+    CartPage->>Razorpay: Open checkout modal (UPI → NB → Wallet → Cards)
+    User->>Razorpay: Complete payment
+    Razorpay-->>CartPage: { razorpay_payment_id, signature }
 
-        CartPage->>Action: verifyPayment(payload)
-        Action->>Action: Verify HMAC signature
-        Action->>PG: Create order (transaction)
+    CartPage->>Action: POST /api/payment/verify
+    Action->>Action: Verify HMAC signature
 
-        par DB Transaction
-            Action->>PG: INSERT order
-            Action->>PG: INSERT order_items
-            Action->>PG: INSERT payment (success)
-            Action->>PG: UPDATE stock (decrement)
-            Action->>PG: DELETE cart_items
-        end
-
-        Action->>Ably: Publish order.{orderId} { status: "confirmed" }
-        Action-->>CartPage: { success: true, orderId }
-
-        CartPage->>Store: clearCart()
-        CartPage->>User: Show CravingsPopup (real-time upsell)
-
-    else Cash on Delivery
-        User->>CartPage: Click "Place Order"
-        CartPage->>Action: checkCodEligibility(total)
-        Action-->>CartPage: { eligible: true }
-
-        CartPage->>Action: placeOrder({ paymentMethod: "cod" })
-
-        Action->>PG: Create order (transaction)
-        Action->>PG: INSERT order
-        Action->>PG: INSERT order_items
-        Action->>PG: INSERT payment (pending)
-        Action->>PG: DELETE cart_items
-
-        Action->>Ably: Publish order.{orderId} { status: "confirmed", cod: true }
-        Action-->>CartPage: { success: true, orderId }
-
-        CartPage->>Store: clearCart()
-        CartPage->>User: Show CravingsPopup
+    par DB Transaction
+        Action->>PG: Mark Payment SUCCESS
+        Action->>PG: Order → PREPARING
+        Action->>PG: Create KitchenPayout
+        Action->>PG: Award loyalty points
     end
+
+    Action->>Ably: order:{id} "order:status", kitchen:{id} "queue:new-order", "order:cravings"
+    Action-->>CartPage: { success: true, orderId }
+
+    CartPage->>Store: clearCart()
+    CartPage->>User: Show AddToCartPopup with cravings recommendations
 ```
 
 ### 3.4 Wishlist Toggle Flow
@@ -458,26 +452,20 @@ graph LR
 
 ---
 
-## 7. Event Bus Architecture
+## 7. Real-time State (Ably)
 
-For cross-component communication without prop drilling:
+Cross-component real-time state is handled by dedicated Ably hooks, not a generic event bus:
 
 ```typescript
-// stores/event-bus.ts
-type EventMap = {
-  CART_UPDATED: { itemId: string; quantity: number };
-  CART_CLEARED: {};
-  WISHLIST_TOGGLED: { itemId: string; isWishlisted: boolean };
-  AUTH_STATE_CHANGED: { isAuthenticated: boolean; role?: string };
-  ORDER_PLACED: { orderId: string };
-  ORDER_STATUS_CHANGED: { orderId: string; status: string };
-  POPUP_OPENED: { type: string; data?: unknown };
-  POPUP_CLOSED: { type: string };
-  TOAST_SHOWN: { message: string; type: 'success' | 'error' | 'info' };
-  NETWORK_STATUS_CHANGED: { isOnline: boolean };
-};
-
-// Usage
-eventBus.emit('CART_UPDATED', { itemId: 'abc', quantity: 3 });
-eventBus.on('CART_UPDATED', ({ itemId, quantity }) => { ... });
+// hooks/useAblySubscribe.ts
+useAblySubscribe(channelName, eventName, callback);      // generic
+useAblyOrderChannel(orderId, handlers);                  // order:{id} events
+useAblyKitchenChannel(kitchenId, handlers);              // kitchen:{id} queue events
+useAblyDeliveryPersonChannel(deliveryPartnerId, handlers); // deliveryPartner:{id} offers
 ```
+
+- Client: `lib/ably/client.ts` (`Ably.Realtime`, token auth via `/api/ably-token`)
+- Server publish: `lib/ably/server.ts` (`Ably.Rest` singleton) from payment/order/dispatch/refund actions
+- Consumers: `track-order-client.tsx`, `add-to-cart-popup.tsx` (order:cravings), `live-order-tracking-map.tsx`, `kitchen-detail-client.tsx`
+
+Full channel/event catalogue: [09-real-time-system.md](09-real-time-system.md).

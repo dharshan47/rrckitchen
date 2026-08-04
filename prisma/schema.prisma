@@ -11,6 +11,7 @@ datasource db {
 
 model User {
   id                  String    @id @default(cuid())
+  publicCode          String?   @unique
   phoneNumber         String?   @unique
   phoneNumberVerified Boolean   @default(false)
   role                String    @default("user") @map("role")
@@ -28,6 +29,7 @@ model User {
   updatedAt           DateTime  @updatedAt
   deletedAt           DateTime?
 
+  customer            Customer?
   userRoles           UserRole[]
   sessions            Session[]
   accounts            Account[]
@@ -51,7 +53,6 @@ model User {
   twoFactorEnabled    Boolean?
   twoFactors          TwoFactor[]
   adminProfile        AdminProfile?
-  userCodEligibility  UserCodEligibility?
   wishlistItems       WishlistItem[]
   kitchenWishlists    KitchenWishlist[]
 
@@ -63,6 +64,26 @@ model Role {
   id        String     @id @default(cuid())
   name      RoleName   @unique
   userRoles UserRole[]
+}
+
+model Customer {
+  id          String    @id @default(cuid())
+  publicCode  String?   @unique
+  userId      String    @unique
+  name        String?
+  email       String?
+  phoneNumber String?
+  avatarUrl   String?
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([isActive])
+  @@index([createdAt])
+  @@map("customer")
 }
 
 enum RoleName {
@@ -171,6 +192,7 @@ model Address {
 
 model KitchenPartner {
   id             String        @id @default(cuid())
+  publicCode     String?       @unique
   slug           String        @unique
   userId         String        @unique
   status         PartnerStatus @default(PENDINGAPPROVAL)
@@ -180,8 +202,9 @@ model KitchenPartner {
   avgRating      Decimal       @default(0)
   totalReviews   Int           @default(0)
   operatingHours Json?
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
+  createdAt         DateTime      @default(now())
+  estimatedPrepTime Int?          @default(25)
+  updatedAt         DateTime      @updatedAt
   deletedAt      DateTime?
 
   user                       User                               @relation(fields: [userId], references: [id])
@@ -194,10 +217,12 @@ model KitchenPartner {
   deliveryPartnerAssignments DeliveryPartnerKitchenAssignment[]
   orderItems                 OrderItem[]
   reviews                    Review[]
+  rrcKitchenReview           RrcKitchenReview?
   serviceZone                ServiceZone?                       @relation(fields: [serviceZoneId], references: [id])
   coupons                    Coupon[]
   kitchenPayouts             KitchenPayout[]
   kitchenWishlists           KitchenWishlist[]
+  cravingsTriggerRules       CravingsRule[]      @relation("cravingsTriggerKitchen")
 
   @@index([status])
   @@index([serviceZoneId])
@@ -236,6 +261,9 @@ model KitchenAlias {
   kitchenPartnerId String   @unique
   displayName      String   @unique
   sequenceNumber   Int      @unique
+  imageUrl         String?
+  description      String?
+  customOfferText  String?
   createdAt        DateTime @default(now())
 
   kitchenPartner KitchenPartner @relation(fields: [kitchenPartnerId], references: [id])
@@ -282,6 +310,7 @@ model Menu {
 
 model MenuItem {
   id             String    @id @default(cuid())
+  publicCode     String?   @unique
   slug           String?   @unique
   menuId         String
   name           String
@@ -291,26 +320,54 @@ model MenuItem {
   foodType       FoodType
   timeSlot       TimeSlot
   isAvailable    Boolean   @default(true)
-  reservedCount  Int       @default(0)
-  dailyStock     Int?
+  availableFor   AvailableFor @default(BOTH)
   createdAt      DateTime  @default(now())
   updatedAt      DateTime  @updatedAt
   deletedAt      DateTime?
 
+  // CMS / menu-detail management fields
+  cuisine          String?
+  categoryId       String?
+  bestseller       Boolean  @default(false)
+  highlights       Json?
+  aboutTitle       String?
+  aboutDescription String?
+  serves           Int?
+  portionSize      String?
+  shelfLife        String?
+  allergens        String?
+  metaTitle        String?
+  metaDescription  String?
+  deliveryTimeMin  Int?
+  deliveryTimeMax  Int?
+  deliveryFee      Decimal?
+  freeDelivery     Boolean  @default(false)
+  packagingType    String?
+  relatedItemIds   String[] @default([])
+
   menu              Menu                 @relation(fields: [menuId], references: [id])
+  category          Category?            @relation(fields: [categoryId], references: [id])
   photos            MenuItemPhoto[]
   orderItems        OrderItem[]
   menuItemFeedbacks MenuItemFeedback[]
   menuItemReviews   MenuItemReview[]
-  dailyStockEntries MenuItemDailyStock[]
   wishlistItems     WishlistItem[]
   avgRating         Decimal              @default(0)
   totalReviews      Int                  @default(0)
+  cravingsTriggers  CravingsRule[]       @relation("cravingsTriggerItem")
+  cravingsRuleItems CravingsRuleItem[]
 
   @@index([menuId, timeSlot, foodType])
   @@index([isAvailable, timeSlot, foodType])
   @@index([isAvailable, foodType, timeSlot])
   @@index([isAvailable, menuId])
+  @@index([categoryId])
+}
+
+enum AvailableFor {
+  TODAY
+  TOMORROW
+  BOTH
 }
 
 enum FoodType {
@@ -341,6 +398,7 @@ model MenuItemPhoto {
 
 model DeliveryPartner {
   id           String        @id @default(cuid())
+  publicCode   String?       @unique
   userId       String        @unique
   status       PartnerStatus @default(PENDINGAPPROVAL)
   approvedAt   DateTime?
@@ -359,10 +417,6 @@ model DeliveryPartner {
   deliveryAssignments DeliveryAssignment[]
   deliveryLocations   DeliveryLocation[]
   deliveryPayouts     DeliveryPartnerPayout[]
-  cashInHand          Decimal                            @default(0)
-  codEligible         Boolean                            @default(true)
-  cashRemittances     CashRemittance[]
-  codVariances        CodVariance[]
 
   @@index([status])
 }
@@ -422,9 +476,13 @@ model Category {
   id          String  @id @default(cuid())
   name        String  @unique
   description String?
+  imageUrl    String?
   isActive    Boolean @default(true)
+  createdAt   DateTime @default(now())
 
-  kitchenCategories KitchenCategory[]
+  kitchenCategories  KitchenCategory[]
+  menuItems          MenuItem[]
+  categoryPageContent CategoryPageContent?
 }
 
 model ServiceZone {
@@ -441,6 +499,7 @@ model ServiceZone {
 
 model Order {
   id                String          @id @default(cuid())
+  publicCode        String?         @unique
   userId            String
   addressId         String?
   serviceDate       DateTime
@@ -474,11 +533,7 @@ model Order {
   kitchenPayouts         KitchenPayout[]
   deliveryPartnerPayouts DeliveryPartnerPayout[]
   supportTickets         SupportTicket[]
-  deliveryOtp            String? // generated at READYFORPICKUP, proves delivery happened
-  deliveryOtpVerifiedAt  DateTime?
-  codAmountExpected      Decimal? // what SHOULD be collected — Order.totalAmount
-  codAmountEntered       Decimal? // what the rider actually typed into the app
-  codVariance            CodVariance?
+  upiCollectRequest      UpiCollectRequest?
 
   @@index([userId])
   @@index([serviceDate, timeSlot])
@@ -592,6 +647,22 @@ model DeliveryReview {
   @@index([deliveryPartnerId])
 }
 
+// ============ RRC KITCHEN PLATFORM REVIEWS ============
+
+model RrcKitchenReview {
+  id               String    @id @default(cuid())
+  kitchenPartnerId String    @unique
+  rating           Int
+  recommendation   Boolean?
+  comment          String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  kitchenPartner KitchenPartner @relation(fields: [kitchenPartnerId], references: [id])
+
+  @@index([rating])
+}
+
 // ============ MENU ITEM FEEDBACK ============
 
 model MenuItemFeedback {
@@ -672,20 +743,23 @@ model DeliveryLocation {
 // ============ PAYMENT ============
 
 model Payment {
-  id                String          @id @default(cuid())
-  orderId           String          @unique
-  provider          PaymentProvider
-  providerOrderId   String?
-  providerPaymentId String?
-  paymentMethod     String?
-  amount            Decimal
-  status            PaymentStatus   @default(PENDING)
-  idempotencyKey    String?         @unique
-  paidAt            DateTime?
-  createdAt         DateTime        @default(now())
+  id                  String          @id @default(cuid())
+  publicCode          String?         @unique
+  orderId             String          @unique
+  provider            PaymentProvider
+  providerOrderId     String?
+  providerPaymentId   String?
+  paymentMethod       String?
+  paymentMethodDetail Json?           // { method, app, vpa, bank, wallet, card_brand }
+  amount              Decimal
+  status              PaymentStatus   @default(PENDING)
+  idempotencyKey      String?         @unique
+  paidAt              DateTime?
+  createdAt           DateTime        @default(now())
 
-  order   Order    @relation(fields: [orderId], references: [id])
-  refunds Refund[]
+  order              Order               @relation(fields: [orderId], references: [id])
+  refunds            Refund[]
+  upiCollectRequest  UpiCollectRequest?
 
   @@index([status])
   @@index([idempotencyKey])
@@ -701,7 +775,7 @@ enum PaymentStatus {
 
 enum PaymentProvider {
   RAZORPAY
-  CASH_ON_DELIVERY
+  UPI_COLLECT
 }
 
 // ============ PUSH NOTIFICATIONS ============
@@ -801,6 +875,23 @@ model TicketMessage {
 
   @@index([ticketId])
   @@map("ticket_message")
+}
+
+// ============ CONTACT / SUPPORT MESSAGES ============
+
+model ContactMessage {
+  id        String   @id @default(cuid())
+  fullName  String
+  email     String
+  phone     String?
+  subject   String
+  message   String
+  status    String   @default("OPEN")
+  createdAt DateTime @default(now())
+
+  @@index([status])
+  @@index([createdAt])
+  @@map("contact_message")
 }
 
 // ============ REFERRAL ============
@@ -969,10 +1060,38 @@ model PaymentOffer {
   createdAt     DateTime         @default(now())
 }
 
+// ============ UPI SMART COLLECT ============
+
+model UpiCollectRequest {
+  id             String           @id @default(cuid())
+  orderId        String           @unique
+  paymentId      String           @unique
+  vpa            String           // Virtual Payment Address e.g. rrc.order123@razorpay
+  razorpayVpaId  String?          @unique
+  status         UpiCollectStatus @default(PENDING)
+  expiresAt      DateTime
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  order   Order   @relation(fields: [orderId], references: [id])
+  payment Payment @relation(fields: [paymentId], references: [id])
+
+  @@index([status])
+  @@map("upi_collect_request")
+}
+
+enum UpiCollectStatus {
+  PENDING
+  PAID
+  EXPIRED
+  FAILED
+}
+
 // ============ REFUNDS ============
 
 model Refund {
   id               String       @id @default(cuid())
+  publicCode       String?      @unique
   orderId          String
   orderItemId      String?
   paymentId        String
@@ -1065,21 +1184,6 @@ model KitchenAddress {
   kitchenPartner   KitchenPartner @relation(fields: [kitchenPartnerId], references: [id])
 }
 
-// ============ DAILY BATCH STOCK ============
-
-model MenuItemDailyStock {
-  id               String   @id @default(cuid())
-  menuItemId       String
-  serviceDate      DateTime
-  totalQuantity    Int
-  reservedQuantity Int      @default(0)
-  soldQuantity     Int      @default(0)
-  menuItem         MenuItem @relation(fields: [menuItemId], references: [id])
-
-  @@unique([menuItemId, serviceDate])
-  @@index([menuItemId, serviceDate])
-}
-
 // ============ ADMIN PROTECTION ============
 
 enum AdminPermission {
@@ -1097,6 +1201,7 @@ enum AdminPermission {
 
 model AdminProfile {
   id              String            @id @default(cuid())
+  publicCode      String?           @unique
   userId          String            @unique
   permissions     AdminPermission[]
   isActive        Boolean           @default(true)
@@ -1185,66 +1290,6 @@ model TwoFactor {
   @@map("two_factor")
 }
 
-model UserCodEligibility {
-  id                      String   @id @default(cuid())
-  userId                  String   @unique
-  successfulPrepaidOrders Int      @default(0)
-  codRefusalCount         Int      @default(0)
-  isCodBlocked            Boolean  @default(false)
-  maxCodOrderValue        Decimal  @default(1000)
-  updatedAt               DateTime @updatedAt
-
-  user User @relation(fields: [userId], references: [id])
-}
-
-enum RemittanceMethod {
-  UPI_TO_PLATFORM
-  BANK_TRANSFER
-  ADMIN_COLLECTED_CASH
-}
-
-enum RemittanceStatus {
-  PENDING
-  CONFIRMED
-  DISPUTED
-}
-
-model CashRemittance {
-  id                String           @id @default(cuid())
-  deliveryPartnerId String
-  amount            Decimal
-  method            RemittanceMethod
-  referenceId       String?
-  status            RemittanceStatus @default(PENDING)
-  confirmedByUserId String?
-  createdAt         DateTime         @default(now())
-  confirmedAt       DateTime?
-
-  deliveryPartner DeliveryPartner @relation(fields: [deliveryPartnerId], references: [id])
-
-  @@index([deliveryPartnerId, status])
-}
-
-// When a rider enters less than what was
-// actually collected (whether by honest error or deliberate under-reporting)
-model CodVariance {
-  id                String    @id @default(cuid())
-  orderId           String    @unique
-  deliveryPartnerId String
-  expectedAmount    Decimal
-  enteredAmount     Decimal
-  varianceAmount    Decimal // expected - entered
-  resolvedAt        DateTime?
-  resolutionNote    String?
-  createdAt         DateTime  @default(now())
-
-  order           Order           @relation(fields: [orderId], references: [id])
-  deliveryPartner DeliveryPartner @relation(fields: [deliveryPartnerId], references: [id])
-
-  @@index([deliveryPartnerId])
-  @@index([resolvedAt])
-}
-
 // ============ WISHLIST / FAVOURITES ============
 
 model WishlistItem {
@@ -1274,4 +1319,307 @@ model KitchenWishlist {
   @@index([userId])
   @@index([kitchenPartnerId])
   @@map("kitchen_wishlist")
+}
+
+// ============ SEARCH PAGE CONTENT (CMS) ============
+
+model SearchPageContent {
+  id             String   @id @default(cuid())
+  keyword        String   @unique
+  isActive       Boolean  @default(true)
+  bannerImageUrl String   @default("")
+  heading        String   @default("")
+  subHeading     String   @default("")
+  cardsPerPage   Int      @default(12)
+  defaultSort    String   @default("Relevance")
+  showRatings    Boolean  @default(true)
+  kitchensCount  Int      @default(0)
+  version        Int      @default(1)
+  updatedBy      String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  filters   SearchPageFilter[]
+  badges    SearchPageBadge[]
+  infoItems SearchPageInfoItem[]
+
+  @@index([isActive])
+  @@map("search_page_content")
+}
+
+model SearchPageFilter {
+  id                  String  @id @default(cuid())
+  searchPageContentId String
+  name                String
+  options             String[] @default([])
+  isEnabled           Boolean  @default(true)
+  sortOrder           Int      @default(0)
+
+  searchPageContent SearchPageContent @relation(fields: [searchPageContentId], references: [id], onDelete: Cascade)
+
+  @@index([searchPageContentId])
+  @@map("search_page_filter")
+}
+
+model SearchPageBadge {
+  id                  String  @id @default(cuid())
+  searchPageContentId String
+  name                String
+  isEnabled           Boolean @default(true)
+  sortOrder           Int     @default(0)
+
+  searchPageContent SearchPageContent @relation(fields: [searchPageContentId], references: [id], onDelete: Cascade)
+
+  @@index([searchPageContentId])
+  @@map("search_page_badge")
+}
+
+model SearchPageInfoItem {
+  id                  String  @id @default(cuid())
+  searchPageContentId String
+  icon                String  @default("Heart")
+  title               String
+  subtitle            String  @default("")
+  color               String  @default("text-orange-500")
+  isEnabled           Boolean @default(true)
+  sortOrder           Int     @default(0)
+
+  searchPageContent SearchPageContent @relation(fields: [searchPageContentId], references: [id], onDelete: Cascade)
+
+  @@index([searchPageContentId])
+  @@map("search_page_info_item")
+}
+
+// ============ CATEGORY PAGE CONTENT (CMS) ============
+
+model CategoryPageContent {
+  id                 String   @id @default(cuid())
+  categoryId         String   @unique
+  isActive           Boolean  @default(true)
+  heroLayout         String   @default("LEFT_TEXT")
+  desktopBannerUrl   String   @default("")
+  mobileBannerUrl    String   @default("")
+  iconUrl            String   @default("")
+  title              String   @default("")
+  badgeText          String   @default("")
+  description        String   @default("")
+  showHero           Boolean  @default(true)
+  defaultSort        String   @default("Popularity")
+  showRatings        Boolean  @default(true)
+  cardsPerPage       Int      @default(12)
+  metaTitle          String   @default("")
+  metaDescription    String   @default("")
+  keywords           String[] @default([])
+  canonicalUrl       String   @default("")
+  featuredKitchenIds String[] @default([])
+  featuredMenuIds    String[] @default([])
+  version            Int      @default(1)
+  updatedBy          String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  features CategoryPageFeature[]
+  offers   CategoryPageOffer[]
+  faqs     CategoryPageFaq[]
+
+  @@index([isActive])
+  @@map("category_page_content")
+}
+
+model CategoryPageFeature {
+  id                    String  @id @default(cuid())
+  categoryPageContentId String
+  icon                  String  @default("ChefHat")
+  title                 String
+  subtitle              String  @default("")
+  color                 String  @default("text-orange-500")
+  isEnabled             Boolean @default(true)
+  sortOrder             Int     @default(0)
+
+  categoryPageContent CategoryPageContent @relation(fields: [categoryPageContentId], references: [id], onDelete: Cascade)
+
+  @@index([categoryPageContentId])
+  @@map("category_page_feature")
+}
+
+model CategoryPageOffer {
+  id                    String  @id @default(cuid())
+  categoryPageContentId String
+  title                 String
+  subtitle              String  @default("")
+  badge                 String  @default("")
+  isEnabled             Boolean @default(true)
+  sortOrder             Int     @default(0)
+
+  categoryPageContent CategoryPageContent @relation(fields: [categoryPageContentId], references: [id], onDelete: Cascade)
+
+  @@index([categoryPageContentId])
+  @@map("category_page_offer")
+}
+
+model CategoryPageFaq {
+  id                    String  @id @default(cuid())
+  categoryPageContentId String
+  question              String
+  answer                String  @default("")
+  sortOrder             Int     @default(0)
+
+  categoryPageContent CategoryPageContent @relation(fields: [categoryPageContentId], references: [id], onDelete: Cascade)
+
+  @@index([categoryPageContentId])
+  @@map("category_page_faq")
+}
+
+// ============ KITCHEN SEARCH PAGE CONTENT (CMS) ============
+// Search Experience Management — per search keyword configuration
+// shown when a customer clicks "View Menu" on a kitchen from search results.
+
+model KitchenSearchPageContent {
+  id                   String   @id @default(cuid())
+  keyword              String   @unique
+  isActive             Boolean  @default(true)
+  desktopBannerUrl     String   @default("")
+  mobileBannerUrl      String   @default("")
+  searchTitle          String   @default("")
+  badgeText            String   @default("")
+  description          String   @default("")
+  showHero             Boolean  @default(true)
+  defaultSort          String   @default("Popularity")
+  showRatings          Boolean  @default(true)
+  showDeliveryTime     Boolean  @default(true)
+  showDistance         Boolean  @default(true)
+  showPureVegBadge     Boolean  @default(true)
+  showHygienicBadge    Boolean  @default(true)
+  showKitchenStory     Boolean  @default(true)
+  showInternalNotes    Boolean  @default(false)
+  showKitchenTiming    Boolean  @default(true)
+  showFreshIngredients Boolean  @default(true)
+  showPackaging        Boolean  @default(true)
+  showSupportLocalWomen Boolean @default(true)
+  kitchensCount        Int      @default(0)
+  menuItemsCount       Int      @default(0)
+  version              Int      @default(1)
+  updatedBy            String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  chips            KitchenSearchChip[]
+  filters          KitchenSearchFilter[]
+  menuCategories   KitchenSearchMenuCategory[]
+  recommendedItems KitchenSearchRecommendedItem[]
+
+  @@index([isActive])
+  @@map("kitchen_search_page_content")
+}
+
+model KitchenSearchChip {
+  id                         String  @id @default(cuid())
+  kitchenSearchPageContentId String
+  label                      String
+  isEnabled                  Boolean @default(true)
+  sortOrder                  Int     @default(0)
+
+  kitchenSearchPageContent KitchenSearchPageContent @relation(fields: [kitchenSearchPageContentId], references: [id], onDelete: Cascade)
+
+  @@index([kitchenSearchPageContentId])
+  @@map("kitchen_search_chip")
+}
+
+model KitchenSearchFilter {
+  id                         String   @id @default(cuid())
+  kitchenSearchPageContentId String
+  name                       String
+  options                    String[] @default([])
+  isEnabled                  Boolean  @default(true)
+  sortOrder                  Int      @default(0)
+
+  kitchenSearchPageContent KitchenSearchPageContent @relation(fields: [kitchenSearchPageContentId], references: [id], onDelete: Cascade)
+
+  @@index([kitchenSearchPageContentId])
+  @@map("kitchen_search_filter")
+}
+
+model KitchenSearchMenuCategory {
+  id                         String  @id @default(cuid())
+  kitchenSearchPageContentId String
+  name                       String
+  sortOrder                  Int     @default(0)
+
+  kitchenSearchPageContent KitchenSearchPageContent @relation(fields: [kitchenSearchPageContentId], references: [id], onDelete: Cascade)
+
+  @@index([kitchenSearchPageContentId])
+  @@map("kitchen_search_menu_category")
+}
+
+model KitchenSearchRecommendedItem {
+  id                         String  @id @default(cuid())
+  kitchenSearchPageContentId String
+  name                       String
+  sortOrder                  Int     @default(0)
+
+  kitchenSearchPageContent KitchenSearchPageContent @relation(fields: [kitchenSearchPageContentId], references: [id], onDelete: Cascade)
+
+  @@index([kitchenSearchPageContentId])
+  @@map("kitchen_search_recommended_item")
+}
+
+// ============ CRAVINGS POPUP RULES (CROSS-SELL / UPSELL) ============
+// Admin creates rules: IF customer adds <triggerItem> THEN show <recommended items>
+// in the add-to-cart popup to increase average order value.
+
+enum CravingsPriority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+model CravingsRule {
+  id            String           @id @default(cuid())
+  name          String
+  triggerItemId String
+  kitchenId     String
+  title         String           @default("Complete Your Meal 🍽️")
+  message       String           @default("Customers usually order these together.")
+  priority      CravingsPriority @default(MEDIUM)
+  isActive      Boolean          @default(true)
+  updatedBy     String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  triggerItem MenuItem         @relation("cravingsTriggerItem", fields: [triggerItemId], references: [id])
+  kitchen     KitchenPartner   @relation("cravingsTriggerKitchen", fields: [kitchenId], references: [id])
+  items       CravingsRuleItem[]
+
+  @@index([triggerItemId])
+  @@index([kitchenId])
+  @@index([priority])
+  @@index([isActive])
+  @@map("cravings_rule")
+}
+
+model CravingsRuleItem {
+  id         String @id @default(cuid())
+  ruleId     String
+  menuItemId String
+  sortOrder  Int    @default(0)
+
+  rule     CravingsRule @relation(fields: [ruleId], references: [id], onDelete: Cascade)
+  menuItem MenuItem     @relation(fields: [menuItemId], references: [id])
+
+  @@unique([ruleId, menuItemId])
+  @@index([menuItemId])
+  @@map("cravings_rule_item")
+}
+
+// ============ PUBLIC ID COUNTERS ============
+
+model PublicIdCounter {
+  id       String @id @default(cuid())
+  prefix   String @unique
+  sequence Int    @default(0)
+  digits   Int
+
+  @@map("public_id_counter")
 }

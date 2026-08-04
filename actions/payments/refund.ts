@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma"
 import { getRazorpayClient } from "@/lib/razorpay"
 import { getAblyRest } from "@/lib/ably/server"
 import { redis } from "@/lib/redis"
+import { allocatePublicCode, PUBLIC_ID_SPECS } from "@/lib/public-id"
 
 export async function refundOrderItem(
   orderItemId: string,
@@ -45,6 +46,7 @@ export async function refundOrderItem(
 
     await tx.refund.create({
       data: {
+        publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.REFUND),
         orderId: orderItem.orderId,
         orderItemId,
         paymentId: payment.id,

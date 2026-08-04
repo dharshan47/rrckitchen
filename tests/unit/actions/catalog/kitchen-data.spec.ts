@@ -1,13 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   kitchenPartner: { findUnique: vi.fn() },
   menuItem: { findMany: vi.fn(), findUnique: vi.fn() },
-  menuItemDailyStock: { findMany: vi.fn() },
   menu: { findMany: vi.fn() },
   category: { findFirst: vi.fn(), findMany: vi.fn() },
   kitchenCategory: { findMany: vi.fn() },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 
@@ -23,6 +22,7 @@ describe("kitchen-data", () => {
         address: "123 Main St", lat: 12.34, lng: 56.78, phoneNumber: "9999999999",
         imageUrl: "/kitchen.jpg", coverImageUrl: "/cover.jpg", description: "Great food",
         deliveryFee: 20, minOrder: 100, estimatedPrepTime: 30,
+        kitchenAlias: { displayName: "Tasty Kitchen" },
       })
 
       const result = await getKitchenBySlug("tasty-kitchen")
@@ -38,11 +38,7 @@ describe("kitchen-data", () => {
   })
 
   describe("getMenuItemsByKitchen", () => {
-    it("returns menu items with stock info", async () => {
-      const serviceDate = new Date()
-      serviceDate.setDate(serviceDate.getDate() + 1)
-      serviceDate.setHours(0, 0, 0, 0)
-
+    it("returns menu items", async () => {
       mockPrisma.menuItem.findMany.mockResolvedValue([
         {
           id: "mi-1", name: "Dosa", price: 100, description: "Crispy", foodType: "VEG", timeSlot: "BREAKFAST",
@@ -51,15 +47,12 @@ describe("kitchen-data", () => {
           compareAtPrice: null,
         },
       ])
-      mockPrisma.menuItemDailyStock.findMany.mockResolvedValue([
-        { menuItemId: "mi-1", totalQuantity: 50, reservedQuantity: 10, soldQuantity: 5 },
-      ])
 
       const result = await getMenuItemsByKitchen("kp-1")
 
       expect(result).toHaveLength(1)
       expect(result[0].name).toBe("Dosa")
-      expect(result[0].availableStock).toBe(35)
+      expect(result[0].isAvailable).toBe(true)
     })
 
     it("returns empty for kitchen with no items", async () => {

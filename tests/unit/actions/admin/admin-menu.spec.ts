@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   menuItem: {
     findMany: vi.fn(),
     update: vi.fn(),
@@ -10,7 +10,7 @@ const mockPrisma = {
     findUnique: vi.fn(),
     delete: vi.fn(),
   },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 vi.mock("@/lib/auth-guards", () => ({
@@ -100,7 +100,7 @@ describe("admin-menu", () => {
 
       const result = await getAllMenuItems()
       expect(result[0].compareAtPrice).toBeNull()
-      expect(result[0].kitchenName).toBe("")
+      expect(result[0].kitchenName).toBeUndefined()
     })
   })
 

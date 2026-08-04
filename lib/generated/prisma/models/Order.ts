@@ -30,20 +30,17 @@ export type OrderAvgAggregateOutputType = {
   totalAmount: runtime.Decimal | null
   discountAmount: runtime.Decimal | null
   commissionAmount: runtime.Decimal | null
-  codAmountExpected: runtime.Decimal | null
-  codAmountEntered: runtime.Decimal | null
 }
 
 export type OrderSumAggregateOutputType = {
   totalAmount: runtime.Decimal | null
   discountAmount: runtime.Decimal | null
   commissionAmount: runtime.Decimal | null
-  codAmountExpected: runtime.Decimal | null
-  codAmountEntered: runtime.Decimal | null
 }
 
 export type OrderMinAggregateOutputType = {
   id: string | null
+  publicCode: string | null
   userId: string | null
   addressId: string | null
   serviceDate: Date | null
@@ -59,14 +56,11 @@ export type OrderMinAggregateOutputType = {
   idempotencyKey: string | null
   createdAt: Date | null
   updatedAt: Date | null
-  deliveryOtp: string | null
-  deliveryOtpVerifiedAt: Date | null
-  codAmountExpected: runtime.Decimal | null
-  codAmountEntered: runtime.Decimal | null
 }
 
 export type OrderMaxAggregateOutputType = {
   id: string | null
+  publicCode: string | null
   userId: string | null
   addressId: string | null
   serviceDate: Date | null
@@ -82,14 +76,11 @@ export type OrderMaxAggregateOutputType = {
   idempotencyKey: string | null
   createdAt: Date | null
   updatedAt: Date | null
-  deliveryOtp: string | null
-  deliveryOtpVerifiedAt: Date | null
-  codAmountExpected: runtime.Decimal | null
-  codAmountEntered: runtime.Decimal | null
 }
 
 export type OrderCountAggregateOutputType = {
   id: number
+  publicCode: number
   userId: number
   addressId: number
   serviceDate: number
@@ -105,10 +96,6 @@ export type OrderCountAggregateOutputType = {
   idempotencyKey: number
   createdAt: number
   updatedAt: number
-  deliveryOtp: number
-  deliveryOtpVerifiedAt: number
-  codAmountExpected: number
-  codAmountEntered: number
   _all: number
 }
 
@@ -117,20 +104,17 @@ export type OrderAvgAggregateInputType = {
   totalAmount?: true
   discountAmount?: true
   commissionAmount?: true
-  codAmountExpected?: true
-  codAmountEntered?: true
 }
 
 export type OrderSumAggregateInputType = {
   totalAmount?: true
   discountAmount?: true
   commissionAmount?: true
-  codAmountExpected?: true
-  codAmountEntered?: true
 }
 
 export type OrderMinAggregateInputType = {
   id?: true
+  publicCode?: true
   userId?: true
   addressId?: true
   serviceDate?: true
@@ -146,14 +130,11 @@ export type OrderMinAggregateInputType = {
   idempotencyKey?: true
   createdAt?: true
   updatedAt?: true
-  deliveryOtp?: true
-  deliveryOtpVerifiedAt?: true
-  codAmountExpected?: true
-  codAmountEntered?: true
 }
 
 export type OrderMaxAggregateInputType = {
   id?: true
+  publicCode?: true
   userId?: true
   addressId?: true
   serviceDate?: true
@@ -169,14 +150,11 @@ export type OrderMaxAggregateInputType = {
   idempotencyKey?: true
   createdAt?: true
   updatedAt?: true
-  deliveryOtp?: true
-  deliveryOtpVerifiedAt?: true
-  codAmountExpected?: true
-  codAmountEntered?: true
 }
 
 export type OrderCountAggregateInputType = {
   id?: true
+  publicCode?: true
   userId?: true
   addressId?: true
   serviceDate?: true
@@ -192,10 +170,6 @@ export type OrderCountAggregateInputType = {
   idempotencyKey?: true
   createdAt?: true
   updatedAt?: true
-  deliveryOtp?: true
-  deliveryOtpVerifiedAt?: true
-  codAmountExpected?: true
-  codAmountEntered?: true
   _all?: true
 }
 
@@ -287,6 +261,7 @@ export type OrderGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalAr
 
 export type OrderGroupByOutputType = {
   id: string
+  publicCode: string | null
   userId: string
   addressId: string | null
   serviceDate: Date
@@ -302,10 +277,6 @@ export type OrderGroupByOutputType = {
   idempotencyKey: string | null
   createdAt: Date
   updatedAt: Date
-  deliveryOtp: string | null
-  deliveryOtpVerifiedAt: Date | null
-  codAmountExpected: runtime.Decimal | null
-  codAmountEntered: runtime.Decimal | null
   _count: OrderCountAggregateOutputType | null
   _avg: OrderAvgAggregateOutputType | null
   _sum: OrderSumAggregateOutputType | null
@@ -333,6 +304,7 @@ export type OrderWhereInput = {
   OR?: Prisma.OrderWhereInput[]
   NOT?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
   id?: Prisma.StringFilter<"Order"> | string
+  publicCode?: Prisma.StringNullableFilter<"Order"> | string | null
   userId?: Prisma.StringFilter<"Order"> | string
   addressId?: Prisma.StringNullableFilter<"Order"> | string | null
   serviceDate?: Prisma.DateTimeFilter<"Order"> | Date | string
@@ -348,10 +320,6 @@ export type OrderWhereInput = {
   idempotencyKey?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
-  deliveryOtp?: Prisma.StringNullableFilter<"Order"> | string | null
-  deliveryOtpVerifiedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
-  codAmountExpected?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   address?: Prisma.XOR<Prisma.AddressNullableScalarRelationFilter, Prisma.AddressWhereInput> | null
   deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
@@ -369,11 +337,12 @@ export type OrderWhereInput = {
   kitchenPayouts?: Prisma.KitchenPayoutListRelationFilter
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutListRelationFilter
   supportTickets?: Prisma.SupportTicketListRelationFilter
-  codVariance?: Prisma.XOR<Prisma.CodVarianceNullableScalarRelationFilter, Prisma.CodVarianceWhereInput> | null
+  upiCollectRequest?: Prisma.XOR<Prisma.UpiCollectRequestNullableScalarRelationFilter, Prisma.UpiCollectRequestWhereInput> | null
 }
 
 export type OrderOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   addressId?: Prisma.SortOrderInput | Prisma.SortOrder
   serviceDate?: Prisma.SortOrder
@@ -389,10 +358,6 @@ export type OrderOrderByWithRelationInput = {
   idempotencyKey?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deliveryOtp?: Prisma.SortOrderInput | Prisma.SortOrder
-  deliveryOtpVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  codAmountExpected?: Prisma.SortOrderInput | Prisma.SortOrder
-  codAmountEntered?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   address?: Prisma.AddressOrderByWithRelationInput
   deliveryPartner?: Prisma.DeliveryPartnerOrderByWithRelationInput
@@ -410,11 +375,12 @@ export type OrderOrderByWithRelationInput = {
   kitchenPayouts?: Prisma.KitchenPayoutOrderByRelationAggregateInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutOrderByRelationAggregateInput
   supportTickets?: Prisma.SupportTicketOrderByRelationAggregateInput
-  codVariance?: Prisma.CodVarianceOrderByWithRelationInput
+  upiCollectRequest?: Prisma.UpiCollectRequestOrderByWithRelationInput
 }
 
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  publicCode?: string
   idempotencyKey?: string
   AND?: Prisma.OrderWhereInput | Prisma.OrderWhereInput[]
   OR?: Prisma.OrderWhereInput[]
@@ -433,10 +399,6 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   deliveryStatus?: Prisma.EnumDeliveryStatusNullableFilter<"Order"> | $Enums.DeliveryStatus | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
-  deliveryOtp?: Prisma.StringNullableFilter<"Order"> | string | null
-  deliveryOtpVerifiedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
-  codAmountExpected?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   address?: Prisma.XOR<Prisma.AddressNullableScalarRelationFilter, Prisma.AddressWhereInput> | null
   deliveryPartner?: Prisma.XOR<Prisma.DeliveryPartnerNullableScalarRelationFilter, Prisma.DeliveryPartnerWhereInput> | null
@@ -454,11 +416,12 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   kitchenPayouts?: Prisma.KitchenPayoutListRelationFilter
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutListRelationFilter
   supportTickets?: Prisma.SupportTicketListRelationFilter
-  codVariance?: Prisma.XOR<Prisma.CodVarianceNullableScalarRelationFilter, Prisma.CodVarianceWhereInput> | null
-}, "id" | "idempotencyKey">
+  upiCollectRequest?: Prisma.XOR<Prisma.UpiCollectRequestNullableScalarRelationFilter, Prisma.UpiCollectRequestWhereInput> | null
+}, "id" | "publicCode" | "idempotencyKey">
 
 export type OrderOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
   addressId?: Prisma.SortOrderInput | Prisma.SortOrder
   serviceDate?: Prisma.SortOrder
@@ -474,10 +437,6 @@ export type OrderOrderByWithAggregationInput = {
   idempotencyKey?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deliveryOtp?: Prisma.SortOrderInput | Prisma.SortOrder
-  deliveryOtpVerifiedAt?: Prisma.SortOrderInput | Prisma.SortOrder
-  codAmountExpected?: Prisma.SortOrderInput | Prisma.SortOrder
-  codAmountEntered?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.OrderCountOrderByAggregateInput
   _avg?: Prisma.OrderAvgOrderByAggregateInput
   _max?: Prisma.OrderMaxOrderByAggregateInput
@@ -490,6 +449,7 @@ export type OrderScalarWhereWithAggregatesInput = {
   OR?: Prisma.OrderScalarWhereWithAggregatesInput[]
   NOT?: Prisma.OrderScalarWhereWithAggregatesInput | Prisma.OrderScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Order"> | string
+  publicCode?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   userId?: Prisma.StringWithAggregatesFilter<"Order"> | string
   addressId?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   serviceDate?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
@@ -505,14 +465,11 @@ export type OrderScalarWhereWithAggregatesInput = {
   idempotencyKey?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Order"> | Date | string
-  deliveryOtp?: Prisma.StringNullableWithAggregatesFilter<"Order"> | string | null
-  deliveryOtpVerifiedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"Order"> | Date | string | null
-  codAmountExpected?: Prisma.DecimalNullableWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.DecimalNullableWithAggregatesFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type OrderCreateInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -525,10 +482,6 @@ export type OrderCreateInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -546,11 +499,12 @@ export type OrderCreateInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -566,10 +520,6 @@ export type OrderUncheckedCreateInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -584,11 +534,12 @@ export type OrderUncheckedCreateInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -601,10 +552,6 @@ export type OrderUpdateInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -622,11 +569,12 @@ export type OrderUpdateInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -642,10 +590,6 @@ export type OrderUncheckedUpdateInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -660,11 +604,12 @@ export type OrderUncheckedUpdateInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateManyInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -680,14 +625,11 @@ export type OrderCreateManyInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type OrderUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -700,14 +642,11 @@ export type OrderUpdateManyMutationInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type OrderUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -723,10 +662,6 @@ export type OrderUncheckedUpdateManyInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type OrderListRelationFilter = {
@@ -741,6 +676,7 @@ export type OrderOrderByRelationAggregateInput = {
 
 export type OrderCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   addressId?: Prisma.SortOrder
   serviceDate?: Prisma.SortOrder
@@ -756,22 +692,17 @@ export type OrderCountOrderByAggregateInput = {
   idempotencyKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deliveryOtp?: Prisma.SortOrder
-  deliveryOtpVerifiedAt?: Prisma.SortOrder
-  codAmountExpected?: Prisma.SortOrder
-  codAmountEntered?: Prisma.SortOrder
 }
 
 export type OrderAvgOrderByAggregateInput = {
   totalAmount?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
   commissionAmount?: Prisma.SortOrder
-  codAmountExpected?: Prisma.SortOrder
-  codAmountEntered?: Prisma.SortOrder
 }
 
 export type OrderMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   addressId?: Prisma.SortOrder
   serviceDate?: Prisma.SortOrder
@@ -787,14 +718,11 @@ export type OrderMaxOrderByAggregateInput = {
   idempotencyKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deliveryOtp?: Prisma.SortOrder
-  deliveryOtpVerifiedAt?: Prisma.SortOrder
-  codAmountExpected?: Prisma.SortOrder
-  codAmountEntered?: Prisma.SortOrder
 }
 
 export type OrderMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   addressId?: Prisma.SortOrder
   serviceDate?: Prisma.SortOrder
@@ -810,18 +738,12 @@ export type OrderMinOrderByAggregateInput = {
   idempotencyKey?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
-  deliveryOtp?: Prisma.SortOrder
-  deliveryOtpVerifiedAt?: Prisma.SortOrder
-  codAmountExpected?: Prisma.SortOrder
-  codAmountEntered?: Prisma.SortOrder
 }
 
 export type OrderSumOrderByAggregateInput = {
   totalAmount?: Prisma.SortOrder
   discountAmount?: Prisma.SortOrder
   commissionAmount?: Prisma.SortOrder
-  codAmountExpected?: Prisma.SortOrder
-  codAmountEntered?: Prisma.SortOrder
 }
 
 export type OrderScalarRelationFilter = {
@@ -1132,6 +1054,20 @@ export type OrderUpdateOneRequiredWithoutCouponRedemptionNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutCouponRedemptionInput, Prisma.OrderUpdateWithoutCouponRedemptionInput>, Prisma.OrderUncheckedUpdateWithoutCouponRedemptionInput>
 }
 
+export type OrderCreateNestedOneWithoutUpiCollectRequestInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutUpiCollectRequestInput, Prisma.OrderUncheckedCreateWithoutUpiCollectRequestInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutUpiCollectRequestInput
+  connect?: Prisma.OrderWhereUniqueInput
+}
+
+export type OrderUpdateOneRequiredWithoutUpiCollectRequestNestedInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutUpiCollectRequestInput, Prisma.OrderUncheckedCreateWithoutUpiCollectRequestInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutUpiCollectRequestInput
+  upsert?: Prisma.OrderUpsertWithoutUpiCollectRequestInput
+  connect?: Prisma.OrderWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutUpiCollectRequestInput, Prisma.OrderUpdateWithoutUpiCollectRequestInput>, Prisma.OrderUncheckedUpdateWithoutUpiCollectRequestInput>
+}
+
 export type OrderCreateNestedOneWithoutRefundsInput = {
   create?: Prisma.XOR<Prisma.OrderCreateWithoutRefundsInput, Prisma.OrderUncheckedCreateWithoutRefundsInput>
   connectOrCreate?: Prisma.OrderCreateOrConnectWithoutRefundsInput
@@ -1174,22 +1110,9 @@ export type OrderUpdateOneRequiredWithoutDeliveryPartnerPayoutsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutDeliveryPartnerPayoutsInput, Prisma.OrderUpdateWithoutDeliveryPartnerPayoutsInput>, Prisma.OrderUncheckedUpdateWithoutDeliveryPartnerPayoutsInput>
 }
 
-export type OrderCreateNestedOneWithoutCodVarianceInput = {
-  create?: Prisma.XOR<Prisma.OrderCreateWithoutCodVarianceInput, Prisma.OrderUncheckedCreateWithoutCodVarianceInput>
-  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutCodVarianceInput
-  connect?: Prisma.OrderWhereUniqueInput
-}
-
-export type OrderUpdateOneRequiredWithoutCodVarianceNestedInput = {
-  create?: Prisma.XOR<Prisma.OrderCreateWithoutCodVarianceInput, Prisma.OrderUncheckedCreateWithoutCodVarianceInput>
-  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutCodVarianceInput
-  upsert?: Prisma.OrderUpsertWithoutCodVarianceInput
-  connect?: Prisma.OrderWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutCodVarianceInput, Prisma.OrderUpdateWithoutCodVarianceInput>, Prisma.OrderUncheckedUpdateWithoutCodVarianceInput>
-}
-
 export type OrderCreateWithoutUserInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -1202,10 +1125,6 @@ export type OrderCreateWithoutUserInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
@@ -1222,11 +1141,12 @@ export type OrderCreateWithoutUserInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutUserInput = {
   id?: string
+  publicCode?: string | null
   addressId?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
@@ -1241,10 +1161,6 @@ export type OrderUncheckedCreateWithoutUserInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -1259,7 +1175,7 @@ export type OrderUncheckedCreateWithoutUserInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutUserInput = {
@@ -1293,6 +1209,7 @@ export type OrderScalarWhereInput = {
   OR?: Prisma.OrderScalarWhereInput[]
   NOT?: Prisma.OrderScalarWhereInput | Prisma.OrderScalarWhereInput[]
   id?: Prisma.StringFilter<"Order"> | string
+  publicCode?: Prisma.StringNullableFilter<"Order"> | string | null
   userId?: Prisma.StringFilter<"Order"> | string
   addressId?: Prisma.StringNullableFilter<"Order"> | string | null
   serviceDate?: Prisma.DateTimeFilter<"Order"> | Date | string
@@ -1308,14 +1225,11 @@ export type OrderScalarWhereInput = {
   idempotencyKey?: Prisma.StringNullableFilter<"Order"> | string | null
   createdAt?: Prisma.DateTimeFilter<"Order"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Order"> | Date | string
-  deliveryOtp?: Prisma.StringNullableFilter<"Order"> | string | null
-  deliveryOtpVerifiedAt?: Prisma.DateTimeNullableFilter<"Order"> | Date | string | null
-  codAmountExpected?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.DecimalNullableFilter<"Order"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type OrderCreateWithoutAddressInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -1328,10 +1242,6 @@ export type OrderCreateWithoutAddressInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
@@ -1348,11 +1258,12 @@ export type OrderCreateWithoutAddressInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutAddressInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
@@ -1367,10 +1278,6 @@ export type OrderUncheckedCreateWithoutAddressInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -1385,7 +1292,7 @@ export type OrderUncheckedCreateWithoutAddressInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutAddressInput = {
@@ -1416,6 +1323,7 @@ export type OrderUpdateManyWithWhereWithoutAddressInput = {
 
 export type OrderCreateWithoutDeliveryPartnerInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -1428,10 +1336,6 @@ export type OrderCreateWithoutDeliveryPartnerInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
@@ -1448,11 +1352,12 @@ export type OrderCreateWithoutDeliveryPartnerInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutDeliveryPartnerInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -1467,10 +1372,6 @@ export type OrderUncheckedCreateWithoutDeliveryPartnerInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -1485,7 +1386,7 @@ export type OrderUncheckedCreateWithoutDeliveryPartnerInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutDeliveryPartnerInput = {
@@ -1516,6 +1417,7 @@ export type OrderUpdateManyWithWhereWithoutDeliveryPartnerInput = {
 
 export type OrderCreateWithoutOrderItemsInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -1528,10 +1430,6 @@ export type OrderCreateWithoutOrderItemsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -1548,11 +1446,12 @@ export type OrderCreateWithoutOrderItemsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutOrderItemsInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -1568,10 +1467,6 @@ export type OrderUncheckedCreateWithoutOrderItemsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
@@ -1585,7 +1480,7 @@ export type OrderUncheckedCreateWithoutOrderItemsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutOrderItemsInput = {
@@ -1606,6 +1501,7 @@ export type OrderUpdateToOneWithWhereWithoutOrderItemsInput = {
 
 export type OrderUpdateWithoutOrderItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -1618,10 +1514,6 @@ export type OrderUpdateWithoutOrderItemsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -1638,11 +1530,12 @@ export type OrderUpdateWithoutOrderItemsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutOrderItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1658,10 +1551,6 @@ export type OrderUncheckedUpdateWithoutOrderItemsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
@@ -1675,11 +1564,12 @@ export type OrderUncheckedUpdateWithoutOrderItemsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutStatusHistoryInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -1692,10 +1582,6 @@ export type OrderCreateWithoutStatusHistoryInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -1712,11 +1598,12 @@ export type OrderCreateWithoutStatusHistoryInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutStatusHistoryInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -1732,10 +1619,6 @@ export type OrderUncheckedCreateWithoutStatusHistoryInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
@@ -1749,7 +1632,7 @@ export type OrderUncheckedCreateWithoutStatusHistoryInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutStatusHistoryInput = {
@@ -1770,6 +1653,7 @@ export type OrderUpdateToOneWithWhereWithoutStatusHistoryInput = {
 
 export type OrderUpdateWithoutStatusHistoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -1782,10 +1666,6 @@ export type OrderUpdateWithoutStatusHistoryInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -1802,11 +1682,12 @@ export type OrderUpdateWithoutStatusHistoryInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutStatusHistoryInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1822,10 +1703,6 @@ export type OrderUncheckedUpdateWithoutStatusHistoryInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
@@ -1839,11 +1716,12 @@ export type OrderUncheckedUpdateWithoutStatusHistoryInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutReviewInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -1856,10 +1734,6 @@ export type OrderCreateWithoutReviewInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -1876,11 +1750,12 @@ export type OrderCreateWithoutReviewInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutReviewInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -1896,10 +1771,6 @@ export type OrderUncheckedCreateWithoutReviewInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -1913,7 +1784,7 @@ export type OrderUncheckedCreateWithoutReviewInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutReviewInput = {
@@ -1934,6 +1805,7 @@ export type OrderUpdateToOneWithWhereWithoutReviewInput = {
 
 export type OrderUpdateWithoutReviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -1946,10 +1818,6 @@ export type OrderUpdateWithoutReviewInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -1966,11 +1834,12 @@ export type OrderUpdateWithoutReviewInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutReviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -1986,10 +1855,6 @@ export type OrderUncheckedUpdateWithoutReviewInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -2003,11 +1868,12 @@ export type OrderUncheckedUpdateWithoutReviewInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutDeliveryReviewInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -2020,10 +1886,6 @@ export type OrderCreateWithoutDeliveryReviewInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -2040,11 +1902,12 @@ export type OrderCreateWithoutDeliveryReviewInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutDeliveryReviewInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -2060,10 +1923,6 @@ export type OrderUncheckedCreateWithoutDeliveryReviewInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -2077,7 +1936,7 @@ export type OrderUncheckedCreateWithoutDeliveryReviewInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutDeliveryReviewInput = {
@@ -2098,6 +1957,7 @@ export type OrderUpdateToOneWithWhereWithoutDeliveryReviewInput = {
 
 export type OrderUpdateWithoutDeliveryReviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -2110,10 +1970,6 @@ export type OrderUpdateWithoutDeliveryReviewInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -2130,11 +1986,12 @@ export type OrderUpdateWithoutDeliveryReviewInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutDeliveryReviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2150,10 +2007,6 @@ export type OrderUncheckedUpdateWithoutDeliveryReviewInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -2167,11 +2020,12 @@ export type OrderUncheckedUpdateWithoutDeliveryReviewInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutMenuItemFeedbacksInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -2184,10 +2038,6 @@ export type OrderCreateWithoutMenuItemFeedbacksInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -2204,11 +2054,12 @@ export type OrderCreateWithoutMenuItemFeedbacksInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutMenuItemFeedbacksInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -2224,10 +2075,6 @@ export type OrderUncheckedCreateWithoutMenuItemFeedbacksInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -2241,7 +2088,7 @@ export type OrderUncheckedCreateWithoutMenuItemFeedbacksInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutMenuItemFeedbacksInput = {
@@ -2262,6 +2109,7 @@ export type OrderUpdateToOneWithWhereWithoutMenuItemFeedbacksInput = {
 
 export type OrderUpdateWithoutMenuItemFeedbacksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -2274,10 +2122,6 @@ export type OrderUpdateWithoutMenuItemFeedbacksInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -2294,11 +2138,12 @@ export type OrderUpdateWithoutMenuItemFeedbacksInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2314,10 +2159,6 @@ export type OrderUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -2331,11 +2172,12 @@ export type OrderUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutMenuItemReviewsInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -2348,10 +2190,6 @@ export type OrderCreateWithoutMenuItemReviewsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -2368,11 +2206,12 @@ export type OrderCreateWithoutMenuItemReviewsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutMenuItemReviewsInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -2388,10 +2227,6 @@ export type OrderUncheckedCreateWithoutMenuItemReviewsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -2405,7 +2240,7 @@ export type OrderUncheckedCreateWithoutMenuItemReviewsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutMenuItemReviewsInput = {
@@ -2426,6 +2261,7 @@ export type OrderUpdateToOneWithWhereWithoutMenuItemReviewsInput = {
 
 export type OrderUpdateWithoutMenuItemReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -2438,10 +2274,6 @@ export type OrderUpdateWithoutMenuItemReviewsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -2458,11 +2290,12 @@ export type OrderUpdateWithoutMenuItemReviewsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutMenuItemReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2478,10 +2311,6 @@ export type OrderUncheckedUpdateWithoutMenuItemReviewsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -2495,11 +2324,12 @@ export type OrderUncheckedUpdateWithoutMenuItemReviewsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutDeliveryAssignmentInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -2512,10 +2342,6 @@ export type OrderCreateWithoutDeliveryAssignmentInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -2532,11 +2358,12 @@ export type OrderCreateWithoutDeliveryAssignmentInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutDeliveryAssignmentInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -2552,10 +2379,6 @@ export type OrderUncheckedCreateWithoutDeliveryAssignmentInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -2569,7 +2392,7 @@ export type OrderUncheckedCreateWithoutDeliveryAssignmentInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutDeliveryAssignmentInput = {
@@ -2590,6 +2413,7 @@ export type OrderUpdateToOneWithWhereWithoutDeliveryAssignmentInput = {
 
 export type OrderUpdateWithoutDeliveryAssignmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -2602,10 +2426,6 @@ export type OrderUpdateWithoutDeliveryAssignmentInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -2622,11 +2442,12 @@ export type OrderUpdateWithoutDeliveryAssignmentInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutDeliveryAssignmentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2642,10 +2463,6 @@ export type OrderUncheckedUpdateWithoutDeliveryAssignmentInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -2659,11 +2476,12 @@ export type OrderUncheckedUpdateWithoutDeliveryAssignmentInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutDeliveryLocationsInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -2676,10 +2494,6 @@ export type OrderCreateWithoutDeliveryLocationsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -2696,11 +2510,12 @@ export type OrderCreateWithoutDeliveryLocationsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutDeliveryLocationsInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -2716,10 +2531,6 @@ export type OrderUncheckedCreateWithoutDeliveryLocationsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -2733,7 +2544,7 @@ export type OrderUncheckedCreateWithoutDeliveryLocationsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutDeliveryLocationsInput = {
@@ -2754,6 +2565,7 @@ export type OrderUpdateToOneWithWhereWithoutDeliveryLocationsInput = {
 
 export type OrderUpdateWithoutDeliveryLocationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -2766,10 +2578,6 @@ export type OrderUpdateWithoutDeliveryLocationsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -2786,11 +2594,12 @@ export type OrderUpdateWithoutDeliveryLocationsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutDeliveryLocationsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2806,10 +2615,6 @@ export type OrderUncheckedUpdateWithoutDeliveryLocationsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -2823,11 +2628,12 @@ export type OrderUncheckedUpdateWithoutDeliveryLocationsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutPaymentInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -2840,10 +2646,6 @@ export type OrderCreateWithoutPaymentInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -2860,11 +2662,12 @@ export type OrderCreateWithoutPaymentInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutPaymentInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -2880,10 +2683,6 @@ export type OrderUncheckedCreateWithoutPaymentInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
@@ -2897,7 +2696,7 @@ export type OrderUncheckedCreateWithoutPaymentInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutPaymentInput = {
@@ -2918,6 +2717,7 @@ export type OrderUpdateToOneWithWhereWithoutPaymentInput = {
 
 export type OrderUpdateWithoutPaymentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -2930,10 +2730,6 @@ export type OrderUpdateWithoutPaymentInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -2950,11 +2746,12 @@ export type OrderUpdateWithoutPaymentInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutPaymentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -2970,10 +2767,6 @@ export type OrderUncheckedUpdateWithoutPaymentInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
@@ -2987,11 +2780,12 @@ export type OrderUncheckedUpdateWithoutPaymentInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutSupportTicketsInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -3004,10 +2798,6 @@ export type OrderCreateWithoutSupportTicketsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -3024,11 +2814,12 @@ export type OrderCreateWithoutSupportTicketsInput = {
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutSupportTicketsInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -3044,10 +2835,6 @@ export type OrderUncheckedCreateWithoutSupportTicketsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -3061,7 +2848,7 @@ export type OrderUncheckedCreateWithoutSupportTicketsInput = {
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutSupportTicketsInput = {
@@ -3082,6 +2869,7 @@ export type OrderUpdateToOneWithWhereWithoutSupportTicketsInput = {
 
 export type OrderUpdateWithoutSupportTicketsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -3094,10 +2882,6 @@ export type OrderUpdateWithoutSupportTicketsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -3114,11 +2898,12 @@ export type OrderUpdateWithoutSupportTicketsInput = {
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutSupportTicketsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3134,10 +2919,6 @@ export type OrderUncheckedUpdateWithoutSupportTicketsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -3151,11 +2932,12 @@ export type OrderUncheckedUpdateWithoutSupportTicketsInput = {
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutCouponRedemptionInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -3168,10 +2950,6 @@ export type OrderCreateWithoutCouponRedemptionInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -3188,11 +2966,12 @@ export type OrderCreateWithoutCouponRedemptionInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutCouponRedemptionInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -3208,10 +2987,6 @@ export type OrderUncheckedCreateWithoutCouponRedemptionInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -3225,7 +3000,7 @@ export type OrderUncheckedCreateWithoutCouponRedemptionInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutCouponRedemptionInput = {
@@ -3246,6 +3021,7 @@ export type OrderUpdateToOneWithWhereWithoutCouponRedemptionInput = {
 
 export type OrderUpdateWithoutCouponRedemptionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -3258,10 +3034,6 @@ export type OrderUpdateWithoutCouponRedemptionInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -3278,11 +3050,12 @@ export type OrderUpdateWithoutCouponRedemptionInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutCouponRedemptionInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3298,10 +3071,6 @@ export type OrderUncheckedUpdateWithoutCouponRedemptionInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -3315,11 +3084,12 @@ export type OrderUncheckedUpdateWithoutCouponRedemptionInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
-export type OrderCreateWithoutRefundsInput = {
+export type OrderCreateWithoutUpiCollectRequestInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -3332,10 +3102,158 @@ export type OrderCreateWithoutRefundsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  user: Prisma.UserCreateNestedOneWithoutOrdersInput
+  address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
+  statusHistory?: Prisma.OrderStatusHistoryCreateNestedManyWithoutOrderInput
+  payment?: Prisma.PaymentCreateNestedOneWithoutOrderInput
+  couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
+  deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
+  deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
+  refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
+  kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
+  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
+}
+
+export type OrderUncheckedCreateWithoutUpiCollectRequestInput = {
+  id?: string
+  publicCode?: string | null
+  userId: string
+  addressId?: string | null
+  serviceDate: Date | string
+  serviceDateType?: $Enums.ServiceDateType
+  timeSlot: $Enums.TimeSlot
+  status?: $Enums.OrderStatus
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  commissionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  source?: $Enums.OrderSource
+  deliveryPartnerId?: string | null
+  deliveryStatus?: $Enums.DeliveryStatus | null
+  idempotencyKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
+  statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
+  payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
+  couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
+  deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
+  deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
+  refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
+  kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
+  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
+}
+
+export type OrderCreateOrConnectWithoutUpiCollectRequestInput = {
+  where: Prisma.OrderWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrderCreateWithoutUpiCollectRequestInput, Prisma.OrderUncheckedCreateWithoutUpiCollectRequestInput>
+}
+
+export type OrderUpsertWithoutUpiCollectRequestInput = {
+  update: Prisma.XOR<Prisma.OrderUpdateWithoutUpiCollectRequestInput, Prisma.OrderUncheckedUpdateWithoutUpiCollectRequestInput>
+  create: Prisma.XOR<Prisma.OrderCreateWithoutUpiCollectRequestInput, Prisma.OrderUncheckedCreateWithoutUpiCollectRequestInput>
+  where?: Prisma.OrderWhereInput
+}
+
+export type OrderUpdateToOneWithWhereWithoutUpiCollectRequestInput = {
+  where?: Prisma.OrderWhereInput
+  data: Prisma.XOR<Prisma.OrderUpdateWithoutUpiCollectRequestInput, Prisma.OrderUncheckedUpdateWithoutUpiCollectRequestInput>
+}
+
+export type OrderUpdateWithoutUpiCollectRequestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  commissionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
+  address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
+  statusHistory?: Prisma.OrderStatusHistoryUpdateManyWithoutOrderNestedInput
+  payment?: Prisma.PaymentUpdateOneWithoutOrderNestedInput
+  couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
+  deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
+  deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
+  refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
+  kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
+  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
+}
+
+export type OrderUncheckedUpdateWithoutUpiCollectRequestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  commissionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+  statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
+  payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
+  couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
+  deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
+  deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
+  refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
+  kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
+  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
+}
+
+export type OrderCreateWithoutRefundsInput = {
+  id?: string
+  publicCode?: string | null
+  serviceDate: Date | string
+  serviceDateType?: $Enums.ServiceDateType
+  timeSlot: $Enums.TimeSlot
+  status?: $Enums.OrderStatus
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  commissionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  source?: $Enums.OrderSource
+  deliveryStatus?: $Enums.DeliveryStatus | null
+  idempotencyKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -3352,11 +3270,12 @@ export type OrderCreateWithoutRefundsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutRefundsInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -3372,10 +3291,6 @@ export type OrderUncheckedCreateWithoutRefundsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -3389,7 +3304,7 @@ export type OrderUncheckedCreateWithoutRefundsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutRefundsInput = {
@@ -3410,6 +3325,7 @@ export type OrderUpdateToOneWithWhereWithoutRefundsInput = {
 
 export type OrderUpdateWithoutRefundsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -3422,10 +3338,6 @@ export type OrderUpdateWithoutRefundsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -3442,11 +3354,12 @@ export type OrderUpdateWithoutRefundsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutRefundsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3462,10 +3375,6 @@ export type OrderUncheckedUpdateWithoutRefundsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -3479,11 +3388,12 @@ export type OrderUncheckedUpdateWithoutRefundsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutKitchenPayoutsInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -3496,10 +3406,6 @@ export type OrderCreateWithoutKitchenPayoutsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -3516,11 +3422,12 @@ export type OrderCreateWithoutKitchenPayoutsInput = {
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutKitchenPayoutsInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -3536,10 +3443,6 @@ export type OrderUncheckedCreateWithoutKitchenPayoutsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -3553,7 +3456,7 @@ export type OrderUncheckedCreateWithoutKitchenPayoutsInput = {
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutKitchenPayoutsInput = {
@@ -3574,6 +3477,7 @@ export type OrderUpdateToOneWithWhereWithoutKitchenPayoutsInput = {
 
 export type OrderUpdateWithoutKitchenPayoutsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -3586,10 +3490,6 @@ export type OrderUpdateWithoutKitchenPayoutsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -3606,11 +3506,12 @@ export type OrderUpdateWithoutKitchenPayoutsInput = {
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutKitchenPayoutsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3626,10 +3527,6 @@ export type OrderUncheckedUpdateWithoutKitchenPayoutsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -3643,11 +3540,12 @@ export type OrderUncheckedUpdateWithoutKitchenPayoutsInput = {
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutDeliveryPartnerPayoutsInput = {
   id?: string
+  publicCode?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
   timeSlot: $Enums.TimeSlot
@@ -3660,10 +3558,6 @@ export type OrderCreateWithoutDeliveryPartnerPayoutsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user: Prisma.UserCreateNestedOneWithoutOrdersInput
   address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
   deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
@@ -3680,11 +3574,12 @@ export type OrderCreateWithoutDeliveryPartnerPayoutsInput = {
   refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutDeliveryPartnerPayoutsInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -3700,10 +3595,6 @@ export type OrderUncheckedCreateWithoutDeliveryPartnerPayoutsInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
   payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
@@ -3717,7 +3608,7 @@ export type OrderUncheckedCreateWithoutDeliveryPartnerPayoutsInput = {
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-  codVariance?: Prisma.CodVarianceUncheckedCreateNestedOneWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutDeliveryPartnerPayoutsInput = {
@@ -3738,6 +3629,7 @@ export type OrderUpdateToOneWithWhereWithoutDeliveryPartnerPayoutsInput = {
 
 export type OrderUpdateWithoutDeliveryPartnerPayoutsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -3750,10 +3642,6 @@ export type OrderUpdateWithoutDeliveryPartnerPayoutsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
@@ -3770,11 +3658,12 @@ export type OrderUpdateWithoutDeliveryPartnerPayoutsInput = {
   refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutDeliveryPartnerPayoutsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -3790,10 +3679,6 @@ export type OrderUncheckedUpdateWithoutDeliveryPartnerPayoutsInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -3807,175 +3692,12 @@ export type OrderUncheckedUpdateWithoutDeliveryPartnerPayoutsInput = {
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
-}
-
-export type OrderCreateWithoutCodVarianceInput = {
-  id?: string
-  serviceDate: Date | string
-  serviceDateType?: $Enums.ServiceDateType
-  timeSlot: $Enums.TimeSlot
-  status?: $Enums.OrderStatus
-  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  commissionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  source?: $Enums.OrderSource
-  deliveryStatus?: $Enums.DeliveryStatus | null
-  idempotencyKey?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  user: Prisma.UserCreateNestedOneWithoutOrdersInput
-  address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
-  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
-  orderItems?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
-  statusHistory?: Prisma.OrderStatusHistoryCreateNestedManyWithoutOrderInput
-  payment?: Prisma.PaymentCreateNestedOneWithoutOrderInput
-  couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
-  review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
-  deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
-  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
-  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
-  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
-  deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
-  refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
-  kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
-  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
-  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
-}
-
-export type OrderUncheckedCreateWithoutCodVarianceInput = {
-  id?: string
-  userId: string
-  addressId?: string | null
-  serviceDate: Date | string
-  serviceDateType?: $Enums.ServiceDateType
-  timeSlot: $Enums.TimeSlot
-  status?: $Enums.OrderStatus
-  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  commissionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
-  source?: $Enums.OrderSource
-  deliveryPartnerId?: string | null
-  deliveryStatus?: $Enums.DeliveryStatus | null
-  idempotencyKey?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
-  statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
-  payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
-  couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
-  review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
-  deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
-  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
-  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
-  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
-  deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
-  refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
-  kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
-  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
-  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
-}
-
-export type OrderCreateOrConnectWithoutCodVarianceInput = {
-  where: Prisma.OrderWhereUniqueInput
-  create: Prisma.XOR<Prisma.OrderCreateWithoutCodVarianceInput, Prisma.OrderUncheckedCreateWithoutCodVarianceInput>
-}
-
-export type OrderUpsertWithoutCodVarianceInput = {
-  update: Prisma.XOR<Prisma.OrderUpdateWithoutCodVarianceInput, Prisma.OrderUncheckedUpdateWithoutCodVarianceInput>
-  create: Prisma.XOR<Prisma.OrderCreateWithoutCodVarianceInput, Prisma.OrderUncheckedCreateWithoutCodVarianceInput>
-  where?: Prisma.OrderWhereInput
-}
-
-export type OrderUpdateToOneWithWhereWithoutCodVarianceInput = {
-  where?: Prisma.OrderWhereInput
-  data: Prisma.XOR<Prisma.OrderUpdateWithoutCodVarianceInput, Prisma.OrderUncheckedUpdateWithoutCodVarianceInput>
-}
-
-export type OrderUpdateWithoutCodVarianceInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
-  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
-  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  commissionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
-  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
-  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
-  address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
-  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
-  orderItems?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
-  statusHistory?: Prisma.OrderStatusHistoryUpdateManyWithoutOrderNestedInput
-  payment?: Prisma.PaymentUpdateOneWithoutOrderNestedInput
-  couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
-  review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
-  deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
-  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
-  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
-  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
-  deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
-  refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
-  kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
-  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
-  supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-}
-
-export type OrderUncheckedUpdateWithoutCodVarianceInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  userId?: Prisma.StringFieldUpdateOperationsInput | string
-  addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
-  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
-  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
-  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  commissionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
-  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
-  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
-  statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
-  payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
-  couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
-  review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
-  deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
-  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
-  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
-  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
-  deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
-  refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
-  kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
-  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
-  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateManyUserInput = {
   id?: string
+  publicCode?: string | null
   addressId?: string | null
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
@@ -3990,14 +3712,11 @@ export type OrderCreateManyUserInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type OrderUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -4010,10 +3729,6 @@ export type OrderUpdateWithoutUserInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
@@ -4030,11 +3745,12 @@ export type OrderUpdateWithoutUserInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
@@ -4049,10 +3765,6 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -4067,11 +3779,12 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
@@ -4086,14 +3799,11 @@ export type OrderUncheckedUpdateManyWithoutUserInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type OrderCreateManyAddressInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   serviceDate: Date | string
   serviceDateType?: $Enums.ServiceDateType
@@ -4108,14 +3818,11 @@ export type OrderCreateManyAddressInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type OrderUpdateWithoutAddressInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -4128,10 +3835,6 @@ export type OrderUpdateWithoutAddressInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
@@ -4148,11 +3851,12 @@ export type OrderUpdateWithoutAddressInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutAddressInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
@@ -4167,10 +3871,6 @@ export type OrderUncheckedUpdateWithoutAddressInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -4185,11 +3885,12 @@ export type OrderUncheckedUpdateWithoutAddressInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateManyWithoutAddressInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
@@ -4204,14 +3905,11 @@ export type OrderUncheckedUpdateManyWithoutAddressInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type OrderCreateManyDeliveryPartnerInput = {
   id?: string
+  publicCode?: string | null
   userId: string
   addressId?: string | null
   serviceDate: Date | string
@@ -4226,14 +3924,11 @@ export type OrderCreateManyDeliveryPartnerInput = {
   idempotencyKey?: string | null
   createdAt?: Date | string
   updatedAt?: Date | string
-  deliveryOtp?: string | null
-  deliveryOtpVerifiedAt?: Date | string | null
-  codAmountExpected?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 export type OrderUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
@@ -4246,10 +3941,6 @@ export type OrderUpdateWithoutDeliveryPartnerInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
   address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
@@ -4266,11 +3957,12 @@ export type OrderUpdateWithoutDeliveryPartnerInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4285,10 +3977,6 @@ export type OrderUncheckedUpdateWithoutDeliveryPartnerInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
   statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
   payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
@@ -4303,11 +3991,12 @@ export type OrderUncheckedUpdateWithoutDeliveryPartnerInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
-  codVariance?: Prisma.CodVarianceUncheckedUpdateOneWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateManyWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -4322,10 +4011,6 @@ export type OrderUncheckedUpdateManyWithoutDeliveryPartnerInput = {
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deliveryOtp?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  deliveryOtpVerifiedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  codAmountExpected?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  codAmountEntered?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
 }
 
 
@@ -4433,6 +4118,7 @@ export type OrderCountOutputTypeCountSupportTicketsArgs<ExtArgs extends runtime.
 
 export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   userId?: boolean
   addressId?: boolean
   serviceDate?: boolean
@@ -4448,10 +4134,6 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   idempotencyKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  deliveryOtp?: boolean
-  deliveryOtpVerifiedAt?: boolean
-  codAmountExpected?: boolean
-  codAmountEntered?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   address?: boolean | Prisma.Order$addressArgs<ExtArgs>
   deliveryPartner?: boolean | Prisma.Order$deliveryPartnerArgs<ExtArgs>
@@ -4469,12 +4151,13 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   kitchenPayouts?: boolean | Prisma.Order$kitchenPayoutsArgs<ExtArgs>
   deliveryPartnerPayouts?: boolean | Prisma.Order$deliveryPartnerPayoutsArgs<ExtArgs>
   supportTickets?: boolean | Prisma.Order$supportTicketsArgs<ExtArgs>
-  codVariance?: boolean | Prisma.Order$codVarianceArgs<ExtArgs>
+  upiCollectRequest?: boolean | Prisma.Order$upiCollectRequestArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["order"]>
 
 export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   userId?: boolean
   addressId?: boolean
   serviceDate?: boolean
@@ -4490,10 +4173,6 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   idempotencyKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  deliveryOtp?: boolean
-  deliveryOtpVerifiedAt?: boolean
-  codAmountExpected?: boolean
-  codAmountEntered?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   address?: boolean | Prisma.Order$addressArgs<ExtArgs>
   deliveryPartner?: boolean | Prisma.Order$deliveryPartnerArgs<ExtArgs>
@@ -4501,6 +4180,7 @@ export type OrderSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 
 export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   userId?: boolean
   addressId?: boolean
   serviceDate?: boolean
@@ -4516,10 +4196,6 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   idempotencyKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  deliveryOtp?: boolean
-  deliveryOtpVerifiedAt?: boolean
-  codAmountExpected?: boolean
-  codAmountEntered?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   address?: boolean | Prisma.Order$addressArgs<ExtArgs>
   deliveryPartner?: boolean | Prisma.Order$deliveryPartnerArgs<ExtArgs>
@@ -4527,6 +4203,7 @@ export type OrderSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 
 export type OrderSelectScalar = {
   id?: boolean
+  publicCode?: boolean
   userId?: boolean
   addressId?: boolean
   serviceDate?: boolean
@@ -4542,13 +4219,9 @@ export type OrderSelectScalar = {
   idempotencyKey?: boolean
   createdAt?: boolean
   updatedAt?: boolean
-  deliveryOtp?: boolean
-  deliveryOtpVerifiedAt?: boolean
-  codAmountExpected?: boolean
-  codAmountEntered?: boolean
 }
 
-export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "userId" | "addressId" | "serviceDate" | "serviceDateType" | "timeSlot" | "status" | "totalAmount" | "discountAmount" | "commissionAmount" | "source" | "deliveryPartnerId" | "deliveryStatus" | "idempotencyKey" | "createdAt" | "updatedAt" | "deliveryOtp" | "deliveryOtpVerifiedAt" | "codAmountExpected" | "codAmountEntered", ExtArgs["result"]["order"]>
+export type OrderOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicCode" | "userId" | "addressId" | "serviceDate" | "serviceDateType" | "timeSlot" | "status" | "totalAmount" | "discountAmount" | "commissionAmount" | "source" | "deliveryPartnerId" | "deliveryStatus" | "idempotencyKey" | "createdAt" | "updatedAt", ExtArgs["result"]["order"]>
 export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   address?: boolean | Prisma.Order$addressArgs<ExtArgs>
@@ -4567,7 +4240,7 @@ export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   kitchenPayouts?: boolean | Prisma.Order$kitchenPayoutsArgs<ExtArgs>
   deliveryPartnerPayouts?: boolean | Prisma.Order$deliveryPartnerPayoutsArgs<ExtArgs>
   supportTickets?: boolean | Prisma.Order$supportTicketsArgs<ExtArgs>
-  codVariance?: boolean | Prisma.Order$codVarianceArgs<ExtArgs>
+  upiCollectRequest?: boolean | Prisma.Order$upiCollectRequestArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4601,10 +4274,11 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     kitchenPayouts: Prisma.$KitchenPayoutPayload<ExtArgs>[]
     deliveryPartnerPayouts: Prisma.$DeliveryPartnerPayoutPayload<ExtArgs>[]
     supportTickets: Prisma.$SupportTicketPayload<ExtArgs>[]
-    codVariance: Prisma.$CodVariancePayload<ExtArgs> | null
+    upiCollectRequest: Prisma.$UpiCollectRequestPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    publicCode: string | null
     userId: string
     addressId: string | null
     serviceDate: Date
@@ -4620,10 +4294,6 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     idempotencyKey: string | null
     createdAt: Date
     updatedAt: Date
-    deliveryOtp: string | null
-    deliveryOtpVerifiedAt: Date | null
-    codAmountExpected: runtime.Decimal | null
-    codAmountEntered: runtime.Decimal | null
   }, ExtArgs["result"]["order"]>
   composites: {}
 }
@@ -5035,7 +4705,7 @@ export interface Prisma__OrderClient<T, Null = never, ExtArgs extends runtime.Ty
   kitchenPayouts<T extends Prisma.Order$kitchenPayoutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$kitchenPayoutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenPayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deliveryPartnerPayouts<T extends Prisma.Order$deliveryPartnerPayoutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$deliveryPartnerPayoutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerPayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   supportTickets<T extends Prisma.Order$supportTicketsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$supportTicketsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  codVariance<T extends Prisma.Order$codVarianceArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$codVarianceArgs<ExtArgs>>): Prisma.Prisma__CodVarianceClient<runtime.Types.Result.GetResult<Prisma.$CodVariancePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  upiCollectRequest<T extends Prisma.Order$upiCollectRequestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$upiCollectRequestArgs<ExtArgs>>): Prisma.Prisma__UpiCollectRequestClient<runtime.Types.Result.GetResult<Prisma.$UpiCollectRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5066,6 +4736,7 @@ export interface Prisma__OrderClient<T, Null = never, ExtArgs extends runtime.Ty
  */
 export interface OrderFieldRefs {
   readonly id: Prisma.FieldRef<"Order", 'String'>
+  readonly publicCode: Prisma.FieldRef<"Order", 'String'>
   readonly userId: Prisma.FieldRef<"Order", 'String'>
   readonly addressId: Prisma.FieldRef<"Order", 'String'>
   readonly serviceDate: Prisma.FieldRef<"Order", 'DateTime'>
@@ -5081,10 +4752,6 @@ export interface OrderFieldRefs {
   readonly idempotencyKey: Prisma.FieldRef<"Order", 'String'>
   readonly createdAt: Prisma.FieldRef<"Order", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Order", 'DateTime'>
-  readonly deliveryOtp: Prisma.FieldRef<"Order", 'String'>
-  readonly deliveryOtpVerifiedAt: Prisma.FieldRef<"Order", 'DateTime'>
-  readonly codAmountExpected: Prisma.FieldRef<"Order", 'Decimal'>
-  readonly codAmountEntered: Prisma.FieldRef<"Order", 'Decimal'>
 }
     
 
@@ -5835,22 +5502,22 @@ export type Order$supportTicketsArgs<ExtArgs extends runtime.Types.Extensions.In
 }
 
 /**
- * Order.codVariance
+ * Order.upiCollectRequest
  */
-export type Order$codVarianceArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+export type Order$upiCollectRequestArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the CodVariance
+   * Select specific fields to fetch from the UpiCollectRequest
    */
-  select?: Prisma.CodVarianceSelect<ExtArgs> | null
+  select?: Prisma.UpiCollectRequestSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the CodVariance
+   * Omit specific fields from the UpiCollectRequest
    */
-  omit?: Prisma.CodVarianceOmit<ExtArgs> | null
+  omit?: Prisma.UpiCollectRequestOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.CodVarianceInclude<ExtArgs> | null
-  where?: Prisma.CodVarianceWhereInput
+  include?: Prisma.UpiCollectRequestInclude<ExtArgs> | null
+  where?: Prisma.UpiCollectRequestWhereInput
 }
 
 /**

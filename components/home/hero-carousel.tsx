@@ -5,139 +5,157 @@ import Link from "next/link"
 import Image from "next/image"
 import useEmblaCarousel from "embla-carousel-react"
 import Autoplay from "embla-carousel-autoplay"
-import { ArrowRight, Sparkles, ShieldCheck, Clock, ChefHat, Bike } from "lucide-react"
+import {
+  ArrowRight,
+  Leaf,
+  Heart,
+  ShieldCheck,
+  Clock,
+  Package,
+  Flame,
+  Recycle,
+  Ban,
+  ChevronRight,
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 
 interface HeroSlide {
   tag: string
-  tagIcon: "sparkle" | "shield" | "clock" | "chef" | "bike"
-  headline: string
-  accentText: string
-  description: string
+  headline: React.ReactNode
+  description: React.ReactNode
   primaryCta: { label: string; href: string }
   secondaryCta: { label: string; href: string }
-  image: string
+  trustBar: { icon: typeof Heart; text: string }[]
+  rightCard: { icon: typeof Flame; title: string; subtitle: string }[]
+  bgImage: string
   imageAlt: string
-  bgGradient: string
-  accentColor: string
-  floatImages: { src: string; alt: string; className: string }[]
 }
 
 const slides: HeroSlide[] = [
   {
     tag: "100% HOME COOKED",
-    tagIcon: "sparkle",
-    headline: "Fresh Home",
-    accentText: "Cooked Food, Delivered Daily",
-    description:
-      "Delicious, healthy and hygienic meals made by trusted home chefs near you.",
-    primaryCta: { label: "ORDER NOW", href: "/search" },
-    secondaryCta: { label: "EXPLORE MENU", href: "/categories" },
-    image: "/banners/fresh-cooked.png",
-    imageAlt: "Fresh home cooked food in a tiffin carrier",
-    bgGradient: "from-[#FFF8F0] via-[#FFF5EB] to-[#FFE8D0]",
-    accentColor: "#EE7005",
-    floatImages: [
-      { src: "/banners/tiffin-carrier.png", alt: "Tiffin", className: "hero-float-1" },
-    ],
-  },
-  {
-    tag: "HYGIENIC & SAFE",
-    tagIcon: "shield",
-    headline: "Taste the Difference",
-    accentText: "of Homemade Meals",
-    description:
-      "Every meal is prepared with love, using the freshest ingredients from local kitchens.",
-    primaryCta: { label: "ORDER NOW", href: "/search" },
-    secondaryCta: { label: "HOW IT WORKS", href: "/help" },
-    image: "/banners/tiffin-carrier.png",
-    imageAlt: "Delicious home cooked meals delivered fresh",
-    bgGradient: "from-[#F0FFF4] via-[#F0FDF4] to-[#DCFCE7]",
-    accentColor: "#22C55E",
-    floatImages: [
-      { src: "/banners/fresh-daily.png", alt: "Fresh", className: "hero-float-2" },
-    ],
-  },
-  {
-    tag: "ON-TIME DELIVERY",
-    tagIcon: "clock",
-    headline: "Your Favorite",
-    accentText: "Home Food, On Time",
-    description:
-      "Hot and fresh meals delivered to your doorstep. Experience the warmth of home cooking.",
+    headline: (
+      <>
+        <span className="block text-[#0A3D24] font-black text-[2.5rem] sm:text-5xl lg:text-[3.75rem] leading-[1.05] tracking-tight">
+          Home cooked food
+        </span>
+        <span className="block text-[#0A3D24] font-black text-[2.5rem] sm:text-5xl lg:text-[3.75rem] leading-[1.05] tracking-tight mt-1 lg:mt-1.5">
+          in{" "}
+          <span className="text-[#FF4B00] font-serif italic font-semibold">
+            ever silver
+          </span>{" "}
+          Box carrier
+        </span>
+      </>
+    ),
+    description: (
+      <span className="block">
+        Healthy, hygienic and delicious meals prepared by trusted<br className="hidden lg:block"/>
+        home chefs and delivered to your doorstep in<br className="hidden lg:block"/>
+        <span className="text-[#0A3D24] font-bold">traditional stainless steel tiffin box carrier.</span>
+      </span>
+    ),
     primaryCta: { label: "ORDER NOW", href: "/search" },
     secondaryCta: { label: "EXPLORE KITCHENS", href: "/categories" },
-    image: "/banners/fresh-daily.png",
-    imageAlt: "Fresh daily meals delivered to your door",
-    bgGradient: "from-[#FFF7ED] via-[#FFFBEB] to-[#FEF3C7]",
-    accentColor: "#F59E0B",
-    floatImages: [
-      { src: "/banners/fresh-cooked.png", alt: "Cooked", className: "hero-float-3" },
+    trustBar: [
+      { icon: Heart, text: "Cooked with Love" },
+      { icon: ShieldCheck, text: "Hygienic & Safe" },
+      { icon: Clock, text: "On-time Delivery" },
+      { icon: Leaf, text: "Fresh Ingredients" },
+      { icon: Package, text: "Steel Tiffin Carrier" },
     ],
+    rightCard: [
+      { icon: Flame, title: "Food stays hot", subtitle: "for longer" },
+      { icon: ShieldCheck, title: "Leak proof", subtitle: "& spill safe" },
+      { icon: Leaf, title: "Eco friendly", subtitle: "& reusable" },
+      { icon: Ban, title: "No plastic", subtitle: "Only stainless steel" },
+    ],
+    bgImage:
+      "/hero/hero-tiffin-carrier.webp",
+    imageAlt: "Home chef holding stainless steel tiffin carrier",
   },
   {
     tag: "BECOME A HOME CHEF",
-    tagIcon: "chef",
-    headline: "Turn Your Passion",
-    accentText: "Into Your Profession",
+    headline: (
+      <>
+        <span className="block text-[#0A3D24] font-black text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.1] tracking-tight">
+          Turn Your Passion
+        </span>
+        <span className="block text-[#0A3D24] font-black text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.1] tracking-tight mt-1">
+          Into Your{" "}
+          <span className="text-primary font-serif italic font-semibold">
+            Profession
+          </span>
+        </span>
+      </>
+    ),
     description:
-      "Cook from home, earn on your terms, and build something extraordinary with RRC Kitchen.",
+      "Cook from home, earn on your terms, and build something extraordinary with RRC Kitchen. Join our growing community of passionate home chefs.",
     primaryCta: { label: "JOIN NOW", href: "/kitchen/signup" },
     secondaryCta: { label: "LEARN MORE", href: "/kitchen" },
-    image: "/banners/become-chef.png",
-    imageAlt: "Become a home chef with RRC Kitchen",
-    bgGradient: "from-[#F5F3FF] via-[#EDE9FE] to-[#DDD6FE]",
-    accentColor: "#7C3AED",
-    floatImages: [
-      { src: "/banners/womenchef.png", alt: "Chef", className: "hero-float-1" },
+    trustBar: [
+      { icon: Heart, text: "Be Your Own Boss" },
+      { icon: Clock, text: "Flexible Hours" },
+      { icon: ShieldCheck, text: "Trusted Platform" },
+      { icon: Package, text: "We Handle Delivery" },
     ],
+    rightCard: [
+      { icon: Heart, title: "Reach more", subtitle: "happy customers" },
+      { icon: Clock, title: "Work when", subtitle: "you want to" },
+      { icon: Flame, title: "Earn extra", subtitle: "income daily" },
+      { icon: ShieldCheck, title: "Secure & safe", subtitle: "payments" },
+    ],
+    bgImage:
+      "/hero/hero-women-chef.webp",
+    imageAlt: "Become a home chef with RRC Kitchen",
   },
   {
-    tag: "DELIVER WITH US",
-    tagIcon: "bike",
-    headline: "Deliver Happiness,",
-    accentText: "Earn Big Rewards",
+    tag: "FRESHLY COOKED DAILY",
+    headline: (
+      <>
+        <span className="block text-[#0A3D24] font-black text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.1] tracking-tight">
+          Fresh & Healthy
+        </span>
+        <span className="block text-[#0A3D24] font-black text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.1] tracking-tight mt-1">
+          <span className="text-primary font-serif italic font-semibold">
+            Daily Menu
+          </span>{" "}
+          Delivered
+        </span>
+      </>
+    ),
     description:
-      "Join our delivery partner network. Flexible hours, great earnings, and be part of your community's food journey.",
-    primaryCta: { label: "SIGN UP", href: "/delivery-partner/signup" },
-    secondaryCta: { label: "KNOW MORE", href: "/help" },
-    image: "/banners/delivery-with-us.png",
-    imageAlt: "Delivery partner with RRC Kitchen",
-    bgGradient: "from-[#EFF6FF] via-[#DBEAFE] to-[#BFDBFE]",
-    accentColor: "#2563EB",
-    floatImages: [
-      { src: "/banners/freshpacakaged.png", alt: "Packaged", className: "hero-float-2" },
+      "Explore a rotating daily menu crafted by home chefs using the freshest ingredients. Order by noon for same-day delivery in eco-friendly packaging.",
+    primaryCta: { label: "VIEW TODAY'S MENU", href: "/today-specials" },
+    secondaryCta: { label: "SUBSCRIBE NOW", href: "/categories" },
+    trustBar: [
+      { icon: Clock, text: "Daily Rotating Menu" },
+      { icon: Leaf, text: "Farm Fresh Produce" },
+      { icon: ShieldCheck, text: "Home Chef Certified" },
+      { icon: Flame, text: "Hot Delivery" },
     ],
+    rightCard: [
+      { icon: Clock, title: "Order by", subtitle: "12:00 PM" },
+      { icon: Leaf, title: "Farm to", subtitle: "table freshness" },
+      { icon: Recycle, title: "Eco friendly", subtitle: "packaging" },
+      { icon: Flame, title: "Hot & fresh", subtitle: "every day" },
+    ],
+    bgImage:
+      "/hero/hero-delivery-with-us.webp",
+    imageAlt: "Fresh daily home cooked meals",
   },
 ]
-
-const features = [
-  { icon: Sparkles, text: "Home Cooked with Love" },
-  { icon: ShieldCheck, text: "Hygienic & Safe" },
-  { icon: Clock, text: "On-time Everyday" },
-  { icon: ChefHat, text: "Fresh Ingredients" },
-]
-
-function TagIcon({ type }: { type: "sparkle" | "shield" | "clock" | "chef" | "bike" }) {
-  if (type === "sparkle") return <Sparkles className="h-3.5 w-3.5" />
-  if (type === "shield") return <ShieldCheck className="h-3.5 w-3.5" />
-  if (type === "clock") return <Clock className="h-3.5 w-3.5" />
-  if (type === "chef") return <ChefHat className="h-3.5 w-3.5" />
-  return <Bike className="h-3.5 w-3.5" />
-}
 
 export function HeroCarousel() {
   const [emblaRef, emblaApi] = useEmblaCarousel(
-    { loop: true, duration: 40 },
-    [Autoplay({ delay: 6000, stopOnInteraction: false })]
+    { loop: true, duration: 50 },
+    [Autoplay({ delay: 7000, stopOnInteraction: false })]
   )
   const [current, setCurrent] = useState(0)
 
   useEffect(() => {
     if (!emblaApi) return
-    const onSelect = () => {
-      setCurrent(emblaApi.selectedScrollSnap())
-    }
+    const onSelect = () => setCurrent(emblaApi.selectedScrollSnap())
     emblaApi.on("select", onSelect)
     emblaApi.on("reInit", onSelect)
     return () => {
@@ -147,195 +165,12 @@ export function HeroCarousel() {
   }, [emblaApi])
 
   return (
-    <section className="hero-section relative w-full overflow-hidden">
-      {/* Animated background shapes */}
-      <div className="hero-bg-shapes absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="hero-blob hero-blob-1" />
-        <div className="hero-blob hero-blob-2" />
-        <div className="hero-blob hero-blob-3" />
-        <div className="hero-grid-pattern" />
-      </div>
-
-      <div className="relative" ref={emblaRef}>
+    <section className="hero-section relative w-full overflow-hidden bg-[#FDFBF7]">
+      <div ref={emblaRef}>
         <div className="flex">
           {slides.map((slide, index) => (
-            <div
-              key={index}
-              className="min-w-0 shrink-0 grow-0 basis-full"
-            >
-              <div
-                className={cn(
-                  "hero-slide relative min-h-105 sm:min-h-120 lg:min-h-135 xl:min-h-145",
-                  `bg-linear-to-br ${slide.bgGradient}`,
-                  current === index && "hero-slide-active"
-                )}
-              >
-                {/* Decorative floating shapes */}
-                <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                  <div
-                    className={cn(
-                      "hero-deco-circle hero-deco-1",
-                      current === index && "hero-deco-active"
-                    )}
-                    style={{ borderColor: `${slide.accentColor}20` }}
-                  />
-                  <div
-                    className={cn(
-                      "hero-deco-circle hero-deco-2",
-                      current === index && "hero-deco-active"
-                    )}
-                    style={{ borderColor: `${slide.accentColor}15` }}
-                  />
-                  <div
-                    className={cn(
-                      "hero-deco-ring",
-                      current === index && "hero-deco-active"
-                    )}
-                    style={{ borderColor: `${slide.accentColor}10` }}
-                  />
-                </div>
-
-                {/* Content area */}
-                <div className="relative z-10 h-full flex items-center pt-32.5 sm:pt-25 lg:pt-27.5">
-                  <div className="w-full max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 xl:px-16">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-4 items-center min-h-95 sm:min-h-110 lg:min-h-125">
-                      {/* Left: Text Content */}
-                      <div className="space-y-4 sm:space-y-5 lg:space-y-6">
-                        {/* Tag */}
-                        <div
-                          className={cn(
-                            "hero-tag inline-flex items-center gap-2 rounded-full px-4 py-2 backdrop-blur-md border shadow-sm",
-                            current === index && "hero-tag-active"
-                          )}
-                          style={{
-                            backgroundColor: `${slide.accentColor}10`,
-                            borderColor: `${slide.accentColor}25`,
-                            color: slide.accentColor,
-                          }}
-                        >
-                          <TagIcon type={slide.tagIcon} />
-                          <span className="text-xs sm:text-sm font-bold tracking-wider">
-                            {slide.tag}
-                          </span>
-                        </div>
-
-                        {/* Headline */}
-                        <div className="space-y-1">
-                          <h1
-                            className={cn(
-                              "hero-headline text-2xl sm:text-3xl md:text-4xl lg:text-[3rem] xl:text-[3.5rem] font-black leading-[1.08] tracking-tight text-gray-900",
-                              current === index && "hero-headline-active"
-                            )}
-                          >
-                            {slide.headline}
-                          </h1>
-                          <h1
-                            className={cn(
-                              "hero-headline hero-headline-accent text-2xl sm:text-3xl md:text-4xl lg:text-[3rem] xl:text-[3.5rem] font-black leading-[1.08] tracking-tight",
-                              current === index && "hero-headline-active"
-                            )}
-                            style={{ color: slide.accentColor }}
-                          >
-                            {slide.accentText}
-                          </h1>
-                        </div>
-
-                        {/* Description */}
-                        <p
-                          className={cn(
-                            "hero-desc text-sm sm:text-base lg:text-lg text-gray-600 leading-relaxed max-w-lg font-medium",
-                            current === index && "hero-desc-active"
-                          )}
-                        >
-                          {slide.description}
-                        </p>
-
-                        {/* CTAs */}
-                        <div
-                          className={cn(
-                            "hero-ctas flex flex-wrap gap-3 sm:gap-4",
-                            current === index && "hero-ctas-active"
-                          )}
-                        >
-                          <Link
-                            href={slide.primaryCta.href}
-                            className="hero-btn-primary group inline-flex items-center gap-2.5 rounded-full px-6 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base font-bold text-white shadow-xl transition-all duration-500 active:scale-95"
-                            style={{
-                              backgroundColor: slide.accentColor,
-                              boxShadow: `0 20px 50px ${slide.accentColor}30`,
-                            }}
-                          >
-                            {slide.primaryCta.label}
-                            <ArrowRight className="h-4 w-4 group-hover:translate-x-1.5 transition-transform duration-300" />
-                          </Link>
-                          <Link
-                            href={slide.secondaryCta.href}
-                            className="hero-btn-secondary inline-flex items-center gap-2 rounded-full px-6 sm:px-8 py-3 sm:py-3.5 text-sm sm:text-base font-bold text-gray-800 bg-white/70 backdrop-blur-sm border border-gray-200/80 hover:bg-white hover:border-gray-300 hover:shadow-lg transition-all duration-300 active:scale-95"
-                          >
-                            {slide.secondaryCta.label}
-                            <ArrowRight className="h-4 w-4 opacity-50" />
-                          </Link>
-                        </div>
-
-                        {/* Feature pills */}
-                        <div
-                          className={cn(
-                            "hero-features flex flex-wrap gap-2 sm:gap-2.5 pt-2",
-                            current === index && "hero-features-active"
-                          )}
-                        >
-                          {features.map((feat, i) => (
-                            <div
-                              key={feat.text}
-                              className="hero-feature-pill inline-flex items-center gap-1.5 rounded-full bg-white/60 backdrop-blur-sm px-3 py-1.5 border border-white/80 shadow-sm"
-                              style={{ animationDelay: `${0.8 + i * 0.1}s` }}
-                            >
-                              <feat.icon
-                                className="h-3 w-3 sm:h-3.5 sm:w-3.5"
-                                style={{ color: slide.accentColor }}
-                              />
-                              <span className="text-[10px] sm:text-xs font-semibold text-gray-700">
-                                {feat.text}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      {/* Right: Image Area */}
-                      <div className="relative h-60 sm:h-75 lg:h-110 xl:h-125">
-                        {/* Main image */}
-                        <div
-                          className={cn(
-                            "hero-main-image absolute inset-0 flex items-center justify-center",
-                            current === index && "hero-main-image-active"
-                          )}
-                        >
-                          <div className="relative w-55 h-55 sm:w-70 sm:h-70 lg:w-90 lg:h-90 xl:w-105 xl:h-105">
-                            <Image
-                              src={slide.image}
-                              alt={slide.imageAlt}
-                              fill
-                              className="object-contain drop-shadow-2xl"
-                              sizes="(max-width: 1024px) 80vw, 40vw"
-                              priority={index === 0}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Glow effect behind image */}
-                        <div
-                          className={cn(
-                            "hero-glow absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-65 h-65 lg:w-90 lg:h-90 rounded-full blur-3xl opacity-30",
-                            current === index && "hero-glow-active"
-                          )}
-                          style={{ backgroundColor: slide.accentColor }}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div key={index} className="min-w-0 shrink-0 grow-0 basis-full">
+              <SlideContent slide={slide} isActive={current === index} />
             </div>
           ))}
         </div>
@@ -343,3 +178,124 @@ export function HeroCarousel() {
     </section>
   )
 }
+
+function SlideContent({
+  slide,
+  isActive,
+}: {
+  slide: HeroSlide
+  isActive: boolean
+}) {
+  return (
+    <div className="relative min-h-145 sm:min-h-160 lg:min-h-155 flex flex-col lg:block">
+      <div className="absolute inset-0 lg:inset-y-0 lg:left-auto lg:right-0 w-full lg:w-[70%] z-0 overflow-hidden">
+        <Image
+          src={slide.bgImage}
+          alt={slide.imageAlt}
+          fill
+          className="object-cover object-[center_right] lg:object-left"
+          sizes="(max-width: 1024px) 100vw, 70vw"
+          priority
+        />
+        {/* Gradient to blend left edge of image into background on desktop */}
+        <div className="hidden lg:block absolute inset-y-0 left-0 w-[45%] bg-linear-to-r from-[#FDFBF7] from-15% via-[#FDFBF7]/80 to-transparent z-10" />
+        {/* Gradient for mobile to ensure text readability (fades diagonally) */}
+        <div className="lg:hidden absolute inset-0 bg-linear-to-br from-[#FDFBF7] from-35% via-[#FDFBF7]/85 to-transparent z-10" />
+      </div>
+
+      <div className="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 pt-8 sm:pt-14 lg:pt-16 pb-36 sm:pb-40 lg:pb-32 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-center">
+          <div
+            className={cn(
+              "lg:col-span-7 space-y-6 lg:space-y-7 transition-all duration-700",
+              isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
+            )}
+          >
+            <div className="inline-flex items-center gap-1.5 bg-[#FFF4E5] text-[#0A3D24] px-3.5 py-1.5 rounded-full shadow-sm border border-[#FADCBF]/60">
+              <Leaf className="h-4 w-4 text-[#168846]" />
+              <span className="text-[11px] font-bold tracking-wider uppercase">
+                {slide.tag}
+              </span>
+            </div>
+
+            <h1>{slide.headline}</h1>
+
+            <p className="text-gray-700 text-base lg:text-[1.05rem] max-w-xl font-medium leading-relaxed">
+              {slide.description}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-4 pt-2">
+              <Link
+                href={slide.primaryCta.href}
+                className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-[13px] font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-95 bg-[#FF4B00]"
+              >
+                {slide.primaryCta.label}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href={slide.secondaryCta.href}
+                className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-[13px] font-bold text-gray-900 bg-white border border-gray-200 shadow-sm transition-all hover:bg-gray-50 active:scale-95"
+              >
+                {slide.secondaryCta.label}
+                <ChevronRight className="h-4 w-4 text-gray-900" />
+              </Link>
+            </div>
+          </div>
+
+          <div className="hidden lg:flex lg:col-span-5 justify-end">
+            <div
+              className={cn(
+                "bg-white rounded-[14px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-6 flex flex-col w-[300px] border border-gray-100 transition-all duration-700 delay-150 relative",
+                isActive ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"
+              )}
+            >
+              {slide.rightCard.map((item, i) => (
+                <div key={i} className="flex flex-col">
+                  <div className="flex items-center gap-4 py-1">
+                    <div className="shrink-0 flex items-center justify-center">
+                      <item.icon className="h-6 w-6 text-[#168846]" strokeWidth={1.75} />
+                    </div>
+                    <div className="flex flex-col justify-center">
+                      <span className="font-bold text-[14.5px] leading-tight text-gray-900">
+                        {item.title}
+                      </span>
+                      <span className="text-[13px] text-gray-600 mt-0.5">
+                        {item.subtitle}
+                      </span>
+                    </div>
+                  </div>
+                  {i < slide.rightCard.length - 1 && (
+                    <div className="w-full h-px bg-gray-100 my-4" />
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute bottom-6 lg:bottom-10 left-0 right-0 z-20 px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-[1400px]">
+          <div className="bg-white rounded-xl lg:rounded-2xl border border-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.06)] px-4 py-4 sm:px-6 lg:px-8 lg:py-5 flex overflow-x-auto lg:overflow-visible items-center lg:justify-between gap-x-6 gap-y-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+            {slide.trustBar.map((item, i) => (
+              <div key={i} className="flex items-center gap-6 shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <div className="flex items-center justify-center shrink-0">
+                    <item.icon className={cn("h-5 w-5", i % 2 === 0 ? "text-[#FF4B00]" : "text-[#168846]")} strokeWidth={2} />
+                  </div>
+                  <span className="text-[12px] font-bold text-gray-900 whitespace-nowrap">
+                    {item.text}
+                  </span>
+                </div>
+                {i < slide.trustBar.length - 1 && (
+                  <div className="w-[1px] h-6 bg-gray-200 shrink-0" />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+

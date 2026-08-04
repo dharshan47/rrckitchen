@@ -28,6 +28,7 @@ export async function getAllMenuItems() {
         },
       },
       photos: { select: { id: true, imageUrl: true }, orderBy: { sortOrder: "asc" } },
+      _count: { select: { orderItems: true } },
     },
     orderBy: { updatedAt: "desc" },
   })
@@ -41,9 +42,13 @@ export async function getAllMenuItems() {
     foodType: item.foodType,
     timeSlot: item.timeSlot,
     isAvailable: item.isAvailable,
+    availableFor: item.availableFor,
+    avgRating: Number(item.avgRating),
+    totalReviews: item.totalReviews,
+    orderCount: item._count?.orderItems ?? 0,
     photos: item.photos.map((p) => ({ id: p.id, imageUrl: p.imageUrl })),
     menuName: item.menu.name,
-    kitchenName: item.menu.kitchenPartner.kitchenAlias?.displayName ?? "",
+    kitchenName: item.menu.kitchenPartner.kitchenAlias?.displayName,
     createdAt: item.createdAt,
   }))
 }
@@ -58,6 +63,7 @@ export async function updateMenuItem(
     foodType?: string
     timeSlot?: string
     isAvailable?: boolean
+    availableFor?: "TODAY" | "TOMORROW" | "BOTH"
   }
 ) {
   let adminSession
@@ -76,6 +82,7 @@ export async function updateMenuItem(
         ...(data.foodType !== undefined && { foodType: data.foodType as "VEG" | "NONVEG" }),
         ...(data.timeSlot !== undefined && { timeSlot: data.timeSlot as "MORNING" | "LUNCH" | "EVENINGSNACKS" | "DINNER" }),
         ...(data.isAvailable !== undefined && { isAvailable: data.isAvailable }),
+        ...(data.availableFor !== undefined && { availableFor: data.availableFor }),
       },
     })
     await logAdminAction({

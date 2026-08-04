@@ -1,6 +1,7 @@
 import "dotenv/config";
 import prisma from "@/lib/prisma";
 import type { AdminPermission } from "@/lib/generated/prisma/client";
+import { allocatePublicCode, PUBLIC_ID_SPECS } from "@/lib/public-id";
 
 const ALL_PERMISSIONS: AdminPermission[] = [
   "MANAGE_ADMINS", "APPROVE_KYC", "MANAGE_CATALOG", "ISSUE_REFUNDS",
@@ -19,14 +20,17 @@ async function main() {
   }
 
   if (!user) {
-    user = await prisma.user.create({
-      data: {
-        email,
-        phoneNumber: phone ?? null,
-        name: email.split("@")[0],
-        emailVerified: true,
-        role: "customer",
-      },
+    user = await prisma.$transaction(async (tx) => {
+      return tx.user.create({
+        data: {
+          publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.CUSTOMER),
+          email,
+          phoneNumber: phone ?? null,
+          name: email.split("@")[0],
+          emailVerified: true,
+          role: "customer",
+        },
+      });
     });
     console.log(`Created user: ${email}`);
   } else {
@@ -34,6 +38,13 @@ async function main() {
   }
 
   const adminRole = await prisma.role.findUniqueOrThrow({ where: { name: "ADMIN" } });
+
+  await prisma.$transaction(async (tx) => {
+    const current = await tx.adminProfile.findUnique({ where: { userId: user.id } });
+    if (current) return current;
+    const publicCode = await allocatePublicCode(tx, PUBLIC_ID_SPECS.ADMIN);
+    return tx.adminProfile.create({ data: { publicCode, userId: user.id, permissions: ALL_PERMISSIONS } });
+  });
 
   await prisma.$transaction([
     prisma.user.update({
@@ -44,11 +55,6 @@ async function main() {
       where: { userId_roleId: { userId: user.id, roleId: adminRole.id } },
       create: { userId: user.id, roleId: adminRole.id },
       update: {},
-    }),
-    prisma.adminProfile.upsert({
-      where: { userId: user.id },
-      create: { userId: user.id, permissions: ALL_PERMISSIONS },
-      update: { permissions: ALL_PERMISSIONS },
     }),
   ]);
 

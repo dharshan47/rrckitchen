@@ -21,5 +21,5 @@ export default async function MenuItemPage({ params }: { params: Promise<{ kitch
   const shortId = itemIdentifier.substring(lastDash + 1);
   const item = await getMenuItemByIdentifier(kitchenSlug, shortId);
   if (!item) notFound();
-  return <MenuItemDetail item={item} />;
+  return <MenuItemDetail item={item} kitchenSlug={kitchenSlug} itemIdentifier={shortId} />;
 }

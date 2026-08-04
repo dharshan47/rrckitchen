@@ -14,3 +14,6 @@ export { usePWA } from "./usePWA";
 export { useVirtualizedMenu } from "./useVirtualizedMenu";
 export { useExploreKitchens } from "./useExploreKitchens";
 export { useRazorpay } from "./useRazorpay";
+export { useUpiCollect } from "./useUpiCollect";
+export type { UpiCollectState, UpiCollectStatus } from "./useUpiCollect";
+

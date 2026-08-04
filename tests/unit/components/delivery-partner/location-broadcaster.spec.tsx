@@ -1,5 +1,5 @@
 import { render } from "@testing-library/react"
-import { describe, expect, it, vi, beforeEach } from "vitest"
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { DeliveryPersonLocationBroadcaster } from "@/components/delivery-partner/location-broadcaster"
 
@@ -10,10 +10,35 @@ function createWrapper() {
   }
 }
 
+function mockGeolocation() {
+  const clearWatch = vi.fn()
+  const watchPosition = vi.fn(
+    (success: (pos: GeolocationPosition) => void, error?: (err: GeolocationPositionError) => void) => {
+      void success
+      void error
+      return 1
+    }
+  )
+  vi.stubGlobal("navigator", {
+    ...window.navigator,
+    geolocation: {
+      watchPosition,
+      clearWatch,
+      getCurrentPosition: vi.fn(),
+    },
+  })
+  return { watchPosition, clearWatch }
+}
+
 describe("DeliveryPersonLocationBroadcaster", () => {
   beforeEach(() => {
     vi.clearAllMocks()
     vi.useFakeTimers()
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    vi.useRealTimers()
   })
 
   it("renders nothing", () => {
@@ -25,42 +50,25 @@ describe("DeliveryPersonLocationBroadcaster", () => {
   })
 
   it("does not call geolocation when disabled", () => {
-    const geoSpy = vi.spyOn(navigator.geolocation, "getCurrentPosition")
+    const { watchPosition } = mockGeolocation()
     render(
       <DeliveryPersonLocationBroadcaster deliveryPersonId="dp1" orderId="order1" enabled={false} />,
       { wrapper: createWrapper() }
     )
-    expect(geoSpy).not.toHaveBeenCalled()
+    expect(watchPosition).not.toHaveBeenCalled()
   })
 
-  it("calls geolocation when enabled", () => {
-    const geoSpy = vi.spyOn(navigator.geolocation, "getCurrentPosition").mockImplementation((success) => {
-      success({ coords: { latitude: 10.78, longitude: 79.13 } } as GeolocationPosition)
-    })
+  it("starts watchPosition when enabled", () => {
+    const { watchPosition } = mockGeolocation()
     render(
       <DeliveryPersonLocationBroadcaster deliveryPersonId="dp1" orderId="order1" enabled={true} />,
       { wrapper: createWrapper() }
     )
-    expect(geoSpy).toHaveBeenCalled()
+    expect(watchPosition).toHaveBeenCalled()
   })
 
-  it("sets up interval for periodic location sending", () => {
-    const setIntervalSpy = vi.spyOn(global, "setInterval")
-    vi.spyOn(navigator.geolocation, "getCurrentPosition").mockImplementation((success) => {
-      success({ coords: { latitude: 10.78, longitude: 79.13 } } as GeolocationPosition)
-    })
-    render(
-      <DeliveryPersonLocationBroadcaster deliveryPersonId="dp1" orderId="order1" enabled={true} />,
-      { wrapper: createWrapper() }
-    )
-    expect(setIntervalSpy).toHaveBeenCalled()
-  })
-
-  it("clears interval when enabled changes to false", () => {
-    const clearIntervalSpy = vi.spyOn(global, "clearInterval")
-    vi.spyOn(navigator.geolocation, "getCurrentPosition").mockImplementation((success) => {
-      success({ coords: { latitude: 10.78, longitude: 79.13 } } as GeolocationPosition)
-    })
+  it("clears the watcher when enabled changes to false", () => {
+    const { clearWatch } = mockGeolocation()
     const { rerender } = render(
       <DeliveryPersonLocationBroadcaster deliveryPersonId="dp1" orderId="order1" enabled={true} />,
       { wrapper: createWrapper() }
@@ -68,16 +76,18 @@ describe("DeliveryPersonLocationBroadcaster", () => {
     rerender(
       <DeliveryPersonLocationBroadcaster deliveryPersonId="dp1" orderId="order1" enabled={false} />
     )
-    expect(clearIntervalSpy).toHaveBeenCalled()
+    expect(clearWatch).toHaveBeenCalledWith(1)
   })
 
   it("handles geolocation error gracefully", () => {
-    vi.spyOn(navigator.geolocation, "getCurrentPosition").mockImplementation((_success, error) => {
+    const { watchPosition } = mockGeolocation()
+    watchPosition.mockImplementation((success, error) => {
+      void success
       error?.({ code: 1, message: "Permission denied" } as GeolocationPositionError)
+      return 1
     })
     render(
       <DeliveryPersonLocationBroadcaster deliveryPersonId="dp1" orderId="order1" enabled={true} />,
       { wrapper: createWrapper() }
     )
-  })
-})
+  })})

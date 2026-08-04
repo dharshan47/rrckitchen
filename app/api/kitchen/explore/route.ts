@@ -33,6 +33,9 @@ export async function GET(request: Request) {
       ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
       include: {
         kitchenAlias: true,
+        kitchenAddress: {
+          select: { latitude: true, longitude: true },
+        },
         menus: {
           where: { isActive: true },
           include: {
@@ -78,7 +81,8 @@ export async function GET(request: Request) {
         displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
         avgRating,
         totalReviews: k._count.reviews,
-        imageUrl: firstItemPhoto,
+        imageUrl: k.kitchenAlias?.imageUrl ?? firstItemPhoto,
+        customOfferText: k.kitchenAlias?.customOfferText ?? null,
         cuisineTags,
         items: allItems.map((i) => ({
           id: i.id,
@@ -90,6 +94,9 @@ export async function GET(request: Request) {
           imageUrl: i.photos[0]?.imageUrl ?? null,
         })),
         timeSlots,
+        lat: k.kitchenAddress?.latitude ?? null,
+        lng: k.kitchenAddress?.longitude ?? null,
+        estimatedPrepTime: k.estimatedPrepTime,
         operatingHours: k.operatingHours as Record<string, { open: string; close: string }> | null,
       };
     });

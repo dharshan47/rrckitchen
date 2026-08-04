@@ -1,17 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   role: { findUnique: vi.fn() },
   userRole: { upsert: vi.fn() },
   kitchenPartner: { findMany: vi.fn(), upsert: vi.fn() },
   deliveryPartner: { upsert: vi.fn() },
   user: { findFirst: vi.fn(), update: vi.fn() },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 vi.mock("@/lib/slug", () => ({ uniqueSlug: vi.fn(() => "test-kitchen") }))
 
-const mockGetSession = vi.fn()
+const mockGetSession = vi.hoisted(() => vi.fn())
 vi.mock("@/lib/auth-server", () => ({ getSession: mockGetSession }))
 
 import { assignUserRole, checkPhoneRegistered, updateUserName } from "@/actions/onboarding/auth"
@@ -76,7 +76,7 @@ describe("onboarding/auth", () => {
 
       await assignUserRole("KITCHENPARTNER")
 
-      expect(uniqueSlug).toHaveBeenCalledWith("kitchen", expect.any(Set))
+      expect(uniqueSlug).toHaveBeenCalledWith("user-1", expect.any(Set))
     })
 
     it("creates delivery partner for DELIVERYPARTNER role", async () => {

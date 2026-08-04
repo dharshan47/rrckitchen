@@ -9,9 +9,13 @@ export interface KitchenData {
   avgRating: number | null;
   totalReviews: number;
   imageUrl: string | null;
+  customOfferText: string | null;
   cuisineTags: string[];
   items: { id: string; name: string; price: number; compareAtPrice?: number | null; timeSlot: string; foodType: string }[];
   timeSlots: string[];
+  lat: number | null;
+  lng: number | null;
+  estimatedPrepTime: number | null;
   operatingHours: Record<string, { open: string; close: string }> | null;
 }
 

@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   Role: 'Role',
+  Customer: 'Customer',
   UserRole: 'UserRole',
   Session: 'Session',
   Account: 'Account',
@@ -78,6 +79,7 @@ export const ModelName = {
   OrderStatusHistory: 'OrderStatusHistory',
   Review: 'Review',
   DeliveryReview: 'DeliveryReview',
+  RrcKitchenReview: 'RrcKitchenReview',
   MenuItemFeedback: 'MenuItemFeedback',
   MenuItemReview: 'MenuItemReview',
   DeliveryAssignment: 'DeliveryAssignment',
@@ -88,6 +90,7 @@ export const ModelName = {
   NotificationLog: 'NotificationLog',
   SupportTicket: 'SupportTicket',
   TicketMessage: 'TicketMessage',
+  ContactMessage: 'ContactMessage',
   Referral: 'Referral',
   LoyaltyPoints: 'LoyaltyPoints',
   LoyaltyTransaction: 'LoyaltyTransaction',
@@ -96,21 +99,34 @@ export const ModelName = {
   Coupon: 'Coupon',
   CouponRedemption: 'CouponRedemption',
   PaymentOffer: 'PaymentOffer',
+  UpiCollectRequest: 'UpiCollectRequest',
   Refund: 'Refund',
   KitchenPayout: 'KitchenPayout',
   DeliveryPartnerPayout: 'DeliveryPartnerPayout',
   KitchenAddress: 'KitchenAddress',
-  MenuItemDailyStock: 'MenuItemDailyStock',
   AdminProfile: 'AdminProfile',
   AdminInvite: 'AdminInvite',
   AdminApprovalRequest: 'AdminApprovalRequest',
   AdminAuditLog: 'AdminAuditLog',
   TwoFactor: 'TwoFactor',
-  UserCodEligibility: 'UserCodEligibility',
-  CashRemittance: 'CashRemittance',
-  CodVariance: 'CodVariance',
   WishlistItem: 'WishlistItem',
-  KitchenWishlist: 'KitchenWishlist'
+  KitchenWishlist: 'KitchenWishlist',
+  SearchPageContent: 'SearchPageContent',
+  SearchPageFilter: 'SearchPageFilter',
+  SearchPageBadge: 'SearchPageBadge',
+  SearchPageInfoItem: 'SearchPageInfoItem',
+  CategoryPageContent: 'CategoryPageContent',
+  CategoryPageFeature: 'CategoryPageFeature',
+  CategoryPageOffer: 'CategoryPageOffer',
+  CategoryPageFaq: 'CategoryPageFaq',
+  KitchenSearchPageContent: 'KitchenSearchPageContent',
+  KitchenSearchChip: 'KitchenSearchChip',
+  KitchenSearchFilter: 'KitchenSearchFilter',
+  KitchenSearchMenuCategory: 'KitchenSearchMenuCategory',
+  KitchenSearchRecommendedItem: 'KitchenSearchRecommendedItem',
+  CravingsRule: 'CravingsRule',
+  CravingsRuleItem: 'CravingsRuleItem',
+  PublicIdCounter: 'PublicIdCounter'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -131,6 +147,7 @@ export type TransactionIsolationLevel = (typeof TransactionIsolationLevel)[keyof
 
 export const UserScalarFieldEnum = {
   id: 'id',
+  publicCode: 'publicCode',
   phoneNumber: 'phoneNumber',
   phoneNumberVerified: 'phoneNumberVerified',
   role: 'role',
@@ -159,6 +176,23 @@ export const RoleScalarFieldEnum = {
 } as const
 
 export type RoleScalarFieldEnum = (typeof RoleScalarFieldEnum)[keyof typeof RoleScalarFieldEnum]
+
+
+export const CustomerScalarFieldEnum = {
+  id: 'id',
+  publicCode: 'publicCode',
+  userId: 'userId',
+  name: 'name',
+  email: 'email',
+  phoneNumber: 'phoneNumber',
+  avatarUrl: 'avatarUrl',
+  isActive: 'isActive',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  deletedAt: 'deletedAt'
+} as const
+
+export type CustomerScalarFieldEnum = (typeof CustomerScalarFieldEnum)[keyof typeof CustomerScalarFieldEnum]
 
 
 export const UserRoleScalarFieldEnum = {
@@ -249,6 +283,7 @@ export type AddressScalarFieldEnum = (typeof AddressScalarFieldEnum)[keyof typeo
 
 export const KitchenPartnerScalarFieldEnum = {
   id: 'id',
+  publicCode: 'publicCode',
   slug: 'slug',
   userId: 'userId',
   status: 'status',
@@ -259,6 +294,7 @@ export const KitchenPartnerScalarFieldEnum = {
   totalReviews: 'totalReviews',
   operatingHours: 'operatingHours',
   createdAt: 'createdAt',
+  estimatedPrepTime: 'estimatedPrepTime',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
 } as const
@@ -291,6 +327,9 @@ export const KitchenAliasScalarFieldEnum = {
   kitchenPartnerId: 'kitchenPartnerId',
   displayName: 'displayName',
   sequenceNumber: 'sequenceNumber',
+  imageUrl: 'imageUrl',
+  description: 'description',
+  customOfferText: 'customOfferText',
   createdAt: 'createdAt'
 } as const
 
@@ -330,6 +369,7 @@ export type MenuScalarFieldEnum = (typeof MenuScalarFieldEnum)[keyof typeof Menu
 
 export const MenuItemScalarFieldEnum = {
   id: 'id',
+  publicCode: 'publicCode',
   slug: 'slug',
   menuId: 'menuId',
   name: 'name',
@@ -339,11 +379,28 @@ export const MenuItemScalarFieldEnum = {
   foodType: 'foodType',
   timeSlot: 'timeSlot',
   isAvailable: 'isAvailable',
-  reservedCount: 'reservedCount',
-  dailyStock: 'dailyStock',
+  availableFor: 'availableFor',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt',
+  cuisine: 'cuisine',
+  categoryId: 'categoryId',
+  bestseller: 'bestseller',
+  highlights: 'highlights',
+  aboutTitle: 'aboutTitle',
+  aboutDescription: 'aboutDescription',
+  serves: 'serves',
+  portionSize: 'portionSize',
+  shelfLife: 'shelfLife',
+  allergens: 'allergens',
+  metaTitle: 'metaTitle',
+  metaDescription: 'metaDescription',
+  deliveryTimeMin: 'deliveryTimeMin',
+  deliveryTimeMax: 'deliveryTimeMax',
+  deliveryFee: 'deliveryFee',
+  freeDelivery: 'freeDelivery',
+  packagingType: 'packagingType',
+  relatedItemIds: 'relatedItemIds',
   avgRating: 'avgRating',
   totalReviews: 'totalReviews'
 } as const
@@ -364,6 +421,7 @@ export type MenuItemPhotoScalarFieldEnum = (typeof MenuItemPhotoScalarFieldEnum)
 
 export const DeliveryPartnerScalarFieldEnum = {
   id: 'id',
+  publicCode: 'publicCode',
   userId: 'userId',
   status: 'status',
   approvedAt: 'approvedAt',
@@ -371,9 +429,7 @@ export const DeliveryPartnerScalarFieldEnum = {
   avgRating: 'avgRating',
   totalReviews: 'totalReviews',
   createdAt: 'createdAt',
-  deletedAt: 'deletedAt',
-  cashInHand: 'cashInHand',
-  codEligible: 'codEligible'
+  deletedAt: 'deletedAt'
 } as const
 
 export type DeliveryPartnerScalarFieldEnum = (typeof DeliveryPartnerScalarFieldEnum)[keyof typeof DeliveryPartnerScalarFieldEnum]
@@ -423,7 +479,9 @@ export const CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
   description: 'description',
-  isActive: 'isActive'
+  imageUrl: 'imageUrl',
+  isActive: 'isActive',
+  createdAt: 'createdAt'
 } as const
 
 export type CategoryScalarFieldEnum = (typeof CategoryScalarFieldEnum)[keyof typeof CategoryScalarFieldEnum]
@@ -441,6 +499,7 @@ export type ServiceZoneScalarFieldEnum = (typeof ServiceZoneScalarFieldEnum)[key
 
 export const OrderScalarFieldEnum = {
   id: 'id',
+  publicCode: 'publicCode',
   userId: 'userId',
   addressId: 'addressId',
   serviceDate: 'serviceDate',
@@ -455,11 +514,7 @@ export const OrderScalarFieldEnum = {
   deliveryStatus: 'deliveryStatus',
   idempotencyKey: 'idempotencyKey',
   createdAt: 'createdAt',
-  updatedAt: 'updatedAt',
-  deliveryOtp: 'deliveryOtp',
-  deliveryOtpVerifiedAt: 'deliveryOtpVerifiedAt',
-  codAmountExpected: 'codAmountExpected',
-  codAmountEntered: 'codAmountEntered'
+  updatedAt: 'updatedAt'
 } as const
 
 export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
@@ -524,6 +579,19 @@ export const DeliveryReviewScalarFieldEnum = {
 export type DeliveryReviewScalarFieldEnum = (typeof DeliveryReviewScalarFieldEnum)[keyof typeof DeliveryReviewScalarFieldEnum]
 
 
+export const RrcKitchenReviewScalarFieldEnum = {
+  id: 'id',
+  kitchenPartnerId: 'kitchenPartnerId',
+  rating: 'rating',
+  recommendation: 'recommendation',
+  comment: 'comment',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type RrcKitchenReviewScalarFieldEnum = (typeof RrcKitchenReviewScalarFieldEnum)[keyof typeof RrcKitchenReviewScalarFieldEnum]
+
+
 export const MenuItemFeedbackScalarFieldEnum = {
   id: 'id',
   orderId: 'orderId',
@@ -581,11 +649,13 @@ export type DeliveryLocationScalarFieldEnum = (typeof DeliveryLocationScalarFiel
 
 export const PaymentScalarFieldEnum = {
   id: 'id',
+  publicCode: 'publicCode',
   orderId: 'orderId',
   provider: 'provider',
   providerOrderId: 'providerOrderId',
   providerPaymentId: 'providerPaymentId',
   paymentMethod: 'paymentMethod',
+  paymentMethodDetail: 'paymentMethodDetail',
   amount: 'amount',
   status: 'status',
   idempotencyKey: 'idempotencyKey',
@@ -662,6 +732,20 @@ export const TicketMessageScalarFieldEnum = {
 } as const
 
 export type TicketMessageScalarFieldEnum = (typeof TicketMessageScalarFieldEnum)[keyof typeof TicketMessageScalarFieldEnum]
+
+
+export const ContactMessageScalarFieldEnum = {
+  id: 'id',
+  fullName: 'fullName',
+  email: 'email',
+  phone: 'phone',
+  subject: 'subject',
+  message: 'message',
+  status: 'status',
+  createdAt: 'createdAt'
+} as const
+
+export type ContactMessageScalarFieldEnum = (typeof ContactMessageScalarFieldEnum)[keyof typeof ContactMessageScalarFieldEnum]
 
 
 export const ReferralScalarFieldEnum = {
@@ -788,8 +872,24 @@ export const PaymentOfferScalarFieldEnum = {
 export type PaymentOfferScalarFieldEnum = (typeof PaymentOfferScalarFieldEnum)[keyof typeof PaymentOfferScalarFieldEnum]
 
 
+export const UpiCollectRequestScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  paymentId: 'paymentId',
+  vpa: 'vpa',
+  razorpayVpaId: 'razorpayVpaId',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type UpiCollectRequestScalarFieldEnum = (typeof UpiCollectRequestScalarFieldEnum)[keyof typeof UpiCollectRequestScalarFieldEnum]
+
+
 export const RefundScalarFieldEnum = {
   id: 'id',
+  publicCode: 'publicCode',
   orderId: 'orderId',
   orderItemId: 'orderItemId',
   paymentId: 'paymentId',
@@ -850,20 +950,9 @@ export const KitchenAddressScalarFieldEnum = {
 export type KitchenAddressScalarFieldEnum = (typeof KitchenAddressScalarFieldEnum)[keyof typeof KitchenAddressScalarFieldEnum]
 
 
-export const MenuItemDailyStockScalarFieldEnum = {
-  id: 'id',
-  menuItemId: 'menuItemId',
-  serviceDate: 'serviceDate',
-  totalQuantity: 'totalQuantity',
-  reservedQuantity: 'reservedQuantity',
-  soldQuantity: 'soldQuantity'
-} as const
-
-export type MenuItemDailyStockScalarFieldEnum = (typeof MenuItemDailyStockScalarFieldEnum)[keyof typeof MenuItemDailyStockScalarFieldEnum]
-
-
 export const AdminProfileScalarFieldEnum = {
   id: 'id',
+  publicCode: 'publicCode',
   userId: 'userId',
   permissions: 'permissions',
   isActive: 'isActive',
@@ -932,49 +1021,6 @@ export const TwoFactorScalarFieldEnum = {
 export type TwoFactorScalarFieldEnum = (typeof TwoFactorScalarFieldEnum)[keyof typeof TwoFactorScalarFieldEnum]
 
 
-export const UserCodEligibilityScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  successfulPrepaidOrders: 'successfulPrepaidOrders',
-  codRefusalCount: 'codRefusalCount',
-  isCodBlocked: 'isCodBlocked',
-  maxCodOrderValue: 'maxCodOrderValue',
-  updatedAt: 'updatedAt'
-} as const
-
-export type UserCodEligibilityScalarFieldEnum = (typeof UserCodEligibilityScalarFieldEnum)[keyof typeof UserCodEligibilityScalarFieldEnum]
-
-
-export const CashRemittanceScalarFieldEnum = {
-  id: 'id',
-  deliveryPartnerId: 'deliveryPartnerId',
-  amount: 'amount',
-  method: 'method',
-  referenceId: 'referenceId',
-  status: 'status',
-  confirmedByUserId: 'confirmedByUserId',
-  createdAt: 'createdAt',
-  confirmedAt: 'confirmedAt'
-} as const
-
-export type CashRemittanceScalarFieldEnum = (typeof CashRemittanceScalarFieldEnum)[keyof typeof CashRemittanceScalarFieldEnum]
-
-
-export const CodVarianceScalarFieldEnum = {
-  id: 'id',
-  orderId: 'orderId',
-  deliveryPartnerId: 'deliveryPartnerId',
-  expectedAmount: 'expectedAmount',
-  enteredAmount: 'enteredAmount',
-  varianceAmount: 'varianceAmount',
-  resolvedAt: 'resolvedAt',
-  resolutionNote: 'resolutionNote',
-  createdAt: 'createdAt'
-} as const
-
-export type CodVarianceScalarFieldEnum = (typeof CodVarianceScalarFieldEnum)[keyof typeof CodVarianceScalarFieldEnum]
-
-
 export const WishlistItemScalarFieldEnum = {
   id: 'id',
   userId: 'userId',
@@ -993,6 +1039,244 @@ export const KitchenWishlistScalarFieldEnum = {
 } as const
 
 export type KitchenWishlistScalarFieldEnum = (typeof KitchenWishlistScalarFieldEnum)[keyof typeof KitchenWishlistScalarFieldEnum]
+
+
+export const SearchPageContentScalarFieldEnum = {
+  id: 'id',
+  keyword: 'keyword',
+  isActive: 'isActive',
+  bannerImageUrl: 'bannerImageUrl',
+  heading: 'heading',
+  subHeading: 'subHeading',
+  cardsPerPage: 'cardsPerPage',
+  defaultSort: 'defaultSort',
+  showRatings: 'showRatings',
+  kitchensCount: 'kitchensCount',
+  version: 'version',
+  updatedBy: 'updatedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type SearchPageContentScalarFieldEnum = (typeof SearchPageContentScalarFieldEnum)[keyof typeof SearchPageContentScalarFieldEnum]
+
+
+export const SearchPageFilterScalarFieldEnum = {
+  id: 'id',
+  searchPageContentId: 'searchPageContentId',
+  name: 'name',
+  options: 'options',
+  isEnabled: 'isEnabled',
+  sortOrder: 'sortOrder'
+} as const
+
+export type SearchPageFilterScalarFieldEnum = (typeof SearchPageFilterScalarFieldEnum)[keyof typeof SearchPageFilterScalarFieldEnum]
+
+
+export const SearchPageBadgeScalarFieldEnum = {
+  id: 'id',
+  searchPageContentId: 'searchPageContentId',
+  name: 'name',
+  isEnabled: 'isEnabled',
+  sortOrder: 'sortOrder'
+} as const
+
+export type SearchPageBadgeScalarFieldEnum = (typeof SearchPageBadgeScalarFieldEnum)[keyof typeof SearchPageBadgeScalarFieldEnum]
+
+
+export const SearchPageInfoItemScalarFieldEnum = {
+  id: 'id',
+  searchPageContentId: 'searchPageContentId',
+  icon: 'icon',
+  title: 'title',
+  subtitle: 'subtitle',
+  color: 'color',
+  isEnabled: 'isEnabled',
+  sortOrder: 'sortOrder'
+} as const
+
+export type SearchPageInfoItemScalarFieldEnum = (typeof SearchPageInfoItemScalarFieldEnum)[keyof typeof SearchPageInfoItemScalarFieldEnum]
+
+
+export const CategoryPageContentScalarFieldEnum = {
+  id: 'id',
+  categoryId: 'categoryId',
+  isActive: 'isActive',
+  heroLayout: 'heroLayout',
+  desktopBannerUrl: 'desktopBannerUrl',
+  mobileBannerUrl: 'mobileBannerUrl',
+  iconUrl: 'iconUrl',
+  title: 'title',
+  badgeText: 'badgeText',
+  description: 'description',
+  showHero: 'showHero',
+  defaultSort: 'defaultSort',
+  showRatings: 'showRatings',
+  cardsPerPage: 'cardsPerPage',
+  metaTitle: 'metaTitle',
+  metaDescription: 'metaDescription',
+  keywords: 'keywords',
+  canonicalUrl: 'canonicalUrl',
+  featuredKitchenIds: 'featuredKitchenIds',
+  featuredMenuIds: 'featuredMenuIds',
+  version: 'version',
+  updatedBy: 'updatedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CategoryPageContentScalarFieldEnum = (typeof CategoryPageContentScalarFieldEnum)[keyof typeof CategoryPageContentScalarFieldEnum]
+
+
+export const CategoryPageFeatureScalarFieldEnum = {
+  id: 'id',
+  categoryPageContentId: 'categoryPageContentId',
+  icon: 'icon',
+  title: 'title',
+  subtitle: 'subtitle',
+  color: 'color',
+  isEnabled: 'isEnabled',
+  sortOrder: 'sortOrder'
+} as const
+
+export type CategoryPageFeatureScalarFieldEnum = (typeof CategoryPageFeatureScalarFieldEnum)[keyof typeof CategoryPageFeatureScalarFieldEnum]
+
+
+export const CategoryPageOfferScalarFieldEnum = {
+  id: 'id',
+  categoryPageContentId: 'categoryPageContentId',
+  title: 'title',
+  subtitle: 'subtitle',
+  badge: 'badge',
+  isEnabled: 'isEnabled',
+  sortOrder: 'sortOrder'
+} as const
+
+export type CategoryPageOfferScalarFieldEnum = (typeof CategoryPageOfferScalarFieldEnum)[keyof typeof CategoryPageOfferScalarFieldEnum]
+
+
+export const CategoryPageFaqScalarFieldEnum = {
+  id: 'id',
+  categoryPageContentId: 'categoryPageContentId',
+  question: 'question',
+  answer: 'answer',
+  sortOrder: 'sortOrder'
+} as const
+
+export type CategoryPageFaqScalarFieldEnum = (typeof CategoryPageFaqScalarFieldEnum)[keyof typeof CategoryPageFaqScalarFieldEnum]
+
+
+export const KitchenSearchPageContentScalarFieldEnum = {
+  id: 'id',
+  keyword: 'keyword',
+  isActive: 'isActive',
+  desktopBannerUrl: 'desktopBannerUrl',
+  mobileBannerUrl: 'mobileBannerUrl',
+  searchTitle: 'searchTitle',
+  badgeText: 'badgeText',
+  description: 'description',
+  showHero: 'showHero',
+  defaultSort: 'defaultSort',
+  showRatings: 'showRatings',
+  showDeliveryTime: 'showDeliveryTime',
+  showDistance: 'showDistance',
+  showPureVegBadge: 'showPureVegBadge',
+  showHygienicBadge: 'showHygienicBadge',
+  showKitchenStory: 'showKitchenStory',
+  showInternalNotes: 'showInternalNotes',
+  showKitchenTiming: 'showKitchenTiming',
+  showFreshIngredients: 'showFreshIngredients',
+  showPackaging: 'showPackaging',
+  showSupportLocalWomen: 'showSupportLocalWomen',
+  kitchensCount: 'kitchensCount',
+  menuItemsCount: 'menuItemsCount',
+  version: 'version',
+  updatedBy: 'updatedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type KitchenSearchPageContentScalarFieldEnum = (typeof KitchenSearchPageContentScalarFieldEnum)[keyof typeof KitchenSearchPageContentScalarFieldEnum]
+
+
+export const KitchenSearchChipScalarFieldEnum = {
+  id: 'id',
+  kitchenSearchPageContentId: 'kitchenSearchPageContentId',
+  label: 'label',
+  isEnabled: 'isEnabled',
+  sortOrder: 'sortOrder'
+} as const
+
+export type KitchenSearchChipScalarFieldEnum = (typeof KitchenSearchChipScalarFieldEnum)[keyof typeof KitchenSearchChipScalarFieldEnum]
+
+
+export const KitchenSearchFilterScalarFieldEnum = {
+  id: 'id',
+  kitchenSearchPageContentId: 'kitchenSearchPageContentId',
+  name: 'name',
+  options: 'options',
+  isEnabled: 'isEnabled',
+  sortOrder: 'sortOrder'
+} as const
+
+export type KitchenSearchFilterScalarFieldEnum = (typeof KitchenSearchFilterScalarFieldEnum)[keyof typeof KitchenSearchFilterScalarFieldEnum]
+
+
+export const KitchenSearchMenuCategoryScalarFieldEnum = {
+  id: 'id',
+  kitchenSearchPageContentId: 'kitchenSearchPageContentId',
+  name: 'name',
+  sortOrder: 'sortOrder'
+} as const
+
+export type KitchenSearchMenuCategoryScalarFieldEnum = (typeof KitchenSearchMenuCategoryScalarFieldEnum)[keyof typeof KitchenSearchMenuCategoryScalarFieldEnum]
+
+
+export const KitchenSearchRecommendedItemScalarFieldEnum = {
+  id: 'id',
+  kitchenSearchPageContentId: 'kitchenSearchPageContentId',
+  name: 'name',
+  sortOrder: 'sortOrder'
+} as const
+
+export type KitchenSearchRecommendedItemScalarFieldEnum = (typeof KitchenSearchRecommendedItemScalarFieldEnum)[keyof typeof KitchenSearchRecommendedItemScalarFieldEnum]
+
+
+export const CravingsRuleScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  triggerItemId: 'triggerItemId',
+  kitchenId: 'kitchenId',
+  title: 'title',
+  message: 'message',
+  priority: 'priority',
+  isActive: 'isActive',
+  updatedBy: 'updatedBy',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type CravingsRuleScalarFieldEnum = (typeof CravingsRuleScalarFieldEnum)[keyof typeof CravingsRuleScalarFieldEnum]
+
+
+export const CravingsRuleItemScalarFieldEnum = {
+  id: 'id',
+  ruleId: 'ruleId',
+  menuItemId: 'menuItemId',
+  sortOrder: 'sortOrder'
+} as const
+
+export type CravingsRuleItemScalarFieldEnum = (typeof CravingsRuleItemScalarFieldEnum)[keyof typeof CravingsRuleItemScalarFieldEnum]
+
+
+export const PublicIdCounterScalarFieldEnum = {
+  id: 'id',
+  prefix: 'prefix',
+  sequence: 'sequence',
+  digits: 'digits'
+} as const
+
+export type PublicIdCounterScalarFieldEnum = (typeof PublicIdCounterScalarFieldEnum)[keyof typeof PublicIdCounterScalarFieldEnum]
 
 
 export const SortOrder = {

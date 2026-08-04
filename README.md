@@ -12,9 +12,10 @@ A multi-vendor tiffin/meal delivery marketplace in Thanjavur connecting customer
 - **Kitchen Portal** — Menu CRUD, order management, payouts, profile/KYC
 - **Delivery Portal** — Accept deliveries, COD cash tracking, UPI/bank payout details
 - **Admin Panel** — Manage kitchens, delivery partners, customers, orders, coupons, cash reconciliation
+- **Cravings Popup** — Admin cross-sell rules (trigger item → recommended items) with live preview; shown in the add-to-cart popup and after order payment
 - **Customer Account** — Order history, tracking (real-time via Ably), wishlist, loyalty points, addresses
 - **Reviews & Ratings** — Rate kitchens and delivery per order
-- **Real-time** — Live order tracking, delivery location, cravings popup via Ably
+- **Real-time** — Live order tracking, delivery location, cravings recommendations via Ably
 - **PWA** — Offline-capable, installable, push notifications
 
 ## Tech Stack
@@ -76,7 +77,8 @@ Open [http://localhost:3000](http://localhost:3000).
 - `/account/orders` — Order history with tracking
 - `/kitchen/dashboard` — Kitchen partner portal
 - `/delivery-partner/dashboard` — Delivery partner portal
-- `/admin/*` — Admin panel
+- `/admin/*` — Admin panel (incl. `/admin/content/cravings-popup` for cross-sell rules)
+- `/invite/[token]` — Accept an admin invite (create admin account + 2FA setup)
 
 ## Project Structure
 

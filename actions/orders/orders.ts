@@ -4,14 +4,10 @@ import prisma from "@/lib/prisma"
 import { getSession } from "@/lib/auth-server"
 import { razorpayClient } from "@/lib/razorpay"
 import { confirmPayment } from "@/actions/payments/payment"
-import crypto from "crypto"
 import { sendPushToDeliveryPartners } from "@/lib/notification"
 import { getAblyRest } from "@/lib/ably/server"
 import { requireAdmin } from "@/lib/auth-guards"
 import { redis } from "@/lib/redis"
-
-const CASH_IN_HAND_CAP = 3000
-
 
 export async function getUserOrders() {
   const session = await getSession()
@@ -20,15 +16,15 @@ export async function getUserOrders() {
   const orders = await prisma.order.findMany({
     where: {
       userId: session.user.id,
-      payment: { OR: [{ status: "SUCCESS" }, { provider: "CASH_ON_DELIVERY" }] },
+      payment: { status: "SUCCESS" },
     },
     select: {
       id: true,
+      publicCode: true,
       status: true,
       serviceDate: true,
       timeSlot: true,
       totalAmount: true,
-      deliveryOtp: true,
       createdAt: true,
       orderItems: {
         select: {
@@ -59,10 +55,12 @@ export async function getUserOrders() {
           },
         },
       },
-      address: { select: { lineOne: true, lineTwo: true, pincode: true } },
+      address: { select: { lineOne: true, lineTwo: true, pincode: true, label: true, isDefault: true } },
       payment: { select: { status: true, provider: true } },
       deliveryReview: { select: { id: true, rating: true, speedRating: true, behaviorHygiene: true, safetyContactless: true, comment: true } },
       review: { select: { id: true, rating: true, tasteRating: true, packagingRating: true, portionSizeRating: true, comment: true } },
+      statusHistory: { select: { status: true, changedAt: true, note: true } },
+      user: { select: { phoneNumber: true } },
     },
     orderBy: { createdAt: "desc" },
     take: 20,
@@ -73,6 +71,7 @@ export async function getUserOrders() {
     const deliveryAssignment = kitchenPartner?.deliveryPartnerAssignments[0]
     return {
       id: o.id,
+      publicCode: o.publicCode,
       status: o.status,
       serviceDate: o.serviceDate.toISOString(),
       timeSlot: o.timeSlot,
@@ -83,24 +82,33 @@ export async function getUserOrders() {
         foodType: i.menuItem.foodType,
         quantity: i.quantity,
         unitPrice: i.unitPrice.toString(),
-        imageUrl: i.menuItem.photos[0]?.imageUrl ?? null,
+        imageUrl: i.menuItem.photos[0]?.imageUrl,
         kitchenId: i.kitchenPartnerId,
+        kitchenName: i.kitchenPartner?.kitchenAlias?.displayName,
       })),
       address: o.address
         ? `${o.address.lineOne}${o.address.lineTwo ? `, ${o.address.lineTwo}` : ""}, ${o.address.pincode}`
         : null,
-      paymentProvider: o.payment?.provider ?? null,
-      paymentStatus: o.payment?.status ?? null,
-      deliveryOtp: o.deliveryOtp ?? null,
-      deliveryReview: o.deliveryReview ?? null,
-      kitchenReview: o.review ?? null,
-      kitchenPartnerId: kitchenPartner?.id ?? null,
+      addressLabel: o.address?.label,
+      addressIsDefault: o.address?.isDefault ?? false,
+      phoneNumber: o.user?.phoneNumber,
+      paymentProvider: o.payment?.provider,
+      paymentStatus: o.payment?.status,
+      deliveryReview: o.deliveryReview,
+      kitchenReview: o.review,
+      kitchenName: kitchenPartner?.kitchenAlias?.displayName,
+      kitchenPartnerId: kitchenPartner?.id,
       deliveryPartner: deliveryAssignment
         ? {
             id: deliveryAssignment.deliveryPartner.id,
-            name: deliveryAssignment.deliveryPartner.user?.name ?? "Delivery Partner",
+            name: deliveryAssignment.deliveryPartner.user?.name,
           }
         : null,
+      statusHistory: o.statusHistory.map(h => ({
+        status: h.status,
+        changedAt: h.changedAt.toISOString(),
+        note: h.note,
+      })),
     }
   })
 }
@@ -112,14 +120,21 @@ export async function getAdminOrders() {
 
   const orders = await prisma.order.findMany({
     where: {
-      payment: { OR: [{ status: "SUCCESS" }, { provider: "CASH_ON_DELIVERY" }] },
+      payment: { status: "SUCCESS" },
     },
     include: {
-      user: { select: { name: true } },
+      user: { select: { name: true, phoneNumber: true, email: true } },
       orderItems: {
         include: {
-          kitchenPartner: { include: { kitchenAlias: true } },
-          menuItem: { select: { name: true } },
+          kitchenPartner: { 
+            include: { 
+              kitchenAlias: true,
+              kitchenAddress: {
+                select: { lineOne: true, area: true, landmark: true, pincode: true }
+              }
+            } 
+          },
+          menuItem: { select: { name: true, price: true, photos: { take: 1 } } },
         },
       },
       payment: { select: { status: true, provider: true, paymentMethod: true, providerOrderId: true } },
@@ -129,26 +144,47 @@ export async function getAdminOrders() {
     take: 50,
   })
 
-  return orders.map((o) => ({
-    id: o.id,
-    customer: o.user?.name ?? "",
-    kitchen: o.orderItems[0]?.kitchenPartner?.kitchenAlias?.displayName ?? "",
-    items: o.orderItems.map((i) => i.menuItem.name),
-    date: o.createdAt.toISOString(),
-    amount: Number(o.totalAmount),
-    status: o.status,
-    payment: o.payment?.status ?? "PENDING",
-    paymentProvider: o.payment?.provider ?? null,
-    paymentMethod: o.payment?.paymentMethod ?? null,
-    providerOrderId: o.payment?.providerOrderId ?? null,
-    deliveryPartner: o.deliveryPartner
-      ? {
-          id: o.deliveryPartner.id,
-          name: o.deliveryPartner.user?.name ?? "",
-          phone: o.deliveryPartner.user?.phoneNumber ?? null,
-        }
-      : null,
-  }))
+  return orders.map((o) => {
+    const firstKitchen = o.orderItems[0]?.kitchenPartner
+    const address = firstKitchen?.kitchenAddress
+    
+    return {
+      id: o.id,
+      publicCode: o.publicCode,
+      customer: {
+        name: o.user?.name,
+        phone: o.user?.phoneNumber,
+        email: o.user?.email
+      },
+      kitchen: {
+        name: firstKitchen?.kitchenAlias?.displayName,
+        address: address 
+          ? `${address.lineOne}${address.area ? `, ${address.area}` : ""}, ${address.pincode}` 
+          : undefined,
+      },
+      items: o.orderItems.map((i) => ({
+        id: i.id,
+        name: i.menuItem.name,
+        price: Number(i.unitPrice), // using the price at time of order
+        quantity: i.quantity,
+        imageUrl: i.menuItem.photos?.[0]?.imageUrl
+      })),
+      date: o.createdAt.toISOString(),
+      amount: Number(o.totalAmount),
+      status: o.status,
+      payment: o.payment?.status,
+      paymentProvider: o.payment?.provider,
+      paymentMethod: o.payment?.paymentMethod,
+      providerOrderId: o.payment?.providerOrderId,
+      deliveryPartner: o.deliveryPartner
+        ? {
+            id: o.deliveryPartner.id,
+            name: o.deliveryPartner.user?.name,
+            phone: o.deliveryPartner.user?.phoneNumber,
+          }
+        : null,
+    }
+  })
 }
 
 export async function updateOrderStatus(orderId: string, status: string) {
@@ -185,16 +221,6 @@ export async function updateOrderStatus(orderId: string, status: string) {
     await ably.channels.get(`order:${orderId}`).publish("order:status", { status })
 
     if (status === "READYFORPICKUP") {
-      // Generate delivery OTP for all orders (proof-of-delivery for prepaid too)
-      const otp = crypto.randomInt(1000, 9999).toString()
-      await prisma.order.update({
-        where: { id: orderId },
-        data: { deliveryOtp: otp },
-      })
-
-      // Send OTP to customer via Ably
-      await ably.channels.get(`order:${orderId}`).publish("order:confirmation-code", { code: otp })
-
       const orderItems = await prisma.orderItem.findMany({
         where: { orderId },
         select: { kitchenPartnerId: true },
@@ -224,12 +250,6 @@ export async function updateOrderStatus(orderId: string, status: string) {
           const kitchenLat = kitchenPartner?.kitchenAddress?.latitude
           const kitchenLng = kitchenPartner?.kitchenAddress?.longitude
 
-          const orderPay = await prisma.order.findUnique({
-            where: { id: orderId },
-            select: { payment: { select: { provider: true } } },
-          })
-          const isCodOrder = orderPay?.payment?.provider === "CASH_ON_DELIVERY"
-
           let assigned = false
 
           // Step 1: Try nearby delivery partners (within 5km of kitchen)
@@ -247,10 +267,9 @@ export async function updateOrderStatus(orderId: string, status: string) {
               const deliveryPersonId = typeof member === "string" ? member : String(member)
               const person = await prisma.deliveryPartner.findUnique({
                 where: { id: deliveryPersonId },
-                select: { id: true, isOnline: true, codEligible: true, cashInHand: true },
+                select: { id: true, isOnline: true },
               })
               if (!person?.isOnline) continue
-              if (isCodOrder && (!person.codEligible || Number(person.cashInHand) >= CASH_IN_HAND_CAP)) continue
 
               const existing = await prisma.deliveryAssignment.findFirst({
                 where: { deliveryPartnerId: deliveryPersonId, status: "PENDING" },
@@ -279,12 +298,10 @@ export async function updateOrderStatus(orderId: string, status: string) {
           if (!assigned) {
             const allOnline = await prisma.deliveryPartner.findMany({
               where: { isOnline: true, status: { in: ["APPROVED", "ACTIVE"] } },
-              select: { id: true, codEligible: true, cashInHand: true },
+              select: { id: true },
             })
 
             for (const person of allOnline) {
-              if (isCodOrder && (!person.codEligible || Number(person.cashInHand) >= CASH_IN_HAND_CAP)) continue
-
               const existing = await prisma.deliveryAssignment.findFirst({
                 where: { deliveryPartnerId: person.id, status: "PENDING" },
               })
@@ -326,24 +343,6 @@ export async function updateOrderStatus(orderId: string, status: string) {
       for (const item of orderItems) {
         await ably.channels.get(`kitchen:${item.kitchenPartnerId}`).publish("queue:status", { orderId, status: "PREPARING" })
       }
-    }
-
-    if (status === "CANCELLED" || status === "REFUNDED") {
-      const orderItems = await prisma.orderItem.findMany({
-        where: { orderId },
-        include: { menuItem: true },
-      })
-
-      await prisma.$transaction(
-        orderItems.map((item) =>
-          prisma.menuItem.update({
-            where: { id: item.menuItemId },
-            data: {
-              reservedCount: { decrement: item.quantity },
-            },
-          })
-        )
-      )
     }
 
     return { success: true }
@@ -403,52 +402,68 @@ export async function getOrderForTracking(orderId: string) {
           },
         },
       },
-      address: { select: { latitude: true, longitude: true, lineOne: true, lineTwo: true, pincode: true } },
+      address: { select: { latitude: true, longitude: true, lineOne: true, lineTwo: true, pincode: true, label: true } },
       payment: { select: { provider: true, status: true } },
       deliveryLocations: { orderBy: { updatedAt: "desc" }, take: 1 },
-      deliveryPartner: { select: { id: true, user: { select: { name: true } } } },
+      deliveryPartner: { select: { id: true, user: { select: { name: true, image: true } } } },
       deliveryAssignment: { select: { status: true } },
     },
   })
 
   if (!order) throw new Error("Order not found")
 
+  let livePos: { lat: number; lng: number } | null = null
+  const lastLocRaw = await redis.get<string>(`deliveryOrder:${orderId}:lastLoc`)
+  if (lastLocRaw) {
+    try {
+      const parsed = JSON.parse(lastLocRaw)
+      if (typeof parsed?.lat === "number" && typeof parsed?.lng === "number") {
+        livePos = { lat: parsed.lat, lng: parsed.lng }
+      }
+    } catch {
+      livePos = null
+    }
+  }
+
   const firstItem = order.orderItems[0]
   const kitchen = firstItem?.kitchenPartner
 
   return {
     id: order.id,
+    publicCode: order.publicCode,
     status: order.status,
     deliveryStatus: order.deliveryStatus,
     totalAmount: order.totalAmount.toString(),
     createdAt: order.createdAt.toISOString(),
-    deliveryOtp: order.deliveryOtp,
-    deliveryOtpVerifiedAt: order.deliveryOtpVerifiedAt?.toISOString() ?? null,
+    serviceDate: order.serviceDate.toISOString(),
+    timeSlot: order.timeSlot,
     items: order.orderItems.map((i) => ({
       name: i.menuItem.name,
       quantity: i.quantity,
       unitPrice: i.unitPrice.toString(),
-      imageUrl: i.menuItem.photos[0]?.imageUrl ?? null,
-      kitchenName: i.kitchenPartner?.kitchenAlias?.displayName ?? "",
+      imageUrl: i.menuItem.photos[0]?.imageUrl,
+      kitchenName: i.kitchenPartner?.kitchenAlias?.displayName,
     })),
-    kitchenLat: kitchen?.kitchenAddress?.latitude ?? null,
-    kitchenLng: kitchen?.kitchenAddress?.longitude ?? null,
-    kitchenName: kitchen?.kitchenAlias?.displayName ?? "",
-    customerLat: order.address?.latitude ?? null,
-    customerLng: order.address?.longitude ?? null,
+    kitchenLat: kitchen?.kitchenAddress?.latitude,
+    kitchenLng: kitchen?.kitchenAddress?.longitude,
+    kitchenName: kitchen?.kitchenAlias?.displayName,
+    customerLat: order.address?.latitude,
+    customerLng: order.address?.longitude,
     customerAddress: order.address
       ? `${order.address.lineOne}${order.address.lineTwo ? `, ${order.address.lineTwo}` : ""}, ${order.address.pincode}`
       : null,
-    deliveryPersonName: order.deliveryPartner?.user?.name ?? null,
-    deliveryPersonLat: order.deliveryLocations[0]?.latitude ?? null,
-    deliveryPersonLng: order.deliveryLocations[0]?.longitude ?? null,
-    deliveryAssignmentStatus: order.deliveryAssignment?.status ?? null,
-    paymentProvider: order.payment?.provider ?? null,
-    paymentStatus: order.payment?.status ?? null,
+    customerAddressLabel: order.address?.label,
+    deliveryPersonName: order.deliveryPartner?.user?.name,
+    deliveryPersonLat: livePos?.lat ?? order.deliveryLocations[0]?.latitude,
+    deliveryPersonLng: livePos?.lng ?? order.deliveryLocations[0]?.longitude,
+    deliveryAssignmentStatus: order.deliveryAssignment?.status,
+    paymentProvider: order.payment?.provider,
+    paymentStatus: order.payment?.status,
     deliveryPartner: order.deliveryPartner
       ? {
           id: order.deliveryPartner.id,
-          name: order.deliveryPartner.user?.name ?? "Delivery Partner",
+          name: order.deliveryPartner.user?.name,
+          image: order.deliveryPartner.user?.image,
         }
       : null,
   }

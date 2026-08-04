@@ -4,14 +4,14 @@ vi.mock("@/lib/auth-guards", () => ({
   requirePermission: vi.fn(),
 }))
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   category: {
     findMany: vi.fn(),
     findUnique: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
   },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({
   default: mockPrisma,

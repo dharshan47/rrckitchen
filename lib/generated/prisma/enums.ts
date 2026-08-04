@@ -31,6 +31,15 @@ export const PartnerStatus = {
 export type PartnerStatus = (typeof PartnerStatus)[keyof typeof PartnerStatus]
 
 
+export const AvailableFor = {
+  TODAY: 'TODAY',
+  TOMORROW: 'TOMORROW',
+  BOTH: 'BOTH'
+} as const
+
+export type AvailableFor = (typeof AvailableFor)[keyof typeof AvailableFor]
+
+
 export const FoodType = {
   VEG: 'VEG',
   NONVEG: 'NONVEG'
@@ -121,7 +130,7 @@ export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
 
 export const PaymentProvider = {
   RAZORPAY: 'RAZORPAY',
-  CASH_ON_DELIVERY: 'CASH_ON_DELIVERY'
+  UPI_COLLECT: 'UPI_COLLECT'
 } as const
 
 export type PaymentProvider = (typeof PaymentProvider)[keyof typeof PaymentProvider]
@@ -172,6 +181,16 @@ export const PaymentOfferType = {
 } as const
 
 export type PaymentOfferType = (typeof PaymentOfferType)[keyof typeof PaymentOfferType]
+
+
+export const UpiCollectStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  EXPIRED: 'EXPIRED',
+  FAILED: 'FAILED'
+} as const
+
+export type UpiCollectStatus = (typeof UpiCollectStatus)[keyof typeof UpiCollectStatus]
 
 
 export const RefundReason = {
@@ -242,19 +261,10 @@ export const AdminApprovalStatus = {
 export type AdminApprovalStatus = (typeof AdminApprovalStatus)[keyof typeof AdminApprovalStatus]
 
 
-export const RemittanceMethod = {
-  UPI_TO_PLATFORM: 'UPI_TO_PLATFORM',
-  BANK_TRANSFER: 'BANK_TRANSFER',
-  ADMIN_COLLECTED_CASH: 'ADMIN_COLLECTED_CASH'
+export const CravingsPriority = {
+  HIGH: 'HIGH',
+  MEDIUM: 'MEDIUM',
+  LOW: 'LOW'
 } as const
 
-export type RemittanceMethod = (typeof RemittanceMethod)[keyof typeof RemittanceMethod]
-
-
-export const RemittanceStatus = {
-  PENDING: 'PENDING',
-  CONFIRMED: 'CONFIRMED',
-  DISPUTED: 'DISPUTED'
-} as const
-
-export type RemittanceStatus = (typeof RemittanceStatus)[keyof typeof RemittanceStatus]
+export type CravingsPriority = (typeof CravingsPriority)[keyof typeof CravingsPriority]

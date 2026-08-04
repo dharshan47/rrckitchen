@@ -1,41 +1,38 @@
 "use client";
 
-import { useRef, useCallback, useEffect } from "react";
+import { useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
-interface PendingRequest {
-  promise: Promise<unknown>;
-  timestamp: number;
-}
+const dedupeBaseKey = ["dedupe"] as const;
 
-const pendingRequests = new Map<string, PendingRequest>();
-
+/**
+ * Dedupes requests via the TanStack Query cache: calling `dedupe` with the same
+ * key within `dedupeMs` reuses the cached/in-flight result instead of re-running
+ * the fetcher. Identical keys share one in-flight promise and the result is
+ * served from cache until the window expires.
+ */
 export function useRequestDedupe(dedupeMs = 5000) {
-  const dedupeRef = useRef(dedupeMs);
-  useEffect(() => {
-    dedupeRef.current = dedupeMs;
-  });
+  const queryClient = useQueryClient();
 
   const dedupe = useCallback(async <T>(key: string, fetcher: () => Promise<T>): Promise<T> => {
-    const existing = pendingRequests.get(key);
-    if (existing && Date.now() - existing.timestamp < dedupeRef.current) {
-      return existing.promise as Promise<T>;
-    }
-    const promise = fetcher().finally(() => {
-      setTimeout(() => pendingRequests.delete(key), dedupeRef.current);
+    return queryClient.fetchQuery<T>({
+      queryKey: [...dedupeBaseKey, key],
+      queryFn: fetcher,
+      staleTime: dedupeMs,
+      retry: false,
     });
-    pendingRequests.set(key, { promise, timestamp: Date.now() });
-    return promise;
-  }, []);
+  }, [queryClient, dedupeMs]);
 
   const invalidate = useCallback((pattern?: string) => {
     if (pattern) {
-      for (const key of pendingRequests.keys()) {
-        if (key.includes(pattern)) pendingRequests.delete(key);
-      }
+      queryClient.removeQueries({
+        queryKey: dedupeBaseKey,
+        predicate: (query) => typeof query.queryKey[1] === "string" && query.queryKey[1].includes(pattern),
+      });
     } else {
-      pendingRequests.clear();
+      queryClient.removeQueries({ queryKey: dedupeBaseKey });
     }
-  }, []);
+  }, [queryClient]);
 
   return { dedupe, invalidate };
 }

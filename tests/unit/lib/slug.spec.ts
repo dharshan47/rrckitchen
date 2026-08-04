@@ -26,15 +26,16 @@ describe('uniqueSlug', () => {
     expect(slugs.has('new-kitchen')).toBe(true);
   });
 
-  it('returns "kitchen" for empty base after slugify', () => {
+  it('returns a random fallback slug for empty base after slugify', () => {
     const slugs = new Set<string>();
     const result = uniqueSlug('', slugs);
-    expect(result).toBe('kitchen');
+    expect(result).not.toBe('');
+    expect(result).toMatch(/^[a-z0-9]+$/);
   });
 
   it('handles special characters', () => {
     const slugs = new Set<string>();
     const result = uniqueSlug('Hello World! @#$', slugs);
-    expect(result).toBe('hello-world');
+    expect(result).toBe('hello-world-dollar');
   });
 });

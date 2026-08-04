@@ -1,6 +1,14 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+﻿import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useRequestDedupe } from '@/hooks/useRequestDedupe';
+
+function createWrapper() {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  };
+}
 
 describe('useRequestDedupe', () => {
   beforeEach(() => {
@@ -13,13 +21,13 @@ describe('useRequestDedupe', () => {
   });
 
   it('returns dedupe and invalidate functions', () => {
-    const { result } = renderHook(() => useRequestDedupe());
+    const { result } = renderHook(() => useRequestDedupe(), { wrapper: createWrapper() });
     expect(typeof result.current.dedupe).toBe('function');
     expect(typeof result.current.invalidate).toBe('function');
   });
 
   it('calls fetcher on first dedupe call', async () => {
-    const { result } = renderHook(() => useRequestDedupe());
+    const { result } = renderHook(() => useRequestDedupe(), { wrapper: createWrapper() });
     const fetcher = vi.fn().mockResolvedValue('data');
 
     let res: string | undefined;
@@ -31,23 +39,25 @@ describe('useRequestDedupe', () => {
     expect(res).toBe('data');
   });
 
-  it('returns same promise for duplicate calls within dedupe window', async () => {
-    const { result } = renderHook(() => useRequestDedupe(5000));
+  it('dedupes duplicate calls within dedupe window', async () => {
+    const { result } = renderHook(() => useRequestDedupe(5000), { wrapper: createWrapper() });
     const fetcher = vi.fn().mockResolvedValue('data');
 
     const p1 = result.current.dedupe('key1', fetcher);
     const p2 = result.current.dedupe('key1', fetcher);
 
-    expect(p1).toBe(p2);
     expect(fetcher).toHaveBeenCalledTimes(1);
 
     await act(async () => {
       await p1;
     });
+    await act(async () => {
+      expect(await p2).toBe('data');
+    });
   });
 
   it('calls fetcher again after dedupe window expires', async () => {
-    const { result } = renderHook(() => useRequestDedupe(1000));
+    const { result } = renderHook(() => useRequestDedupe(1000), { wrapper: createWrapper() });
     const fetcher = vi.fn().mockResolvedValue('data');
 
     await act(async () => {
@@ -66,7 +76,7 @@ describe('useRequestDedupe', () => {
   });
 
   it('uses default dedupe window of 5000ms', async () => {
-    const { result } = renderHook(() => useRequestDedupe());
+    const { result } = renderHook(() => useRequestDedupe(), { wrapper: createWrapper() });
     const fetcher = vi.fn().mockResolvedValue('data');
 
     await act(async () => {
@@ -86,7 +96,7 @@ describe('useRequestDedupe', () => {
   });
 
   it('different keys do not dedupe against each other', async () => {
-    const { result } = renderHook(() => useRequestDedupe());
+    const { result } = renderHook(() => useRequestDedupe(), { wrapper: createWrapper() });
     const fetcher1 = vi.fn().mockResolvedValue('data1');
     const fetcher2 = vi.fn().mockResolvedValue('data2');
 
@@ -102,7 +112,7 @@ describe('useRequestDedupe', () => {
   });
 
   it('invalidate clears all pending requests', async () => {
-    const { result } = renderHook(() => useRequestDedupe());
+    const { result } = renderHook(() => useRequestDedupe(), { wrapper: createWrapper() });
     const fetcher = vi.fn().mockResolvedValue('data');
 
     await act(async () => {
@@ -121,7 +131,7 @@ describe('useRequestDedupe', () => {
   });
 
   it('invalidate with pattern clears matching requests', async () => {
-    const { result } = renderHook(() => useRequestDedupe());
+    const { result } = renderHook(() => useRequestDedupe(), { wrapper: createWrapper() });
     const fetcher1 = vi.fn().mockResolvedValue('data1');
     const fetcher2 = vi.fn().mockResolvedValue('data2');
 
@@ -148,7 +158,7 @@ describe('useRequestDedupe', () => {
   });
 
   it('propagates fetcher errors', async () => {
-    const { result } = renderHook(() => useRequestDedupe());
+    const { result } = renderHook(() => useRequestDedupe(), { wrapper: createWrapper() });
     const error = new Error('fetch failed');
     const fetcher = vi.fn().mockRejectedValue(error);
 
@@ -160,7 +170,7 @@ describe('useRequestDedupe', () => {
   });
 
   it('cleans up pending request after dedupe window', async () => {
-    const { result } = renderHook(() => useRequestDedupe(1000));
+    const { result } = renderHook(() => useRequestDedupe(1000), { wrapper: createWrapper() });
     const fetcher = vi.fn().mockResolvedValue('data');
 
     await act(async () => {
@@ -181,7 +191,7 @@ describe('useRequestDedupe', () => {
   it('updates dedupe window on rerender', async () => {
     const { result, rerender } = renderHook(
       ({ ms }: { ms: number }) => useRequestDedupe(ms),
-      { initialProps: { ms: 5000 } },
+      { initialProps: { ms: 5000 }, wrapper: createWrapper() },
     );
     const fetcher = vi.fn().mockResolvedValue('data');
 
@@ -202,3 +212,4 @@ describe('useRequestDedupe', () => {
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 });
+

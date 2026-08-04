@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    let body: { items?: { id: string; qty: number; price: number }[]; couponCode?: string; paymentProvider?: "RAZORPAY" | "CASH_ON_DELIVERY" };
+    let body: { items?: { id: string; qty: number; price: number }[]; couponCode?: string; serviceDateType?: "TODAY" | "TOMORROW" };
     try {
       body = await req.json();
     } catch {
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
       userId: session.user.id,
       items,
       couponCode: body.couponCode,
-      paymentProvider: body.paymentProvider,
+      serviceDateType: body.serviceDateType,
     });
     return NextResponse.json(result);
   } catch (error) {

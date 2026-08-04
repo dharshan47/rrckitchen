@@ -14,7 +14,7 @@ export async function banUser(userId: string, reason: string, banExpires?: strin
     where: { id: userId },
     data: {
       banned: true,
-      banReason: reason || "Banned by admin",
+      banReason: reason || null,
       banExpires: banExpires ? new Date(banExpires) : null,
     },
   });
@@ -81,7 +81,7 @@ export async function searchUsers(search: string, page = 1, limit = 20) {
     users: users.map((u) => ({
       ...u,
       createdAt: u.createdAt.toISOString(),
-      banExpires: u.banExpires?.toISOString() ?? null,
+      banExpires: u.banExpires?.toISOString(),
     })),
     total,
     page,

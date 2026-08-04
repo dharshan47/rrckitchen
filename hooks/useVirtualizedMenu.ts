@@ -24,7 +24,6 @@ export function useVirtualizedMenu<T>({
 }: UseVirtualizedMenuOptions<T>): UseVirtualizedMenuResult<T> {
   const parentRef = useRef<HTMLDivElement | null>(null);
 
-  // eslint-disable-next-line react-hooks/incompatible-library
   const virtualizer = useVirtualizer({
     count: items.length,
     getScrollElement: () => parentRef.current,

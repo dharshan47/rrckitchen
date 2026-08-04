@@ -1,7 +1,7 @@
 # PWA & Offline Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [System Architecture](01-system-architecture.md), [Performance](11-performance-scaling.md), [State Management](06-state-data-flow.md)
 
 ---
@@ -12,31 +12,32 @@
 %%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true}}}%%
 flowchart TB
     subgraph "Browser"
-        SW["Service Worker Workbox v6"]
-        CS["Cache Storage Static: Cache API Dynamic: IndexedDB"]
+        SW["Service Worker public/sw.js<br/>Hand-written (no Workbox)"]
+        CS["Cache Storage<br/>rrc-static / rrc-dynamic / rrc-images / rrc-api"]
         PM["Push Manager"]
-        BS["Background Sync"]
     end
 
     subgraph "Server"
         Assets["Static Assets _next/static/*"]
-        Pages["Pages + API SSR + API Routes"]
-        Push["Push Endpoint POST /api/push"]
+        Pages["Pages + SSR + API Routes"]
+        Push["Push Endpoint POST /api/push/subscribe"]
     end
 
     subgraph "Installability"
-        M["Web App Manifest"]
-        SWR["Service Worker Registration"]
+        M["Web App Manifest app/manifest.ts"]
+        SWR["Service Worker Registration (usePWA hook)"]
     end
 
     M -->|"manifest.json"| Browser
-    SWR -->|"sw.js"| SW
-    SW -->|"Precache"| Assets
-    SW -->|"Network First"| Pages
+    SWR -->|"public/sw.js"| SW
+    SW -->|"Precache / + manifest.json"| Assets
     SW -->|"Cache First"| Assets
+    SW -->|"Network First"| Pages
+    SW -->|"Cache First"| Images
     PM -->|"subscribe"| Push
-    BS -->|"sync"| Pages
 ```
+
+> **Note:** No Workbox, no IndexedDB, no Background Sync. The service worker is a hand-written `public/sw.js` (~220 lines) registered by `hooks/usePWA.ts`.
 
 ---
 
@@ -71,86 +72,59 @@ stateDiagram-v2
 
 ### 2.2 Caching Strategies
 
-| Asset Type | Strategy | Cache Name | Max Entries | Max Age |
-|------------|----------|------------|-------------|---------|
-| **JS/CSS chunks** | Cache First (Stale-While-Revalidate) | `static-assets` | 100 | 30 days |
-| **Fonts** | Cache First | `fonts` | 10 | 30 days |
-| **Images (Cloudinary)** | Cache First (via Cloudinary CDN) | `images` | 50 | 7 days |
-| **HTML pages** | Network First (fallback to cache) | `pages` | 20 | 24 hours |
-| **API responses** | Network Only | — | — | — |
-| **Server Actions** | Network Only | — | — | — |
+| Asset Type | Strategy | Cache Name | Max Age |
+|------------|----------|------------|---------|
+| **Precache (install)** | `/` + `/manifest.json` | `rrc-static-v1` | — |
+| **JS/CSS / `_next/static/`** | Cache First | `rrc-static-v1` | — |
+| **Images (png/jpg/webp/avif/svg)** | Cache First (revalidate in background after 7 days) | `rrc-images-v1` | 7 days |
+| **`/api/` calls** | Network First | `rrc-api-v1` | — |
+| **HTML navigation** | Network First (fallback to cached `/`) | `rrc-dynamic-v1` | — |
+| **Other same-origin GET** | Stale-While-Revalidate | `rrc-dynamic-v1` | — |
 
-```typescript
-// sw.ts — Workbox configuration
-import { precacheAndRoute } from 'workbox-precaching';
-import { registerRoute } from 'workbox-routing';
-import { CacheFirst, NetworkFirst, NetworkOnly } from 'workbox-strategies';
-import { ExpirationPlugin } from 'workbox-expiration';
+```javascript
+// public/sw.js — hand-written (no Workbox)
+const CACHE_VERSION = 'v1';
+const STATIC_CACHE = `rrc-static-${CACHE_VERSION}`;
+const DYNAMIC_CACHE = `rrc-dynamic-${CACHE_VERSION}`;
+const IMAGE_CACHE = `rrc-images-${CACHE_VERSION}`;
+const API_CACHE = `rrc-api-${CACHE_VERSION}`;
 
-// Precache all static assets (generated at build time)
-precacheAndRoute(self.__WB_MANIFEST);
+// install: precache '/' + '/manifest.json', self.skipWaiting()
+// activate: delete stale caches, self.clients.claim()
 
-// Cache First: Static assets (.js, .css)
-registerRoute(
-  ({ request }) => request.destination === 'script' || request.destination === 'style',
-  new CacheFirst({
-    cacheName: 'static-assets',
-    plugins: [
-      new ExpirationPlugin({ maxEntries: 100, maxAgeSeconds: 30 * 24 * 60 * 60 }),
-    ],
-  })
-);
+// Excluded from interception:
+//  - non-GET requests
+//  - cross-origin (Razorpay, Google Maps, Cloudinary upload, etc.) → plain fetch
+//  - /api/auth/* (never cache credentials/sessions)
 
-// Cache First: Fonts
-registerRoute(
-  ({ url }) => url.origin === self.location.origin && url.pathname.includes('/fonts/'),
-  new CacheFirst({
-    cacheName: 'fonts',
-    plugins: [
-      new ExpirationPlugin({ maxEntries: 10, maxAgeSeconds: 30 * 24 * 60 * 60 }),
-    ],
-  })
-);
+function isStaticAsset(url) {
+  const staticPatterns = [/\.(js|css|woff2?)$/, /\/_next\/static\//];
+  return staticPatterns.some((p) => p.test(url));
+}
 
-// Network First: HTML pages
-registerRoute(
-  ({ request }) => request.mode === 'navigate',
-  new NetworkFirst({
-    cacheName: 'pages',
-    plugins: [
-      new ExpirationPlugin({ maxEntries: 20, maxAgeSeconds: 24 * 60 * 60 }),
-    ],
-  })
-);
-
-// Network Only: API and Server Actions
-registerRoute(
-  ({ url }) => url.pathname.startsWith('/api/'),
-  new NetworkOnly()
-);
+// fetch handler routing:
+//   isStaticAsset → cacheFirst(STATIC_CACHE)
+//   isImage       → cacheFirst(IMAGE_CACHE, 7 days)
+//   isApiCall     → networkFirst(API_CACHE)
+//   mode 'navigate' → networkFirst(DYNAMIC_CACHE) with caches.match('/') fallback
+//   else            → staleWhileRevalidate(DYNAMIC_CACHE)
 ```
+
+> Note: Network-first API caching means API responses are cached on success and served as an offline fallback — unlike an "API cache" this never serves stale data while online.
 
 ### 2.3 Offline Fallback Page
 
-```typescript
-// When network-first fails, serve offline page
-const OFFLINE_URL = '/offline';
+There is no dedicated `/offline` page. A failed navigation serves the cached home page (`caches.match('/')`); a failed API call that has no cached response returns `503 "Offline"`.
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.mode === 'navigate') {
-    event.respondWith(
-      (async () => {
-        try {
-          return await networkFirst(event.request);
-        } catch {
-          const cache = await caches.open('pages');
-          const cached = await cache.match(OFFLINE_URL);
-          return cached || new Response('Offline', { status: 503 });
-        }
-      })()
-    );
-  }
-});
+```javascript
+// Navigation requests — network first, fall back to cached home page
+if (request.mode === 'navigate') {
+  event.respondWith(
+    networkFirst(request, DYNAMIC_CACHE).catch(() => {
+      return caches.match('/');
+    })
+  );
+}
 ```
 
 ---
@@ -260,35 +234,7 @@ interface PushPayload {
 
 ## 4. Background Sync
 
-```typescript
-// Service Worker: Register sync
-self.addEventListener('sync', (event) => {
-  if (event.tag === 'sync-cart') {
-    event.waitUntil(syncCart());
-  }
-  if (event.tag === 'sync-wishlist') {
-    event.waitUntil(syncWishlist());
-  }
-});
-
-async function syncCart() {
-  const db = await openDB('rrc-offline', 1);
-  const pendingItems = await db.getAll('pendingCartItems');
-
-  for (const item of pendingItems) {
-    try {
-      await fetch('/api/cart/sync', {
-        method: 'POST',
-        body: JSON.stringify(item),
-        headers: { 'Content-Type': 'application/json' },
-      });
-      await db.delete('pendingCartItems', item.id);
-    } catch {
-      // Will retry on next sync event
-    }
-  }
-}
-```
+**Not implemented.** There is no Background Sync API usage in the service worker and no IndexedDB queue — pending writes rely on optimistic UI + server action retries while online. Push notifications are fire-and-forget via the `push` / `notificationclick` handlers in `public/sw.js` (navigation posts a `NAVIGATE` message to existing windows or opens a new one).
 
 ---
 
@@ -296,46 +242,50 @@ async function syncCart() {
 
 | Feature | Online | Offline | Partial Connectivity |
 |---------|--------|---------|---------------------|
-| **Home page** | SSR (fresh) | Cached version (24h old) | Stale-while-revalidate |
-| **Kitchen menus** | Fresh from server | Cached version (1h old) | Show cached, refetch |
-| **Item detail** | Fresh from server | Cached version | Show cached, refetch |
-| **Search** | Server-side search | Disabled, show cached items | Show cached results |
+| **Home page** | SSR (fresh) | Cached `/` (from `rrc-dynamic-v1`/precache) | Network-first |
+| **Kitchen menus** | Fresh from server | Cached page | Show cached, refetch |
+| **Item detail** | Fresh from server | Cached page | Show cached, refetch |
+| **Search** | Server-side search | Cached page | Show cached, refetch |
 | **Cart** | Full functionality | Full functionality (localStorage) | Full functionality |
-| **Add to cart** | Optimistic + server sync | Optimistic + queue | Optimistic + queue |
+| **Add to cart** | Optimistic + server sync | Optimistic (pending until online) | Optimistic |
 | **Checkout** | Full | Disabled (no network) | Show "retry" state |
-| **Order tracking** | Real-time (WebSocket) | Cached status (last known) | Polling fallback |
-| **Reviews** | Submit to server | Queue for later | Queue for later |
+| **Order tracking** | Real-time (Ably) | Cached status (last known) | Polling fallback |
+| **Reviews** | Submit to server | Disabled | Disabled |
 | **Profile** | Fresh | Cached (show stale) | Stale-while-revalidate |
-| **Images** | Cloudinary CDN | Cached images | Show blurred placeholder |
+| **Images** | Cloudinary CDN | Cached images (7 days) | Show cached |
 | **Auth (login)** | Full | Disabled | Show cached session |
+| **API responses** | Fresh | Cached (if previously fetched) | Network-first |
 
 ---
 
 ## 6. Web App Manifest
 
-```json
-{
-  "name": "RRC Kitchen — Order Food Online",
-  "short_name": "RRC Kitchen",
-  "description": "Order from the best kitchens near you. Fresh food, fast delivery.",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#FFFFFF",
-  "theme_color": "#EE7005",
-  "orientation": "portrait-primary",
-  "icons": [
-    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "/icons/icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-    { "src": "/icons/icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
-  ],
-  "screenshots": [
-    { "src": "/screenshots/home.png", "sizes": "1080x1920", "type": "image/png" },
-    { "src": "/screenshots/menu.png", "sizes": "1080x1920", "type": "image/png" }
-  ],
-  "categories": ["food", "lifestyle"],
-  "prefer_related_applications": false,
-  "related_applications": []
+Generated by `app/manifest.ts` (Next.js MetadataRoute) and served at `/manifest.json`:
+
+```typescript
+// app/manifest.ts
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: "RRC Kitchen",
+    short_name: "RRC Kitchen",
+    description: "Order fresh home-cooked meals from local kitchens in Thanjavur.",
+    start_url: "/",
+    display: "standalone",
+    background_color: "#FFFFFF",
+    theme_color: "#EE7005",
+    orientation: "portrait-primary",
+    categories: ["food", "lifestyle"],
+    lang: "en",
+    icons: [
+      { src: "/icons/icon-192x192.png", sizes: "192x192", type: "image/png", purpose: "maskable" },
+      { src: "/icons/icon-384x384.png", sizes: "384x384", type: "image/png", purpose: "maskable" },
+      { src: "/icons/icon-512x512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+    ],
+    shortcuts: [
+      { name: "Tomorrow's Menu", short_name: "Menu", description: "Browse tomorrow's menu", url: "/menu" },
+      { name: "My Cart", short_name: "Cart", description: "View your cart", url: "/cart" },
+    ],
+  };
 }
 ```
 
@@ -346,8 +296,8 @@ async function syncCart() {
 | `display` | `standalone` | Native app feel without browser chrome |
 | `background_color` | `#FFFFFF` | Smooth splash screen transition (no white flash) |
 | `orientation` | `portrait-primary` | Mobile-first, no landscape needed for food ordering |
-| `maskable` icons | Included | Adaptive icons on Android |
-| `screenshots` | Included | Store listing enrichment for Play Store |
+| `maskable` icons | 192/384/512 | Adaptive icons on Android |
+| `shortcuts` | Menu, Cart | Instant deep links from app icon long-press |
 
 ---
 
@@ -359,7 +309,7 @@ async function syncCart() {
 | Repeat visit HTML load | ~400ms | ~50ms (cache hit) / ~300ms (network first) | 25-87% faster |
 | Offline availability | None | All previously visited pages | ✓ |
 | Push notification delivery | None | Yes (SW registration required) | ✓ |
-| Bundle size (SW overhead) | — | ~8KB (Workbox runtime) | Negligible |
+| Bundle size (SW overhead) | — | ~7KB (hand-written sw.js) | Negligible |
 
 ---
 
@@ -368,10 +318,10 @@ async function syncCart() {
 - [ ] App installable on Android Chrome (shows install prompt)
 - [ ] App installable on iOS Safari (share → Add to Home Screen)
 - [ ] Full navigation offline for previously visited kitchen pages
-- [ ] Cart persists offline and syncs when online
+- [ ] Cart persists offline (localStorage)
 - [ ] Images show cached versions when offline
 - [ ] Push notification received when app is closed
-- [ ] Push notification click opens correct page
-- [ ] Service worker updates without breaking (skipWaiting + clientsClaim)
-- [ ] Background sync restores pending actions after reconnect
+- [ ] Push notification click opens correct page (NAVIGATE message / new window)
+- [ ] Service worker updates without breaking (skipWaiting + clientsClaim + cache cleanup)
+- [ ] `/api/auth/*` and cross-origin requests are never cached
 - [ ] Manifest passes Lighthouse PWA audit

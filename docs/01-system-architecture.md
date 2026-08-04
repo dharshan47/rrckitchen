@@ -1,7 +1,7 @@
 # System Architecture
 
 > **Level:** C4 Model — Context → Container → Component → Code
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [ADRs](02-architecture-decisions.md), [Data Model](03-data-model.md), [Performance](11-performance-scaling.md)
 
 ---
@@ -12,7 +12,7 @@
 C4Context
   Person(customer, "Customer", "End user browsing menus, placing orders, tracking delivery")
   Person(kitchenPartner, "Kitchen Partner", "Manages menu items, processes orders, views earnings")
-  Person(deliveryPartner, "Delivery Partner", "Accepts deliveries, updates status, collects COD")
+  Person(deliveryPartner, "Delivery Partner", "Accepts deliveries, updates status, tracks location")
   Person(admin, "Platform Admin", "Approves KYC, manages platform, views analytics")
 
   System_Boundary(rrc, "RRC Kitchen Platform") {
@@ -20,14 +20,14 @@ C4Context
     System(system, "Backend System", "Server Actions, API Routes, Background Jobs")
   }
 
-  System_Ext_System(sms, "Twilio SMS", "OTP delivery")
-  System_Ext_System(ably, "Ably Realtime", "WebSocket messaging")
-  System_Ext_System(razorpay, "Razorpay", "Payment processing")
-  System_Ext_System(cloudinary, "Cloudinary", "Image CDN & transformations")
-  System_Ext_System(redis, "Upstash Redis", "Rate limiting, session cache")
-  System_Ext_System(pg, "PostgreSQL (Prisma Data Proxy)", "Primary database")
-  System_Ext_System(push, "Web Push API", "Browser push notifications")
-  System_Ext_System(vercel, "Vercel Edge Network", "CDN, global distribution")
+  System_Ext(sms, "Twilio SMS", "OTP delivery")
+  System_Ext(ably, "Ably Realtime", "WebSocket messaging")
+  System_Ext(razorpay, "Razorpay", "Payment processing")
+  System_Ext(cloudinary, "Cloudinary", "Image CDN & transformations")
+  System_Ext(redis, "Upstash Redis", "Rate limiting, session cache")
+  System_Ext(pg, "PostgreSQL (Prisma Data Proxy)", "Primary database")
+  System_Ext(push, "Web Push API", "Browser push notifications")
+  System_Ext(vercel, "Vercel Edge Network", "CDN, global distribution")
 
   Rel(customer, webApp, "HTTPS", "Browse, order, track")
   Rel(kitchenPartner, webApp, "HTTPS", "Menu mgmt, orders")
@@ -53,7 +53,7 @@ C4Context
 |--------|---------|-------------|----------------|
 | **Twilio** | SMS OTP delivery | REST API (SDK) | 99.9% uptime — auth gate failure if down |
 | **Ably** | Real-time messaging | WebSocket + REST | 99.999% — graceful degradation to polling |
-| **Razorpay** | Payment processing | Checkout.js + REST API | 99.95% — COD fallback available |
+| **Razorpay** | Payment processing | Checkout.js + REST API + Smart Collect VPA | 99.95% — degraded mode without gateway |
 | **Cloudinary** | Image storage + CDN | Upload API + URL-based transforms | 99.9% — degraded experience without images |
 | **Upstash Redis** | Caching + rate limiting | ioredis via HTTP/REST | 99.99% — system degrades to DB-only |
 | **PostgreSQL (Prisma Data Proxy)** | Primary database | Prisma ORM | 99.95% — complete system failure if down |
@@ -73,8 +73,8 @@ C4Container
     Container(interactive, "Client Components", "React Client Components", "Interactive UI — cart, auth, real-time, forms")
     Container(api, "API Routes", "Next.js API handlers", "REST endpoints — payment webhooks, image upload, Ably auth")
     Container(actions, "Server Actions", "Server-side functions", "Business logic — place order, update profile, manage menu")
-    Container(middleware, "Edge Middleware", "Vercel Edge Functions", "Auth redirects, route protection, i18n, geolocation")
-    Container(sw, "Service Worker", "Workbox-based", "PWA offline caching, push notifications, background sync")
+    Container(middleware, "Proxy (Edge)", "Next.js proxy.ts", "Auth redirects, route protection")
+    Container(sw, "Service Worker", "Hand-written public/sw.js", "PWA offline caching, push notifications")
   }
 
   System_Boundary(external, "External Services") {
@@ -110,7 +110,7 @@ C4Container
 | **Client Components** | React Client | Cart, auth flows, real-time subscriptions, forms, animations | `ErrorBoundary` per feature section |
 | **API Routes** | Edge/Node.js | Payment webhooks, file upload, Ably token auth | Global error handler + 500 fallback |
 | **Server Actions** | Server Functions | Business logic — orders, menu CRUD, profile, wishlist | `try/catch` → structured error response |
-| **Edge Middleware** | Vercel/Cloudflare | Auth redirects, bot detection, geolocation-based routing | No state — pure redirect/rewrite |
+| **Edge Middleware** | Vercel/Cloudflare | Auth redirects, role-based route protection | No state — pure redirect/rewrite |
 | **Service Worker** | Browser | Cache-first for static assets, network-first for API, push events | `install` → `activate` → `fetch` lifecycle |
 
 ---
@@ -143,7 +143,7 @@ C4Component
   Rel(placeOrder, createPayment, "Inline call", "Get payment order ID")
   Rel(placeOrder, razorpay, "Fetch API", "Create Razorpay order")
   Rel(createPayment, razorpay, "REST POST", "Create payment order")
-  Rel(placeOrder, db, "Prisma tx", "Create order + orderItems + deduct stock")
+  Rel(placeOrder, db, "Prisma tx", "Create order + orderItems + payment")
   Rel(placeOrder, ably, "Publish", "Order status event")
   Rel(verifyPayment, razorpay, "REST POST", "Verify payment signature")
   Rel(verifyPayment, db, "Prisma", "Update order status to confirmed")
@@ -198,11 +198,11 @@ sequenceDiagram
 | **Database** | PostgreSQL | 16 | Serverless via Prisma Data Proxy, branching, connection pooling | Supabase, PlanetScale, CockroachDB | SQL vs. managed simplicity |
 | **Cache** | Upstash Redis | Serverless | HTTP-based, no persistent connection, global | Vercel KV, Redis Cloud, Momento | Latency (+5ms) vs. zero cold start |
 | **Auth** | Better-Auth | latest | Phone OTP native, admin 2FA, session mgmt | NextAuth, Clerk, Supabase Auth | Less mature vs. integrated auth |
-| **Payments** | Razorpay | API v2 | Indian market leader, COD support, auto-reconciliation | Stripe, PayU, PhonePe PG | India-specific vs. global support |
+| **Payments** | Razorpay | API v2 | Indian market leader, Checkout + UPI Smart Collect | Stripe, PayU, PhonePe PG | India-specific vs. global support |
 | **Real-time** | Ably | SDK v2 | Assured delivery, channel history, presence | Socket.io, Pusher, Supabase Realtime | Cost vs. managed infrastructure |
 | **Forms** | React Hook Form | v7 | Uncontrolled, minimal re-renders, RHF + Zod | Formik, Final Form | Less imperative vs. performance |
 | **Validation** | Zod | v4 | Runtime + type inference, composable schemas | Yup, Joi, io-ts | Bundle size vs. TS integration |
-| **PWA** | Workbox | v6 | Precaching, runtime caching, background sync | SW Precache, idle-manager | Google-centric vs. web-standard SW |
+| **PWA** | Hand-written SW | v1 (public/sw.js) | Cache-first static, network-first API, push | Workbox, SW Precache, idle-manager | Manual caching logic vs. managed precache |
 | **Icons** | Lucide React | latest | Tree-shakeable, consistent design | FontAwesome, Heroicons, Phosphor | Fewer icons vs. small bundle |
 | **Radix UI** | Radix Primitives | v2 | Accessible, headless, composable | Headless UI, Ark UI, Reach UI | Abstraction overhead vs. WCAG compliance |
 | **Image CDN** | Cloudinary | API v2 | Auto-format, responsive breakpoints, face detection | Imgix, Cloudflare Images, custom Sharp | Vendor lock-in vs. transformation power |

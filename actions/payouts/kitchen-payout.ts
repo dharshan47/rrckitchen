@@ -127,7 +127,7 @@ export async function settleKitchenPayout(kitchenPayoutId: string) {
           payout.kitchenPartnerId,
           kyc.bankAccountNumber!,
           kyc.ifscCode!,
-          kyc.accountHolderName ?? "Kitchen Partner",
+          kyc.accountHolderName ?? kyc.upiId ?? "",
         )
 
     const rzpPayout = await razorpayX.payouts.create({

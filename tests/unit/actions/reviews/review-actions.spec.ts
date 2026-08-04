@@ -4,13 +4,13 @@ vi.mock("@/lib/auth-server", () => ({
   getSession: vi.fn(() => ({ user: { id: "user-1", role: "CUSTOMER" } })),
 }))
 
-const mockTx = {
+const mockTx = vi.hoisted(() => ({
   review: { create: vi.fn() },
   deliveryReview: { create: vi.fn() },
   order: { update: vi.fn() },
   kitchenPartner: { findUniqueOrThrow: vi.fn(), update: vi.fn() },
   deliveryPartner: { findUniqueOrThrow: vi.fn(), update: vi.fn() },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({
   default: {

@@ -1,18 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockRedis = {
+const mockRedis = vi.hoisted(() => ({
   geosearch: vi.fn(),
   geoadd: vi.fn(),
   zrem: vi.fn(),
-}
+}))
 
 vi.mock("@/lib/redis", () => ({ redis: mockRedis }))
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   kitchenAddress: { findMany: vi.fn(), findUnique: vi.fn(), findFirst: vi.fn() },
   menuItem: { findMany: vi.fn(), count: vi.fn() },
   review: { aggregate: vi.fn() },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 

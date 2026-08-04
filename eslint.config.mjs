@@ -21,6 +21,14 @@ const eslintConfig = defineConfig([
       "@next/next/no-img-element": "off",
     },
   },
+  {
+    // TanStack Table (`useReactTable`) and TanStack Virtual (`useVirtualizer`)
+    // return non-memoizable APIs, so React Compiler intentionally skips
+    // memoizing those components. This is safe by design, hence the rule is off.
+    rules: {
+      "react-hooks/incompatible-library": "off",
+    },
+  },
 ]);
 
 export default eslintConfig;

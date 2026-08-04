@@ -29,8 +29,10 @@ export type AggregateMenuItem = {
 export type MenuItemAvgAggregateOutputType = {
   price: runtime.Decimal | null
   compareAtPrice: runtime.Decimal | null
-  reservedCount: number | null
-  dailyStock: number | null
+  serves: number | null
+  deliveryTimeMin: number | null
+  deliveryTimeMax: number | null
+  deliveryFee: runtime.Decimal | null
   avgRating: runtime.Decimal | null
   totalReviews: number | null
 }
@@ -38,14 +40,17 @@ export type MenuItemAvgAggregateOutputType = {
 export type MenuItemSumAggregateOutputType = {
   price: runtime.Decimal | null
   compareAtPrice: runtime.Decimal | null
-  reservedCount: number | null
-  dailyStock: number | null
+  serves: number | null
+  deliveryTimeMin: number | null
+  deliveryTimeMax: number | null
+  deliveryFee: runtime.Decimal | null
   avgRating: runtime.Decimal | null
   totalReviews: number | null
 }
 
 export type MenuItemMinAggregateOutputType = {
   id: string | null
+  publicCode: string | null
   slug: string | null
   menuId: string | null
   name: string | null
@@ -55,17 +60,33 @@ export type MenuItemMinAggregateOutputType = {
   foodType: $Enums.FoodType | null
   timeSlot: $Enums.TimeSlot | null
   isAvailable: boolean | null
-  reservedCount: number | null
-  dailyStock: number | null
+  availableFor: $Enums.AvailableFor | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
+  cuisine: string | null
+  categoryId: string | null
+  bestseller: boolean | null
+  aboutTitle: string | null
+  aboutDescription: string | null
+  serves: number | null
+  portionSize: string | null
+  shelfLife: string | null
+  allergens: string | null
+  metaTitle: string | null
+  metaDescription: string | null
+  deliveryTimeMin: number | null
+  deliveryTimeMax: number | null
+  deliveryFee: runtime.Decimal | null
+  freeDelivery: boolean | null
+  packagingType: string | null
   avgRating: runtime.Decimal | null
   totalReviews: number | null
 }
 
 export type MenuItemMaxAggregateOutputType = {
   id: string | null
+  publicCode: string | null
   slug: string | null
   menuId: string | null
   name: string | null
@@ -75,17 +96,33 @@ export type MenuItemMaxAggregateOutputType = {
   foodType: $Enums.FoodType | null
   timeSlot: $Enums.TimeSlot | null
   isAvailable: boolean | null
-  reservedCount: number | null
-  dailyStock: number | null
+  availableFor: $Enums.AvailableFor | null
   createdAt: Date | null
   updatedAt: Date | null
   deletedAt: Date | null
+  cuisine: string | null
+  categoryId: string | null
+  bestseller: boolean | null
+  aboutTitle: string | null
+  aboutDescription: string | null
+  serves: number | null
+  portionSize: string | null
+  shelfLife: string | null
+  allergens: string | null
+  metaTitle: string | null
+  metaDescription: string | null
+  deliveryTimeMin: number | null
+  deliveryTimeMax: number | null
+  deliveryFee: runtime.Decimal | null
+  freeDelivery: boolean | null
+  packagingType: string | null
   avgRating: runtime.Decimal | null
   totalReviews: number | null
 }
 
 export type MenuItemCountAggregateOutputType = {
   id: number
+  publicCode: number
   slug: number
   menuId: number
   name: number
@@ -95,11 +132,28 @@ export type MenuItemCountAggregateOutputType = {
   foodType: number
   timeSlot: number
   isAvailable: number
-  reservedCount: number
-  dailyStock: number
+  availableFor: number
   createdAt: number
   updatedAt: number
   deletedAt: number
+  cuisine: number
+  categoryId: number
+  bestseller: number
+  highlights: number
+  aboutTitle: number
+  aboutDescription: number
+  serves: number
+  portionSize: number
+  shelfLife: number
+  allergens: number
+  metaTitle: number
+  metaDescription: number
+  deliveryTimeMin: number
+  deliveryTimeMax: number
+  deliveryFee: number
+  freeDelivery: number
+  packagingType: number
+  relatedItemIds: number
   avgRating: number
   totalReviews: number
   _all: number
@@ -109,8 +163,10 @@ export type MenuItemCountAggregateOutputType = {
 export type MenuItemAvgAggregateInputType = {
   price?: true
   compareAtPrice?: true
-  reservedCount?: true
-  dailyStock?: true
+  serves?: true
+  deliveryTimeMin?: true
+  deliveryTimeMax?: true
+  deliveryFee?: true
   avgRating?: true
   totalReviews?: true
 }
@@ -118,14 +174,17 @@ export type MenuItemAvgAggregateInputType = {
 export type MenuItemSumAggregateInputType = {
   price?: true
   compareAtPrice?: true
-  reservedCount?: true
-  dailyStock?: true
+  serves?: true
+  deliveryTimeMin?: true
+  deliveryTimeMax?: true
+  deliveryFee?: true
   avgRating?: true
   totalReviews?: true
 }
 
 export type MenuItemMinAggregateInputType = {
   id?: true
+  publicCode?: true
   slug?: true
   menuId?: true
   name?: true
@@ -135,17 +194,33 @@ export type MenuItemMinAggregateInputType = {
   foodType?: true
   timeSlot?: true
   isAvailable?: true
-  reservedCount?: true
-  dailyStock?: true
+  availableFor?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
+  cuisine?: true
+  categoryId?: true
+  bestseller?: true
+  aboutTitle?: true
+  aboutDescription?: true
+  serves?: true
+  portionSize?: true
+  shelfLife?: true
+  allergens?: true
+  metaTitle?: true
+  metaDescription?: true
+  deliveryTimeMin?: true
+  deliveryTimeMax?: true
+  deliveryFee?: true
+  freeDelivery?: true
+  packagingType?: true
   avgRating?: true
   totalReviews?: true
 }
 
 export type MenuItemMaxAggregateInputType = {
   id?: true
+  publicCode?: true
   slug?: true
   menuId?: true
   name?: true
@@ -155,17 +230,33 @@ export type MenuItemMaxAggregateInputType = {
   foodType?: true
   timeSlot?: true
   isAvailable?: true
-  reservedCount?: true
-  dailyStock?: true
+  availableFor?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
+  cuisine?: true
+  categoryId?: true
+  bestseller?: true
+  aboutTitle?: true
+  aboutDescription?: true
+  serves?: true
+  portionSize?: true
+  shelfLife?: true
+  allergens?: true
+  metaTitle?: true
+  metaDescription?: true
+  deliveryTimeMin?: true
+  deliveryTimeMax?: true
+  deliveryFee?: true
+  freeDelivery?: true
+  packagingType?: true
   avgRating?: true
   totalReviews?: true
 }
 
 export type MenuItemCountAggregateInputType = {
   id?: true
+  publicCode?: true
   slug?: true
   menuId?: true
   name?: true
@@ -175,11 +266,28 @@ export type MenuItemCountAggregateInputType = {
   foodType?: true
   timeSlot?: true
   isAvailable?: true
-  reservedCount?: true
-  dailyStock?: true
+  availableFor?: true
   createdAt?: true
   updatedAt?: true
   deletedAt?: true
+  cuisine?: true
+  categoryId?: true
+  bestseller?: true
+  highlights?: true
+  aboutTitle?: true
+  aboutDescription?: true
+  serves?: true
+  portionSize?: true
+  shelfLife?: true
+  allergens?: true
+  metaTitle?: true
+  metaDescription?: true
+  deliveryTimeMin?: true
+  deliveryTimeMax?: true
+  deliveryFee?: true
+  freeDelivery?: true
+  packagingType?: true
+  relatedItemIds?: true
   avgRating?: true
   totalReviews?: true
   _all?: true
@@ -273,6 +381,7 @@ export type MenuItemGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 
 export type MenuItemGroupByOutputType = {
   id: string
+  publicCode: string | null
   slug: string | null
   menuId: string
   name: string
@@ -282,11 +391,28 @@ export type MenuItemGroupByOutputType = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable: boolean
-  reservedCount: number
-  dailyStock: number | null
+  availableFor: $Enums.AvailableFor
   createdAt: Date
   updatedAt: Date
   deletedAt: Date | null
+  cuisine: string | null
+  categoryId: string | null
+  bestseller: boolean
+  highlights: runtime.JsonValue | null
+  aboutTitle: string | null
+  aboutDescription: string | null
+  serves: number | null
+  portionSize: string | null
+  shelfLife: string | null
+  allergens: string | null
+  metaTitle: string | null
+  metaDescription: string | null
+  deliveryTimeMin: number | null
+  deliveryTimeMax: number | null
+  deliveryFee: runtime.Decimal | null
+  freeDelivery: boolean
+  packagingType: string | null
+  relatedItemIds: string[]
   avgRating: runtime.Decimal
   totalReviews: number
   _count: MenuItemCountAggregateOutputType | null
@@ -316,6 +442,7 @@ export type MenuItemWhereInput = {
   OR?: Prisma.MenuItemWhereInput[]
   NOT?: Prisma.MenuItemWhereInput | Prisma.MenuItemWhereInput[]
   id?: Prisma.StringFilter<"MenuItem"> | string
+  publicCode?: Prisma.StringNullableFilter<"MenuItem"> | string | null
   slug?: Prisma.StringNullableFilter<"MenuItem"> | string | null
   menuId?: Prisma.StringFilter<"MenuItem"> | string
   name?: Prisma.StringFilter<"MenuItem"> | string
@@ -325,24 +452,44 @@ export type MenuItemWhereInput = {
   foodType?: Prisma.EnumFoodTypeFilter<"MenuItem"> | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFilter<"MenuItem"> | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFilter<"MenuItem"> | boolean
-  reservedCount?: Prisma.IntFilter<"MenuItem"> | number
-  dailyStock?: Prisma.IntNullableFilter<"MenuItem"> | number | null
+  availableFor?: Prisma.EnumAvailableForFilter<"MenuItem"> | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFilter<"MenuItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MenuItem"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"MenuItem"> | Date | string | null
+  cuisine?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  categoryId?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  bestseller?: Prisma.BoolFilter<"MenuItem"> | boolean
+  highlights?: Prisma.JsonNullableFilter<"MenuItem">
+  aboutTitle?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  aboutDescription?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  serves?: Prisma.IntNullableFilter<"MenuItem"> | number | null
+  portionSize?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  shelfLife?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  allergens?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  metaTitle?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  metaDescription?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  deliveryTimeMin?: Prisma.IntNullableFilter<"MenuItem"> | number | null
+  deliveryTimeMax?: Prisma.IntNullableFilter<"MenuItem"> | number | null
+  deliveryFee?: Prisma.DecimalNullableFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFilter<"MenuItem"> | boolean
+  packagingType?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  relatedItemIds?: Prisma.StringNullableListFilter<"MenuItem">
   avgRating?: Prisma.DecimalFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFilter<"MenuItem"> | number
   menu?: Prisma.XOR<Prisma.MenuScalarRelationFilter, Prisma.MenuWhereInput>
+  category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
   photos?: Prisma.MenuItemPhotoListRelationFilter
   orderItems?: Prisma.OrderItemListRelationFilter
   menuItemFeedbacks?: Prisma.MenuItemFeedbackListRelationFilter
   menuItemReviews?: Prisma.MenuItemReviewListRelationFilter
-  dailyStockEntries?: Prisma.MenuItemDailyStockListRelationFilter
   wishlistItems?: Prisma.WishlistItemListRelationFilter
+  cravingsTriggers?: Prisma.CravingsRuleListRelationFilter
+  cravingsRuleItems?: Prisma.CravingsRuleItemListRelationFilter
 }
 
 export type MenuItemOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   menuId?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -352,24 +499,44 @@ export type MenuItemOrderByWithRelationInput = {
   foodType?: Prisma.SortOrder
   timeSlot?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
-  reservedCount?: Prisma.SortOrder
-  dailyStock?: Prisma.SortOrderInput | Prisma.SortOrder
+  availableFor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cuisine?: Prisma.SortOrderInput | Prisma.SortOrder
+  categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
+  bestseller?: Prisma.SortOrder
+  highlights?: Prisma.SortOrderInput | Prisma.SortOrder
+  aboutTitle?: Prisma.SortOrderInput | Prisma.SortOrder
+  aboutDescription?: Prisma.SortOrderInput | Prisma.SortOrder
+  serves?: Prisma.SortOrderInput | Prisma.SortOrder
+  portionSize?: Prisma.SortOrderInput | Prisma.SortOrder
+  shelfLife?: Prisma.SortOrderInput | Prisma.SortOrder
+  allergens?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaDescription?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryTimeMin?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryTimeMax?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryFee?: Prisma.SortOrderInput | Prisma.SortOrder
+  freeDelivery?: Prisma.SortOrder
+  packagingType?: Prisma.SortOrderInput | Prisma.SortOrder
+  relatedItemIds?: Prisma.SortOrder
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
   menu?: Prisma.MenuOrderByWithRelationInput
+  category?: Prisma.CategoryOrderByWithRelationInput
   photos?: Prisma.MenuItemPhotoOrderByRelationAggregateInput
   orderItems?: Prisma.OrderItemOrderByRelationAggregateInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackOrderByRelationAggregateInput
   menuItemReviews?: Prisma.MenuItemReviewOrderByRelationAggregateInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockOrderByRelationAggregateInput
   wishlistItems?: Prisma.WishlistItemOrderByRelationAggregateInput
+  cravingsTriggers?: Prisma.CravingsRuleOrderByRelationAggregateInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemOrderByRelationAggregateInput
 }
 
 export type MenuItemWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  publicCode?: string
   slug?: string
   AND?: Prisma.MenuItemWhereInput | Prisma.MenuItemWhereInput[]
   OR?: Prisma.MenuItemWhereInput[]
@@ -382,24 +549,44 @@ export type MenuItemWhereUniqueInput = Prisma.AtLeast<{
   foodType?: Prisma.EnumFoodTypeFilter<"MenuItem"> | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFilter<"MenuItem"> | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFilter<"MenuItem"> | boolean
-  reservedCount?: Prisma.IntFilter<"MenuItem"> | number
-  dailyStock?: Prisma.IntNullableFilter<"MenuItem"> | number | null
+  availableFor?: Prisma.EnumAvailableForFilter<"MenuItem"> | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFilter<"MenuItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MenuItem"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"MenuItem"> | Date | string | null
+  cuisine?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  categoryId?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  bestseller?: Prisma.BoolFilter<"MenuItem"> | boolean
+  highlights?: Prisma.JsonNullableFilter<"MenuItem">
+  aboutTitle?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  aboutDescription?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  serves?: Prisma.IntNullableFilter<"MenuItem"> | number | null
+  portionSize?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  shelfLife?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  allergens?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  metaTitle?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  metaDescription?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  deliveryTimeMin?: Prisma.IntNullableFilter<"MenuItem"> | number | null
+  deliveryTimeMax?: Prisma.IntNullableFilter<"MenuItem"> | number | null
+  deliveryFee?: Prisma.DecimalNullableFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFilter<"MenuItem"> | boolean
+  packagingType?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  relatedItemIds?: Prisma.StringNullableListFilter<"MenuItem">
   avgRating?: Prisma.DecimalFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFilter<"MenuItem"> | number
   menu?: Prisma.XOR<Prisma.MenuScalarRelationFilter, Prisma.MenuWhereInput>
+  category?: Prisma.XOR<Prisma.CategoryNullableScalarRelationFilter, Prisma.CategoryWhereInput> | null
   photos?: Prisma.MenuItemPhotoListRelationFilter
   orderItems?: Prisma.OrderItemListRelationFilter
   menuItemFeedbacks?: Prisma.MenuItemFeedbackListRelationFilter
   menuItemReviews?: Prisma.MenuItemReviewListRelationFilter
-  dailyStockEntries?: Prisma.MenuItemDailyStockListRelationFilter
   wishlistItems?: Prisma.WishlistItemListRelationFilter
-}, "id" | "slug">
+  cravingsTriggers?: Prisma.CravingsRuleListRelationFilter
+  cravingsRuleItems?: Prisma.CravingsRuleItemListRelationFilter
+}, "id" | "publicCode" | "slug">
 
 export type MenuItemOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrderInput | Prisma.SortOrder
   slug?: Prisma.SortOrderInput | Prisma.SortOrder
   menuId?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -409,11 +596,28 @@ export type MenuItemOrderByWithAggregationInput = {
   foodType?: Prisma.SortOrder
   timeSlot?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
-  reservedCount?: Prisma.SortOrder
-  dailyStock?: Prisma.SortOrderInput | Prisma.SortOrder
+  availableFor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
+  cuisine?: Prisma.SortOrderInput | Prisma.SortOrder
+  categoryId?: Prisma.SortOrderInput | Prisma.SortOrder
+  bestseller?: Prisma.SortOrder
+  highlights?: Prisma.SortOrderInput | Prisma.SortOrder
+  aboutTitle?: Prisma.SortOrderInput | Prisma.SortOrder
+  aboutDescription?: Prisma.SortOrderInput | Prisma.SortOrder
+  serves?: Prisma.SortOrderInput | Prisma.SortOrder
+  portionSize?: Prisma.SortOrderInput | Prisma.SortOrder
+  shelfLife?: Prisma.SortOrderInput | Prisma.SortOrder
+  allergens?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaTitle?: Prisma.SortOrderInput | Prisma.SortOrder
+  metaDescription?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryTimeMin?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryTimeMax?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryFee?: Prisma.SortOrderInput | Prisma.SortOrder
+  freeDelivery?: Prisma.SortOrder
+  packagingType?: Prisma.SortOrderInput | Prisma.SortOrder
+  relatedItemIds?: Prisma.SortOrder
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
   _count?: Prisma.MenuItemCountOrderByAggregateInput
@@ -428,6 +632,7 @@ export type MenuItemScalarWhereWithAggregatesInput = {
   OR?: Prisma.MenuItemScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MenuItemScalarWhereWithAggregatesInput | Prisma.MenuItemScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"MenuItem"> | string
+  publicCode?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
   slug?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
   menuId?: Prisma.StringWithAggregatesFilter<"MenuItem"> | string
   name?: Prisma.StringWithAggregatesFilter<"MenuItem"> | string
@@ -437,17 +642,35 @@ export type MenuItemScalarWhereWithAggregatesInput = {
   foodType?: Prisma.EnumFoodTypeWithAggregatesFilter<"MenuItem"> | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotWithAggregatesFilter<"MenuItem"> | $Enums.TimeSlot
   isAvailable?: Prisma.BoolWithAggregatesFilter<"MenuItem"> | boolean
-  reservedCount?: Prisma.IntWithAggregatesFilter<"MenuItem"> | number
-  dailyStock?: Prisma.IntNullableWithAggregatesFilter<"MenuItem"> | number | null
+  availableFor?: Prisma.EnumAvailableForWithAggregatesFilter<"MenuItem"> | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"MenuItem"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"MenuItem"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"MenuItem"> | Date | string | null
+  cuisine?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
+  categoryId?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
+  bestseller?: Prisma.BoolWithAggregatesFilter<"MenuItem"> | boolean
+  highlights?: Prisma.JsonNullableWithAggregatesFilter<"MenuItem">
+  aboutTitle?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
+  aboutDescription?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
+  serves?: Prisma.IntNullableWithAggregatesFilter<"MenuItem"> | number | null
+  portionSize?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
+  shelfLife?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
+  allergens?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
+  metaTitle?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
+  metaDescription?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
+  deliveryTimeMin?: Prisma.IntNullableWithAggregatesFilter<"MenuItem"> | number | null
+  deliveryTimeMax?: Prisma.IntNullableWithAggregatesFilter<"MenuItem"> | number | null
+  deliveryFee?: Prisma.DecimalNullableWithAggregatesFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolWithAggregatesFilter<"MenuItem"> | boolean
+  packagingType?: Prisma.StringNullableWithAggregatesFilter<"MenuItem"> | string | null
+  relatedItemIds?: Prisma.StringNullableListFilter<"MenuItem">
   avgRating?: Prisma.DecimalWithAggregatesFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntWithAggregatesFilter<"MenuItem"> | number
 }
 
 export type MenuItemCreateInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   name: string
   description?: string | null
@@ -456,24 +679,43 @@ export type MenuItemCreateInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   menu: Prisma.MenuCreateNestedOneWithoutMenuItemsInput
+  category?: Prisma.CategoryCreateNestedOneWithoutMenuItemsInput
   photos?: Prisma.MenuItemPhotoCreateNestedManyWithoutMenuItemInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutMenuItemInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutMenuItemInput
   menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockCreateNestedManyWithoutMenuItemInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemUncheckedCreateInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   menuId: string
   name: string
@@ -483,23 +725,42 @@ export type MenuItemUncheckedCreateInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  categoryId?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   photos?: Prisma.MenuItemPhotoUncheckedCreateNestedManyWithoutMenuItemInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutMenuItemInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutMenuItemInput
   menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedCreateNestedManyWithoutMenuItemInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -508,24 +769,43 @@ export type MenuItemUpdateInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   menu?: Prisma.MenuUpdateOneRequiredWithoutMenuItemsNestedInput
+  category?: Prisma.CategoryUpdateOneWithoutMenuItemsNestedInput
   photos?: Prisma.MenuItemPhotoUpdateManyWithoutMenuItemNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutMenuItemNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutMenuItemNestedInput
   menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUpdateManyWithoutMenuItemNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUpdateManyWithoutMenuItemNestedInput
 }
 
 export type MenuItemUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   menuId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -535,23 +815,42 @@ export type MenuItemUncheckedUpdateInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   photos?: Prisma.MenuItemPhotoUncheckedUpdateManyWithoutMenuItemNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutMenuItemNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutMenuItemNestedInput
   menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedUpdateManyWithoutMenuItemNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedUpdateManyWithoutMenuItemNestedInput
 }
 
 export type MenuItemCreateManyInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   menuId: string
   name: string
@@ -561,17 +860,35 @@ export type MenuItemCreateManyInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  categoryId?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
 }
 
 export type MenuItemUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -580,17 +897,34 @@ export type MenuItemUpdateManyMutationInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type MenuItemUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   menuId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -600,11 +934,28 @@ export type MenuItemUncheckedUpdateManyInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -619,8 +970,17 @@ export type MenuItemOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type StringNullableListFilter<$PrismaModel = never> = {
+  equals?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel> | null
+  has?: string | Prisma.StringFieldRefInput<$PrismaModel> | null
+  hasEvery?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  hasSome?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
+  isEmpty?: boolean
+}
+
 export type MenuItemCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   menuId?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -630,11 +990,28 @@ export type MenuItemCountOrderByAggregateInput = {
   foodType?: Prisma.SortOrder
   timeSlot?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
-  reservedCount?: Prisma.SortOrder
-  dailyStock?: Prisma.SortOrder
+  availableFor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+  cuisine?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
+  bestseller?: Prisma.SortOrder
+  highlights?: Prisma.SortOrder
+  aboutTitle?: Prisma.SortOrder
+  aboutDescription?: Prisma.SortOrder
+  serves?: Prisma.SortOrder
+  portionSize?: Prisma.SortOrder
+  shelfLife?: Prisma.SortOrder
+  allergens?: Prisma.SortOrder
+  metaTitle?: Prisma.SortOrder
+  metaDescription?: Prisma.SortOrder
+  deliveryTimeMin?: Prisma.SortOrder
+  deliveryTimeMax?: Prisma.SortOrder
+  deliveryFee?: Prisma.SortOrder
+  freeDelivery?: Prisma.SortOrder
+  packagingType?: Prisma.SortOrder
+  relatedItemIds?: Prisma.SortOrder
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
 }
@@ -642,14 +1019,17 @@ export type MenuItemCountOrderByAggregateInput = {
 export type MenuItemAvgOrderByAggregateInput = {
   price?: Prisma.SortOrder
   compareAtPrice?: Prisma.SortOrder
-  reservedCount?: Prisma.SortOrder
-  dailyStock?: Prisma.SortOrder
+  serves?: Prisma.SortOrder
+  deliveryTimeMin?: Prisma.SortOrder
+  deliveryTimeMax?: Prisma.SortOrder
+  deliveryFee?: Prisma.SortOrder
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
 }
 
 export type MenuItemMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   menuId?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -659,17 +1039,33 @@ export type MenuItemMaxOrderByAggregateInput = {
   foodType?: Prisma.SortOrder
   timeSlot?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
-  reservedCount?: Prisma.SortOrder
-  dailyStock?: Prisma.SortOrder
+  availableFor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+  cuisine?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
+  bestseller?: Prisma.SortOrder
+  aboutTitle?: Prisma.SortOrder
+  aboutDescription?: Prisma.SortOrder
+  serves?: Prisma.SortOrder
+  portionSize?: Prisma.SortOrder
+  shelfLife?: Prisma.SortOrder
+  allergens?: Prisma.SortOrder
+  metaTitle?: Prisma.SortOrder
+  metaDescription?: Prisma.SortOrder
+  deliveryTimeMin?: Prisma.SortOrder
+  deliveryTimeMax?: Prisma.SortOrder
+  deliveryFee?: Prisma.SortOrder
+  freeDelivery?: Prisma.SortOrder
+  packagingType?: Prisma.SortOrder
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
 }
 
 export type MenuItemMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   slug?: Prisma.SortOrder
   menuId?: Prisma.SortOrder
   name?: Prisma.SortOrder
@@ -679,11 +1075,26 @@ export type MenuItemMinOrderByAggregateInput = {
   foodType?: Prisma.SortOrder
   timeSlot?: Prisma.SortOrder
   isAvailable?: Prisma.SortOrder
-  reservedCount?: Prisma.SortOrder
-  dailyStock?: Prisma.SortOrder
+  availableFor?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
+  cuisine?: Prisma.SortOrder
+  categoryId?: Prisma.SortOrder
+  bestseller?: Prisma.SortOrder
+  aboutTitle?: Prisma.SortOrder
+  aboutDescription?: Prisma.SortOrder
+  serves?: Prisma.SortOrder
+  portionSize?: Prisma.SortOrder
+  shelfLife?: Prisma.SortOrder
+  allergens?: Prisma.SortOrder
+  metaTitle?: Prisma.SortOrder
+  metaDescription?: Prisma.SortOrder
+  deliveryTimeMin?: Prisma.SortOrder
+  deliveryTimeMax?: Prisma.SortOrder
+  deliveryFee?: Prisma.SortOrder
+  freeDelivery?: Prisma.SortOrder
+  packagingType?: Prisma.SortOrder
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
 }
@@ -691,8 +1102,10 @@ export type MenuItemMinOrderByAggregateInput = {
 export type MenuItemSumOrderByAggregateInput = {
   price?: Prisma.SortOrder
   compareAtPrice?: Prisma.SortOrder
-  reservedCount?: Prisma.SortOrder
-  dailyStock?: Prisma.SortOrder
+  serves?: Prisma.SortOrder
+  deliveryTimeMin?: Prisma.SortOrder
+  deliveryTimeMax?: Prisma.SortOrder
+  deliveryFee?: Prisma.SortOrder
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
 }
@@ -744,6 +1157,10 @@ export type MenuItemUncheckedUpdateManyWithoutMenuNestedInput = {
   deleteMany?: Prisma.MenuItemScalarWhereInput | Prisma.MenuItemScalarWhereInput[]
 }
 
+export type MenuItemCreaterelatedItemIdsInput = {
+  set: string[]
+}
+
 export type NullableDecimalFieldUpdateOperationsInput = {
   set?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   increment?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -760,12 +1177,13 @@ export type EnumTimeSlotFieldUpdateOperationsInput = {
   set?: $Enums.TimeSlot
 }
 
-export type NullableIntFieldUpdateOperationsInput = {
-  set?: number | null
-  increment?: number
-  decrement?: number
-  multiply?: number
-  divide?: number
+export type EnumAvailableForFieldUpdateOperationsInput = {
+  set?: $Enums.AvailableFor
+}
+
+export type MenuItemUpdaterelatedItemIdsInput = {
+  set?: string[]
+  push?: string | string[]
 }
 
 export type MenuItemCreateNestedOneWithoutPhotosInput = {
@@ -780,6 +1198,48 @@ export type MenuItemUpdateOneRequiredWithoutPhotosNestedInput = {
   upsert?: Prisma.MenuItemUpsertWithoutPhotosInput
   connect?: Prisma.MenuItemWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.MenuItemUpdateToOneWithWhereWithoutPhotosInput, Prisma.MenuItemUpdateWithoutPhotosInput>, Prisma.MenuItemUncheckedUpdateWithoutPhotosInput>
+}
+
+export type MenuItemCreateNestedManyWithoutCategoryInput = {
+  create?: Prisma.XOR<Prisma.MenuItemCreateWithoutCategoryInput, Prisma.MenuItemUncheckedCreateWithoutCategoryInput> | Prisma.MenuItemCreateWithoutCategoryInput[] | Prisma.MenuItemUncheckedCreateWithoutCategoryInput[]
+  connectOrCreate?: Prisma.MenuItemCreateOrConnectWithoutCategoryInput | Prisma.MenuItemCreateOrConnectWithoutCategoryInput[]
+  createMany?: Prisma.MenuItemCreateManyCategoryInputEnvelope
+  connect?: Prisma.MenuItemWhereUniqueInput | Prisma.MenuItemWhereUniqueInput[]
+}
+
+export type MenuItemUncheckedCreateNestedManyWithoutCategoryInput = {
+  create?: Prisma.XOR<Prisma.MenuItemCreateWithoutCategoryInput, Prisma.MenuItemUncheckedCreateWithoutCategoryInput> | Prisma.MenuItemCreateWithoutCategoryInput[] | Prisma.MenuItemUncheckedCreateWithoutCategoryInput[]
+  connectOrCreate?: Prisma.MenuItemCreateOrConnectWithoutCategoryInput | Prisma.MenuItemCreateOrConnectWithoutCategoryInput[]
+  createMany?: Prisma.MenuItemCreateManyCategoryInputEnvelope
+  connect?: Prisma.MenuItemWhereUniqueInput | Prisma.MenuItemWhereUniqueInput[]
+}
+
+export type MenuItemUpdateManyWithoutCategoryNestedInput = {
+  create?: Prisma.XOR<Prisma.MenuItemCreateWithoutCategoryInput, Prisma.MenuItemUncheckedCreateWithoutCategoryInput> | Prisma.MenuItemCreateWithoutCategoryInput[] | Prisma.MenuItemUncheckedCreateWithoutCategoryInput[]
+  connectOrCreate?: Prisma.MenuItemCreateOrConnectWithoutCategoryInput | Prisma.MenuItemCreateOrConnectWithoutCategoryInput[]
+  upsert?: Prisma.MenuItemUpsertWithWhereUniqueWithoutCategoryInput | Prisma.MenuItemUpsertWithWhereUniqueWithoutCategoryInput[]
+  createMany?: Prisma.MenuItemCreateManyCategoryInputEnvelope
+  set?: Prisma.MenuItemWhereUniqueInput | Prisma.MenuItemWhereUniqueInput[]
+  disconnect?: Prisma.MenuItemWhereUniqueInput | Prisma.MenuItemWhereUniqueInput[]
+  delete?: Prisma.MenuItemWhereUniqueInput | Prisma.MenuItemWhereUniqueInput[]
+  connect?: Prisma.MenuItemWhereUniqueInput | Prisma.MenuItemWhereUniqueInput[]
+  update?: Prisma.MenuItemUpdateWithWhereUniqueWithoutCategoryInput | Prisma.MenuItemUpdateWithWhereUniqueWithoutCategoryInput[]
+  updateMany?: Prisma.MenuItemUpdateManyWithWhereWithoutCategoryInput | Prisma.MenuItemUpdateManyWithWhereWithoutCategoryInput[]
+  deleteMany?: Prisma.MenuItemScalarWhereInput | Prisma.MenuItemScalarWhereInput[]
+}
+
+export type MenuItemUncheckedUpdateManyWithoutCategoryNestedInput = {
+  create?: Prisma.XOR<Prisma.MenuItemCreateWithoutCategoryInput, Prisma.MenuItemUncheckedCreateWithoutCategoryInput> | Prisma.MenuItemCreateWithoutCategoryInput[] | Prisma.MenuItemUncheckedCreateWithoutCategoryInput[]
+  connectOrCreate?: Prisma.MenuItemCreateOrConnectWithoutCategoryInput | Prisma.MenuItemCreateOrConnectWithoutCategoryInput[]
+  upsert?: Prisma.MenuItemUpsertWithWhereUniqueWithoutCategoryInput | Prisma.MenuItemUpsertWithWhereUniqueWithoutCategoryInput[]
+  createMany?: Prisma.MenuItemCreateManyCategoryInputEnvelope
+  set?: Prisma.MenuItemWhereUniqueInput | Prisma.MenuItemWhereUniqueInput[]
+  disconnect?: Prisma.MenuItemWhereUniqueInput | Prisma.MenuItemWhereUniqueInput[]
+  delete?: Prisma.MenuItemWhereUniqueInput | Prisma.MenuItemWhereUniqueInput[]
+  connect?: Prisma.MenuItemWhereUniqueInput | Prisma.MenuItemWhereUniqueInput[]
+  update?: Prisma.MenuItemUpdateWithWhereUniqueWithoutCategoryInput | Prisma.MenuItemUpdateWithWhereUniqueWithoutCategoryInput[]
+  updateMany?: Prisma.MenuItemUpdateManyWithWhereWithoutCategoryInput | Prisma.MenuItemUpdateManyWithWhereWithoutCategoryInput[]
+  deleteMany?: Prisma.MenuItemScalarWhereInput | Prisma.MenuItemScalarWhereInput[]
 }
 
 export type MenuItemCreateNestedOneWithoutOrderItemsInput = {
@@ -824,20 +1284,6 @@ export type MenuItemUpdateOneRequiredWithoutMenuItemReviewsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MenuItemUpdateToOneWithWhereWithoutMenuItemReviewsInput, Prisma.MenuItemUpdateWithoutMenuItemReviewsInput>, Prisma.MenuItemUncheckedUpdateWithoutMenuItemReviewsInput>
 }
 
-export type MenuItemCreateNestedOneWithoutDailyStockEntriesInput = {
-  create?: Prisma.XOR<Prisma.MenuItemCreateWithoutDailyStockEntriesInput, Prisma.MenuItemUncheckedCreateWithoutDailyStockEntriesInput>
-  connectOrCreate?: Prisma.MenuItemCreateOrConnectWithoutDailyStockEntriesInput
-  connect?: Prisma.MenuItemWhereUniqueInput
-}
-
-export type MenuItemUpdateOneRequiredWithoutDailyStockEntriesNestedInput = {
-  create?: Prisma.XOR<Prisma.MenuItemCreateWithoutDailyStockEntriesInput, Prisma.MenuItemUncheckedCreateWithoutDailyStockEntriesInput>
-  connectOrCreate?: Prisma.MenuItemCreateOrConnectWithoutDailyStockEntriesInput
-  upsert?: Prisma.MenuItemUpsertWithoutDailyStockEntriesInput
-  connect?: Prisma.MenuItemWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.MenuItemUpdateToOneWithWhereWithoutDailyStockEntriesInput, Prisma.MenuItemUpdateWithoutDailyStockEntriesInput>, Prisma.MenuItemUncheckedUpdateWithoutDailyStockEntriesInput>
-}
-
 export type MenuItemCreateNestedOneWithoutWishlistItemsInput = {
   create?: Prisma.XOR<Prisma.MenuItemCreateWithoutWishlistItemsInput, Prisma.MenuItemUncheckedCreateWithoutWishlistItemsInput>
   connectOrCreate?: Prisma.MenuItemCreateOrConnectWithoutWishlistItemsInput
@@ -852,8 +1298,37 @@ export type MenuItemUpdateOneRequiredWithoutWishlistItemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.MenuItemUpdateToOneWithWhereWithoutWishlistItemsInput, Prisma.MenuItemUpdateWithoutWishlistItemsInput>, Prisma.MenuItemUncheckedUpdateWithoutWishlistItemsInput>
 }
 
+export type MenuItemCreateNestedOneWithoutCravingsTriggersInput = {
+  create?: Prisma.XOR<Prisma.MenuItemCreateWithoutCravingsTriggersInput, Prisma.MenuItemUncheckedCreateWithoutCravingsTriggersInput>
+  connectOrCreate?: Prisma.MenuItemCreateOrConnectWithoutCravingsTriggersInput
+  connect?: Prisma.MenuItemWhereUniqueInput
+}
+
+export type MenuItemUpdateOneRequiredWithoutCravingsTriggersNestedInput = {
+  create?: Prisma.XOR<Prisma.MenuItemCreateWithoutCravingsTriggersInput, Prisma.MenuItemUncheckedCreateWithoutCravingsTriggersInput>
+  connectOrCreate?: Prisma.MenuItemCreateOrConnectWithoutCravingsTriggersInput
+  upsert?: Prisma.MenuItemUpsertWithoutCravingsTriggersInput
+  connect?: Prisma.MenuItemWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MenuItemUpdateToOneWithWhereWithoutCravingsTriggersInput, Prisma.MenuItemUpdateWithoutCravingsTriggersInput>, Prisma.MenuItemUncheckedUpdateWithoutCravingsTriggersInput>
+}
+
+export type MenuItemCreateNestedOneWithoutCravingsRuleItemsInput = {
+  create?: Prisma.XOR<Prisma.MenuItemCreateWithoutCravingsRuleItemsInput, Prisma.MenuItemUncheckedCreateWithoutCravingsRuleItemsInput>
+  connectOrCreate?: Prisma.MenuItemCreateOrConnectWithoutCravingsRuleItemsInput
+  connect?: Prisma.MenuItemWhereUniqueInput
+}
+
+export type MenuItemUpdateOneRequiredWithoutCravingsRuleItemsNestedInput = {
+  create?: Prisma.XOR<Prisma.MenuItemCreateWithoutCravingsRuleItemsInput, Prisma.MenuItemUncheckedCreateWithoutCravingsRuleItemsInput>
+  connectOrCreate?: Prisma.MenuItemCreateOrConnectWithoutCravingsRuleItemsInput
+  upsert?: Prisma.MenuItemUpsertWithoutCravingsRuleItemsInput
+  connect?: Prisma.MenuItemWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.MenuItemUpdateToOneWithWhereWithoutCravingsRuleItemsInput, Prisma.MenuItemUpdateWithoutCravingsRuleItemsInput>, Prisma.MenuItemUncheckedUpdateWithoutCravingsRuleItemsInput>
+}
+
 export type MenuItemCreateWithoutMenuInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   name: string
   description?: string | null
@@ -862,23 +1337,42 @@ export type MenuItemCreateWithoutMenuInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  category?: Prisma.CategoryCreateNestedOneWithoutMenuItemsInput
   photos?: Prisma.MenuItemPhotoCreateNestedManyWithoutMenuItemInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutMenuItemInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutMenuItemInput
   menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockCreateNestedManyWithoutMenuItemInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemUncheckedCreateWithoutMenuInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   name: string
   description?: string | null
@@ -887,19 +1381,37 @@ export type MenuItemUncheckedCreateWithoutMenuInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  categoryId?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   photos?: Prisma.MenuItemPhotoUncheckedCreateNestedManyWithoutMenuItemInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutMenuItemInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutMenuItemInput
   menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedCreateNestedManyWithoutMenuItemInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemCreateOrConnectWithoutMenuInput = {
@@ -933,6 +1445,7 @@ export type MenuItemScalarWhereInput = {
   OR?: Prisma.MenuItemScalarWhereInput[]
   NOT?: Prisma.MenuItemScalarWhereInput | Prisma.MenuItemScalarWhereInput[]
   id?: Prisma.StringFilter<"MenuItem"> | string
+  publicCode?: Prisma.StringNullableFilter<"MenuItem"> | string | null
   slug?: Prisma.StringNullableFilter<"MenuItem"> | string | null
   menuId?: Prisma.StringFilter<"MenuItem"> | string
   name?: Prisma.StringFilter<"MenuItem"> | string
@@ -942,17 +1455,35 @@ export type MenuItemScalarWhereInput = {
   foodType?: Prisma.EnumFoodTypeFilter<"MenuItem"> | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFilter<"MenuItem"> | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFilter<"MenuItem"> | boolean
-  reservedCount?: Prisma.IntFilter<"MenuItem"> | number
-  dailyStock?: Prisma.IntNullableFilter<"MenuItem"> | number | null
+  availableFor?: Prisma.EnumAvailableForFilter<"MenuItem"> | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFilter<"MenuItem"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"MenuItem"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"MenuItem"> | Date | string | null
+  cuisine?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  categoryId?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  bestseller?: Prisma.BoolFilter<"MenuItem"> | boolean
+  highlights?: Prisma.JsonNullableFilter<"MenuItem">
+  aboutTitle?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  aboutDescription?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  serves?: Prisma.IntNullableFilter<"MenuItem"> | number | null
+  portionSize?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  shelfLife?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  allergens?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  metaTitle?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  metaDescription?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  deliveryTimeMin?: Prisma.IntNullableFilter<"MenuItem"> | number | null
+  deliveryTimeMax?: Prisma.IntNullableFilter<"MenuItem"> | number | null
+  deliveryFee?: Prisma.DecimalNullableFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFilter<"MenuItem"> | boolean
+  packagingType?: Prisma.StringNullableFilter<"MenuItem"> | string | null
+  relatedItemIds?: Prisma.StringNullableListFilter<"MenuItem">
   avgRating?: Prisma.DecimalFilter<"MenuItem"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFilter<"MenuItem"> | number
 }
 
 export type MenuItemCreateWithoutPhotosInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   name: string
   description?: string | null
@@ -961,23 +1492,42 @@ export type MenuItemCreateWithoutPhotosInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   menu: Prisma.MenuCreateNestedOneWithoutMenuItemsInput
+  category?: Prisma.CategoryCreateNestedOneWithoutMenuItemsInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutMenuItemInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutMenuItemInput
   menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockCreateNestedManyWithoutMenuItemInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemUncheckedCreateWithoutPhotosInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   menuId: string
   name: string
@@ -987,18 +1537,36 @@ export type MenuItemUncheckedCreateWithoutPhotosInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  categoryId?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutMenuItemInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutMenuItemInput
   menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedCreateNestedManyWithoutMenuItemInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemCreateOrConnectWithoutPhotosInput = {
@@ -1019,6 +1587,7 @@ export type MenuItemUpdateToOneWithWhereWithoutPhotosInput = {
 
 export type MenuItemUpdateWithoutPhotosInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1027,23 +1596,42 @@ export type MenuItemUpdateWithoutPhotosInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   menu?: Prisma.MenuUpdateOneRequiredWithoutMenuItemsNestedInput
+  category?: Prisma.CategoryUpdateOneWithoutMenuItemsNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutMenuItemNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutMenuItemNestedInput
   menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUpdateManyWithoutMenuItemNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUpdateManyWithoutMenuItemNestedInput
 }
 
 export type MenuItemUncheckedUpdateWithoutPhotosInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   menuId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1053,22 +1641,41 @@ export type MenuItemUncheckedUpdateWithoutPhotosInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutMenuItemNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutMenuItemNestedInput
   menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedUpdateManyWithoutMenuItemNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedUpdateManyWithoutMenuItemNestedInput
 }
 
-export type MenuItemCreateWithoutOrderItemsInput = {
+export type MenuItemCreateWithoutCategoryInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   name: string
   description?: string | null
@@ -1077,23 +1684,42 @@ export type MenuItemCreateWithoutOrderItemsInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   menu: Prisma.MenuCreateNestedOneWithoutMenuItemsInput
   photos?: Prisma.MenuItemPhotoCreateNestedManyWithoutMenuItemInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutMenuItemInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutMenuItemInput
   menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockCreateNestedManyWithoutMenuItemInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemCreateNestedManyWithoutMenuItemInput
 }
 
-export type MenuItemUncheckedCreateWithoutOrderItemsInput = {
+export type MenuItemUncheckedCreateWithoutCategoryInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   menuId: string
   name: string
@@ -1103,18 +1729,150 @@ export type MenuItemUncheckedCreateWithoutOrderItemsInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  photos?: Prisma.MenuItemPhotoUncheckedCreateNestedManyWithoutMenuItemInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutMenuItemInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutMenuItemInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutMenuItemInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedCreateNestedManyWithoutMenuItemInput
+}
+
+export type MenuItemCreateOrConnectWithoutCategoryInput = {
+  where: Prisma.MenuItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.MenuItemCreateWithoutCategoryInput, Prisma.MenuItemUncheckedCreateWithoutCategoryInput>
+}
+
+export type MenuItemCreateManyCategoryInputEnvelope = {
+  data: Prisma.MenuItemCreateManyCategoryInput | Prisma.MenuItemCreateManyCategoryInput[]
+  skipDuplicates?: boolean
+}
+
+export type MenuItemUpsertWithWhereUniqueWithoutCategoryInput = {
+  where: Prisma.MenuItemWhereUniqueInput
+  update: Prisma.XOR<Prisma.MenuItemUpdateWithoutCategoryInput, Prisma.MenuItemUncheckedUpdateWithoutCategoryInput>
+  create: Prisma.XOR<Prisma.MenuItemCreateWithoutCategoryInput, Prisma.MenuItemUncheckedCreateWithoutCategoryInput>
+}
+
+export type MenuItemUpdateWithWhereUniqueWithoutCategoryInput = {
+  where: Prisma.MenuItemWhereUniqueInput
+  data: Prisma.XOR<Prisma.MenuItemUpdateWithoutCategoryInput, Prisma.MenuItemUncheckedUpdateWithoutCategoryInput>
+}
+
+export type MenuItemUpdateManyWithWhereWithoutCategoryInput = {
+  where: Prisma.MenuItemScalarWhereInput
+  data: Prisma.XOR<Prisma.MenuItemUpdateManyMutationInput, Prisma.MenuItemUncheckedUpdateManyWithoutCategoryInput>
+}
+
+export type MenuItemCreateWithoutOrderItemsInput = {
+  id?: string
+  publicCode?: string | null
+  slug?: string | null
+  name: string
+  description?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType: $Enums.FoodType
+  timeSlot: $Enums.TimeSlot
+  isAvailable?: boolean
+  availableFor?: $Enums.AvailableFor
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  cuisine?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  menu: Prisma.MenuCreateNestedOneWithoutMenuItemsInput
+  category?: Prisma.CategoryCreateNestedOneWithoutMenuItemsInput
+  photos?: Prisma.MenuItemPhotoCreateNestedManyWithoutMenuItemInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutMenuItemInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutMenuItemInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemCreateNestedManyWithoutMenuItemInput
+}
+
+export type MenuItemUncheckedCreateWithoutOrderItemsInput = {
+  id?: string
+  publicCode?: string | null
+  slug?: string | null
+  menuId: string
+  name: string
+  description?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType: $Enums.FoodType
+  timeSlot: $Enums.TimeSlot
+  isAvailable?: boolean
+  availableFor?: $Enums.AvailableFor
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  cuisine?: string | null
+  categoryId?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   photos?: Prisma.MenuItemPhotoUncheckedCreateNestedManyWithoutMenuItemInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutMenuItemInput
   menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedCreateNestedManyWithoutMenuItemInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemCreateOrConnectWithoutOrderItemsInput = {
@@ -1135,6 +1893,7 @@ export type MenuItemUpdateToOneWithWhereWithoutOrderItemsInput = {
 
 export type MenuItemUpdateWithoutOrderItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1143,23 +1902,42 @@ export type MenuItemUpdateWithoutOrderItemsInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   menu?: Prisma.MenuUpdateOneRequiredWithoutMenuItemsNestedInput
+  category?: Prisma.CategoryUpdateOneWithoutMenuItemsNestedInput
   photos?: Prisma.MenuItemPhotoUpdateManyWithoutMenuItemNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutMenuItemNestedInput
   menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUpdateManyWithoutMenuItemNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUpdateManyWithoutMenuItemNestedInput
 }
 
 export type MenuItemUncheckedUpdateWithoutOrderItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   menuId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1169,22 +1947,41 @@ export type MenuItemUncheckedUpdateWithoutOrderItemsInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   photos?: Prisma.MenuItemPhotoUncheckedUpdateManyWithoutMenuItemNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutMenuItemNestedInput
   menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedUpdateManyWithoutMenuItemNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedUpdateManyWithoutMenuItemNestedInput
 }
 
 export type MenuItemCreateWithoutMenuItemFeedbacksInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   name: string
   description?: string | null
@@ -1193,23 +1990,42 @@ export type MenuItemCreateWithoutMenuItemFeedbacksInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   menu: Prisma.MenuCreateNestedOneWithoutMenuItemsInput
+  category?: Prisma.CategoryCreateNestedOneWithoutMenuItemsInput
   photos?: Prisma.MenuItemPhotoCreateNestedManyWithoutMenuItemInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutMenuItemInput
   menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockCreateNestedManyWithoutMenuItemInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemUncheckedCreateWithoutMenuItemFeedbacksInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   menuId: string
   name: string
@@ -1219,18 +2035,36 @@ export type MenuItemUncheckedCreateWithoutMenuItemFeedbacksInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  categoryId?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   photos?: Prisma.MenuItemPhotoUncheckedCreateNestedManyWithoutMenuItemInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutMenuItemInput
   menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedCreateNestedManyWithoutMenuItemInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemCreateOrConnectWithoutMenuItemFeedbacksInput = {
@@ -1251,6 +2085,7 @@ export type MenuItemUpdateToOneWithWhereWithoutMenuItemFeedbacksInput = {
 
 export type MenuItemUpdateWithoutMenuItemFeedbacksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1259,23 +2094,42 @@ export type MenuItemUpdateWithoutMenuItemFeedbacksInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   menu?: Prisma.MenuUpdateOneRequiredWithoutMenuItemsNestedInput
+  category?: Prisma.CategoryUpdateOneWithoutMenuItemsNestedInput
   photos?: Prisma.MenuItemPhotoUpdateManyWithoutMenuItemNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutMenuItemNestedInput
   menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUpdateManyWithoutMenuItemNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUpdateManyWithoutMenuItemNestedInput
 }
 
 export type MenuItemUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   menuId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1285,22 +2139,41 @@ export type MenuItemUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   photos?: Prisma.MenuItemPhotoUncheckedUpdateManyWithoutMenuItemNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutMenuItemNestedInput
   menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedUpdateManyWithoutMenuItemNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedUpdateManyWithoutMenuItemNestedInput
 }
 
 export type MenuItemCreateWithoutMenuItemReviewsInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   name: string
   description?: string | null
@@ -1309,23 +2182,42 @@ export type MenuItemCreateWithoutMenuItemReviewsInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   menu: Prisma.MenuCreateNestedOneWithoutMenuItemsInput
+  category?: Prisma.CategoryCreateNestedOneWithoutMenuItemsInput
   photos?: Prisma.MenuItemPhotoCreateNestedManyWithoutMenuItemInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutMenuItemInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockCreateNestedManyWithoutMenuItemInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemUncheckedCreateWithoutMenuItemReviewsInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   menuId: string
   name: string
@@ -1335,18 +2227,36 @@ export type MenuItemUncheckedCreateWithoutMenuItemReviewsInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  categoryId?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   photos?: Prisma.MenuItemPhotoUncheckedCreateNestedManyWithoutMenuItemInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutMenuItemInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedCreateNestedManyWithoutMenuItemInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemCreateOrConnectWithoutMenuItemReviewsInput = {
@@ -1367,6 +2277,7 @@ export type MenuItemUpdateToOneWithWhereWithoutMenuItemReviewsInput = {
 
 export type MenuItemUpdateWithoutMenuItemReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1375,23 +2286,42 @@ export type MenuItemUpdateWithoutMenuItemReviewsInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   menu?: Prisma.MenuUpdateOneRequiredWithoutMenuItemsNestedInput
+  category?: Prisma.CategoryUpdateOneWithoutMenuItemsNestedInput
   photos?: Prisma.MenuItemPhotoUpdateManyWithoutMenuItemNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutMenuItemNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUpdateManyWithoutMenuItemNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUpdateManyWithoutMenuItemNestedInput
 }
 
 export type MenuItemUncheckedUpdateWithoutMenuItemReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   menuId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1401,138 +2331,41 @@ export type MenuItemUncheckedUpdateWithoutMenuItemReviewsInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   photos?: Prisma.MenuItemPhotoUncheckedUpdateManyWithoutMenuItemNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutMenuItemNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedUpdateManyWithoutMenuItemNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutMenuItemNestedInput
-}
-
-export type MenuItemCreateWithoutDailyStockEntriesInput = {
-  id?: string
-  slug?: string | null
-  name: string
-  description?: string | null
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  foodType: $Enums.FoodType
-  timeSlot: $Enums.TimeSlot
-  isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  totalReviews?: number
-  menu: Prisma.MenuCreateNestedOneWithoutMenuItemsInput
-  photos?: Prisma.MenuItemPhotoCreateNestedManyWithoutMenuItemInput
-  orderItems?: Prisma.OrderItemCreateNestedManyWithoutMenuItemInput
-  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutMenuItemInput
-  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutMenuItemInput
-  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutMenuItemInput
-}
-
-export type MenuItemUncheckedCreateWithoutDailyStockEntriesInput = {
-  id?: string
-  slug?: string | null
-  menuId: string
-  name: string
-  description?: string | null
-  price: runtime.Decimal | runtime.DecimalJsLike | number | string
-  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  foodType: $Enums.FoodType
-  timeSlot: $Enums.TimeSlot
-  isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
-  totalReviews?: number
-  photos?: Prisma.MenuItemPhotoUncheckedCreateNestedManyWithoutMenuItemInput
-  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutMenuItemInput
-  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutMenuItemInput
-  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutMenuItemInput
-  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutMenuItemInput
-}
-
-export type MenuItemCreateOrConnectWithoutDailyStockEntriesInput = {
-  where: Prisma.MenuItemWhereUniqueInput
-  create: Prisma.XOR<Prisma.MenuItemCreateWithoutDailyStockEntriesInput, Prisma.MenuItemUncheckedCreateWithoutDailyStockEntriesInput>
-}
-
-export type MenuItemUpsertWithoutDailyStockEntriesInput = {
-  update: Prisma.XOR<Prisma.MenuItemUpdateWithoutDailyStockEntriesInput, Prisma.MenuItemUncheckedUpdateWithoutDailyStockEntriesInput>
-  create: Prisma.XOR<Prisma.MenuItemCreateWithoutDailyStockEntriesInput, Prisma.MenuItemUncheckedCreateWithoutDailyStockEntriesInput>
-  where?: Prisma.MenuItemWhereInput
-}
-
-export type MenuItemUpdateToOneWithWhereWithoutDailyStockEntriesInput = {
-  where?: Prisma.MenuItemWhereInput
-  data: Prisma.XOR<Prisma.MenuItemUpdateWithoutDailyStockEntriesInput, Prisma.MenuItemUncheckedUpdateWithoutDailyStockEntriesInput>
-}
-
-export type MenuItemUpdateWithoutDailyStockEntriesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
-  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
-  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
-  menu?: Prisma.MenuUpdateOneRequiredWithoutMenuItemsNestedInput
-  photos?: Prisma.MenuItemPhotoUpdateManyWithoutMenuItemNestedInput
-  orderItems?: Prisma.OrderItemUpdateManyWithoutMenuItemNestedInput
-  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutMenuItemNestedInput
-  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutMenuItemNestedInput
-  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutMenuItemNestedInput
-}
-
-export type MenuItemUncheckedUpdateWithoutDailyStockEntriesInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  menuId?: Prisma.StringFieldUpdateOperationsInput | string
-  name?: Prisma.StringFieldUpdateOperationsInput | string
-  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
-  foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
-  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
-  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
-  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
-  photos?: Prisma.MenuItemPhotoUncheckedUpdateManyWithoutMenuItemNestedInput
-  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutMenuItemNestedInput
-  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutMenuItemNestedInput
-  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutMenuItemNestedInput
-  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedUpdateManyWithoutMenuItemNestedInput
 }
 
 export type MenuItemCreateWithoutWishlistItemsInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   name: string
   description?: string | null
@@ -1541,23 +2374,42 @@ export type MenuItemCreateWithoutWishlistItemsInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   menu: Prisma.MenuCreateNestedOneWithoutMenuItemsInput
+  category?: Prisma.CategoryCreateNestedOneWithoutMenuItemsInput
   photos?: Prisma.MenuItemPhotoCreateNestedManyWithoutMenuItemInput
   orderItems?: Prisma.OrderItemCreateNestedManyWithoutMenuItemInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutMenuItemInput
   menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemUncheckedCreateWithoutWishlistItemsInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   menuId: string
   name: string
@@ -1567,18 +2419,36 @@ export type MenuItemUncheckedCreateWithoutWishlistItemsInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  categoryId?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
   photos?: Prisma.MenuItemPhotoUncheckedCreateNestedManyWithoutMenuItemInput
   orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutMenuItemInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutMenuItemInput
   menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutMenuItemInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutTriggerItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedCreateNestedManyWithoutMenuItemInput
 }
 
 export type MenuItemCreateOrConnectWithoutWishlistItemsInput = {
@@ -1599,6 +2469,7 @@ export type MenuItemUpdateToOneWithWhereWithoutWishlistItemsInput = {
 
 export type MenuItemUpdateWithoutWishlistItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1607,23 +2478,42 @@ export type MenuItemUpdateWithoutWishlistItemsInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   menu?: Prisma.MenuUpdateOneRequiredWithoutMenuItemsNestedInput
+  category?: Prisma.CategoryUpdateOneWithoutMenuItemsNestedInput
   photos?: Prisma.MenuItemPhotoUpdateManyWithoutMenuItemNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutMenuItemNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutMenuItemNestedInput
   menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUpdateManyWithoutMenuItemNestedInput
 }
 
 export type MenuItemUncheckedUpdateWithoutWishlistItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   menuId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1633,22 +2523,41 @@ export type MenuItemUncheckedUpdateWithoutWishlistItemsInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   photos?: Prisma.MenuItemPhotoUncheckedUpdateManyWithoutMenuItemNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutMenuItemNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutMenuItemNestedInput
   menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedUpdateManyWithoutMenuItemNestedInput
 }
 
-export type MenuItemCreateManyMenuInput = {
+export type MenuItemCreateWithoutCravingsTriggersInput = {
   id?: string
+  publicCode?: string | null
   slug?: string | null
   name: string
   description?: string | null
@@ -1657,17 +2566,102 @@ export type MenuItemCreateManyMenuInput = {
   foodType: $Enums.FoodType
   timeSlot: $Enums.TimeSlot
   isAvailable?: boolean
-  reservedCount?: number
-  dailyStock?: number | null
+  availableFor?: $Enums.AvailableFor
   createdAt?: Date | string
   updatedAt?: Date | string
   deletedAt?: Date | string | null
+  cuisine?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
   avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: number
+  menu: Prisma.MenuCreateNestedOneWithoutMenuItemsInput
+  category?: Prisma.CategoryCreateNestedOneWithoutMenuItemsInput
+  photos?: Prisma.MenuItemPhotoCreateNestedManyWithoutMenuItemInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutMenuItemInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutMenuItemInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutMenuItemInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutMenuItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemCreateNestedManyWithoutMenuItemInput
 }
 
-export type MenuItemUpdateWithoutMenuInput = {
+export type MenuItemUncheckedCreateWithoutCravingsTriggersInput = {
+  id?: string
+  publicCode?: string | null
+  slug?: string | null
+  menuId: string
+  name: string
+  description?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType: $Enums.FoodType
+  timeSlot: $Enums.TimeSlot
+  isAvailable?: boolean
+  availableFor?: $Enums.AvailableFor
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  cuisine?: string | null
+  categoryId?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  photos?: Prisma.MenuItemPhotoUncheckedCreateNestedManyWithoutMenuItemInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutMenuItemInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutMenuItemInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutMenuItemInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutMenuItemInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedCreateNestedManyWithoutMenuItemInput
+}
+
+export type MenuItemCreateOrConnectWithoutCravingsTriggersInput = {
+  where: Prisma.MenuItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.MenuItemCreateWithoutCravingsTriggersInput, Prisma.MenuItemUncheckedCreateWithoutCravingsTriggersInput>
+}
+
+export type MenuItemUpsertWithoutCravingsTriggersInput = {
+  update: Prisma.XOR<Prisma.MenuItemUpdateWithoutCravingsTriggersInput, Prisma.MenuItemUncheckedUpdateWithoutCravingsTriggersInput>
+  create: Prisma.XOR<Prisma.MenuItemCreateWithoutCravingsTriggersInput, Prisma.MenuItemUncheckedCreateWithoutCravingsTriggersInput>
+  where?: Prisma.MenuItemWhereInput
+}
+
+export type MenuItemUpdateToOneWithWhereWithoutCravingsTriggersInput = {
+  where?: Prisma.MenuItemWhereInput
+  data: Prisma.XOR<Prisma.MenuItemUpdateWithoutCravingsTriggersInput, Prisma.MenuItemUncheckedUpdateWithoutCravingsTriggersInput>
+}
+
+export type MenuItemUpdateWithoutCravingsTriggersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1676,24 +2670,44 @@ export type MenuItemUpdateWithoutMenuInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  menu?: Prisma.MenuUpdateOneRequiredWithoutMenuItemsNestedInput
+  category?: Prisma.CategoryUpdateOneWithoutMenuItemsNestedInput
   photos?: Prisma.MenuItemPhotoUpdateManyWithoutMenuItemNestedInput
   orderItems?: Prisma.OrderItemUpdateManyWithoutMenuItemNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutMenuItemNestedInput
   menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUpdateManyWithoutMenuItemNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutMenuItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUpdateManyWithoutMenuItemNestedInput
 }
 
-export type MenuItemUncheckedUpdateWithoutMenuInput = {
+export type MenuItemUncheckedUpdateWithoutCravingsTriggersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  menuId?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1701,23 +2715,145 @@ export type MenuItemUncheckedUpdateWithoutMenuInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
   photos?: Prisma.MenuItemPhotoUncheckedUpdateManyWithoutMenuItemNestedInput
   orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutMenuItemNestedInput
   menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutMenuItemNestedInput
   menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutMenuItemNestedInput
-  dailyStockEntries?: Prisma.MenuItemDailyStockUncheckedUpdateManyWithoutMenuItemNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutMenuItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedUpdateManyWithoutMenuItemNestedInput
 }
 
-export type MenuItemUncheckedUpdateManyWithoutMenuInput = {
+export type MenuItemCreateWithoutCravingsRuleItemsInput = {
+  id?: string
+  publicCode?: string | null
+  slug?: string | null
+  name: string
+  description?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType: $Enums.FoodType
+  timeSlot: $Enums.TimeSlot
+  isAvailable?: boolean
+  availableFor?: $Enums.AvailableFor
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  cuisine?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  menu: Prisma.MenuCreateNestedOneWithoutMenuItemsInput
+  category?: Prisma.CategoryCreateNestedOneWithoutMenuItemsInput
+  photos?: Prisma.MenuItemPhotoCreateNestedManyWithoutMenuItemInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutMenuItemInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutMenuItemInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutMenuItemInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleCreateNestedManyWithoutTriggerItemInput
+}
+
+export type MenuItemUncheckedCreateWithoutCravingsRuleItemsInput = {
+  id?: string
+  publicCode?: string | null
+  slug?: string | null
+  menuId: string
+  name: string
+  description?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType: $Enums.FoodType
+  timeSlot: $Enums.TimeSlot
+  isAvailable?: boolean
+  availableFor?: $Enums.AvailableFor
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  cuisine?: string | null
+  categoryId?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  photos?: Prisma.MenuItemPhotoUncheckedCreateNestedManyWithoutMenuItemInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutMenuItemInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutMenuItemInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutMenuItemInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutMenuItemInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutTriggerItemInput
+}
+
+export type MenuItemCreateOrConnectWithoutCravingsRuleItemsInput = {
+  where: Prisma.MenuItemWhereUniqueInput
+  create: Prisma.XOR<Prisma.MenuItemCreateWithoutCravingsRuleItemsInput, Prisma.MenuItemUncheckedCreateWithoutCravingsRuleItemsInput>
+}
+
+export type MenuItemUpsertWithoutCravingsRuleItemsInput = {
+  update: Prisma.XOR<Prisma.MenuItemUpdateWithoutCravingsRuleItemsInput, Prisma.MenuItemUncheckedUpdateWithoutCravingsRuleItemsInput>
+  create: Prisma.XOR<Prisma.MenuItemCreateWithoutCravingsRuleItemsInput, Prisma.MenuItemUncheckedCreateWithoutCravingsRuleItemsInput>
+  where?: Prisma.MenuItemWhereInput
+}
+
+export type MenuItemUpdateToOneWithWhereWithoutCravingsRuleItemsInput = {
+  where?: Prisma.MenuItemWhereInput
+  data: Prisma.XOR<Prisma.MenuItemUpdateWithoutCravingsRuleItemsInput, Prisma.MenuItemUncheckedUpdateWithoutCravingsRuleItemsInput>
+}
+
+export type MenuItemUpdateWithoutCravingsRuleItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -1726,11 +2862,403 @@ export type MenuItemUncheckedUpdateManyWithoutMenuInput = {
   foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
   timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
   isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  reservedCount?: Prisma.IntFieldUpdateOperationsInput | number
-  dailyStock?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  menu?: Prisma.MenuUpdateOneRequiredWithoutMenuItemsNestedInput
+  category?: Prisma.CategoryUpdateOneWithoutMenuItemsNestedInput
+  photos?: Prisma.MenuItemPhotoUpdateManyWithoutMenuItemNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutMenuItemNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutMenuItemNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutMenuItemNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUpdateManyWithoutTriggerItemNestedInput
+}
+
+export type MenuItemUncheckedUpdateWithoutCravingsRuleItemsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  menuId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  photos?: Prisma.MenuItemPhotoUncheckedUpdateManyWithoutMenuItemNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutMenuItemNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutMenuItemNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutMenuItemNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedUpdateManyWithoutTriggerItemNestedInput
+}
+
+export type MenuItemCreateManyMenuInput = {
+  id?: string
+  publicCode?: string | null
+  slug?: string | null
+  name: string
+  description?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType: $Enums.FoodType
+  timeSlot: $Enums.TimeSlot
+  isAvailable?: boolean
+  availableFor?: $Enums.AvailableFor
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  cuisine?: string | null
+  categoryId?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+}
+
+export type MenuItemUpdateWithoutMenuInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  category?: Prisma.CategoryUpdateOneWithoutMenuItemsNestedInput
+  photos?: Prisma.MenuItemPhotoUpdateManyWithoutMenuItemNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutMenuItemNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutMenuItemNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutMenuItemNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUpdateManyWithoutMenuItemNestedInput
+}
+
+export type MenuItemUncheckedUpdateWithoutMenuInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  photos?: Prisma.MenuItemPhotoUncheckedUpdateManyWithoutMenuItemNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutMenuItemNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutMenuItemNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutMenuItemNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedUpdateManyWithoutMenuItemNestedInput
+}
+
+export type MenuItemUncheckedUpdateManyWithoutMenuInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  categoryId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type MenuItemCreateManyCategoryInput = {
+  id?: string
+  publicCode?: string | null
+  slug?: string | null
+  menuId: string
+  name: string
+  description?: string | null
+  price: runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType: $Enums.FoodType
+  timeSlot: $Enums.TimeSlot
+  isAvailable?: boolean
+  availableFor?: $Enums.AvailableFor
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  cuisine?: string | null
+  bestseller?: boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: string | null
+  aboutDescription?: string | null
+  serves?: number | null
+  portionSize?: string | null
+  shelfLife?: string | null
+  allergens?: string | null
+  metaTitle?: string | null
+  metaDescription?: string | null
+  deliveryTimeMin?: number | null
+  deliveryTimeMax?: number | null
+  deliveryFee?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: boolean
+  packagingType?: string | null
+  relatedItemIds?: Prisma.MenuItemCreaterelatedItemIdsInput | string[]
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+}
+
+export type MenuItemUpdateWithoutCategoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  menu?: Prisma.MenuUpdateOneRequiredWithoutMenuItemsNestedInput
+  photos?: Prisma.MenuItemPhotoUpdateManyWithoutMenuItemNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutMenuItemNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutMenuItemNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutMenuItemNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUpdateManyWithoutMenuItemNestedInput
+}
+
+export type MenuItemUncheckedUpdateWithoutCategoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  menuId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  photos?: Prisma.MenuItemPhotoUncheckedUpdateManyWithoutMenuItemNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutMenuItemNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutMenuItemNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutMenuItemNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutMenuItemNestedInput
+  cravingsTriggers?: Prisma.CravingsRuleUncheckedUpdateManyWithoutTriggerItemNestedInput
+  cravingsRuleItems?: Prisma.CravingsRuleItemUncheckedUpdateManyWithoutMenuItemNestedInput
+}
+
+export type MenuItemUncheckedUpdateManyWithoutCategoryInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  menuId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  compareAtPrice?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  foodType?: Prisma.EnumFoodTypeFieldUpdateOperationsInput | $Enums.FoodType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  isAvailable?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  availableFor?: Prisma.EnumAvailableForFieldUpdateOperationsInput | $Enums.AvailableFor
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  cuisine?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  bestseller?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  highlights?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  aboutTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  aboutDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serves?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  portionSize?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  shelfLife?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  allergens?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaTitle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  metaDescription?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryTimeMin?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryTimeMax?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryFee?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  freeDelivery?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  packagingType?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  relatedItemIds?: Prisma.MenuItemUpdaterelatedItemIdsInput | string[]
   avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
 }
@@ -1745,8 +3273,9 @@ export type MenuItemCountOutputType = {
   orderItems: number
   menuItemFeedbacks: number
   menuItemReviews: number
-  dailyStockEntries: number
   wishlistItems: number
+  cravingsTriggers: number
+  cravingsRuleItems: number
 }
 
 export type MenuItemCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1754,8 +3283,9 @@ export type MenuItemCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   orderItems?: boolean | MenuItemCountOutputTypeCountOrderItemsArgs
   menuItemFeedbacks?: boolean | MenuItemCountOutputTypeCountMenuItemFeedbacksArgs
   menuItemReviews?: boolean | MenuItemCountOutputTypeCountMenuItemReviewsArgs
-  dailyStockEntries?: boolean | MenuItemCountOutputTypeCountDailyStockEntriesArgs
   wishlistItems?: boolean | MenuItemCountOutputTypeCountWishlistItemsArgs
+  cravingsTriggers?: boolean | MenuItemCountOutputTypeCountCravingsTriggersArgs
+  cravingsRuleItems?: boolean | MenuItemCountOutputTypeCountCravingsRuleItemsArgs
 }
 
 /**
@@ -1799,20 +3329,28 @@ export type MenuItemCountOutputTypeCountMenuItemReviewsArgs<ExtArgs extends runt
 /**
  * MenuItemCountOutputType without action
  */
-export type MenuItemCountOutputTypeCountDailyStockEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.MenuItemDailyStockWhereInput
+export type MenuItemCountOutputTypeCountWishlistItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.WishlistItemWhereInput
 }
 
 /**
  * MenuItemCountOutputType without action
  */
-export type MenuItemCountOutputTypeCountWishlistItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.WishlistItemWhereInput
+export type MenuItemCountOutputTypeCountCravingsTriggersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CravingsRuleWhereInput
+}
+
+/**
+ * MenuItemCountOutputType without action
+ */
+export type MenuItemCountOutputTypeCountCravingsRuleItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.CravingsRuleItemWhereInput
 }
 
 
 export type MenuItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   slug?: boolean
   menuId?: boolean
   name?: boolean
@@ -1822,25 +3360,45 @@ export type MenuItemSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   foodType?: boolean
   timeSlot?: boolean
   isAvailable?: boolean
-  reservedCount?: boolean
-  dailyStock?: boolean
+  availableFor?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
+  cuisine?: boolean
+  categoryId?: boolean
+  bestseller?: boolean
+  highlights?: boolean
+  aboutTitle?: boolean
+  aboutDescription?: boolean
+  serves?: boolean
+  portionSize?: boolean
+  shelfLife?: boolean
+  allergens?: boolean
+  metaTitle?: boolean
+  metaDescription?: boolean
+  deliveryTimeMin?: boolean
+  deliveryTimeMax?: boolean
+  deliveryFee?: boolean
+  freeDelivery?: boolean
+  packagingType?: boolean
+  relatedItemIds?: boolean
   avgRating?: boolean
   totalReviews?: boolean
   menu?: boolean | Prisma.MenuDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.MenuItem$categoryArgs<ExtArgs>
   photos?: boolean | Prisma.MenuItem$photosArgs<ExtArgs>
   orderItems?: boolean | Prisma.MenuItem$orderItemsArgs<ExtArgs>
   menuItemFeedbacks?: boolean | Prisma.MenuItem$menuItemFeedbacksArgs<ExtArgs>
   menuItemReviews?: boolean | Prisma.MenuItem$menuItemReviewsArgs<ExtArgs>
-  dailyStockEntries?: boolean | Prisma.MenuItem$dailyStockEntriesArgs<ExtArgs>
   wishlistItems?: boolean | Prisma.MenuItem$wishlistItemsArgs<ExtArgs>
+  cravingsTriggers?: boolean | Prisma.MenuItem$cravingsTriggersArgs<ExtArgs>
+  cravingsRuleItems?: boolean | Prisma.MenuItem$cravingsRuleItemsArgs<ExtArgs>
   _count?: boolean | Prisma.MenuItemCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["menuItem"]>
 
 export type MenuItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   slug?: boolean
   menuId?: boolean
   name?: boolean
@@ -1850,18 +3408,37 @@ export type MenuItemSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   foodType?: boolean
   timeSlot?: boolean
   isAvailable?: boolean
-  reservedCount?: boolean
-  dailyStock?: boolean
+  availableFor?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
+  cuisine?: boolean
+  categoryId?: boolean
+  bestseller?: boolean
+  highlights?: boolean
+  aboutTitle?: boolean
+  aboutDescription?: boolean
+  serves?: boolean
+  portionSize?: boolean
+  shelfLife?: boolean
+  allergens?: boolean
+  metaTitle?: boolean
+  metaDescription?: boolean
+  deliveryTimeMin?: boolean
+  deliveryTimeMax?: boolean
+  deliveryFee?: boolean
+  freeDelivery?: boolean
+  packagingType?: boolean
+  relatedItemIds?: boolean
   avgRating?: boolean
   totalReviews?: boolean
   menu?: boolean | Prisma.MenuDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.MenuItem$categoryArgs<ExtArgs>
 }, ExtArgs["result"]["menuItem"]>
 
 export type MenuItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   slug?: boolean
   menuId?: boolean
   name?: boolean
@@ -1871,18 +3448,37 @@ export type MenuItemSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   foodType?: boolean
   timeSlot?: boolean
   isAvailable?: boolean
-  reservedCount?: boolean
-  dailyStock?: boolean
+  availableFor?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
+  cuisine?: boolean
+  categoryId?: boolean
+  bestseller?: boolean
+  highlights?: boolean
+  aboutTitle?: boolean
+  aboutDescription?: boolean
+  serves?: boolean
+  portionSize?: boolean
+  shelfLife?: boolean
+  allergens?: boolean
+  metaTitle?: boolean
+  metaDescription?: boolean
+  deliveryTimeMin?: boolean
+  deliveryTimeMax?: boolean
+  deliveryFee?: boolean
+  freeDelivery?: boolean
+  packagingType?: boolean
+  relatedItemIds?: boolean
   avgRating?: boolean
   totalReviews?: boolean
   menu?: boolean | Prisma.MenuDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.MenuItem$categoryArgs<ExtArgs>
 }, ExtArgs["result"]["menuItem"]>
 
 export type MenuItemSelectScalar = {
   id?: boolean
+  publicCode?: boolean
   slug?: boolean
   menuId?: boolean
   name?: boolean
@@ -1892,46 +3488,70 @@ export type MenuItemSelectScalar = {
   foodType?: boolean
   timeSlot?: boolean
   isAvailable?: boolean
-  reservedCount?: boolean
-  dailyStock?: boolean
+  availableFor?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
+  cuisine?: boolean
+  categoryId?: boolean
+  bestseller?: boolean
+  highlights?: boolean
+  aboutTitle?: boolean
+  aboutDescription?: boolean
+  serves?: boolean
+  portionSize?: boolean
+  shelfLife?: boolean
+  allergens?: boolean
+  metaTitle?: boolean
+  metaDescription?: boolean
+  deliveryTimeMin?: boolean
+  deliveryTimeMax?: boolean
+  deliveryFee?: boolean
+  freeDelivery?: boolean
+  packagingType?: boolean
+  relatedItemIds?: boolean
   avgRating?: boolean
   totalReviews?: boolean
 }
 
-export type MenuItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "slug" | "menuId" | "name" | "description" | "price" | "compareAtPrice" | "foodType" | "timeSlot" | "isAvailable" | "reservedCount" | "dailyStock" | "createdAt" | "updatedAt" | "deletedAt" | "avgRating" | "totalReviews", ExtArgs["result"]["menuItem"]>
+export type MenuItemOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicCode" | "slug" | "menuId" | "name" | "description" | "price" | "compareAtPrice" | "foodType" | "timeSlot" | "isAvailable" | "availableFor" | "createdAt" | "updatedAt" | "deletedAt" | "cuisine" | "categoryId" | "bestseller" | "highlights" | "aboutTitle" | "aboutDescription" | "serves" | "portionSize" | "shelfLife" | "allergens" | "metaTitle" | "metaDescription" | "deliveryTimeMin" | "deliveryTimeMax" | "deliveryFee" | "freeDelivery" | "packagingType" | "relatedItemIds" | "avgRating" | "totalReviews", ExtArgs["result"]["menuItem"]>
 export type MenuItemInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   menu?: boolean | Prisma.MenuDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.MenuItem$categoryArgs<ExtArgs>
   photos?: boolean | Prisma.MenuItem$photosArgs<ExtArgs>
   orderItems?: boolean | Prisma.MenuItem$orderItemsArgs<ExtArgs>
   menuItemFeedbacks?: boolean | Prisma.MenuItem$menuItemFeedbacksArgs<ExtArgs>
   menuItemReviews?: boolean | Prisma.MenuItem$menuItemReviewsArgs<ExtArgs>
-  dailyStockEntries?: boolean | Prisma.MenuItem$dailyStockEntriesArgs<ExtArgs>
   wishlistItems?: boolean | Prisma.MenuItem$wishlistItemsArgs<ExtArgs>
+  cravingsTriggers?: boolean | Prisma.MenuItem$cravingsTriggersArgs<ExtArgs>
+  cravingsRuleItems?: boolean | Prisma.MenuItem$cravingsRuleItemsArgs<ExtArgs>
   _count?: boolean | Prisma.MenuItemCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type MenuItemIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   menu?: boolean | Prisma.MenuDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.MenuItem$categoryArgs<ExtArgs>
 }
 export type MenuItemIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   menu?: boolean | Prisma.MenuDefaultArgs<ExtArgs>
+  category?: boolean | Prisma.MenuItem$categoryArgs<ExtArgs>
 }
 
 export type $MenuItemPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "MenuItem"
   objects: {
     menu: Prisma.$MenuPayload<ExtArgs>
+    category: Prisma.$CategoryPayload<ExtArgs> | null
     photos: Prisma.$MenuItemPhotoPayload<ExtArgs>[]
     orderItems: Prisma.$OrderItemPayload<ExtArgs>[]
     menuItemFeedbacks: Prisma.$MenuItemFeedbackPayload<ExtArgs>[]
     menuItemReviews: Prisma.$MenuItemReviewPayload<ExtArgs>[]
-    dailyStockEntries: Prisma.$MenuItemDailyStockPayload<ExtArgs>[]
     wishlistItems: Prisma.$WishlistItemPayload<ExtArgs>[]
+    cravingsTriggers: Prisma.$CravingsRulePayload<ExtArgs>[]
+    cravingsRuleItems: Prisma.$CravingsRuleItemPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    publicCode: string | null
     slug: string | null
     menuId: string
     name: string
@@ -1941,11 +3561,28 @@ export type $MenuItemPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     foodType: $Enums.FoodType
     timeSlot: $Enums.TimeSlot
     isAvailable: boolean
-    reservedCount: number
-    dailyStock: number | null
+    availableFor: $Enums.AvailableFor
     createdAt: Date
     updatedAt: Date
     deletedAt: Date | null
+    cuisine: string | null
+    categoryId: string | null
+    bestseller: boolean
+    highlights: runtime.JsonValue | null
+    aboutTitle: string | null
+    aboutDescription: string | null
+    serves: number | null
+    portionSize: string | null
+    shelfLife: string | null
+    allergens: string | null
+    metaTitle: string | null
+    metaDescription: string | null
+    deliveryTimeMin: number | null
+    deliveryTimeMax: number | null
+    deliveryFee: runtime.Decimal | null
+    freeDelivery: boolean
+    packagingType: string | null
+    relatedItemIds: string[]
     avgRating: runtime.Decimal
     totalReviews: number
   }, ExtArgs["result"]["menuItem"]>
@@ -2343,12 +3980,14 @@ readonly fields: MenuItemFieldRefs;
 export interface Prisma__MenuItemClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   menu<T extends Prisma.MenuDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MenuDefaultArgs<ExtArgs>>): Prisma.Prisma__MenuClient<runtime.Types.Result.GetResult<Prisma.$MenuPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  category<T extends Prisma.MenuItem$categoryArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MenuItem$categoryArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   photos<T extends Prisma.MenuItem$photosArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MenuItem$photosArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MenuItemPhotoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   orderItems<T extends Prisma.MenuItem$orderItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MenuItem$orderItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   menuItemFeedbacks<T extends Prisma.MenuItem$menuItemFeedbacksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MenuItem$menuItemFeedbacksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MenuItemFeedbackPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   menuItemReviews<T extends Prisma.MenuItem$menuItemReviewsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MenuItem$menuItemReviewsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MenuItemReviewPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-  dailyStockEntries<T extends Prisma.MenuItem$dailyStockEntriesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MenuItem$dailyStockEntriesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MenuItemDailyStockPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   wishlistItems<T extends Prisma.MenuItem$wishlistItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MenuItem$wishlistItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WishlistItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cravingsTriggers<T extends Prisma.MenuItem$cravingsTriggersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MenuItem$cravingsTriggersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CravingsRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cravingsRuleItems<T extends Prisma.MenuItem$cravingsRuleItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.MenuItem$cravingsRuleItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CravingsRuleItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2379,6 +4018,7 @@ export interface Prisma__MenuItemClient<T, Null = never, ExtArgs extends runtime
  */
 export interface MenuItemFieldRefs {
   readonly id: Prisma.FieldRef<"MenuItem", 'String'>
+  readonly publicCode: Prisma.FieldRef<"MenuItem", 'String'>
   readonly slug: Prisma.FieldRef<"MenuItem", 'String'>
   readonly menuId: Prisma.FieldRef<"MenuItem", 'String'>
   readonly name: Prisma.FieldRef<"MenuItem", 'String'>
@@ -2388,11 +4028,28 @@ export interface MenuItemFieldRefs {
   readonly foodType: Prisma.FieldRef<"MenuItem", 'FoodType'>
   readonly timeSlot: Prisma.FieldRef<"MenuItem", 'TimeSlot'>
   readonly isAvailable: Prisma.FieldRef<"MenuItem", 'Boolean'>
-  readonly reservedCount: Prisma.FieldRef<"MenuItem", 'Int'>
-  readonly dailyStock: Prisma.FieldRef<"MenuItem", 'Int'>
+  readonly availableFor: Prisma.FieldRef<"MenuItem", 'AvailableFor'>
   readonly createdAt: Prisma.FieldRef<"MenuItem", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"MenuItem", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"MenuItem", 'DateTime'>
+  readonly cuisine: Prisma.FieldRef<"MenuItem", 'String'>
+  readonly categoryId: Prisma.FieldRef<"MenuItem", 'String'>
+  readonly bestseller: Prisma.FieldRef<"MenuItem", 'Boolean'>
+  readonly highlights: Prisma.FieldRef<"MenuItem", 'Json'>
+  readonly aboutTitle: Prisma.FieldRef<"MenuItem", 'String'>
+  readonly aboutDescription: Prisma.FieldRef<"MenuItem", 'String'>
+  readonly serves: Prisma.FieldRef<"MenuItem", 'Int'>
+  readonly portionSize: Prisma.FieldRef<"MenuItem", 'String'>
+  readonly shelfLife: Prisma.FieldRef<"MenuItem", 'String'>
+  readonly allergens: Prisma.FieldRef<"MenuItem", 'String'>
+  readonly metaTitle: Prisma.FieldRef<"MenuItem", 'String'>
+  readonly metaDescription: Prisma.FieldRef<"MenuItem", 'String'>
+  readonly deliveryTimeMin: Prisma.FieldRef<"MenuItem", 'Int'>
+  readonly deliveryTimeMax: Prisma.FieldRef<"MenuItem", 'Int'>
+  readonly deliveryFee: Prisma.FieldRef<"MenuItem", 'Decimal'>
+  readonly freeDelivery: Prisma.FieldRef<"MenuItem", 'Boolean'>
+  readonly packagingType: Prisma.FieldRef<"MenuItem", 'String'>
+  readonly relatedItemIds: Prisma.FieldRef<"MenuItem", 'String[]'>
   readonly avgRating: Prisma.FieldRef<"MenuItem", 'Decimal'>
   readonly totalReviews: Prisma.FieldRef<"MenuItem", 'Int'>
 }
@@ -2796,6 +4453,25 @@ export type MenuItemDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 /**
+ * MenuItem.category
+ */
+export type MenuItem$categoryArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Category
+   */
+  select?: Prisma.CategorySelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Category
+   */
+  omit?: Prisma.CategoryOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CategoryInclude<ExtArgs> | null
+  where?: Prisma.CategoryWhereInput
+}
+
+/**
  * MenuItem.photos
  */
 export type MenuItem$photosArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2892,30 +4568,6 @@ export type MenuItem$menuItemReviewsArgs<ExtArgs extends runtime.Types.Extension
 }
 
 /**
- * MenuItem.dailyStockEntries
- */
-export type MenuItem$dailyStockEntriesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the MenuItemDailyStock
-   */
-  select?: Prisma.MenuItemDailyStockSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the MenuItemDailyStock
-   */
-  omit?: Prisma.MenuItemDailyStockOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.MenuItemDailyStockInclude<ExtArgs> | null
-  where?: Prisma.MenuItemDailyStockWhereInput
-  orderBy?: Prisma.MenuItemDailyStockOrderByWithRelationInput | Prisma.MenuItemDailyStockOrderByWithRelationInput[]
-  cursor?: Prisma.MenuItemDailyStockWhereUniqueInput
-  take?: number
-  skip?: number
-  distinct?: Prisma.MenuItemDailyStockScalarFieldEnum | Prisma.MenuItemDailyStockScalarFieldEnum[]
-}
-
-/**
  * MenuItem.wishlistItems
  */
 export type MenuItem$wishlistItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2937,6 +4589,54 @@ export type MenuItem$wishlistItemsArgs<ExtArgs extends runtime.Types.Extensions.
   take?: number
   skip?: number
   distinct?: Prisma.WishlistItemScalarFieldEnum | Prisma.WishlistItemScalarFieldEnum[]
+}
+
+/**
+ * MenuItem.cravingsTriggers
+ */
+export type MenuItem$cravingsTriggersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CravingsRule
+   */
+  select?: Prisma.CravingsRuleSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CravingsRule
+   */
+  omit?: Prisma.CravingsRuleOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CravingsRuleInclude<ExtArgs> | null
+  where?: Prisma.CravingsRuleWhereInput
+  orderBy?: Prisma.CravingsRuleOrderByWithRelationInput | Prisma.CravingsRuleOrderByWithRelationInput[]
+  cursor?: Prisma.CravingsRuleWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CravingsRuleScalarFieldEnum | Prisma.CravingsRuleScalarFieldEnum[]
+}
+
+/**
+ * MenuItem.cravingsRuleItems
+ */
+export type MenuItem$cravingsRuleItemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the CravingsRuleItem
+   */
+  select?: Prisma.CravingsRuleItemSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the CravingsRuleItem
+   */
+  omit?: Prisma.CravingsRuleItemOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CravingsRuleItemInclude<ExtArgs> | null
+  where?: Prisma.CravingsRuleItemWhereInput
+  orderBy?: Prisma.CravingsRuleItemOrderByWithRelationInput | Prisma.CravingsRuleItemOrderByWithRelationInput[]
+  cursor?: Prisma.CravingsRuleItemWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.CravingsRuleItemScalarFieldEnum | Prisma.CravingsRuleItemScalarFieldEnum[]
 }
 
 /**

@@ -8,37 +8,41 @@ interface SkeletonCardProps {
 
 function MenuItemSkeleton({ hasOffer = true }: { hasOffer?: boolean }) {
   return (
-    <div className="overflow-hidden bg-card">
+    <div className="bg-white rounded-xl p-2.5 md:p-3 flex gap-3 md:gap-3.5 shadow-sm border border-gray-100">
       {/* Image Section matching CompoundMenuCard.ImageSection */}
-      <div className="relative w-full rounded-2xl bg-muted" style={{ aspectRatio: "1 / 1" }}>
-        <Skeleton className="h-full w-full rounded-2xl" />
-
-        {/* FoodTypeOverlay placeholder (bottom-left) */}
-        <div className="absolute bottom-2 left-2 z-10">
-          <Skeleton className="h-4 w-4 rounded-sm" />
+      <div className="relative w-[100px] md:w-[120px] h-[100px] md:h-[120px] rounded-xl bg-muted shrink-0">
+        <Skeleton className="h-full w-full rounded-xl" />
+        
+        {/* Wishlist placeholder (top-right) */}
+        <div className="absolute top-1.5 md:top-2 right-1.5 md:right-2 z-10">
+          <Skeleton className="h-6 w-6 rounded-full" />
         </div>
 
-        {/* RatingOverlay placeholder (bottom-right) */}
+        {/* Badge placeholder (bottom-left) */}
         {hasOffer && (
-          <div className="absolute bottom-2 right-2 z-10">
-            <Skeleton className="h-5 w-16 rounded-full bg-emerald-500/20" />
+          <div className="absolute bottom-1.5 md:bottom-2 left-1.5 md:left-2 z-10">
+            <Skeleton className="h-4 w-12 rounded-sm" />
           </div>
         )}
       </div>
 
       {/* Header matching CompoundMenuCard.Header */}
-      <div className="pt-2 pb-1">
-        {/* Item name */}
-        <Skeleton className="h-4 w-3/4 mb-1.5" />
-        <Skeleton className="h-3 w-1/2 mb-1.5" />
+      <div className="flex-1 flex flex-col justify-between py-0.5 min-w-0">
+        <div>
+          {/* Title & Icon row */}
+          <div className="flex items-start gap-1 md:gap-1.5 mb-1.5">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-3.5 w-3.5 rounded-sm shrink-0" />
+          </div>
+          {/* Description */}
+          <Skeleton className="h-3 w-full mb-1" />
+          <Skeleton className="h-3 w-2/3" />
+        </div>
 
         {/* Price & Add Button Row */}
-        <div className="flex items-center justify-between gap-1 mt-2">
-          <div className="flex flex-col gap-0.5">
-            <Skeleton className="h-3 w-10" />
-            <Skeleton className="h-5 w-14 rounded" />
-          </div>
-          <Skeleton className="h-8 w-14 rounded-lg" />
+        <div className="flex items-center justify-between mt-2 md:mt-2.5">
+          <Skeleton className="h-4 w-12" />
+          <Skeleton className="h-[28px] md:h-[30px] w-16 rounded-lg" />
         </div>
       </div>
     </div>

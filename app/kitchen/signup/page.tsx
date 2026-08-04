@@ -7,7 +7,6 @@ export default function KitchenSignupPage() {
       <div className="relative w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-700">
         <SignupForm
           role="kitchen"
-          title="Kitchen Partner Sign Up"
           subtitle="Register your kitchen with us"
           accountLinkHref="/kitchen/login"
           accountLinkLabel="Already have an account?"

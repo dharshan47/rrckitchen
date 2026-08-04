@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma"
 import { redis } from "@/lib/redis"
 import { toTitleCase } from "@/lib/utils"
+import { PartnerStatus } from "@/lib/generated/prisma/client"
 
 export interface NearbyKitchen {
   id: string
@@ -12,7 +13,7 @@ export interface NearbyKitchen {
   totalReviews: number
   imageUrl: string | null
   cuisineTags: string[]
-  distanceKm: number | null
+  distanceKm: number | null | undefined
 }
 
 function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
@@ -51,7 +52,11 @@ export async function getNearbyKitchens(
       include: { kitchenPartner: { select: { id: true, status: true } } },
     })
     nearbyKitchenIds = allAddresses
-      .filter((a) => a.kitchenPartner.status === "ACTIVE" || a.kitchenPartner.status === "APPROVED")
+      .filter(
+        (a) =>
+          a.kitchenPartner.status === PartnerStatus.ACTIVE ||
+          a.kitchenPartner.status === PartnerStatus.APPROVED,
+      )
       .map((a) => a.kitchenPartner.id)
   }
 
@@ -60,7 +65,7 @@ export async function getNearbyKitchens(
   const kitchens = await prisma.kitchenPartner.findMany({
     where: {
       id: { in: nearbyKitchenIds },
-      status: { in: ["APPROVED", "ACTIVE"] },
+      status: { in: [PartnerStatus.APPROVED, PartnerStatus.ACTIVE] },
     },
     include: {
       kitchenAlias: true,
@@ -101,7 +106,7 @@ export async function getNearbyKitchens(
           ? Math.round((k.reviews.reduce((s, r) => s + r.rating, 0) / k.reviews.length) * 10) / 10
           : null
 
-      const firstItemPhoto = k.menus[0]?.menuItems[0]?.photos[0]?.imageUrl ?? null
+      const firstItemPhoto = k.menus[0]?.menuItems[0]?.photos[0]?.imageUrl
 
       return {
         id: k.id,
@@ -111,12 +116,12 @@ export async function getNearbyKitchens(
         totalReviews: k._count.reviews,
         imageUrl: firstItemPhoto,
         cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
-        distanceKm: kitchenDistances.get(k.id) ?? null,
+        distanceKm: kitchenDistances.get(k.id),
       }
     })
     .sort((a, b) => {
-      if (a.distanceKm === null) return 1
-      if (b.distanceKm === null) return -1
+      if (a.distanceKm == null) return 1
+      if (b.distanceKm == null) return -1
       return a.distanceKm - b.distanceKm
     })
 }

@@ -1,7 +1,7 @@
 # RRC Kitchen — Architecture Documentation
 
-> **Version:** 1.0.0
-> **Last Updated:** 2026-07-21
+> **Version:** 1.1.0
+> **Last Updated:** 2026-08-05
 > **Repository:** [github.com/dharshan47/rrckitchen](https://github.com/dharshan47/rrckitchen)
 
 ---
@@ -19,7 +19,7 @@ RRC Kitchen is a full-stack food ordering platform connecting customers with loc
 | **Database** | PostgreSQL (Prisma Data Proxy) |
 | **State** | TanStack Query (server) + Zustand (client) |
 | **Auth** | Better-Auth (phone OTP + admin 2FA) |
-| **Payments** | Razorpay (online) + Platform-managed COD |
+| **Payments** | Razorpay (Checkout + UPI Smart Collect) |
 | **Real-time** | Ably WebSocket |
 | **Deployment** | Vercel (Edge + Serverless) |
 | **Observability** | (none — production gap) |
@@ -46,6 +46,7 @@ RRC Kitchen is a full-stack food ordering platform connecting customers with loc
 | 14 | [Deployment & DevOps](14-deployment-devops.md) | CI/CD pipeline, environment strategy, rollback runbook, DR plan | DevOps |
 | 15 | [Routing & Middleware](15-routing-middleware.md) | Route map, middleware chain, guard composition, layout architecture | Frontend |
 | 16 | [Roles & Permissions](16-roles-permissions.md) | RBAC model, permission bitfield design, audit trail, admin scoping | All engineers |
+| 17 | [Cravings Popup](17-cravings-popup.md) | Cross-sell rules (schema, actions, store), admin UI, customer popup + Ably events | All engineers |
 
 ---
 
@@ -62,12 +63,12 @@ C4Context
     System(web, "Next.js 16 App", "SSR, PWA, Server Actions, Edge Middleware")
   }
 
-  System_Ext_System(pg, "PostgreSQL (Prisma Data Proxy)", "Primary database")
-  System_Ext_System(redis, "Upstash Redis", "Cache + rate limiting")
-  System_Ext_System(twilio, "Twilio", "SMS OTP")
-  System_Ext_System(razorpay, "Razorpay", "Payment processing")
-  System_Ext_System(ably, "Ably", "Real-time messaging")
-  System_Ext_System(cloudinary, "Cloudinary", "Image CDN")
+  System_Ext(pg, "PostgreSQL (Prisma Data Proxy)", "Primary database")
+  System_Ext(redis, "Upstash Redis", "Cache + rate limiting")
+  System_Ext(twilio, "Twilio", "SMS OTP")
+  System_Ext(razorpay, "Razorpay", "Payment processing")
+  System_Ext(ably, "Ably", "Real-time messaging")
+  System_Ext(cloudinary, "Cloudinary", "Image CDN")
 
   Rel(customer, web, "HTTPS")
   Rel(kitchen, web, "HTTPS")

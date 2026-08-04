@@ -10,15 +10,12 @@ export interface KitchenBySlugResult {
   avgRating: number | null
   totalReviews: number
   isActive: boolean
-  address: string
-  lat: number
-  lng: number
-  phoneNumber: string | null
-  imageUrl: string | null
-  coverImageUrl: string | null
-  description: string | null
-  deliveryFee: number
-  minOrder: number
+  address: string | undefined
+  lat: number | null | undefined
+  lng: number | null | undefined
+  phoneNumber: string | null | undefined
+  imageUrl: string | null | undefined
+  description: string | null | undefined
   estimatedPrepTime: number | null
 }
 
@@ -38,27 +35,24 @@ export async function getKitchenBySlug(slug: string): Promise<KitchenBySlugResul
 
   return {
     id: kitchen.id,
-    name: toTitleCase(kitchen.kitchenAlias?.displayName ?? ""),
+    name: toTitleCase(kitchen.kitchenAlias?.displayName ?? kitchen.slug),
     slug: kitchen.slug,
     avgRating: Number(kitchen.avgRating),
     totalReviews: kitchen.totalReviews,
     isActive: kitchen.status === "ACTIVE",
     address: kitchen.kitchenAddress
       ? `${kitchen.kitchenAddress.lineOne}${kitchen.kitchenAddress.doorNo ? ", " + kitchen.kitchenAddress.doorNo : ""}, ${kitchen.kitchenAddress.pincode}`
-      : "",
-    lat: kitchen.kitchenAddress?.latitude ?? 0,
-    lng: kitchen.kitchenAddress?.longitude ?? 0,
-    phoneNumber: kitchen.kitchenKyc?.phoneNumber ?? null,
-    imageUrl: null,
-    coverImageUrl: null,
-    description: null,
-    deliveryFee: 0,
-    minOrder: 0,
-    estimatedPrepTime: null,
+      : undefined,
+    lat: kitchen.kitchenAddress?.latitude,
+    lng: kitchen.kitchenAddress?.longitude,
+    phoneNumber: kitchen.kitchenKyc?.phoneNumber,
+    imageUrl: kitchen.kitchenAlias?.imageUrl,
+    description: kitchen.kitchenAlias?.description,
+    estimatedPrepTime: kitchen.estimatedPrepTime,
   }
 }
 
-export interface MenuItemWithStock {
+export interface MenuItemInfo {
   id: string
   name: string
   price: number
@@ -68,10 +62,9 @@ export interface MenuItemWithStock {
   isAvailable: boolean
   avgRating: number | null
   totalReviews: number
-  imageUrl: string | null
+  imageUrl: string | null | undefined
   menuId: string
   compareAtPrice: number | null
-  availableStock: number
   menu: {
     id: string
     name: string
@@ -79,67 +72,43 @@ export interface MenuItemWithStock {
   }
 }
 
-export async function getMenuItemsByKitchen(kitchenId: string): Promise<MenuItemWithStock[]> {
-  const [items, stockEntries] = await Promise.all([
-    prisma.menuItem.findMany({
-      where: {
-        menu: { kitchenPartnerId: kitchenId },
-      },
-      include: {
-        menu: {
-          select: {
-            id: true,
-            name: true,
-            kitchenPartnerId: true,
-          },
-        },
-        photos: {
-          take: 1,
-          select: { imageUrl: true },
-        },
-      },
-    }),
-    prisma.menuItemDailyStock.findMany({
-      where: {
-        menuItem: {
-          menu: { kitchenPartnerId: kitchenId },
-        },
-      },
-    }),
-  ])
-
-  const stockMap = new Map<string, { totalQuantity: number; reservedQuantity: number; soldQuantity: number }>()
-  for (const stock of stockEntries) {
-    stockMap.set(stock.menuItemId, {
-      totalQuantity: stock.totalQuantity,
-      reservedQuantity: stock.reservedQuantity,
-      soldQuantity: stock.soldQuantity,
-    })
-  }
-
-  return items.map((item) => {
-    const stock = stockMap.get(item.id)
-    const availableStock = stock ? stock.totalQuantity - stock.reservedQuantity - stock.soldQuantity : 0
-
-    return {
-      id: item.id,
-      name: item.name,
-      price: Number(item.price),
-      description: item.description,
-      foodType: item.foodType,
-      timeSlot: item.timeSlot,
-      isAvailable: item.isAvailable,
-      avgRating: null,
-      totalReviews: 0,
-      imageUrl: item.photos?.[0]?.imageUrl ?? null,
-      menuId: item.menuId,
-      compareAtPrice: item.compareAtPrice ? Number(item.compareAtPrice) : null,
-      availableStock,
+export async function getMenuItemsByKitchen(kitchenId: string): Promise<MenuItemInfo[]> {
+  const items = await prisma.menuItem.findMany({
+    where: {
+      menu: { kitchenPartnerId: kitchenId },
+    },
+    include: {
       menu: {
-        id: item.menu.id,
-        name: item.menu.name,
-        kitchenPartnerId: item.menu.kitchenPartnerId,
+        select: {
+          id: true,
+          name: true,
+          kitchenPartnerId: true,
+        },
       },
-    }
+      photos: {
+        take: 1,
+        select: { imageUrl: true },
+      },
+    },
   })
+
+  return items.map((item) => ({
+    id: item.id,
+    name: item.name,
+    price: Number(item.price),
+    description: item.description,
+    foodType: item.foodType,
+    timeSlot: item.timeSlot,
+    isAvailable: item.isAvailable,
+    avgRating: item.avgRating ? Number(item.avgRating) : null,
+    totalReviews: item.totalReviews,
+    imageUrl: item.photos?.[0]?.imageUrl,
+    menuId: item.menuId,
+    compareAtPrice: item.compareAtPrice ? Number(item.compareAtPrice) : null,
+    menu: {
+      id: item.menu.id,
+      name: item.menu.name,
+      kitchenPartnerId: item.menu.kitchenPartnerId,
+    },
+  }))
 }

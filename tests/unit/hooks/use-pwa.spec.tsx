@@ -1,6 +1,14 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+﻿import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { usePWA } from '@/hooks/usePWA';
+
+function createWrapper() {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  };
+}
 
 describe('usePWA', () => {
   beforeEach(() => {
@@ -27,14 +35,14 @@ describe('usePWA', () => {
   });
 
   it('returns app installed status', async () => {
-    const { result } = renderHook(() => usePWA());
+    const { result } = renderHook(() => usePWA(), { wrapper: createWrapper() });
     await act(async () => {});
     expect(result.current.isStandalone).toBe(false);
     expect(result.current.isInstallable).toBe(false);
   });
 
   it('returns can install status when beforeinstallprompt fires', async () => {
-    const { result } = renderHook(() => usePWA());
+    const { result } = renderHook(() => usePWA(), { wrapper: createWrapper() });
 
     const beforeInstallHandler = (window.addEventListener as ReturnType<typeof vi.fn>).mock.calls.find(
       ([event]: string[]) => event === 'beforeinstallprompt',
@@ -50,8 +58,9 @@ describe('usePWA', () => {
   });
 
   it('returns online status', async () => {
-    const { result } = renderHook(() => usePWA());
+    const { result } = renderHook(() => usePWA(), { wrapper: createWrapper() });
     await act(async () => {});
     expect(result.current.isOnline).toBe(true);
   });
 });
+

@@ -1,13 +1,11 @@
 "use client";
 
 import { createContext, useContext, useCallback, useMemo, type ReactNode } from "react";
-import { Button } from "@/components/ui/button";
 import { ProgressiveImage } from "@/components/patterns/progressive-image";
 import { WishlistButton as WishlistBtn } from "@/components/menu/wishlist-button";
 import { cn } from "@/lib/utils";
-import { Minus, Plus } from "lucide-react";
+import { Minus, Plus, UtensilsCrossed } from "lucide-react";
 import { useCartItems, useCartActions } from "@/stores";
-
 
 interface MenuCardItem {
   id: string;
@@ -26,6 +24,7 @@ interface MenuCardItem {
   description?: string | null;
   imageUrl?: string | null;
   isBestseller?: boolean;
+  orderCount?: number;
 }
 
 interface MenuCardContextValue {
@@ -85,7 +84,10 @@ function Root({ item, onAddToCart, onShowAddPopup, onItemClick, showKitchenMeta 
         role={isClickable ? "button" : undefined}
         tabIndex={isClickable ? 0 : undefined}
         onKeyDown={isClickable ? (e) => { if (e.key === "Enter") handleRootClick(); } : undefined}
-        className={`flex flex-col gap-2 w-full transition-all duration-300 ${isClickable ? "cursor-pointer hover:scale-[0.97] active:scale-95 md:hover:scale-100 md:active:scale-100" : ""}`}
+        className={cn(
+          "bg-white rounded-xl p-2.5 md:p-3 flex gap-3 md:gap-3.5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group w-full",
+          isClickable && "cursor-pointer"
+        )}
       >
         {children}
       </div>
@@ -95,41 +97,50 @@ function Root({ item, onAddToCart, onShowAddPopup, onItemClick, showKitchenMeta 
 
 function ImageSection({ children }: { children?: ReactNode }) {
   const { item } = useMenuCardContext();
+  
+  let badge = null;
+  if (item.isBestseller || (item.orderCount && item.orderCount > 10)) {
+    badge = { label: "Bestseller", color: "bg-[#267E3E]" };
+  } else if (item.orderCount && item.orderCount > 5) {
+    badge = { label: "Popular", color: "bg-[#EE7005]" };
+  }
+
   return (
-    <div className="relative w-full overflow-hidden rounded-[18px] bg-muted shadow-sm" style={{ aspectRatio: "1 / 1" }}>
+    <div className="relative w-[100px] md:w-[120px] h-[100px] md:h-[120px] rounded-xl overflow-hidden shrink-0 bg-gray-50">
       {item.imageUrl ? (
         <ProgressiveImage
-          src={item.imageUrl}
+          highResUrl={item.imageUrl}
           alt={item.name}
           fill
-          className="object-cover"
+          className="object-cover group-hover:scale-105 transition-transform duration-500"
         />
       ) : (
-        <div className="h-full w-full flex items-center justify-center bg-linear-to-br from-primary/10 to-muted">
-          <span className="text-muted-foreground/20 text-4xl font-black">
-            {item.name.charAt(0)}
-          </span>
+        <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-100">
+          <UtensilsCrossed className="w-7 md:w-8 h-7 md:h-8" />
         </div>
       )}
-      <div className="absolute top-2 right-2 z-10" onClick={e => e.stopPropagation()}>
+      
+      <div className="absolute top-1.5 md:top-2 right-1.5 md:right-2 z-10" onClick={e => e.stopPropagation()}>
         <WishlistBtn menuItemId={item.id} size="sm" variant="overlay" />
       </div>
+
+      {badge && (
+        <div className={cn(
+          "absolute bottom-1.5 md:bottom-2 left-1.5 md:left-2 text-white text-[8px] md:text-[9px] font-bold px-1.5 md:px-2 py-0.5 rounded-sm uppercase tracking-wide shadow-sm",
+          badge.color
+        )}>
+          {badge.label}
+        </div>
+      )}
       {children}
     </div>
   );
 }
 
-// Kept as empty components for backwards compatibility in case they are referenced
+// Empty components for backward compatibility
 function BadgeRibbon() { return null; }
 function AddButtonOverlay() { return null; }
-function WishlistButton() {
-  const { item } = useMenuCardContext();
-  return (
-    <div className="absolute top-2 right-2 z-10" onClick={e => e.stopPropagation()}>
-      <WishlistBtn menuItemId={item.id} size="sm" variant="overlay" />
-    </div>
-  );
-}
+function WishlistButton() { return null; }
 function FoodTypeOverlay() { return null; }
 function RatingOverlay() { return null; }
 
@@ -181,79 +192,62 @@ function Header() {
   const hasDiscount = item.compareAtPrice != null;
 
   return (
-    <div className="pt-1 pb-2 flex flex-col gap-1.5">
-      {/* Row 1: Veg/NonVeg and Rating */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
+    <div className="flex-1 flex flex-col justify-between py-0.5 min-w-0">
+      <div>
+        <div className="flex items-start gap-1 md:gap-1.5">
+          <h3 className="font-bold text-gray-900 text-[13px] md:text-[14px] leading-tight truncate">
+            {item.name}
+          </h3>
           {item.foodType === "VEG" ? (
-            <VegIcon className="h-3.75 w-3.75" />
+            <VegIcon className="w-3 md:w-3.5 h-3 md:h-3.5 shrink-0 mt-0.5" />
           ) : item.foodType === "NONVEG" ? (
-            <NonVegIcon className="h-3.75 w-3.75" />
+            <NonVegIcon className="w-3 md:w-3.5 h-3 md:h-3.5 shrink-0 mt-0.5" />
           ) : null}
         </div>
-        {(item.avgRating ?? item.kitchenRating) ? (
-          <div className="flex items-center gap-0.5 bg-[#E8F8F0] px-1.5 py-0.75 rounded text-[11px] font-extrabold text-[#118A42]">
-            <svg className="h-2.5 w-2.5 fill-[#118A42] shrink-0" viewBox="0 0 20 20">
-              <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-            </svg>
-            <span>{(item.avgRating ?? item.kitchenRating)!.toFixed(1)}</span>
-            {item.totalReviews ? <span className="font-bold opacity-80">({item.totalReviews})</span> : null}
-          </div>
-        ) : null}
+        <p className="text-[10px] md:text-[11px] text-gray-500 leading-[1.5] mt-1 md:mt-1.5 line-clamp-2">
+          {item.description || "Freshly prepared dish with premium ingredients."}
+        </p>
       </div>
-
-      {/* Row 2: Item Name */}
-      <h3 className="line-clamp-2 text-[15px] font-bold leading-tight text-gray-800">
-        {item.name}
-      </h3>
-
-      {/* Row 3: Price & Add Button */}
-      <div className="flex items-end justify-between gap-2 mt-0.5">
-        <div className="flex flex-col min-w-0 pb-0.5">
+      <div className="flex items-center justify-between mt-2 md:mt-2.5">
+        <div className="flex flex-col">
           {hasDiscount ? (
             <>
-              <span className="text-[12px] font-semibold text-gray-500 line-through leading-none mb-1">
-                ₹{discount}
-              </span>
-              <div className="bg-primary border-b-2 border-r-2 border-black rounded-[3px] px-1.5 py-0.75 inline-flex items-center self-start shadow-xs">
-                <span className="text-[13px] font-black leading-none text-primary-foreground tracking-tight">₹{item.price}</span>
-              </div>
+              <span className="text-[10px] font-semibold text-gray-500 line-through leading-none mb-0.5">₹{discount}</span>
+              <span className="font-extrabold text-[14px] md:text-[15px] text-gray-900 leading-none">₹{item.price}</span>
             </>
           ) : (
-            <span className="text-[14px] font-black text-gray-800 tracking-tight">₹{item.price}</span>
+            <span className="font-extrabold text-[14px] md:text-[15px] text-gray-900 leading-none">₹{item.price}</span>
           )}
         </div>
-
+        
         {cartItem ? (
           <div
-            className="flex items-center rounded-lg border border-[#118A42] bg-white shrink-0 shadow-xs"
+            className="flex items-center rounded-lg border border-[#EE7005] bg-white shrink-0 shadow-sm h-[28px] md:h-[30px]"
             onClick={e => e.stopPropagation()}
           >
             <button
               onClick={handleDecrement}
-              className="h-7.5 w-7 flex items-center justify-center text-[#118A42] hover:bg-[#118A42]/10 transition-colors rounded-l-lg"
+              className="h-full w-7 flex items-center justify-center text-[#EE7005] hover:bg-[#EE7005]/10 transition-colors rounded-l-lg"
               aria-label="Decrease quantity"
             >
-              <Minus className="h-3 w-3 stroke-3" />
+              <Minus className="h-3 w-3 stroke-[3]" />
             </button>
-            <span className="w-5 text-center text-[13px] font-black text-[#118A42] leading-none">{cartItem.qty}</span>
+            <span className="w-5 text-center text-[12px] font-bold text-[#EE7005] leading-none">{cartItem.qty}</span>
             <button
               onClick={handleIncrement}
-              className="h-7.5 w-7 flex items-center justify-center text-[#118A42] hover:bg-[#118A42]/10 transition-colors rounded-r-lg"
+              className="h-full w-7 flex items-center justify-center text-[#EE7005] hover:bg-[#EE7005]/10 transition-colors rounded-r-lg"
               aria-label="Increase quantity"
             >
-              <Plus className="h-3 w-3 stroke-3" />
+              <Plus className="h-3 w-3 stroke-[3]" />
             </button>
           </div>
         ) : (
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 shrink-0 rounded-lg font-black border-gray-200 text-[#118A42] px-7 text-sm hover:bg-gray-50 transition-colors shadow-xs"
+          <button
             onClick={handleAddClick}
+            className="h-[28px] md:h-[30px] px-3 md:px-4 rounded-lg border border-[#EE7005] text-[#EE7005] bg-[#FFF7F0] hover:bg-[#FFF0E0] font-bold text-[11px] md:text-[12px] uppercase tracking-wide flex items-center gap-0.5 md:gap-1 transition-colors cursor-pointer shrink-0"
           >
-            ADD
-          </Button>
+            ADD <span className="text-[14px] md:text-[15px] leading-none font-normal">+</span>
+          </button>
         )}
       </div>
     </div>
@@ -261,9 +255,8 @@ function Header() {
 }
 
 function Footer() {
-  return null; // Merged into Header for the combined design look
+  return null;
 }
 
 export const CompoundMenuCard = { Root, ImageSection, BadgeRibbon, AddButtonOverlay, WishlistButton, FoodTypeOverlay, RatingOverlay, Header, Footer };
 export type { MenuCardItem };
-

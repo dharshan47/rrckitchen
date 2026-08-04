@@ -1,18 +1,17 @@
 "use client"
 
-import { useState, useRef, useCallback } from "react"
+import { useRef, useCallback, useEffect } from "react"
 import { Input } from "@/components/ui/input"
 import { Search, MapPin, Loader2 } from "lucide-react"
-import { useAbortController } from "@/hooks/useAbortController"
-
-interface GeoResult {
-  lat: number
-  lon: number
-  display_name: string
-  street: string
-  city: string
-  postcode: string
-}
+import {
+  useLocationSearchInput,
+  useLocationSearchClosed,
+  useLocationSearchResults,
+  useLocationSearchFetching,
+  useLocationSearchActions,
+  useLocationSearchQuery,
+  type GeoResult,
+} from "@/stores/locationSearchStore"
 
 interface LocationAutocompleteProps {
   placeholder?: string
@@ -27,45 +26,37 @@ export function LocationAutocomplete({
   className,
   defaultValue,
 }: LocationAutocompleteProps) {
-  const [query, setQuery] = useState(defaultValue ?? "")
-  const [results, setResults] = useState<GeoResult[]>([])
-  const [isFetching, setIsFetching] = useState(false)
-  const [manuallyClosed, setManuallyClosed] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
-  const { getSignal } = useAbortController()
+  const query = useLocationSearchInput()
+  const manuallyClosed = useLocationSearchClosed()
+  const results = useLocationSearchResults()
+  const isFetching = useLocationSearchFetching()
+  const actions = useLocationSearchActions()
 
-  const searchLocation = useCallback(async (q: string) => {
-    if (q.length < 1) {
-      setResults([])
-      return
-    }
-    setIsFetching(true)
-    setManuallyClosed(false)
-    try {
-      const signal = getSignal()
-      const res = await fetch(`/api/geocode/search?q=${encodeURIComponent(q)}`, { signal })
-      if (!res.ok) throw new Error("Search failed")
-      const data = await res.json()
-      setResults(data)
-    } catch (err) {
-      if (err instanceof DOMException && err.name === "AbortError") return
-      setResults([])
-    } finally {
-      setIsFetching(false)
-    }
-  }, [getSignal])
+  useLocationSearchQuery(query)
 
-  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value
-    setQuery(val)
-    searchLocation(val)
-  }, [searchLocation])
+  const defaultRef = useRef(defaultValue)
+  useEffect(() => {
+    if (defaultRef.current) {
+      actions.setQuery(defaultRef.current)
+    }
+  }, [actions])
+
+  useEffect(() => {
+    return () => actions.resetSearch()
+  }, [actions])
+
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      actions.setQuery(e.target.value)
+    },
+    [actions]
+  )
 
   const handleSelect = useCallback(
     (result: GeoResult) => {
-      setQuery(result.display_name)
-      setManuallyClosed(true)
-      setResults([])
+      actions.setQuery(result.display_name)
+      actions.setManuallyClosed(true)
       onPlaceSelect({
         name: result.display_name,
         address: result.display_name,
@@ -73,7 +64,7 @@ export function LocationAutocomplete({
         lng: result.lon,
       })
     },
-    [onPlaceSelect]
+    [actions, onPlaceSelect]
   )
 
   const handleWrapperClick = useCallback((e: React.MouseEvent) => {
@@ -93,7 +84,7 @@ export function LocationAutocomplete({
         <Input
           value={query}
           onChange={handleInputChange}
-          onFocus={() => { if (results.length > 0) setManuallyClosed(false) }}
+          onFocus={() => { if (results.length > 0) actions.setManuallyClosed(false) }}
           placeholder={placeholder}
           className={`w-full h-12 pl-11 pr-4 bg-background border border-border rounded-xl text-sm ${className ?? ""}`}
         />

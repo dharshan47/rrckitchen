@@ -1,6 +1,14 @@
-import { describe, expect, it, vi, beforeEach } from 'vitest';
+﻿import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSignUp } from '@/hooks/useSignUp';
+
+function createWrapper() {
+  const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  };
+}
 
 vi.mock('@/actions/onboarding/auth', () => ({
   assignUserRole: vi.fn(),
@@ -26,7 +34,7 @@ describe('useSignUp', () => {
   });
 
   it('returns initial state for customer role', () => {
-    const { result } = renderHook(() => useSignUp('customer'));
+    const { result } = renderHook(() => useSignUp('customer'), { wrapper: createWrapper() });
     expect(result.current.step).toBe('phone');
     expect(result.current.errorMessage).toBeNull();
     expect(result.current.isLoading).toBe(false);
@@ -39,7 +47,7 @@ describe('useSignUp', () => {
       json: () => Promise.resolve({ status: true }),
     });
 
-    const { result } = renderHook(() => useSignUp('customer'));
+    const { result } = renderHook(() => useSignUp('customer'), { wrapper: createWrapper() });
     await act(async () => {
       result.current.sendOtp('9876543210');
     });
@@ -51,7 +59,7 @@ describe('useSignUp', () => {
   });
 
   it('shows error for invalid phone number', async () => {
-    const { result } = renderHook(() => useSignUp('customer'));
+    const { result } = renderHook(() => useSignUp('customer'), { wrapper: createWrapper() });
     await act(async () => {
       result.current.sendOtp('123');
     });
@@ -66,7 +74,7 @@ describe('useSignUp', () => {
       .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ status: true }) })
       .mockResolvedValueOnce({ ok: true, json: () => Promise.resolve({ status: true }) });
 
-    const { result } = renderHook(() => useSignUp('customer'));
+    const { result } = renderHook(() => useSignUp('customer'), { wrapper: createWrapper() });
     await act(async () => {
       result.current.sendOtp('9876543210');
     });
@@ -85,7 +93,7 @@ describe('useSignUp', () => {
   });
 
   it('shows error for empty otp', async () => {
-    const { result } = renderHook(() => useSignUp('customer'));
+    const { result } = renderHook(() => useSignUp('customer'), { wrapper: createWrapper() });
     await act(async () => {
       result.current.verifyOtp('');
     });
@@ -96,7 +104,7 @@ describe('useSignUp', () => {
   });
 
   it('handles completeSignup error when name is empty', async () => {
-    const { result } = renderHook(() => useSignUp('customer'));
+    const { result } = renderHook(() => useSignUp('customer'), { wrapper: createWrapper() });
     await act(async () => {
       result.current.completeSignup('', '');
     });
@@ -108,7 +116,7 @@ describe('useSignUp', () => {
 
   it('shows error when sendOtp fails', async () => {
     global.fetch = vi.fn().mockRejectedValueOnce(new Error('Network error'));
-    const { result } = renderHook(() => useSignUp('customer'));
+    const { result } = renderHook(() => useSignUp('customer'), { wrapper: createWrapper() });
     await act(async () => {
       result.current.sendOtp('9876543210');
     });
@@ -118,3 +126,4 @@ describe('useSignUp', () => {
     });
   });
 });
+

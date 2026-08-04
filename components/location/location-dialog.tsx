@@ -1,14 +1,24 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useCallback, useEffect } from "react"
 import dynamic from "next/dynamic"
 import {
   Dialog,
   DialogContent,
   DialogTitle,
-} from "@/components/ui"
+} from "@/components/ui/dialog"
 import { MapPin, Crosshair, ChevronLeft, AlertTriangle, Loader2, LocateFixed } from "lucide-react"
 import { useMenuActions } from "@/stores"
+import {
+  useLocationDialogStep,
+  useLocationDialogError,
+  useLocationDialogBusy,
+  useLocationDialogSelectedPos,
+  useLocationDialogMapPicked,
+  useLocationDialogActions,
+  useReverseGeocodeMutation,
+  locationDialogStore,
+} from "@/stores/locationDialogStore"
 import { THANJAVUR_CENTER } from "@/lib/geo/thanjavur-bounds"
 import { LocationAutocomplete } from "./location-autocomplete"
 
@@ -16,8 +26,6 @@ const ThanjavurMap = dynamic(
   () => import("@/components/map/thanjavur-map").then((m) => m.ThanjavurMap),
   { ssr: false }
 )
-
-type LocationStep = "main" | "select-location"
 
 interface LocationDialogProps {
   open: boolean
@@ -40,6 +48,12 @@ function isServiceable(lat: number, lng: number): boolean {
 }
 
 export function LocationDialog({ open, onClose }: LocationDialogProps) {
+  useEffect(() => {
+    if (open) {
+      locationDialogStore.getState().resetDialog()
+    }
+  }, [open])
+
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o) onClose() }}>
       <DialogContent className="sm:max-w-md p-0 gap-0 overflow-hidden flex flex-col max-h-[90vh]">
@@ -50,119 +64,102 @@ export function LocationDialog({ open, onClose }: LocationDialogProps) {
 }
 
 function LocationDialogInner({ onClose }: { onClose: () => void }) {
-  const [step, setStep] = useState<LocationStep>("main")
-  const [error, setError] = useState("")
-  const [busy, setBusy] = useState(false)
-  const [selectedPos, setSelectedPos] = useState<{ lat: number; lng: number } | null>(null)
-  const [mapPicked, setMapPicked] = useState(false)
+  const step = useLocationDialogStep()
+  const error = useLocationDialogError()
+  const busy = useLocationDialogBusy()
+  const selectedPos = useLocationDialogSelectedPos()
+  const mapPicked = useLocationDialogMapPicked()
+  const actions = useLocationDialogActions()
   const setDeliveryAddress = useMenuActions().setDeliveryAddress
 
-  const clearError = useCallback(() => setError(""), [])
+  const clearError = useCallback(() => actions.setError(""), [actions])
+
+  const reverseGeocode = useReverseGeocodeMutation()
 
   const handleUseCurrentLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      setError("Geolocation is not supported by your browser. Please search for an address above.")
+      actions.setError("Geolocation is not supported by your browser. Please search for an address above.")
       return
     }
-    setBusy(true)
-    setError("")
+    actions.setBusy(true)
+    actions.setError("")
     navigator.geolocation.getCurrentPosition(
       async (pos) => {
         const { latitude, longitude } = pos.coords
         if (!isServiceable(latitude, longitude)) {
-          setBusy(false)
-          setError("We are not serviceable at this location. Please select a different location.")
+          actions.setBusy(false)
+          actions.setError("We are not serviceable at this location. Please select a different location.")
           return
         }
         try {
-          const res = await fetch(
-            `/api/geocode/reverse?lat=${latitude}&lon=${longitude}`
-          )
-          if (res.ok) {
-            const data = await res.json()
-            const address = data?.display_name
-              ? data.display_name
-              : `Location at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`
-            setDeliveryAddress(address)
-          } else {
-            setDeliveryAddress(`Location at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
-          }
+          const displayName = await reverseGeocode.mutateAsync({ lat: latitude, lng: longitude })
+          setDeliveryAddress(displayName ?? `Location at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
         } catch {
           setDeliveryAddress(`Location at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
         } finally {
-          setBusy(false)
+          actions.setBusy(false)
           onClose()
         }
       },
       (err) => {
-        setBusy(false)
+        actions.setBusy(false)
         if (err.code === err.PERMISSION_DENIED) {
-          setError("Location permission denied. Please allow location access in your browser settings, or search for an address above.")
+          actions.setError("Location permission denied. Please allow location access in your browser settings, or search for an address above.")
         } else {
-          setError("Unable to retrieve your location. Please enable location permissions or search for an address.")
+          actions.setError("Unable to retrieve your location. Please enable location permissions or search for an address.")
         }
       },
       { enableHighAccuracy: true, timeout: 10000 }
     )
-  }, [onClose, setDeliveryAddress])
+  }, [onClose, setDeliveryAddress, reverseGeocode, actions])
 
   const handlePlaceFromAutocomplete = useCallback(
     (place: { name: string; address: string; lat: number; lng: number }) => {
       clearError()
       if (!isServiceable(place.lat, place.lng)) {
-        setError("We are not serviceable at this location. Please select a location within Thanjavur.")
+        actions.setError("We are not serviceable at this location. Please select a location within Thanjavur.")
         return
       }
-      setSelectedPos({ lat: place.lat, lng: place.lng })
+      actions.setSelectedPos({ lat: place.lat, lng: place.lng })
       setDeliveryAddress(place.name)
       onClose()
     },
-    [clearError, setDeliveryAddress, onClose]
+    [clearError, setDeliveryAddress, onClose, actions]
   )
 
   const handleMapSelect = useCallback(
     (lat: number, lng: number) => {
-      setSelectedPos({ lat, lng })
-      setMapPicked(true)
+      actions.setSelectedPos({ lat, lng })
+      actions.setMapPicked(true)
       clearError()
     },
-    [clearError]
+    [actions, clearError]
   )
 
   const handleConfirmMapLocation = useCallback(async () => {
     if (!selectedPos) return
     if (!isServiceable(selectedPos.lat, selectedPos.lng)) {
-      setError("We are not serviceable at this location. Please select a location within Thanjavur.")
+      actions.setError("We are not serviceable at this location. Please select a location within Thanjavur.")
       return
     }
-    setBusy(true)
+    actions.setBusy(true)
     try {
-      const res = await fetch(
-        `/api/geocode/reverse?lat=${selectedPos.lat}&lon=${selectedPos.lng}`
-      )
-      if (res.ok) {
-        const data = await res.json()
-        const address = data?.display_name
-          ? data.display_name
-          : `Location at ${selectedPos.lat.toFixed(4)}, ${selectedPos.lng.toFixed(4)}`
-        setDeliveryAddress(address)
-      } else {
-        setDeliveryAddress(`Location at ${selectedPos.lat.toFixed(4)}, ${selectedPos.lng.toFixed(4)}`)
-      }
+      const displayName = await reverseGeocode.mutateAsync({ lat: selectedPos.lat, lng: selectedPos.lng })
+      setDeliveryAddress(displayName ?? `Location at ${selectedPos.lat.toFixed(4)}, ${selectedPos.lng.toFixed(4)}`)
     } catch {
       setDeliveryAddress(`Location at ${selectedPos.lat.toFixed(4)}, ${selectedPos.lng.toFixed(4)}`)
     } finally {
-      setBusy(false)
+      actions.setBusy(false)
       onClose()
     }
-  }, [selectedPos, setDeliveryAddress, onClose])
+  }, [selectedPos, setDeliveryAddress, onClose, reverseGeocode, actions])
 
   return (
     <>
       <div className="flex items-center gap-3 px-6 pt-6 pb-3 border-b border-border shrink-0">
         {step !== "main" && (
           <button
-            onClick={() => { setStep("main"); clearError() }}
+            onClick={() => { actions.setStep("main"); clearError() }}
             className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors -ml-1"
           >
             <ChevronLeft className="h-5 w-5 text-foreground" />
@@ -224,7 +221,7 @@ function LocationDialogInner({ onClose }: { onClose: () => void }) {
             </div>
 
             <button
-              onClick={() => { setStep("select-location"); clearError() }}
+              onClick={() => { actions.setStep("select-location"); clearError() }}
               className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-primary/40 hover:border-primary/80 transition-colors text-left group"
             >
               <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">

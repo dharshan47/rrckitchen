@@ -1,7 +1,7 @@
 # API Design & Contracts
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [Data Model](03-data-model.md), [System Architecture](01-system-architecture.md), [Payment Architecture](08-payment-system.md)
 
 ---
@@ -67,32 +67,36 @@ const schema = z.object({
 
 No input required. Returns full cart state with item details (name, price, photo, kitchen info).
 
-### 2.2 Order Operations
+### 2.2 Order & Payment Operations
 
-#### `createRazorpayOrder(amount: number)`
+#### `createPaymentOrder` (via `POST /api/payment/create-order`)
 
 ```typescript
-// Input
+// Server-side (actions/payments/payment.ts)
 {
-  amount: number;  // in paise (₹100 = 10000)
+  userId: string;
+  items: Array<{ menuItemId: string; quantity: number }>;
+  idempotencyKey: string;      // Client-generated, unique per attempt
+  couponCode?: string;
+  serviceDateType: "TODAY" | "TOMORROW";
 }
 
 // Output
 {
   razorpayOrderId: string;
-  amount: number;
+  amount: number;        // in paise (₹100 = 10000)
   currency: "INR";
-  key: string;  // Razorpay API key ID
+  keyId: string;         // NEXT_PUBLIC_RAZORPAY_KEY_ID
+  orderId: string;       // Internal order id (status CONFIRMED on creation)
 }
-
-// Error
-{ code: "AMOUNT_MISMATCH" | "ORDER_CREATION_FAILED" }
 ```
 
-#### `verifyPayment(payload: RazorpayPaymentPayload)`
+Creates Order + OrderItems + Payment (PENDING) in a transaction, applies coupon discount, allocates `publicCode` (`ORD-…`), and busts the menu cache.
+
+#### `POST /api/payment/verify`
 
 ```typescript
-// Input
+// Input — Razorpay handler payload
 {
   razorpay_order_id: string;
   razorpay_payment_id: string;
@@ -103,74 +107,73 @@ No input required. Returns full cart state with item details (name, price, photo
 {
   success: true;
   orderId: string;
-  status: "confirmed";
+  status: "PREPARING";
 }
 ```
 
-#### `checkCodEligibility(orderAmount: number)`
+Verifies the HMAC-SHA256 signature, marks Payment SUCCESS, moves Order → PREPARING, creates the kitchen payout, awards loyalty points, and publishes Ably events (`order:status`, `kitchen:{id}` `queue:new-order`, `order:cravings`).
 
-| Condition | Eligible? |
-|-----------|-----------|
-| Amount ≤ ₹2000 | Yes |
-| Amount > ₹2000 | No |
-| User has 3+ failed COD deliveries | No (24h cooldown) |
+#### `POST /api/payment/fail`
 
-#### `placeOrder(data: OrderInput)`
+Marks the payment FAILED and the order CANCELLED (called when the Razorpay modal is dismissed or payment fails).
 
-```typescript
-// Input
-{
-  addressId: string;
-  orderType: "prebook" | "instant";
-  scheduledAt?: string;  // ISO date (required for prebook)
-  couponCode?: string;
-  paymentMethod: "online" | "cod";
-  notes?: string;
-}
-```
+#### UPI Smart Collect (backend-ready, no UI wired)
+
+| Route | Purpose |
+|-------|---------|
+| `POST /api/payment/upi-collect/create` | Creates a Razorpay Virtual Account/VPA for the order (30-min expiry), idempotent via `UpiCollectRequest` |
+| `GET /api/payment/upi-collect/status?orderId=` | Polls the VPA for captured payments; on capture calls `confirmPayment(..., "upi")` |
+
+Client hook `hooks/useUpiCollect.ts` implements create + 4s auto-polling (statuses `IDLE/CREATING/PENDING/PAID/EXPIRED/FAILED/ERROR`) but is not yet connected to any component.
 
 ### 2.3 Kitchen Operations
 
-#### `getKitchenDetail(slug: string)`
+#### `getKitchenDetail(slug)` / `getKitchenDetailLive(slug)`
 
-Returns full kitchen detail page payload:
-- Kitchen profile (name, description, rating, review count)
-- Menu items grouped by time slot with photos
-- Operating hours
-- Reviews (first 10)
-- Available stock for today
+Returns full kitchen detail page payload (via `lib/kitchen-detail.ts`):
+- Kitchen profile (display name, description, rating, review count, prep time)
+- Menu items grouped by time slot with photos (bestseller logic by order count)
+- Operating hours, time-on-platform, total orders delivered, pure-veg indicator
+- Reviews (first 10) and item reviews
 
-#### `updateMenuItem(data: MenuItemInput)`
+#### `updateMenuItem(data: MenuItemInput)` / `saveAdminMenuItem(data)`
 
 ```typescript
-// Input
+// Input (actions/admin/admin-menu-cms.ts — full menu editor)
 {
   id: string;
   name?: string;
   description?: string;
   price?: number;
-  discountedPrice?: number;
+  compareAtPrice?: number;
   isAvailable?: boolean;
-  timeSlot?: "breakfast" | "lunch" | "dinner" | "all_day";
-  isVeg?: boolean;
-  preparationTime?: number;
+  foodType?: "VEG" | "NONVEG";
+  timeSlot?: "MORNING" | "LUNCH" | "EVENINGSNACKS" | "DINNER";
+  bestseller?: boolean;
+  highlights?: string[];
+  photos?: string[];       // Cloudinary URLs
+  // ...CMS fields: aboutTitle, serves, portionSize, allergens, metaTitle...
 }
 
 // Output
 { success: true; menuItem: MenuItem }
 ```
 
-#### `manageStock(data: StockInput[])`
+Also: `toggleAdminMenuItemAvailability(id, isAvailable)`, `createAdminMenuItem(data)` (allocates `publicCode` `M-…`). Admin actions require `MANAGE_CATALOG`.
 
-```typescript
-// Input — batch update
-[
-  { menuItemId: string; date: string; totalQty: number },
-  { menuItemId: string; date: string; totalQty: number },
-]
-```
+### 2.4 Catalog Operations (public)
 
-### 2.4 User Operations
+| Action | Purpose |
+|--------|---------|
+| `getCategoryPageBundle(slug)` | Full category page payload — CMS content + up to 100 kitchens + computed facets (mealTypes, foodTypes, deliveryTimes, ratings, cuisines) |
+| `getCravingsRecommendations(triggerItemIds)` | Resolve highest-priority active cravings rule for the given cart items |
+| `getMenuItemReviews(menuItemId, cursor, limit)` | Cursor-paginated menu item reviews |
+| `getKitchenReviews(kitchenId)` | Last 50 kitchen reviews incl. taste/packaging/portion ratings |
+| `getKitchenData()` / `getHomePageData()` | Home page payload (cached 30–60s via `lib/server-cache.ts` + `'use cache'`) |
+| `submitContactForm(input)` | Public contact form → `ContactMessage` |
+| `getKitchenTestimonials()` | Top-6 rated kitchens for `/home-chefs` and `/kitchen` landing |
+
+### 2.5 User Operations
 
 | Action | Input | Output |
 |--------|-------|--------|
@@ -179,11 +182,11 @@ Returns full kitchen detail page payload:
 | `getAddresses()` | None | `Address[]` |
 | `addAddress(data)` | Address fields | Created `Address` |
 | `deleteAddress(id)` | `string` | `{ success: true }` |
-| `getOrderHistory()` | None | `Order[]` with items + tracking |
-| `getWishlist()` | None | `MenuItem[]` |
+| `getUserOrders()` | None | Last 20 orders with items + tracking |
+| `getRecommendedKitchens()` | None | Top-rated kitchens (favourites page) |
 | `toggleWishlist(itemId)` | `string` | `{ isWishlisted: boolean }` |
 
-### 2.5 Auth Operations
+### 2.6 Auth Operations
 
 | Action | Input | Output |
 |--------|-------|--------|
@@ -201,7 +204,7 @@ Returns full kitchen detail page payload:
 ### 3.1 Payment Webhooks
 
 ```
-POST /api/payment/webhook
+POST /api/auth/razorpay/webhook
 ```
 
 Called by Razorpay for async payment status updates.
@@ -212,32 +215,12 @@ x-razorpay-signature: <HMAC-SHA256 signature>
 Content-Type: application/json
 ```
 
-**Request Body:**
-```json
-{
-  "event": "payment.captured",
-  "payload": {
-    "payment": {
-      "entity": {
-        "id": "pay_xxxxxxxx",
-        "order_id": "order_xxxxxxxx",
-        "status": "captured",
-        "amount": 10000,
-        "currency": "INR",
-        "method": "upi",
-        "created_at": 1700000000
-      }
-    }
-  }
-}
-```
-
 **Events Handled:**
 | Event | Action |
 |-------|--------|
 | `payment.captured` | Mark payment as success, confirm order |
 | `payment.failed` | Mark payment as failed, update order status |
-| `payment.refunded` | Create refund record, update order |
+| `refund.processed` | Mark refund PROCESSED, publish `refund:processed` |
 
 **Verification:**
 ```typescript
@@ -251,60 +234,68 @@ if (expectedSignature !== signature) {
 }
 ```
 
-### 3.2 Image Upload
+### 3.2 Image Upload (Cloudinary)
 
 ```
-POST /api/upload/photo
+POST /api/cloudinary/sign        — generate signed upload payload
+POST /api/cloudinary/delete      — delete image by publicId
 ```
 
-**Content-Type:** `multipart/form-data`
-
-**Fields:**
-| Field | Type | Required |
-|-------|------|----------|
-| `file` | File (image) | Yes |
-| `folder` | string | No (default: `menu-items`) |
-
-**Response:**
-```json
-{
-  "url": "https://res.cloudinary.com/.../image/upload/v1/menu-items/abc123.jpg",
-  "publicId": "menu-items/abc123",
-  "width": 800,
-  "height": 600,
-  "format": "webp"
-}
-```
-
-**Validation:**
-- Max file size: 5MB
-- Allowed types: `image/jpeg`, `image/png`, `image/webp`, `image/avif`
-- Max dimensions: 4096x4096
+Uploads themselves are direct-to-Cloudinary from the client (`components/patterns/cloudinary-upload.tsx`) using the signed payload.
 
 ### 3.3 Ably Token Authentication
 
 ```
-POST /api/ably/auth
+POST /api/ably-token
 ```
 
-**Auth:** Requires valid session cookie
+**Auth:** Requires valid session cookie.
 
 **Response:**
 ```json
 {
-  "token": "<Ably JWT token>",
-  "keyName": "<Ably API key name>",
-  "ttl": 3600
+  "tokenRequest": { ... },  // Ably TokenRequest
+  "clientId": "user:xyz"
 }
 ```
 
-**Token Capabilities:**
+Token TTL: 15 minutes. The route validates ownership before granting channel capabilities:
 | Channel Pattern | Capabilities |
 |----------------|-------------|
-| `order:{userId}` | Subscribe |
+| `order:{orderId}` | Subscribe (owner) |
 | `kitchen:{kitchenId}` | Subscribe |
-| `delivery:{deliveryId}` | Subscribe + Publish |
-| `presence:*` | Subscribe |
+| `deliveryPartner:{id}` | Subscribe |
+| `user:{id}` | Fallback when no specific channel granted |
+
+### 3.4 Other API Routes (Inventory)
+
+| Route | Purpose | Auth |
+|-------|---------|------|
+| `GET /api/home/testimonials` | Latest 8 reviews with comments (`s-maxage=60`) | Public |
+| `GET /api/kitchen/explore` | Infinite-scroll kitchen grid (PAGE_SIZE 15) | Public |
+| `GET /api/kitchen/categories` | Kitchen categories | Public |
+| `GET /api/kitchen/trending` / `nearby` / `wishlist` / `earnings` | Kitchen discovery & partner data | Public / Session |
+| `GET /api/menu/search` | Menu item search | Public |
+| `GET /api/menu/tomorrow` | Tomorrow's menu | Public |
+| `GET /api/cravings-banner` | Cravings banner content | Public |
+| `GET /api/search/content` | Search page CMS content | Public |
+| `GET /api/coupon/validate` / `GET /api/coupon/offers` | Coupon + payment offers | Session |
+| `POST /api/coupon/...` | Coupon validation | Session |
+| `GET/POST /api/loyalty/*` | Loyalty points, history, coupons, redeem | Session |
+| `POST /api/referral/code` / `GET /api/referral/stats` | Referral program | Session |
+| `GET /api/geocode/search` / `reverse` | Geoapify geocoding | Public |
+| `GET /api/route/road-route` | OpenRouteService directions + ETA | Public |
+| `POST /api/rider/location` | Delivery partner location heartbeat (Redis `deliveryOrder:{id}:lastLoc`) | Delivery role |
+| `POST /api/push/subscribe` / `GET /api/push/vapid-public-key` | Push subscriptions | Session |
+| `POST /api/support` / `POST /api/admin/support` | Support tickets | Session / Admin |
+| `POST /api/auth/twilio/send` / `verify` | Phone OTP | Public |
+| `POST /api/auth/razorpay/webhook` | Razorpay webhooks | Signature-verified |
+| `POST /api/account/profile` | Profile update | Session |
+| `POST /api/ably-token` | Ably token request | Session |
+| `POST /api/cloudinary/sign` / `delete` | Image management | Session |
+| `GET /api/cron/process-order-events` | Drain `order-events` Redis stream → order processing | Cron secret |
+| `POST /api/jobs/cravings-nudge` / `retry-refund` / `settle-payouts` | Background jobs | Cron secret |
+| `GET /api/admin/backfill-slugs` / `POST /api/admin/invite` | Admin utilities | Admin |
 
 ---
 

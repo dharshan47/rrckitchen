@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { getCategoryImageUrl } from "@/lib/category-images";
 
 export async function GET() {
   try {
@@ -21,7 +20,7 @@ export async function GET() {
         id: c.id,
         name: c.name,
         kitchenCount: c._count.kitchenCategories,
-        imageUrl: getCategoryImageUrl(c.name),
+        imageUrl: c.imageUrl,
       })),
     );
   } catch (error) {

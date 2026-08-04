@@ -1,7 +1,11 @@
+import { useEffect } from "react";
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
 import { subscribeWithSelector, persist } from "zustand/middleware";
+import { useQuery } from "@tanstack/react-query";
 import { globalEventBus, AppEvents } from "@/lib/patterns/event-bus";
+import { getUserAddresses } from "@/actions/cart-checkout/address";
+import { getCartConfig } from "@/actions/cart-checkout/config";
 
 export interface CartItem {
   id: string;
@@ -22,12 +26,44 @@ export interface AppliedCoupon {
   description?: string;
 }
 
-export type OrderType = "PREBOOK" | "INSTANT";
+export type OrderType = "PREBOOK";
+
+/** Saved address row used on the cart page (from getUserAddresses). */
+export interface CartAddress {
+  id: string;
+  label: string | null;
+  lineOne: string;
+  lineTwo: string | null;
+  pincode: string;
+  isDefault: boolean;
+  latitude: number | null;
+  longitude: number | null;
+  serviceZone: { name: string } | null;
+}
+
+/** Checkout charges config (from getCartConfig). */
+export interface CartConfig {
+  packagingCharge: number;
+  deliveryCharge: number;
+  freeDeliveryMin: number;
+}
+
+/** Coupon offer row returned by /api/coupon/offers. */
+export interface CouponOffer {
+  code: string;
+  description: string;
+  discountValue: number;
+  discountType: string;
+  minOrderValue: number | null;
+}
 
 interface CartState {
   cart: CartItem[];
   appliedCoupon: AppliedCoupon | null;
   orderType: OrderType;
+  addresses: CartAddress[];
+  cartConfig: CartConfig | null;
+  availableCoupons: CouponOffer[];
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, qty: number) => void;
@@ -35,6 +71,10 @@ interface CartState {
   applyCoupon: (coupon: AppliedCoupon) => void;
   removeCoupon: () => void;
   setOrderType: (type: OrderType) => void;
+  setAddresses: (addresses: CartAddress[]) => void;
+  setCartConfig: (config: CartConfig | null) => void;
+  setAvailableCoupons: (coupons: CouponOffer[]) => void;
+  resetCartData: () => void;
 }
 
 // Fine-grained selectors for stable references and minimal re-renders
@@ -55,6 +95,16 @@ export const selectCartCoupon = (s: CartState) => s.appliedCoupon;
 
 export const selectCartOrderType = (s: CartState) => s.orderType;
 
+export const selectCartAddresses = (s: CartState) => s.addresses;
+export const selectCartConfig = (s: CartState) => s.cartConfig;
+export const selectCartAvailableCoupons = (s: CartState) => s.availableCoupons;
+export const selectCartDataActions = (s: CartState) => ({
+  setAddresses: s.setAddresses,
+  setCartConfig: s.setCartConfig,
+  setAvailableCoupons: s.setAvailableCoupons,
+  resetCartData: s.resetCartData,
+});
+
 export const cartStore = create<CartState>()(
   subscribeWithSelector(
     persist(
@@ -62,7 +112,10 @@ export const cartStore = create<CartState>()(
         cart: [],
         appliedCoupon: null,
         orderType: "PREBOOK" as OrderType,
-        setOrderType: (type: OrderType) => set({ orderType: type }),
+        addresses: [],
+        cartConfig: null,
+        availableCoupons: [],
+        setOrderType: () => {},
         addToCart: (item: CartItem) => {
           set((state) => {
             const existing = state.cart.find((cartItem) => cartItem.id === item.id);
@@ -103,8 +156,21 @@ export const cartStore = create<CartState>()(
           set({ appliedCoupon: null });
           globalEventBus.emit(AppEvents.CART_UPDATED, { action: "remove-coupon" });
         },
+        setAddresses: (addresses: CartAddress[]) => set({ addresses }),
+        setCartConfig: (cartConfig: CartConfig | null) => set({ cartConfig }),
+        setAvailableCoupons: (availableCoupons: CouponOffer[]) => set({ availableCoupons }),
+        resetCartData: () => set({ addresses: [], cartConfig: null, availableCoupons: [] }),
       }),
-      { name: "rrc-cart" }
+      {
+        name: "rrc-cart",
+        // Only the user's client-side cart state is persisted; server data
+        // (addresses, config, coupons) is always fetched from the backend.
+        partialize: (state) => ({
+          cart: state.cart,
+          appliedCoupon: state.appliedCoupon,
+          orderType: state.orderType,
+        }),
+      }
     )
   )
 );
@@ -127,4 +193,85 @@ export function useCartCoupon() {
 }
 export function useCartOrderType() {
   return cartStore(selectCartOrderType);
+}
+export function useCartAddresses() {
+  return cartStore(selectCartAddresses);
+}
+export function useCartConfig() {
+  return cartStore(selectCartConfig);
+}
+export function useCartAvailableCoupons() {
+  return cartStore(selectCartAvailableCoupons);
+}
+export function useCartDataActions() {
+  return cartStore(useShallow(selectCartDataActions));
+}
+
+/* ------------------------- TanStack Query hooks ------------------------- */
+
+/**
+ * Fetches the user's saved addresses via TanStack Query and syncs the
+ * result into the zustand store. Runs only when the user is logged in.
+ */
+export function useCartAddressesQuery(enabled: boolean) {
+  const { data, ...rest } = useQuery({
+    queryKey: ["user-addresses"],
+    queryFn: async () => {
+      const result = await getUserAddresses();
+      return result as unknown as CartAddress[];
+    },
+    enabled,
+  });
+
+  useEffect(() => {
+    cartStore.getState().setAddresses(Array.isArray(data) ? data : []);
+  }, [data]);
+
+  return { data, ...rest };
+}
+
+/**
+ * Fetches the cart charges config via TanStack Query and syncs the
+ * result into the zustand store.
+ */
+export function useCartConfigQuery() {
+  const { data, ...rest } = useQuery({
+    queryKey: ["cart-config"],
+    queryFn: getCartConfig,
+  });
+
+  useEffect(() => {
+    cartStore.getState().setCartConfig(data ?? null);
+  }, [data]);
+
+  return { data, ...rest };
+}
+
+/**
+ * Fetches the available coupon offers for the given cart total via
+ * TanStack Query and syncs the result into the zustand store. The query
+ * is keyed by cart total so the offers always match the current cart.
+ */
+export function useCartCouponsQuery(cartTotal: number) {
+  const { data, ...rest } = useQuery({
+    queryKey: ["cart-sidebar-coupons", cartTotal],
+    queryFn: async () => {
+      const res = await fetch("/api/coupon/offers", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ cartTotal }),
+      });
+      if (!res.ok) return [];
+      const json = await res.json();
+      return (json.coupons || []) as CouponOffer[];
+    },
+    staleTime: 60_000,
+    gcTime: 300_000,
+  });
+
+  useEffect(() => {
+    cartStore.getState().setAvailableCoupons(Array.isArray(data) ? data : []);
+  }, [data]);
+
+  return { data, ...rest };
 }

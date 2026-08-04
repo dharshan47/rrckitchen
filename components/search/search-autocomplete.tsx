@@ -161,7 +161,7 @@ export function SearchAutocomplete({
         const urlSlug = slug?.length === 25 && slug.startsWith("c")
           ? kitchenName!.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
           : slug
-        router.push(`/kitchen/${urlSlug ?? id}`)
+        router.push(`/kitchens/${urlSlug ?? id}`)
       }
     },
     [router, onNavigate, mobileModal]
@@ -311,7 +311,7 @@ export function SearchAutocomplete({
                         <div className="flex items-center gap-2">
                           <p className="text-sm font-medium truncate">{kitchen.displayName}</p>
                           {isClosed && status.opensNextAt && (
-                            <span className="text-[9px] font-bold text-[#EE7005] uppercase bg-orange-50 px-1.5 py-0.5 rounded-sm shrink-0 whitespace-nowrap hidden sm:inline-block">
+                            <span className="text-[9px] font-bold text-primary uppercase bg-orange-50 px-1.5 py-0.5 rounded-sm shrink-0 whitespace-nowrap hidden sm:inline-block">
                               OPENS {status.opensNextAt.time} {status.opensNextAt.day}
                             </span>
                           )}

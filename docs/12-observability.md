@@ -1,7 +1,7 @@
 # Observability & Monitoring
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [Dependencies & Replacements](dependencies-and-replacements.md#9-monitoring-not-present), [System Architecture](01-system-architecture.md)
 
 ---
@@ -14,13 +14,18 @@ This is a **critical production gap** that must be addressed before going live.
 
 ### Current `console.*` Usage
 
+> Representative sample — actual usage spans ~40+ files (all `actions/admin/*`, most `app/api/*` routes, `lib/twilio.ts`, `lib/ably/client.ts`, `lib/auth-client.ts`, payment/refund/payout actions). And `next.config.ts` sets `removeConsole: true` for production, stripping it from client bundles anyway.
+
 | File | Pattern | Count |
 |------|---------|-------|
 | `lib/twilio.ts` | `console.log("[TWILIO] Message response:", ...)` | 3 |
 | `lib/twilio.ts` | `console.error("[TWILIO] Failed to send SMS:", ...)` | 1 |
-| `lib/ably/client.ts` | `console.warn("[Ably] Connection state:", ...)` | 2 |
-| `lib/ably/client.ts` | `console.error("[Ably] Failed:", ...)` | 1 |
+| `lib/ably/client.ts` | `console.warn("[Ably] Connection failed...")` | 1 |
+| `lib/ably/client.ts` | `console.error("[Ably] Connection failed permanently")` | 1 |
 | `lib/auth-client.ts` | `console.warn("Rate limited. Retrying after", ...)` | 1 |
+| `actions/payments/refund.ts` | `console.error("Razorpay refund failed:", ...)` | 2 |
+| `actions/payouts/kitchen-payout.ts` | `console.error("RazorpayX payout failed:", ...)` | 1 |
+| `actions/orders/orders.ts` | `console.error("Auto-assignment failed:", ...)` | 2 |
 | `app/api/ably-token/route.ts` | `console.error("[Ably Token] Error:", ...)` | 1 |
 | `app/api/cloudinary/delete/route.ts` | `console.error("[Cloudinary] Error:", ...)` | 1 |
 
@@ -238,23 +243,52 @@ Once logging is implemented, set up dashboards for:
 
 ## 7. Audit Logging (Already Implemented)
 
-The `AdminAuditLog` model in PostgreSQL logs all admin actions:
+Admin actions are recorded in Postgres via `logAdminAction()` (`lib/auth-guards.ts`) into the `AdminAuditLog` model:
 
 ```prisma
 model AdminAuditLog {
-  id         String   @id @default(cuid())
-  adminId    String
-  action     String   // e.g., "UPDATE_ORDER_STATUS"
-  entityType String   // e.g., "order"
-  entityId   String
-  before     Json     // Previous state (PII redacted)
-  after      Json     // New state (PII redacted)
-  ipAddress  String
-  createdAt  DateTime @default(now())
+  id          String   @id @default(cuid())
+  actorUserId String   // Admin user who performed the action
+  action      String   // e.g. "UPDATE_ORDER_STATUS", "GRANT_PERMISSION"
+  targetType  String?  // e.g. "order", "menuItem", "adminProfile"
+  targetId    String?
+  metadata    Json?    // Before/after state (PII redacted)
+  ipAddress   String?
+  createdAt   DateTime @default(now())
+
+  @@index([actorUserId])
+  @@index([targetType, targetId])
+  @@index([createdAt])
 }
 ```
 
-This is the **only observability currently implemented**. It captures admin actions with PII redaction.
+High-risk actions (remove admin, grant permission, large refund, payout settlement, ban user) additionally go through `AdminApprovalRequest` (two-admin approval: one requests, a second approves; status PENDING/APPROVED/REJECTED).
+
+```prisma
+enum AdminActionType {
+  REMOVE_ADMIN
+  GRANT_PERMISSION
+  LARGE_REFUND
+  PAYOUT_SETTLEMENT
+  BAN_USER
+}
+
+model AdminApprovalRequest {
+  id                String              @id @default(cuid())
+  actionType        AdminActionType
+  targetId          String?
+  payload           Json?
+  requestedByUserId String
+  status            AdminApprovalStatus @default(PENDING)
+  decidedByUserId   String?
+  decidedAt         DateTime?
+  createdAt         DateTime            @default(now())
+}
+```
+
+These two models are the **only observability currently implemented**.
+
+> **Important:** `next.config.ts` sets `removeConsole: true` in production — all `console.*` output is stripped from client bundles. Structured logging must write to a log aggregation service (or DB), not rely on server console.
 
 ---
 
@@ -266,4 +300,4 @@ This is the **only observability currently implemented**. It captures admin acti
 - [ ] Add log aggregation (Better Stack, Axiom, or Datadog)
 - [ ] Set up alerting for critical errors
 - [ ] Add health check endpoint (`GET /api/health`)
-- [ ] Configure `next.config.ts` `removeConsole` for production (currently strips all console output!)
+- [ ] Review `next.config.ts` `removeConsole` (currently strips all console output in production)

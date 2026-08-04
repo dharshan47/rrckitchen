@@ -2,92 +2,123 @@
 
 import Link from "next/link"
 import Image from "next/image"
-import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from "@/components/ui/carousel"
-import { Button } from "@/components/ui/button"
-import { useSession } from "@/lib/auth-client"
-import { useState } from "react"
+import { ArrowRight } from "lucide-react"
 
 const categories = [
-  { name: "Dosa", slug: "dosa" },
-  { name: "Biryani", slug: "biryani" },
-  { name: "Idli", slug: "idli" },
-  { name: "Vada", slug: "vada" },
-  { name: "Momos", slug: "momos" },
-  { name: "Parotta", slug: "parotta" },
-  { name: "Noodles", slug: "noodles" },
-  { name: "Pancake", slug: "pancake" },
-  { name: "Sandwich", slug: "sandwich" },
+  {
+    name: "Breakfast",
+    slug: "breakfast",
+    image:
+      "https://images.pexels.com/photos/376464/pexels-photo-376464.jpeg?auto=compress&cs=tinysrgb&w=200",
+  },
+  {
+    name: "Lunch",
+    slug: "lunch",
+    image:
+      "https://images.pexels.com/photos/5938/food-salad-healthy-lunch.jpg?auto=compress&cs=tinysrgb&w=200",
+  },
+  {
+    name: "Dinner",
+    slug: "dinner",
+    image:
+      "https://images.pexels.com/photos/691114/pexels-photo-691114.jpeg?auto=compress&cs=tinysrgb&w=200",
+  },
+  {
+    name: "Veg Meals",
+    slug: "veg-meals",
+    image:
+      "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=200",
+  },
+  {
+    name: "Non Veg Meals",
+    slug: "non-veg-meals",
+    image:
+      "https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&cs=tinysrgb&w=200",
+  },
+  {
+    name: "South Indian",
+    slug: "south-indian",
+    image:
+      "https://images.pexels.com/photos/5560763/pexels-photo-5560763.jpeg?auto=compress&cs=tinysrgb&w=200",
+  },
+  {
+    name: "North Indian",
+    slug: "north-indian",
+    image:
+      "https://images.pexels.com/photos/2474661/pexels-photo-2474661.jpeg?auto=compress&cs=tinysrgb&w=200",
+  },
+  {
+    name: "Healthy Meals",
+    slug: "healthy-meals",
+    image:
+      "https://images.pexels.com/photos/1640774/pexels-photo-1640774.jpeg?auto=compress&cs=tinysrgb&w=200",
+  },
+  {
+    name: "Kids Meals",
+    slug: "kids-meals",
+    image:
+      "https://images.pexels.com/photos/1640770/pexels-photo-1640770.jpeg?auto=compress&cs=tinysrgb&w=200",
+  },
+  {
+    name: "Snacks",
+    slug: "snacks",
+    image:
+      "https://images.pexels.com/photos/410911/pexels-photo-410911.jpeg?auto=compress&cs=tinysrgb&w=200",
+  },
+  {
+    name: "Desserts",
+    slug: "desserts",
+    image:
+      "https://images.pexels.com/photos/291528/pexels-photo-291528.jpeg?auto=compress&cs=tinysrgb&w=200",
+  },
+  {
+    name: "Beverages",
+    slug: "beverages",
+    image:
+      "https://images.pexels.com/photos/50593/coca-cola-cold-drink-soft-drink-coke-50593.jpeg?auto=compress&cs=tinysrgb&w=200",
+  },
 ]
 
 export function WhatsOnYourMind() {
-  const { data: session } = useSession()
-  const greeting = session?.user?.name ? `${session.user.name}, What's on your mind?` : "What's on your mind?"
-  const [api, setApi] = useState<CarouselApi | null>(null)
-
   return (
-    <section className="max-w-300 mx-auto">
-      <div className="flex items-center justify-between gap-4 mb-5 sm:mb-7">
-        <h2 className="text-xl sm:text-2xl font-bold text-foreground">
-          {greeting}
+    <section>
+      <div className="flex items-center justify-between gap-4 mb-6 sm:mb-8">
+        <h2 className="text-[17px] sm:text-2xl lg:text-[1.65rem] font-bold text-black tracking-tight uppercase">
+          What Would You Like To Eat?
         </h2>
-        <div className="hidden lg:flex items-center gap-2 shrink-0">
-          <Button
-            type="button"
-            variant="secondary"
-            size="icon"
-            aria-label="Previous categories"
-            onClick={() => api?.scrollPrev()}
-            className="h-10 w-10 rounded-full bg-muted hover:bg-muted/80 text-foreground shadow-none"
-          >
-            <ChevronLeft className="h-5 w-5" />
-          </Button>
-          <Button
-            type="button"
-            variant="secondary"
-            size="icon"
-            aria-label="Next categories"
-            onClick={() => api?.scrollNext()}
-            className="h-10 w-10 rounded-full bg-muted hover:bg-muted/80 text-foreground shadow-none"
-          >
-            <ChevronRight className="h-5 w-5" />
-          </Button>
-        </div>
+        <Link
+          href="/categories"
+          className="flex items-center gap-1 sm:gap-1.5 text-[12px] sm:text-sm font-bold text-[#053F1F] hover:underline shrink-0"
+        >
+          View All Categories
+          <ArrowRight className="h-4 w-4" />
+        </Link>
       </div>
-      <Carousel
-        opts={{
-          align: "start",
-          dragFree: true,
-        }}
-        setApi={setApi}
-      >
-        <CarouselContent className="-ml-3 sm:-ml-4">
-          {categories.map((cat) => (
-            <CarouselItem
-              key={cat.slug}
-              className="basis-[36%] sm:basis-[24%] md:basis-[18%] lg:basis-[calc(100%/7)] xl:basis-[12.5%] pl-3 sm:pl-4"
-            >
-              <Link
-                href={`/search?q=${cat.slug}`}
-                className="flex flex-col items-center gap-2 sm:gap-3 group/cat"
-              >
-                <div className="relative w-full aspect-square rounded-full overflow-hidden bg-muted/30 transition-transform duration-300 group-hover/cat:scale-105">
-                  <Image
-                    src="/categories/idli.png"
-                    alt={cat.name}
-                    fill
-                    sizes="(max-width: 640px) 36vw, (max-width: 768px) 24vw, (max-width: 1024px) 18vw, 14.28vw"
-                    className="object-contain scale-110 p-4 sm:p-5 md:p-6"
-                  />
-                </div>
-                <span className="text-xs sm:text-sm font-semibold text-center text-muted-foreground group-hover/cat:text-foreground transition-colors leading-tight">
-                  {cat.name}
-                </span>
-              </Link>
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-      </Carousel>
+
+      {/* Horizontal scroll on mobile, 2 rows layout */}
+      <div className="grid grid-rows-2 grid-flow-col gap-x-4 sm:gap-x-8 lg:gap-x-12 gap-y-6 sm:gap-y-10 overflow-x-auto pb-4 hide-scrollbar snap-x">
+        {categories.map((cat) => (
+          <Link
+            key={cat.slug}
+            href={`/search?q=${cat.slug}`}
+            className="flex flex-col items-center gap-3 group/cat w-[85px] sm:w-[110px] md:w-[130px] snap-start"
+          >
+            <div className="relative w-full aspect-square rounded-full overflow-hidden transition-transform duration-300 group-hover/cat:scale-105 shadow-[0_4px_20px_rgba(0,0,0,0.08)] bg-white">
+              <Image
+                src={cat.image}
+                alt={cat.name}
+                fill
+                sizes="(max-width: 640px) 85px, (max-width: 768px) 110px, 130px"
+                className="object-cover"
+              />
+            </div>
+            <span className="text-[12px] sm:text-[14px] font-bold text-center text-black group-hover/cat:text-[#FF4B00] transition-colors leading-tight">
+              {cat.name}
+            </span>
+          </Link>
+        ))}
+      </div>
     </section>
   )
 }
+

@@ -91,7 +91,7 @@ export async function decideApprovalRequest(requestId: string, approve: boolean)
       if (targetId) {
         await prisma.user.update({
           where: { id: targetId },
-          data: { banned: true, banReason: (payload?.reason as string) ?? "Banned by admin" },
+          data: { banned: true, banReason: (payload?.reason as string) ?? null },
         });
       }
       break;

@@ -1,8 +1,23 @@
 # Testing & Quality Assurance Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [Deployment Pipeline](14-deployment-devops.md), [Component System](07-component-system.md), [System Architecture](01-system-architecture.md)
+
+---
+
+## 0. Current State
+
+| Area | Status |
+|------|--------|
+| **Unit tests (Vitest)** | **149 spec files** under `tests/unit/**` (stores, lib, hooks, components, api, actions) |
+| **Component tests** | Included in the same Vitest suite (Testing Library + jsdom, `tests/unit/components/**`) |
+| **API/action integration tests** | Included in the same Vitest suite (`tests/unit/api/**`, `tests/unit/actions/**`) with mocked services |
+| **E2E (Playwright)** | Configured (`playwright.config.ts`, `tests/e2e/` dir, `test:e2e` script) but **0 spec files written** |
+| **Storybook / Chromatic / axe-core / MSW** | Not installed |
+| **CI pipeline** | None — no `.github/workflows/*`; nothing runs on push/PR |
+
+Scripts: `npm run test:unit` (vitest), `npm run test:e2e` (playwright test), `npm run lint` (eslint).
 
 ---
 
@@ -49,12 +64,12 @@ flowchart TB
 
 | Layer | Framework | Count | Coverage Target | CI Stage |
 |-------|-----------|-------|-----------------|----------|
-| **Unit (pure logic)** | Vitest | 200+ | 90% lines | `test:unit` |
-| **Component** | Vitest + RTL + Storybook | 100+ | 80% branches | `test:component` |
-| **Integration** | Vitest + MSW | 50+ | 85% branches | `test:integration` |
-| **E2E** | Playwright | 20+ | 100% of critical flows | `test:e2e` |
-| **Accessibility** | axe-core + RTL | 30+ | — | `test:a11y` |
-| **Visual** | Storybook + Chromatic | 50+ | — | `test:visual` |
+| **Unit (pure logic)** | Vitest | 149 files (`tests/unit/lib`, `tests/unit/stores`) | 90% lines | `test:unit` |
+| **Component** | Vitest + RTL | within unit suite (`tests/unit/components`) | 80% branches | `test:unit` |
+| **Integration (API/actions)** | Vitest + mocked services | within unit suite (`tests/unit/api`, `tests/unit/actions`) | 85% branches | `test:unit` |
+| **E2E** | Playwright | 0 written (scaffold ready) | 100% of critical flows | `test:e2e` |
+
+> The pyramid in section 2 is the **target shape**; today everything runs as one Vitest suite (`tests/unit/**`). E2E is the missing layer.
 
 ---
 
@@ -254,8 +269,8 @@ describe('Place Order (Integration)', () => {
   it('should place order successfully', async () => {
     const result = await placeOrder({
       addressId: testAddressId,
-      orderType: 'instant',
-      paymentMethod: 'cod',
+      orderType: 'prebook',
+      paymentMethod: 'online',
     });
 
     expect(result.success).toBe(true);
@@ -270,7 +285,7 @@ describe('Place Order (Integration)', () => {
     expect(order).toBeDefined();
     expect(order?.orderItems).toHaveLength(1);
     expect(order?.orderItems[0].quantity).toBe(2);
-    expect(order?.payment?.method).toBe('cod');
+    expect(order?.payment?.method).toBe('online');
   });
 
   it('should fail when cart is empty', async () => {
@@ -278,8 +293,8 @@ describe('Place Order (Integration)', () => {
     await expect(
       placeOrder({
         addressId: testAddressId,
-        orderType: 'instant',
-        paymentMethod: 'cod',
+        orderType: 'prebook',
+        paymentMethod: 'online',
       })
     ).rejects.toThrow('Cart is empty');
   });
@@ -295,7 +310,6 @@ describe('Place Order (Integration)', () => {
 | Journey | Test File | Steps |
 |---------|-----------|-------|
 | **Browse → Order (Online)** | `browse-order-online.spec.ts` | Home → Kitchen → Add item → Checkout → Pay → Success |
-| **Browse → Order (COD)** | `browse-order-cod.spec.ts` | Home → Kitchen → Add item → Checkout → COD → Success |
 | **Auth (Phone OTP)** | `auth-phone-otp.spec.ts` | Enter phone → Enter OTP → Complete profile → Dashboard |
 | **Kitchen Dashboard** | `kitchen-dashboard.spec.ts` | Login → View orders → Update status |
 | **Delivery Workflow** | `delivery-workflow.spec.ts` | Login → Accept delivery → Navigate → Mark delivered |
@@ -380,25 +394,18 @@ describe('Accordion Accessibility', () => {
 
 ## 8. CI Quality Gates
 
+> **No CI exists yet.** Suggested pipeline (mirrors current scripts):
+
 ```yaml
-# .github/workflows/ci.yml (simplified)
+# .github/workflows/ci.yml (suggested — does not exist yet)
 jobs:
   quality:
     steps:
       - run: npm run lint                    # ESLint
-      - run: npm run typecheck               # tsc --noEmit
-      - run: npm run test:unit               # Vitest unit tests
-      - run: npm run test:component          # Vitest + RTL
-      - run: npm run test:integration        # Vitest + MSW
-      - run: npm run test:a11y               # axe-core
+      - run: npx tsc --noEmit                # TypeScript strict
+      - run: npm run test:unit               # Vitest (149 spec files)
+      - run: npm run test:e2e                # Playwright (once specs exist)
       - run: npm audit                       # Vulnerability scan
-      - run: npx bundle-analyzer             # Bundle size check
-      - run: npx depcheck                    # Unused dependencies
-
-  preview:
-    steps:
-      - run: npx chromatic                    # Visual regression
-      - run: npx lighthouse-ci                # Performance budget
 ```
 
 ### Gate Thresholds
@@ -407,14 +414,9 @@ jobs:
 |------|---------------|-------------|
 | **Lint** | 0 errors, 0 warnings | Block merge |
 | **TypeScript** | 0 errors (strict mode) | Block merge |
-| **Unit tests** | 100% pass, >90% lines | Block merge |
-| **Component tests** | 100% pass, >80% branches | Block merge |
-| **Integration tests** | 100% pass | Block merge |
-| **Accessibility** | 0 violations | Block merge |
-| **Bundle size** | <150KB initial JS | Warning (manual review) |
+| **Unit tests** | 100% pass | Block merge |
+| **E2E tests** | 100% pass | Block merge |
 | **npm audit** | 0 critical, <3 high | Block merge |
-| **Visual regression** | <2% change threshold | Manual review |
-| **Lighthouse** | Performance >80, A11y >90 | Warning |
 
 ---
 

@@ -1,7 +1,7 @@
 # Payment System Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [API Design](04-api-design.md), [Data Model](03-data-model.md), [Architecture Decisions (Razorpay)](02-architecture-decisions.md#adr-012-payment---razorpay--cod)
 
 ---
@@ -12,31 +12,30 @@
 %%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true, 'nodeSpacing': 50, 'rankSpacing': 50}}}%%
 flowchart TB
     subgraph "Payment Methods"
-        Online["Online Payment"]
-        COD["Cash on Delivery"]
+        Online["Razorpay Checkout"]
+        UPI["UPI Smart Collect"]
     end
 
     subgraph "Online Flow"
-        O1["Razorpay Order Creation"]
-        O2["Checkout Modal (UPI/Card/NB/Wallet)"]
-        O3["Payment Verification"]
-        O4["Order Confirmation"]
+        O1["createPaymentOrder (Order + Payment PENDING)"]
+        O2["Checkout Modal (UPI/NB/Wallet/Cards)"]
+        O3["Payment Verification (HMAC)"]
+        O4["Order PREPARING + Payout + Loyalty"]
         O5["Refund Lifecycle"]
     end
 
-    subgraph "COD Flow"
-        C1["Eligibility Check"]
-        C2["Order Placement"]
-        C3["Delivery Collection"]
-        C4["Partner Remittance"]
-        C5["Reconciliation"]
+    subgraph "UPI Smart Collect Flow"
+        U1["Create Virtual Payment Address (VPA)"]
+        U2["Customer pays to VPA"]
+        U3["Poll VPA payments"]
+        U4["confirmPayment on capture"]
     end
 
     subgraph "Supporting Systems"
-        WH["Webhook Handler"]
-        RC["Reconciliation Engine"]
+        WH["Webhook Handler (/api/auth/razorpay/webhook)"]
         RF["Refund Manager"]
         AUD["Audit Trail"]
+        J["Jobs: retry-refund, settle-payouts"]
     end
 
     Online --> O1
@@ -45,19 +44,19 @@ flowchart TB
     O3 --> O4
     O4 --> O5
 
-    COD --> C1
-    C1 --> C2
-    C2 --> C3
-    C3 --> C4
-    C4 --> C5
+    UPI --> U1
+    U1 --> U2
+    U2 --> U3
+    U3 --> U4
 
     O3 --> WH
     O5 --> RF
-    C5 --> RC
     WH --> AUD
-    RC --> AUD
     RF --> AUD
+    RF --> J
 ```
+
+**COD was fully removed (ADR-019).** There is no cash collection, delivery OTP, remittance, or reconciliation engine. All orders are prepaid.
 
 ---
 
@@ -68,24 +67,23 @@ flowchart TB
 ```mermaid
 sequenceDiagram
     participant User
-    participant FE as Frontend
-    participant Action as Server Actions
+    participant FE as Frontend (cart-content)
+    participant API as /api/payment/create-order
     participant Razorpay
     participant DB
     participant Ably
 
     User->>FE: Click "Place Order" (Pay Online)
 
-    FE->>FE: Validate cart (items available, stock ok)
-    FE->>Action: createRazorpayOrder({ amount })
-    Action->>DB: Calculate final amount (subtotal - coupon + tax + delivery)
-    Note over Action: Amount in paise (19900 = Rs 199)
-    Action->>Razorpay: POST /v1/orders { amount, currency: "INR", receipt }
-    Razorpay-->>Action: { id: "order_xxxx", amount, status: "created" }
-    Action->>DB: Create Payment record (status: "initiated")
-    Action-->>FE: { razorpayOrderId: "order_xxxx", amount, key_id, orderId }
+    FE->>FE: Validate cart (items available, address, config)
+    FE->>API: createPaymentOrder({ items, idempotencyKey, couponCode, serviceDateType })
+    API->>DB: $transaction — idempotency + slot-cutoff checks
+    Note over API: Create Order (CONFIRMED) + OrderItems + Payment (PENDING)<br/>Allocate publicCode ORD-…, bust menu cache
+    API->>Razorpay: POST /v1/orders { amount: paise, currency: "INR", receipt }
+    Razorpay-->>API: { id: "order_xxxx", amount, status: "created" }
+    API-->>FE: { razorpayOrderId, amount, keyId, orderId }
 
-    Note over FE: Open Razorpay Checkout Modal
+    Note over FE: Open Razorpay Checkout Modal (explicit method order: UPI → Net Banking → Wallets → Cards)
     FE->>Razorpay: Razorpay.checkout.open(options)
     Razorpay->>User: Show payment UI
 
@@ -93,34 +91,32 @@ sequenceDiagram
 
     alt Payment Success
         Razorpay-->>FE: { razorpay_payment_id, razorpay_order_id, razorpay_signature }
-        FE->>Action: verifyPayment({ payment_id, order_id, signature })
+        FE->>API: POST /api/payment/verify
 
-        Action->>Action: HMAC_SHA256(expected = body.order_id + "|" + body.payment_id)
-        Note over Action: Compare with razorpay_signature
+        API->>API: HMAC_SHA256(expected = order_id + "|" + payment_id)
 
         alt Signature Valid
-            Action->>DB: $transaction
-            Action->>DB: Create Order (status: "confirmed")
-            Action->>DB: Create OrderItems
-            Action->>DB: Update Payment (status: "paid")
-            Action->>DB: Deduct KitchenDailyStock
-            Action->>DB: Delete CartItems
-            Action->>DB: Apply coupon usage increment
+            API->>DB: $transaction
+            API->>DB: Payment → SUCCESS (store method + paymentMethodDetail)
+            API->>DB: Order → PREPARING
+            API->>DB: Create KitchenPayout (gross - 15% commission)
+            API->>DB: Award loyalty points
 
-            Action->>Ably: Publish "order.{orderId}" = { status: "confirmed" }
-            Action-->>FE: { success: true, orderId, redirect: "/orders/{id}" }
+            API->>Ably: order:{id} "order:status" + kitchen:{id} "queue:new-order" + "order:cravings"
+            API->>Redis: Stream "order-events" type ORDER_CONFIRMED
+            API-->>FE: { success: true, orderId, status: "PREPARING" }
 
             FE->>FE: clearCart()
-            FE->>User: Show CravingsPopup + redirect
+            FE->>User: Show AddToCartPopup (cravings recommendations)
         else Signature Invalid
-            Action-->>FE: { success: false, error: "PAYMENT_VERIFICATION_FAILED" }
+            API-->>FE: { success: false, error: "SIGNATURE_MISMATCH" }
         end
 
-    else Payment Failed
-        Razorpay-->>FE: { error: { code, description } }
-        FE->>Action: handleFailedPayment({ order_id, error })
-        Action->>DB: Update Payment (status: "failed")
-        Action-->>FE: { success: false }
+    else Payment Failed / Modal Dismissed
+        Razorpay-->>FE: { error: { code, description } } | modal dismissed
+        FE->>API: POST /api/payment/fail
+        API->>DB: Payment → FAILED, Order → CANCELLED
+        API-->>FE: { success: false }
         FE->>User: Show error + retry button
     end
 ```
@@ -128,33 +124,24 @@ sequenceDiagram
 ### 2.2 Razorpay Checkout Options
 
 ```typescript
+// hooks/useRazorpay.ts — initiateCheckout()
 const options = {
-  key: process.env.RAZORPAY_KEY_ID,           // Razorpay API Key ID
-  amount: order.amount,                         // Amount in paise
+  key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+  amount: order.amount,                       // Amount in paise
   currency: 'INR',
   name: 'RRC Kitchen',
   description: `Order #${order.orderId}`,
-  order_id: order.razorpayOrderId,              // From createRazorpayOrder
-  prefill: {
-    contact: user.phone,                        // Auto-fill customer phone
-  },
-  theme: {
-    color: '#EE7005',                           // Brand primary color
-  },
+  order_id: order.razorpayOrderId,
+  prefill: { contact: user.phone },
+  theme: { color: '#EE7005' },
   modal: {
-    ondismiss: () => {
-      // Handle modal close without payment
-    },
+    ondismiss: () => failPayment(orderId),    // POST /api/payment/fail
   },
-  handler: async (response) => {
-    // Handle successful payment
-    const result = await verifyPayment({
-      razorpay_order_id: response.razorpay_order_id,
-      razorpay_payment_id: response.razorpay_payment_id,
-      razorpay_signature: response.razorpay_signature,
-    });
-  },
+  handler: (response) => verifyPayment(response), // POST /api/payment/verify
 };
+
+// Method order is forced via Razorpay's payment block config:
+// UPI → Net Banking → Wallets → Cards (PAYMENT_BLOCKS_CONFIG)
 ```
 
 ### 2.3 Webhook Processing
@@ -162,13 +149,12 @@ const options = {
 ```mermaid
 sequenceDiagram
     participant Razorpay
-    participant WH as Webhook Handler
+    participant WH as /api/auth/razorpay/webhook
     participant DB
     participant Ably
-    participant Admin
 
-    Razorpay->>WH: POST /api/payment/webhook
-    Note over Razorpay,WH: Signed with HMAC-SHA256
+    Razorpay->>WH: POST webhook event
+    Note over Razorpay,WH: Signed with HMAC-SHA256 (RAZORPAY_WEBHOOK_SECRET)
 
     WH->>WH: Verify webhook signature
     alt Invalid Signature
@@ -178,159 +164,63 @@ sequenceDiagram
     WH->>WH: Parse event type
 
     alt payment.captured
-        WH->>DB: Find Payment by razorpay_order_id
-        DB-->>WH: Payment record
-        WH->>DB: Update Payment status = "paid"
-        WH->>DB: Update Order status = "confirmed"
-        WH->>Ably: Publish order.{orderId} { status: "confirmed" }
-        alt Order already confirmed (duplicate webhook)
-            WH-->>Razorpay: 200 OK (idempotent)
-        end
+        WH->>DB: Find Payment by razorpay_order_id (idempotent)
+        WH->>DB: Payment → SUCCESS, Order → PREPARING
+        WH->>Ably: order:{orderId} "order:status"
     else payment.failed
-        WH->>DB: Update Payment status = "failed"
-        WH->>DB: Update Order status = "payment_failed"
-    else payment.refunded
-        WH->>DB: Create Refund record
-        WH->>DB: Update Payment status = "refunded"
+        WH->>DB: Payment → FAILED, Order → CANCELLED
+    else refund.processed
+        WH->>DB: Refund → PROCESSED
+        WH->>Ably: order:{orderId} "refund:processed"
     end
 
-    WH->>DB: Create OrderEvent (audit)
+    WH->>DB: AdminAuditLog / notification log entry
     WH-->>Razorpay: 200 OK
 ```
 
 ---
 
-## 3. COD (Cash on Delivery) Flow
+## 3. UPI Smart Collect (backend-ready)
 
-### 3.1 Eligibility Logic
+Falls back on / complements Razorpay Checkout for UPI-only payment: a per-order Razorpay Virtual Payment Address (VPA) that the customer pays from any UPI app.
 
-```typescript
-async function checkCodEligibility(
-  userId: string,
-  orderAmount: number
-): Promise<{ eligible: boolean; reason?: string }> {
-  // Rule 1: Amount limit
-  if (orderAmount > 200000) { // ₹2000 in paise
-    return { eligible: false, reason: "Order exceeds COD limit" };
-  }
-
-  // Rule 2: User history
-  const recentFailedCod = await prisma.order.count({
-    where: {
-      userId,
-      paymentMethod: 'cod',
-      status: 'cancelled',
-      createdAt: { gte: subDays(new Date(), 30) },
-    },
-  });
-  if (recentFailedCod >= 3) {
-    return { eligible: false, reason: "Too many failed COD deliveries" };
-  }
-
-  // Rule 3: Kitchen accepts COD
-  const kitchenAcceptsCod = true; // Configurable per kitchen
-
-  return { eligible: true };
-}
-```
-
-### 3.2 COD Settlement Flow
+### 3.1 Flow
 
 ```mermaid
 sequenceDiagram
     participant Customer
-    participant Delivery as Delivery Partner
-    participant Platform
-    participant Kitchen
+    participant API as /api/payment/upi-collect/create
+    participant Razorpay
+    participant DB
+    participant Poll as /api/payment/upi-collect/status
 
-    Customer->>Platform: Place COD order
-    Platform->>Platform: Inventory hold (stock reserved)
+    Customer->>API: Create UPI collect request (orderId)
+    API->>DB: Payment (provider: UPI_COLLECT, PENDING)
+    API->>Razorpay: virtualAccounts.create (VPA, 30-min expiry)
+    API->>DB: UpiCollectRequest (vpa, expiresAt)
+    API-->>Customer: { vpa, qr, expiresAt }
 
-    Kitchen->>Platform: Mark "Ready for Pickup"
-    Platform->>Delivery: Assign delivery partner
+    Customer->>Customer: Pay via UPI app (scan QR / enter VPA)
 
-    Delivery->>Customer: Deliver food
-    Customer->>Delivery: Pay cash (exact amount)
-    Customer->>Delivery: Provide 4-digit OTP (confirmation)
-    Delivery->>Platform: Confirm delivery (OTP)
-
-    Platform->>Platform: Mark order "delivered"
-    Platform->>Platform: Record COD receivable: amount
-
-    Note over Delivery: End of day: collect all COD cash
-    Delivery->>Platform: Remit COD amount
-    Platform->>Platform: Record remittance
-
-    alt Full Remittance
-        Platform->>Platform: Variance = 0
-        Platform->>Delivery: Full settlement
-    else Short/Excess
-        Platform->>Platform: Log CodVariance
-        Platform->>Delivery: Adjust settlement
+    loop Poll every 4s (hooks/useUpiCollect.ts)
+        Poll->>Razorpay: virtualAccounts.fetchPayments
+        alt Payment captured
+            Poll->>DB: confirmPayment(..., "upi", { source: "smart_collect" })
+            Poll->>DB: UpiCollectRequest → PAID
+            Poll-->>Customer: { status: "PAID" }
+        else Expired
+            Poll->>DB: UpiCollectRequest → EXPIRED
+        end
     end
-
-    Platform->>Kitchen: Payout (amount - commission)
-    Note over Platform: Weekly payout cycle
 ```
 
----
+### 3.2 Model
 
-## 4. Reconciliation Engine
+- `UpiCollectRequest`: `orderId` (unique), `paymentId` (unique), `vpa`, `razorpayVpaId`, `status` (`PENDING | PAID | EXPIRED | FAILED`), `expiresAt` (30 min)
+- `Payment.provider` distinguishes `RAZORPAY` vs `UPI_COLLECT`
+- Helpers in `lib/razorpay.ts`: `createVpa()`, `fetchVpaPayments()`
 
-### 4.1 Data Model
-
-```mermaid
-erDiagram
-    CodCollection {
-        string id PK
-        string deliveryPartnerId FK
-        date collectionDate
-        float totalCollected "Cash collected by delivery partner"
-        float totalRemitted "Cash remitted to platform"
-        float variance "totalCollected - totalRemitted"
-    }
-
-    CodRemittance {
-        string id PK
-        string deliveryPartnerId FK
-        string orderId FK
-        float amount "COD amount for this order"
-        string status "pending | remitted | reconciled"
-    }
-
-    CodVariance {
-        string id PK
-        string codCollectionId FK
-        float expectedAmount
-        float actualAmount
-        float difference
-        string reason "short | excess | unaccounted"
-        string resolution "pending | adjusted | written_off"
-    }
-```
-
-### 4.2 Reconciliation Process
-
-```mermaid
-graph TD
-    A["Delivery Partner submits<br/>daily COD report"] --> B["System matches against<br/>delivered COD orders"]
-    B --> C{"Total Collected =<br/>Total Expected?"}
-
-    C -->|"Yes ✓"| D["No variance<br/>Mark reconciled"]
-    C -->|"No ✗"| E["Variance detected"]
-
-    E --> F{"Variance amount?"}
-
-    F -->|"Small (&le;50)"| G["Auto write-off(small variance)"]
-    F -->|"Large (&gt;50)"| H["Flag for admin review"]
-
-    H --> I["Admin investigates"]
-    I --> J["Adjustment or<br/>write-off approved"]
-
-    D --> K["Release delivery<br/>partner settlement"]
-    G --> K
-    J --> K
-```
+> **Status note:** server flow, API routes, and the `useUpiCollect` hook are complete and tested, but no UI currently wires the flow — Razorpay Checkout is the active path.
 
 ---
 
@@ -338,38 +228,26 @@ graph TD
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Initiated: Admin triggers refund
-    Initiated --> Processing: Payment verified
-    Processing --> Completed: Razorpay processes refund
-    Processing --> Failed: Insufficient balance / technical error
-    Failed --> Initiated: Retry (max 3 attempts)
-    Completed --> [*]
-
-    state Initiated {
-        [*] --> Validating: Check payment method
-        Validating --> OnlineRefund: Razorpay payment
-        Validating --> CODAdjustment: COD order
-    }
-
-    state OnlineRefund {
-        [*] --> RefundAPI: POST /v1/refunds
-        RefundAPI --> Success: Refund initiated
-        RefundAPI --> Failure: API error
-    }
-
-    state CODAdjustment {
-        [*] --> ManualEntry: Adjust in next settlement
-        ManualEntry --> Success: Adjusted
-    }
+    [*] --> Initiated: refundOrderItem(orderItemId, reason)
+    Initiated --> Processing: Razorpay refund API
+    Processing --> Processed: Webhook "refund.processed"
+    Processing --> Failed: API error
+    Failed --> Initiated: Retry (via /api/jobs/retry-refund, max 3)
+    Processed --> [*]
 ```
+
+Entry points:
+- `refundOrderItem(orderItemId, reason)` — per-item refund: orderItem → UNAVAILABLE, order → REFUNDED, payment → PARTIAL_REFUND/REFUNDED, publishes `order:item-unavailable`
+- `refundOrder(orderId, reason)` — full-order refund, publishes `order:refund`
+- `processWebhookRefund(razorpayRefundId)` — marks PROCESSED on `refund.processed` webhook
+- Background retry: `POST /api/jobs/retry-refund`
 
 ### Refund Rules
 
 | Scenario | Refund Method | Processing Time | Fee |
 |----------|--------------|-----------------|-----|
+| Item unavailable / kitchen rejected | Per-item refund to source | 3-5 business days | None |
 | Order cancelled before preparation | Full refund to source | 3-5 business days | None |
-| Order cancelled during preparation | Partial refund (net of ingredient cost) | 3-5 business days | Platform fee retained |
-| Delivery failed (no-show) | Full refund | 3-5 business days | None |
 | Quality complaint (verified) | Partial/Full refund | 3-5 business days | None |
 | Duplicate payment | Full refund | 24-48 hours | None |
 
@@ -380,11 +258,11 @@ stateDiagram-v2
 | Concern | Mitigation |
 |---------|------------|
 | **Amount tampering** | Amount calculated server-side; Razorpay verifies amount against order |
-| **Duplicate payment** | Idempotency via `razorpay_order_id` unique constraint |
+| **Duplicate payment** | Idempotency via `idempotencyKey` (unique) on Order and Payment |
 | **Webhook spoofing** | HMAC-SHA256 verification with `RAZORPAY_WEBHOOK_SECRET` |
-| **Refund fraud** | Refund only to original payment source; manual review for >₹1000 |
+| **Refund fraud** | Refund only to original payment source; manual review for >₹1000; large refunds require `AdminApprovalRequest` |
 | **PCI DSS scope** | No card data stored; handled entirely by Razorpay (SAQ A eligible) |
-| **OTP delivery bypass** | COD requires delivery OTP verification |
+| **UPI VPA abuse** | 30-min VPA expiry; idempotent `UpiCollectRequest`; payment matched to the exact order |
 
 ---
 
@@ -400,14 +278,6 @@ stateDiagram-v2
 | `SIGNATURE_MISMATCH` | "Payment verification failed" | Contact support; order not placed |
 | `WEBHOOK_FAILURE` | (Silent - internal) | Admin alert; manual reconciliation |
 
-### COD Errors
-
-| Error | User Message | Recovery |
-|-------|-------------|----------|
-| `COD_NOT_ELIGIBLE` | "COD not available for this order" | Pay online or reduce order |
-| `COD_FAILED` | "COD order could not be placed" | Try again; pay online |
-| `DELIVERY_OTP_INVALID` | "Invalid delivery OTP" | Retry OTP |
-
 ---
 
 ## 8. Accounting Impact
@@ -421,21 +291,11 @@ flowchart LR
         C["Kitchen payout: 95"]
     end
 
-    subgraph "Per Order (COD)"
-        E["Customer pays Rs 100 cash"]
-        F["Cash handling cost: Rs 3"]
-        G["Kitchen payout: Rs 97"]
-    end
-
     subgraph "Platform Revenue"
         H["Online: Rs 5 - Razorpay fee"]
-        I["COD: Rs 3"]
     end
 
     A --> B
     A --> C
-    E --> F
-    E --> G
     B --> H
-    F --> I
 ```

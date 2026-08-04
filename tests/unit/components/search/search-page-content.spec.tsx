@@ -219,7 +219,7 @@ describe("SearchPageContent", () => {
     fireEvent.click(screen.getByText("Kitchens"))
     await waitFor(() => {
       const links = screen.getAllByRole("link")
-      const kitchenLink = links.find((l) => l.getAttribute("href")?.includes("/kitchen/"))
+      const kitchenLink = links.find((l) => l.getAttribute("href")?.includes("/kitchens/"))
       expect(kitchenLink).toBeTruthy()
     })
   })

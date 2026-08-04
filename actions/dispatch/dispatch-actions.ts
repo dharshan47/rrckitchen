@@ -5,8 +5,6 @@ import { getAblyRest } from "@/lib/ably/server"
 import { getSession } from "@/lib/auth-server"
 import prisma from "@/lib/prisma"
 
-const CASH_IN_HAND_CAP = 3000;
-
 export async function assignNearestDeliveryPerson(
   orderId: string,
   kitchenLat: number,
@@ -14,13 +12,6 @@ export async function assignNearestDeliveryPerson(
 ) {
   const session = await getSession()
   if (!session?.user) throw new Error("Unauthorized")
-
-  // Check if this is a COD order
-  const order = await prisma.order.findUnique({
-    where: { id: orderId },
-    select: { payment: { select: { provider: true } } },
-  })
-  const isCodOrder = order?.payment?.provider === "CASH_ON_DELIVERY"
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const redisRaw = redis as any
@@ -36,12 +27,9 @@ export async function assignNearestDeliveryPerson(
     const deliveryPersonId = typeof member === "string" ? member : String(member)
     const person = await prisma.deliveryPartner.findUnique({
       where: { id: deliveryPersonId },
-      select: { id: true, isOnline: true, codEligible: true, cashInHand: true },
+      select: { id: true, isOnline: true },
     })
     if (!person?.isOnline) continue
-
-    // For COD orders, skip riders who are not COD-eligible or have too much cash in hand
-    if (isCodOrder && (!person.codEligible || Number(person.cashInHand) >= CASH_IN_HAND_CAP)) continue
 
     const existing = await prisma.deliveryAssignment.findFirst({
       where: {

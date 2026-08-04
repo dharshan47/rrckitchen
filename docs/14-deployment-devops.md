@@ -1,12 +1,14 @@
 # Deployment & DevOps Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [System Architecture](01-system-architecture.md), [Observability](12-observability.md), [Testing](13-testing-quality.md)
 
 ---
 
 ## 1. CI/CD Pipeline
+
+> **Current state:** No CI exists — there is no `.github/workflows/` directory and no `vercel.json`. The pipeline below is the **target design**. Today, deploys are manual via `next dev` / `next build` / `next start`, and tests run locally (`npm run lint`, `npm run test:unit`).
 
 ```mermaid
 %%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true}}}%%
@@ -65,77 +67,71 @@ flowchart LR
 ### Environment Variables
 
 ```bash
-# Required in all environments
+# Required in all environments (per current codebase usage)
 NEXT_PUBLIC_APP_URL=
-DATABASE_URL=
-UPSTASH_REDIS_REST_URL=
+DATABASE_URL=               # lib/prisma.ts (pg adapter)
+UPSTASH_REDIS_REST_URL=     # lib/redis.ts (Redis.fromEnv())
 UPSTASH_REDIS_REST_TOKEN=
-BETTER_AUTH_SECRET=
-BETTER_AUTH_URL=
+BETTER_AUTH_SECRET=         # lib/auth.ts (better-auth)
 TWILIO_ACCOUNT_SID=
 TWILIO_AUTH_TOKEN=
+TWILIO_MESSAGING_SERVICE_SID=
 TWILIO_PHONE_NUMBER=
+TWILIO_CONTENT_SID=
+TWILIO_VERIFY_SERVICE_SID=
 RAZORPAY_KEY_ID=
 RAZORPAY_KEY_SECRET=
 RAZORPAY_WEBHOOK_SECRET=
 NEXT_PUBLIC_RAZORPAY_KEY_ID=
-ABLY_API_KEY=
-CLOUDINARY_CLOUD_NAME=
+RAZORPAYX_ACCOUNT_ID=       # payouts (kitchen + delivery partner)
+ABLY_API_KEY=               # lib/ably/server.ts
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
-SENTRY_DSN=
-LOGTAIL_SOURCE_TOKEN=
-
-# Production only
-NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=
-SENTRY_AUTH_TOKEN=
+VAPID_PUBLIC_KEY=           # web push (lib/notification.ts)
+VAPID_PRIVATE_KEY=
+VAPID_CONTACT=
+CRON_SECRET=                # /api/cron/* and /api/jobs/* bearer guard
 ```
+
+> No `.env.example` file exists — envs are documented here. `SENTRY_DSN`/`LOGTAIL_SOURCE_TOKEN` are **not** used (no monitoring, see [Observability](12-observability.md)).
 
 ---
 
 ## 3. Vercel Configuration
 
+> `vercel.json` does not exist yet. Suggested shape for the actual background jobs:
+
 ```json
-// vercel.json
+// vercel.json (suggested)
 {
   "framework": "nextjs",
   "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "installCommand": "npm ci",
-  "regions": ["bom1", "sin1"], // Mumbai + Singapore for India users
+  "regions": ["bom1", "sin1"],
   "functions": {
-    "api/*.ts": {
-      "maxDuration": 30
-    }
+    "api/*.ts": { "maxDuration": 30 }
   },
   "crons": [
     {
-      "path": "/api/cron/cleanup-expired-sessions",
-      "schedule": "0 3 * * *" // Daily at 3 AM IST
+      "path": "/api/cron/process-order-events",
+      "schedule": "* * * * *"
     },
     {
-      "path": "/api/cron/cleanup-abandoned-carts",
-      "schedule": "0 4 * * *" // Daily at 4 AM IST
+      "path": "/api/jobs/cravings-nudge",
+      "schedule": "*/15 * * * *"
     },
     {
-      "path": "/api/cron/daily-reconciliation",
-      "schedule": "0 23 * * *" // Daily at 11 PM IST (end of business)
+      "path": "/api/jobs/retry-refund",
+      "schedule": "*/10 * * * *"
     },
     {
-      "path": "/api/cron/health-check",
-      "schedule": "*/5 * * * *" // Every 5 minutes
+      "path": "/api/jobs/settle-payouts",
+      "schedule": "30 2 * * *"
     }
   ],
   "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "DENY" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" }
-      ]
-    },
     {
       "source": "/sw.js",
       "headers": [
@@ -146,6 +142,8 @@ SENTRY_AUTH_TOKEN=
   ]
 }
 ```
+
+> All cron/job routes are guarded by `Authorization: Bearer ${CRON_SECRET}`.
 
 ---
 
@@ -237,41 +235,34 @@ flowchart TD
 
 ## 6. Cron Jobs
 
-| Job | Schedule | Description | Idempotent? |
-|-----|----------|-------------|-------------|
-| `cleanup-expired-sessions` | Daily 3 AM IST | Delete sessions past expiry + 30 days | Yes |
-| `cleanup-abandoned-carts` | Daily 4 AM IST | Delete cart items older than 7 days | Yes |
-| `daily-reconciliation` | Daily 11 PM IST | Reconcile COD collections vs orders | Yes |
-| `health-check` | Every 5 min | Health check endpoint → alert if unhealthy | — |
+| Job | Suggested Schedule | Description | Guard |
+|-----|----------|-------------|-------|
+| `/api/cron/process-order-events` | Every 1 min | Drain the Redis `order-events` stream (order event fan-out to history/notifications) | `CRON_SECRET` |
+| `/api/jobs/cravings-nudge` | Every 15 min | Find users in cravings window & send push nudges | `CRON_SECRET` |
+| `/api/jobs/retry-refund` | Every 10 min | Retry failed Razorpay refunds (max 3 attempts) | `CRON_SECRET` |
+| `/api/jobs/settle-payouts` | Daily 2:30 AM IST | Settle kitchen (15% commission) & delivery partner (10%) payouts via RazorpayX | `CRON_SECRET` |
 
 ```typescript
-// app/api/cron/cleanup-expired-sessions/route.ts
-export async function GET() {
-  // Verify cron secret
-  if (request.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
+// app/api/cron/process-order-events/route.ts
+export async function GET(request: Request) {
+  const auth = request.headers.get("Authorization");
+  if (auth !== `Bearer ${process.env.CRON_SECRET}`) {
+    return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-  const result = await prisma.session.deleteMany({
-    where: {
-      expiresAt: { lt: thirtyDaysAgo },
-    },
-  });
-
-  logger.info('Cleaned up expired sessions', { deletedCount: result.count });
-  return Response.json({ deletedCount: result.count });
+  // XREAD the "order-events" Redis stream → persist/process events
 }
 ```
+
+> COD-era jobs (cleanup-expired-sessions, cleanup-abandoned-carts, daily-reconciliation, health-check) were planned but never existed; `daily-reconciliation` (COD reconciliation) is obsolete after [ADR-019](02-architecture-decisions.md#adr-019-remove-cash-on-delivery).
 
 ---
 
 ## 7. Docker Configuration
 
+> No `Dockerfile` or `docker-compose.yml` exists — deployment is Vercel-native. Shown below as a local-dev reference (suggested):
+
 ```dockerfile
-# Dockerfile (for local dev consistency)
+# Dockerfile (suggested — does not exist yet)
 FROM node:20-alpine AS base
 
 # Dependencies
@@ -329,8 +320,8 @@ CMD ["npm", "start"]
 | **Database failure** | Full platform outage | Restore from latest backup (Prisma/PostgreSQL) | 30 min |
 | **Redis outage** | Rate limiting bypass, cache degraded | Auto-degradation to DB-only | 5 min (automatic) |
 | **Ably outage** | No real-time updates | Fallback to polling (Ably fallback transports) | 1 min (automatic) |
-| **Razorpay outage** | Online payments fail | Enable COD-only mode via feature flag | 15 min |
-| **Twilio outage** | OTP delivery fails | Fallback to app-based TOTP | 15 min |
+| **Razorpay outage** | Online payments fail | Show payment-unavailable state; pause new orders | 15 min |
+| **Twilio outage** | OTP delivery fails | OTP flow degrades (no fallback built-in) | 15 min |
 | **Cloudinary outage** | Images not loading | Show placeholder images | Automatic |
 | **Full platform failure** | Complete outage | Vercel rollback + DB restore from backup | 1 hour |
 

@@ -1,9 +1,9 @@
 # Architecture Decision Records
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Format:** ADR (based on Michael Nygard's template)
-> **Total ADRs:** 18
+> **Total ADRs:** 21
 
 ---
 
@@ -319,27 +319,27 @@ Use **Prisma Data Proxy** (`pooled.db.prisma.io`) with:
 
 ---
 
-## ADR-012: Payment — Razorpay + COD
+## ADR-012: Payment — Razorpay (Checkout + UPI Smart Collect)
 
 | Field | Value |
 |-------|-------|
-| **Status** | Accepted |
+| **Status** | Superseded by ADR-019 (COD removed) |
 | **Date** | 2026-02-01 |
 | **Deciders** | Product, Tech Lead, Finance |
 
 ### Context
-The platform serves Indian customers who expect both online payment (UPI, cards, net banking) and Cash on Delivery.
+The platform serves Indian customers who expect online payment (UPI, cards, net banking). COD was originally planned but was removed in ADR-019 — see that ADR for the rationale.
 
 ### Decision
-Use **Razorpay** for online payments and platform-managed **COD** with:
-- COD eligibility check based on order amount (<₹2000) and customer history
-- COD settlement via delivery partners (cash collected at delivery)
-- Automated reconciliation between COD collected, COD remitted, and COD deposited
-- Razorpay webhooks for payment status updates
+Use **Razorpay** for all payments:
+- Razorpay Checkout.js modal with explicit method order (UPI → Net Banking → Wallets → Cards)
+- Razorpay webhooks (`payment.captured` / `refund.processed`) for async status updates
+- Razorpay Smart Collect (virtual payment address per order) for UPI-based flows
+- RazorpayX for kitchen and delivery-partner payouts
 
 ### Consequences
-- **Positive:** Unified payment flow, COD reconciliation engine, refund management via Razorpay dashboard
-- **Negative:** COD has 2-5% operational cost (cash handling, reconciliation), fraud risk for high-value COD orders
+- **Positive:** Unified payment flow, refund management via Razorpay API, no cash handling
+- **Negative:** Razorpay fee per transaction; UPI Smart Collect UI not yet wired (backend + hooks complete)
 
 ---
 
@@ -479,3 +479,75 @@ Replace the custom implementation with **Radix UI Accordion** for both the "Disc
 ### Consequences
 - **Positive:** Accessible (WCAG 2.1 compliant), keyboard-navigable, fewer lines of code
 - **Negative:** Adds ~2KB to bundle from Radix Accordion dependency (already in bundle via other components)
+
+---
+
+## ADR-019: Remove Cash on Delivery (Online Payments Only)
+
+| Field | Value |
+|-------|-------|
+| **Status** | Accepted |
+| **Date** | 2026-07-20 |
+| **Deciders** | Product, Tech Lead, Finance |
+
+### Context
+COD introduced operational complexity disproportionate to adoption: daily cash reconciliation (collections vs. remittances vs. variances), delivery-partner cash handling, fraud exposure, and a 2-5% handling cost. The platform's early user base pays overwhelmingly via UPI.
+
+### Decision
+Remove COD entirely:
+- Delete all COD surfaces: eligibility checks, COD checkout, delivery OTP confirmation, remittance, reconciliation engine (`CodCollection`, `CodRemittance`, `CodVariance`, `KitchenDailyStock` models dropped)
+- All orders are prepaid via Razorpay (Checkout) or UPI Smart Collect
+- `Order.paymentMethod` is always `online`; `Payment.method` is always `online`
+
+### Consequences
+- **Positive:** No cash handling, no reconciliation engine, simpler order state machine, simpler audit trail
+- **Negative:** Customers without digital payment methods cannot order; acceptable given measured user behavior
+
+---
+
+## ADR-020: Public Codes for Order/User/Entity Identification
+
+| Field | Value |
+|-------|-------|
+| **Status** | Accepted |
+| **Date** | 2026-08-03 |
+| **Deciders** | Tech Lead |
+
+### Context
+Customer support and order references used long opaque CUIDs (`cm8f2x...`). Users needed short, human-friendly, copy-safe reference numbers for orders, payments, refunds, kitchens, and users.
+
+### Decision
+Introduce a `PublicIdCounter` table and a `lib/public-id.ts` allocator:
+- Atomic per-prefix counter (`UPDATE public_id_counter SET sequence = sequence + 1 RETURNING sequence`) inside the transaction that creates the entity
+- Formats: `KP-000123` (kitchen partner), `DP-…`, `ADM-…`, `ORD-…`, `PYMT-…`, `RFD-…`, `M-…` (menu item), `CUS-…` (customer)
+- `publicCode` unique column added to User, Customer, KitchenPartner, DeliveryPartner, AdminProfile, Order, Payment, Refund, MenuItem
+- One-time backfill via `scripts/backfill-public-codes.ts`
+
+### Consequences
+- **Positive:** Short, greppable reference numbers for support; stable across environments
+- **Negative:** Extra counter table dependency; allocation must always run inside a transaction (avoided via strict helper)
+
+---
+
+## ADR-021: CMS-Driven Marketing Pages over Hardcoded Content
+
+| Field | Value |
+|-------|-------|
+| **Status** | Accepted |
+| **Date** | 2026-08-04 |
+| **Deciders** | Product, Tech Lead |
+
+### Context
+Category pages, search result pages, and kitchen landing pages were hardcoded. The team needed to iterate on copy, hero banners, filters, badges, and SEO metadata without code deploys.
+
+### Decision
+Store page content in dedicated content models edited from the admin panel under `/admin/content` (`MANAGE_CMS` permission):
+- `CategoryPageContent` (+ features/offers/faqs) — `/categories/[slug]`
+- `SearchPageContent` (+ filters/badges/infoItems) — `/search`
+- `KitchenSearchPageContent` (+ chips/filters/menuCategories/recommendedItems) — kitchen search landing pages
+- `CravingsRule` (+ `CravingsRuleItem`) — cross-sell popup rules (see [17-cravings-popup](17-cravings-popup.md))
+- Admin editors live in `actions/admin/category-pages.ts`, `search-page.ts`, `kitchen-search-pages.ts`, `cravings-popup.ts`
+
+### Consequences
+- **Positive:** Non-engineers iterate on landing pages; per-keyword SEO control; content versioning (`version` field)
+- **Negative:** Editor complexity (stores, dialogs, previews); content/`revalidateTag` coupling must be maintained

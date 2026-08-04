@@ -1,37 +1,47 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
+process.env.RAZORPAY_KEY_SECRET = "test-secret"
+
+const { mockTx, mockPrisma } = vi.hoisted(() => {
+  const mockTx = {
+    order: { create: vi.fn(), update: vi.fn() },
+    orderStatusHistory: { create: vi.fn() },
+    orderItems: { create: vi.fn() },
+  }
+
+  const mockPrisma = {
+    menuItem: { findMany: vi.fn() },
+    deliverySlot: { findFirst: vi.fn() },
+    coupon: { findUnique: vi.fn() },
+    couponRedemption: { create: vi.fn().mockResolvedValue({}) },
+    payment: { create: vi.fn(), findFirst: vi.fn(), update: vi.fn() },
+    order: { findUnique: vi.fn(), update: vi.fn() },
+    orderItem: { findMany: vi.fn().mockResolvedValue([]) },
+    orderStatusHistory: { create: vi.fn() },
+    refund: { create: vi.fn() },
+    $transaction: vi.fn((cb: (tx: typeof mockTx) => unknown) => cb(mockTx)),
+  }
+
+  return { mockTx, mockPrisma }
+})
+
 vi.mock("@/lib/razorpay", () => ({
   getRazorpayClient: () => ({
     orders: { create: vi.fn().mockResolvedValue({ id: "rzp_order_1", amount: 50000, currency: "INR" }) },
     payments: { fetch: vi.fn(), refund: vi.fn() },
   }),
+  razorpayClient: {
+    orders: { create: vi.fn() },
+    payments: { fetch: vi.fn(), refund: vi.fn() },
+    fundAccounts: { create: vi.fn().mockResolvedValue({ id: "fa_1" }) },
+  },
 }))
-
-const mockTx = {
-  menuItemDailyStock: { update: vi.fn() },
-  order: { create: vi.fn(), update: vi.fn() },
-  orderStatusHistory: { create: vi.fn() },
-  orderItems: { create: vi.fn() },
-}
-
-const mockPrisma = {
-  menuItem: { findMany: vi.fn() },
-  menuItemDailyStock: { findMany: vi.fn() },
-  deliverySlot: { findFirst: vi.fn() },
-  coupon: { findUnique: vi.fn() },
-  couponRedemption: { create: vi.fn() },
-  payment: { create: vi.fn(), findFirst: vi.fn(), update: vi.fn() },
-  order: { findUnique: vi.fn(), update: vi.fn() },
-  orderStatusHistory: { create: vi.fn() },
-  userCodEligibility: { upsert: vi.fn() },
-  refund: { create: vi.fn() },
-  $transaction: vi.fn((cb: (tx: typeof mockTx) => unknown) => cb(mockTx)),
-}
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 vi.mock("@/lib/ably/server", () => ({ getAblyRest: () => ({ channels: { get: () => ({ publish: vi.fn() }) } }) }))
 vi.mock("@/lib/redis", () => ({ redis: { del: vi.fn(), xadd: vi.fn() } }))
-vi.mock("@/actions/loyalty/loyalty", () => ({ awardPoints: vi.fn() }))
+vi.mock("@/actions/loyalty/loyalty", () => ({ awardPoints: vi.fn().mockResolvedValue({}) }))
+vi.mock("@/actions/payouts/kitchen-payout", () => ({ createKitchenPayout: vi.fn().mockResolvedValue({}) }))
 
 import { createPaymentOrder, confirmPayment, failPayment, verifyPaymentSignature, refundOrder } from "@/actions/payments/payment"
 
@@ -45,9 +55,7 @@ describe("payments", () => {
       mockPrisma.menuItem.findMany.mockResolvedValue([
         { id: "item-1", name: "Dosa", price: 100, timeSlot: "BREAKFAST", menu: { kitchenPartnerId: "kp-1" } },
       ])
-      mockPrisma.menuItemDailyStock.findMany.mockResolvedValue([])
       mockPrisma.deliverySlot.findFirst.mockResolvedValue(null)
-      mockTx.menuItemDailyStock.update.mockResolvedValue({ reservedQuantity: 2, totalQuantity: 10 })
       mockTx.order.create.mockResolvedValue({ id: "order-1", orderItems: [{ id: "oi1" }] })
     })
 
@@ -59,24 +67,8 @@ describe("payments", () => {
       expect(mockPrisma.payment.create).toHaveBeenCalled()
     })
 
-    it("creates a COD order", async () => {
-      const result = await createPaymentOrder({ ...baseInput, paymentProvider: "CASH_ON_DELIVERY" })
-
-      expect(result.localOrderId).toBe("order-1")
-      expect(mockPrisma.payment.create).toHaveBeenCalledWith(
-        expect.objectContaining({ data: expect.objectContaining({ provider: "CASH_ON_DELIVERY" }) }),
-      )
-    })
-
     it("throws for empty cart", async () => {
       await expect(createPaymentOrder({ ...baseInput, items: [] })).rejects.toThrow("Cart is empty")
-    })
-
-    it("throws for insufficient stock", async () => {
-      mockPrisma.menuItemDailyStock.findMany.mockResolvedValue([
-        { id: "stock-1", menuItemId: "item-1", totalQuantity: 10, reservedQuantity: 10, soldQuantity: 0 },
-      ])
-      await expect(createPaymentOrder(baseInput)).rejects.toThrow("Insufficient stock")
     })
 
     it("applies coupon discount", async () => {

@@ -14,12 +14,14 @@ interface MenuState {
   selectedTimeSlot: TimeSlotFilter;
   selectedTab: MenuTab;
   deliveryAddress: string;
+  deliveryLat: number | null;
+  deliveryLng: number | null;
   bestsellerOnly: boolean;
   setSearchQuery: (value: string) => void;
   setSelectedFoodType: (value: FoodTypeFilter) => void;
   setSelectedTimeSlot: (value: TimeSlotFilter) => void;
   setSelectedTab: (value: MenuTab) => void;
-  setDeliveryAddress: (value: string) => void;
+  setDeliveryAddress: (value: string, lat?: number | null, lng?: number | null) => void;
   setBestsellerOnly: (value: boolean) => void;
 }
 
@@ -33,6 +35,10 @@ export const selectTimeSlot = (s: MenuState) => s.selectedTimeSlot;
 export const selectMenuTab = (s: MenuState) => s.selectedTab;
 /** Selector returning the delivery address. */
 export const selectDeliveryAddress = (s: MenuState) => s.deliveryAddress;
+/** Selector returning the delivery latitude. */
+export const selectDeliveryLat = (s: MenuState) => s.deliveryLat;
+/** Selector returning the delivery longitude. */
+export const selectDeliveryLng = (s: MenuState) => s.deliveryLng;
 /** Selector returning the bestseller filter. */
 export const selectBestsellerOnly = (s: MenuState) => s.bestsellerOnly;
 /** Selector returning all menu actions in a single object (stable reference via shallow). */
@@ -57,6 +63,8 @@ export const menuStore = create<MenuState>()(
       selectedTimeSlot: "ALL",
       selectedTab: "menu",
       deliveryAddress: "",
+      deliveryLat: null,
+      deliveryLng: null,
       bestsellerOnly: false,
       setSearchQuery: (value: string) => {
         set({ searchQuery: value });
@@ -71,7 +79,7 @@ export const menuStore = create<MenuState>()(
         globalEventBus.emit(AppEvents.MENU_FILTER_CHANGED, { type: "timeSlot", value });
       },
       setSelectedTab: (value: MenuTab) => set({ selectedTab: value }),
-      setDeliveryAddress: (value: string) => set({ deliveryAddress: value }),
+      setDeliveryAddress: (value: string, lat?: number | null, lng?: number | null) => set({ deliveryAddress: value, deliveryLat: lat ?? null, deliveryLng: lng ?? null }),
       setBestsellerOnly: (value: boolean) => {
         set({ bestsellerOnly: value });
         globalEventBus.emit(AppEvents.MENU_FILTER_CHANGED, { type: "bestseller", value });
@@ -79,7 +87,7 @@ export const menuStore = create<MenuState>()(
     }),
     {
       name: "rrc-menu-store",
-      partialize: (state) => ({ deliveryAddress: state.deliveryAddress }),
+      partialize: (state) => ({ deliveryAddress: state.deliveryAddress, deliveryLat: state.deliveryLat, deliveryLng: state.deliveryLng }),
     }
   )
 );
@@ -103,6 +111,14 @@ export function useMenuTab() {
 /** Hook returning the delivery address. */
 export function useMenuDeliveryAddress() {
   return menuStore(selectDeliveryAddress);
+}
+/** Hook returning the delivery latitude. */
+export function useMenuDeliveryLat() {
+  return menuStore(selectDeliveryLat);
+}
+/** Hook returning the delivery longitude. */
+export function useMenuDeliveryLng() {
+  return menuStore(selectDeliveryLng);
 }
 /** Hook returning the bestseller filter. */
 export function useMenuBestsellerOnly() {

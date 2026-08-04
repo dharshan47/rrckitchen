@@ -13,7 +13,6 @@ export default function DeliveryPartnerSignupPage() {
       <div className="relative w-full max-w-md animate-in fade-in slide-in-from-bottom-4 duration-700">
         <SignupForm
           role="delivery-partner"
-          title="Delivery Partner Sign Up"
           subtitle="Join us as a delivery partner"
           accountLinkHref="/delivery-partner/login"
           accountLinkLabel="Already have an account?"

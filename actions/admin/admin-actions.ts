@@ -35,13 +35,13 @@ export async function getActiveAdmins() {
     return admins.map((a) => ({
       id: a.id,
       userId: a.userId,
-      name: a.user.name ?? "",
+      name: a.user.name,
       email: a.user.email,
       phoneNumber: a.user.phoneNumber,
       permissions: a.permissions,
       isActive: a.isActive,
       banned: a.user.banned,
-      invitedByName: a.invitedByUserId ? (inviterMap.get(a.invitedByUserId) ?? null) : null,
+      invitedByName: a.invitedByUserId ? inviterMap.get(a.invitedByUserId) : null,
       createdAt: a.createdAt.toISOString(),
       canDeactivate: a.userId !== caller.userId,
     }));

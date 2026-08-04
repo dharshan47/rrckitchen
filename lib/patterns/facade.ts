@@ -17,7 +17,7 @@ interface AddToCartParams {
 interface CheckoutParams {
   items: AddToCartParams[];
   address: string;
-  paymentMethod: "razorpay" | "cod";
+  paymentMethod: "razorpay";
 }
 
 export class MenuFacade {

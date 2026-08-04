@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   loyaltyCoupon: {
     findMany: vi.fn(),
     findUnique: vi.fn(),
@@ -18,11 +18,11 @@ const mockPrisma = {
     create: vi.fn(),
   },
   $transaction: vi.fn(),
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 
-const mockSession = { user: { id: "user-1" } }
+const mockSession = vi.hoisted(() => ({ user: { id: "user-1" } }))
 vi.mock("@/lib/auth-server", () => ({
   getSession: vi.fn(() => mockSession),
 }))

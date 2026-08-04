@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { normalizePhone } from "@/lib/phone";
 import { cookies } from "next/headers";
 import { client } from "@/lib/twilio";
+import { allocatePublicCode, PUBLIC_ID_SPECS } from "@/lib/public-id";
 
 async function signSessionToken(token: string, secret: string): Promise<string> {
   const encoder = new TextEncoder();
@@ -73,11 +74,14 @@ export async function POST(request: NextRequest) {
     });
 
     if (!user) {
-      user = await prisma.user.create({
-        data: {
-          phoneNumber,
-          phoneNumberVerified: true,
-        },
+      user = await prisma.$transaction(async (tx) => {
+        return tx.user.create({
+          data: {
+            publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.CUSTOMER),
+            phoneNumber,
+            phoneNumberVerified: true,
+          },
+        });
       });
     } else {
       user = await prisma.user.update({

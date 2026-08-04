@@ -1,19 +1,28 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useState } from "react";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 
-export function useDebouncedValue<T>(value: T, delay = 300) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-  const timerRef = useRef<number | null>(null);
+/**
+ * Debounces a value via the TanStack Query cache. Every change starts a fresh
+ * query whose promise resolves `delay` ms later, so the returned value only
+ * updates `delay` ms after the last change. Abandoned queries are GC'd
+ * immediately, so rapid updates never settle stale values.
+ */
+export function useDebouncedValue<T>(value: T, delay = 300): T {
+  const [initialValue] = useState(value);
 
-  useEffect(() => {
-    timerRef.current = window.setTimeout(() => setDebouncedValue(value), delay);
-    return () => {
-      if (timerRef.current !== null) {
-        window.clearTimeout(timerRef.current);
-      }
-    };
-  }, [value, delay]);
+  const { data } = useQuery<T>({
+    queryKey: ["use-debounced", value],
+    queryFn: () =>
+      new Promise<T>((resolve) => {
+        window.setTimeout(() => resolve(value), delay);
+      }),
+    enabled: typeof window !== "undefined",
+    placeholderData: keepPreviousData,
+    staleTime: delay,
+    gcTime: 0,
+  });
 
-  return debouncedValue;
+  return data ?? initialValue;
 }

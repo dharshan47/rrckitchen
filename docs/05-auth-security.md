@@ -1,7 +1,7 @@
 # Authentication & Security Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [API Design](04-api-design.md), [Architecture Decisions (Better-Auth)](02-architecture-decisions.md#adr-005-better-auth-for-authentication), [Roles](16-roles-permissions.md)
 
 ---
@@ -174,29 +174,34 @@ graph TD
 | View audit logs | ✗ | ✗ | ✗ | ✗ | ✓ | ✓ |
 | Platform config | ✗ | ✗ | ✗ | ✗ | ✗ | ✓ |
 
-### 2.3 Admin Permission Bitfield
+### 2.3 Admin Permissions (String Enum Array)
+
+Permissions are stored as an array of enum values (`AdminPermission[]`) on `AdminProfile` — not a bitfield:
 
 ```typescript
+// lib/generated/prisma/enums.ts
 enum AdminPermission {
-  MANAGE_ORDERS = 1 << 0,     // 1
-  MANAGE_MENU = 1 << 1,       // 2
-  APPROVE_KYC = 1 << 2,       // 4
-  VIEW_FINANCIALS = 1 << 3,   // 8
-  MANAGE_COUPONS = 1 << 4,    // 16
-  MANAGE_PAYOUTS = 1 << 5,    // 32
-  BAN_USERS = 1 << 6,         // 64
-  MANAGE_SUPPORT = 1 << 7,    // 128
-  MANAGE_CMS = 1 << 8,        // 256
-  MANAGE_ADMINS = 1 << 9,     // 512
-  MANAGE_CATALOG = 1 << 10,   // 1024
+  MANAGE_ADMINS = "MANAGE_ADMINS",
+  APPROVE_KYC = "APPROVE_KYC",
+  MANAGE_CATALOG = "MANAGE_CATALOG",
+  ISSUE_REFUNDS = "ISSUE_REFUNDS",
+  MANAGE_PAYOUTS = "MANAGE_PAYOUTS",
+  MANAGE_COUPONS = "MANAGE_COUPONS",
+  VIEW_FINANCIALS = "VIEW_FINANCIALS",
+  MANAGE_SUPPORT = "MANAGE_SUPPORT",
+  BAN_USERS = "BAN_USERS",
+  MANAGE_CMS = "MANAGE_CMS",
 }
 
-// Example: Support Agent has only MANAGE_SUPPORT
-const supportPermissions = AdminPermission.MANAGE_SUPPORT; // 128
-
-// Example: Full admin has all except MANAGE_ADMINS
-const fullAdmin = (1 << 10) - 1 ^ AdminPermission.MANAGE_ADMINS; // 1023
+// Server-side guard (lib/auth-guards.ts)
+export async function requirePermission(permission: AdminPermission) {
+  const { session, adminProfile } = await requireAdmin();
+  if (!adminProfile.permissions.includes(permission)) notFound();
+  return { session, adminProfile };
+}
 ```
+
+`requireAdmin()` additionally enforces 2FA: users without `twoFactorEnabled` are redirected to `/admin/2fa-setup`. See [Roles & Permissions](16-roles-permissions.md) for the full matrix.
 
 ---
 
@@ -302,60 +307,69 @@ No user-supplied HTML is rendered. Markdown is not supported. All text is escape
 
 ---
 
-## 7. Session Validation Middleware
+## 7. Route Protection (proxy.ts)
+
+Next.js 16 has no `middleware.ts` in this project — route guards live in `proxy.ts` (the Next.js 16 proxy file, at repo root):
 
 ```typescript
-// middleware.ts — Edge Middleware
-export function middleware(request: NextRequest) {
-  const session = request.cookies.get('session_token');
-  const path = request.nextUrl.pathname;
+// proxy.ts — Edge runtime
+import { getSessionCookie } from 'better-auth/cookies';
 
-  // Public routes
-  if (path.startsWith('/_next') || path.startsWith('/api/public') ||
-      path === '/' || path === '/auth/login' || path === '/auth/signup') {
-    return NextResponse.next();
+// Matcher: /kitchen/dashboard/:path*, /delivery-partner/dashboard/:path*, /admin/:path*
+export default function proxy(request: Request) {
+  const sessionCookie = getSessionCookie(request);
+  if (!sessionCookie) {
+    // Redirect to role-specific login with ?redirect= back-link
   }
 
-  // Admin routes
-  if (path.startsWith('/admin')) {
-    if (!session) return redirectToLogin(request);
-    const isValid = await validateAdminSession(session.value);
-    if (!isValid) return redirectToLogin(request);
-  }
-
-  // Protected customer routes
-  if (path.startsWith('/account') || path.startsWith('/checkout')) {
-    if (!session) return redirectToLogin(request);
-  }
-
-  return NextResponse.next();
+  // Admin guard: verify session server-side
+  // fetch('/api/auth/get-session') → rewrite to /404 unless role === "admin"
 }
+
+export const config = {
+  matcher: ['/kitchen/dashboard/:path*', '/delivery-partner/dashboard/:path*', '/admin/:path*'],
+};
 ```
+
+Deeper authorization happens in `lib/auth-guards.ts` (`requireAdmin`, `requirePermission`) inside every admin Server Action, and in the admin dashboard layouts.
+
+### 7.1 Public / protected route summary
+
+| Route pattern | Guard |
+|---------------|-------|
+| `/`, `/kitchens`, `/categories`, `/search`, `/menu/*`, `/about-us`, `/home-chefs`, `/contact`, `/help`, `/support`, `/login`, `/signup` | Public |
+| `/cart`, `/account/*` | Session (layout-level check) |
+| `/kitchen/dashboard/*` | proxy.ts cookie check + kitchen role layout |
+| `/delivery-partner/dashboard/*` | proxy.ts cookie check + delivery role layout |
+| `/admin/*` | proxy.ts cookie check + session role validation + 2FA (`/admin/2fa-setup` redirect) |
 
 ---
 
 ## 8. Audit Logging
 
-All admin actions are logged to `AdminAuditLog`:
+All admin actions are logged to `AdminAuditLog` via `logAdminAction` (`lib/auth-guards.ts`):
 
 ```typescript
-interface AuditLogEntry {
-  adminId: string;
-  action: string;           // e.g., "UPDATE_ORDER_STATUS"
-  entityType: string;       // e.g., "order"
-  entityId: string;         // e.g., "order_abc123"
-  before: Record<string, unknown>;  // Previous state (redacted PII)
-  after: Record<string, unknown>;   // New state (redacted PII)
-  ipAddress: string;
-  userAgent: string;
+// Prisma model (schema)
+model AdminAuditLog {
+  id          String   @id @default(cuid())
+  actorUserId String   // admin's user id
+  action      String   // e.g., "UPDATE_ORDER_STATUS"
+  targetType  String?  // e.g., "order"
+  targetId    String?  // e.g., "order_abc123"
+  metadata    Json?    // Change context (PII avoided by convention)
+  ipAddress   String?
+  createdAt   DateTime @default(now())
 }
 ```
 
-**PII Redaction:**
+**PII handling:**
 - Phone numbers: `+919876xxxx10`
 - Email: `d****@example.com`
 - Address: Show only city/pincode, hide street/house number
 - Bank details: Show only last 4 digits
+
+High-risk admin actions (remove admin, grant permission, large refund, payout settlement, ban user) additionally flow through `AdminApprovalRequest` with status `PENDING | APPROVED | REJECTED`.
 
 ---
 

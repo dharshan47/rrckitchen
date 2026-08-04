@@ -1,7 +1,7 @@
 # Data Model & Storage Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [API Design](04-api-design.md), [System Architecture](01-system-architecture.md), [Architecture Decisions (Prisma)](02-architecture-decisions.md#adr-006-prisma-as-orm)
 
 ---
@@ -12,13 +12,27 @@
 erDiagram
     User {
         string id PK
-        string phone UK
-        string email UK
+        string publicCode UK "KP-000001 style"
+        string phoneNumber UK
+        string role "user | kitchen | delivery | admin"
         string name
-        string role "customer | kitchen | delivery | admin"
+        string fullName
+        string email UK
+        string image
+        string razorpayCustomerId
+        boolean banned
+        boolean twoFactorEnabled
         datetime createdAt
-        datetime updatedAt
         datetime deletedAt "Soft delete"
+    }
+
+    Customer {
+        string id PK
+        string publicCode UK
+        string userId FK, UK
+        string name
+        string phoneNumber
+        datetime createdAt
     }
 
     Session {
@@ -26,97 +40,98 @@ erDiagram
         string userId FK
         string token UK
         datetime expiresAt
-        json metadata "IP, user agent, geo"
+        string ipAddress
+        string userAgent
     }
 
     KitchenPartner {
         string id PK
+        string publicCode UK
+        string slug UK
         string userId FK, UK
-        string alias UK
-        string kitchenName
-        string phone UK
-        string panNumber UK
-        string bankAccount
-        string ifscCode
-        string upiId
-        float commissionRate "e.g. 0.15 = 15%"
-        boolean isApproved
-        boolean isActive
-        json address "lat, lng, street, city, pincode"
-        json operatingHours "day-wise open/close"
+        string status "PENDINGAPPROVAL | APPROVED | ACTIVE | SUSPENDED | REJECTED"
+        float avgRating
+        int totalReviews
+        json operatingHours
+        int estimatedPrepTime
         datetime createdAt
     }
 
     KitchenAlias {
         string id PK
-        string kitchenPartnerId FK
-        string slug UK
-        string name
+        string kitchenPartnerId FK, UK
+        string displayName UK
+        int sequenceNumber UK
+        string imageUrl
         string description
-        string[] photoUrls
-        float avgRating
-        int totalReviews
+        string customOfferText
+    }
+
+    KitchenPartnerKyc {
+        string id PK
+        string kitchenPartnerId FK, UK
+        string bankAccountNumber
+        string ifscCode
+        string upiId
+        string gpayNumber
+    }
+
+    Category {
+        string id PK
+        string name UK
+        string imageUrl
         boolean isActive
         datetime createdAt
     }
 
     MenuItem {
         string id PK
-        string kitchenAliasId FK
+        string publicCode UK
+        string slug UK
+        string menuId FK
         string name
-        string description
-        float price
-        float discountedPrice
-        string category
-        string timeSlot "breakfast | lunch | dinner | all_day"
-        boolean isVeg
+        decimal price
+        decimal compareAtPrice
+        string foodType "VEG | NONVEG"
+        string timeSlot "MORNING | LUNCH | EVENINGSNACKS | DINNER"
+        string availableFor "TODAY | TOMORROW | BOTH"
+        string cuisine
+        boolean bestseller
+        json highlights
+        int serves
+        string portionSize
+        string allergens
+        string metaTitle
+        decimal deliveryFee
+        boolean freeDelivery
         boolean isAvailable
-        string[] photoUrls
-        int preparationTime "in minutes"
-        json nutritionalInfo "calories, protein, etc."
+        float avgRating
         datetime createdAt
-        datetime updatedAt
     }
 
-    TimeSlot {
-        string id PK
-        string kitchenAliasId FK
-        string name "breakfast | lunch | dinner"
-        string displayName "Morning | Afternoon | Evening"
-        time startTime "HH:mm"
-        time endTime "HH:mm"
-        boolean isActive
-        int sortOrder
-    }
-
-    Photo {
+    MenuItemPhoto {
         string id PK
         string menuItemId FK
-        string url
-        string publicId "Cloudinary ID"
-        boolean isPrimary
+        string imageUrl
+        string cloudinaryPublicId
         int sortOrder
-        datetime createdAt
     }
 
     Order {
         string id PK
+        string publicCode UK
         string userId FK
-        string kitchenAliasId FK
-        string orderType "prebook | instant"
-        string status "pending | confirmed | preparing | ready | out_for_delivery | delivered | cancelled"
-        float subtotal
-        float deliveryFee
-        float discountAmount
-        float taxAmount
-        float total
-        string paymentMethod "online | cod"
-        string paymentStatus "pending | paid | failed | refunded"
-        string couponCode
-        json deliveryAddress
-        datetime scheduledAt "for prebook"
-        datetime confirmedAt
-        datetime deliveredAt
+        string addressId FK
+        datetime serviceDate
+        string serviceDateType "TODAY | TOMORROW | FUTURE"
+        string timeSlot
+        string status "CONFIRMED | PREPARING | READYFORPICKUP | COMPLETED | CANCELLED | REFUNDED"
+        decimal totalAmount
+        decimal discountAmount
+        decimal commissionAmount "15% platform commission"
+        string source "APP | PHONECALL"
+        string deliveryStatus "ASSIGNED | ACCEPTED | PICKEDUP | INTRANSIT | DELIVERED | FAILED"
+        string idempotencyKey UK
         datetime createdAt
     }
 
@@ -124,289 +139,425 @@ erDiagram
         string id PK
         string orderId FK
         string menuItemId FK
-        string itemName "snapshot at order time"
-        float itemPrice "snapshot at order time"
+        string kitchenPartnerId FK
         int quantity
-        float subtotal
+        decimal unitPrice "snapshot at order time"
+        decimal packagingFee
+        string status "CONFIRMED | UNAVAILABLE | REFUNDED"
     }
 
-    OrderTracking {
+    OrderStatusHistory {
         string id PK
         string orderId FK
         string status
-        string location "lat,lng for delivery tracking"
-        string updatedBy "user | kitchen | delivery | system"
-        datetime createdAt
-    }
-
-    OrderEvent {
-        string id PK
-        string orderId FK
-        string eventType "status_change | payment_update | location_update"
-        json payload
-        datetime createdAt
+        datetime changedAt
     }
 
     DeliveryAssignment {
         string id PK
         string orderId FK, UK
         string deliveryPartnerId FK
-        string status "assigned | accepted | picked_up | delivered | failed"
-        datetime assignedAt
+        string assignedByAdminId FK
+        string status "PENDING | DELIVERED | CANCELLED"
         datetime acceptedAt
         datetime deliveredAt
     }
 
+    DeliveryLocation {
+        string id PK
+        string orderId FK
+        string deliveryPartnerId FK
+        float latitude
+        float longitude
+        datetime updatedAt
+    }
+
     DeliveryPartner {
         string id PK
+        string publicCode UK
         string userId FK, UK
-        string phone UK
+        string status
         boolean isOnline
-        json currentLocation "lat, lng"
-        float rating
-        int totalDeliveries
-        bool isVerified
-        string bankAccount
+        float avgRating
+        datetime createdAt
+    }
+
+    DeliveryPartnerKyc {
+        string id PK
+        string deliveryPartnerId FK, UK
+        string bankAccountNumber
         string ifscCode
         string upiId
-        datetime createdAt
     }
 
     Payment {
         string id PK
-        string orderId FK
-        float amount
-        string method "online | cod"
-        string status "initiated | success | failed | refunded"
-        string razorpayOrderId UK
-        string razorpayPaymentId UK
-        string razorpaySignature
-        json webhookResponse "raw webhook data for audit"
-        datetime createdAt
-        datetime refundedAt
+        string publicCode UK
+        string orderId FK, UK
+        string provider "RAZORPAY | UPI_COLLECT"
+        string providerOrderId
+        string providerPaymentId
+        string paymentMethod
+        json paymentMethodDetail "method, app, vpa, bank, card_brand"
+        decimal amount
+        string status "PENDING | SUCCESS | PARTIAL_REFUND | FAILED | REFUNDED"
+        string idempotencyKey UK
+        datetime paidAt
+    }
+
+    UpiCollectRequest {
+        string id PK
+        string orderId FK, UK
+        string paymentId FK, UK
+        string vpa "rrc.order123@razorpay"
+        string status "PENDING | PAID | EXPIRED | FAILED"
+        datetime expiresAt "30 min TTL"
     }
 
     Refund {
         string id PK
+        string publicCode UK
+        string orderId FK
+        string orderItemId FK
         string paymentId FK
-        float amount
-        string reason
-        string status "initiated | processed | failed"
-        string razorpayRefundId
-        datetime createdAt
+        string razorpayRefundId UK
+        decimal amount
+        string reason "ITEM_OUT_OF_STOCK | KITCHEN_REJECTED | CUSTOMER_CANCELLED | QUALITY_ISSUE | LATE_DELIVERY | OTHER"
+        string status "INITIATED | PROCESSING | PROCESSED | FAILED"
     }
 
     Review {
         string id PK
         string orderId FK, UK
         string userId FK
-        string kitchenAliasId FK
-        float rating "1-5"
+        string kitchenPartnerId FK
+        int rating
+        int tasteRating
+        int packagingRating
+        int portionSizeRating
         string comment
-        json photos
-        datetime createdAt
+        string[] mediaUrls
     }
 
-    Wishlist {
+    MenuItemFeedback {
+        string id PK
+        string orderId FK
+        string orderItemId FK, UK
+        string menuItemId FK
+        string userId FK
+        boolean thumbsUp
+        string[] tags
+    }
+
+    MenuItemReview {
+        string id PK
+        string orderId FK
+        string orderItemId FK, UK
+        string menuItemId FK
+        string userId FK
+        int rating
+    }
+
+    RrcKitchenReview {
+        string id PK
+        string kitchenPartnerId FK, UK
+        int rating
+        boolean recommendation
+        string comment
+    }
+
+    WishlistItem {
         string id PK
         string userId FK
         string menuItemId FK
+        datetime createdAt
+    }
+
+    KitchenWishlist {
+        string id PK
+        string userId FK
+        string kitchenPartnerId FK
         datetime createdAt
     }
 
     Address {
         string id PK
         string userId FK
-        string label "Home | Work | Other"
-        string street
-        string city
+        string serviceZoneId FK
+        string lineOne
         string pincode
-        float lat
-        float lng
-        bool isDefault
-        datetime createdAt
+        float latitude
+        float longitude
+        boolean isDefault
     }
 
     Coupon {
         string id PK
         string code UK
-        string type "percentage | fixed"
-        float value "10 = 10% or Rs.10"
-        float minOrderValue
-        float maxDiscount "max cap for percentage"
-        int maxUses
-        int currentUses
+        string discountType "FLAT | PERCENTAGE"
+        decimal discountValue
+        decimal maxDiscount
+        decimal minOrderValue
+        string scope "PLATFORM | KITCHEN_SPECIFIC"
+        string kitchenPartnerId FK
         datetime validFrom
-        datetime validUntil
-        bool isActive
-        datetime createdAt
+        datetime validTo
+        int usageLimitTotal
+        int usageLimitPerUser
     }
 
-    KitchenDailyStock {
+    CouponRedemption {
         string id PK
-        string menuItemId FK
-        date date
-        int totalQty
-        int bookedQty
-        int availableQty
-        datetime createdAt
-        datetime updatedAt
-    }
-
-    CartItem {
-        string id PK
+        string couponId FK
         string userId FK
-        string menuItemId FK
-        int quantity
-        datetime createdAt
-        datetime updatedAt
+        string orderId FK, UK
+        decimal discountAmount
+    }
+
+    PaymentOffer {
+        string id PK
+        string name
+        string offerType "UPI | WALLET | CARDS | NETBANKING | ALL"
+        string discountType
+        decimal discountValue
+        datetime validFrom
+        datetime validTo
+    }
+
+    LoyaltyPoints {
+        string id PK
+        string userId FK, UK
+        int points
+        int lifetimePoints
+        string tier "BRONZE..."
+    }
+
+    LoyaltyCoupon {
+        string id PK
+        string name
+        string discountType
+        decimal discountValue
+        int pointsCost
+        boolean isActive
+    }
+
+    Referral {
+        string id PK
+        string referrerId FK
+        string referredId FK
+        string referralCode UK
+        string status "PENDING..."
+        decimal rewardAmount
     }
 
     AdminProfile {
         string id PK
+        string publicCode UK
         string userId FK, UK
-        string email UK
-        string passwordHash
-        bool isSuperAdmin
-        int permissions "bitfield"
+        string[] permissions "AdminPermission[] — string enum"
+        boolean isActive
         datetime createdAt
     }
 
     AdminInvite {
         string id PK
-        string email
         string token UK
-        int permissions "bitfield"
-        string invitedByUserId FK
+        string[] permissions
+        string createdByUserId FK
         datetime expiresAt
-        bool isAccepted
-        datetime createdAt
+        datetime consumedAt
     }
 
     AdminAuditLog {
         string id PK
-        string adminId FK
+        string actorUserId FK
         string action
-        string entityType "order | user | kitchen | coupon"
-        string entityId
-        json before "previous state"
-        json after "new state"
+        string targetType
+        string targetId
+        json metadata
         string ipAddress
         datetime createdAt
+    }
+
+    AdminApprovalRequest {
+        string id PK
+        string actionType "REMOVE_ADMIN | GRANT_PERMISSION | LARGE_REFUND | PAYOUT_SETTLEMENT | BAN_USER"
+        string status "PENDING | APPROVED | REJECTED"
+        json payload
+    }
+
+    TwoFactor {
+        string id PK
+        string userId FK
+        string secret
+        string backupCodes
+        boolean verified
+        datetime lockedUntil
+    }
+
+    SupportTicket {
+        string id PK
+        string userId FK
+        string orderId FK
+        string subject
+        string description
+        string category
+        string priority "LOW | MEDIUM | HIGH | URGENT"
+        string status "OPEN | INPROGRESS | RESOLVED | CLOSED"
+        string[] mediaUrls
+    }
+
+    ContactMessage {
+        string id PK
+        string fullName
+        string email
+        string phone
+        string subject
+        string message
+        string status "OPEN..."
+    }
+
+    SearchPageContent {
+        string id PK
+        string keyword UK
+        boolean isActive
+        string bannerImageUrl
+        string heading
+        int cardsPerPage
+        string defaultSort
+        int version
+    }
+
+    CategoryPageContent {
+        string id PK
+        string categoryId FK, UK
+        string heroLayout "LEFT_TEXT..."
+        string desktopBannerUrl
+        string mobileBannerUrl
+        string metaTitle
+        string metaDescription
+        string[] keywords
+        string[] featuredKitchenIds
+        int version
+    }
+
+    KitchenSearchPageContent {
+        string id PK
+        string keyword UK
+        string desktopBannerUrl
+        string searchTitle
+        boolean showDeliveryTime
+        boolean showDistance
+        boolean showPureVegBadge
+        int version
+    }
+
+    CravingsRule {
+        string id PK
+        string name
+        string triggerItemId FK
+        string kitchenId FK
+        string title
+        string message
+        string priority "HIGH | MEDIUM | LOW"
+        boolean isActive
+        string updatedBy
+    }
+
+    CravingsRuleItem {
+        string id PK
+        string ruleId FK
+        string menuItemId FK
+        int sortOrder
+    }
+
+    KitchenPayout {
+        string id PK
+        string kitchenPartnerId FK
+        string orderId FK, UK
+        decimal grossAmount
+        decimal commissionAmount
+        decimal couponBorneByKitchen
+        decimal netAmount
+        string status "PENDING | PROCESSING | SETTLED | FAILED"
+        string razorpayPayoutId UK
+    }
+
+    DeliveryPartnerPayout {
+        string id PK
+        string deliveryPartnerId FK
+        string orderId FK, UK
+        decimal amount "10% commission"
+        string status
+    }
+
+    NotificationLog {
+        string id PK
+        string userId FK
+        string channel
+        string templateKey
+        string status
     }
 
     PushSubscription {
         string id PK
         string userId FK
         string endpoint UK
-        json keys "p256dh, auth"
-        datetime createdAt
+        string p256dh
+        string auth
     }
 
-    CodCollection {
+    PublicIdCounter {
         string id PK
-        string deliveryPartnerId FK
-        date collectionDate
-        float totalCollected
-        float totalRemitted
-        float variance
-        datetime createdAt
+        string prefix UK "KP | DP | ADM | ORD | PYMT | RFD | M | CUS"
+        int sequence
+        int digits
     }
 
-    CodRemittance {
-        string id PK
-        string deliveryPartnerId FK
-        string orderId FK
-        float amount
-        string status "pending | remitted | reconciled"
-        datetime createdAt
-        datetime reconciledAt
-    }
-
-    CodVariance {
-        string id PK
-        string codCollectionId FK
-        float expectedAmount
-        float actualAmount
-        float difference
-        string reason "short | excess | unaccounted"
-        string resolution "pending | adjusted | written_off"
-        datetime createdAt
-    }
-
-    KitchenPayout {
-        string id PK
-        string kitchenPartnerId FK
-        float amount
-        string status "pending | processing | completed | failed"
-        string bankReference
-        string periodStart
-        string periodEnd
-        datetime createdAt
-        datetime processedAt
-    }
-
-    OrderStatusConfig {
-        string id PK
-        string name "confirmed"
-        int sortOrder
-        string color
-        string icon
-        bool isActive
-    }
-
-    Notification {
-        string id PK
-        string userId FK
-        string title
-        string body
-        string type "order | promo | system"
-        json data "deep link payload"
-        bool isRead
-        datetime createdAt
-    }
-
-    User ||--o{ Order : places
-    User ||--o{ Address : has
-    User ||--o{ Review : writes
-    User ||--o{ Wishlist : has
-    User ||--o{ PushSubscription : has
+    User ||--o| Customer : is
     User ||--o{ Session : has
-    User ||--o{ Notification : receives
-    User ||--o{ CartItem : has
-    User || o{ AdminProfile : is
-    User ||--o{ KitchenPartner : owns
-    User ||--o{ DeliveryPartner : is
+    User ||--o{ Address : has
+    User ||--o{ Order : places
+    User ||--o{ Review : writes
+    User ||--o{ WishlistItem : has
+    User ||--o{ KitchenWishlist : has
+    User ||--o{ SupportTicket : opens
+    User ||--o{ PushSubscription : has
+    User ||--o| AdminProfile : is
+    User ||--o| KitchenPartner : owns
+    User ||--o| DeliveryPartner : is
 
-    KitchenPartner ||--o{ KitchenAlias : manages
-    KitchenPartner ||--o{ Order : fulfills
+    KitchenPartner ||--o| KitchenAlias : branded_as
+    KitchenPartner ||--o| KitchenPartnerKyc : has
+    KitchenPartner ||--o{ OrderItem : fulfills
+    KitchenPartner ||--o{ Review : receives
     KitchenPartner ||--o{ KitchenPayout : receives
+    KitchenPartner ||--o{ CravingsRule : triggers
 
     KitchenAlias ||--o{ MenuItem : contains
-    KitchenAlias ||--o{ TimeSlot : configures
-    KitchenAlias ||--o{ Review : receives
-    KitchenAlias ||--o{ Order : contains
+    Category ||--o{ MenuItem : categorizes
+    Category ||--o{ CategoryPageContent : drives
 
+    MenuItem ||--o{ MenuItemPhoto : has
     MenuItem ||--o{ OrderItem : referenced_in
-    MenuItem ||--o{ Photo : has
-    MenuItem ||--o{ KitchenDailyStock : tracks
-    MenuItem ||--o{ Wishlist : appears_in
-    MenuItem ||--o{ CartItem : references
+    MenuItem ||--o{ CravingsRuleItem : recommended_in
 
     Order ||--o{ OrderItem : contains
-    Order ||--o{ OrderTracking : tracks
-    Order ||--o{ OrderEvent : logs
-    Order ||--o{ Payment : has
-    Order ||--o{ Review : results_in
-    Order ||--o{ DeliveryAssignment : assigned_to
+    Order ||--o{ OrderStatusHistory : tracks
+    Order ||--o{ DeliveryLocation : has
+    Order ||--o| Payment : has
+    Order ||--o| DeliveryAssignment : assigned_to
+    Order ||--o{ Refund : refunded_by
+    Order ||--o| UpiCollectRequest : maybe
 
     DeliveryPartner ||--o{ DeliveryAssignment : performs
-    DeliveryPartner ||--o{ CodCollection : remits
+    DeliveryPartner ||--o{ DeliveryLocation : broadcasts
+    DeliveryPartner ||--o{ DeliveryPartnerPayout : receives
 
     Payment ||--o{ Refund : has_refunds
-    CodCollection ||--o{ CodVariance : may_have
-    CodRemittance ||--o{ CodCollection : reconciles
+    Payment ||--o| UpiCollectRequest : backed_by
 
+    CravingsRule ||--o{ CravingsRuleItem : contains
     AdminProfile ||--o{ AdminInvite : creates
     AdminProfile ||--o{ AdminAuditLog : logs
 ```
@@ -422,48 +573,45 @@ All `id` fields have a primary B-tree index.
 
 | Table | Index | Type | Purpose | Query Pattern |
 |-------|-------|------|---------|---------------|
-| `User` | `idx_user_phone` | Unique | Phone OTP lookup | `findUnique({ where: { phone } })` |
-| `User` | `idx_user_email` | Unique | Admin login | `findUnique({ where: { email } })` |
-| `User` | `idx_user_role` | B-tree | Role-based listing | `findMany({ where: { role } })` |
-| `Session` | `idx_session_token` | Unique | Session validation | `findUnique({ where: { token } })` |
-| `Session` | `idx_session_userId` | B-tree | User sessions | `findMany({ where: { userId } })` |
-| `Session` | `idx_session_expiresAt` | B-tree | Expired cleanup | `deleteMany({ where: { expiresAt: { lt: now } } })` |
-| `KitchenPartner` | `idx_kp_userId` | Unique | User->Kitchen join | `findUnique({ where: { userId } })` |
-| `KitchenPartner` | `idx_kp_alias` | Unique | Slug lookup | `findUnique({ where: { alias } })` |
-| `KitchenAlias` | `idx_ka_slug` | Unique | URL routing | `findUnique({ where: { slug } })` |
-| `KitchenAlias` | `idx_ka_isActive` | B-tree | Active kitchens filter | `findMany({ where: { isActive } })` |
-| `MenuItem` | `idx_mi_kitchenAliasId` | B-tree | Kitchen menu items | `findMany({ where: { kitchenAliasId } })` |
-| `MenuItem` | `idx_mi_timeSlot` | B-tree | Time-slot grouping | `findMany({ where: { timeSlot } })` |
-| `MenuItem` | `idx_mi_isAvailable` | B-tree | Available items filter | `findMany({ where: { isAvailable } })` |
-| `MenuItem` | `idx_mi_kitchen_timeSlot` | Composite | Kitchen + time-slot | `findMany({ where: { kitchenAliasId, timeSlot } })` |
-| `MenuItem` | `idx_mi_category` | B-tree | Category filtering | `findMany({ where: { category } })` |
-| `TimeSlot` | `idx_ts_kitchenId` | B-tree | Kitchen time slots | `findMany({ where: { kitchenAliasId } }, orderBy: sortOrder)` |
-| `Order` | `idx_order_userId` | B-tree | User order history | `findMany({ where: { userId } })` |
-| `Order` | `idx_order_kitchenAliasId` | B-tree | Kitchen orders | `findMany({ where: { kitchenAliasId } })` |
-| `Order` | `idx_order_status` | B-tree | Status-based queries | `findMany({ where: { status } })` |
-| `Order` | `idx_order_kitchen_status` | Composite | Kitchen dashboard | `findMany({ where: { kitchenAliasId, status } })` |
-| `Order` | `idx_order_user_status` | Composite | User order filtering | `findMany({ where: { userId, status } })` |
-| `Order` | `idx_order_createdAt` | B-tree DESC | Recent orders | `findMany({ orderBy: { createdAt: 'desc' } })` |
-| `OrderItem` | `idx_oi_orderId` | B-tree | Order items | `findMany({ where: { orderId } })` |
-| `OrderTracking` | `idx_ot_orderId` | B-tree | Tracking history | `findMany({ where: { orderId } })` |
-| `OrderEvent` | `idx_oe_orderId` | B-tree | Event log | `findMany({ where: { orderId } })` |
-| `DeliveryAssignment` | `idx_da_orderId` | Unique | Assignment lookup | `findUnique({ where: { orderId } })` |
-| `DeliveryAssignment` | `idx_da_deliveryPartnerId` | B-tree | Partner assignments | `findMany({ where: { deliveryPartnerId } })` |
-| `DeliveryAssignment` | `idx_da_status` | B-tree | Active deliveries | `findMany({ where: { status: 'accepted' } })` |
-| `Review` | `idx_rev_kitchenAliasId` | B-tree | Kitchen reviews | `findMany({ where: { kitchenAliasId } })` |
-| `Review` | `idx_rev_userId` | B-tree | User reviews | `findMany({ where: { userId } })` |
-| `Review` | `idx_rev_orderId` | Unique | One review per order | `findUnique({ where: { orderId } })` |
-| `Review` | `idx_rev_kitchen_rating` | Composite | Avg rating calc | `aggregate({ where: { kitchenAliasId }, _avg: { rating } })` |
-| `Wishlist` | `idx_wl_userId` | B-tree | User wishlist | `findMany({ where: { userId } })` |
-| `Wishlist` | `idx_wl_user_menuItem` | Composite Unique | Prevent duplicates | `findUnique({ where: { userId_menuItemId } })` |
-| `KitchenDailyStock` | `idx_kds_menuItem_date` | Composite Unique | Daily stock lookup | `findUnique({ where: { menuItemId_date } })` |
-| `KitchenDailyStock` | `idx_kds_date` | B-tree | Date-based queries | `findMany({ where: { date } })` |
-| `Coupon` | `idx_coupon_code` | Unique | Coupon validation | `findUnique({ where: { code } })` |
-| `Coupon` | `idx_coupon_validUntil` | B-tree | Expired coupons | `findMany({ where: { validUntil: { lt: now } } })` |
-| `Payment` | `idx_pay_orderId` | B-tree | Payment lookup | `findMany({ where: { orderId } })` |
-| `Payment` | `idx_pay_razorpayOrderId` | Unique | Webhook processing | `findUnique({ where: { razorpayOrderId } })` |
-| `CartItem` | `idx_ci_userId` | B-tree | User cart | `findMany({ where: { userId } })` |
-| `CartItem` | `idx_ci_user_menuItem` | Composite Unique | One cart entry per item | `findUnique({ where: { userId_menuItemId } })` |
+| `User` | `phoneNumber` | Unique | Phone OTP lookup | `findUnique({ where: { phoneNumber } })` |
+| `User` | `email` | Unique | Admin login | `findUnique({ where: { email } })` |
+| `User` | `publicCode` | Unique | Support lookups | `findUnique({ where: { publicCode } })` |
+| `Session` | `token` | Unique | Session validation | `findUnique({ where: { token } })` |
+| `Session` | `userId` | B-tree | User sessions | `findMany({ where: { userId } })` |
+| `KitchenPartner` | `slug` | Unique | URL routing | `findUnique({ where: { slug } })` |
+| `KitchenPartner` | `status` | B-tree | Approval queues | `findMany({ where: { status } })` |
+| `KitchenPartner` | `avgRating` | B-tree | Top-rated kitchens | `orderBy: { avgRating: 'desc' }` |
+| `KitchenAlias` | `displayName` | Unique | Brand lookup | `findUnique({ where: { displayName } })` |
+| `KitchenAlias` | `sequenceNumber` | Unique | Kitchen numbering | `findUnique({ where: { sequenceNumber } })` |
+| `MenuItem` | `slug` | Unique | Menu item URL | `findUnique({ where: { slug } })` |
+| `MenuItem` | `[menuId, timeSlot, foodType]` | Composite | Kitchen menu by slot | `findMany({ where: { menuId, timeSlot, foodType } })` |
+| `MenuItem` | `[isAvailable, timeSlot, foodType]` | Composite | Catalog browsing | `findMany({ where: { isAvailable, timeSlot, foodType } })` |
+| `MenuItem` | `categoryId` | B-tree | Category pages | `findMany({ where: { categoryId } })` |
+| `Order` | `userId` | B-tree | User order history | `findMany({ where: { userId } })` |
+| `Order` | `[serviceDate, timeSlot]` | Composite | Slot-based queries | `findMany({ where: { serviceDate, timeSlot } })` |
+| `Order` | `status` | B-tree | Status queues | `findMany({ where: { status } })` |
+| `Order` | `deliveryPartnerId` | B-tree | Partner deliveries | `findMany({ where: { deliveryPartnerId } })` |
+| `Order` | `idempotencyKey` | Unique | Duplicate order prevention | `findUnique({ where: { idempotencyKey } })` |
+| `OrderItem` | `orderId` | B-tree | Order items | `findMany({ where: { orderId } })` |
+| `OrderItem` | `kitchenPartnerId` | B-tree | Kitchen order view | `findMany({ where: { kitchenPartnerId } })` |
+| `OrderStatusHistory` | `orderId` | B-tree | Status timeline | `findMany({ where: { orderId } })` |
+| `DeliveryAssignment` | `orderId` | Unique | Assignment lookup | `findUnique({ where: { orderId } })` |
+| `DeliveryAssignment` | `deliveryPartnerId` | B-tree | Partner assignments | `findMany({ where: { deliveryPartnerId } })` |
+| `DeliveryLocation` | `orderId` | B-tree | Tracking fallback | `findMany({ where: { orderId } })` |
+| `Review` | `kitchenPartnerId` | B-tree | Kitchen reviews | `findMany({ where: { kitchenPartnerId } })` |
+| `Review` | `orderId` | Unique | One review per order | `findUnique({ where: { orderId } })` |
+| `Review` | `[kitchenPartnerId, rating]` | Composite | Avg rating calc | `aggregate({ where: { kitchenPartnerId }, _avg: { rating } })` |
+| `WishlistItem` | `[userId, menuItemId]` | Composite Unique | Prevent duplicates | `findUnique({ where: { userId_menuItemId } })` |
+| `Coupon` | `code` | Unique | Coupon validation | `findUnique({ where: { code } })` |
+| `Payment` | `orderId` | Unique | Payment lookup | `findUnique({ where: { orderId } })` |
+| `Payment` | `idempotencyKey` | Unique | Webhook idempotency | `findUnique({ where: { idempotencyKey } })` |
+| `Refund` | `razorpayRefundId` | Unique | Webhook processing | `findUnique({ where: { razorpayRefundId } })` |
+| `UpiCollectRequest` | `orderId` / `paymentId` | Unique | VPA↔order mapping | `findUnique({ where: { orderId } })` |
+| `CravingsRule` | `[triggerItemId, isActive]` | Composite | Rule resolution | `findMany({ where: { triggerItemId, isActive } })` |
+| `CravingsRuleItem` | `[ruleId, menuItemId]` | Composite Unique | Rule items | `findMany({ where: { ruleId } })` |
+| `PublicIdCounter` | `prefix` | Unique | Atomic code allocation | `update({ where: { prefix }, data: { sequence: { increment: 1 } } })` |
+| `CategoryPageContent` | `categoryId` | Unique | Category CMS lookup | `findUnique({ where: { categoryId } })` |
+| `SearchPageContent` | `keyword` | Unique | Keyword CMS lookup | `findUnique({ where: { keyword } })` |
 
 ### 2.3 Full-Text Search
 
@@ -531,27 +679,23 @@ const kitchen = await prisma.kitchenPartner.findUnique({ where: { alias: slug } 
 const aliases = await prisma.kitchenAlias.findMany({ where: { kitchenPartnerId: kitchen.id } });
 // For each alias, fetch menu items separately!
 
-// ✅ Optimal Pattern
-const kitchenDetail = await prisma.kitchenAlias.findUnique({
+// ✅ Optimal Pattern (lib/kitchen-detail.ts → queryKitchenDetail)
+const kitchen = await prisma.kitchenPartner.findUnique({
   where: { slug },
   include: {
-    kitchenPartner: {
+    kitchenAlias: true,
+    kitchenAddress: true,
+    reviews: { orderBy: { createdAt: 'desc' }, take: 10 },
+    menus: {
       include: {
-        payouts: { orderBy: { createdAt: 'desc' }, take: 1 },
+        menuItems: {
+          where: { isAvailable: true },
+          include: { photos: { orderBy: { sortOrder: 'asc' }, take: 1 } },
+          orderBy: { createdAt: 'desc' },
+        },
       },
     },
-    menuItems: {
-      where: { isAvailable: true },
-      include: { photos: { take: 1 } },
-      orderBy: { createdAt: 'desc' },
-    },
-    timeSlots: { orderBy: { sortOrder: 'asc' } },
-    reviews: {
-      take: 10,
-      orderBy: { createdAt: 'desc' },
-      include: { user: { select: { name: true } } },
-    },
-    _count: { select: { reviews: true, menuItems: true } },
+    _count: { select: { reviews: true, orderItems: true } },
   },
 });
 ```
@@ -583,8 +727,7 @@ async function getOrders(userId: string, cursor?: string, limit = 20) {
     ...(cursor ? { cursor: { id: cursor }, skip: 1 } : {}),
     orderBy: { createdAt: 'desc' },
     include: {
-      orderItems: true,
-      kitchenAlias: { select: { name: true, slug: true } },
+      orderItems: { include: { menuItem: { select: { name: true, slug: true } } } },
     },
   });
 }
@@ -594,12 +737,12 @@ async function getOrders(userId: string, cursor?: string, limit = 20) {
 ### 4.4 Batch Operations
 
 ```typescript
-// Bulk stock update
+// Bulk status update
 await prisma.$transaction(
-  stockUpdates.map(({ id, qty }) =>
-    prisma.kitchenDailyStock.update({
+  orderIds.map((id) =>
+    prisma.order.update({
       where: { id },
-      data: { availableQty: { decrement: qty } },
+      data: { status: "CANCELLED" },
     })
   )
 );
@@ -609,16 +752,20 @@ await prisma.$transaction(
 
 ## 5. Redis Cache Strategy
 
+Upstash Redis (serverless) is used for hot-path caching, live rider state, and the order-event stream:
+
 | Cache Key | TTL | Purpose | Invalidation Trigger |
 |-----------|-----|---------|---------------------|
-| `kitchen:{slug}:detail` | 60s | Kitchen detail page | Menu update, stock change |
+| `kitchen:{slug}:detail` | 60s | Kitchen detail page | Menu update |
 | `menu:{kitchenId}:items` | 30s | Menu items list | Menu CRUD |
-| `user:{id}:profile` | 300s | User profile | Profile update |
+| `menu:cache` | — | Menu cache (busted on order) | New order |
+| `deliveryPersons:live` | — | Geo-index of online delivery partners | Location heartbeat |
+| `deliveryOrder:{id}:lastLoc` | — | Rider's last known position (tracking) | Location update |
+| `order-events` | — | Redis stream — `ORDER_CONFIRMED` etc. | Append on order events |
 | `otp:cooldown:{phone}` | 60s | OTP rate limiting | Auto-expire |
 | `otp:ip:{ip}` | 3600s | IP rate limiting | Auto-expire |
-| `coupon:{code}` | 120s | Coupon validation | Coupon update |
-| `rating:{kitchenId}` | 300s | Avg rating cache | New review |
-| `search:results:{query}` | 60s | Search results | Menu change |
+
+> Note: the generic `user:{id}:profile` / `coupon:{code}` / `rating:{kitchenId}` / `search:results:{query}` keys documented previously are not currently implemented — server-side data is cached with `lib/server-cache.ts` (`cached()` wrapper, 30–60s) and Next.js `'use cache'; cacheLife('hours')`.
 
 ---
 

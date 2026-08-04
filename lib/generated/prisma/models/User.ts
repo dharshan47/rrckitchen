@@ -26,6 +26,7 @@ export type AggregateUser = {
 
 export type UserMinAggregateOutputType = {
   id: string | null
+  publicCode: string | null
   phoneNumber: string | null
   phoneNumberVerified: boolean | null
   role: string | null
@@ -47,6 +48,7 @@ export type UserMinAggregateOutputType = {
 
 export type UserMaxAggregateOutputType = {
   id: string | null
+  publicCode: string | null
   phoneNumber: string | null
   phoneNumberVerified: boolean | null
   role: string | null
@@ -68,6 +70,7 @@ export type UserMaxAggregateOutputType = {
 
 export type UserCountAggregateOutputType = {
   id: number
+  publicCode: number
   phoneNumber: number
   phoneNumberVerified: number
   role: number
@@ -91,6 +94,7 @@ export type UserCountAggregateOutputType = {
 
 export type UserMinAggregateInputType = {
   id?: true
+  publicCode?: true
   phoneNumber?: true
   phoneNumberVerified?: true
   role?: true
@@ -112,6 +116,7 @@ export type UserMinAggregateInputType = {
 
 export type UserMaxAggregateInputType = {
   id?: true
+  publicCode?: true
   phoneNumber?: true
   phoneNumberVerified?: true
   role?: true
@@ -133,6 +138,7 @@ export type UserMaxAggregateInputType = {
 
 export type UserCountAggregateInputType = {
   id?: true
+  publicCode?: true
   phoneNumber?: true
   phoneNumberVerified?: true
   role?: true
@@ -227,6 +233,7 @@ export type UserGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 
 export type UserGroupByOutputType = {
   id: string
+  publicCode: string | null
   phoneNumber: string | null
   phoneNumberVerified: boolean
   role: string
@@ -269,6 +276,7 @@ export type UserWhereInput = {
   OR?: Prisma.UserWhereInput[]
   NOT?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
   id?: Prisma.StringFilter<"User"> | string
+  publicCode?: Prisma.StringNullableFilter<"User"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"User"> | string | null
   phoneNumberVerified?: Prisma.BoolFilter<"User"> | boolean
   role?: Prisma.StringFilter<"User"> | string
@@ -286,6 +294,7 @@ export type UserWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   twoFactorEnabled?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   userRoles?: Prisma.UserRoleListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
@@ -308,13 +317,13 @@ export type UserWhereInput = {
   notificationLogs?: Prisma.NotificationLogListRelationFilter
   twoFactors?: Prisma.TwoFactorListRelationFilter
   adminProfile?: Prisma.XOR<Prisma.AdminProfileNullableScalarRelationFilter, Prisma.AdminProfileWhereInput> | null
-  userCodEligibility?: Prisma.XOR<Prisma.UserCodEligibilityNullableScalarRelationFilter, Prisma.UserCodEligibilityWhereInput> | null
   wishlistItems?: Prisma.WishlistItemListRelationFilter
   kitchenWishlists?: Prisma.KitchenWishlistListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumberVerified?: Prisma.SortOrder
   role?: Prisma.SortOrder
@@ -332,6 +341,7 @@ export type UserOrderByWithRelationInput = {
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   twoFactorEnabled?: Prisma.SortOrderInput | Prisma.SortOrder
+  customer?: Prisma.CustomerOrderByWithRelationInput
   userRoles?: Prisma.UserRoleOrderByRelationAggregateInput
   sessions?: Prisma.SessionOrderByRelationAggregateInput
   accounts?: Prisma.AccountOrderByRelationAggregateInput
@@ -354,13 +364,13 @@ export type UserOrderByWithRelationInput = {
   notificationLogs?: Prisma.NotificationLogOrderByRelationAggregateInput
   twoFactors?: Prisma.TwoFactorOrderByRelationAggregateInput
   adminProfile?: Prisma.AdminProfileOrderByWithRelationInput
-  userCodEligibility?: Prisma.UserCodEligibilityOrderByWithRelationInput
   wishlistItems?: Prisma.WishlistItemOrderByRelationAggregateInput
   kitchenWishlists?: Prisma.KitchenWishlistOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  publicCode?: string
   phoneNumber?: string
   email?: string
   AND?: Prisma.UserWhereInput | Prisma.UserWhereInput[]
@@ -381,6 +391,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"User"> | Date | string | null
   twoFactorEnabled?: Prisma.BoolNullableFilter<"User"> | boolean | null
+  customer?: Prisma.XOR<Prisma.CustomerNullableScalarRelationFilter, Prisma.CustomerWhereInput> | null
   userRoles?: Prisma.UserRoleListRelationFilter
   sessions?: Prisma.SessionListRelationFilter
   accounts?: Prisma.AccountListRelationFilter
@@ -403,13 +414,13 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   notificationLogs?: Prisma.NotificationLogListRelationFilter
   twoFactors?: Prisma.TwoFactorListRelationFilter
   adminProfile?: Prisma.XOR<Prisma.AdminProfileNullableScalarRelationFilter, Prisma.AdminProfileWhereInput> | null
-  userCodEligibility?: Prisma.XOR<Prisma.UserCodEligibilityNullableScalarRelationFilter, Prisma.UserCodEligibilityWhereInput> | null
   wishlistItems?: Prisma.WishlistItemListRelationFilter
   kitchenWishlists?: Prisma.KitchenWishlistListRelationFilter
-}, "id" | "phoneNumber" | "email">
+}, "id" | "publicCode" | "phoneNumber" | "email">
 
 export type UserOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumberVerified?: Prisma.SortOrder
   role?: Prisma.SortOrder
@@ -437,6 +448,7 @@ export type UserScalarWhereWithAggregatesInput = {
   OR?: Prisma.UserScalarWhereWithAggregatesInput[]
   NOT?: Prisma.UserScalarWhereWithAggregatesInput | Prisma.UserScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"User"> | string
+  publicCode?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   phoneNumber?: Prisma.StringNullableWithAggregatesFilter<"User"> | string | null
   phoneNumberVerified?: Prisma.BoolWithAggregatesFilter<"User"> | boolean
   role?: Prisma.StringWithAggregatesFilter<"User"> | string
@@ -458,6 +470,7 @@ export type UserScalarWhereWithAggregatesInput = {
 
 export type UserCreateInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -475,6 +488,7 @@ export type UserCreateInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -497,13 +511,13 @@ export type UserCreateInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -521,6 +535,7 @@ export type UserUncheckedCreateInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -543,13 +558,13 @@ export type UserUncheckedCreateInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -567,6 +582,7 @@ export type UserUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -589,13 +605,13 @@ export type UserUpdateInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -613,6 +629,7 @@ export type UserUncheckedUpdateInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -635,13 +652,13 @@ export type UserUncheckedUpdateInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -663,6 +680,7 @@ export type UserCreateManyInput = {
 
 export type UserUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -684,6 +702,7 @@ export type UserUpdateManyMutationInput = {
 
 export type UserUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -705,6 +724,7 @@ export type UserUncheckedUpdateManyInput = {
 
 export type UserCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   phoneNumberVerified?: Prisma.SortOrder
   role?: Prisma.SortOrder
@@ -726,6 +746,7 @@ export type UserCountOrderByAggregateInput = {
 
 export type UserMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   phoneNumberVerified?: Prisma.SortOrder
   role?: Prisma.SortOrder
@@ -747,6 +768,7 @@ export type UserMaxOrderByAggregateInput = {
 
 export type UserMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
   phoneNumberVerified?: Prisma.SortOrder
   role?: Prisma.SortOrder
@@ -798,6 +820,20 @@ export type DateTimeFieldUpdateOperationsInput = {
 
 export type NullableBoolFieldUpdateOperationsInput = {
   set?: boolean | null
+}
+
+export type UserCreateNestedOneWithoutCustomerInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCustomerInput, Prisma.UserUncheckedCreateWithoutCustomerInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomerInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutCustomerNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutCustomerInput, Prisma.UserUncheckedCreateWithoutCustomerInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutCustomerInput
+  upsert?: Prisma.UserUpsertWithoutCustomerInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutCustomerInput, Prisma.UserUpdateWithoutCustomerInput>, Prisma.UserUncheckedUpdateWithoutCustomerInput>
 }
 
 export type UserCreateNestedOneWithoutUserRolesInput = {
@@ -1112,20 +1148,6 @@ export type UserUpdateOneRequiredWithoutTwoFactorsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTwoFactorsInput, Prisma.UserUpdateWithoutTwoFactorsInput>, Prisma.UserUncheckedUpdateWithoutTwoFactorsInput>
 }
 
-export type UserCreateNestedOneWithoutUserCodEligibilityInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutUserCodEligibilityInput, Prisma.UserUncheckedCreateWithoutUserCodEligibilityInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserCodEligibilityInput
-  connect?: Prisma.UserWhereUniqueInput
-}
-
-export type UserUpdateOneRequiredWithoutUserCodEligibilityNestedInput = {
-  create?: Prisma.XOR<Prisma.UserCreateWithoutUserCodEligibilityInput, Prisma.UserUncheckedCreateWithoutUserCodEligibilityInput>
-  connectOrCreate?: Prisma.UserCreateOrConnectWithoutUserCodEligibilityInput
-  upsert?: Prisma.UserUpsertWithoutUserCodEligibilityInput
-  connect?: Prisma.UserWhereUniqueInput
-  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutUserCodEligibilityInput, Prisma.UserUpdateWithoutUserCodEligibilityInput>, Prisma.UserUncheckedUpdateWithoutUserCodEligibilityInput>
-}
-
 export type UserCreateNestedOneWithoutWishlistItemsInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutWishlistItemsInput, Prisma.UserUncheckedCreateWithoutWishlistItemsInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutWishlistItemsInput
@@ -1154,8 +1176,9 @@ export type UserUpdateOneRequiredWithoutKitchenWishlistsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutKitchenWishlistsInput, Prisma.UserUpdateWithoutKitchenWishlistsInput>, Prisma.UserUncheckedUpdateWithoutKitchenWishlistsInput>
 }
 
-export type UserCreateWithoutUserRolesInput = {
+export type UserCreateWithoutCustomerInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -1173,6 +1196,7 @@ export type UserCreateWithoutUserRolesInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
@@ -1194,13 +1218,13 @@ export type UserCreateWithoutUserRolesInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
-export type UserUncheckedCreateWithoutUserRolesInput = {
+export type UserUncheckedCreateWithoutCustomerInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -1218,6 +1242,7 @@ export type UserUncheckedCreateWithoutUserRolesInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
@@ -1239,7 +1264,206 @@ export type UserUncheckedCreateWithoutUserRolesInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutCustomerInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutCustomerInput, Prisma.UserUncheckedCreateWithoutCustomerInput>
+}
+
+export type UserUpsertWithoutCustomerInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutCustomerInput, Prisma.UserUncheckedUpdateWithoutCustomerInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutCustomerInput, Prisma.UserUncheckedCreateWithoutCustomerInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutCustomerInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutCustomerInput, Prisma.UserUncheckedUpdateWithoutCustomerInput>
+}
+
+export type UserUpdateWithoutCustomerInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
+  kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
+  notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
+  twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
+  adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutCustomerInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
+  kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
+  notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
+  twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
+  adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+}
+
+export type UserCreateWithoutUserRolesInput = {
+  id?: string
+  publicCode?: string | null
+  phoneNumber?: string | null
+  phoneNumberVerified?: boolean
+  role?: string
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  name?: string | null
+  fullName?: string | null
+  email?: string | null
+  emailVerified?: boolean
+  image?: string | null
+  isActive?: boolean
+  razorpayCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
+  kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
+  notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
+  twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
+  adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutUserRolesInput = {
+  id?: string
+  publicCode?: string | null
+  phoneNumber?: string | null
+  phoneNumberVerified?: boolean
+  role?: string
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  name?: string | null
+  fullName?: string | null
+  email?: string | null
+  emailVerified?: boolean
+  image?: string | null
+  isActive?: boolean
+  razorpayCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
+  kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
+  deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
+  notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
+  twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
+  adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -1262,6 +1486,7 @@ export type UserUpdateToOneWithWhereWithoutUserRolesInput = {
 
 export type UserUpdateWithoutUserRolesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1279,6 +1504,7 @@ export type UserUpdateWithoutUserRolesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
@@ -1300,13 +1526,13 @@ export type UserUpdateWithoutUserRolesInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserRolesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1324,6 +1550,7 @@ export type UserUncheckedUpdateWithoutUserRolesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
@@ -1345,13 +1572,13 @@ export type UserUncheckedUpdateWithoutUserRolesInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -1369,6 +1596,7 @@ export type UserCreateWithoutSessionsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
   otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
@@ -1390,13 +1618,13 @@ export type UserCreateWithoutSessionsInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -1414,6 +1642,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
   otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
@@ -1435,7 +1664,6 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -1458,6 +1686,7 @@ export type UserUpdateToOneWithWhereWithoutSessionsInput = {
 
 export type UserUpdateWithoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1475,6 +1704,7 @@ export type UserUpdateWithoutSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
   otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
@@ -1496,13 +1726,13 @@ export type UserUpdateWithoutSessionsInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1520,6 +1750,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
   otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
@@ -1541,13 +1772,13 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -1565,6 +1796,7 @@ export type UserCreateWithoutAccountsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
@@ -1586,13 +1818,13 @@ export type UserCreateWithoutAccountsInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -1610,6 +1842,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
@@ -1631,7 +1864,6 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -1654,6 +1886,7 @@ export type UserUpdateToOneWithWhereWithoutAccountsInput = {
 
 export type UserUpdateWithoutAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1671,6 +1904,7 @@ export type UserUpdateWithoutAccountsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
@@ -1692,13 +1926,13 @@ export type UserUpdateWithoutAccountsInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1716,6 +1950,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
@@ -1737,13 +1972,13 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOtpCodesInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -1761,6 +1996,7 @@ export type UserCreateWithoutOtpCodesInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -1782,13 +2018,13 @@ export type UserCreateWithoutOtpCodesInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOtpCodesInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -1806,6 +2042,7 @@ export type UserUncheckedCreateWithoutOtpCodesInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -1827,7 +2064,6 @@ export type UserUncheckedCreateWithoutOtpCodesInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -1850,6 +2086,7 @@ export type UserUpdateToOneWithWhereWithoutOtpCodesInput = {
 
 export type UserUpdateWithoutOtpCodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1867,6 +2104,7 @@ export type UserUpdateWithoutOtpCodesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -1888,13 +2126,13 @@ export type UserUpdateWithoutOtpCodesInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOtpCodesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1912,6 +2150,7 @@ export type UserUncheckedUpdateWithoutOtpCodesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -1933,13 +2172,13 @@ export type UserUncheckedUpdateWithoutOtpCodesInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAddressesInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -1957,6 +2196,7 @@ export type UserCreateWithoutAddressesInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -1978,13 +2218,13 @@ export type UserCreateWithoutAddressesInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAddressesInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -2002,6 +2242,7 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -2023,7 +2264,6 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -2046,6 +2286,7 @@ export type UserUpdateToOneWithWhereWithoutAddressesInput = {
 
 export type UserUpdateWithoutAddressesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2063,6 +2304,7 @@ export type UserUpdateWithoutAddressesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -2084,13 +2326,13 @@ export type UserUpdateWithoutAddressesInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2108,6 +2350,7 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -2129,13 +2372,13 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutKitchenPartnerInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -2153,6 +2396,7 @@ export type UserCreateWithoutKitchenPartnerInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -2174,13 +2418,13 @@ export type UserCreateWithoutKitchenPartnerInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutKitchenPartnerInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -2198,6 +2442,7 @@ export type UserUncheckedCreateWithoutKitchenPartnerInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -2219,7 +2464,6 @@ export type UserUncheckedCreateWithoutKitchenPartnerInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -2242,6 +2486,7 @@ export type UserUpdateToOneWithWhereWithoutKitchenPartnerInput = {
 
 export type UserUpdateWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2259,6 +2504,7 @@ export type UserUpdateWithoutKitchenPartnerInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -2280,13 +2526,13 @@ export type UserUpdateWithoutKitchenPartnerInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2304,6 +2550,7 @@ export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -2325,13 +2572,13 @@ export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDeliveryPartnerInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -2349,6 +2596,7 @@ export type UserCreateWithoutDeliveryPartnerInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -2370,13 +2618,13 @@ export type UserCreateWithoutDeliveryPartnerInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -2394,6 +2642,7 @@ export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -2415,7 +2664,6 @@ export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -2438,6 +2686,7 @@ export type UserUpdateToOneWithWhereWithoutDeliveryPartnerInput = {
 
 export type UserUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2455,6 +2704,7 @@ export type UserUpdateWithoutDeliveryPartnerInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -2476,13 +2726,13 @@ export type UserUpdateWithoutDeliveryPartnerInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2500,6 +2750,7 @@ export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -2521,13 +2772,13 @@ export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -2545,6 +2796,7 @@ export type UserCreateWithoutOrdersInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -2566,13 +2818,13 @@ export type UserCreateWithoutOrdersInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -2590,6 +2842,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -2611,7 +2864,6 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -2634,6 +2886,7 @@ export type UserUpdateToOneWithWhereWithoutOrdersInput = {
 
 export type UserUpdateWithoutOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2651,6 +2904,7 @@ export type UserUpdateWithoutOrdersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -2672,13 +2926,13 @@ export type UserUpdateWithoutOrdersInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2696,6 +2950,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -2717,13 +2972,13 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -2741,6 +2996,7 @@ export type UserCreateWithoutReviewsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -2762,13 +3018,13 @@ export type UserCreateWithoutReviewsInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -2786,6 +3042,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -2807,7 +3064,6 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -2830,6 +3086,7 @@ export type UserUpdateToOneWithWhereWithoutReviewsInput = {
 
 export type UserUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2847,6 +3104,7 @@ export type UserUpdateWithoutReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -2868,13 +3126,13 @@ export type UserUpdateWithoutReviewsInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -2892,6 +3150,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -2913,13 +3172,13 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutDeliveryReviewsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -2937,6 +3196,7 @@ export type UserCreateWithoutDeliveryReviewsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -2958,13 +3218,13 @@ export type UserCreateWithoutDeliveryReviewsInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutDeliveryReviewsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -2982,6 +3242,7 @@ export type UserUncheckedCreateWithoutDeliveryReviewsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -3003,7 +3264,6 @@ export type UserUncheckedCreateWithoutDeliveryReviewsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -3026,6 +3286,7 @@ export type UserUpdateToOneWithWhereWithoutDeliveryReviewsInput = {
 
 export type UserUpdateWithoutDeliveryReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3043,6 +3304,7 @@ export type UserUpdateWithoutDeliveryReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -3064,13 +3326,13 @@ export type UserUpdateWithoutDeliveryReviewsInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeliveryReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3088,6 +3350,7 @@ export type UserUncheckedUpdateWithoutDeliveryReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -3109,13 +3372,13 @@ export type UserUncheckedUpdateWithoutDeliveryReviewsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMenuItemFeedbacksInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -3133,6 +3396,7 @@ export type UserCreateWithoutMenuItemFeedbacksInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -3154,13 +3418,13 @@ export type UserCreateWithoutMenuItemFeedbacksInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMenuItemFeedbacksInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -3178,6 +3442,7 @@ export type UserUncheckedCreateWithoutMenuItemFeedbacksInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -3199,7 +3464,6 @@ export type UserUncheckedCreateWithoutMenuItemFeedbacksInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -3222,6 +3486,7 @@ export type UserUpdateToOneWithWhereWithoutMenuItemFeedbacksInput = {
 
 export type UserUpdateWithoutMenuItemFeedbacksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3239,6 +3504,7 @@ export type UserUpdateWithoutMenuItemFeedbacksInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -3260,13 +3526,13 @@ export type UserUpdateWithoutMenuItemFeedbacksInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3284,6 +3550,7 @@ export type UserUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -3305,13 +3572,13 @@ export type UserUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutMenuItemReviewsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -3329,6 +3596,7 @@ export type UserCreateWithoutMenuItemReviewsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -3350,13 +3618,13 @@ export type UserCreateWithoutMenuItemReviewsInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutMenuItemReviewsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -3374,6 +3642,7 @@ export type UserUncheckedCreateWithoutMenuItemReviewsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -3395,7 +3664,6 @@ export type UserUncheckedCreateWithoutMenuItemReviewsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -3418,6 +3686,7 @@ export type UserUpdateToOneWithWhereWithoutMenuItemReviewsInput = {
 
 export type UserUpdateWithoutMenuItemReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3435,6 +3704,7 @@ export type UserUpdateWithoutMenuItemReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -3456,13 +3726,13 @@ export type UserUpdateWithoutMenuItemReviewsInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMenuItemReviewsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3480,6 +3750,7 @@ export type UserUncheckedUpdateWithoutMenuItemReviewsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -3501,13 +3772,13 @@ export type UserUncheckedUpdateWithoutMenuItemReviewsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutPushSubscriptionsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -3525,6 +3796,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -3546,13 +3818,13 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -3570,6 +3842,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -3591,7 +3864,6 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -3614,6 +3886,7 @@ export type UserUpdateToOneWithWhereWithoutPushSubscriptionsInput = {
 
 export type UserUpdateWithoutPushSubscriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3631,6 +3904,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -3652,13 +3926,13 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3676,6 +3950,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -3697,13 +3972,13 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutNotificationLogsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -3721,6 +3996,7 @@ export type UserCreateWithoutNotificationLogsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -3742,13 +4018,13 @@ export type UserCreateWithoutNotificationLogsInput = {
   loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutNotificationLogsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -3766,6 +4042,7 @@ export type UserUncheckedCreateWithoutNotificationLogsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -3787,7 +4064,6 @@ export type UserUncheckedCreateWithoutNotificationLogsInput = {
   loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -3810,6 +4086,7 @@ export type UserUpdateToOneWithWhereWithoutNotificationLogsInput = {
 
 export type UserUpdateWithoutNotificationLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3827,6 +4104,7 @@ export type UserUpdateWithoutNotificationLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -3848,13 +4126,13 @@ export type UserUpdateWithoutNotificationLogsInput = {
   loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationLogsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -3872,6 +4150,7 @@ export type UserUncheckedUpdateWithoutNotificationLogsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -3893,13 +4172,13 @@ export type UserUncheckedUpdateWithoutNotificationLogsInput = {
   loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSupportTicketsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -3917,6 +4196,7 @@ export type UserCreateWithoutSupportTicketsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -3938,13 +4218,13 @@ export type UserCreateWithoutSupportTicketsInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSupportTicketsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -3962,6 +4242,7 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -3983,7 +4264,6 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -4006,6 +4286,7 @@ export type UserUpdateToOneWithWhereWithoutSupportTicketsInput = {
 
 export type UserUpdateWithoutSupportTicketsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4023,6 +4304,7 @@ export type UserUpdateWithoutSupportTicketsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -4044,13 +4326,13 @@ export type UserUpdateWithoutSupportTicketsInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4068,6 +4350,7 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -4089,13 +4372,13 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutReferralsMadeInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -4113,6 +4396,7 @@ export type UserCreateWithoutReferralsMadeInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -4134,13 +4418,13 @@ export type UserCreateWithoutReferralsMadeInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferralsMadeInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -4158,6 +4442,7 @@ export type UserUncheckedCreateWithoutReferralsMadeInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -4179,7 +4464,6 @@ export type UserUncheckedCreateWithoutReferralsMadeInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -4191,6 +4475,7 @@ export type UserCreateOrConnectWithoutReferralsMadeInput = {
 
 export type UserCreateWithoutReferralsUsedInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -4208,6 +4493,7 @@ export type UserCreateWithoutReferralsUsedInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -4229,13 +4515,13 @@ export type UserCreateWithoutReferralsUsedInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutReferralsUsedInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -4253,6 +4539,7 @@ export type UserUncheckedCreateWithoutReferralsUsedInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -4274,7 +4561,6 @@ export type UserUncheckedCreateWithoutReferralsUsedInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -4297,6 +4583,7 @@ export type UserUpdateToOneWithWhereWithoutReferralsMadeInput = {
 
 export type UserUpdateWithoutReferralsMadeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4314,6 +4601,7 @@ export type UserUpdateWithoutReferralsMadeInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -4335,13 +4623,13 @@ export type UserUpdateWithoutReferralsMadeInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferralsMadeInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4359,6 +4647,7 @@ export type UserUncheckedUpdateWithoutReferralsMadeInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -4380,7 +4669,6 @@ export type UserUncheckedUpdateWithoutReferralsMadeInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -4398,6 +4686,7 @@ export type UserUpdateToOneWithWhereWithoutReferralsUsedInput = {
 
 export type UserUpdateWithoutReferralsUsedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4415,6 +4704,7 @@ export type UserUpdateWithoutReferralsUsedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -4436,13 +4726,13 @@ export type UserUpdateWithoutReferralsUsedInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferralsUsedInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4460,6 +4750,7 @@ export type UserUncheckedUpdateWithoutReferralsUsedInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -4481,13 +4772,13 @@ export type UserUncheckedUpdateWithoutReferralsUsedInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLoyaltyPointsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -4505,6 +4796,7 @@ export type UserCreateWithoutLoyaltyPointsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -4526,13 +4818,13 @@ export type UserCreateWithoutLoyaltyPointsInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLoyaltyPointsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -4550,6 +4842,7 @@ export type UserUncheckedCreateWithoutLoyaltyPointsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -4571,7 +4864,6 @@ export type UserUncheckedCreateWithoutLoyaltyPointsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -4594,6 +4886,7 @@ export type UserUpdateToOneWithWhereWithoutLoyaltyPointsInput = {
 
 export type UserUpdateWithoutLoyaltyPointsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4611,6 +4904,7 @@ export type UserUpdateWithoutLoyaltyPointsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -4632,13 +4926,13 @@ export type UserUpdateWithoutLoyaltyPointsInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLoyaltyPointsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4656,6 +4950,7 @@ export type UserUncheckedUpdateWithoutLoyaltyPointsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -4677,13 +4972,13 @@ export type UserUncheckedUpdateWithoutLoyaltyPointsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLoyaltyTransactionsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -4701,6 +4996,7 @@ export type UserCreateWithoutLoyaltyTransactionsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -4722,13 +5018,13 @@ export type UserCreateWithoutLoyaltyTransactionsInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLoyaltyTransactionsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -4746,6 +5042,7 @@ export type UserUncheckedCreateWithoutLoyaltyTransactionsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -4767,7 +5064,6 @@ export type UserUncheckedCreateWithoutLoyaltyTransactionsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -4790,6 +5086,7 @@ export type UserUpdateToOneWithWhereWithoutLoyaltyTransactionsInput = {
 
 export type UserUpdateWithoutLoyaltyTransactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4807,6 +5104,7 @@ export type UserUpdateWithoutLoyaltyTransactionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -4828,13 +5126,13 @@ export type UserUpdateWithoutLoyaltyTransactionsInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLoyaltyTransactionsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -4852,6 +5150,7 @@ export type UserUncheckedUpdateWithoutLoyaltyTransactionsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -4873,13 +5172,13 @@ export type UserUncheckedUpdateWithoutLoyaltyTransactionsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutLoyaltyCouponPurchasesInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -4897,6 +5196,7 @@ export type UserCreateWithoutLoyaltyCouponPurchasesInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -4918,13 +5218,13 @@ export type UserCreateWithoutLoyaltyCouponPurchasesInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutLoyaltyCouponPurchasesInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -4942,6 +5242,7 @@ export type UserUncheckedCreateWithoutLoyaltyCouponPurchasesInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -4963,7 +5264,6 @@ export type UserUncheckedCreateWithoutLoyaltyCouponPurchasesInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -4986,6 +5286,7 @@ export type UserUpdateToOneWithWhereWithoutLoyaltyCouponPurchasesInput = {
 
 export type UserUpdateWithoutLoyaltyCouponPurchasesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5003,6 +5304,7 @@ export type UserUpdateWithoutLoyaltyCouponPurchasesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -5024,13 +5326,13 @@ export type UserUpdateWithoutLoyaltyCouponPurchasesInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLoyaltyCouponPurchasesInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5048,6 +5350,7 @@ export type UserUncheckedUpdateWithoutLoyaltyCouponPurchasesInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -5069,13 +5372,13 @@ export type UserUncheckedUpdateWithoutLoyaltyCouponPurchasesInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutAdminProfileInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -5093,6 +5396,7 @@ export type UserCreateWithoutAdminProfileInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -5114,13 +5418,13 @@ export type UserCreateWithoutAdminProfileInput = {
   loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutAdminProfileInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -5138,6 +5442,7 @@ export type UserUncheckedCreateWithoutAdminProfileInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -5159,7 +5464,6 @@ export type UserUncheckedCreateWithoutAdminProfileInput = {
   loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -5182,6 +5486,7 @@ export type UserUpdateToOneWithWhereWithoutAdminProfileInput = {
 
 export type UserUpdateWithoutAdminProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5199,6 +5504,7 @@ export type UserUpdateWithoutAdminProfileInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -5220,13 +5526,13 @@ export type UserUpdateWithoutAdminProfileInput = {
   loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAdminProfileInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5244,6 +5550,7 @@ export type UserUncheckedUpdateWithoutAdminProfileInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -5265,13 +5572,13 @@ export type UserUncheckedUpdateWithoutAdminProfileInput = {
   loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutTwoFactorsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -5289,6 +5596,7 @@ export type UserCreateWithoutTwoFactorsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -5310,13 +5618,13 @@ export type UserCreateWithoutTwoFactorsInput = {
   loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutTwoFactorsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -5334,6 +5642,7 @@ export type UserUncheckedCreateWithoutTwoFactorsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -5355,7 +5664,6 @@ export type UserUncheckedCreateWithoutTwoFactorsInput = {
   loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
@@ -5378,6 +5686,7 @@ export type UserUpdateToOneWithWhereWithoutTwoFactorsInput = {
 
 export type UserUpdateWithoutTwoFactorsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5395,6 +5704,7 @@ export type UserUpdateWithoutTwoFactorsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -5416,13 +5726,13 @@ export type UserUpdateWithoutTwoFactorsInput = {
   loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTwoFactorsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5440,6 +5750,7 @@ export type UserUncheckedUpdateWithoutTwoFactorsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -5460,203 +5771,6 @@ export type UserUncheckedUpdateWithoutTwoFactorsInput = {
   loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
   loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
-  adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
-  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
-  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
-}
-
-export type UserCreateWithoutUserCodEligibilityInput = {
-  id?: string
-  phoneNumber?: string | null
-  phoneNumberVerified?: boolean
-  role?: string
-  banned?: boolean
-  banReason?: string | null
-  banExpires?: Date | string | null
-  name?: string | null
-  fullName?: string | null
-  email?: string | null
-  emailVerified?: boolean
-  image?: string | null
-  isActive?: boolean
-  razorpayCustomerId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  twoFactorEnabled?: boolean | null
-  userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
-  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
-  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
-  deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
-  kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
-  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
-  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
-  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
-  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
-  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
-  referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
-  referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
-  loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
-  loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
-  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
-  notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
-  twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
-  adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
-  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
-}
-
-export type UserUncheckedCreateWithoutUserCodEligibilityInput = {
-  id?: string
-  phoneNumber?: string | null
-  phoneNumberVerified?: boolean
-  role?: string
-  banned?: boolean
-  banReason?: string | null
-  banExpires?: Date | string | null
-  name?: string | null
-  fullName?: string | null
-  email?: string | null
-  emailVerified?: boolean
-  image?: string | null
-  isActive?: boolean
-  razorpayCustomerId?: string | null
-  createdAt?: Date | string
-  updatedAt?: Date | string
-  deletedAt?: Date | string | null
-  twoFactorEnabled?: boolean | null
-  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
-  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
-  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
-  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
-  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
-  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
-  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
-  deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
-  kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
-  deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
-  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
-  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
-  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
-  referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
-  referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
-  loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
-  loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
-  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
-  notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
-  twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
-  adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
-  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
-}
-
-export type UserCreateOrConnectWithoutUserCodEligibilityInput = {
-  where: Prisma.UserWhereUniqueInput
-  create: Prisma.XOR<Prisma.UserCreateWithoutUserCodEligibilityInput, Prisma.UserUncheckedCreateWithoutUserCodEligibilityInput>
-}
-
-export type UserUpsertWithoutUserCodEligibilityInput = {
-  update: Prisma.XOR<Prisma.UserUpdateWithoutUserCodEligibilityInput, Prisma.UserUncheckedUpdateWithoutUserCodEligibilityInput>
-  create: Prisma.XOR<Prisma.UserCreateWithoutUserCodEligibilityInput, Prisma.UserUncheckedCreateWithoutUserCodEligibilityInput>
-  where?: Prisma.UserWhereInput
-}
-
-export type UserUpdateToOneWithWhereWithoutUserCodEligibilityInput = {
-  where?: Prisma.UserWhereInput
-  data: Prisma.XOR<Prisma.UserUpdateWithoutUserCodEligibilityInput, Prisma.UserUncheckedUpdateWithoutUserCodEligibilityInput>
-}
-
-export type UserUpdateWithoutUserCodEligibilityInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  role?: Prisma.StringFieldUpdateOperationsInput | string
-  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
-  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
-  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
-  deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
-  kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
-  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
-  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
-  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
-  supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
-  referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
-  referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
-  loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
-  loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
-  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
-  notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
-  twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
-  adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
-  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
-}
-
-export type UserUncheckedUpdateWithoutUserCodEligibilityInput = {
-  id?: Prisma.StringFieldUpdateOperationsInput | string
-  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  role?: Prisma.StringFieldUpdateOperationsInput | string
-  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
-  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
-  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
-  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
-  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
-  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
-  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
-  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
-  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
-  deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
-  kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
-  deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
-  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
-  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
-  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
-  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
-  referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
-  referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
-  loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
-  loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
-  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
-  notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
-  twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
@@ -5664,6 +5778,7 @@ export type UserUncheckedUpdateWithoutUserCodEligibilityInput = {
 
 export type UserCreateWithoutWishlistItemsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -5681,6 +5796,7 @@ export type UserCreateWithoutWishlistItemsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -5703,12 +5819,12 @@ export type UserCreateWithoutWishlistItemsInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutWishlistItemsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -5726,6 +5842,7 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -5748,7 +5865,6 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -5770,6 +5886,7 @@ export type UserUpdateToOneWithWhereWithoutWishlistItemsInput = {
 
 export type UserUpdateWithoutWishlistItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5787,6 +5904,7 @@ export type UserUpdateWithoutWishlistItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -5809,12 +5927,12 @@ export type UserUpdateWithoutWishlistItemsInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5832,6 +5950,7 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -5854,12 +5973,12 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutKitchenWishlistsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -5877,6 +5996,7 @@ export type UserCreateWithoutKitchenWishlistsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
@@ -5899,12 +6019,12 @@ export type UserCreateWithoutKitchenWishlistsInput = {
   notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutKitchenWishlistsInput = {
   id?: string
+  publicCode?: string | null
   phoneNumber?: string | null
   phoneNumberVerified?: boolean
   role?: string
@@ -5922,6 +6042,7 @@ export type UserUncheckedCreateWithoutKitchenWishlistsInput = {
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
   userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
   sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
   accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
@@ -5944,7 +6065,6 @@ export type UserUncheckedCreateWithoutKitchenWishlistsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
 }
 
@@ -5966,6 +6086,7 @@ export type UserUpdateToOneWithWhereWithoutKitchenWishlistsInput = {
 
 export type UserUpdateWithoutKitchenWishlistsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -5983,6 +6104,7 @@ export type UserUpdateWithoutKitchenWishlistsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
@@ -6005,12 +6127,12 @@ export type UserUpdateWithoutKitchenWishlistsInput = {
   notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutKitchenWishlistsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
   role?: Prisma.StringFieldUpdateOperationsInput | string
@@ -6028,6 +6150,7 @@ export type UserUncheckedUpdateWithoutKitchenWishlistsInput = {
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
   userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
   sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
   accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
@@ -6050,7 +6173,6 @@ export type UserUncheckedUpdateWithoutKitchenWishlistsInput = {
   notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
-  userCodEligibility?: Prisma.UserCodEligibilityUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
 }
 
@@ -6258,6 +6380,7 @@ export type UserCountOutputTypeCountKitchenWishlistsArgs<ExtArgs extends runtime
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   phoneNumber?: boolean
   phoneNumberVerified?: boolean
   role?: boolean
@@ -6275,6 +6398,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   updatedAt?: boolean
   deletedAt?: boolean
   twoFactorEnabled?: boolean
+  customer?: boolean | Prisma.User$customerArgs<ExtArgs>
   userRoles?: boolean | Prisma.User$userRolesArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
@@ -6297,7 +6421,6 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   notificationLogs?: boolean | Prisma.User$notificationLogsArgs<ExtArgs>
   twoFactors?: boolean | Prisma.User$twoFactorsArgs<ExtArgs>
   adminProfile?: boolean | Prisma.User$adminProfileArgs<ExtArgs>
-  userCodEligibility?: boolean | Prisma.User$userCodEligibilityArgs<ExtArgs>
   wishlistItems?: boolean | Prisma.User$wishlistItemsArgs<ExtArgs>
   kitchenWishlists?: boolean | Prisma.User$kitchenWishlistsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -6305,6 +6428,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 
 export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   phoneNumber?: boolean
   phoneNumberVerified?: boolean
   role?: boolean
@@ -6326,6 +6450,7 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 
 export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   phoneNumber?: boolean
   phoneNumberVerified?: boolean
   role?: boolean
@@ -6347,6 +6472,7 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
 
 export type UserSelectScalar = {
   id?: boolean
+  publicCode?: boolean
   phoneNumber?: boolean
   phoneNumberVerified?: boolean
   role?: boolean
@@ -6366,8 +6492,9 @@ export type UserSelectScalar = {
   twoFactorEnabled?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "phoneNumber" | "phoneNumberVerified" | "role" | "banned" | "banReason" | "banExpires" | "name" | "fullName" | "email" | "emailVerified" | "image" | "isActive" | "razorpayCustomerId" | "createdAt" | "updatedAt" | "deletedAt" | "twoFactorEnabled", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicCode" | "phoneNumber" | "phoneNumberVerified" | "role" | "banned" | "banReason" | "banExpires" | "name" | "fullName" | "email" | "emailVerified" | "image" | "isActive" | "razorpayCustomerId" | "createdAt" | "updatedAt" | "deletedAt" | "twoFactorEnabled", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  customer?: boolean | Prisma.User$customerArgs<ExtArgs>
   userRoles?: boolean | Prisma.User$userRolesArgs<ExtArgs>
   sessions?: boolean | Prisma.User$sessionsArgs<ExtArgs>
   accounts?: boolean | Prisma.User$accountsArgs<ExtArgs>
@@ -6390,7 +6517,6 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   notificationLogs?: boolean | Prisma.User$notificationLogsArgs<ExtArgs>
   twoFactors?: boolean | Prisma.User$twoFactorsArgs<ExtArgs>
   adminProfile?: boolean | Prisma.User$adminProfileArgs<ExtArgs>
-  userCodEligibility?: boolean | Prisma.User$userCodEligibilityArgs<ExtArgs>
   wishlistItems?: boolean | Prisma.User$wishlistItemsArgs<ExtArgs>
   kitchenWishlists?: boolean | Prisma.User$kitchenWishlistsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
@@ -6401,6 +6527,7 @@ export type UserIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
 export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "User"
   objects: {
+    customer: Prisma.$CustomerPayload<ExtArgs> | null
     userRoles: Prisma.$UserRolePayload<ExtArgs>[]
     sessions: Prisma.$SessionPayload<ExtArgs>[]
     accounts: Prisma.$AccountPayload<ExtArgs>[]
@@ -6423,12 +6550,12 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     notificationLogs: Prisma.$NotificationLogPayload<ExtArgs>[]
     twoFactors: Prisma.$TwoFactorPayload<ExtArgs>[]
     adminProfile: Prisma.$AdminProfilePayload<ExtArgs> | null
-    userCodEligibility: Prisma.$UserCodEligibilityPayload<ExtArgs> | null
     wishlistItems: Prisma.$WishlistItemPayload<ExtArgs>[]
     kitchenWishlists: Prisma.$KitchenWishlistPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    publicCode: string | null
     phoneNumber: string | null
     phoneNumberVerified: boolean
     role: string
@@ -6840,6 +6967,7 @@ readonly fields: UserFieldRefs;
  */
 export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
+  customer<T extends Prisma.User$customerArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$customerArgs<ExtArgs>>): Prisma.Prisma__CustomerClient<runtime.Types.Result.GetResult<Prisma.$CustomerPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   userRoles<T extends Prisma.User$userRolesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userRolesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserRolePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   sessions<T extends Prisma.User$sessionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$sessionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SessionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   accounts<T extends Prisma.User$accountsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$accountsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$AccountPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -6862,7 +6990,6 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   notificationLogs<T extends Prisma.User$notificationLogsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$notificationLogsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotificationLogPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   twoFactors<T extends Prisma.User$twoFactorsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$twoFactorsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TwoFactorPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   adminProfile<T extends Prisma.User$adminProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$adminProfileArgs<ExtArgs>>): Prisma.Prisma__AdminProfileClient<runtime.Types.Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  userCodEligibility<T extends Prisma.User$userCodEligibilityArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$userCodEligibilityArgs<ExtArgs>>): Prisma.Prisma__UserCodEligibilityClient<runtime.Types.Result.GetResult<Prisma.$UserCodEligibilityPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   wishlistItems<T extends Prisma.User$wishlistItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$wishlistItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WishlistItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitchenWishlists<T extends Prisma.User$kitchenWishlistsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$kitchenWishlistsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenWishlistPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -6895,6 +7022,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
  */
 export interface UserFieldRefs {
   readonly id: Prisma.FieldRef<"User", 'String'>
+  readonly publicCode: Prisma.FieldRef<"User", 'String'>
   readonly phoneNumber: Prisma.FieldRef<"User", 'String'>
   readonly phoneNumberVerified: Prisma.FieldRef<"User", 'Boolean'>
   readonly role: Prisma.FieldRef<"User", 'String'>
@@ -7302,6 +7430,25 @@ export type UserDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Internal
    * Limit how many Users to delete.
    */
   limit?: number
+}
+
+/**
+ * User.customer
+ */
+export type User$customerArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Customer
+   */
+  select?: Prisma.CustomerSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Customer
+   */
+  omit?: Prisma.CustomerOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.CustomerInclude<ExtArgs> | null
+  where?: Prisma.CustomerWhereInput
 }
 
 /**
@@ -7810,25 +7957,6 @@ export type User$adminProfileArgs<ExtArgs extends runtime.Types.Extensions.Inter
    */
   include?: Prisma.AdminProfileInclude<ExtArgs> | null
   where?: Prisma.AdminProfileWhereInput
-}
-
-/**
- * User.userCodEligibility
- */
-export type User$userCodEligibilityArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the UserCodEligibility
-   */
-  select?: Prisma.UserCodEligibilitySelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the UserCodEligibility
-   */
-  omit?: Prisma.UserCodEligibilityOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.UserCodEligibilityInclude<ExtArgs> | null
-  where?: Prisma.UserCodEligibilityWhereInput
 }
 
 /**

@@ -28,6 +28,11 @@ export type User = Prisma.UserModel
  */
 export type Role = Prisma.RoleModel
 /**
+ * Model Customer
+ * 
+ */
+export type Customer = Prisma.CustomerModel
+/**
  * Model UserRole
  * 
  */
@@ -153,6 +158,11 @@ export type Review = Prisma.ReviewModel
  */
 export type DeliveryReview = Prisma.DeliveryReviewModel
 /**
+ * Model RrcKitchenReview
+ * 
+ */
+export type RrcKitchenReview = Prisma.RrcKitchenReviewModel
+/**
  * Model MenuItemFeedback
  * 
  */
@@ -203,6 +213,11 @@ export type SupportTicket = Prisma.SupportTicketModel
  */
 export type TicketMessage = Prisma.TicketMessageModel
 /**
+ * Model ContactMessage
+ * 
+ */
+export type ContactMessage = Prisma.ContactMessageModel
+/**
  * Model Referral
  * 
  */
@@ -243,6 +258,11 @@ export type CouponRedemption = Prisma.CouponRedemptionModel
  */
 export type PaymentOffer = Prisma.PaymentOfferModel
 /**
+ * Model UpiCollectRequest
+ * 
+ */
+export type UpiCollectRequest = Prisma.UpiCollectRequestModel
+/**
  * Model Refund
  * 
  */
@@ -262,11 +282,6 @@ export type DeliveryPartnerPayout = Prisma.DeliveryPartnerPayoutModel
  * 
  */
 export type KitchenAddress = Prisma.KitchenAddressModel
-/**
- * Model MenuItemDailyStock
- * 
- */
-export type MenuItemDailyStock = Prisma.MenuItemDailyStockModel
 /**
  * Model AdminProfile
  * 
@@ -293,21 +308,6 @@ export type AdminAuditLog = Prisma.AdminAuditLogModel
  */
 export type TwoFactor = Prisma.TwoFactorModel
 /**
- * Model UserCodEligibility
- * 
- */
-export type UserCodEligibility = Prisma.UserCodEligibilityModel
-/**
- * Model CashRemittance
- * 
- */
-export type CashRemittance = Prisma.CashRemittanceModel
-/**
- * Model CodVariance
- * 
- */
-export type CodVariance = Prisma.CodVarianceModel
-/**
  * Model WishlistItem
  * 
  */
@@ -317,3 +317,83 @@ export type WishlistItem = Prisma.WishlistItemModel
  * 
  */
 export type KitchenWishlist = Prisma.KitchenWishlistModel
+/**
+ * Model SearchPageContent
+ * 
+ */
+export type SearchPageContent = Prisma.SearchPageContentModel
+/**
+ * Model SearchPageFilter
+ * 
+ */
+export type SearchPageFilter = Prisma.SearchPageFilterModel
+/**
+ * Model SearchPageBadge
+ * 
+ */
+export type SearchPageBadge = Prisma.SearchPageBadgeModel
+/**
+ * Model SearchPageInfoItem
+ * 
+ */
+export type SearchPageInfoItem = Prisma.SearchPageInfoItemModel
+/**
+ * Model CategoryPageContent
+ * 
+ */
+export type CategoryPageContent = Prisma.CategoryPageContentModel
+/**
+ * Model CategoryPageFeature
+ * 
+ */
+export type CategoryPageFeature = Prisma.CategoryPageFeatureModel
+/**
+ * Model CategoryPageOffer
+ * 
+ */
+export type CategoryPageOffer = Prisma.CategoryPageOfferModel
+/**
+ * Model CategoryPageFaq
+ * 
+ */
+export type CategoryPageFaq = Prisma.CategoryPageFaqModel
+/**
+ * Model KitchenSearchPageContent
+ * 
+ */
+export type KitchenSearchPageContent = Prisma.KitchenSearchPageContentModel
+/**
+ * Model KitchenSearchChip
+ * 
+ */
+export type KitchenSearchChip = Prisma.KitchenSearchChipModel
+/**
+ * Model KitchenSearchFilter
+ * 
+ */
+export type KitchenSearchFilter = Prisma.KitchenSearchFilterModel
+/**
+ * Model KitchenSearchMenuCategory
+ * 
+ */
+export type KitchenSearchMenuCategory = Prisma.KitchenSearchMenuCategoryModel
+/**
+ * Model KitchenSearchRecommendedItem
+ * 
+ */
+export type KitchenSearchRecommendedItem = Prisma.KitchenSearchRecommendedItemModel
+/**
+ * Model CravingsRule
+ * 
+ */
+export type CravingsRule = Prisma.CravingsRuleModel
+/**
+ * Model CravingsRuleItem
+ * 
+ */
+export type CravingsRuleItem = Prisma.CravingsRuleItemModel
+/**
+ * Model PublicIdCounter
+ * 
+ */
+export type PublicIdCounter = Prisma.PublicIdCounterModel

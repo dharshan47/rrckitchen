@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-} from "@/components/ui"
+} from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { ShoppingBag, Plus } from "lucide-react"
 

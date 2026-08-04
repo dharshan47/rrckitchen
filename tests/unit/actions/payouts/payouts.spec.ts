@@ -1,12 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   kitchenPayout: { create: vi.fn(), findMany: vi.fn() },
   deliveryPartnerPayout: { create: vi.fn(), findMany: vi.fn(), findFirst: vi.fn(), update: vi.fn() },
   order: { findUnique: vi.fn() },
   kitchenPartner: { findUnique: vi.fn() },
   deliveryPartner: { findUnique: vi.fn() },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 

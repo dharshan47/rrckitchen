@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   order: {
     findMany: vi.fn(),
     findUnique: vi.fn(),
@@ -10,7 +10,7 @@ const mockPrisma = {
   deliverySlot: { findFirst: vi.fn() },
   deliveryPartner: { findMany: vi.fn(), findFirst: vi.fn(), update: vi.fn() },
   $transaction: vi.fn(),
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 vi.mock("@/lib/redis", () => ({ redis: { get: vi.fn(), set: vi.fn(), expire: vi.fn() } }))
@@ -30,7 +30,7 @@ describe("orders", () => {
       mockPrisma.order.findMany.mockResolvedValue([
         {
           id: "order-1", status: "CONFIRMED", totalAmount: 500, createdAt: now,
-          serviceDate: now, timeSlot: "MORNING", deliveryOtp: null,
+          serviceDate: now, timeSlot: "MORNING",
           orderItems: [
             {
               id: "oi1", quantity: 2, unitPrice: 100, kitchenPartnerId: "kp1",
@@ -71,7 +71,6 @@ describe("orders", () => {
     it("returns order with delivery partner and location data", async () => {
       mockPrisma.order.findUnique.mockResolvedValue({
         id: "order-1", status: "READYFORPICKUP", totalAmount: 500,
-        deliveryOtp: "1234", deliveryOtpVerifiedAt: null,
         deliveryStatus: null,
         deliveryAssignment: { status: "ASSIGNED" },
         createdAt: new Date(),

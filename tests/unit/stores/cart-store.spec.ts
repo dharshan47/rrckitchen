@@ -93,13 +93,6 @@ describe('cartStore', () => {
     expect(cartStore.getState().appliedCoupon).toBeNull();
   });
 
-  it('sets order type', () => {
-    cartStore.getState().setOrderType('INSTANT');
-    expect(cartStore.getState().orderType).toBe('INSTANT');
-    cartStore.getState().setOrderType('PREBOOK');
-    expect(cartStore.getState().orderType).toBe('PREBOOK');
-  });
-
   it('calculates total correctly', () => {
     cartStore.getState().addToCart(mockItem);
     cartStore.getState().addToCart(mockItem2);

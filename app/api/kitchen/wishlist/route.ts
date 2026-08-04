@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
+import { toTitleCase } from "@/lib/utils";
 
 export async function GET(req: NextRequest) {
   try {
@@ -27,9 +28,31 @@ export async function GET(req: NextRequest) {
             id: true,
             slug: true,
             status: true,
-            kitchenAlias: { select: { displayName: true } },
-            kitchenAddress: { select: { lineOne: true, pincode: true } },
+            operatingHours: true,
+            estimatedPrepTime: true,
+            kitchenAlias: { select: { displayName: true, imageUrl: true } },
+            kitchenAddress: {
+              select: { lineOne: true, pincode: true, latitude: true, longitude: true },
+            },
             kitchenKyc: { select: { phoneNumber: true } },
+            kitchenCategories: {
+              select: { category: { select: { name: true } } },
+            },
+            menus: {
+              where: { isActive: true },
+              select: {
+                menuItems: {
+                  where: { isAvailable: true },
+                  select: {
+                    photos: { take: 1, orderBy: { sortOrder: "asc" }, select: { imageUrl: true } },
+                  },
+                  take: 1,
+                },
+              },
+              take: 1,
+            },
+            reviews: { select: { rating: true } },
+            _count: { select: { reviews: true } },
             user: { select: { name: true } },
           },
         },
@@ -38,7 +61,34 @@ export async function GET(req: NextRequest) {
     });
 
     const hasMore = items.length > limit;
-    const result = hasMore ? items.slice(0, limit) : items;
+    const result = (hasMore ? items.slice(0, limit) : items).map((w) => {
+      const k = w.kitchenPartner;
+      const avgRating =
+        k.reviews.length > 0
+          ? Math.round((k.reviews.reduce((s, r) => s + r.rating, 0) / k.reviews.length) * 10) / 10
+          : null;
+      return {
+        ...w,
+        kitchenPartner: {
+          id: k.id,
+          slug: k.slug,
+          status: k.status,
+          operatingHours: k.operatingHours,
+          estimatedPrepTime: k.estimatedPrepTime,
+          kitchenAlias: k.kitchenAlias,
+          kitchenAddress: k.kitchenAddress,
+          kitchenKyc: k.kitchenKyc,
+          cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
+          avgRating,
+          totalReviews: k._count.reviews,
+          imageUrl:
+            k.kitchenAlias?.imageUrl ?? k.menus[0]?.menuItems[0]?.photos[0]?.imageUrl ?? null,
+          lat: k.kitchenAddress?.latitude ?? null,
+          lng: k.kitchenAddress?.longitude ?? null,
+          user: k.user,
+        },
+      };
+    });
     const nextCursor = hasMore && result.length > 0 ? result[result.length - 1].id : null;
 
     return NextResponse.json({ items: result, nextCursor });

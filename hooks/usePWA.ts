@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 
 export function usePWA() {
   const [isOnline, setIsOnline] = useState(() => {
@@ -61,6 +62,38 @@ export function usePWA() {
     }).catch(() => {});
   }, []);
 
+  // VAPID public key — fetched once and cached for the session
+  const { data: vapidPublicKey } = useQuery({
+    queryKey: ["pwa", "vapid-public-key"],
+    queryFn: async () => {
+      const res = await fetch("/api/push/vapid-public-key");
+      if (!res.ok) throw new Error("Failed to fetch push key");
+      const { publicKey } = await res.json();
+      return publicKey as string | undefined;
+    },
+    enabled: typeof navigator !== "undefined" && "serviceWorker" in navigator,
+    staleTime: 24 * 60 * 60 * 1000,
+    gcTime: Infinity,
+    retry: 1,
+  });
+
+  const subscribePushMutation = useMutation({
+    mutationFn: async (subscription: PushSubscription) => {
+      const sub = subscription.toJSON();
+      const res = await fetch("/api/push/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          endpoint: sub.endpoint,
+          p256dh: sub.keys?.p256dh,
+          auth: sub.keys?.auth,
+          userAgent: navigator.userAgent,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to subscribe to push notifications");
+    },
+  });
+
   const activateUpdate = useCallback(() => {
     if (!swRegistration?.waiting) return;
     swRegistration.waiting.postMessage({ type: "SKIP_WAITING" });
@@ -74,32 +107,17 @@ export function usePWA() {
   }, [deferredPrompt]);
 
   const subscribeToPush = useCallback(async () => {
-    if (!swRegistration) return;
+    if (!swRegistration || !vapidPublicKey) return;
     try {
-      const res = await fetch("/api/push/vapid-public-key");
-      const { publicKey } = await res.json();
-      if (!publicKey) return;
-
       const subscription = await swRegistration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: publicKey,
+        applicationServerKey: vapidPublicKey,
       });
-
-      const sub = subscription.toJSON();
-      await fetch("/api/push/subscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          endpoint: sub.endpoint,
-          p256dh: sub.keys?.p256dh,
-          auth: sub.keys?.auth,
-          userAgent: navigator.userAgent,
-        }),
-      });
+      await subscribePushMutation.mutateAsync(subscription);
     } catch {
       // silently fail - user may have denied permission
     }
-  }, [swRegistration]);
+  }, [swRegistration, vapidPublicKey, subscribePushMutation]);
 
   return {
     isOnline,

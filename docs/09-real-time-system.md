@@ -1,7 +1,7 @@
 # Real-Time System Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [System Architecture](01-system-architecture.md), [Architecture Decisions (Ably)](02-architecture-decisions.md#adr-008-ably-for-real-time-over-websocket-custom), [Data Model](03-data-model.md)
 
 ---
@@ -48,11 +48,12 @@ flowchart TB
 | Channel Pattern | Subscribers | Permissions | Purpose |
 |----------------|------------|-------------|---------|
 | `order:{orderId}` | Customer (owner), Kitchen (fulfiller), Admin | Subscribe | Order status updates |
-| `kitchen:{kitchenId}` | Kitchen partner, Admin | Subscribe, Presence | Incoming orders, kitchen status |
-| `delivery:{deliveryId}` | Delivery partner, Admin | Subscribe, Publish | Assignment notifications |
-| `delivery:location:{deliveryId}` | Customer, Admin | Subscribe | Live location tracking |
-| `admin:notifications` | Admin | Subscribe | Alerts, audit events |
-| `cravings:{kitchenId}` | Customer (in checkout flow) | Subscribe | Real-time upsell popups |
+| `kitchen:{kitchenId}` | Kitchen partner, Admin | Subscribe | Incoming orders, queue status |
+| `deliveryPartner:{deliveryPartnerId}` | Delivery partner | Subscribe | Delivery offers (assignment) |
+| `category:{categoryId}` | Kitchen partners (menu push) | Subscribe | Menu category changes |
+| `user:{userId}` | User | Subscribe | Fallback capability grant |
+
+> Location is **not** streamed over Ably — the delivery partner heartbeats position to `POST /api/rider/location`, stored in Redis as `deliveryOrder:{id}:lastLoc` and polled by the tracking UI (with `DeliveryLocation` rows as persistence fallback).
 
 ---
 
@@ -65,59 +66,33 @@ flowchart TB
 interface OrderEvent {
   event: string;
   orderId: string;
-  userId: string;
-  kitchenId: string;
   timestamp: string; // ISO 8601
   data: Record<string, unknown>;
 }
 
-// Event Types
+// Event Types (as published today)
 type OrderEventType =
-  | 'order:confirmed'      // Order placed successfully
-  | 'order:preparing'      // Kitchen started preparation
-  | 'order:ready'          // Order ready for pickup/delivery
-  | 'order:out_for_delivery' // Delivery partner picked up
-  | 'order:delivered'      // Order delivered
-  | 'order:cancelled'      // Order cancelled by customer/kitchen
-  | 'order:payment_failed' // Payment processing failed
-  | 'order:cravings'       // Real-time upsell popup
+  | 'order:status'           // Status transition (CONFIRMED → PREPARING → READYFORPICKUP → COMPLETED)
+  | 'delivery:status'        // Delivery phase (ASSIGNED / ACCEPTED / PICKEDUP / INTRANSIT / DELIVERED)
+  | 'order:ready'            // Kitchen marked order ready for pickup
+  | 'order:cravings'         // Real-time upsell popup payload (post-payment)
+  | 'order:item-unavailable' // Item refunded as unavailable
+  | 'order:refund'           // Full-order refund
+  | 'refund:processed'       // Razorpay refund webhook processed
 
-// Example: order:out_for_delivery
+// Example: order:status
 {
-  event: 'order:out_for_delivery',
+  event: 'order:status',
   orderId: 'ord_abc123',
-  userId: 'usr_xyz',
-  kitchenId: 'kit_123',
   timestamp: '2026-07-21T14:30:00Z',
   data: {
-    deliveryPartner: {
-      name: 'Rahul',
-      phone: '+919876543210',
-    },
-    estimatedDelivery: '2026-07-21T14:45:00Z',
+    status: 'OUT_FOR_DELIVERY',
+    deliveryPartner: { name: 'Rahul', phone: '+919876543210' },
   },
 }
 ```
 
-### 3.2 Delivery Location Events
-
-```typescript
-interface DeliveryLocationEvent {
-  event: 'delivery:location';
-  deliveryId: string;
-  orderId: string;
-  timestamp: string;
-  data: {
-    lat: number;
-    lng: number;
-    bearing: number;     // Degrees
-    speed: number;       // km/h
-    accuracy: number;    // Meters
-  };
-}
-```
-
-### 3.3 Kitchen Events
+### 3.2 Kitchen Events
 
 ```typescript
 interface KitchenEvent {
@@ -128,21 +103,39 @@ interface KitchenEvent {
 }
 
 type KitchenEventType =
-  | 'kitchen:new_order'         // New order received
-  | 'kitchen:order_cancelled'   // Customer cancelled
-  | 'kitchen:stock_low'         // Menu item running low
-  | 'kitchen:status_change'     // Online/Offline/Busy
-  | 'kitchen:delivery_assigned' // Delivery partner assigned
+  | 'queue:new-order'    // New order received (published on payment confirm)
+  | 'queue:status'       // Queue/order status change
+  | 'order:ready'        // Order marked ready (published on READYFORPICKUP)
+```
+
+### 3.3 Delivery Offer Events
+
+```typescript
+interface DeliveryOfferEvent {
+  event: 'delivery:offer';
+  orderId: string;
+  timestamp: string;
+  data: {
+    orderId: string;
+    kitchenLat: number;
+    kitchenLng: number;
+  };
+}
+// Published to deliveryPartner:{id} when an order is READYFORPICKUP:
+// auto-assigned to the nearest online partner (Redis deliveryPersons:live
+// geosearch, 5km) or to all online partners as fallback.
 ```
 
 ### 3.4 Cravings Popup Events
 
 ```typescript
 interface CravingsEvent {
-  event: 'cravings:show';
+  event: 'order:cravings';
   orderId: string;
   timestamp: string;
   data: {
+    title: string;
+    message: string;
     items: Array<{
       id: string;
       name: string;
@@ -151,18 +144,17 @@ interface CravingsEvent {
       photoUrl?: string;
       isVeg: boolean;
     }>;
-    expiresAt: string; // ISO 8601 — popup auto-dismisses
   };
 }
 ```
 
 ---
 
-## 4. Client Subscription Hook
+### 4.1 Client Subscription Hooks
 
 ```typescript
-// hooks/useAblyChannel.ts
-function useAblyChannel<T = unknown>(
+// hooks/useAblySubscribe.ts
+function useAblySubscribe<T = unknown>(
   channelName: string | null,
   eventName: string,
   callback: (data: T) => void
@@ -173,10 +165,7 @@ function useAblyChannel<T = unknown>(
   useEffect(() => {
     if (!channelName) return;
 
-    const ably = new Ably.Realtime({
-      authUrl: '/api/ably/auth',
-      authMethod: 'POST',
-    });
+    const ably = getAblyClient(); // lib/ably/client.ts — Ably.Realtime, authUrl: /api/ably-token
 
     ably.connection.on('connected', () => setConnected(true));
     ably.connection.on('failed', (err) => setError(err));
@@ -188,31 +177,17 @@ function useAblyChannel<T = unknown>(
 
     return () => {
       channel.unsubscribe();
-      ably.close();
+      destroyAblyClient(); // Close + release singleton
     };
   }, [channelName, eventName]);
 
   return { connected, error };
 }
 
-// Usage
-function OrderTracker({ orderId }: { orderId: string }) {
-  const { connected } = useAblyChannel<OrderEvent>(
-    `order:${orderId}`,
-    'order:status',
-    (event) => {
-      setStatus(event.data.status);
-      setLastUpdate(event.timestamp);
-    }
-  );
-
-  return (
-    <div>
-      {!connected && <p>Connecting to live updates...</p>}
-      <StatusTimeline status={status} />
-    </div>
-  );
-}
+// Convenience hooks
+useAblyOrderChannel(orderId, { onStatus, onCravings });
+useAblyKitchenChannel(kitchenId, { onNewOrder, onQueueStatus });
+useAblyDeliveryPersonChannel(deliveryPartnerId, { onOffer });
 ```
 
 ---
@@ -266,31 +241,28 @@ stateDiagram-v2
 ### Server-Side Token Issuance
 
 ```typescript
-// POST /api/ably/auth
+// POST /api/ably-token
 export async function POST(request: Request) {
   const session = await getSession();
-  if (!session) {
-    return Response.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  if (!session) return Response.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { userId, role } = session;
-  const clientId = `${role}:${userId}`;
+  // Validate ownership of requested channel (order/kitchen/deliveryPartner)
+  // → 403 for channels the user does not own; falls back to user:{id} capability
+  const { userId } = session;
+  const clientId = `user:${userId}`;
 
-  // Define channel capabilities based on role
-  const capabilities: Record<string, string[]> = {
-    [`order:${userId}`]: ['subscribe'],
-    [`kitchen:${session.kitchenId}`]: ['subscribe', 'presence'],
-    [`delivery:${session.deliveryId}`]: ['subscribe', 'publish'],
-    [`delivery:location:${session.deliveryId}`]: ['publish'],
-  };
-
-  const token = await ably.auth.createTokenRequest({
+  const tokenRequest = await ably.auth.createTokenRequest({
     clientId,
-    capability: capabilities,
-    ttl: 3600, // 1 hour
+    capability: {
+      [`order:${orderId}`]: ['subscribe'],
+      [`kitchen:${kitchenId}`]: ['subscribe'],
+      [`deliveryPartner:${id}`]: ['subscribe'],
+      [`user:${userId}`]: ['subscribe'],
+    },
+    ttl: 15 * 60 * 1000, // 15 minutes
   });
 
-  return Response.json(token);
+  return Response.json(tokenRequest);
 }
 ```
 
@@ -299,14 +271,11 @@ export async function POST(request: Request) {
 | Channel Pattern | Customer | Kitchen | Delivery | Admin |
 |----------------|----------|---------|----------|-------|
 | `order:{ownOrderId}` | Subscribe | Subscribe | Subscribe | Subscribe |
-| `order:{otherOrderId}` | ✗ | ✗ | ✗ | Subscribe |
-| `kitchen:{ownKitchenId}` | ✗ | Subscribe + Presence | ✗ | Subscribe |
-| `kitchen:{otherKitchenId}` | ✗ | ✗ | ✗ | Subscribe |
-| `delivery:{ownId}` | ✗ | ✗ | Subscribe + Publish | Subscribe |
-| `delivery:location:{ownId}` | ✗ | ✗ | Publish | Subscribe |
-| `delivery:location:{otherId}` | Subscribe (on assigned order) | ✗ | ✗ | Subscribe |
-| `admin:notifications` | ✗ | ✗ | ✗ | Subscribe |
-| `cravings:{kitchenId}` | Subscribe | ✗ | ✗ | ✗ |
+| `order:{otherOrderId}` | ✗ | ✗ | ✗ | ✗ (must be assigned) |
+| `kitchen:{ownKitchenId}` | ✗ | Subscribe | ✗ | ✗ (via other tooling) |
+| `kitchen:{otherKitchenId}` | ✗ | ✗ | ✗ | ✗ |
+| `deliveryPartner:{ownId}` | ✗ | ✗ | Subscribe | ✗ |
+| `user:{id}` | Own only | Own only | Own only | Own only |
 
 ---
 
@@ -316,34 +285,33 @@ export async function POST(request: Request) {
 sequenceDiagram
     participant Customer
     participant CartPage
-    participant Action as Server Actions
+    participant API as /api/payment/verify
     participant Ably
     participant Kitchen
 
     Customer->>CartPage: Place order (payment successful)
-    CartPage->>Action: verifyPayment()
-    Action->>Action: Create order
+    CartPage->>API: Verify payment
+    API->>API: confirmPayment() — order PREPARING
 
     par Cravings Logic
-        Action->>Action: Check: is customer eligible for cravings?
-        Note over Action: Criteria: order > Rs 200, kitchen has active items, customer has ordered before
+        API->>API: Resolve active cravings rule for cart items
+        Note over API: getCravingsRecommendations(triggerItemIds) — priority HIGH → MEDIUM → LOW
     end
 
     alt Eligible
-        Action->>Kitchen: Fetch 3 random items (not in order, available)
-        Action->>Ably: Publish "order:{orderId}" event "cravings:show"
-        Ably-->>Customer: Receive cravings popup payload
+        API->>Ably: Publish "order:{orderId}" event "order:cravings"
+        Ably-->>Customer: Receive cravings payload (title, message, items)
 
         Customer->>CartPage: "Add Butter Chicken for Rs 199?"
-        Customer->>Action: addToCart(itemId, quantity)
-        Action->>CartPage: { success: true }
+        Customer->>API: addToCart(itemId, quantity)
+        API-->>CartPage: { success: true }
 
         par Update total
             CartPage->>CartPage: Show updated total in header
         end
     end
 
-    Note over Customer: Popup auto-dismisses after 15 seconds
+    Note over Customer: Popup auto-dismisses (order:cravings events also merge with rule-based recommendations in AddToCartPopup)
 ```
 
 ---

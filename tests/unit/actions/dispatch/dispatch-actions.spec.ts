@@ -1,18 +1,18 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   order: { findUnique: vi.fn(), update: vi.fn() },
   deliveryPartner: { findUnique: vi.fn(), update: vi.fn() },
   deliveryAssignment: { create: vi.fn(), findFirst: vi.fn(), updateMany: vi.fn() },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 
-const mockRedis = {
+const mockRedis = vi.hoisted(() => ({
   geosearch: vi.fn(),
   zrem: vi.fn(),
   geoadd: vi.fn(),
-}
+}))
 
 vi.mock("@/lib/redis", () => ({ redis: mockRedis }))
 
@@ -22,7 +22,7 @@ vi.mock("@/lib/ably/server", () => ({
   getAblyRest: () => ({ channels: { get: mockChannelsGet } }),
 }))
 
-const mockSession = { user: { id: "admin-1", role: "ADMIN" } }
+const mockSession = vi.hoisted(() => ({ user: { id: "admin-1", role: "ADMIN" } }))
 vi.mock("@/lib/auth-server", () => ({ getSession: vi.fn(() => mockSession) }))
 
 import {
@@ -38,13 +38,9 @@ describe("dispatch-actions", () => {
 
   describe("assignNearestDeliveryPerson", () => {
     it("assigns nearest available delivery person", async () => {
-      mockPrisma.order.findUnique.mockResolvedValue({
-        id: "order-1",
-        payment: { provider: "PREPAID" },
-      })
       mockRedis.geosearch.mockResolvedValue([{ member: "dp-1" }])
       mockPrisma.deliveryPartner.findUnique.mockResolvedValue({
-        id: "dp-1", isOnline: true, codEligible: false, cashInHand: 0,
+        id: "dp-1", isOnline: true,
       })
       mockPrisma.deliveryAssignment.findFirst.mockResolvedValue(null)
       mockPrisma.deliveryAssignment.create.mockResolvedValue({ id: "assign-1" })
@@ -66,13 +62,10 @@ describe("dispatch-actions", () => {
     })
 
     it("skips offline delivery persons", async () => {
-      mockPrisma.order.findUnique.mockResolvedValue({
-        id: "order-1", payment: { provider: "PREPAID" },
-      })
       mockRedis.geosearch.mockResolvedValue([{ member: "dp-1" }, { member: "dp-2" }])
       mockPrisma.deliveryPartner.findUnique
-        .mockResolvedValueOnce({ id: "dp-1", isOnline: false, codEligible: false, cashInHand: 0 })
-        .mockResolvedValueOnce({ id: "dp-2", isOnline: true, codEligible: false, cashInHand: 0 })
+        .mockResolvedValueOnce({ id: "dp-1", isOnline: false })
+        .mockResolvedValueOnce({ id: "dp-2", isOnline: true })
       mockPrisma.deliveryAssignment.findFirst.mockResolvedValue(null)
       mockPrisma.deliveryAssignment.create.mockResolvedValue({ id: "assign-1" })
 
@@ -87,13 +80,10 @@ describe("dispatch-actions", () => {
     })
 
     it("skips delivery person with existing pending assignment", async () => {
-      mockPrisma.order.findUnique.mockResolvedValue({
-        id: "order-1", payment: { provider: "PREPAID" },
-      })
       mockRedis.geosearch.mockResolvedValue([{ member: "dp-1" }, { member: "dp-2" }])
       mockPrisma.deliveryPartner.findUnique
-        .mockResolvedValueOnce({ id: "dp-1", isOnline: true, codEligible: false, cashInHand: 0 })
-        .mockResolvedValueOnce({ id: "dp-2", isOnline: true, codEligible: false, cashInHand: 0 })
+        .mockResolvedValueOnce({ id: "dp-1", isOnline: true })
+        .mockResolvedValueOnce({ id: "dp-2", isOnline: true })
       mockPrisma.deliveryAssignment.findFirst
         .mockResolvedValueOnce({ id: "existing" })
         .mockResolvedValueOnce(null)
@@ -109,53 +99,10 @@ describe("dispatch-actions", () => {
     })
 
     it("throws when no delivery persons available", async () => {
-      mockPrisma.order.findUnique.mockResolvedValue({
-        id: "order-1", payment: { provider: "PREPAID" },
-      })
       mockRedis.geosearch.mockResolvedValue([])
 
       await expect(assignNearestDeliveryPerson("order-1", 13.0, 80.2)).rejects.toThrow(
         "No delivery persons available nearby",
-      )
-    })
-
-    it("skips COD-ineligible rider for COD orders", async () => {
-      mockPrisma.order.findUnique.mockResolvedValue({
-        id: "order-1", payment: { provider: "CASH_ON_DELIVERY" },
-      })
-      mockRedis.geosearch.mockResolvedValue([{ member: "dp-1" }, { member: "dp-2" }])
-      mockPrisma.deliveryPartner.findUnique
-        .mockResolvedValueOnce({ id: "dp-1", isOnline: true, codEligible: false, cashInHand: 0 })
-        .mockResolvedValueOnce({ id: "dp-2", isOnline: true, codEligible: true, cashInHand: 500 })
-      mockPrisma.deliveryAssignment.findFirst.mockResolvedValue(null)
-      mockPrisma.deliveryAssignment.create.mockResolvedValue({ id: "assign-1" })
-
-      await assignNearestDeliveryPerson("order-1", 13.0, 80.2)
-
-      expect(mockPrisma.deliveryAssignment.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({ deliveryPartnerId: "dp-2" }),
-        }),
-      )
-    })
-
-    it("skips COD rider with cashInHand >= cap for COD orders", async () => {
-      mockPrisma.order.findUnique.mockResolvedValue({
-        id: "order-1", payment: { provider: "CASH_ON_DELIVERY" },
-      })
-      mockRedis.geosearch.mockResolvedValue([{ member: "dp-1" }, { member: "dp-2" }])
-      mockPrisma.deliveryPartner.findUnique
-        .mockResolvedValueOnce({ id: "dp-1", isOnline: true, codEligible: true, cashInHand: 3000 })
-        .mockResolvedValueOnce({ id: "dp-2", isOnline: true, codEligible: true, cashInHand: 100 })
-      mockPrisma.deliveryAssignment.findFirst.mockResolvedValue(null)
-      mockPrisma.deliveryAssignment.create.mockResolvedValue({ id: "assign-1" })
-
-      await assignNearestDeliveryPerson("order-1", 13.0, 80.2)
-
-      expect(mockPrisma.deliveryAssignment.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          data: expect.objectContaining({ deliveryPartnerId: "dp-2" }),
-        }),
       )
     })
   })

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 
 type MockTx = { kitchenCategory: { deleteMany: ReturnType<typeof vi.fn>; createMany: ReturnType<typeof vi.fn> } }
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   kitchenPartner: {
     findMany: vi.fn(),
     update: vi.fn(),
@@ -18,7 +18,7 @@ const mockPrisma = {
     return (fns as (tx: MockTx) => Promise<unknown>)(tx)
   }),
   kitchenCategory: {},
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 vi.mock("@/lib/auth-guards", () => ({

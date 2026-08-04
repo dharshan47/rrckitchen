@@ -10,7 +10,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { orderId, status, cashCollected, otp } = await req.json();
+    const { orderId, status } = await req.json();
 
     const partner = await prisma.deliveryPartner.findUnique({
       where: { userId: session.user.id },
@@ -35,14 +35,9 @@ export async function POST(req: Request) {
     }
 
     if (status === "DELIVERED") {
-      // Require delivery OTP for all orders (prepaid + COD) — proof-of-delivery
-      if (!otp || order.deliveryOtp !== otp) {
-        return NextResponse.json({ error: "Incorrect delivery code — ask the customer to confirm it again" }, { status: 400 });
-      }
-
       await prisma.order.update({
         where: { id: orderId },
-        data: { deliveryStatus: status as never, status: "COMPLETED" as never, deliveryOtpVerifiedAt: new Date() },
+        data: { deliveryStatus: status as never, status: "COMPLETED" as never },
       });
     } else {
       await prisma.order.update({
@@ -73,24 +68,8 @@ export async function POST(req: Request) {
       },
     });
 
-    if (status === "DELIVERED" && cashCollected && order.payment?.provider === "CASH_ON_DELIVERY") {
-      await prisma.payment.update({
-        where: { orderId },
-        data: { status: "SUCCESS", paidAt: new Date() },
-      });
-
-      await prisma.deliveryPartnerPayout.create({
-        data: {
-          deliveryPartnerId: partner.id,
-          orderId,
-          amount: Number(order.commissionAmount) || Math.round(Number(order.totalAmount) * 0.15),
-          status: "PENDING",
-        },
-      });
-    }
-
     const ably = getAblyRest();
-    await ably.channels.get(`order:${orderId}`).publish("delivery:status", { status, cashCollected });
+    await ably.channels.get(`order:${orderId}`).publish("delivery:status", { status });
     if (status === "DELIVERED") {
       await ably.channels.get(`order:${orderId}`).publish("order:status", { status: "COMPLETED" });
     }

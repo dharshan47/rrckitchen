@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   adminProfile: { findMany: vi.fn(), findUnique: vi.fn(), findFirst: vi.fn(), update: vi.fn() },
   user: { findMany: vi.fn() },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 vi.mock("@/lib/auth-guards", () => ({ requireAdmin: vi.fn(), logAdminAction: vi.fn() }))
 
-const mockSession = { user: { id: "admin-1" } }
+const mockSession = vi.hoisted(() => ({ user: { id: "admin-1" } }))
 vi.mock("@/lib/auth-server", () => ({ getSession: vi.fn(() => mockSession) }))
 
 import { getActiveAdmins, deactivateAdmin, getCurrentAdminPermissions } from "@/actions/admin/admin-actions"

@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   loyaltyPoints: { findUnique: vi.fn(), upsert: vi.fn(), update: vi.fn() },
   loyaltyTransaction: { create: vi.fn(), findMany: vi.fn() },
   order: { findUnique: vi.fn() },
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 
-const mockSession = { user: { id: "user-1" } }
+const mockSession = vi.hoisted(() => ({ user: { id: "user-1" } }))
 vi.mock("@/lib/auth-server", () => ({ getSession: vi.fn(() => mockSession) }))
 
 import { awardPoints, redeemPoints, getLoyaltySummary, getLoyaltyHistory, computeTier } from "@/actions/loyalty/loyalty"

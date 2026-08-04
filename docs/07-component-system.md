@@ -1,7 +1,7 @@
 # Component System & Design Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-08-05
 > **Cross-refs:** [State Management](06-state-data-flow.md), [Design System](https://github.com/your-org/rrc-kitchen/wiki/Design-System), [System Architecture](01-system-architecture.md)
 
 ---
@@ -273,25 +273,31 @@ graph TD
 graph TB
     KD["KitchenDetailClient"]
     KD --> HS["HeroSection<br/>Conditional render"]
-    KD --> KA["KitchenAboutSection<br/>Accordion: discover more + FAQs"]
+    KD --> T["KitchenTabs (Radix Tabs)<br/>Menu | About | Info | Reviews"]
     KD --> MF["MenuFilters<br/>Veg toggle | Search | Sort"]
     KD --> SG["SlotGroup (Accordion)"]
-    KD --> SG2["SlotGroup (breakfast)"]
-    KD --> SG3["SlotGroup (lunch)"]
-    KD --> SG4["SlotGroup (dinner)"]
+    KD --> SG2["SlotGroup (MORNING)"]
+    KD --> SG3["SlotGroup (LUNCH)"]
+    KD --> SG4["SlotGroup (DINNER)"]
+
+    T --> KA["AboutKitchenTab<br/>Accordion: discover more + FAQs"]
+    T --> KI["InfoKitchenTab<br/>Operating hours, prep time, policies"]
+    T --> KR["ReviewsKitchenTab<br/>Rating breakdown + reviews + item reviews"]
 
     SG --> CMR["CompoundMenuCard.Root (×N)"]
     CMR --> IS["ImageSection"]
     IS --> BR["BadgeRibbon<br/>Bestseller | Veg/NonVeg"]
     CMR --> HDR["Header<br/>Name, Price, Rating"]
     CMR --> QA["QuantityActions<br/>Grouped border"]
-    CMR --> POP["AddToCartPopup<br/>3s auto-dismiss"]
+    CMR --> POP["AddToCartPopup<br/>Cravings recommendations"]
 
     KD --> BB["BottomBar (sticky)<br/>Cart summary + View Cart"]
     KD --> EMP["EmptyState<br/>No items found"]
     KD --> ERR["ErrorBoundary<br/>Fallback UI"]
     KD --> SKL["Skeleton<br/>Loading state"]
 ```
+
+> The kitchen detail page lives at `/kitchens/[slug]` (`app/kitchens/[slug]/page.tsx`), backed by `lib/kitchen-detail.ts`. Related kitchens are a grid (`related-kitchens-grid.tsx`), not a carousel. Related/removed components: `fast-delivery-carousel`, `kitchen-about-section`, `related-kitchens-carousel`, `order-type-selector`, `payment-method-selector`, `rating-prompt`, `components/order/cravings-popup.tsx` (superseded by `AddToCartPopup` with cravings, see [17-cravings-popup](17-cravings-popup.md)).
 
 ---
 

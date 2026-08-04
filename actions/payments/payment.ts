@@ -1,20 +1,22 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import crypto from "crypto";
+import type { Prisma } from "@/lib/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { getRazorpayClient } from "@/lib/razorpay";
 import { getAblyRest } from "@/lib/ably/server";
 import { redis } from "@/lib/redis";
 import { awardPoints } from "@/actions/loyalty/loyalty";
+import { allocatePublicCode, PUBLIC_ID_SPECS } from "@/lib/public-id";
 
 export interface CreateOrderInput {
   userId: string;
   items: { id: string; qty: number; price: number }[];
   idempotencyKey?: string;
   couponCode?: string;
-  paymentProvider?: "RAZORPAY" | "CASH_ON_DELIVERY";
+  serviceDateType?: "TODAY" | "TOMORROW";
 }
 
-export async function createPaymentOrder({ userId, items, idempotencyKey, couponCode, paymentProvider = "RAZORPAY" }: CreateOrderInput) {
+export async function createPaymentOrder({ userId, items, idempotencyKey, couponCode, serviceDateType }: CreateOrderInput) {
   if (!items?.length) {
     throw new Error("Cart is empty");
   }
@@ -46,26 +48,11 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
   }
 
   const serviceDate = new Date();
-  serviceDate.setDate(serviceDate.getDate() + 1);
-  serviceDate.setHours(0, 0, 0, 0);
-
-  const dailyStocks = await prisma.menuItemDailyStock.findMany({
-    where: {
-      menuItemId: { in: menuItemIds },
-      serviceDate,
-    },
-  });
-  const stockMap = new Map(dailyStocks.map((s) => [s.menuItemId, s]));
-
-  for (const item of items) {
-    const menuItem = menuItems.find((m) => m.id === item.id)!;
-    const stock = stockMap.get(item.id);
-    if (stock) {
-      const available = stock.totalQuantity - stock.reservedQuantity - stock.soldQuantity;
-      if (item.qty > available) {
-        throw new Error(`Insufficient stock for ${menuItem.name}. Only ${Math.max(0, available)} left.`);
-      }
-    }
+  if (serviceDateType === "TODAY") {
+    serviceDate.setHours(0, 0, 0, 0);
+  } else {
+    serviceDate.setDate(serviceDate.getDate() + 1);
+    serviceDate.setHours(0, 0, 0, 0);
   }
 
   const firstItem = items[0];
@@ -112,23 +99,12 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
   }
 
   const order = await prisma.$transaction(async (tx) => {
-    for (const item of items) {
-      const stock = stockMap.get(item.id);
-      if (stock) {
-        const updated = await tx.menuItemDailyStock.update({
-          where: { id: stock.id },
-          data: { reservedQuantity: { increment: item.qty } },
-        });
-        if (updated.reservedQuantity > updated.totalQuantity) {
-          throw new Error(`Insufficient stock for menu item`);
-        }
-      }
-    }
-
     const created = await tx.order.create({
       data: {
+        publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.ORDER),
         userId,
         serviceDate,
+        serviceDateType: serviceDateType ?? "TOMORROW",
         timeSlot,
         totalAmount,
         discountAmount: appliedDiscount,
@@ -168,32 +144,6 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
     }
   }
 
-  if (paymentProvider === "CASH_ON_DELIVERY") {
-    await prisma.payment.create({
-      data: {
-        orderId: order.id,
-        provider: "CASH_ON_DELIVERY",
-        amount: totalAmount,
-        status: "PENDING",
-      },
-    });
-
-    await prisma.order.update({
-      where: { id: order.id },
-      data: { codAmountExpected: totalAmount },
-    });
-
-    await redis.del(`menu:cache`);
-
-    return {
-      orderId: order.id,
-      amount: Math.round(totalAmount * 100),
-      currency: "INR",
-      localOrderId: order.id,
-      idempotent: false,
-    };
-  }
-
   const razorpayOrder = await getRazorpayClient().orders.create({
     amount: Math.round(totalAmount * 100),
     currency: "INR",
@@ -201,14 +151,17 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
     notes: { userId, orderId: order.id },
   });
 
-  await prisma.payment.create({
-    data: {
-      orderId: order.id,
-      provider: "RAZORPAY",
-      providerOrderId: razorpayOrder.id,
-      amount: totalAmount,
-      status: "PENDING",
-    },
+  await prisma.$transaction(async (tx) => {
+    await tx.payment.create({
+      data: {
+        publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.PAYMENT),
+        orderId: order.id,
+        provider: "RAZORPAY",
+        providerOrderId: razorpayOrder.id,
+        amount: totalAmount,
+        status: "PENDING",
+      },
+    });
   });
 
   await redis.del(`menu:cache`);
@@ -246,25 +199,27 @@ export async function refundOrder(orderId: string, reason: RefundReasonType = "O
     }
   }
 
-  await prisma.refund.create({
-    data: {
-      orderId,
-      paymentId: payment.id,
-      amount: order.totalAmount,
-      reason,
-      razorpayRefundId,
-      status: refundStatus,
-    },
-  });
-
-  await prisma.order.update({
-    where: { id: orderId },
-    data: { status: "REFUNDED" },
-  });
-
-  await prisma.payment.update({
-    where: { id: payment.id },
-    data: { status: "REFUNDED" },
+  await prisma.$transaction(async (tx) => {
+    const created = await tx.refund.create({
+      data: {
+        publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.REFUND),
+        orderId,
+        paymentId: payment.id,
+        amount: order.totalAmount,
+        reason,
+        razorpayRefundId,
+        status: refundStatus,
+      },
+    });
+    await tx.order.update({
+      where: { id: orderId },
+      data: { status: "REFUNDED" },
+    });
+    await tx.payment.update({
+      where: { id: payment.id },
+      data: { status: "REFUNDED" },
+    });
+    return created;
   });
 
   const ably = getAblyRest();
@@ -289,6 +244,7 @@ export async function confirmPayment(
   razorpayOrderId: string,
   razorpayPaymentId: string,
   paymentMethod?: string,
+  paymentMethodDetail?: Record<string, unknown>,
 ) {
   const payment = await prisma.payment.findFirst({
     where: { providerOrderId: razorpayOrderId },
@@ -323,6 +279,7 @@ export async function confirmPayment(
       status: "SUCCESS",
       providerPaymentId: razorpayPaymentId,
       paymentMethod: paymentMethod ?? null,
+      paymentMethodDetail: (paymentMethodDetail ?? undefined) as Prisma.InputJsonValue | undefined,
       paidAt: new Date(),
     },
   });
@@ -341,13 +298,6 @@ export async function confirmPayment(
 
   // Award loyalty points
   await awardPoints(payment.orderId).catch(() => {});
-
-  // Track successful prepaid orders for COD eligibility
-  await prisma.userCodEligibility.upsert({
-    where: { userId: order.userId },
-    update: { successfulPrepaidOrders: { increment: 1 } },
-    create: { userId: order.userId, successfulPrepaidOrders: 1 },
-  });
 
   const ably = getAblyRest();
   await ably.channels.get(`order:${payment.orderId}`).publish("order:status", { status: "PREPARING" });
@@ -486,4 +436,114 @@ function cryptoCreateHmac(body: string) {
     .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
     .update(body)
     .digest("hex");
+}
+
+// ── UPI Smart Collect ─────────────────────────────────────────────────────────
+
+import { createVpa, fetchVpaPayments } from "@/lib/razorpay";
+
+/**
+ * Creates a Razorpay Virtual Account / VPA for Smart Collect.
+ * Saves the request to the DB so the polling endpoint can check status.
+ *
+ * Requires Razorpay Smart Collect to be enabled on your account.
+ */
+export async function createUpiCollectRequest(orderId: string) {
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { payment: true },
+  });
+
+  if (!order) throw new Error("Order not found");
+  if (!order.payment) throw new Error("Payment record not found for order");
+  if (order.payment.status !== "PENDING") {
+    throw new Error("Order payment is no longer pending");
+  }
+
+  // Idempotent: return existing if already created
+  const existing = await prisma.upiCollectRequest.findUnique({
+    where: { orderId },
+  });
+  if (existing) {
+    return {
+      vpa: existing.vpa,
+      expiresAt: existing.expiresAt,
+      status: existing.status,
+    };
+  }
+
+  const result = await createVpa({
+    receipt: orderId,
+    amountPaise: Math.round(Number(order.totalAmount) * 100),
+    expireMinutes: 30,
+    description: `RRC Kitchen Order #${order.publicCode ?? orderId.slice(-8)}`,
+  });
+
+  await prisma.upiCollectRequest.create({
+    data: {
+      orderId,
+      paymentId: order.payment.id,
+      vpa: result.vpa,
+      razorpayVpaId: result.virtualAccountId,
+      status: "PENDING",
+      expiresAt: result.expiresAt,
+    },
+  });
+
+  return {
+    vpa: result.vpa,
+    expiresAt: result.expiresAt,
+    status: "PENDING" as const,
+  };
+}
+
+/**
+ * Polls Razorpay to see if a payment arrived for a Smart Collect VPA.
+ * If paid, confirms the order (same as regular payment verification).
+ */
+export async function pollUpiCollectStatus(orderId: string) {
+  const collectReq = await prisma.upiCollectRequest.findUnique({
+    where: { orderId },
+    include: { payment: true },
+  });
+
+  if (!collectReq) throw new Error("UPI Collect request not found");
+
+  // Already resolved
+  if (collectReq.status !== "PENDING") {
+    return { status: collectReq.status, orderId: collectReq.status === "PAID" ? orderId : undefined };
+  }
+
+  // Expired
+  if (new Date() > collectReq.expiresAt) {
+    await prisma.upiCollectRequest.update({
+      where: { orderId },
+      data: { status: "EXPIRED" },
+    });
+    return { status: "EXPIRED" as const };
+  }
+
+  if (!collectReq.razorpayVpaId) return { status: "PENDING" as const };
+
+  const payments = await fetchVpaPayments(collectReq.razorpayVpaId);
+  const captured = payments.find((p) => p.status === "captured");
+
+  if (captured) {
+    // Confirm the order
+    await confirmPayment(
+      collectReq.payment.providerOrderId ?? "",
+      captured.paymentId,
+      "upi",
+      { method: "upi", source: "smart_collect", vpa: collectReq.vpa },
+    );
+
+    await prisma.upiCollectRequest.update({
+      where: { orderId },
+      data: { status: "PAID" },
+    });
+
+    return { status: "PAID" as const, orderId };
+  }
+
+  return { status: "PENDING" as const };
 }

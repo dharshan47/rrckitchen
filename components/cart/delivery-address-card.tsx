@@ -97,7 +97,7 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
     try {
       const parts = [values.doorNo, values.area, values.landmark].filter(Boolean)
       const fullAddress = [...parts, selectedAddress].join(", ")
-      setDeliveryAddress(fullAddress)
+      setDeliveryAddress(fullAddress, selectedLat, selectedLng)
 
       try {
         const pincode = selectedAddress.match(/\b\d{6}\b/)?.[0] ?? "612001"
@@ -119,7 +119,7 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
     } finally {
       setSaving(false)
     }
-  }, [selectedAddress, form, setDeliveryAddress, setOpen])
+  }, [selectedAddress, selectedLat, selectedLng, form, setDeliveryAddress, setOpen])
 
   const label = useWatch({ control: form.control, name: "label" })
 

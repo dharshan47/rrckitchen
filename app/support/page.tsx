@@ -15,7 +15,9 @@ import {
   Truck, CreditCard, AlertTriangle, ShieldCheck, BookOpen,
   FileText,
 } from "lucide-react";
-import { Button, Badge, Input } from "@/components/ui";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";

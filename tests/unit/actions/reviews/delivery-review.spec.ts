@@ -1,14 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockTx = {
+const mockTx = vi.hoisted(() => ({
   deliveryReview: { create: vi.fn() },
   deliveryPartner: { findUniqueOrThrow: vi.fn(), update: vi.fn() },
   order: { update: vi.fn() },
-}
+}))
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   $transaction: vi.fn((cb: (tx: typeof mockTx) => unknown) => cb(mockTx)),
-}
+  order: { findUnique: vi.fn() },
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 
@@ -20,7 +21,10 @@ import { createDeliveryReview } from "@/actions/reviews/delivery-review"
 const RECENCY_WEIGHT = 0.15
 
 describe("delivery-review", () => {
-  beforeEach(() => { vi.clearAllMocks() })
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockPrisma.order.findUnique.mockResolvedValue({ userId: "user-1", deliveryReview: null })
+  })
 
   it("creates delivery review and updates avgRating for new partner", async () => {
     mockTx.deliveryPartner.findUniqueOrThrow.mockResolvedValue({
@@ -60,7 +64,7 @@ describe("delivery-review", () => {
     )
   })
 
-  it("marks order as reviewed", async () => {
+  it("creates the review record for the order", async () => {
     mockTx.deliveryPartner.findUniqueOrThrow.mockResolvedValue({
       id: "dp-1", avgRating: null, totalReviews: 0,
     })
@@ -69,8 +73,15 @@ describe("delivery-review", () => {
       orderId: "order-1", deliveryPartnerId: "dp-1", rating: 4,
     })
 
-    expect(mockTx.order.update).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { id: "order-1" }, data: { isReviewedByCustomer: true } }),
+    expect(mockTx.deliveryReview.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        data: expect.objectContaining({
+          orderId: "order-1",
+          userId: "user-1",
+          deliveryPartnerId: "dp-1",
+          rating: 4,
+        }),
+      }),
     )
   })
 })

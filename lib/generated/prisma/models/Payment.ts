@@ -36,6 +36,7 @@ export type PaymentSumAggregateOutputType = {
 
 export type PaymentMinAggregateOutputType = {
   id: string | null
+  publicCode: string | null
   orderId: string | null
   provider: $Enums.PaymentProvider | null
   providerOrderId: string | null
@@ -50,6 +51,7 @@ export type PaymentMinAggregateOutputType = {
 
 export type PaymentMaxAggregateOutputType = {
   id: string | null
+  publicCode: string | null
   orderId: string | null
   provider: $Enums.PaymentProvider | null
   providerOrderId: string | null
@@ -64,11 +66,13 @@ export type PaymentMaxAggregateOutputType = {
 
 export type PaymentCountAggregateOutputType = {
   id: number
+  publicCode: number
   orderId: number
   provider: number
   providerOrderId: number
   providerPaymentId: number
   paymentMethod: number
+  paymentMethodDetail: number
   amount: number
   status: number
   idempotencyKey: number
@@ -88,6 +92,7 @@ export type PaymentSumAggregateInputType = {
 
 export type PaymentMinAggregateInputType = {
   id?: true
+  publicCode?: true
   orderId?: true
   provider?: true
   providerOrderId?: true
@@ -102,6 +107,7 @@ export type PaymentMinAggregateInputType = {
 
 export type PaymentMaxAggregateInputType = {
   id?: true
+  publicCode?: true
   orderId?: true
   provider?: true
   providerOrderId?: true
@@ -116,11 +122,13 @@ export type PaymentMaxAggregateInputType = {
 
 export type PaymentCountAggregateInputType = {
   id?: true
+  publicCode?: true
   orderId?: true
   provider?: true
   providerOrderId?: true
   providerPaymentId?: true
   paymentMethod?: true
+  paymentMethodDetail?: true
   amount?: true
   status?: true
   idempotencyKey?: true
@@ -217,11 +225,13 @@ export type PaymentGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 
 export type PaymentGroupByOutputType = {
   id: string
+  publicCode: string | null
   orderId: string
   provider: $Enums.PaymentProvider
   providerOrderId: string | null
   providerPaymentId: string | null
   paymentMethod: string | null
+  paymentMethodDetail: runtime.JsonValue | null
   amount: runtime.Decimal
   status: $Enums.PaymentStatus
   idempotencyKey: string | null
@@ -254,11 +264,13 @@ export type PaymentWhereInput = {
   OR?: Prisma.PaymentWhereInput[]
   NOT?: Prisma.PaymentWhereInput | Prisma.PaymentWhereInput[]
   id?: Prisma.StringFilter<"Payment"> | string
+  publicCode?: Prisma.StringNullableFilter<"Payment"> | string | null
   orderId?: Prisma.StringFilter<"Payment"> | string
   provider?: Prisma.EnumPaymentProviderFilter<"Payment"> | $Enums.PaymentProvider
   providerOrderId?: Prisma.StringNullableFilter<"Payment"> | string | null
   providerPaymentId?: Prisma.StringNullableFilter<"Payment"> | string | null
   paymentMethod?: Prisma.StringNullableFilter<"Payment"> | string | null
+  paymentMethodDetail?: Prisma.JsonNullableFilter<"Payment">
   amount?: Prisma.DecimalFilter<"Payment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
   idempotencyKey?: Prisma.StringNullableFilter<"Payment"> | string | null
@@ -266,15 +278,18 @@ export type PaymentWhereInput = {
   createdAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
   refunds?: Prisma.RefundListRelationFilter
+  upiCollectRequest?: Prisma.XOR<Prisma.UpiCollectRequestNullableScalarRelationFilter, Prisma.UpiCollectRequestWhereInput> | null
 }
 
 export type PaymentOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrderInput | Prisma.SortOrder
   orderId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerOrderId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerPaymentId?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentMethod?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentMethodDetail?: Prisma.SortOrderInput | Prisma.SortOrder
   amount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -282,10 +297,12 @@ export type PaymentOrderByWithRelationInput = {
   createdAt?: Prisma.SortOrder
   order?: Prisma.OrderOrderByWithRelationInput
   refunds?: Prisma.RefundOrderByRelationAggregateInput
+  upiCollectRequest?: Prisma.UpiCollectRequestOrderByWithRelationInput
 }
 
 export type PaymentWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  publicCode?: string
   orderId?: string
   idempotencyKey?: string
   AND?: Prisma.PaymentWhereInput | Prisma.PaymentWhereInput[]
@@ -295,21 +312,25 @@ export type PaymentWhereUniqueInput = Prisma.AtLeast<{
   providerOrderId?: Prisma.StringNullableFilter<"Payment"> | string | null
   providerPaymentId?: Prisma.StringNullableFilter<"Payment"> | string | null
   paymentMethod?: Prisma.StringNullableFilter<"Payment"> | string | null
+  paymentMethodDetail?: Prisma.JsonNullableFilter<"Payment">
   amount?: Prisma.DecimalFilter<"Payment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumPaymentStatusFilter<"Payment"> | $Enums.PaymentStatus
   paidAt?: Prisma.DateTimeNullableFilter<"Payment"> | Date | string | null
   createdAt?: Prisma.DateTimeFilter<"Payment"> | Date | string
   order?: Prisma.XOR<Prisma.OrderScalarRelationFilter, Prisma.OrderWhereInput>
   refunds?: Prisma.RefundListRelationFilter
-}, "id" | "orderId" | "idempotencyKey">
+  upiCollectRequest?: Prisma.XOR<Prisma.UpiCollectRequestNullableScalarRelationFilter, Prisma.UpiCollectRequestWhereInput> | null
+}, "id" | "publicCode" | "orderId" | "idempotencyKey">
 
 export type PaymentOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrderInput | Prisma.SortOrder
   orderId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerOrderId?: Prisma.SortOrderInput | Prisma.SortOrder
   providerPaymentId?: Prisma.SortOrderInput | Prisma.SortOrder
   paymentMethod?: Prisma.SortOrderInput | Prisma.SortOrder
+  paymentMethodDetail?: Prisma.SortOrderInput | Prisma.SortOrder
   amount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrderInput | Prisma.SortOrder
@@ -327,11 +348,13 @@ export type PaymentScalarWhereWithAggregatesInput = {
   OR?: Prisma.PaymentScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PaymentScalarWhereWithAggregatesInput | Prisma.PaymentScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Payment"> | string
+  publicCode?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
   orderId?: Prisma.StringWithAggregatesFilter<"Payment"> | string
   provider?: Prisma.EnumPaymentProviderWithAggregatesFilter<"Payment"> | $Enums.PaymentProvider
   providerOrderId?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
   providerPaymentId?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
   paymentMethod?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
+  paymentMethodDetail?: Prisma.JsonNullableWithAggregatesFilter<"Payment">
   amount?: Prisma.DecimalWithAggregatesFilter<"Payment"> | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumPaymentStatusWithAggregatesFilter<"Payment"> | $Enums.PaymentStatus
   idempotencyKey?: Prisma.StringNullableWithAggregatesFilter<"Payment"> | string | null
@@ -341,10 +364,12 @@ export type PaymentScalarWhereWithAggregatesInput = {
 
 export type PaymentCreateInput = {
   id?: string
+  publicCode?: string | null
   provider: $Enums.PaymentProvider
   providerOrderId?: string | null
   providerPaymentId?: string | null
   paymentMethod?: string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.PaymentStatus
   idempotencyKey?: string | null
@@ -352,29 +377,35 @@ export type PaymentCreateInput = {
   createdAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutPaymentInput
   refunds?: Prisma.RefundCreateNestedManyWithoutPaymentInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutPaymentInput
 }
 
 export type PaymentUncheckedCreateInput = {
   id?: string
+  publicCode?: string | null
   orderId: string
   provider: $Enums.PaymentProvider
   providerOrderId?: string | null
   providerPaymentId?: string | null
   paymentMethod?: string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.PaymentStatus
   idempotencyKey?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutPaymentInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutPaymentInput
 }
 
 export type PaymentUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -382,30 +413,36 @@ export type PaymentUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutPaymentNestedInput
   refunds?: Prisma.RefundUpdateManyWithoutPaymentNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutPaymentNestedInput
 }
 
 export type PaymentUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orderId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutPaymentNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutPaymentNestedInput
 }
 
 export type PaymentCreateManyInput = {
   id?: string
+  publicCode?: string | null
   orderId: string
   provider: $Enums.PaymentProvider
   providerOrderId?: string | null
   providerPaymentId?: string | null
   paymentMethod?: string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.PaymentStatus
   idempotencyKey?: string | null
@@ -415,10 +452,12 @@ export type PaymentCreateManyInput = {
 
 export type PaymentUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -428,11 +467,13 @@ export type PaymentUpdateManyMutationInput = {
 
 export type PaymentUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orderId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -447,11 +488,13 @@ export type PaymentNullableScalarRelationFilter = {
 
 export type PaymentCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   orderId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerOrderId?: Prisma.SortOrder
   providerPaymentId?: Prisma.SortOrder
   paymentMethod?: Prisma.SortOrder
+  paymentMethodDetail?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   status?: Prisma.SortOrder
   idempotencyKey?: Prisma.SortOrder
@@ -465,6 +508,7 @@ export type PaymentAvgOrderByAggregateInput = {
 
 export type PaymentMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   orderId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerOrderId?: Prisma.SortOrder
@@ -479,6 +523,7 @@ export type PaymentMaxOrderByAggregateInput = {
 
 export type PaymentMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  publicCode?: Prisma.SortOrder
   orderId?: Prisma.SortOrder
   provider?: Prisma.SortOrder
   providerOrderId?: Prisma.SortOrder
@@ -540,6 +585,20 @@ export type EnumPaymentStatusFieldUpdateOperationsInput = {
   set?: $Enums.PaymentStatus
 }
 
+export type PaymentCreateNestedOneWithoutUpiCollectRequestInput = {
+  create?: Prisma.XOR<Prisma.PaymentCreateWithoutUpiCollectRequestInput, Prisma.PaymentUncheckedCreateWithoutUpiCollectRequestInput>
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutUpiCollectRequestInput
+  connect?: Prisma.PaymentWhereUniqueInput
+}
+
+export type PaymentUpdateOneRequiredWithoutUpiCollectRequestNestedInput = {
+  create?: Prisma.XOR<Prisma.PaymentCreateWithoutUpiCollectRequestInput, Prisma.PaymentUncheckedCreateWithoutUpiCollectRequestInput>
+  connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutUpiCollectRequestInput
+  upsert?: Prisma.PaymentUpsertWithoutUpiCollectRequestInput
+  connect?: Prisma.PaymentWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.PaymentUpdateToOneWithWhereWithoutUpiCollectRequestInput, Prisma.PaymentUpdateWithoutUpiCollectRequestInput>, Prisma.PaymentUncheckedUpdateWithoutUpiCollectRequestInput>
+}
+
 export type PaymentCreateNestedOneWithoutRefundsInput = {
   create?: Prisma.XOR<Prisma.PaymentCreateWithoutRefundsInput, Prisma.PaymentUncheckedCreateWithoutRefundsInput>
   connectOrCreate?: Prisma.PaymentCreateOrConnectWithoutRefundsInput
@@ -556,30 +615,36 @@ export type PaymentUpdateOneRequiredWithoutRefundsNestedInput = {
 
 export type PaymentCreateWithoutOrderInput = {
   id?: string
+  publicCode?: string | null
   provider: $Enums.PaymentProvider
   providerOrderId?: string | null
   providerPaymentId?: string | null
   paymentMethod?: string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.PaymentStatus
   idempotencyKey?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   refunds?: Prisma.RefundCreateNestedManyWithoutPaymentInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutPaymentInput
 }
 
 export type PaymentUncheckedCreateWithoutOrderInput = {
   id?: string
+  publicCode?: string | null
   provider: $Enums.PaymentProvider
   providerOrderId?: string | null
   providerPaymentId?: string | null
   paymentMethod?: string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.PaymentStatus
   idempotencyKey?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutPaymentInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutPaymentInput
 }
 
 export type PaymentCreateOrConnectWithoutOrderInput = {
@@ -600,24 +665,114 @@ export type PaymentUpdateToOneWithWhereWithoutOrderInput = {
 
 export type PaymentUpdateWithoutOrderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   refunds?: Prisma.RefundUpdateManyWithoutPaymentNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutPaymentNestedInput
 }
 
 export type PaymentUncheckedUpdateWithoutOrderInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  refunds?: Prisma.RefundUncheckedUpdateManyWithoutPaymentNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutPaymentNestedInput
+}
+
+export type PaymentCreateWithoutUpiCollectRequestInput = {
+  id?: string
+  publicCode?: string | null
+  provider: $Enums.PaymentProvider
+  providerOrderId?: string | null
+  providerPaymentId?: string | null
+  paymentMethod?: string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.PaymentStatus
+  idempotencyKey?: string | null
+  paidAt?: Date | string | null
+  createdAt?: Date | string
+  order: Prisma.OrderCreateNestedOneWithoutPaymentInput
+  refunds?: Prisma.RefundCreateNestedManyWithoutPaymentInput
+}
+
+export type PaymentUncheckedCreateWithoutUpiCollectRequestInput = {
+  id?: string
+  publicCode?: string | null
+  orderId: string
+  provider: $Enums.PaymentProvider
+  providerOrderId?: string | null
+  providerPaymentId?: string | null
+  paymentMethod?: string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: $Enums.PaymentStatus
+  idempotencyKey?: string | null
+  paidAt?: Date | string | null
+  createdAt?: Date | string
+  refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutPaymentInput
+}
+
+export type PaymentCreateOrConnectWithoutUpiCollectRequestInput = {
+  where: Prisma.PaymentWhereUniqueInput
+  create: Prisma.XOR<Prisma.PaymentCreateWithoutUpiCollectRequestInput, Prisma.PaymentUncheckedCreateWithoutUpiCollectRequestInput>
+}
+
+export type PaymentUpsertWithoutUpiCollectRequestInput = {
+  update: Prisma.XOR<Prisma.PaymentUpdateWithoutUpiCollectRequestInput, Prisma.PaymentUncheckedUpdateWithoutUpiCollectRequestInput>
+  create: Prisma.XOR<Prisma.PaymentCreateWithoutUpiCollectRequestInput, Prisma.PaymentUncheckedCreateWithoutUpiCollectRequestInput>
+  where?: Prisma.PaymentWhereInput
+}
+
+export type PaymentUpdateToOneWithWhereWithoutUpiCollectRequestInput = {
+  where?: Prisma.PaymentWhereInput
+  data: Prisma.XOR<Prisma.PaymentUpdateWithoutUpiCollectRequestInput, Prisma.PaymentUncheckedUpdateWithoutUpiCollectRequestInput>
+}
+
+export type PaymentUpdateWithoutUpiCollectRequestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+  providerOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  order?: Prisma.OrderUpdateOneRequiredWithoutPaymentNestedInput
+  refunds?: Prisma.RefundUpdateManyWithoutPaymentNestedInput
+}
+
+export type PaymentUncheckedUpdateWithoutUpiCollectRequestInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  orderId?: Prisma.StringFieldUpdateOperationsInput | string
+  provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
+  providerOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -628,30 +783,36 @@ export type PaymentUncheckedUpdateWithoutOrderInput = {
 
 export type PaymentCreateWithoutRefundsInput = {
   id?: string
+  publicCode?: string | null
   provider: $Enums.PaymentProvider
   providerOrderId?: string | null
   providerPaymentId?: string | null
   paymentMethod?: string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.PaymentStatus
   idempotencyKey?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
   order: Prisma.OrderCreateNestedOneWithoutPaymentInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutPaymentInput
 }
 
 export type PaymentUncheckedCreateWithoutRefundsInput = {
   id?: string
+  publicCode?: string | null
   orderId: string
   provider: $Enums.PaymentProvider
   providerOrderId?: string | null
   providerPaymentId?: string | null
   paymentMethod?: string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount: runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: $Enums.PaymentStatus
   idempotencyKey?: string | null
   paidAt?: Date | string | null
   createdAt?: Date | string
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutPaymentInput
 }
 
 export type PaymentCreateOrConnectWithoutRefundsInput = {
@@ -672,30 +833,36 @@ export type PaymentUpdateToOneWithWhereWithoutRefundsInput = {
 
 export type PaymentUpdateWithoutRefundsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   order?: Prisma.OrderUpdateOneRequiredWithoutPaymentNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutPaymentNestedInput
 }
 
 export type PaymentUncheckedUpdateWithoutRefundsInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   orderId?: Prisma.StringFieldUpdateOperationsInput | string
   provider?: Prisma.EnumPaymentProviderFieldUpdateOperationsInput | $Enums.PaymentProvider
   providerOrderId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   providerPaymentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paymentMethod?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  paymentMethodDetail?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   amount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   status?: Prisma.EnumPaymentStatusFieldUpdateOperationsInput | $Enums.PaymentStatus
   idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   paidAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutPaymentNestedInput
 }
 
 
@@ -731,11 +898,13 @@ export type PaymentCountOutputTypeCountRefundsArgs<ExtArgs extends runtime.Types
 
 export type PaymentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   orderId?: boolean
   provider?: boolean
   providerOrderId?: boolean
   providerPaymentId?: boolean
   paymentMethod?: boolean
+  paymentMethodDetail?: boolean
   amount?: boolean
   status?: boolean
   idempotencyKey?: boolean
@@ -743,16 +912,19 @@ export type PaymentSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   createdAt?: boolean
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   refunds?: boolean | Prisma.Payment$refundsArgs<ExtArgs>
+  upiCollectRequest?: boolean | Prisma.Payment$upiCollectRequestArgs<ExtArgs>
   _count?: boolean | Prisma.PaymentCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["payment"]>
 
 export type PaymentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   orderId?: boolean
   provider?: boolean
   providerOrderId?: boolean
   providerPaymentId?: boolean
   paymentMethod?: boolean
+  paymentMethodDetail?: boolean
   amount?: boolean
   status?: boolean
   idempotencyKey?: boolean
@@ -763,11 +935,13 @@ export type PaymentSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
 
 export type PaymentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  publicCode?: boolean
   orderId?: boolean
   provider?: boolean
   providerOrderId?: boolean
   providerPaymentId?: boolean
   paymentMethod?: boolean
+  paymentMethodDetail?: boolean
   amount?: boolean
   status?: boolean
   idempotencyKey?: boolean
@@ -778,11 +952,13 @@ export type PaymentSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 
 export type PaymentSelectScalar = {
   id?: boolean
+  publicCode?: boolean
   orderId?: boolean
   provider?: boolean
   providerOrderId?: boolean
   providerPaymentId?: boolean
   paymentMethod?: boolean
+  paymentMethodDetail?: boolean
   amount?: boolean
   status?: boolean
   idempotencyKey?: boolean
@@ -790,10 +966,11 @@ export type PaymentSelectScalar = {
   createdAt?: boolean
 }
 
-export type PaymentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "orderId" | "provider" | "providerOrderId" | "providerPaymentId" | "paymentMethod" | "amount" | "status" | "idempotencyKey" | "paidAt" | "createdAt", ExtArgs["result"]["payment"]>
+export type PaymentOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicCode" | "orderId" | "provider" | "providerOrderId" | "providerPaymentId" | "paymentMethod" | "paymentMethodDetail" | "amount" | "status" | "idempotencyKey" | "paidAt" | "createdAt", ExtArgs["result"]["payment"]>
 export type PaymentInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   order?: boolean | Prisma.OrderDefaultArgs<ExtArgs>
   refunds?: boolean | Prisma.Payment$refundsArgs<ExtArgs>
+  upiCollectRequest?: boolean | Prisma.Payment$upiCollectRequestArgs<ExtArgs>
   _count?: boolean | Prisma.PaymentCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type PaymentIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -808,14 +985,17 @@ export type $PaymentPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   objects: {
     order: Prisma.$OrderPayload<ExtArgs>
     refunds: Prisma.$RefundPayload<ExtArgs>[]
+    upiCollectRequest: Prisma.$UpiCollectRequestPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
+    publicCode: string | null
     orderId: string
     provider: $Enums.PaymentProvider
     providerOrderId: string | null
     providerPaymentId: string | null
     paymentMethod: string | null
+    paymentMethodDetail: runtime.JsonValue | null
     amount: runtime.Decimal
     status: $Enums.PaymentStatus
     idempotencyKey: string | null
@@ -1217,6 +1397,7 @@ export interface Prisma__PaymentClient<T, Null = never, ExtArgs extends runtime.
   readonly [Symbol.toStringTag]: "PrismaPromise"
   order<T extends Prisma.OrderDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrderDefaultArgs<ExtArgs>>): Prisma.Prisma__OrderClient<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   refunds<T extends Prisma.Payment$refundsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Payment$refundsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RefundPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  upiCollectRequest<T extends Prisma.Payment$upiCollectRequestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Payment$upiCollectRequestArgs<ExtArgs>>): Prisma.Prisma__UpiCollectRequestClient<runtime.Types.Result.GetResult<Prisma.$UpiCollectRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1247,11 +1428,13 @@ export interface Prisma__PaymentClient<T, Null = never, ExtArgs extends runtime.
  */
 export interface PaymentFieldRefs {
   readonly id: Prisma.FieldRef<"Payment", 'String'>
+  readonly publicCode: Prisma.FieldRef<"Payment", 'String'>
   readonly orderId: Prisma.FieldRef<"Payment", 'String'>
   readonly provider: Prisma.FieldRef<"Payment", 'PaymentProvider'>
   readonly providerOrderId: Prisma.FieldRef<"Payment", 'String'>
   readonly providerPaymentId: Prisma.FieldRef<"Payment", 'String'>
   readonly paymentMethod: Prisma.FieldRef<"Payment", 'String'>
+  readonly paymentMethodDetail: Prisma.FieldRef<"Payment", 'Json'>
   readonly amount: Prisma.FieldRef<"Payment", 'Decimal'>
   readonly status: Prisma.FieldRef<"Payment", 'PaymentStatus'>
   readonly idempotencyKey: Prisma.FieldRef<"Payment", 'String'>
@@ -1679,6 +1862,25 @@ export type Payment$refundsArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.RefundScalarFieldEnum | Prisma.RefundScalarFieldEnum[]
+}
+
+/**
+ * Payment.upiCollectRequest
+ */
+export type Payment$upiCollectRequestArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UpiCollectRequest
+   */
+  select?: Prisma.UpiCollectRequestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UpiCollectRequest
+   */
+  omit?: Prisma.UpiCollectRequestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UpiCollectRequestInclude<ExtArgs> | null
+  where?: Prisma.UpiCollectRequestWhereInput
 }
 
 /**

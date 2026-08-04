@@ -1,3 +1,4 @@
+
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -27,7 +28,10 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-border-primary: var(--border-primary);
   --color-nav-primary: var(--nav-primary);
   --color-nav-primary-foreground: var(--nav-primary-foreground);
   --color-nav-secondary: var(--nav-secondary);
@@ -63,25 +67,32 @@
   --card-foreground: #000000;
   --popover: #FFFFFF;
   --popover-foreground: #000000;
+
   --primary: #EE7005;
   --primary-foreground: #FFFFFF;
   --secondary: #1B2F45;
   --secondary-foreground: #FFFFFF;
-  --muted: #F5F5F5;
-  --muted-foreground: #666666;
   --accent: #EE7005;
   --accent-foreground: #FFFFFF;
+  --muted: #F5F5F5;
+  --muted-foreground: #666666;
   --destructive: #DC2626;
+  --destructive-foreground: #FFFFFF;
   --success: #22C55E;
+  --success-foreground: #FFFFFF;
+
   --border: #E5E5E5;
+  --border-primary: #EE7005;
   --input: #E5E5E5;
   --ring: #EE7005;
-  --chart-1: #EE7005;
-  --chart-2: #1B2F45;
-  --chart-3: #22C55E;
-  --chart-4: #FF8C38;
-  --chart-5: #2A4A6B;
   --radius: 0.625rem;
+
+  --chart-1: #EE7005;
+  --chart-2: #FF8C38;
+  --chart-3: #16A34A;
+  --chart-4: #6DC8F2;
+  --chart-5: #1B2F45;
+
   --nav-primary: #333333;
   --nav-primary-foreground: #FAFAFA;
   --nav-secondary: #F5F5F5;
@@ -95,7 +106,6 @@
   --sidebar-border: #E5E5E5;
   --sidebar-ring: #999999;
   --search-bar: oklch(0.97 0 0);
-
 }
 
 .dark {
@@ -105,24 +115,31 @@
   --card-foreground: #FFFFFF;
   --popover: #233A55;
   --popover-foreground: #FFFFFF;
+
   --primary: #EE7005;
   --primary-foreground: #FFFFFF;
   --secondary: #2A4A6B;
   --secondary-foreground: #FFFFFF;
-  --muted: #233A55;
-  --muted-foreground: #AAAAAA;
   --accent: #EE7005;
   --accent-foreground: #FFFFFF;
+  --muted: #233A55;
+  --muted-foreground: #AAAAAA;
   --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
   --success: #22C55E;
+  --success-foreground: #FFFFFF;
+
   --border: rgba(255, 255, 255, 0.1);
+  --border-primary: #EE7005;
   --input: rgba(255, 255, 255, 0.15);
   --ring: #EE7005;
+
   --chart-1: #EE7005;
   --chart-2: #FF8C38;
   --chart-3: #22C55E;
   --chart-4: #6DC8F2;
   --chart-5: #FFD700;
+
   --sidebar: #1B2F45;
   --sidebar-foreground: #FFFFFF;
   --sidebar-primary: #EE7005;
@@ -139,6 +156,43 @@
   50% { transform: scaleX(1); transform-origin: left; }
   50.01% { transform-origin: right; }
   100% { transform: scaleX(0); transform-origin: right; }
+}
+
+/* Skeleton shimmer animation */
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@keyframes skeleton-shimmer {
+  100% { transform: translateX(100%); }
+}
+
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  animation: skeleton-pulse 1.8s ease-in-out infinite;
+}
+
+.skeleton-shimmer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.55) 50%,
+    transparent 100%
+  );
+  animation: skeleton-shimmer 1.8s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton-shimmer,
+  .skeleton-shimmer::after {
+    animation: none;
+  }
 }
 
 @layer base {

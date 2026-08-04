@@ -1,74 +1,79 @@
 "use client";
 
-import { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const faqs = [
   {
-    q: "How do I register as a kitchen partner?",
-    a: "Click the 'Register Kitchen' button, enter your mobile number, and complete the OTP verification. Fill in your kitchen details, menu items, and availability slots.",
+    q: "Is there any joining fee?",
+    a: "No, joining RRC Kitchen is completely free. There are no hidden charges or setup fees.",
   },
   {
-    q: "What are the time slots for delivery?",
-    a: "We offer four time slots: Morning Breakfast (7-10 AM), Afternoon Lunch (12-3 PM), Evening Snacks (4-6 PM), and Night Dinner (7-10 PM). You can choose which slots to serve.",
+    q: "Do I need a FSSAI license?",
+    a: "We assist you in the process of obtaining an FSSAI registration if you don't already have one.",
+  },
+  {
+    q: "How will I receive orders?",
+    a: "You will receive orders directly through the RRC Kitchen Partner app or dashboard.",
+  },
+  {
+    q: "Can I work from home?",
+    a: "Yes! That's the whole point. You cook from your own home kitchen.",
+  },
+  {
+    q: "How and when will I get paid?",
+    a: "Payments are settled weekly directly into your bank account. You can track all earnings in your dashboard.",
+  },
+  {
+    q: "What if I need help?",
+    a: "We have a dedicated support team available to help you with any issues you face while taking or delivering orders.",
   },
   {
     q: "How do I set my menu for tomorrow?",
     a: "After logging in, use the Menu Builder to add items with prices, descriptions, and photos. Mark your availability for each time slot before the daily cutoff.",
   },
   {
-    q: "When do I get paid?",
-    a: "Payments are settled weekly. You can track your earnings and order history from your kitchen dashboard.",
-  },
-  {
-    q: "Can I update my menu after publishing?",
-    a: "Yes, you can update your menu at any time before the cutoff. Changes after cutoff will apply to the next day's menu.",
-  },
-  {
-    q: "What kitchen equipment do I need?",
-    a: "A standard home kitchen with basic cooking equipment is sufficient. We focus on home-style cooking using fresh ingredients.",
-  },
-  {
-    q: "Is there a minimum order requirement?",
-    a: "No minimum order requirement. You can offer as many or as few items as you'd like for each time slot.",
+    q: "What are the time slots for delivery?",
+    a: "We offer four time slots: Morning Breakfast, Afternoon Lunch, Evening Snacks, and Night Dinner. You choose which slots to serve.",
   },
 ];
 
 export function KitchenFAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const leftFaqs = faqs.slice(0, Math.ceil(faqs.length / 2));
+  const rightFaqs = faqs.slice(Math.ceil(faqs.length / 2));
 
   return (
-    <section id="faq" className="py-16">
-      <div className="mx-auto max-w-3xl px-6">
-        <h2 className="text-3xl font-bold tracking-tight text-center mb-10">
-          Frequently Asked Questions
-        </h2>
-        <div className="space-y-3">
-          {faqs.map((faq, i) => (
-            <div
-              key={i}
-              className="rounded-2xl border border-border bg-white overflow-hidden"
-            >
-              <button
-                onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="flex items-center justify-between w-full px-6 py-4 text-left"
-              >
-                <span className="font-medium text-sm">{faq.q}</span>
-                <ChevronDown
-                  className={`h-4 w-4 shrink-0 transition-transform ${
-                    openIndex === i ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              {openIndex === i && (
-                <div className="px-6 pb-4">
-                  <p className="text-sm text-muted-foreground leading-6">{faq.a}</p>
-                </div>
-              )}
-            </div>
+    <Accordion type="single" collapsible className="w-full">
+      <div className="grid md:grid-cols-2 gap-4 md:gap-8">
+        <div className="space-y-4">
+          {leftFaqs.map((faq, i) => (
+            <AccordionItem key={i} value={`left-item-${i}`} className="border bg-white rounded-xl shadow-sm px-4">
+              <AccordionTrigger className="text-left font-semibold text-gray-800 hover:no-underline hover:text-[#EE7005]">
+                {faq.q}
+              </AccordionTrigger>
+              <AccordionContent className="text-gray-600 text-sm leading-relaxed">
+                {faq.a}
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </div>
+        <div className="space-y-4">
+          {rightFaqs.map((faq, i) => (
+            <AccordionItem key={i} value={`right-item-${i}`} className="border bg-white rounded-xl shadow-sm px-4">
+              <AccordionTrigger className="text-left font-semibold text-gray-800 hover:no-underline hover:text-[#EE7005]">
+                {faq.q}
+              </AccordionTrigger>
+              <AccordionContent className="text-gray-600 text-sm leading-relaxed">
+                {faq.a}
+              </AccordionContent>
+            </AccordionItem>
           ))}
         </div>
       </div>
-    </section>
+    </Accordion>
   );
 }

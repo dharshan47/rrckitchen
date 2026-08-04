@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest"
 
-const mockPrisma = {
+const mockPrisma = vi.hoisted(() => ({
   referral: {
     findFirst: vi.fn(),
     findUnique: vi.fn(),
@@ -30,7 +30,7 @@ const mockPrisma = {
       return result ?? tx
     }
   }),
-}
+}))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
 vi.mock("@/lib/auth-server", () => ({

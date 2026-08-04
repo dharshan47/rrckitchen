@@ -1,6 +1,14 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
+﻿import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useDebouncedValue } from '@/hooks/useDebouncedValue';
+
+function createWrapper() {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return function Wrapper({ children }: { children: React.ReactNode }) {
+    return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>;
+  };
+}
 
 describe('useDebouncedValue', () => {
   beforeEach(() => {
@@ -12,48 +20,53 @@ describe('useDebouncedValue', () => {
   });
 
   it('returns initial value immediately', () => {
-    const { result } = renderHook(() => useDebouncedValue('hello', 300));
+    const { result } = renderHook(() => useDebouncedValue('hello', 300), { wrapper: createWrapper() });
     expect(result.current).toBe('hello');
   });
 
-  it('updates debounced value after delay', () => {
+  it('updates debounced value after delay', async () => {
     const { result, rerender } = renderHook(({ value, delay }: { value: string; delay?: number }) => useDebouncedValue(value, delay), {
       initialProps: { value: 'hello', delay: 300 },
+      wrapper: createWrapper(),
     });
     expect(result.current).toBe('hello');
     rerender({ value: 'world', delay: 300 });
     expect(result.current).toBe('hello');
-    act(() => { vi.advanceTimersByTime(300); });
+    await act(async () => { vi.advanceTimersByTime(300); });
     expect(result.current).toBe('world');
   });
 
-  it('cancels previous timer on rapid updates', () => {
+  it('cancels previous timer on rapid updates', async () => {
     const { result, rerender } = renderHook(({ value }: { value: string }) => useDebouncedValue(value, 300), {
       initialProps: { value: 'a' },
+      wrapper: createWrapper(),
     });
     rerender({ value: 'b' });
     rerender({ value: 'c' });
-    act(() => { vi.advanceTimersByTime(300); });
+    await act(async () => { vi.advanceTimersByTime(300); });
     expect(result.current).toBe('c');
   });
 
-  it('uses default delay of 300ms', () => {
+  it('uses default delay of 300ms', async () => {
     const { result, rerender } = renderHook(({ value }: { value: string }) => useDebouncedValue(value), {
       initialProps: { value: 'first' },
+      wrapper: createWrapper(),
     });
     rerender({ value: 'second' });
-    act(() => { vi.advanceTimersByTime(300); });
+    await act(async () => { vi.advanceTimersByTime(300); });
     expect(result.current).toBe('second');
   });
 
-  it('uses custom delay', () => {
+  it('uses custom delay', async () => {
     const { result, rerender } = renderHook(({ value }: { value: string }) => useDebouncedValue(value, 500), {
       initialProps: { value: 'a' },
+      wrapper: createWrapper(),
     });
     rerender({ value: 'b' });
-    act(() => { vi.advanceTimersByTime(300); });
+    await act(async () => { vi.advanceTimersByTime(300); });
     expect(result.current).toBe('a');
-    act(() => { vi.advanceTimersByTime(200); });
+    await act(async () => { vi.advanceTimersByTime(200); });
     expect(result.current).toBe('b');
   });
 });
+

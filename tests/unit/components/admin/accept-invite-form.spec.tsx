@@ -22,6 +22,7 @@ vi.mock("@/lib/auth-client", () => ({
 
 vi.mock("@/actions/admin/invites-actions", () => ({
   acceptAdminInvite: vi.fn(),
+  validateAdminInvite: vi.fn(),
 }))
 
 function createWrapper() {
@@ -34,22 +35,46 @@ function createWrapper() {
 describe("AcceptInviteForm", () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    vi.mocked(authClient.useSession).mockReturnValue({ data: null, refetch: vi.fn() } as never)
+    vi.mocked(invitesActions.validateAdminInvite).mockResolvedValue({
+      valid: true,
+      permissions: [],
+      expiresAt: new Date().toISOString(),
+    } as never)
   })
 
-  it("renders create account form when no session", () => {
+  it("shows exact-shape skeleton while the invite is being validated", async () => {
+    vi.mocked(invitesActions.validateAdminInvite).mockImplementation(() => new Promise(() => {}))
     render(<AcceptInviteForm token="test-token" />, { wrapper: createWrapper() })
-    expect(screen.getByText("Create your admin account")).toBeInTheDocument()
-    expect(screen.getByText("Create admin account")).toBeInTheDocument()
+    expect(screen.getByTestId("accept-invite-skeleton")).toBeInTheDocument()
   })
 
-  it("renders email and password fields", () => {
+  it("renders create account form when invite is valid and no session", async () => {
     render(<AcceptInviteForm token="test-token" />, { wrapper: createWrapper() })
-    expect(screen.getByLabelText("Email")).toBeInTheDocument()
-    expect(screen.getByLabelText("Password")).toBeInTheDocument()
+    expect(await screen.findByRole("heading", { name: "Create Admin Account" })).toBeInTheDocument()
+  })
+
+  it("renders email and password fields", async () => {
+    render(<AcceptInviteForm token="test-token" />, { wrapper: createWrapper() })
+    expect(await screen.findByLabelText(/email/i)).toBeInTheDocument()
+    expect(screen.getByLabelText(/password/i)).toBeInTheDocument()
+  })
+
+  it("shows invalid invite card when the token is expired", async () => {
+    vi.mocked(invitesActions.validateAdminInvite).mockResolvedValue({
+      valid: false,
+      reason: "expired",
+    } as never)
+    render(<AcceptInviteForm token="test-token" />, { wrapper: createWrapper() })
+    expect(await screen.findByText("Invite unavailable")).toBeInTheDocument()
+    expect(screen.getByText(/has expired/i)).toBeInTheDocument()
   })
 
   it("shows sign-out card when user is already signed in", () => {
-    vi.mocked(authClient.useSession).mockReturnValue({ data: { user: { email: "test@example.com" } }, refetch: vi.fn() } as never)
+    vi.mocked(authClient.useSession).mockReturnValue({
+      data: { user: { email: "test@example.com" } },
+      refetch: vi.fn(),
+    } as never)
     render(<AcceptInviteForm token="test-token" />, { wrapper: createWrapper() })
     expect(screen.getByText("Sign out first")).toBeInTheDocument()
     expect(screen.getByText("Sign out")).toBeInTheDocument()
@@ -57,11 +82,11 @@ describe("AcceptInviteForm", () => {
 
   it("shows validation error for invalid email", async () => {
     render(<AcceptInviteForm token="test-token" />, { wrapper: createWrapper() })
-    const emailInput = screen.getByLabelText("Email")
+    const emailInput = await screen.findByLabelText(/email/i)
     fireEvent.change(emailInput, { target: { value: "invalid" } })
-    const passwordInput = screen.getByLabelText("Password")
+    const passwordInput = screen.getByLabelText(/password/i)
     fireEvent.change(passwordInput, { target: { value: "password123" } })
-    fireEvent.click(screen.getByText("Create admin account"))
+    fireEvent.submit(emailInput.closest("form")!)
     await waitFor(() => {
       expect(screen.getByText("Enter a valid email")).toBeInTheDocument()
     })
@@ -69,11 +94,11 @@ describe("AcceptInviteForm", () => {
 
   it("shows validation error for short password", async () => {
     render(<AcceptInviteForm token="test-token" />, { wrapper: createWrapper() })
-    const emailInput = screen.getByLabelText("Email")
+    const emailInput = await screen.findByLabelText(/email/i)
     fireEvent.change(emailInput, { target: { value: "test@example.com" } })
-    const passwordInput = screen.getByLabelText("Password")
+    const passwordInput = screen.getByLabelText(/password/i)
     fireEvent.change(passwordInput, { target: { value: "short" } })
-    fireEvent.click(screen.getByText("Create admin account"))
+    fireEvent.click(screen.getByRole("button", { name: "Create Admin Account" }))
     await waitFor(() => {
       expect(screen.getByText("Password must be at least 8 characters")).toBeInTheDocument()
     })
@@ -81,13 +106,13 @@ describe("AcceptInviteForm", () => {
 
   it("calls signUp and acceptAdminInvite on valid submission", async () => {
     vi.mocked(authClient.signUp.email).mockResolvedValue({ error: null, data: {} } as never)
-    vi.mocked(invitesActions.acceptAdminInvite).mockResolvedValue({} as never)
+    vi.mocked(invitesActions.acceptAdminInvite).mockResolvedValue(undefined as never)
     render(<AcceptInviteForm token="test-token" />, { wrapper: createWrapper() })
-    const emailInput = screen.getByLabelText("Email")
+    const emailInput = await screen.findByLabelText(/email/i)
     fireEvent.change(emailInput, { target: { value: "admin@example.com" } })
-    const passwordInput = screen.getByLabelText("Password")
+    const passwordInput = screen.getByLabelText(/password/i)
     fireEvent.change(passwordInput, { target: { value: "password123" } })
-    fireEvent.click(screen.getByText("Create admin account"))
+    fireEvent.click(screen.getByRole("button", { name: "Create Admin Account" }))
     await waitFor(() => {
       expect(authClient.signUp.email).toHaveBeenCalledWith({
         email: "admin@example.com",
@@ -95,30 +120,48 @@ describe("AcceptInviteForm", () => {
         name: "admin",
       })
     })
+    await waitFor(() => {
+      expect(invitesActions.acceptAdminInvite).toHaveBeenCalledWith("test-token")
+    })
   })
 
   it("redirects to 2fa-setup on success", async () => {
     vi.mocked(authClient.signUp.email).mockResolvedValue({ error: null, data: {} } as never)
-    vi.mocked(invitesActions.acceptAdminInvite).mockResolvedValue({} as never)
+    vi.mocked(invitesActions.acceptAdminInvite).mockResolvedValue(undefined as never)
     render(<AcceptInviteForm token="test-token" />, { wrapper: createWrapper() })
-    const emailInput = screen.getByLabelText("Email")
+    const emailInput = await screen.findByLabelText(/email/i)
     fireEvent.change(emailInput, { target: { value: "admin@example.com" } })
-    const passwordInput = screen.getByLabelText("Password")
+    const passwordInput = screen.getByLabelText(/password/i)
     fireEvent.change(passwordInput, { target: { value: "password123" } })
-    fireEvent.click(screen.getByText("Create admin account"))
+    fireEvent.click(screen.getByRole("button", { name: "Create Admin Account" }))
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/admin/2fa-setup")
+    })
+  })
+
+  it("shows backend error when signUp fails", async () => {
+    vi.mocked(authClient.signUp.email).mockResolvedValue({
+      error: { message: "Email already in use" },
+    } as never)
+    render(<AcceptInviteForm token="test-token" />, { wrapper: createWrapper() })
+    const emailInput = await screen.findByLabelText(/email/i)
+    fireEvent.change(emailInput, { target: { value: "admin@example.com" } })
+    const passwordInput = screen.getByLabelText(/password/i)
+    fireEvent.change(passwordInput, { target: { value: "password123" } })
+    fireEvent.click(screen.getByRole("button", { name: "Create Admin Account" }))
+    await waitFor(() => {
+      expect(screen.getByText(/already in use/i)).toBeInTheDocument()
     })
   })
 
   it("disables form inputs while submitting", async () => {
     vi.mocked(authClient.signUp.email).mockImplementation(() => new Promise(() => {}))
     render(<AcceptInviteForm token="test-token" />, { wrapper: createWrapper() })
-    const emailInput = screen.getByLabelText("Email")
+    const emailInput = await screen.findByLabelText(/email/i)
     fireEvent.change(emailInput, { target: { value: "admin@example.com" } })
-    const passwordInput = screen.getByLabelText("Password")
+    const passwordInput = screen.getByLabelText(/password/i)
     fireEvent.change(passwordInput, { target: { value: "password123" } })
-    fireEvent.click(screen.getByText("Create admin account"))
+    fireEvent.click(screen.getByRole("button", { name: "Create Admin Account" }))
     await waitFor(() => {
       expect(screen.getByText("Creating account...")).toBeInTheDocument()
     })
