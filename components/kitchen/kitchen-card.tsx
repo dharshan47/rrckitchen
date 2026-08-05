@@ -183,7 +183,7 @@ export function KitchenCard({ kitchen, variant = "home", onClick }: KitchenCardP
 
   // variant === "page"
   return (
-    <Card className="flex flex-row md:flex-col md:rounded-2xl md:shadow-sm border-b md:border border-gray-100 md:border-border md:overflow-hidden transition-all relative py-4 md:p-0 gap-3 md:gap-0 shadow-none hover:shadow-md hover:border-gray-300 rounded-none md:rounded-2xl">
+    <Card className="flex flex-col md:rounded-2xl md:shadow-sm border-b md:border border-gray-100 md:border-border md:overflow-hidden transition-all relative py-4 md:p-0 gap-3 md:gap-0 shadow-none hover:shadow-md hover:border-gray-300 rounded-none md:rounded-2xl">
       <Link
         href={kitchenHref}
         onClick={onClick}

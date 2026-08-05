@@ -358,6 +358,7 @@ export async function getKitchenDashboardData() {
           publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.KITCHEN_PARTNER),
           userId: session.user.id,
           slug,
+          status: "APPROVED",
         },
         include: {
           kitchenAlias: true,

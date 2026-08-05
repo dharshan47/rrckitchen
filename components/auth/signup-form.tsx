@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { OtpInputBoxes } from "@/components/ui/otp-input-boxes";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, User, Mail, Store, ArrowRight, ShieldCheck, RotateCw, ChevronDown } from "lucide-react";
+import { ArrowLeft, User, Mail, Store, ArrowRight, ShieldCheck, RotateCw } from "lucide-react";
 import Link from "next/link";
 import type { UserRole } from "@/stores";
 
@@ -50,8 +50,8 @@ interface SignupFormProps {
   referralCode?: string | null;
 }
 
-const IndianFlag = () => (
-  <svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" className="rounded-sm shadow-sm shrink-0">
+const IndianFlag = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={`rounded-sm shadow-sm shrink-0 w-[16px] sm:w-[24px] h-auto ${className || ''}`}>
     <rect width="24" height="16" fill="#FFFFFF" />
     <rect width="24" height="5.33" fill="#FF9933" />
     <rect y="10.67" width="24" height="5.33" fill="#138808" />
@@ -76,7 +76,7 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
 
   return (
     <Card className="mx-auto w-full max-w-lg border-border/40 shadow-[0_8px_30px_rgb(0,0,0,0.04)] bg-white rounded-[1.5rem] overflow-hidden">
-      <CardHeader className="px-8 pt-10 pb-6 text-center space-y-3 relative">
+      <CardHeader className="px-5 sm:px-8 pt-8 sm:pt-10 pb-6 text-center space-y-3 relative">
         {showBack && (
           <button
             type="button"
@@ -95,23 +95,22 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
         </p>
       </CardHeader>
       
-      <CardContent className="px-8 pb-10">
+      <CardContent className="px-5 sm:px-8 pb-8 sm:pb-10">
         {step === "phone" && (
           <form onSubmit={phoneForm.handleSubmit((d) => sendOtp(d.phone))} className="grid gap-6">
             <div className="grid gap-2">
               <Label htmlFor="phone" className="text-sm font-semibold text-gray-900">Phone number</Label>
               <div className="flex border border-green-700 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-green-700/20 transition-all bg-white">
-                <div className="flex items-center px-4 bg-white border-r border-border gap-2 shrink-0">
+                <div className="flex items-center px-2 sm:px-4 bg-white border-r border-border gap-1 sm:gap-2 shrink-0">
                   <IndianFlag />
-                  <span className="text-sm font-medium text-gray-700 ml-1">+91</span>
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-[12px] sm:text-sm font-medium text-gray-700 ml-0.5 sm:ml-1">+91</span>
                 </div>
                 <Input
                   id="phone"
                   inputMode="tel"
-                  placeholder="Enter your phone number"
+                  placeholder="Enter phone number"
                   disabled={isLoading}
-                  className="border-0 focus-visible:ring-0 rounded-none bg-white flex-1 text-base py-6 placeholder:text-muted-foreground"
+                  className="border-0 focus-visible:ring-0 rounded-none bg-white flex-1 text-base px-2.5 sm:px-3 py-6 placeholder:text-muted-foreground"
                   {...phoneForm.register("phone")}
                 />
               </div>

@@ -96,39 +96,38 @@ function RrcKitchenReviewCard({ initial }: { initial: RrcReview | null }) {
             </div>
           </div>
 
-          {/* Actions */}
-          <div className="flex flex-col sm:flex-row xl:flex-col items-stretch sm:items-center xl:items-stretch gap-3 shrink-0">
-            <Button
-              onClick={() => rrcMutation.mutate({ rating, recommendation: recommend, comment: comment || null })}
-              disabled={!rating || rrcMutation.isPending}
-              className="h-11 px-6 rounded-xl bg-[#FF6B00] hover:bg-[#E65E00] text-white font-bold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {rrcMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-              {initial ? "Update Review" : "Submit Review"}
-            </Button>
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col sm:flex-row xl:flex-col items-stretch sm:items-center xl:items-stretch gap-3 shrink-0 w-full sm:w-auto">
               <Button
-                variant="outline"
-                type="button"
-                className={`h-9 px-3 rounded-lg text-[11px] font-bold border transition-all ${
-                  recommend === true ? "bg-green-50 border-green-200 text-green-700" : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                }`}
-                onClick={() => setRecommend(recommend === true ? null : true)}
+                onClick={() => rrcMutation.mutate({ rating, recommendation: recommend, comment: comment || null })}
+                disabled={!rating || rrcMutation.isPending}
+                className="h-11 px-6 rounded-xl bg-[#FF6B00] hover:bg-[#E65E00] text-white font-bold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full"
               >
-                <ThumbsUp className="h-3.5 w-3.5 mr-1.5" /> Recommend
+                {rrcMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
+                {initial ? "Update Review" : "Submit Review"}
               </Button>
-              <Button
-                variant="outline"
-                type="button"
-                className={`h-9 px-3 rounded-lg text-[11px] font-bold border transition-all ${
-                  recommend === false ? "bg-red-50 border-red-200 text-red-600" : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                }`}
-                onClick={() => setRecommend(recommend === false ? null : false)}
-              >
-                <ThumbsDown className="h-3.5 w-3.5 mr-1.5" /> Not Yet
-              </Button>
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Button
+                  variant="outline"
+                  type="button"
+                  className={`flex-1 sm:flex-none h-9 px-3 rounded-lg text-[11px] font-bold border transition-all ${
+                    recommend === true ? "bg-green-50 border-green-200 text-green-700" : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                  }`}
+                  onClick={() => setRecommend(recommend === true ? null : true)}
+                >
+                  <ThumbsUp className="h-3.5 w-3.5 mr-1.5" /> Recommend
+                </Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  className={`flex-1 sm:flex-none h-9 px-3 rounded-lg text-[11px] font-bold border transition-all ${
+                    recommend === false ? "bg-red-50 border-red-200 text-red-600" : "border-gray-200 text-gray-600 hover:bg-gray-50"
+                  }`}
+                  onClick={() => setRecommend(recommend === false ? null : false)}
+                >
+                  <ThumbsDown className="h-3.5 w-3.5 mr-1.5" /> Not Yet
+                </Button>
+              </div>
             </div>
-          </div>
         </div>
 
         {initial && (
@@ -300,7 +299,7 @@ export default function ReviewsPageClient() {
             <div className="divide-y divide-gray-50">
               {Array.from({ length: 5 }).map((_, i) => (
                 <div key={i} className="p-6 flex flex-col sm:flex-row gap-4 sm:gap-6">
-                  <div className="w-[120px] shrink-0 flex items-start gap-3">
+                  <div className="w-full sm:w-[120px] shrink-0 flex items-center sm:items-start gap-3">
                     <Skeleton className="h-8 w-8 rounded-full" />
                     <div className="space-y-1.5 flex-1">
                       <Skeleton className="h-3.5 w-16" />
@@ -412,8 +411,7 @@ export default function ReviewsPageClient() {
           </div>
         </div>
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2 border-gray-200 text-gray-700 bg-white hover:bg-gray-50 rounded-xl h-11 px-4 shadow-sm font-medium transition-colors">
+            <Button variant="outline" className="flex items-center gap-2 border-gray-200 text-gray-700 bg-white hover:bg-gray-50 rounded-xl h-11 px-4 shadow-sm font-medium transition-colors w-full sm:w-auto justify-center sm:justify-start">
               <Calendar className="h-4 w-4 text-gray-500" />
               {dateFilter === "week" ? "This Week" : dateFilter === "month" ? "This Month" : dateRange}
               <ChevronDown className="h-4 w-4 ml-1 text-gray-400" />
@@ -637,8 +635,8 @@ export default function ReviewsPageClient() {
         <Card className="rounded-2xl border-none shadow-sm">
           <CardHeader className="pb-4 pt-6 px-6 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <CardTitle className="text-[16px] font-bold text-gray-900">Latest Reviews</CardTitle>
-            <div className="flex items-center gap-3">
-              <div className="relative">
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+              <div className="relative w-full sm:w-auto">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
                   placeholder="Search reviews..."
@@ -647,33 +645,41 @@ export default function ReviewsPageClient() {
                   className="pl-9 h-9 rounded-lg border-gray-200 text-[12px] w-full sm:w-[200px]"
                 />
               </div>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="h-9 px-3 rounded-lg border-gray-200 text-gray-600 text-[12px] font-medium shrink-0">
+              <div className="flex items-center gap-2">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="h-9 px-3 rounded-lg border-gray-200 text-gray-600 text-[12px] font-medium shrink-0 flex-1 sm:flex-none">
                     {ratingFilter ? `${ratingFilter} Stars` : "All Ratings"} <ChevronDown className="h-3 w-3 ml-1" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => resetPage(() => setRatingFilter(null))}>All Ratings</DropdownMenuItem>
-                  {[5, 4, 3, 2, 1].map(s => (
-                    <DropdownMenuItem key={s} onClick={() => resetPage(() => setRatingFilter(s))}>
-                      {s} Star{s > 1 ? "s" : ""}
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="outline" className="h-9 px-3 rounded-lg border-gray-200 text-gray-600 text-[12px] font-medium shrink-0 hidden sm:flex">
-                    {sortBy === "highest" ? "Highest Rated" : sortBy === "lowest" ? "Lowest Rated" : "Most Recent"} <ChevronDown className="h-3 w-3 ml-1" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => resetPage(() => setSortBy("recent"))}>Most Recent</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => resetPage(() => setSortBy("highest"))}>Highest Rated</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => resetPage(() => setSortBy("lowest"))}>Lowest Rated</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    <Button variant="outline" className="h-9 px-3 rounded-lg border-gray-200 text-gray-600 text-[12px] font-medium flex-1">
+                      {ratingFilter ? `${ratingFilter} Stars` : "All Ratings"} <ChevronDown className="h-3 w-3 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => resetPage(() => setRatingFilter(null))}>All Ratings</DropdownMenuItem>
+                    {[5, 4, 3, 2, 1].map(s => (
+                      <DropdownMenuItem key={s} onClick={() => resetPage(() => setRatingFilter(s))}>
+                        {s} Star{s > 1 ? "s" : ""}
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="outline" className="h-9 px-3 rounded-lg border-gray-200 text-gray-600 text-[12px] font-medium flex-1">
+                      {sortBy === "highest" ? "Highest Rated" : sortBy === "lowest" ? "Lowest Rated" : "Most Recent"} <ChevronDown className="h-3 w-3 ml-1" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => resetPage(() => setSortBy("recent"))}>Most Recent</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => resetPage(() => setSortBy("highest"))}>Highest Rated</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => resetPage(() => setSortBy("lowest"))}>Lowest Rated</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </CardHeader>
           <CardContent className="p-0">
@@ -689,12 +695,12 @@ export default function ReviewsPageClient() {
                   return (
                     <div key={review.id} className="p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 hover:bg-gray-50/30 transition-colors">
                       {/* Left: Avatar & Name */}
-                      <div className="w-[120px] shrink-0 flex items-start gap-3">
+                      <div className="w-full sm:w-[120px] shrink-0 flex items-center sm:items-start gap-3">
                         <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-[14px] shrink-0 ${avatarColor}`}>
                           {initial}
                         </div>
-                        <div className="flex flex-col">
-                          <span className="text-[13px] font-bold text-gray-900 truncate max-w-[80px]">{review.customerName || "—"}</span>
+                        <div className="flex flex-col min-w-0">
+                          <span className="text-[13px] font-bold text-gray-900 truncate max-w-[200px] sm:max-w-[80px]">{review.customerName || "—"}</span>
                         </div>
                       </div>
 
@@ -738,10 +744,10 @@ export default function ReviewsPageClient() {
             {/* Pagination */}
             {filteredReviews.length > 0 && (
               <div className="flex items-center justify-between p-6 border-t border-gray-50 flex-col sm:flex-row gap-4">
-                <span className="text-[12px] font-medium text-gray-500">
+                <span className="text-[12px] font-medium text-gray-500 text-center sm:text-left">
                   Showing {(currentPage - 1) * PAGE_SIZE + 1} to {Math.min(currentPage * PAGE_SIZE, filteredReviews.length)} of {filteredReviews.length} reviews
                 </span>
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center justify-center flex-wrap gap-1.5">
                   <Button variant="outline" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="h-8 w-8 p-0 rounded-lg border-gray-200 text-gray-600 hover:bg-gray-50">
                     <ChevronLeft className="h-4 w-4" />
                   </Button>

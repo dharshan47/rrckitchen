@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, ChefHat, Users, Package, ShieldCheck, Target, CheckCircle2, MapPin, Search, CalendarDays, Bike, Heart, Leaf, CookingPot } from "lucide-react";
+import { ChevronRight, ChefHat, Users, Package, ShieldCheck, Target, CheckCircle2, MapPin, Search, CalendarDays, Bike, Heart, Leaf, ConciergeBell } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { AppDownloadBanner } from "@/components/home/app-download-banner";
@@ -36,7 +36,7 @@ export function AboutUsClient() {
         <div className="relative lg:absolute right-0 top-0 bottom-0 w-full lg:w-[55%] h-[300px] sm:h-[400px] lg:h-auto z-0 mt-4 lg:mt-0 shrink-0">
           <div className="hidden lg:block absolute inset-0 bg-gradient-to-r from-[#FDFBF7] via-[#FDFBF7]/90 to-transparent z-10 md:w-1/2" />
           <Image 
-            src="/hero/hero-tiffin-carrier.webp"
+            src="/about/hero-chef.webp"
             alt="Woman cooking"
             fill
             className="object-cover object-[center_right] lg:object-left opacity-90 lg:opacity-100"
@@ -105,19 +105,36 @@ export function AboutUsClient() {
          <section className="max-w-[1200px] mx-auto px-4 mt-8 lg:mt-12">
             <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 p-8 lg:p-10 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden">
                <div className="max-w-3xl relative z-10">
-                  <h2 className="text-[24px] md:text-[28px] font-black text-[#166534] mb-4 tracking-tight">Our Mission</h2>
+                  <h2 className="text-[24px] md:text-[28px] font-black text-[#0A3D24] mb-4 tracking-tight">Our Mission</h2>
                   <p className="text-[16px] md:text-[18px] text-gray-700 font-medium leading-relaxed">
                      To empower home chefs, promote healthy eating, and bring communities closer through the goodness of homemade food.
                   </p>
                </div>
-               <div className="w-20 h-20 md:w-24 md:h-24 shrink-0 relative z-10 bg-green-50 rounded-full flex items-center justify-center">
-                  {/* Simulated Target icon graphic */}
-                  <div className="relative w-12 h-12 flex items-center justify-center">
-                     <div className="absolute inset-0 rounded-full border-4 border-[#166534] opacity-20"></div>
-                     <div className="absolute inset-2 rounded-full border-4 border-[#166534] opacity-50"></div>
-                     <div className="absolute inset-4 rounded-full bg-[#EE7005]"></div>
-                     <Target className="absolute -top-2 -right-2 w-6 h-6 text-[#166534]" />
-                  </div>
+               <div className="w-24 h-24 md:w-32 md:h-32 shrink-0 relative z-10 bg-white rounded-full shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-50 flex items-center justify-center p-3 md:p-5">
+                  {/* Exact Target Icon */}
+                  <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-sm">
+                     {/* Outer green ring */}
+                     <path d="M 66 29 A 34 34 0 1 0 82 58" stroke="#0A3D24" strokeWidth="5.5" fill="none" strokeLinecap="round" />
+                     
+                     {/* Inner orange ring */}
+                     <circle cx="48" cy="58" r="19" stroke="#EE7005" strokeWidth="5.5" fill="none" />
+                     
+                     {/* Center orange ring */}
+                     <circle cx="48" cy="58" r="5" stroke="#EE7005" strokeWidth="5.5" fill="none" />
+                     
+                     {/* Arrow Feather */}
+                     <path d="M 94 12 C 94 12, 90 28, 74 32 C 74 32, 78 16, 94 12 Z" fill="#F4F9E4" stroke="#0A3D24" strokeWidth="4" strokeLinejoin="round" />
+                     
+                     {/* Arrow Shaft */}
+                     <line x1="92" y1="14" x2="52" y2="54" stroke="#0A3D24" strokeWidth="5" strokeLinecap="round" />
+                     
+                     {/* Arrow Feather Details */}
+                     <line x1="84" y1="22" x2="88" y2="16" stroke="#0A3D24" strokeWidth="3.5" strokeLinecap="round" />
+                     <line x1="78" y1="28" x2="82" y2="22" stroke="#0A3D24" strokeWidth="3.5" strokeLinecap="round" />
+
+                     {/* Arrow Head */}
+                     <polygon points="46,58 58,54 52,46" fill="#0A3D24" stroke="#0A3D24" strokeWidth="2" strokeLinejoin="round" />
+                  </svg>
                </div>
                {/* Subtle background decoration */}
                <div className="absolute right-0 top-0 w-64 h-64 bg-green-50 rounded-full -translate-y-1/2 translate-x-1/3 opacity-50 z-0"></div>
@@ -161,7 +178,7 @@ export function AboutUsClient() {
             <div className="mt-6 lg:absolute lg:bottom-0 lg:right-6 lg:w-[40%] h-48 lg:h-[90%] flex items-end justify-center lg:justify-end z-0">
               <div className="relative w-full max-w-[280px] h-full">
                 <Image 
-                  src="/hero/home-cta-chef.webp" 
+                  src="/about/about-rrc-chef.webp"
                   alt="Cooking illustration" 
                   fill
                   className="object-contain object-bottom drop-shadow-md opacity-90"
@@ -171,40 +188,48 @@ export function AboutUsClient() {
           </div>
 
           {/* Our Journey */}
-          <div className="w-full lg:w-[40%] bg-[#FAF7F2] rounded-2xl shadow-sm border border-[#F2EAE1] p-8 lg:p-10 relative overflow-hidden flex flex-col">
+          <div className="w-full lg:w-[40%] bg-[#FCF8F3] rounded-2xl shadow-sm border border-[#F3EBE1] p-8 pb-[220px] sm:pb-[250px] lg:p-10 relative overflow-hidden flex flex-col">
             <h2 className="text-[20px] lg:text-[24px] font-black text-[#0A3D24] mb-4 tracking-tight">Our Journey</h2>
-            <div className="relative z-10 lg:pr-10">
-               <p className="text-[13px] text-[#0A3D24] font-medium leading-relaxed mb-4">
+            <div className="relative z-10 lg:pr-16 w-full lg:max-w-none">
+               <p className="text-[13px] lg:text-[14px] text-[#0A3D24] font-semibold leading-relaxed mb-4">
                  RRC Kitchen started with a simple idea &ndash; to help home chefs turn their passion into a source of income while serving healthy and delicious meals to people.
                </p>
-               <p className="text-[13px] text-[#0A3D24] font-medium leading-relaxed">
+               <p className="text-[13px] lg:text-[14px] text-[#0A3D24] font-semibold leading-relaxed">
                  Today, we are proud to be a trusted platform for thousands of families who believe that the best meals come from home.
                </p>
             </div>
             
-            {/* Winding Path Graphic */}
-            <div className="absolute right-4 bottom-4 lg:right-4 lg:bottom-0 top-1/4 w-1/2 flex items-end pointer-events-none opacity-80">
-                <svg viewBox="0 0 200 300" className="w-full h-full" preserveAspectRatio="xMidYMax meet">
-                   {/* Winding Path */}
-                   <path d="M 180 300 Q 80 280 100 220 T 130 140 T 70 80" stroke="#F5E6D3" strokeWidth="24" strokeLinecap="round" fill="none" />
-                   <path d="M 180 300 Q 80 280 100 220 T 130 140 T 70 80" stroke="#FAF7F2" strokeWidth="12" strokeLinecap="round" fill="none" strokeDasharray="10 10" />
+            {/* Exact Matching Winding Path Graphic */}
+            <div className="absolute right-0 bottom-0 w-[90%] sm:w-[70%] lg:w-[60%] h-[240px] sm:h-[280px] lg:h-[100%] flex items-end justify-end pointer-events-none overflow-hidden">
+                <svg viewBox="0 0 250 300" className="w-full h-full opacity-100" preserveAspectRatio="xMaxYMax meet">
+                   {/* Solid Winding Path */}
+                   <path d="M -50 380 C 250 350, 250 200, 120 160 C 20 130, 80 50, 170 20" stroke="#F3E1D2" strokeWidth="60" strokeLinecap="round" fill="none" />
+                   
+                   {/* Scattered Leaves/Details */}
+                   <path d="M 140 280 Q 155 265 145 295 Z" fill="#A5BAA8" />
+                   <path d="M 220 230 Q 235 215 225 245 Z" fill="#A5BAA8" />
+                   <path d="M 80 180 Q 95 165 85 195 Z" fill="#A5BAA8" />
+                   <path d="M 180 110 Q 195 95 185 125 Z" fill="#A5BAA8" />
                    
                    {/* Bottom Green Flag */}
-                   <g transform="translate(140, 260)">
-                     <line x1="0" y1="0" x2="0" y2="-30" stroke="#168846" strokeWidth="3" strokeLinecap="round"/>
-                     <polygon points="0,-30 20,-22 0,-14" fill="#168846" />
+                   <g transform="translate(90, 260)">
+                     <ellipse cx="0" cy="0" rx="9" ry="4.5" fill="#FF4B00" opacity="0.9" />
+                     <line x1="0" y1="0" x2="0" y2="-35" stroke="#0A3D24" strokeWidth="3.5" strokeLinecap="round"/>
+                     <polygon points="0,-35 26,-35 16,-25 26,-15 0,-15" fill="#0A3D24" />
                    </g>
                    
                    {/* Middle Green Flag */}
-                   <g transform="translate(100, 180)">
-                     <line x1="0" y1="0" x2="0" y2="-30" stroke="#168846" strokeWidth="3" strokeLinecap="round"/>
-                     <polygon points="0,-30 20,-22 0,-14" fill="#168846" />
+                   <g transform="translate(100, 150)">
+                     <ellipse cx="0" cy="0" rx="9" ry="4.5" fill="#FF4B00" opacity="0.9" />
+                     <line x1="0" y1="0" x2="0" y2="-35" stroke="#0A3D24" strokeWidth="3.5" strokeLinecap="round"/>
+                     <polygon points="0,-35 26,-35 16,-25 26,-15 0,-15" fill="#0A3D24" />
                    </g>
                    
                    {/* Top Orange Flag */}
-                   <g transform="translate(120, 100)">
-                     <line x1="0" y1="0" x2="0" y2="-40" stroke="#EE7005" strokeWidth="3" strokeLinecap="round"/>
-                     <polygon points="0,-40 25,-30 0,-20" fill="#EE7005" />
+                   <g transform="translate(170, 50)">
+                     <ellipse cx="0" cy="0" rx="11" ry="5.5" fill="#FF4B00" opacity="0.9" />
+                     <line x1="0" y1="0" x2="0" y2="-45" stroke="#FF4B00" strokeWidth="4.5" strokeLinecap="round"/>
+                     <polygon points="0,-45 36,-45 22,-30 36,-15 0,-15" fill="#FF4B00" />
                    </g>
                 </svg>
             </div>
@@ -214,38 +239,44 @@ export function AboutUsClient() {
 
          {/* 5. How RRC Kitchen Works */}
       <section className="bg-white py-12 lg:py-16">
-        <div className="max-w-[1400px] mx-auto pl-4 pr-0 sm:px-6 lg:px-8 text-left lg:text-center">
-          <h2 className="text-[20px] md:text-[28px] font-black text-[#0A3D24] mb-8 lg:mb-12 tracking-tight">How RRC Kitchen Works</h2>
-          
-          <div className="flex overflow-x-auto lg:overflow-visible items-center justify-start lg:justify-between gap-4 lg:gap-2 relative pb-6 lg:pb-0 snap-x snap-mandatory hide-scrollbar pr-4 lg:pr-0">
-
-             {[
-                { step: 1, icon: MapPin, title: "Choose\nLocation", desc: "Select your\ndelivery location" },
-                { step: 2, icon: Search, title: "Browse\nKitchens", desc: "Explore home chefs\nand their menus" },
-                { step: 3, icon: CalendarDays, title: "Pre-Book\nYour Meal", desc: "Select date, time\nand place your order" },
-                { step: 4, icon: CookingPot, title: "Home Chef\nPrepares", desc: "Fresh, hygienic and\nhomemade with love" },
-                { step: 5, icon: Bike, title: "Delivered\nto You", desc: "Get your order\non time at your door" },
-             ].map((item, index) => (
-                <div key={item.step} className="flex items-center gap-2 lg:flex-1 shrink-0 snap-start">
-                  <div className="flex flex-col lg:flex-row items-center gap-3 w-[140px] lg:w-full justify-center lg:justify-start">
-                     <div className="w-7 h-7 rounded-full bg-[#FFF5EC] text-[#EE7005] font-black text-[12px] flex items-center justify-center shrink-0 shadow-sm">{item.step}</div>
-                     <div className="w-12 h-12 rounded-xl bg-white border border-[#168846]/20 shadow-sm flex items-center justify-center shrink-0 relative">
-                        <item.icon className="w-5 h-5 text-[#168846]" />
-                     </div>
-                     <div className="text-center lg:text-left mt-2 lg:mt-0">
-                        <h4 className="font-black text-[12px] text-[#0A3D24] leading-tight mb-1 whitespace-pre-line">{item.title}</h4>
-                        <p className="text-[10px] text-gray-500 font-bold leading-snug whitespace-pre-line">{item.desc}</p>
-                     </div>
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="relative border border-gray-200 rounded-[1.5rem] mt-4 lg:mt-8">
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-4 sm:px-6 z-10">
+              <h2 className="text-[18px] md:text-[24px] font-black text-[#0A3D24] tracking-tight whitespace-nowrap">How RRC Kitchen Works</h2>
+            </div>
+            
+            <div className="flex overflow-x-auto lg:overflow-visible items-center justify-start lg:justify-between gap-6 lg:gap-2 px-6 py-10 lg:px-8 lg:py-12 snap-x snap-mandatory hide-scrollbar">
+               {[
+                  { step: 1, icon: MapPin, title: "Choose\nLocation", desc: "Select your\ndelivery location" },
+                  { step: 2, icon: Search, title: "Browse\nKitchens", desc: "Explore home chefs\nand their menus" },
+                  { step: 3, icon: CalendarDays, title: "Pre-Book\nYour Meal", desc: "Select date, time\nand place your order" },
+                  { step: 4, icon: ConciergeBell, title: "Home Chef\nPrepares", desc: "Fresh, hygienic and\nhomemade with love" },
+                  { step: 5, icon: Bike, title: "Delivered\nto You", desc: "Get your order\non time at your door" },
+               ].map((item, index) => (
+                  <div key={item.step} className="flex items-center lg:flex-1 shrink-0 snap-start">
+                    <div className="flex flex-row items-center w-full">
+                       {/* Overlapping Badges */}
+                       <div className="relative flex items-center w-[84px] h-[56px] shrink-0">
+                         <div className="absolute left-0 w-10 h-10 rounded-full bg-[#FFF3E8] flex items-center justify-center z-0">
+                           <span className="font-black text-[#FF4B00] text-[15px]">{item.step}</span>
+                         </div>
+                         <div className="absolute right-0 w-14 h-14 rounded-full bg-[#FFF3E8] flex items-center justify-center z-10 border-[3px] border-white">
+                           <item.icon className="w-[22px] h-[22px] text-[#0A3D24]" strokeWidth={1.75} />
+                         </div>
+                       </div>
+                       
+                       {/* Text */}
+                       <div className="text-left ml-3">
+                          <h4 className="font-black text-[13px] text-gray-900 leading-tight mb-1 whitespace-pre-line">{item.title}</h4>
+                          <p className="text-[11px] text-gray-500 font-medium leading-[1.3] whitespace-pre-line">{item.desc}</p>
+                       </div>
+                    </div>
+                    {index < 4 && (
+                      <div className="text-[#0A3D24] font-light text-xl shrink-0 px-4 lg:px-2 xl:px-4">→</div>
+                    )}
                   </div>
-                  {index < 4 && (
-                    <div className="text-gray-300 font-light text-xl shrink-0 px-2 lg:px-4 hidden lg:block">→</div>
-                  )}
-                  {index < 4 && (
-                    <div className="text-gray-300 font-light text-xl shrink-0 px-2 lg:hidden">→</div>
-                  )}
-                </div>
-             ))}
-
+               ))}
+            </div>
           </div>
         </div>
       </section>
@@ -307,7 +338,7 @@ export function AboutUsClient() {
             {/* Image container on the right */}
             <div className="absolute right-0 bottom-0 top-0 w-[45%] hidden md:block">
                <Image 
-                  src="/hero/home-cta-chef.webp" 
+                  src="/about/about-cta-chef.webp"
                   alt="Home Chef" 
                   fill
                   className="object-cover object-left opacity-95"
@@ -324,7 +355,7 @@ export function AboutUsClient() {
             {/* Mobile Image */}
             <div className="md:hidden relative h-48 w-full mt-auto">
                <Image 
-                  src="/hero/home-cta-chef.webp" 
+                  src="/home/home-cta-chef.webp"
                   alt="Home Chef" 
                   fill
                   className="object-cover object-top"

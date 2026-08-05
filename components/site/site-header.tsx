@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { User, ShoppingCart, Home, LayoutGrid, MapPin, ChevronDown, LogOut, Package, Bell, Search, HelpCircle } from "lucide-react";
+import { User, ShoppingCart, Home, LayoutGrid, MapPin, ChevronDown, LogOut, Package, Bell , HelpCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCartStore, useMenuDeliveryAddress } from "@/stores";
 import { useSession, signOut } from "@/lib/auth-client";
@@ -90,9 +90,7 @@ export function SiteHeader() {
     { label: "HOME", href: "/" },
     { label: "CATEGORIES", href: "/categories" },
     { label: "KITCHENS", href: "/kitchens" },
-    { label: "TODAY'S SPECIALS", href: "/specials" },
     { label: "ABOUT US", href: "/about-us" },
-    { label: "BECOME A CHEF", href: "/become-chef" },
     { label: "CONTACT US", href: "/contact" },
   ];
 
@@ -207,7 +205,7 @@ export function SiteHeader() {
                       placeholder="Search for meals, kitchens, cuisines..."
                       inputClassName="h-[42px] w-full rounded-lg text-[13px] pl-4 pr-12 focus-visible:ring-1 focus-visible:ring-gray-300 bg-white hover:bg-gray-50 transition-colors text-gray-900 border border-gray-200 placeholder:text-gray-400"
                     />
-                    <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-gray-700 pointer-events-none" strokeWidth={2} />
+                   
                   </div>
                 </div>
 
@@ -330,7 +328,7 @@ export function SiteHeader() {
             <SearchAutocomplete
               mobileModal
               placeholder="Search for meals, kitchens, cuisines..."
-              inputClassName="h-10 w-full rounded-full text-xs pl-5 pr-10 focus-visible:ring-1 focus-visible:ring-[#EE7005] bg-gray-50 text-gray-900 placeholder:text-gray-400 border border-gray-200 shadow-sm"
+              inputClassName="h-10 w-full rounded-lg  text-xs pl-5 pr-10 focus-visible:ring-1 focus-visible:ring-gray-300 bg-white hover:bg-gray-50 transition-colors text-gray-900 border border-gray-200 placeholder:text-gray-400"
             />
            
           </div>

@@ -18,6 +18,8 @@ function matchesProtected(pathname: string, prefix: string): boolean {
   return pathname === prefix || pathname.startsWith(prefix + "/");
 }
 
+const PUBLIC_ADMIN_PATHS = ["/admin/2fa", "/admin/2fa-setup"];
+
 const STATIC_EXTENSIONS = /\.(jpg|jpeg|png|webp|avif|svg|ico|css|js|woff2?)$/;
 
 export async function proxy(request: NextRequest) {
@@ -41,6 +43,10 @@ export async function proxy(request: NextRequest) {
 
   const matchedPrefix = protectedPaths.find((p) => matchesProtected(pathname, p));
   if (!matchedPrefix) {
+    return response;
+  }
+
+  if (matchedPrefix === "/admin" && PUBLIC_ADMIN_PATHS.includes(pathname)) {
     return response;
   }
 

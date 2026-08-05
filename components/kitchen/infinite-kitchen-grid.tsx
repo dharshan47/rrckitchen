@@ -8,6 +8,7 @@ import { SlidersHorizontal, ChevronRight, Star as StarIcon, User, ShieldCheck } 
 import { KitchenFilters } from "@/components/kitchen/kitchen-filters";
 import type { VegFilterValue } from "@/components/kitchen/veg-filter";
 import { SortByDropdown } from "@/components/kitchen/sort-by-dialog";
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { KitchenCard } from "@/components/kitchen/kitchen-card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -180,6 +181,112 @@ export function InfiniteKitchenGrid() {
       return () => observer.disconnect();
    }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+   const renderFilterContent = () => (
+      <div className="space-y-7">
+         {/* Meal Type */}
+         <div>
+            <h3 className="text-[14px] font-bold text-gray-900 mb-3.5 flex justify-between items-center">Meal Type <ChevronRight className="h-4 w-4 text-gray-400 rotate-90" /></h3>
+            <div className="flex flex-col gap-3">
+               {mealTypeOptions.map((option) => (
+                  <div key={option.key} className="flex items-center gap-3">
+                     <Checkbox
+                        id={`meal-${option.key}`}
+                        checked={mealType === option.key}
+                        onCheckedChange={() => actions.setMealType(mealType === option.key ? null : option.key)}
+                     />
+                     <Label htmlFor={`meal-${option.key}`} className="text-[13px] font-medium text-gray-700 cursor-pointer hover:text-[#EE7005] transition-colors">{option.label}</Label>
+                  </div>
+               ))}
+            </div>
+         </div>
+
+         {/* Cuisine */}
+         <div>
+            <h3 className="text-[14px] font-bold text-gray-900 mb-3.5 flex justify-between items-center">Cuisine <ChevronRight className="h-4 w-4 text-gray-400 rotate-90" /></h3>
+            <div className="flex flex-col gap-3">
+               {categories.map((category) => (
+                  <div key={category.id} className="flex items-center gap-3">
+                     <Checkbox
+                        id={`cuisine-${category.id}`}
+                        checked={selectedCuisines.includes(category.id)}
+                        onCheckedChange={() => actions.toggleCuisine(category.id)}
+                     />
+                     <Label htmlFor={`cuisine-${category.id}`} className="text-[13px] font-medium text-gray-700 cursor-pointer hover:text-[#EE7005] transition-colors">{category.name}</Label>
+                  </div>
+               ))}
+            </div>
+         </div>
+
+         {/* Diet Preference */}
+         <div>
+            <h3 className="text-[14px] font-bold text-gray-900 mb-3.5 flex justify-between items-center">Diet Preference <ChevronRight className="h-4 w-4 text-gray-400 rotate-90" /></h3>
+            <RadioGroup value={vegFilter ?? "none"} onValueChange={(value) => actions.setVegFilter(value === "none" ? null : (value as VegFilterValue))}>
+               <div className="flex flex-col gap-3">
+                  {["Pure Veg", "Veg", "Non Veg"].map((label, idx) => {
+                     const value = idx === 0 ? "pure-veg" : idx === 1 ? "veg" : "non-veg";
+                     return (
+                        <div key={label} className="flex items-center gap-3">
+                           <RadioGroupItem value={value} id={`diet-${value}`} />
+                           <Label htmlFor={`diet-${value}`} className="text-[13px] font-medium text-gray-700 cursor-pointer hover:text-[#EE7005] transition-colors">{label}</Label>
+                        </div>
+                     );
+                  })}
+               </div>
+            </RadioGroup>
+         </div>
+
+         {/* Ratings */}
+         <div>
+            <h3 className="text-[14px] font-bold text-gray-900 mb-3.5 flex justify-between items-center">Ratings <ChevronRight className="h-4 w-4 text-gray-400 rotate-90" /></h3>
+            <RadioGroup value={minRating !== null ? String(minRating) : "any"} onValueChange={(value) => actions.setMinRating(value === "any" ? null : Number(value))}>
+               <div className="flex flex-col gap-3">
+                  {[
+                     { label: "4.5 & above", stars: 5, value: "4.5" },
+                     { label: "4.0 & above", stars: 4, value: "4.0" },
+                     { label: "3.5 & above", stars: 3, value: "3.5" },
+                     { label: "3.0 & above", stars: 3, value: "3.0" },
+                  ].map((item) => (
+                     <div key={item.value} className="flex items-center gap-3">
+                        <RadioGroupItem value={item.value} id={`rating-${item.value}`} />
+                        <Label htmlFor={`rating-${item.value}`} className="flex items-center gap-2 cursor-pointer group">
+                           <div className="flex items-center gap-0.5">
+                              {Array.from({ length: 5 }).map((_, j) => (
+                                 <StarIcon key={j} className={cn("h-3.5 w-3.5", j < item.stars ? "fill-[#F59E0B] text-[#F59E0B]" : "fill-gray-200 text-gray-200")} />
+                              ))}
+                           </div>
+                           <span className="text-[12px] font-medium text-gray-600 group-hover:text-[#EE7005] transition-colors">{item.label}</span>
+                        </Label>
+                     </div>
+                  ))}
+               </div>
+            </RadioGroup>
+         </div>
+
+         {/* Delivery Time */}
+         <div>
+            <h3 className="text-[14px] font-bold text-gray-900 mb-3.5 flex justify-between items-center">Delivery Time <ChevronRight className="h-4 w-4 text-gray-400 rotate-90" /></h3>
+            <RadioGroup value={maxPrepTime !== null ? String(maxPrepTime) : "any"} onValueChange={(value) => actions.setMaxPrepTime(value === "any" ? null : Number(value))}>
+               <div className="flex flex-col gap-3">
+                  {[
+                     { label: "25 mins or less", value: "25" },
+                     { label: "40 mins or less", value: "40" },
+                     { label: "60 mins or less", value: "60" },
+                  ].map((option) => (
+                     <div key={option.value} className="flex items-center gap-3">
+                        <RadioGroupItem value={option.value} id={`time-${option.value}`} />
+                        <Label htmlFor={`time-${option.value}`} className="text-[13px] font-medium text-gray-700 cursor-pointer hover:text-[#EE7005] transition-colors">{option.label}</Label>
+                     </div>
+                  ))}
+               </div>
+            </RadioGroup>
+         </div>
+
+         <button onClick={() => { actions.resetFilters(); actions.setShowMobileFilters(false); }} className="w-full py-3.5 bg-[#EE7005] text-white text-[13px] font-black uppercase tracking-wider rounded-lg shadow-sm hover:bg-[#d66504] transition-colors mt-6">
+            RESET FILTERS
+         </button>
+      </div>
+   );
+
    const renderContent = () => {
       if (isLoading) {
          return <KitchensPageSkeleton />;
@@ -250,109 +357,7 @@ export function InfiniteKitchenGrid() {
                      <button onClick={actions.resetFilters} className="text-[13px] font-bold text-[#EE7005] hover:underline">Clear All</button>
                   </div>
 
-                  <div className="space-y-7">
-                     {/* Meal Type */}
-                     <div>
-                        <h3 className="text-[14px] font-bold text-gray-900 mb-3.5 flex justify-between items-center">Meal Type <ChevronRight className="h-4 w-4 text-gray-400 rotate-90" /></h3>
-                        <div className="flex flex-col gap-3">
-                           {mealTypeOptions.map((option) => (
-                              <div key={option.key} className="flex items-center gap-3">
-                                 <Checkbox
-                                    id={`meal-${option.key}`}
-                                    checked={mealType === option.key}
-                                    onCheckedChange={() => actions.setMealType(mealType === option.key ? null : option.key)}
-                                 />
-                                 <Label htmlFor={`meal-${option.key}`} className="text-[13px] font-medium text-gray-700 cursor-pointer hover:text-[#EE7005] transition-colors">{option.label}</Label>
-                              </div>
-                           ))}
-                        </div>
-                     </div>
-
-                     {/* Cuisine */}
-                     <div>
-                        <h3 className="text-[14px] font-bold text-gray-900 mb-3.5 flex justify-between items-center">Cuisine <ChevronRight className="h-4 w-4 text-gray-400 rotate-90" /></h3>
-                        <div className="flex flex-col gap-3">
-                           {categories.map((category) => (
-                              <div key={category.id} className="flex items-center gap-3">
-                                 <Checkbox
-                                    id={`cuisine-${category.id}`}
-                                    checked={selectedCuisines.includes(category.id)}
-                                    onCheckedChange={() => actions.toggleCuisine(category.id)}
-                                 />
-                                 <Label htmlFor={`cuisine-${category.id}`} className="text-[13px] font-medium text-gray-700 cursor-pointer hover:text-[#EE7005] transition-colors">{category.name}</Label>
-                              </div>
-                           ))}
-                        </div>
-                     </div>
-
-                     {/* Diet Preference */}
-                     <div>
-                        <h3 className="text-[14px] font-bold text-gray-900 mb-3.5 flex justify-between items-center">Diet Preference <ChevronRight className="h-4 w-4 text-gray-400 rotate-90" /></h3>
-                        <RadioGroup value={vegFilter ?? "none"} onValueChange={(value) => actions.setVegFilter(value === "none" ? null : (value as VegFilterValue))}>
-                           <div className="flex flex-col gap-3">
-                              {["Pure Veg", "Veg", "Non Veg"].map((label, idx) => {
-                                 const value = idx === 0 ? "pure-veg" : idx === 1 ? "veg" : "non-veg";
-                                 return (
-                                    <div key={label} className="flex items-center gap-3">
-                                       <RadioGroupItem value={value} id={`diet-${value}`} />
-                                       <Label htmlFor={`diet-${value}`} className="text-[13px] font-medium text-gray-700 cursor-pointer hover:text-[#EE7005] transition-colors">{label}</Label>
-                                    </div>
-                                 );
-                              })}
-                           </div>
-                        </RadioGroup>
-                     </div>
-
-                     {/* Ratings */}
-                     <div>
-                        <h3 className="text-[14px] font-bold text-gray-900 mb-3.5 flex justify-between items-center">Ratings <ChevronRight className="h-4 w-4 text-gray-400 rotate-90" /></h3>
-                        <RadioGroup value={minRating !== null ? String(minRating) : "any"} onValueChange={(value) => actions.setMinRating(value === "any" ? null : Number(value))}>
-                           <div className="flex flex-col gap-3">
-                              {[
-                                 { label: "4.5 & above", stars: 5, value: "4.5" },
-                                 { label: "4.0 & above", stars: 4, value: "4.0" },
-                                 { label: "3.5 & above", stars: 3, value: "3.5" },
-                                 { label: "3.0 & above", stars: 3, value: "3.0" },
-                              ].map((item) => (
-                                 <div key={item.value} className="flex items-center gap-3">
-                                    <RadioGroupItem value={item.value} id={`rating-${item.value}`} />
-                                    <Label htmlFor={`rating-${item.value}`} className="flex items-center gap-2 cursor-pointer group">
-                                       <div className="flex items-center gap-0.5">
-                                          {Array.from({ length: 5 }).map((_, j) => (
-                                             <StarIcon key={j} className={cn("h-3.5 w-3.5", j < item.stars ? "fill-[#F59E0B] text-[#F59E0B]" : "fill-gray-200 text-gray-200")} />
-                                          ))}
-                                       </div>
-                                       <span className="text-[12px] font-medium text-gray-600 group-hover:text-[#EE7005] transition-colors">{item.label}</span>
-                                    </Label>
-                                 </div>
-                              ))}
-                           </div>
-                        </RadioGroup>
-                     </div>
-
-                     {/* Delivery Time */}
-                     <div>
-                        <h3 className="text-[14px] font-bold text-gray-900 mb-3.5 flex justify-between items-center">Delivery Time <ChevronRight className="h-4 w-4 text-gray-400 rotate-90" /></h3>
-                        <RadioGroup value={maxPrepTime !== null ? String(maxPrepTime) : "any"} onValueChange={(value) => actions.setMaxPrepTime(value === "any" ? null : Number(value))}>
-                           <div className="flex flex-col gap-3">
-                              {[
-                                 { label: "25 mins or less", value: "25" },
-                                 { label: "40 mins or less", value: "40" },
-                                 { label: "60 mins or less", value: "60" },
-                              ].map((option) => (
-                                 <div key={option.value} className="flex items-center gap-3">
-                                    <RadioGroupItem value={option.value} id={`time-${option.value}`} />
-                                    <Label htmlFor={`time-${option.value}`} className="text-[13px] font-medium text-gray-700 cursor-pointer hover:text-[#EE7005] transition-colors">{option.label}</Label>
-                                 </div>
-                              ))}
-                           </div>
-                        </RadioGroup>
-                     </div>
-
-                     <button onClick={actions.resetFilters} className="w-full py-3.5 bg-[#EE7005] text-white text-[13px] font-black uppercase tracking-wider rounded-lg shadow-sm hover:bg-[#d66504] transition-colors mt-6">
-                        RESET FILTERS
-                     </button>
-                  </div>
+                  {renderFilterContent()}
                </aside>
 
                {/* Main Content */}
@@ -360,7 +365,7 @@ export function InfiniteKitchenGrid() {
 
                   <div className="mb-6 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                      {/* Quick Filters */}
-                     <div className="flex items-center gap-2.5 overflow-x-auto scrollbar-none pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 w-full lg:flex-1">
+                     <div className="flex items-center gap-2.5 overflow-x-auto scrollbar-none pb-2 -mx-4 px-4 sm:mx-0 sm:px-0 w-[calc(100%+32px)] sm:w-auto lg:flex-1">
                         <button
                            onClick={() => actions.setVegFilter(null)}
                            className={cn(
@@ -468,22 +473,25 @@ export function InfiniteKitchenGrid() {
                      </p>
                   </div>
 
-                  {/* Mobile Filters Dropdown Content */}
-                  {showMobileFilters && (
-                     <div className="lg:hidden bg-white border border-gray-200 rounded-xl p-4 mb-6 shadow-sm">
-                        <KitchenFilters
-                           categories={categories}
-                           selectedCategory={selectedCategory}
-                           onCategorySelect={actions.setSelectedCategory}
-                           sortOption={sortOption}
-                           onSortChange={actions.setSortOption}
-                           vegFilter={vegFilter}
-                           onVegFilterChange={actions.setVegFilter}
-                           selectedCuisines={selectedCuisines}
-                           onCuisinesChange={actions.setSelectedCuisines}
-                        />
-                     </div>
-                  )}
+                  {/* Mobile Filters Sheet */}
+                  <Sheet open={showMobileFilters} onOpenChange={actions.setShowMobileFilters}>
+                     <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl p-0 flex flex-col gap-0 overflow-hidden bg-white" showCloseButton={false}>
+                        <SheetHeader className="px-5 py-4 border-b border-gray-100 bg-white z-10 flex flex-row items-center justify-between shadow-sm">
+                           <SheetTitle className="text-[18px] font-black text-[#0A3D24]">Filters</SheetTitle>
+                           <button onClick={actions.resetFilters} className="text-[13px] font-bold text-[#EE7005] hover:underline">Clear All</button>
+                        </SheetHeader>
+                        
+                        <div className="flex-1 overflow-y-auto px-5 py-6 bg-[#fdfbf9]">
+                           {renderFilterContent()}
+                        </div>
+
+                        <div className="p-4 border-t border-gray-100 bg-white z-10">
+                           <button onClick={() => actions.setShowMobileFilters(false)} className="w-full py-3.5 bg-[#168846] text-white text-[14px] font-black uppercase tracking-wider rounded-lg shadow-sm">
+                              Show Results
+                           </button>
+                        </div>
+                     </SheetContent>
+                  </Sheet>
 
                   {renderContent()}
 

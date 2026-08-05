@@ -217,10 +217,10 @@ export function HomeClient() {
           </section>
 
           <section className="bg-[#FAF7F2] rounded-2xl lg:rounded-xl overflow-hidden">
-            <div className="p-8 lg:px-16 lg:py-12 min-w-[760px] lg:min-w-0 grid grid-cols-[1.2fr_1fr_1.2fr] gap-8 lg:gap-12 items-center">
+            <div className="p-6 sm:p-8 lg:px-16 lg:py-12 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_1.2fr] gap-8 lg:gap-12 items-center">
               {/* Left text */}
-              <div className="flex flex-col justify-center text-left">
-                <h2 className="text-[20px] lg:text-[24px] font-bold text-[#0A3D24] tracking-wide uppercase mb-8 lg:mb-10">
+              <div className="flex flex-col justify-center text-center lg:text-left">
+                <h2 className="text-[20px] lg:text-[24px] font-bold text-[#0A3D24] tracking-wide uppercase mb-4 lg:mb-10">
                   WHY TIFFIN CARRIER?
                 </h2>
                 <div className="space-y-1.5">
@@ -234,7 +234,7 @@ export function HomeClient() {
               </div>
 
               {/* Middle Image */}
-              <div className="relative h-[280px] lg:h-[300px] flex items-center justify-center">
+              <div className="relative h-[220px] sm:h-[280px] lg:h-[300px] flex items-center justify-center">
                 <Image
                   src="/home/tiffin-carrier.webp"
                   alt="Stainless steel tiffin carrier"
@@ -246,7 +246,7 @@ export function HomeClient() {
               </div>
 
               {/* Right Checkmarks */}
-              <div className="flex flex-col justify-center gap-4 lg:gap-5 items-start pl-8 lg:pl-16">
+              <div className="flex flex-col justify-center gap-3.5 lg:gap-5 items-start mx-auto lg:mx-0 lg:pl-16">
                 {[
                   "Keeps food hot & fresh",
                   "Leak proof & spill safe",
