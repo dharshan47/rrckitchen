@@ -411,6 +411,7 @@ export default function ReviewsPageClient() {
           </div>
         </div>
         <DropdownMenu>
+          <DropdownMenuTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2 border-gray-200 text-gray-700 bg-white hover:bg-gray-50 rounded-xl h-11 px-4 shadow-sm font-medium transition-colors w-full sm:w-auto justify-center sm:justify-start">
               <Calendar className="h-4 w-4 text-gray-500" />
               {dateFilter === "week" ? "This Week" : dateFilter === "month" ? "This Month" : dateRange}
@@ -649,12 +650,6 @@ export default function ReviewsPageClient() {
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="outline" className="h-9 px-3 rounded-lg border-gray-200 text-gray-600 text-[12px] font-medium shrink-0 flex-1 sm:flex-none">
-                    {ratingFilter ? `${ratingFilter} Stars` : "All Ratings"} <ChevronDown className="h-3 w-3 ml-1" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => resetPage(() => setRatingFilter(null))}>All Ratings</DropdownMenuItem>
-                    <Button variant="outline" className="h-9 px-3 rounded-lg border-gray-200 text-gray-600 text-[12px] font-medium flex-1">
                       {ratingFilter ? `${ratingFilter} Stars` : "All Ratings"} <ChevronDown className="h-3 w-3 ml-1" />
                     </Button>
                   </DropdownMenuTrigger>
@@ -669,7 +664,7 @@ export default function ReviewsPageClient() {
                 </DropdownMenu>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="h-9 px-3 rounded-lg border-gray-200 text-gray-600 text-[12px] font-medium flex-1">
+                    <Button variant="outline" className="h-9 px-3 rounded-lg border-gray-200 text-gray-600 text-[12px] font-medium shrink-0 flex-1 sm:flex-none">
                       {sortBy === "highest" ? "Highest Rated" : sortBy === "lowest" ? "Lowest Rated" : "Most Recent"} <ChevronDown className="h-3 w-3 ml-1" />
                     </Button>
                   </DropdownMenuTrigger>
