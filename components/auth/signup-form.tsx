@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { OtpInputBoxes } from "@/components/ui/otp-input-boxes";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, User, Mail, Store, ArrowRight, ShieldCheck, RotateCw } from "lucide-react";
+import { ArrowLeft, User, Mail, Store, ArrowRight, ShieldCheck, RotateCw, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import type { UserRole } from "@/stores";
 
@@ -100,17 +100,19 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
           <form onSubmit={phoneForm.handleSubmit((d) => sendOtp(d.phone))} className="grid gap-6">
             <div className="grid gap-2">
               <Label htmlFor="phone" className="text-sm font-semibold text-gray-900">Phone number</Label>
-              <div className="flex border border-green-700 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-green-700/20 transition-all bg-white">
-                <div className="flex items-center px-2 sm:px-4 bg-white border-r border-border gap-1 sm:gap-2 shrink-0">
-                  <IndianFlag />
-                  <span className="text-[12px] sm:text-sm font-medium text-gray-700 ml-0.5 sm:ml-1">+91</span>
+              <div className="flex items-center border border-green-700 rounded-[8px] focus-within:ring-2 focus-within:ring-green-700/20 transition-all bg-white h-[56px] pl-4">
+                <div className="flex items-center gap-2 shrink-0 pr-3 cursor-pointer">
+                  <IndianFlag className="!w-[22px]" />
+                  <span className="text-[15px] font-medium text-[#4B5563]">+91</span>
+                  <ChevronDown className="h-[18px] w-[18px] text-[#9CA3AF] ml-0.5" strokeWidth={2.5} />
                 </div>
+                <div className="w-[1px] h-[28px] bg-[#E5E7EB] shrink-0"></div>
                 <Input
                   id="phone"
                   inputMode="tel"
-                  placeholder="Enter phone number"
+                  placeholder="Enter your phone number"
                   disabled={isLoading}
-                  className="border-0 focus-visible:ring-0 rounded-none bg-white flex-1 text-base px-2.5 sm:px-3 py-6 placeholder:text-muted-foreground"
+                  className="border-0 focus-visible:ring-0 rounded-none bg-transparent flex-1 text-[16px] px-4 py-6 h-full placeholder:text-[#6B7280] text-[#111827]"
                   {...phoneForm.register("phone")}
                 />
               </div>
@@ -243,23 +245,21 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
 
         {/* Info Box */}
         {step === "phone" && (
-          <div className="bg-[#F6FAF7] rounded-xl p-5 flex flex-col sm:flex-row gap-4 sm:gap-2 justify-between items-start sm:items-center">
-            <div className="flex-1 flex flex-col items-center text-center gap-1.5 px-2">
-              <ShieldCheck className="h-6 w-6 text-green-700" strokeWidth={1.5} />
-              <h4 className="text-[13px] font-bold text-gray-900 leading-tight">Secure Login</h4>
-              <p className="text-[11px] text-muted-foreground leading-tight">Your data is safe with us</p>
+          <div className="bg-[#F6FAF7] rounded-xl p-4 sm:p-5 grid grid-cols-3 gap-0 divide-x divide-gray-200">
+            <div className="flex flex-col items-center text-center gap-1 sm:gap-1.5 px-1 sm:px-2">
+              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-green-700" strokeWidth={1.5} />
+              <h4 className="text-[10px] sm:text-[13px] font-bold text-gray-900 leading-tight">Secure Login</h4>
+              <p className="text-[9px] sm:text-[11px] text-muted-foreground leading-tight hidden sm:block">Your data is safe with us</p>
             </div>
-            <div className="hidden sm:block w-px h-10 bg-gray-200"></div>
-            <div className="flex-1 flex flex-col items-center text-center gap-1.5 px-2">
-              <RotateCw className="h-6 w-6 text-green-700" strokeWidth={1.5} />
-              <h4 className="text-[13px] font-bold text-gray-900 leading-tight">Quick Access</h4>
-              <p className="text-[11px] text-muted-foreground leading-tight">Login in seconds with OTP</p>
+            <div className="flex flex-col items-center text-center gap-1 sm:gap-1.5 px-1 sm:px-2">
+              <RotateCw className="h-5 w-5 sm:h-6 sm:w-6 text-green-700" strokeWidth={1.5} />
+              <h4 className="text-[10px] sm:text-[13px] font-bold text-gray-900 leading-tight">Quick Access</h4>
+              <p className="text-[9px] sm:text-[11px] text-muted-foreground leading-tight hidden sm:block">Login in seconds with OTP</p>
             </div>
-            <div className="hidden sm:block w-px h-10 bg-gray-200"></div>
-            <div className="flex-1 flex flex-col items-center text-center gap-1.5 px-2">
-              <ShieldCheck className="h-6 w-6 text-green-700" strokeWidth={1.5} />
-              <h4 className="text-[13px] font-bold text-gray-900 leading-tight">Trusted Support</h4>
-              <p className="text-[11px] text-muted-foreground leading-tight">Real people, real support</p>
+            <div className="flex flex-col items-center text-center gap-1 sm:gap-1.5 px-1 sm:px-2">
+              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-green-700" strokeWidth={1.5} />
+              <h4 className="text-[10px] sm:text-[13px] font-bold text-gray-900 leading-tight">Trusted Support</h4>
+              <p className="text-[9px] sm:text-[11px] text-muted-foreground leading-tight hidden sm:block">Real people, real support</p>
             </div>
           </div>
         )}

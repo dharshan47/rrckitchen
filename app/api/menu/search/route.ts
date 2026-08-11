@@ -160,6 +160,8 @@ export async function GET(request: Request) {
           slug: true,
           name: true,
           price: true,
+          foodType: true,
+          timeSlot: true,
           menu: { select: { kitchenPartnerId: true } },
           photos: {
             take: 1,
@@ -171,7 +173,7 @@ export async function GET(request: Request) {
       })
     : []
 
-  const itemsByKitchen = new Map<string, { id: string; slug?: string; name: string; price: number; imageUrl: string | null }[]>()
+  const itemsByKitchen = new Map<string, { id: string; slug?: string; name: string; price: number; foodType: string; timeSlot: string; imageUrl: string | null }[]>()
   for (const mi of kitchenMenuItems) {
     const kid = mi.menu.kitchenPartnerId
     if (!itemsByKitchen.has(kid)) itemsByKitchen.set(kid, [])
@@ -182,6 +184,8 @@ export async function GET(request: Request) {
         slug: mi.slug ?? undefined,
         name: mi.name,
         price: Number(mi.price),
+        foodType: mi.foodType,
+        timeSlot: mi.timeSlot,
         imageUrl: mi.photos[0]?.imageUrl ?? null,
       })
     }

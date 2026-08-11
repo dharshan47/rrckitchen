@@ -204,6 +204,8 @@ model KitchenPartner {
   operatingHours Json?
   createdAt         DateTime      @default(now())
   estimatedPrepTime Int?          @default(25)
+  minOrder          Int?          @default(99)
+  deliveryRadiusKm  Float?        @default(2.1)
   updatedAt         DateTime      @updatedAt
   deletedAt      DateTime?
 
@@ -252,6 +254,9 @@ model KitchenPartnerKyc {
   upiId              String?
   gpayNumber         String?
   phoneNumber        String?
+  fssaiNumber        String?
+  fssaiValidTill     DateTime?
+  gstNumber          String?
 
   kitchenPartner KitchenPartner @relation(fields: [kitchenPartnerId], references: [id])
 }
@@ -1324,27 +1329,56 @@ model KitchenWishlist {
 // ============ SEARCH PAGE CONTENT (CMS) ============
 
 model SearchPageContent {
-  id             String   @id @default(cuid())
-  keyword        String   @unique
-  isActive       Boolean  @default(true)
-  bannerImageUrl String   @default("")
-  heading        String   @default("")
-  subHeading     String   @default("")
-  cardsPerPage   Int      @default(12)
-  defaultSort    String   @default("Relevance")
-  showRatings    Boolean  @default(true)
-  kitchensCount  Int      @default(0)
-  version        Int      @default(1)
-  updatedBy      String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                  String   @id @default(cuid())
+  keyword             String   @unique
+  isActive            Boolean  @default(true)
+  bannerImageUrl      String   @default("")
+  heading             String   @default("")
+  subHeading          String   @default("")
+  cardsPerPage        Int      @default(12)
+  defaultSort         String   @default("Relevance")
+  showRatings         Boolean  @default(true)
+  kitchensCount       Int      @default(0)
+  version             Int      @default(1)
+  updatedBy           String?
+  backgroundColor     String   @default("#F0FDF4")
+  metaTitle           String   @default("")
+  metaDescription     String   @default("")
+  keywords            String   @default("")
+  showKitchens        Boolean  @default(true)
+  showKitchensLimit   String   @default("32 kitchens")
+  showDishes          Boolean  @default(true)
+  showDishesLimit     String   @default("16 dishes")
+  showCategories      Boolean  @default(true)
+  showCategoriesLimit String   @default("15 categories")
+  autoSuggest         Boolean  @default(true)
+  recentSearches      Boolean  @default(true)
+  showKitchenBadges   Boolean  @default(true)
+  showDistance        Boolean  @default(true)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
 
-  filters   SearchPageFilter[]
-  badges    SearchPageBadge[]
-  infoItems SearchPageInfoItem[]
+  filters      SearchPageFilter[]
+  badges       SearchPageBadge[]
+  infoItems    SearchPageInfoItem[]
+  kitchenCards SearchPageKitchenCard[]
 
   @@index([isActive])
   @@map("search_page_content")
+}
+
+model SearchPageKitchenCard {
+  id                  String  @id @default(cuid())
+  searchPageContentId String
+  kitchenPartnerId    String
+  imageUrl            String?
+  badge               String?
+  sortOrder           Int     @default(0)
+
+  searchPageContent SearchPageContent @relation(fields: [searchPageContentId], references: [id], onDelete: Cascade)
+
+  @@index([searchPageContentId])
+  @@map("search_page_kitchen_card")
 }
 
 model SearchPageFilter {
@@ -1365,6 +1399,7 @@ model SearchPageBadge {
   id                  String  @id @default(cuid())
   searchPageContentId String
   name                String
+  position            String  @default("left")
   isEnabled           Boolean @default(true)
   sortOrder           Int     @default(0)
 

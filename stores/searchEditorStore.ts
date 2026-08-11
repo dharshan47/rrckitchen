@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { useShallow } from "zustand/react/shallow";
+import { toTitleCase } from "@/lib/utils";
 import type {
   AdminSearchPageDetail,
   AdminSearchPageFilter,
@@ -17,6 +18,7 @@ export interface SearchEditorFilter {
 export interface SearchEditorBadge {
   id?: string;
   name: string;
+  position: "left" | "right";
   isEnabled: boolean;
 }
 
@@ -29,10 +31,19 @@ export interface SearchEditorInfoItem {
   isEnabled: boolean;
 }
 
+export interface SearchEditorKitchenCard {
+  id?: string;
+  kitchenPartnerId: string;
+  imageUrl: string | null;
+  badge: string | null;
+}
+
 export interface SearchEditorDraft {
   id: string;
   keyword: string;
   isActive: boolean;
+  updatedAt: string;
+  createdAt: string;
   bannerImageUrl: string;
   heading: string;
   subHeading: string;
@@ -40,9 +51,24 @@ export interface SearchEditorDraft {
   defaultSort: string;
   showRatings: boolean;
   kitchensCount: number;
+  metaTitle: string;
+  metaDescription: string;
+  keywords: string;
+  backgroundColor: string;
+  showKitchens: boolean;
+  showKitchensLimit: string;
+  showDishes: boolean;
+  showDishesLimit: string;
+  showCategories: boolean;
+  showCategoriesLimit: string;
+  autoSuggest: boolean;
+  recentSearches: boolean;
+  showKitchenBadges: boolean;
+  showDistance: boolean;
   filters: SearchEditorFilter[];
   badges: SearchEditorBadge[];
   infoItems: SearchEditorInfoItem[];
+  kitchenCards: SearchEditorKitchenCard[];
 }
 
 export function toSearchEditorDraft(item: AdminSearchPageDetail): SearchEditorDraft {
@@ -55,6 +81,7 @@ export function toSearchEditorDraft(item: AdminSearchPageDetail): SearchEditorDr
   const mapBadge = (b: AdminSearchPageBadge): SearchEditorBadge => ({
     id: b.id,
     name: b.name,
+    position: b.position === "right" ? "right" : "left",
     isEnabled: b.isEnabled,
   });
   const mapInfo = (i: AdminSearchPageInfoItem): SearchEditorInfoItem => ({
@@ -65,11 +92,19 @@ export function toSearchEditorDraft(item: AdminSearchPageDetail): SearchEditorDr
     color: i.color,
     isEnabled: i.isEnabled,
   });
+  const mapCard = (c: { id: string; kitchenPartnerId: string; imageUrl: string | null; badge: string | null }): SearchEditorKitchenCard => ({
+    id: c.id,
+    kitchenPartnerId: c.kitchenPartnerId,
+    imageUrl: c.imageUrl,
+    badge: c.badge,
+  });
 
   return {
     id: item.id,
     keyword: item.keyword,
     isActive: item.isActive,
+    updatedAt: item.updatedAt,
+    createdAt: item.createdAt,
     bannerImageUrl: item.bannerImageUrl,
     heading: item.heading,
     subHeading: item.subHeading,
@@ -77,9 +112,24 @@ export function toSearchEditorDraft(item: AdminSearchPageDetail): SearchEditorDr
     defaultSort: item.defaultSort,
     showRatings: item.showRatings,
     kitchensCount: item.kitchensCount,
+    metaTitle: item.metaTitle || "Best " + toTitleCase(item.keyword) + " Near You | RRC Kitchen",
+    metaDescription: item.metaDescription || "Find the best " + item.keyword + " near you. Order from home kitchens offering delicious " + item.keyword + " with fast delivery.",
+    keywords: item.keywords || item.keyword + ", south indian, breakfast, home food",
+    backgroundColor: item.backgroundColor || "#F0FDF4",
+    showKitchens: item.showKitchens ?? true,
+    showKitchensLimit: item.showKitchensLimit || "32 kitchens",
+    showDishes: item.showDishes ?? true,
+    showDishesLimit: item.showDishesLimit || "16 dishes",
+    showCategories: item.showCategories ?? true,
+    showCategoriesLimit: item.showCategoriesLimit || "15 categories",
+    autoSuggest: item.autoSuggest ?? true,
+    recentSearches: item.recentSearches ?? true,
+    showKitchenBadges: item.showKitchenBadges ?? true,
+    showDistance: item.showDistance ?? true,
     filters: item.filters.map(mapFilter),
     badges: item.badges.map(mapBadge),
     infoItems: item.infoItems.map(mapInfo),
+    kitchenCards: (item.kitchenCards ?? []).map(mapCard),
   };
 }
 
@@ -92,14 +142,33 @@ export function toSaveInput(draft: SearchEditorDraft) {
     cardsPerPage: draft.cardsPerPage,
     defaultSort: draft.defaultSort,
     showRatings: draft.showRatings,
+    backgroundColor: draft.backgroundColor,
+    metaTitle: draft.metaTitle,
+    metaDescription: draft.metaDescription,
+    keywords: draft.keywords,
+    showKitchens: draft.showKitchens,
+    showKitchensLimit: draft.showKitchensLimit,
+    showDishes: draft.showDishes,
+    showDishesLimit: draft.showDishesLimit,
+    showCategories: draft.showCategories,
+    showCategoriesLimit: draft.showCategoriesLimit,
+    autoSuggest: draft.autoSuggest,
+    recentSearches: draft.recentSearches,
+    showKitchenBadges: draft.showKitchenBadges,
+    showDistance: draft.showDistance,
     filters: draft.filters.map(({ name, options, isEnabled }) => ({ name, options, isEnabled })),
-    badges: draft.badges.map(({ name, isEnabled }) => ({ name, isEnabled })),
+    badges: draft.badges.map(({ name, position, isEnabled }) => ({ name, position, isEnabled })),
     infoItems: draft.infoItems.map(({ icon, title, subtitle, color, isEnabled }) => ({
       icon,
       title,
       subtitle,
       color,
       isEnabled,
+    })),
+    kitchenCards: draft.kitchenCards.map(({ kitchenPartnerId, imageUrl, badge }) => ({
+      kitchenPartnerId,
+      imageUrl,
+      badge,
     })),
   };
 }
@@ -119,6 +188,7 @@ interface SearchEditorState {
   addBadge: () => void;
   removeBadge: (index: number) => void;
   updateInfoItem: (index: number, patch: Partial<SearchEditorInfoItem>) => void;
+  updateKitchenCard: (kitchenPartnerId: string, patch: Partial<SearchEditorKitchenCard>) => void;
   markSaved: () => void;
 }
 
@@ -189,7 +259,7 @@ export const searchEditorStore = create<SearchEditorState>()((set, get) => ({
   addBadge: () =>
     withDraft((draft) => ({
       ...draft,
-      badges: [...draft.badges, { name: "New Badge", isEnabled: true }],
+      badges: [...draft.badges, { name: "New Badge", position: "left", isEnabled: true }],
     }))(set, get),
 
   removeBadge: (index) =>
@@ -203,6 +273,19 @@ export const searchEditorStore = create<SearchEditorState>()((set, get) => ({
       ...draft,
       infoItems: draft.infoItems.map((item, i) => (i === index ? { ...item, ...patch } : item)),
     }))(set, get),
+
+  updateKitchenCard: (kitchenPartnerId, patch) =>
+    withDraft((draft) => {
+      const existing = draft.kitchenCards.find((c) => c.kitchenPartnerId === kitchenPartnerId);
+      return {
+        ...draft,
+        kitchenCards: existing
+          ? draft.kitchenCards.map((c) =>
+              c.kitchenPartnerId === kitchenPartnerId ? { ...c, ...patch } : c
+            )
+          : [...draft.kitchenCards, { kitchenPartnerId, imageUrl: null, badge: null, ...patch }],
+      };
+    })(set, get),
 
   markSaved: () => set({ dirty: false }),
 }));
@@ -231,6 +314,7 @@ export function useSearchEditorActions() {
       addBadge: s.addBadge,
       removeBadge: s.removeBadge,
       updateInfoItem: s.updateInfoItem,
+      updateKitchenCard: s.updateKitchenCard,
       markSaved: s.markSaved,
     }))
   );

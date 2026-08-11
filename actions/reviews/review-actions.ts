@@ -14,11 +14,12 @@ export async function submitKitchenReview(input: {
   portionSizeRating?: number;
   comment?: string;
   tags?: string[];
+  mediaUrls?: string[];
 }) {
   const session = await getSession();
   if (!session?.user) throw new Error("Unauthorized");
 
-  const { orderId, kitchenPartnerId, rating, tasteRating, packagingRating, portionSizeRating, comment } = input;
+  const { orderId, kitchenPartnerId, rating, tasteRating, packagingRating, portionSizeRating, comment, mediaUrls } = input;
 
   await prisma.$transaction(async (tx) => {
     await tx.review.create({
@@ -31,6 +32,7 @@ export async function submitKitchenReview(input: {
         packagingRating,
         portionSizeRating,
         comment,
+        mediaUrls,
       },
     });
 

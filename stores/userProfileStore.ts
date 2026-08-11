@@ -13,6 +13,7 @@ export interface UserProfile {
   name: string;
   email: string;
   phoneNumber: string | null;
+  createdAt?: string | null;
 }
 
 /** Address row as returned by getUserAddresses. */

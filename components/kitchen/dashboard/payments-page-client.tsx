@@ -1,8 +1,7 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useMemo, useState, useEffect } from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useEffect } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -33,11 +32,21 @@ import {
 import { ChartPieDonut } from "@/components/ui/donut-chart"
 import type { ChartConfig } from "@/components/ui/chart"
 import { 
-  Wallet, Settings, IndianRupee, Percent, Calendar, Landmark, 
-  CheckCircle2, ShieldCheck, Download, ChevronRight, 
-  Building2, UserCircle2, Lock, FileText, Smartphone, ArrowUpRight, ArrowDownRight,
-  SmartphoneNfc, Receipt, Clock, ChevronDown, ChevronLeft, ArrowUpDown, ArrowUp, ArrowDown
+  WalletCards, Settings, IndianRupee, BadgePercent, CalendarDays, Landmark, 
+  Check, ShieldCheck, Download,
+  User, LockKeyhole, FileText, AtSign, Phone, ArrowUp, ArrowDown, ArrowUpDown,
+  CalendarClock, WalletMinimal, MapPin, Clock3, ChevronDown, Save
 } from "lucide-react"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import Image from "next/image"
 
 type SettlementRow = {
   id: string
@@ -81,7 +90,6 @@ export default function PaymentsPageClient() {
   type BankFormData = z.infer<typeof bankSchema>
 
   const data = useKitchenDashboardData()
-
   const kyc = data?.kitchen
 
   const form = useForm<BankFormData>({
@@ -134,15 +142,6 @@ export default function PaymentsPageClient() {
   const previousMonth = monthlyRevenue[monthlyRevenue.length - 2]
   const revGrowth = getGrowthPct(currentMonth?.revenue ?? 0, previousMonth?.revenue ?? 0)
 
-  const paidAmount = useMemo(
-    () => settlements.filter((s) => s.status === "Paid").reduce((sum, s) => sum + s.net, 0),
-    [settlements]
-  )
-  const pendingAmount = useMemo(
-    () => settlements.filter((s) => s.status === "Pending").reduce((sum, s) => sum + s.net, 0),
-    [settlements]
-  )
-
   const stats = data?.stats
   const revenue = stats?.monthRevenue || 0
   const commission = Math.round(revenue * 0.1)
@@ -154,19 +153,26 @@ export default function PaymentsPageClient() {
 
   const isVerified = kyc?.status === "APPROVED" || kyc?.status === "ACTIVE"
 
-  const earningsTotal = paidAmount + pendingAmount
+  const earningsTotal = revenue
+  const foodOrders = earningsTotal
+  const deliveryCharges = 0
+  const otherEarnings = earningsTotal - foodOrders - deliveryCharges
+
   const earningsData = [
-    { type: "Paid", amount: paidAmount, fill: "var(--color-paid)" },
-    { type: "Pending", amount: pendingAmount, fill: "var(--color-pending)" },
+    { type: "Food Orders", amount: foodOrders, fill: "#087A2B" },
+    ...(deliveryCharges > 0 ? [{ type: "Delivery Charges", amount: deliveryCharges, fill: "#FF5A00" }] : []),
+    ...(otherEarnings > 0 ? [{ type: "Other Earnings", amount: otherEarnings, fill: "#2385F5" }] : []),
   ]
+  
   const earningsConfig = {
     amount: { label: "Amount (₹)" },
-    paid: { label: "Paid", color: "#10B981" },
-    pending: { label: "Pending", color: "#F97316" },
+    "Food Orders": { label: "Food Orders", color: "#087A2B" },
+    "Delivery Charges": { label: "Delivery Charges", color: "#FF5A00" },
+    "Other Earnings": { label: "Other Earnings", color: "#2385F5" },
   } satisfies ChartConfig
 
   const earningsPct = (amount: number) =>
-    earningsTotal > 0 ? `${Math.round((amount / earningsTotal) * 100)}%` : "0%"
+    earningsTotal > 0 ? `${(amount / earningsTotal * 100).toFixed(1)}%` : "0%"
 
   const filteredSettlements = useMemo(() => settlements, [settlements])
   const totalPages = Math.max(1, Math.ceil(filteredSettlements.length / pageSize))
@@ -174,26 +180,26 @@ export default function PaymentsPageClient() {
 
   const columns = useMemo<ColumnDef<SettlementRow>[]>(
     () => [
-      { accessorKey: "period", header: "Period", cell: ({ row }) => <span className="text-[13px] font-medium text-gray-600">{row.original.period}</span> },
-      { accessorKey: "gross", header: "Gross Earnings", cell: ({ row }) => <span className="text-[13px] font-bold text-gray-900">₹{row.original.gross.toLocaleString()}</span> },
-      { accessorKey: "commission", header: "Commission (10%)", cell: ({ row }) => <span className="text-[13px] font-medium text-gray-600">₹{row.original.commission.toLocaleString()}</span> },
-      { accessorKey: "net", header: "Net Payout", cell: ({ row }) => <span className="text-[13px] font-bold text-gray-900">₹{row.original.net.toLocaleString()}</span> },
-      { accessorKey: "payoutDate", header: "Payout Date", cell: ({ row }) => <span className="text-[13px] font-medium text-gray-600">{row.original.payoutDate || "—"}</span> },
+      { accessorKey: "period", header: "Period", cell: ({ row }) => <span className="text-[12px] font-medium text-[#374151]">{row.original.period}</span> },
+      { accessorKey: "gross", header: "Gross Earnings", cell: ({ row }) => <span className="text-[12px] font-medium text-[#374151]">₹{row.original.gross.toLocaleString()}</span> },
+      { accessorKey: "commission", header: "Commission (10%)", cell: ({ row }) => <span className="text-[12px] font-medium text-[#374151]">₹{row.original.commission.toLocaleString()}</span> },
+      { accessorKey: "net", header: "Net Payout", cell: ({ row }) => <span className="text-[12px] font-medium text-[#374151]">₹{row.original.net.toLocaleString()}</span> },
+      { accessorKey: "payoutDate", header: "Payout Date", cell: ({ row }) => <span className="text-[12px] font-medium text-[#374151]">{row.original.payoutDate || "—"}</span> },
       {
         accessorKey: "status",
         header: "Status",
         cell: ({ row }) => {
           const isPaid = row.original.status === "Paid"
           return (
-            <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold ${
-              isPaid ? "bg-[#ECFDF5] text-[#10B981]" : "bg-[#FFF7ED] text-[#EA580C]"
+            <span className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
+              isPaid ? "bg-[#EAF6ED] text-[#287844]" : "bg-[#FFF3E4] text-[#F57C00]"
             }`}>
               {isPaid ? "Paid" : "Pending"}
             </span>
           )
         },
       },
-      { accessorKey: "transactionId", header: "Transaction ID", cell: ({ row }) => <span className="text-[13px] font-medium text-gray-600">{row.original.transactionId || "—"}</span> },
+      { accessorKey: "transactionId", header: "Transaction ID", cell: ({ row }) => <span className="text-[12px] font-medium text-[#374151]">{row.original.transactionId || "—"}</span> },
     ],
     []
   )
@@ -255,7 +261,7 @@ export default function PaymentsPageClient() {
 
   if (!data) {
     return (
-      <div className="space-y-6 pb-20 animate-in fade-in duration-500">
+      <div className="space-y-6 pb-20 animate-in fade-in duration-500 bg-[#FCFCFC] min-h-screen p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
           <div className="flex items-center gap-3">
             <Skeleton className="h-8 w-8 rounded-xl" />
@@ -266,128 +272,10 @@ export default function PaymentsPageClient() {
           </div>
           <Skeleton className="h-11 w-40 rounded-xl" />
         </div>
-
-        <div className="flex overflow-x-auto pb-4 lg:pb-0 lg:grid lg:grid-cols-5 gap-4 hide-scrollbar snap-x">
+        <div className="grid grid-cols-5 gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="rounded-2xl border border-gray-100 bg-white shadow-sm min-w-[240px] lg:min-w-0 snap-start shrink-0 p-5 flex flex-col items-center justify-center text-center space-y-3">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-3 w-24" />
-              <Skeleton className="h-7 w-20" />
-              <Skeleton className="h-3 w-28" />
-              <Skeleton className="h-10 w-full rounded-md" />
-            </div>
+            <Skeleton key={i} className="h-32 w-full rounded-[10px]" />
           ))}
-        </div>
-
-        <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
-          <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
-            <div className="pb-4 pt-6 px-6 border-b border-gray-50 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-5 w-5 rounded-full" />
-                <div className="space-y-1.5">
-                  <Skeleton className="h-5 w-44" />
-                  <Skeleton className="h-3 w-56" />
-                </div>
-              </div>
-              <Skeleton className="h-7 w-20 rounded-lg" />
-            </div>
-            <div className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <div key={i} className="space-y-2">
-                    <Skeleton className="h-3.5 w-28" />
-                    <Skeleton className="h-11 w-full rounded-xl" />
-                  </div>
-                ))}
-              </div>
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-50">
-                <Skeleton className="h-12 w-full lg:w-72 rounded-xl" />
-                <div className="flex items-center gap-3 w-full lg:w-auto">
-                  <Skeleton className="h-11 flex-1 lg:flex-none w-28 rounded-xl" />
-                  <Skeleton className="h-11 flex-1 lg:flex-none w-32 rounded-xl" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
-              <div className="pb-4 pt-6 px-6 border-b border-gray-50 flex items-center gap-2">
-                <Skeleton className="h-5 w-5 rounded-full" />
-                <Skeleton className="h-5 w-36" />
-              </div>
-              <div className="p-6 space-y-4">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <Skeleton className="h-3.5 w-32" />
-                    <Skeleton className="h-3.5 w-24" />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-gray-100 bg-white shadow-sm">
-              <div className="pb-4 pt-6 px-6 border-b border-gray-50 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Skeleton className="h-5 w-5 rounded-full" />
-                  <Skeleton className="h-5 w-36" />
-                </div>
-                <Skeleton className="h-6 w-20 rounded-md" />
-              </div>
-              <div className="p-6 flex flex-col md:flex-row items-center gap-6">
-                <Skeleton className="h-32 w-32 rounded-full" />
-                <div className="flex-1 space-y-3 w-full">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <div key={i} className="flex items-center justify-between">
-                      <Skeleton className="h-3.5 w-28" />
-                      <Skeleton className="h-3.5 w-20" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-6 flex flex-col items-start justify-center h-[180px] space-y-3">
-              <Skeleton className="h-5 w-44" />
-              <Skeleton className="h-3.5 w-56" />
-              <Skeleton className="h-9 w-28 rounded-lg" />
-            </div>
-          </div>
-        </div>
-
-        <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-          <div className="pb-4 pt-6 px-6 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-5 w-5 rounded-full" />
-              <div className="space-y-1.5">
-                <Skeleton className="h-5 w-40" />
-                <Skeleton className="h-3 w-52" />
-              </div>
-            </div>
-            <Skeleton className="h-10 w-44 rounded-xl" />
-          </div>
-          <div className="p-6 space-y-5">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-6">
-                <Skeleton className="h-3.5 w-24 flex-1" />
-                <Skeleton className="h-3.5 w-20 flex-1" />
-                <Skeleton className="h-3.5 w-20 flex-1" />
-                <Skeleton className="h-3.5 w-20 flex-1" />
-                <Skeleton className="h-3.5 w-24 flex-1" />
-                <Skeleton className="h-5 w-16 rounded-md" />
-                <Skeleton className="h-3.5 w-28 flex-1" />
-              </div>
-            ))}
-            <div className="flex items-center justify-between pt-4 border-t border-gray-50">
-              <Skeleton className="h-3.5 w-48" />
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-8 w-8 rounded-lg" />
-                <Skeleton className="h-8 w-8 rounded-lg" />
-                <Skeleton className="h-8 w-8 rounded-lg" />
-                <Skeleton className="h-8 w-8 rounded-lg" />
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     )
@@ -398,165 +286,185 @@ export default function PaymentsPageClient() {
   }
 
   return (
-    <div className="space-y-6 pb-20 animate-in fade-in duration-500">
+    <div className="space-y-6 pb-20 animate-in fade-in duration-500 bg-[#FCFCFC] min-h-screen p-2 sm:p-6">
       
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
         <div className="flex items-center gap-3">
-          <Wallet className="h-8 w-8 text-green-600 hidden sm:block" />
+          <WalletCards className="h-7 w-7 text-[#16833A] hidden sm:block" />
           <div>
-            <h1 className="text-[24px] font-bold text-gray-900 tracking-tight flex items-center gap-2">
-              Payments & Settlements <Wallet className="h-6 w-6 text-green-600 sm:hidden" />
+            <h1 className="text-[24px] font-bold text-[#111827] tracking-tight flex items-center gap-2">
+              Payments & Settlements <WalletCards className="h-6 w-6 text-[#16833A] sm:hidden" />
             </h1>
-            <p className="text-[14px] text-gray-500 font-medium mt-0.5">Track your earnings, manage bank details and view settlement history.</p>
+            <p className="text-[13px] text-[#4B5563] mt-0.5">Track your earnings, manage bank details and view settlement history.</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" className="flex items-center gap-2 border-green-200 text-green-700 bg-white hover:bg-green-50 rounded-xl h-11 px-4 shadow-sm font-bold transition-colors" onClick={scrollToBankDetails}>
-            <Settings className="h-4 w-4" /> Payout Settings
-          </Button>
-        </div>
+        <Button 
+          variant="outline" 
+          className="flex items-center gap-2 bg-[#FFFFFF] border-[#A8D3B3] text-[#16702E] hover:bg-[#F3FAF5] rounded-[8px] h-9 px-4 shadow-[0_1px_2px_rgba(16,24,40,.02)] font-medium transition-colors" 
+          onClick={scrollToBankDetails}
+        >
+          <Settings className="h-4 w-4" /> Payout Settings
+        </Button>
       </div>
 
-      {/* Top Summary Cards (Horizontal scroll on mobile) */}
-      <div className="flex overflow-x-auto pb-4 lg:pb-0 lg:grid lg:grid-cols-5 gap-4 hide-scrollbar snap-x">
-        {/* Total Revenue */}
-        <Card className="rounded-2xl border-none shadow-sm min-w-[240px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-between overflow-hidden">
+      {/* Top Summary Cards */}
+      <ScrollArea className="w-full pb-4 lg:pb-0 whitespace-nowrap lg:whitespace-normal">
+        <div className="flex w-max lg:w-auto lg:grid lg:grid-cols-5 gap-4">
+          
+          {/* Total Revenue */}
+        <Card className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] min-w-[240px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-between overflow-hidden">
           <CardContent className="p-5 pb-0">
-            <div className="flex flex-col items-center justify-center text-center space-y-2 mb-2">
-              <div className="h-10 w-10 rounded-full bg-green-50 flex items-center justify-center mb-1">
-                <IndianRupee className="h-5 w-5 text-green-600" />
+            <div className="flex items-center gap-4 mb-3">
+              <div className="h-12 w-12 rounded-full bg-[#DDF1E2] flex items-center justify-center shrink-0">
+                <IndianRupee className="h-6 w-6 text-[#16833A]" />
               </div>
-              <span className="text-[11px] font-bold text-gray-500 tracking-wide uppercase">Total Revenue</span>
-              <div className="text-[22px] font-bold text-gray-900 leading-none">₹{revenue.toLocaleString()}</div>
-              {revGrowth !== null && (
-                <div className="flex items-center gap-1 text-[11px] font-bold text-green-600">
-                  <ArrowUpRight className="h-3 w-3" /> {revGrowth}% <span className="text-gray-400 font-medium normal-case">vs last month</span>
-                </div>
-              )}
+              <div>
+                <div className="text-[12px] font-medium text-[#4B5563] mb-0.5">Total Revenue</div>
+                <div className="text-[20px] font-semibold text-[#111827] leading-none">₹{revenue.toLocaleString()}</div>
+                {revGrowth !== null && (
+                  <div className="flex items-center gap-1 text-[11px] font-medium mt-1">
+                    <span className="flex items-center text-[#16833A]"><ArrowUp className="h-3 w-3 mr-0.5" /> {revGrowth}%</span> 
+                    <span className="text-[#68727D]">vs last month</span>
+                  </div>
+                )}
+              </div>
             </div>
-            {/* Sparkline */}
-            <svg viewBox="0 0 100 25" className="w-full h-10 overflow-visible mt-2">
-              <path d="M0 20 Q 15 10, 25 15 T 50 10 T 75 15 T 100 5 L 100 25 L 0 25 Z" fill="url(#green-grad)" opacity="0.3" />
-              <path d="M0 20 Q 15 10, 25 15 T 50 10 T 75 15 T 100 5" fill="none" stroke="#10B981" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              <defs>
-                <linearGradient id="green-grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#10B981" />
-                  <stop offset="100%" stopColor="white" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-            </svg>
+            <div className="mt-auto relative h-12 w-full -ml-1">
+              <svg viewBox="0 0 100 25" preserveAspectRatio="none" className="w-[110%] h-full">
+                <path d="M0 20 Q 15 10, 25 15 T 50 10 T 75 15 T 100 5 L 100 25 L 0 25 Z" fill="url(#green-fade)" opacity="1" />
+                <path d="M0 20 Q 15 10, 25 15 T 50 10 T 75 15 T 100 5" fill="none" stroke="#16833A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <defs>
+                  <linearGradient id="green-fade" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="rgba(22, 131, 58, 0.08)" />
+                    <stop offset="100%" stopColor="rgba(22, 131, 58, 0)" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
           </CardContent>
         </Card>
 
         {/* Platform Commission */}
-        <Card className="rounded-2xl border-none shadow-sm min-w-[240px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-between overflow-hidden">
+        <Card className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] min-w-[240px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-between overflow-hidden">
           <CardContent className="p-5 pb-0">
-            <div className="flex flex-col items-center justify-center text-center space-y-2 mb-2">
-              <div className="h-10 w-10 rounded-full bg-orange-50 flex items-center justify-center mb-1">
-                <Percent className="h-5 w-5 text-[#FF6B00]" />
+            <div className="flex items-center gap-4 mb-3">
+              <div className="h-12 w-12 rounded-full bg-[#FFE4D6] flex items-center justify-center shrink-0">
+                <BadgePercent className="h-6 w-6 text-[#FF4D00]" />
               </div>
-              <span className="text-[11px] font-bold text-gray-500 tracking-wide uppercase">Platform Commission (10%)</span>
-              <div className="text-[22px] font-bold text-gray-900 leading-none">₹{commission.toLocaleString()}</div>
-              {revGrowth !== null && (
-                <div className="flex items-center gap-1 text-[11px] font-bold text-[#FF6B00]">
-                  <ArrowDownRight className="h-3 w-3" /> {revGrowth}% <span className="text-gray-400 font-medium normal-case">vs last month</span>
-                </div>
-              )}
+              <div>
+                <div className="text-[12px] font-medium text-[#4B5563] mb-0.5">Platform Commission (10%)</div>
+                <div className="text-[20px] font-semibold text-[#111827] leading-none">₹{commission.toLocaleString()}</div>
+                {revGrowth !== null && (
+                  <div className="flex items-center gap-1 text-[11px] font-medium mt-1">
+                    <span className="flex items-center text-[#FF2D20]"><ArrowDown className="h-3 w-3 mr-0.5" /> {revGrowth}%</span> 
+                    <span className="text-[#68727D]">vs last month</span>
+                  </div>
+                )}
+              </div>
             </div>
-            {/* Sparkline */}
-            <svg viewBox="0 0 100 25" className="w-full h-10 overflow-visible mt-2">
-              <path d="M0 10 Q 20 15, 30 10 T 60 15 T 80 5 T 100 10 L 100 25 L 0 25 Z" fill="url(#orange-grad)" opacity="0.2" />
-              <path d="M0 10 Q 20 15, 30 10 T 60 15 T 80 5 T 100 10" fill="none" stroke="#FF6B00" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              <defs>
-                <linearGradient id="orange-grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#FF6B00" />
-                  <stop offset="100%" stopColor="white" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-            </svg>
+            <div className="mt-auto relative h-12 w-full -ml-1">
+              <svg viewBox="0 0 100 25" preserveAspectRatio="none" className="w-[110%] h-full">
+                <path d="M0 10 Q 20 15, 30 10 T 60 15 T 80 5 T 100 10 L 100 25 L 0 25 Z" fill="url(#orange-fade)" opacity="1" />
+                <path d="M0 10 Q 20 15, 30 10 T 60 15 T 80 5 T 100 10" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <defs>
+                  <linearGradient id="orange-fade" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="rgba(255, 77, 0, 0.06)" />
+                    <stop offset="100%" stopColor="rgba(255, 77, 0, 0)" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
           </CardContent>
         </Card>
 
         {/* Net Payable */}
-        <Card className="rounded-2xl border-none shadow-sm min-w-[240px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-between overflow-hidden">
+        <Card className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] min-w-[240px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-between overflow-hidden">
           <CardContent className="p-5 pb-0">
-            <div className="flex flex-col items-center justify-center text-center space-y-2 mb-2">
-              <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center mb-1">
-                <Wallet className="h-5 w-5 text-blue-500" />
+            <div className="flex items-center gap-4 mb-3">
+              <div className="h-12 w-12 rounded-full bg-[#DCEBFF] flex items-center justify-center shrink-0">
+                <WalletCards className="h-6 w-6 text-[#1677FF]" />
               </div>
-              <span className="text-[11px] font-bold text-gray-500 tracking-wide uppercase">Net Payable</span>
-              <div className="text-[22px] font-bold text-gray-900 leading-none">₹{net.toLocaleString()}</div>
-              {revGrowth !== null && (
-                <div className="flex items-center gap-1 text-[11px] font-bold text-green-600">
-                  <ArrowUpRight className="h-3 w-3" /> {revGrowth}% <span className="text-gray-400 font-medium normal-case">vs last month</span>
-                </div>
-              )}
+              <div>
+                <div className="text-[12px] font-medium text-[#4B5563] mb-0.5">Net Payable</div>
+                <div className="text-[20px] font-semibold text-[#111827] leading-none">₹{net.toLocaleString()}</div>
+                {revGrowth !== null && (
+                  <div className="flex items-center gap-1 text-[11px] font-medium mt-1">
+                    <span className="flex items-center text-[#16833A]"><ArrowUp className="h-3 w-3 mr-0.5" /> {revGrowth}%</span> 
+                    <span className="text-[#68727D]">vs last month</span>
+                  </div>
+                )}
+              </div>
             </div>
-            {/* Sparkline */}
-            <svg viewBox="0 0 100 25" className="w-full h-10 overflow-visible mt-2">
-              <path d="M0 15 Q 15 5, 30 10 T 55 5 T 80 15 T 100 5 L 100 25 L 0 25 Z" fill="url(#blue-grad)" opacity="0.2" />
-              <path d="M0 15 Q 15 5, 30 10 T 55 5 T 80 15 T 100 5" fill="none" stroke="#3B82F6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-              <defs>
-                <linearGradient id="blue-grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#3B82F6" />
-                  <stop offset="100%" stopColor="white" stopOpacity="0" />
-                </linearGradient>
-              </defs>
-            </svg>
+            <div className="mt-auto relative h-12 w-full -ml-1">
+              <svg viewBox="0 0 100 25" preserveAspectRatio="none" className="w-[110%] h-full">
+                <path d="M0 15 Q 15 5, 30 10 T 55 5 T 80 15 T 100 5 L 100 25 L 0 25 Z" fill="url(#blue-fade)" opacity="1" />
+                <path d="M0 15 Q 15 5, 30 10 T 55 5 T 80 15 T 100 5" fill="none" stroke="#1677FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+                <defs>
+                  <linearGradient id="blue-fade" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="rgba(22, 119, 255, 0.06)" />
+                    <stop offset="100%" stopColor="rgba(22, 119, 255, 0)" />
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
           </CardContent>
         </Card>
 
         {/* Pending Payout */}
-        <Card className="rounded-2xl border-none shadow-sm min-w-[240px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-center">
-          <CardContent className="p-5 flex flex-col items-center justify-center text-center">
-            <div className="h-12 w-12 rounded-full bg-purple-50 flex items-center justify-center mb-3">
-              <Calendar className="h-6 w-6 text-purple-600" />
+        <Card className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] min-w-[240px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-center">
+          <CardContent className="p-5 flex items-start gap-4">
+            <div className="h-12 w-12 rounded-full bg-[#E9DEFF] flex items-center justify-center shrink-0">
+              <CalendarDays className="h-6 w-6 text-[#7956D8]" />
             </div>
-            <span className="text-[11px] font-bold text-gray-500 tracking-wide uppercase mb-2">Pending Payout</span>
-            <div className="text-[22px] font-bold text-gray-900 leading-none mb-3">₹{net.toLocaleString()}</div>
-            <p className="text-[11px] text-gray-500 font-medium mb-3">Payout every Monday</p>
-            <div className="bg-purple-50 text-purple-700 px-3 py-1.5 rounded-lg text-[10px] font-bold">
-              Next: {getNextMonday().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+            <div className="flex flex-col h-full w-full">
+              <div className="text-[12px] font-medium text-[#4B5563] mb-0.5">Pending Payout</div>
+              <div className="text-[20px] font-semibold text-[#111827] leading-none mb-2">₹{net.toLocaleString()}</div>
+              <p className="text-[11px] text-[#68727D] mb-3">Payout every Monday</p>
+              <div className="bg-[#F0E9FF] text-[#7956D8] px-2.5 py-1 rounded-[6px] text-[10px] font-medium w-fit">
+                Next: {getNextMonday().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+              </div>
             </div>
           </CardContent>
         </Card>
 
         {/* Total Settlements */}
-        <Card className="rounded-2xl border-none shadow-sm min-w-[240px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-center">
-          <CardContent className="p-5 flex flex-col items-center justify-center text-center">
-            <div className="h-12 w-12 rounded-full bg-yellow-50 flex items-center justify-center mb-3">
-              <Landmark className="h-6 w-6 text-yellow-600" />
+        <Card className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] min-w-[240px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-center">
+          <CardContent className="p-5 flex items-start gap-4">
+            <div className="h-12 w-12 rounded-full bg-[#FFE9C7] flex items-center justify-center shrink-0">
+              <Landmark className="h-6 w-6 text-[#F59E0B]" />
             </div>
-            <span className="text-[11px] font-bold text-gray-500 tracking-wide uppercase mb-2">Total Settlements</span>
-            <div className="text-[22px] font-bold text-gray-900 leading-none mb-3">₹{totalSettlementsAmount.toLocaleString()}</div>
-            <p className="text-[11px] text-gray-500 font-medium mb-3">{settlementsCount} Settlements completed</p>
-            {firstSettlementPeriod && (
-              <div className="bg-orange-50 text-orange-700 px-3 py-1.5 rounded-lg text-[10px] font-bold">
-                Since {firstSettlementPeriod}
+            <div className="flex flex-col h-full w-full">
+              <div className="text-[12px] font-medium text-[#4B5563] mb-0.5">Total Settlements</div>
+              <div className="text-[20px] font-semibold text-[#111827] leading-none mb-2">₹{totalSettlementsAmount.toLocaleString()}</div>
+              <p className="text-[11px] text-[#68727D] mb-3">{settlementsCount} Settlements completed</p>
+              <div className="bg-[#FFF3DE] text-[#C87900] px-2.5 py-1 rounded-[6px] text-[10px] font-medium w-fit">
+                Since {firstSettlementPeriod || "—"}
               </div>
-            )}
+            </div>
           </CardContent>
         </Card>
       </div>
+      <ScrollBar orientation="horizontal" className="hidden" />
+      </ScrollArea>
 
       {/* Middle Section */}
       <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
         
         {/* Left Column: Bank Details */}
-        <Card className="rounded-2xl border-none shadow-sm h-fit">
-          <CardHeader className="pb-4 pt-6 px-6 border-b border-gray-50 flex flex-row items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Landmark className="h-5 w-5 text-green-600" />
+        <Card className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] h-fit" id="bank-details">
+          <CardHeader className="pb-4 pt-6 px-6 border-b border-[#EEF0F2] flex flex-row items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Landmark className="h-6 w-6 text-[#16833A]" />
               <div>
-                <CardTitle className="text-[16px] font-bold text-gray-900">Bank & Payment Details</CardTitle>
-                <p className="text-[11px] text-gray-500 font-medium mt-0.5">Add or update your bank account and payment details for settlements.</p>
+                <CardTitle className="text-[16px] font-bold text-[#111827]">Bank & Payment Details</CardTitle>
+                <p className="text-[12px] text-[#4B5563] mt-0.5">Add or update your bank account and payment details for settlements.</p>
               </div>
             </div>
             {isVerified && (
-              <div className="hidden sm:flex items-center gap-1.5 bg-green-50 text-green-700 px-3 py-1.5 rounded-lg border border-green-100">
-                <CheckCircle2 className="h-4 w-4" />
-                <span className="text-[11px] font-bold">Verified</span>
+              <div className="hidden sm:flex items-center gap-1.5 bg-[#EAF6ED] text-[#287844] px-2.5 py-1 rounded-[6px]">
+                <Check className="h-4 w-4" />
+                <span className="text-[11px] font-semibold">Verified</span>
               </div>
             )}
           </CardHeader>
@@ -566,83 +474,84 @@ export default function PaymentsPageClient() {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
                 {/* Bank Name */}
-                <div className="space-y-2">
-                  <Label htmlFor="bankName" className="text-[13px] font-bold text-gray-700">Bank Name</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="bankName" className="text-[11px] font-medium text-[#18212B]">Bank Name</Label>
                   <div className="relative">
-                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input id="bankName" {...form.register("bankName")} placeholder="e.g. Indian Bank" className="pl-9 h-11 rounded-xl border-gray-200 text-[13px] font-medium" />
+                    <Landmark className="absolute left-3 top-1/2 -translate-y-1/2 h-[14px] w-[14px] text-[#68727D]" />
+                    <Input id="bankName" {...form.register("bankName")} placeholder="Indian Bank" className="pl-9 h-[36px] rounded-[7px] border-[#E1E5E9] text-[13px] text-[#18212B] placeholder:text-[#8A939D]" />
                   </div>
                 </div>
 
-                {/* Account Holder */}
-                <div className="space-y-2">
-                  <Label htmlFor="accountHolderName" className="text-[13px] font-bold text-gray-700">Account Holder Name</Label>
+                {/* Account Holder Name */}
+                <div className="space-y-1.5">
+                  <Label htmlFor="accountHolderName" className="text-[11px] font-medium text-[#18212B]">Account Holder Name</Label>
                   <div className="relative">
-                    <UserCircle2 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input id="accountHolderName" {...form.register("accountHolderName")} placeholder="e.g. Lakshmi S" className="pl-9 h-11 rounded-xl border-gray-200 text-[13px] font-medium" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 h-[14px] w-[14px] text-[#68727D]" />
+                    <Input id="accountHolderName" {...form.register("accountHolderName")} placeholder="Lakshmi S" className="pl-9 h-[36px] rounded-[7px] border-[#E1E5E9] text-[13px] text-[#18212B] placeholder:text-[#8A939D]" />
                   </div>
                 </div>
 
                 {/* Account Number */}
-                <div className="space-y-2">
-                  <Label htmlFor="bankAccountNumber" className="text-[13px] font-bold text-gray-700">Account Number</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="bankAccountNumber" className="text-[11px] font-medium text-[#18212B]">Account Number</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input id="bankAccountNumber" {...form.register("bankAccountNumber")} placeholder="e.g. 1234 5678 9012" className="pl-9 pr-9 h-11 rounded-xl border-gray-200 text-[13px] font-medium" />
-                    <Lock className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-green-600" />
+                    <LockKeyhole className="absolute left-3 top-1/2 -translate-y-1/2 h-[14px] w-[14px] text-[#68727D]" />
+                    <Input id="bankAccountNumber" {...form.register("bankAccountNumber")} placeholder="1234 5678 9012" className="pl-9 pr-9 h-[36px] rounded-[7px] border-[#E1E5E9] text-[13px] text-[#18212B] placeholder:text-[#8A939D]" />
+                    <LockKeyhole className="absolute right-3 top-1/2 -translate-y-1/2 h-[14px] w-[14px] text-[#16833A]" />
                   </div>
                 </div>
 
                 {/* IFSC Code */}
-                <div className="space-y-2">
-                  <Label htmlFor="ifscCode" className="text-[13px] font-bold text-gray-700">IFSC Code</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="ifscCode" className="text-[11px] font-medium text-[#18212B]">IFSC Code</Label>
                   <div className="relative">
-                    <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input id="ifscCode" {...form.register("ifscCode")} placeholder="e.g. IDIB000T123" className="pl-9 h-11 rounded-xl border-gray-200 text-[13px] font-medium" />
+                    <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-[14px] w-[14px] text-[#68727D]" />
+                    <Input id="ifscCode" {...form.register("ifscCode")} placeholder="IDIB000T123" className="pl-9 h-[36px] rounded-[7px] border-[#E1E5E9] text-[13px] text-[#18212B] placeholder:text-[#8A939D]" />
                   </div>
                 </div>
 
                 {/* UPI ID */}
-                <div className="space-y-2">
-                  <Label htmlFor="upiId" className="text-[13px] font-bold text-gray-700">UPI ID</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="upiId" className="text-[11px] font-medium text-[#18212B]">UPI ID</Label>
                   <div className="relative">
-                    <SmartphoneNfc className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input id="upiId" {...form.register("upiId")} placeholder="e.g. lakshmi.kitchen@upi" className="pl-9 h-11 rounded-xl border-gray-200 text-[13px] font-medium" />
+                    <AtSign className="absolute left-3 top-1/2 -translate-y-1/2 h-[14px] w-[14px] text-[#68727D]" />
+                    <Input id="upiId" {...form.register("upiId")} placeholder="lakshmi.kitchen@upi" className="pl-9 h-[36px] rounded-[7px] border-[#E1E5E9] text-[13px] text-[#18212B] placeholder:text-[#8A939D]" />
                   </div>
                 </div>
 
                 {/* GPay Number */}
-                <div className="space-y-2">
-                  <Label htmlFor="gpayNumber" className="text-[13px] font-bold text-gray-700">GPay / PhonePe Number</Label>
-                  <div className="relative flex items-center">
-                    <div className="absolute left-3 flex gap-1 items-center z-10 bg-white">
-                      <span className="h-4 w-4 rounded-full bg-[#4285F4] flex items-center justify-center text-white text-[8px] font-bold">G</span>
+                <div className="space-y-1.5">
+                  <Label htmlFor="gpayNumber" className="text-[11px] font-medium text-[#18212B]">GPay / PhonePe Number</Label>
+                  <div className="relative">
+                    <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center justify-center">
+                       <span className="font-bold text-[#EA4335] text-[12px] leading-none" style={{fontFamily: 'sans-serif'}}>G</span>
                     </div>
-                    <Input id="gpayNumber" {...form.register("gpayNumber")} placeholder="e.g. +91 98765 43210" className="pl-10 h-11 rounded-xl border-gray-200 text-[13px] font-medium w-full" />
+                    <Input id="gpayNumber" {...form.register("gpayNumber")} placeholder="+91 98765 43210" className="pl-9 h-[36px] rounded-[7px] border-[#E1E5E9] text-[13px] text-[#18212B] placeholder:text-[#8A939D]" />
                   </div>
                 </div>
 
                 {/* Phone Number */}
-                <div className="space-y-2">
-                  <Label htmlFor="phoneNumber" className="text-[13px] font-bold text-gray-700">Phone Number</Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="phoneNumber" className="text-[11px] font-medium text-[#18212B]">Phone Number</Label>
                   <div className="relative">
-                    <Smartphone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-                    <Input id="phoneNumber" {...form.register("phoneNumber")} placeholder="e.g. +91 98765 43210" className="pl-9 h-11 rounded-xl border-gray-200 text-[13px] font-medium" />
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-[14px] w-[14px] text-[#68727D]" />
+                    <Input id="phoneNumber" {...form.register("phoneNumber")} placeholder="+91 98765 43210" className="pl-9 h-[36px] rounded-[7px] border-[#E1E5E9] text-[13px] text-[#18212B] placeholder:text-[#8A939D]" />
                   </div>
                 </div>
               </div>
 
               {/* Security Banner & Buttons */}
-              <div className="flex flex-col lg:flex-row items-center justify-between gap-4 pt-4 border-t border-gray-50">
-                <div className="flex items-center gap-2 bg-[#F0FDF4] px-4 py-3 rounded-xl border border-[#DCFCE7] w-full lg:w-auto">
-                  <ShieldCheck className="h-5 w-5 text-[#166534]" />
-                  <span className="text-[12px] font-bold text-[#166534]">Your payment details are secure and encrypted</span>
+              <div className="flex flex-col lg:flex-row items-center justify-between gap-4 pt-6">
+                <div className="flex items-center gap-2 bg-[#F1F8F2] px-4 h-10 rounded-[8px] w-full lg:w-auto">
+                  <ShieldCheck className="h-[18px] w-[18px] text-[#287844]" />
+                  <span className="text-[12px] font-medium text-[#287844]">Your payment details are secure and encrypted</span>
                 </div>
                 <div className="flex items-center gap-3 w-full lg:w-auto">
-                  <Button type="button" variant="outline" onClick={() => form.reset()} className="flex-1 lg:flex-none h-11 px-6 rounded-xl border-gray-200 text-gray-600 font-bold hover:bg-gray-50 shadow-sm">
+                  <Button type="button" variant="outline" onClick={() => form.reset()} className="flex-1 lg:flex-none h-[36px] px-6 rounded-[7px] border-[#D9DEE3] text-[#374151] font-medium bg-[#FFFFFF] hover:bg-gray-50">
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={saveMutation.isPending} className="flex-1 lg:flex-none h-11 px-6 rounded-xl bg-[#FF6B00] hover:bg-[#E66000] text-white font-bold shadow-sm">
+                  <Button type="submit" disabled={saveMutation.isPending} className="flex-1 lg:flex-none h-[36px] px-6 rounded-[7px] bg-[#FF4D00] hover:bg-[#E94300] text-[#FFFFFF] font-medium shadow-[0_1px_3px_rgba(255,77,0,.12)] gap-2">
+                    <Save className="h-[14px] w-[14px]" />
                     {saveMutation.isPending ? "Saving..." : "Save Changes"}
                   </Button>
                 </div>
@@ -656,60 +565,60 @@ export default function PaymentsPageClient() {
         <div className="space-y-6">
           
           {/* Payout Information */}
-          <Card className="rounded-2xl border-none shadow-sm h-fit">
-            <CardHeader className="pb-4 pt-6 px-6 border-b border-gray-50 flex flex-row items-center gap-2">
-              <IndianRupee className="h-5 w-5 text-green-600" />
-              <CardTitle className="text-[16px] font-bold text-gray-900">Payout Information</CardTitle>
+          <Card className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] h-fit">
+            <CardHeader className="pb-4 pt-6 px-6 flex flex-row items-center gap-3">
+              <div className="h-6 w-6 rounded-full border border-[#A8D3B3] flex items-center justify-center">
+                <IndianRupee className="h-3.5 w-3.5 text-[#16833A]" />
+              </div>
+              <CardTitle className="text-[16px] font-bold text-[#111827]">Payout Information</CardTitle>
             </CardHeader>
-            <CardContent className="p-6 space-y-4">
+            <CardContent className="p-6 pt-0 space-y-4">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-500">
-                  <Calendar className="h-4 w-4" /> <span className="text-[12px] font-medium">Settlement Cycle</span>
+                <div className="flex items-center gap-3 text-[#4B5563]">
+                  <CalendarClock className="h-4 w-4 text-[#68727D]" /> <span className="text-[12px]">Settlement Cycle</span>
                 </div>
-                <span className="text-[12px] font-bold text-gray-900">Weekly (Every Monday)</span>
+                <span className="text-[12px] font-medium text-[#374151]">Weekly (Every Monday)</span>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-500">
-                  <IndianRupee className="h-4 w-4" /> <span className="text-[12px] font-medium">Minimum Payout</span>
+                <div className="flex items-center gap-3 text-[#4B5563]">
+                  <WalletMinimal className="h-4 w-4 text-[#68727D]" /> <span className="text-[12px]">Minimum Payout</span>
                 </div>
-                <span className="text-[12px] font-bold text-gray-900">₹500</span>
+                <span className="text-[12px] font-medium text-[#374151]">₹500</span>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-500">
-                  <Landmark className="h-4 w-4" /> <span className="text-[12px] font-medium">Payout Method</span>
+                <div className="flex items-center gap-3 text-[#4B5563]">
+                  <MapPin className="h-4 w-4 text-[#68727D]" /> <span className="text-[12px]">Payout Method</span>
                 </div>
-                <span className="text-[12px] font-bold text-gray-900">Bank Transfer / UPI</span>
+                <span className="text-[12px] font-medium text-[#374151]">Bank Transfer / UPI</span>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-500">
-                  <Clock className="h-4 w-4" /> <span className="text-[12px] font-medium">Processing Time</span>
+                <div className="flex items-center gap-3 text-[#4B5563]">
+                  <Clock3 className="h-4 w-4 text-[#68727D]" /> <span className="text-[12px]">Processing Time</span>
                 </div>
-                <span className="text-[12px] font-bold text-gray-900">1-2 Business Days</span>
+                <span className="text-[12px] font-medium text-[#374151]">1-2 Business Days</span>
               </div>
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-gray-500">
-                  <FileText className="h-4 w-4" /> <span className="text-[12px] font-medium">TDS Deduction</span>
+                <div className="flex items-center gap-3 text-[#4B5563]">
+                  <BadgePercent className="h-4 w-4 text-[#68727D]" /> <span className="text-[12px]">TDS Deduction</span>
                 </div>
-                <span className="text-[12px] font-bold text-gray-900">As per government rules</span>
+                <span className="text-[12px] font-medium text-[#374151]">As per government rules</span>
               </div>
             </CardContent>
           </Card>
 
           {/* Earnings Overview Donut Chart */}
-          <Card className="rounded-2xl border-none shadow-sm h-fit flex flex-col">
-            <CardHeader className="pb-4 pt-6 px-6 border-b border-gray-50 flex flex-row items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="h-5 w-5 bg-green-100 rounded flex items-center justify-center">
-                  <span className="h-2 w-2 rounded-full bg-green-600" />
-                </div>
-                <CardTitle className="text-[16px] font-bold text-gray-900">Earnings Overview</CardTitle>
+          <Card className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] h-fit flex flex-col">
+            <CardHeader className="pb-4 pt-6 px-6 flex flex-row items-center justify-between">
+              <div className="flex items-center gap-3">
+                <WalletCards className="h-5 w-5 text-[#16833A]" />
+                <CardTitle className="text-[16px] font-bold text-[#111827]">Earnings Overview</CardTitle>
               </div>
-              <div className="text-[11px] font-bold text-gray-600 bg-gray-50 px-2 py-1 rounded border border-gray-100 flex items-center gap-1 cursor-pointer">
-                This Month <ChevronDown className="h-3 w-3" />
+              <div className="text-[11px] font-medium text-[#4B5563] bg-[#FFFFFF] px-2.5 py-1.5 rounded-[7px] border border-[#E1E5E9] flex items-center gap-1.5 cursor-pointer">
+                This Month <ChevronDown className="h-3 w-3 text-[#68727D]" />
               </div>
             </CardHeader>
-            <CardContent className="p-6 flex-1 flex flex-col md:flex-row items-center gap-6">
-              <div className="w-32 h-32 shrink-0">
+            <CardContent className="p-6 pt-0 flex flex-row items-center gap-6">
+              <div className="w-28 h-28 shrink-0 relative">
                  <ChartPieDonut
                   data={earningsData}
                   config={earningsConfig}
@@ -718,22 +627,31 @@ export default function PaymentsPageClient() {
                   dataKey="amount"
                   nameKey="type"
                 />
+                <div className="absolute inset-0 bg-[#FFFFFF] rounded-full m-[18px] pointer-events-none"></div>
               </div>
-              <div className="flex-1 space-y-3 w-full">
-                <div className="flex items-center justify-between text-[11px]">
-                  <div className="flex items-center gap-2 text-gray-600 font-medium">
-                    <span className="h-2 w-2 rounded-full bg-[#10B981]" /> Paid
+              <div className="flex-1 space-y-3.5 w-full">
+                <div className="flex items-center justify-between text-[12px]">
+                  <div className="flex items-center gap-2 text-[#374151]">
+                    <span className="h-2 w-2 rounded-full bg-[#087A2B]" /> Food Orders
                   </div>
-                  <div className="font-bold text-gray-900 flex items-center gap-1">
-                    ₹{paidAmount.toLocaleString()} <span className="text-gray-400 font-medium">({earningsPct(paidAmount)})</span>
+                  <div className="font-medium text-[#374151] flex items-center gap-1.5">
+                    ₹{foodOrders.toLocaleString()} <span className="text-[#68727D]">({earningsPct(foodOrders)})</span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between text-[11px]">
-                  <div className="flex items-center gap-2 text-gray-600 font-medium">
-                    <span className="h-2 w-2 rounded-full bg-[#F97316]" /> Pending
+                <div className="flex items-center justify-between text-[12px]">
+                  <div className="flex items-center gap-2 text-[#374151]">
+                    <span className="h-2 w-2 rounded-full bg-[#FF5A00]" /> Delivery Charges
                   </div>
-                  <div className="font-bold text-gray-900 flex items-center gap-1">
-                    ₹{pendingAmount.toLocaleString()} <span className="text-gray-400 font-medium">({earningsPct(pendingAmount)})</span>
+                  <div className="font-medium text-[#374151] flex items-center gap-1.5">
+                    ₹{deliveryCharges.toLocaleString()} <span className="text-[#68727D]">({earningsPct(deliveryCharges)})</span>
+                  </div>
+                </div>
+                <div className="flex items-center justify-between text-[12px]">
+                  <div className="flex items-center gap-2 text-[#374151]">
+                    <span className="h-2 w-2 rounded-full bg-[#2385F5]" /> Other Earnings
+                  </div>
+                  <div className="font-medium text-[#374151] flex items-center gap-1.5">
+                    ₹{otherEarnings.toLocaleString()} <span className="text-[#68727D]">({earningsPct(otherEarnings)})</span>
                   </div>
                 </div>
               </div>
@@ -741,80 +659,62 @@ export default function PaymentsPageClient() {
           </Card>
 
           {/* Promo Card */}
-          <div className="bg-gradient-to-br from-[#F0FDF4] to-white rounded-2xl p-6 border border-[#DCFCE7] shadow-sm relative overflow-hidden flex flex-col items-start justify-center h-[180px]">
-             <div className="w-[60%] z-10 relative">
-               <h3 className="text-[16px] font-bold text-gray-900 leading-tight mb-2">
+          <div className="bg-[#F3FAF5] rounded-[10px] p-6 border-none shadow-[0_1px_2px_rgba(16,24,40,.025)] relative overflow-hidden flex flex-col items-start justify-center min-h-[160px]">
+             <div className="w-[65%] z-10 relative">
+               <h3 className="text-[18px] font-bold text-[#111827] leading-tight mb-2">
                  Get paid on time,<br/>every time!
                </h3>
-               <p className="text-[11px] text-gray-600 font-medium mb-4 leading-relaxed">
+               <p className="text-[12px] text-[#4B5563] font-medium mb-4 leading-relaxed">
                  Keep your bank details updated to receive payments without delay.
                </p>
-               <Button onClick={scrollToBankDetails} className="bg-[#166534] hover:bg-[#14532D] text-white h-9 px-4 rounded-lg text-[11px] font-bold shadow-sm">
-                  Learn More <ChevronRight className="h-3 w-3 ml-1" />
+               <Button onClick={scrollToBankDetails} className="bg-[#006B2B] hover:bg-[#00551F] text-[#FFFFFF] h-[32px] px-4 rounded-[7px] text-[12px] font-medium shadow-none">
+                  Learn More <ArrowUp className="h-3 w-3 ml-1 rotate-45" />
                </Button>
              </div>
              
-             {/* Decorative Graphic */}
-             <div className="absolute -right-4 -bottom-4 z-0">
-               <div className="relative">
-                 {/* Leaves */}
-                 <div className="absolute top-10 -left-6 w-8 h-12 bg-[#86EFAC] rounded-full origin-bottom-right -rotate-45" />
-                 <div className="absolute top-16 -left-12 w-8 h-16 bg-[#166534] rounded-full origin-bottom-right -rotate-45" />
-                 <div className="absolute top-10 -right-2 w-8 h-12 bg-[#86EFAC] rounded-full origin-bottom-left rotate-45" />
-                 <div className="absolute top-16 -right-8 w-8 h-16 bg-[#166534] rounded-full origin-bottom-left rotate-45" />
-                 
-                 {/* Phone */}
-                 <div className="w-20 h-40 bg-white border-4 border-gray-900 rounded-3xl relative z-10 shadow-lg flex flex-col items-center justify-center p-2">
-                   <div className="w-8 h-1 bg-gray-200 rounded-full absolute top-2" />
-                   <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                     <IndianRupee className="h-5 w-5 text-green-600" />
-                   </div>
-                   <div className="w-12 h-1.5 bg-gray-100 rounded-full mb-2" />
-                   <div className="w-8 h-1.5 bg-gray-100 rounded-full" />
-                 </div>
-               </div>
-             </div>
+             <Image src="/kitchen/smartphone.webp" alt="Smartphone" width={192} height={192} className="absolute right-0 -bottom-6 h-48 w-48 object-contain z-0" />
           </div>
 
         </div>
       </div>
 
       {/* Bottom Section: Settlement History */}
-      <Card className="rounded-2xl border-none shadow-sm overflow-hidden">
-        <CardHeader className="pb-4 pt-6 px-6 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white">
-          <div className="flex items-center gap-2">
-            <Receipt className="h-5 w-5 text-green-600" />
+      <Card className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] overflow-hidden">
+        <CardHeader className="pb-4 pt-6 px-6 border-b border-[#EEF0F2] flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white">
+          <div className="flex items-center gap-3">
+            <WalletCards className="h-6 w-6 text-[#16833A]" />
             <div>
-              <CardTitle className="text-[16px] font-bold text-gray-900">Settlement History</CardTitle>
-              <p className="text-[11px] text-gray-500 font-medium mt-0.5">View your past settlements and payout details.</p>
+              <CardTitle className="text-[16px] font-bold text-[#111827]">Settlement History</CardTitle>
+              <p className="text-[12px] text-[#4B5563] mt-0.5">View your past settlements and payout details.</p>
             </div>
           </div>
-          <Button variant="outline" onClick={downloadStatement} disabled={settlements.length === 0} className="border-green-200 text-green-700 bg-white hover:bg-green-50 h-10 px-4 rounded-xl font-bold text-[12px] shadow-sm w-full sm:w-auto">
+          <Button variant="outline" onClick={downloadStatement} disabled={settlements.length === 0} className="border-[#A8D3B3] text-[#16702E] bg-[#FFFFFF] hover:bg-[#F3FAF5] h-[36px] px-4 rounded-[7px] font-medium text-[12px] shadow-[0_1px_2px_rgba(16,24,40,.02)] w-full sm:w-auto">
             <Download className="h-4 w-4 mr-2" /> Download Statement
           </Button>
         </CardHeader>
         
-        <CardContent className="p-0 bg-white overflow-x-auto">
+        <CardContent className="p-0 bg-white">
           {settlements.length === 0 ? (
-            <div className="py-16 flex flex-col items-center justify-center text-gray-400">
-              <Receipt className="h-12 w-12 mb-3 opacity-20" />
-              <p className="text-[14px] font-medium text-gray-500">No settlements yet.</p>
+            <div className="py-16 flex flex-col items-center justify-center text-[#8A939D]">
+              <WalletCards className="h-12 w-12 mb-3 opacity-30" />
+              <p className="text-[13px] font-medium">No settlements yet.</p>
             </div>
           ) : (
             <>
-              <Table className="w-full min-w-[900px]">
+              <ScrollArea className="w-full">
+                <Table className="w-full min-w-[900px]">
                 <TableHeader>
                   {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow key={headerGroup.id} className="bg-gray-50/50 hover:bg-gray-50/50 border-b border-gray-100">
+                    <TableRow key={headerGroup.id} className="bg-[#FFFFFF] hover:bg-[#FFFFFF] border-b border-[#EEF0F2]">
                       {headerGroup.headers.map((header) => (
                         <TableHead
                           key={header.id}
-                          className={`font-bold text-[12px] text-gray-600 h-12 ${header.id === "period" ? "px-6" : ""}`}
+                          className={`font-medium text-[12px] text-[#374151] h-[44px] ${header.id === "period" ? "px-6" : ""}`}
                         >
                           {header.isPlaceholder ? null : (
                             <button
                               type="button"
-                              className={`inline-flex items-center gap-1 uppercase tracking-wide ${
+                              className={`inline-flex items-center gap-1 ${
                                 header.column.getCanSort() ? "cursor-pointer select-none" : ""
                               }`}
                               onClick={header.column.getToggleSortingHandler()}
@@ -838,9 +738,9 @@ export default function PaymentsPageClient() {
                 </TableHeader>
                 <TableBody>
                   {table.getRowModel().rows.map((row) => (
-                    <TableRow key={row.id} className="hover:bg-gray-50/50 transition-colors border-b border-gray-50">
+                    <TableRow key={row.id} className="hover:bg-gray-50/50 transition-colors border-b border-[#EEF0F2]">
                       {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id} className={cell.column.id === "period" || cell.column.id === "transactionId" ? "px-6 py-4" : "py-4"}>
+                         <TableCell key={cell.id} className={cell.column.id === "period" || cell.column.id === "transactionId" ? "px-6 py-3.5" : "py-3.5"}>
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>
                       ))}
@@ -848,34 +748,61 @@ export default function PaymentsPageClient() {
                   ))}
                 </TableBody>
               </Table>
+              <ScrollBar orientation="horizontal" />
+              </ScrollArea>
               
               {/* Pagination */}
-              <div className="flex items-center justify-between p-4 border-t border-gray-50 flex-col sm:flex-row gap-4">
-                <span className="text-[12px] font-medium text-gray-500 px-2">
-                  Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, settlements.length)} of {settlements.length} settlements
+              <div className="flex items-center justify-between p-4 border-t border-[#EEF0F2] flex-col sm:flex-row gap-4 bg-white">
+                <span className="text-[12px] font-medium text-[#68727D] px-2 whitespace-nowrap">
+                  Showing {(currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, settlements.length)} of {settlements.length}
                 </span>
-                <div className="flex items-center gap-2">
-                  <Button variant="outline" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} className="h-8 w-8 p-0 rounded-lg border-gray-200 text-gray-600 hover:bg-gray-50">
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  {Array.from({ length: totalPages }).map((_, i) => (
-                    <Button
-                      key={i}
-                      variant="outline"
-                      onClick={() => setPage(i + 1)}
-                      className={`h-8 w-8 p-0 rounded-lg font-bold ${
-                        currentPage === i + 1
-                          ? "bg-[#166534] text-white hover:text-white hover:bg-[#14532D]"
-                          : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                      }`}
-                    >
-                      {i + 1}
-                    </Button>
-                  ))}
-                  <Button variant="outline" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="h-8 w-8 p-0 rounded-lg border-gray-200 text-gray-600 hover:bg-gray-50">
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
+                <Pagination className="w-auto mx-0 sm:mx-0">
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        href="#" 
+                        onClick={(e) => {
+                          e.preventDefault()
+                          if (currentPage > 1) setPage((p) => p - 1)
+                        }}
+                        className={`h-7 px-2 rounded-[6px] border border-[#E1E5E9] text-[12px] font-medium text-[#374151] hover:bg-gray-50 bg-[#FFFFFF] ${currentPage === 1 ? "opacity-50 pointer-events-none" : ""}`}
+                        text="Prev"
+                      />
+                    </PaginationItem>
+                    
+                    {Array.from({ length: totalPages }).map((_, i) => (
+                      <PaginationItem key={i}>
+                        <PaginationLink 
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault()
+                            setPage(i + 1)
+                          }}
+                          isActive={currentPage === i + 1}
+                          className={`h-7 w-7 p-0 rounded-[6px] font-medium text-[12px] ${
+                            currentPage === i + 1
+                              ? "bg-[#006B2B] text-white hover:text-white hover:bg-[#00551F] border-[#006B2B]"
+                              : "border border-[#E1E5E9] text-[#374151] hover:bg-gray-50 bg-[#FFFFFF]"
+                          }`}
+                        >
+                          {i + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+
+                    <PaginationItem>
+                      <PaginationNext 
+                        href="#" 
+                        onClick={(e) => {
+                          e.preventDefault()
+                          if (currentPage < totalPages) setPage((p) => p + 1)
+                        }}
+                        className={`h-7 px-2 rounded-[6px] border border-[#E1E5E9] text-[12px] font-medium text-[#374151] hover:bg-gray-50 bg-[#FFFFFF] ${currentPage === totalPages ? "opacity-50 pointer-events-none" : ""}`}
+                        text="Next"
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
               </div>
             </>
           )}

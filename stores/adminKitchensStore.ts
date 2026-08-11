@@ -8,6 +8,7 @@ import {
   updateKitchenPartnerStatus,
   updateKitchenImage,
   updateKitchenOfferText,
+  updateKitchenCuisines,
 } from "@/actions/admin/admin-partners";
 
 /** Shape of a kitchen partner row as returned by getAdminKitchenPartners. */
@@ -137,6 +138,20 @@ export function useUpdateKitchenStatusMutation() {
   return useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) =>
       updateKitchenPartnerStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-kitchen-partners"] });
+    },
+  });
+}
+
+/**
+ * Updates a kitchen's cuisine categories. Invalidates the partners query on success.
+ */
+export function useUpdateKitchenCuisinesMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ kitchenId, categoryIds }: { kitchenId: string; categoryIds: string[] }) =>
+      updateKitchenCuisines(kitchenId, categoryIds),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-kitchen-partners"] });
     },

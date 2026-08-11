@@ -12,13 +12,8 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
   appName: "RRC Kitchen",
-  baseURL: {
-    allowedHosts: [
-      "localhost:3000",
-      "*.vercel.app",
-    ],
-    protocol: process.env.NODE_ENV === "development" ? "http" : "https",
-  },
+  baseURL: process.env.BETTER_AUTH_URL || "http://localhost:3000",
+  trustedHost: true,
   emailAndPassword: {
     enabled: true,
   },

@@ -22,10 +22,12 @@ import {
   X,
   Star,
   Info,
+  List,
+  Flag,
+  Calendar,
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -94,10 +96,10 @@ function priorityText(priority: string) {
 
 function priorityColor(priority: string) {
   return priority === "HIGH"
-    ? "text-orange-500"
+    ? "text-[#EF4444]"
     : priority === "MEDIUM"
-      ? "text-yellow-600"
-      : "text-slate-500";
+      ? "text-[#D97706]"
+      : "text-[#06701E]";
 }
 
 function popularityLabel(item: CravingsMenuOption): "High" | "Medium" | "Low" {
@@ -108,10 +110,10 @@ function popularityLabel(item: CravingsMenuOption): "High" | "Medium" | "Low" {
 
 function popularityClasses(popularity: string) {
   return popularity === "High"
-    ? "bg-emerald-50 text-emerald-500"
+    ? "bg-[#EAF6ED] text-[#06701E]"
     : popularity === "Medium"
-      ? "bg-yellow-50 text-yellow-600"
-      : "bg-slate-100 text-slate-600";
+      ? "bg-[#FFF7E8] text-[#D97706]"
+      : "bg-[#F1F5F9] text-[#475569]";
 }
 
 function formatUpdatedAt(dateStr: string) {
@@ -127,7 +129,7 @@ function formatUpdatedAt(dateStr: string) {
 function RuleDetailSkeleton() {
   return (
     <div className="flex flex-col gap-5 animate-in fade-in-0 duration-300">
-      <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+      <div className="flex items-center justify-between pb-4 border-b border-[#EEF1F3]">
         <Skeleton className="h-6 w-56 rounded-md" />
         <Skeleton className="h-9 w-28 rounded-lg" />
       </div>
@@ -141,7 +143,7 @@ function RuleDetailSkeleton() {
         </div>
         <Skeleton className="h-64 w-full rounded-xl" />
       </div>
-      <div className="pt-4 border-t border-slate-100">
+      <div className="pt-4 border-t border-[#EEF1F3]">
         <div className="flex items-end justify-between mb-4">
           <div className="space-y-2">
             <Skeleton className="h-5 w-44 rounded-md" />
@@ -200,16 +202,16 @@ function ItemPickerDialog({ open, onOpenChange, selectedIds, onToggle, title, lo
 
         <div className="flex flex-col sm:flex-row gap-2 mb-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#94A3B8]" />
             <Input
               placeholder="Search menu items..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-9 bg-white border-slate-200"
+              className="pl-9 bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] h-10 text-[#111827] focus-visible:ring-1 focus-visible:ring-[#06701E]"
             />
           </div>
           <Select value={kitchenFilter} onValueChange={setKitchenFilter}>
-            <SelectTrigger className="w-full sm:w-[190px] border-slate-200 bg-white">
+            <SelectTrigger className="w-full sm:w-[190px] bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] h-10 text-[#111827]">
               <SelectValue placeholder="All Kitchens" />
             </SelectTrigger>
             <SelectContent>
@@ -222,7 +224,7 @@ function ItemPickerDialog({ open, onOpenChange, selectedIds, onToggle, title, lo
             </SelectContent>
           </Select>
           <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-full sm:w-[140px] border-slate-200 bg-white">
+            <SelectTrigger className="w-full sm:w-[140px] bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] h-10 text-[#111827]">
               <SelectValue placeholder="Food Type" />
             </SelectTrigger>
             <SelectContent>
@@ -233,7 +235,7 @@ function ItemPickerDialog({ open, onOpenChange, selectedIds, onToggle, title, lo
           </Select>
         </div>
 
-        <div className="flex-1 overflow-y-auto border border-slate-200 rounded-lg divide-y divide-slate-100 bg-white">
+        <div className="flex-1 overflow-y-auto border border-[#EEF1F3] rounded-[10px] divide-y divide-[#EEF1F3] bg-white">
           {loading && menuOptions.length === 0 ? (
             <div className="p-4 space-y-4">
               {[0, 1, 2, 3, 4].map((i) => (
@@ -249,7 +251,7 @@ function ItemPickerDialog({ open, onOpenChange, selectedIds, onToggle, title, lo
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="py-12 text-center text-sm text-slate-500">
+            <div className="py-12 text-center text-[14px] font-medium text-[#94A3B8]">
               No menu items match your search.
             </div>
           ) : (
@@ -263,44 +265,44 @@ function ItemPickerDialog({ open, onOpenChange, selectedIds, onToggle, title, lo
                   onClick={() => onToggle(item.id)}
                   className={cn(
                     "w-full flex items-center gap-3 p-3 text-left transition-colors animate-in fade-in-0 duration-200",
-                    checked ? "bg-emerald-50/60" : "hover:bg-slate-50"
+                    checked ? "bg-[#F8FCF9]" : "hover:bg-[#F8FAFC]"
                   )}
                 >
                   <Checkbox
                     checked={checked}
                     onCheckedChange={() => onToggle(item.id)}
                     onClick={(e) => e.stopPropagation()}
-                    className="rounded bg-white data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
+                    className="rounded bg-white data-[state=checked]:bg-[#06701E] data-[state=checked]:border-[#06701E]"
                   />
-                  <div className="w-10 h-10 rounded-md bg-slate-100 overflow-hidden relative flex-shrink-0">
+                  <div className="w-10 h-10 rounded-[8px] bg-[#FFF2EB] overflow-hidden relative flex-shrink-0">
                     {item.imageUrl ? (
                       <Image src={item.imageUrl} alt={item.name} width={40} height={40} className="w-full h-full object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <ShoppingBag className="w-4 h-4 text-slate-300" />
+                        <ShoppingBag className="w-4 h-4 text-[#FF4B04]/40" />
                       </div>
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="font-semibold text-slate-900 text-sm flex items-center gap-2">
+                    <p className="font-bold text-[#111827] text-[14px] flex items-center gap-2">
                       {item.name}
                       {item.isBestseller && (
-                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">
-                          <Star className="w-2.5 h-2.5 fill-current" /> Bestseller
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#FF4B04] bg-[#FFF2EB] px-1.5 py-0.5 rounded-[4px]">
+                          <Star className="w-[10px] h-[10px] fill-current" /> Bestseller
                         </span>
                       )}
                     </p>
-                    <p className="text-xs text-slate-500 truncate">{item.kitchenName}</p>
+                    <p className="text-[12px] font-medium text-[#475569] truncate">{item.kitchenName}</p>
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     <div className="flex items-center gap-1.5">
-                      <div className={cn("w-2 h-2 rounded-full", item.foodType === "VEG" ? "bg-emerald-500" : "bg-red-500")} />
-                      <span className="text-xs text-slate-600">{item.foodType === "VEG" ? "Veg" : "Non-Veg"}</span>
+                      <div className={cn("w-2 h-2 rounded-full", item.foodType === "VEG" ? "bg-[#06701E]" : "bg-[#EF4444]")} />
+                      <span className="text-[13px] font-medium text-[#475569]">{item.foodType === "VEG" ? "Veg" : "Non-Veg"}</span>
                     </div>
-                    <span className={cn("text-[11px] font-semibold px-2 py-0.5 rounded-full", popularityClasses(popularity))}>
+                    <span className={cn("text-[11px] font-bold px-2.5 py-1 rounded-full", popularityClasses(popularity))}>
                       {popularity}
                     </span>
-                    <span className="text-sm font-semibold text-slate-900">₹{item.price}</span>
+                    <span className="text-[14px] font-bold text-[#111827]">₹{item.price}</span>
                   </div>
                 </button>
               );
@@ -312,13 +314,13 @@ function ItemPickerDialog({ open, onOpenChange, selectedIds, onToggle, title, lo
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="border-slate-200"
+            className="border-[#DDE3E8] text-[#334155] rounded-[8px]"
           >
             Cancel
           </Button>
           <Button
             onClick={() => onOpenChange(false)}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+            className="bg-[#06701E] hover:bg-[#045A18] text-white rounded-[8px]"
           >
             Done ({selectedIds.length} selected)
           </Button>
@@ -436,25 +438,25 @@ function RuleDialog({ open, onOpenChange, loading }: RuleDialogProps) {
         <div className="space-y-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-700">
-                Rule Name <span className="text-red-500">*</span>
+              <Label className="text-[14px] font-semibold text-[#334155]">
+                Rule Name <span className="text-[#FF4B04]">*</span>
               </Label>
               <Input
                 placeholder="e.g. Biryani Orders"
                 value={draft.name}
                 onChange={(e) => updateDraft({ name: e.target.value })}
-                className="border-slate-200"
+                className="bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] h-10 text-[#111827] focus-visible:ring-1 focus-visible:ring-[#06701E]"
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-700">
+              <Label className="text-[14px] font-semibold text-[#334155]">
                 Priority
               </Label>
               <Select
                 value={draft.priority}
                 onValueChange={(value) => updateDraft({ priority: value as "HIGH" | "MEDIUM" | "LOW" })}
               >
-                <SelectTrigger className="border-slate-200">
+                <SelectTrigger className="bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] h-10 text-[#111827]">
                   <SelectValue placeholder="Select priority" />
                 </SelectTrigger>
                 <SelectContent>
@@ -463,7 +465,7 @@ function RuleDialog({ open, onOpenChange, loading }: RuleDialogProps) {
                   <SelectItem value="LOW">Low</SelectItem>
                 </SelectContent>
               </Select>
-              <p className="text-[10px] text-slate-500 mt-1">
+              <p className="text-[12px] text-[#64748B] mt-1">
                 Higher priority rules are applied first
               </p>
             </div>
@@ -471,8 +473,8 @@ function RuleDialog({ open, onOpenChange, loading }: RuleDialogProps) {
 
           {/* Trigger item picker */}
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-slate-700">
-              Trigger Menu Item <span className="text-red-500">*</span>
+            <Label className="text-[14px] font-semibold text-[#334155]">
+              Trigger Menu Item <span className="text-[#FF4B04]">*</span>
             </Label>
             <div className="relative">
               <Input
@@ -483,17 +485,17 @@ function RuleDialog({ open, onOpenChange, loading }: RuleDialogProps) {
                   setTriggerOpen(true);
                 }}
                 onFocus={() => setTriggerOpen(true)}
-                className="border-slate-200 pr-9"
+                className="bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] h-10 pr-9 text-[#111827] focus-visible:ring-1 focus-visible:ring-[#06701E]"
               />
               {triggerItem && (
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1.5">
-                  <span className="text-[11px] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full max-w-[160px] truncate">
+                  <span className="text-[11px] font-bold text-[#06701E] bg-[#EAF6ED] px-2 py-0.5 rounded-full max-w-[160px] truncate">
                     {triggerItem.name}
                   </span>
                   <button
                     type="button"
                     onClick={() => updateDraft({ triggerItemId: "", kitchenId: "" })}
-                    className="text-slate-400 hover:text-slate-600"
+                    className="text-[#94A3B8] hover:text-[#475569]"
                   >
                     <X className="w-4 h-4" />
                   </button>
@@ -501,7 +503,7 @@ function RuleDialog({ open, onOpenChange, loading }: RuleDialogProps) {
               )}
             </div>
             {triggerOpen && (
-              <div className="mt-1 border border-slate-200 rounded-lg bg-white shadow-lg max-h-56 overflow-y-auto z-10 animate-in fade-in-0 slide-in-from-top-1 duration-200">
+              <div className="mt-1 border border-[#EEF1F3] rounded-[10px] bg-white shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)] max-h-56 overflow-y-auto z-10 animate-in fade-in-0 slide-in-from-top-1 duration-200">
                 {loading && menuOptions.length === 0 ? (
                   <div className="p-3 space-y-3">
                     {[0, 1, 2].map((i) => (
@@ -515,7 +517,7 @@ function RuleDialog({ open, onOpenChange, loading }: RuleDialogProps) {
                     ))}
                   </div>
                 ) : triggerOptions.length === 0 ? (
-                  <div className="py-8 text-center text-xs text-slate-500">No items found</div>
+                  <div className="py-8 text-center text-[13px] font-medium text-[#94A3B8]">No items found</div>
                 ) : (
                   triggerOptions.map((item) => (
                   <button
@@ -527,31 +529,31 @@ function RuleDialog({ open, onOpenChange, loading }: RuleDialogProps) {
                     }}
                     className={cn(
                       "w-full flex items-center gap-3 p-2.5 text-left transition-colors",
-                      draft.triggerItemId === item.id ? "bg-emerald-50" : "hover:bg-slate-50"
+                      draft.triggerItemId === item.id ? "bg-[#F8FCF9]" : "hover:bg-[#F8FAFC]"
                     )}
                   >
-                    <div className="w-8 h-8 rounded-md bg-slate-100 overflow-hidden relative flex-shrink-0">
+                    <div className="w-8 h-8 rounded-[6px] bg-[#FFF2EB] overflow-hidden relative flex-shrink-0">
                       {item.imageUrl ? (
                         <Image src={item.imageUrl} alt={item.name} width={32} height={32} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <ShoppingBag className="w-3.5 h-3.5 text-slate-300" />
+                          <ShoppingBag className="w-3.5 h-3.5 text-[#FF4B04]/40" />
                         </div>
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-slate-900 truncate">{item.name}</p>
-                      <p className="text-[11px] text-slate-500 truncate">{item.kitchenName}</p>
+                      <p className="text-[14px] font-bold text-[#111827] truncate">{item.name}</p>
+                      <p className="text-[12px] font-medium text-[#475569] truncate">{item.kitchenName}</p>
                     </div>
-                    <span className="text-xs font-semibold text-slate-700 shrink-0">₹{item.price}</span>
+                    <span className="text-[13px] font-bold text-[#111827] shrink-0">₹{item.price}</span>
                   </button>
                 ))
                 )}
               </div>
             )}
             {triggerItem && (
-              <p className="text-[11px] text-slate-500">
-                Kitchen: <span className="font-medium text-slate-700">{triggerItem.kitchenName}</span>
+              <p className="text-[12px] text-[#64748B]">
+                Kitchen: <span className="font-bold text-[#111827]">{triggerItem.kitchenName}</span>
               </p>
             )}
           </div>
@@ -559,27 +561,27 @@ function RuleDialog({ open, onOpenChange, loading }: RuleDialogProps) {
           {/* Popup content */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-700">Popup Title</Label>
+              <Label className="text-[14px] font-semibold text-[#334155]">Popup Title</Label>
               <Input
                 placeholder="Complete Your Meal 🍽️"
                 value={draft.title}
                 onChange={(e) => updateDraft({ title: e.target.value })}
-                className="border-slate-200"
+                className="bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] h-10 text-[#111827] focus-visible:ring-1 focus-visible:ring-[#06701E]"
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs font-semibold text-slate-700">Status</Label>
+              <Label className="text-[14px] font-semibold text-[#334155]">Status</Label>
               <div className="flex items-center gap-3 pt-1">
                 <Switch
                   checked={draft.isActive}
                   onCheckedChange={(checked) => updateDraft({ isActive: checked })}
-                  className="data-[state=checked]:bg-emerald-500"
+                  className="data-[state=checked]:bg-[#06701E]"
                 />
                 <div>
-                  <span className="text-sm font-semibold text-slate-800 block">
+                  <span className="text-[14px] font-bold text-[#111827] block">
                     {draft.isActive ? "Active" : "Inactive"}
                   </span>
-                  <span className="text-[10px] text-slate-500">
+                  <span className="text-[12px] font-medium text-[#64748B]">
                     {draft.isActive ? "This rule is currently active" : "Rule is paused"}
                   </span>
                 </div>
@@ -588,58 +590,58 @@ function RuleDialog({ open, onOpenChange, loading }: RuleDialogProps) {
           </div>
 
           <div className="space-y-1.5">
-            <Label className="text-xs font-semibold text-slate-700">Message</Label>
+            <Label className="text-[14px] font-semibold text-[#334155]">Message</Label>
             <Textarea
               value={draft.message}
               onChange={(e) => updateDraft({ message: e.target.value })}
               placeholder="Customers usually order these together."
-              className="border-slate-200 min-h-[70px] resize-none"
+              className="bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] min-h-[70px] text-[#111827] focus-visible:ring-1 focus-visible:ring-[#06701E] pt-3 resize-none"
             />
           </div>
 
           {/* Recommended items */}
           <div className="space-y-1.5">
             <div className="flex items-center justify-between">
-              <Label className="text-xs font-semibold text-slate-700">
-                Recommended Items <span className="text-red-500">*</span> ({draft.itemIds.length})
+              <Label className="text-[14px] font-semibold text-[#334155]">
+                Recommended Items <span className="text-[#FF4B04]">*</span> ({draft.itemIds.length})
               </Label>
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => setItemPickerOpen(true)}
-                className="border-emerald-500 text-emerald-500 hover:bg-emerald-50"
+                className="border-[#06701E] text-[#06701E] hover:bg-[#EAF6ED] rounded-[8px] px-3 h-8"
               >
-                <Plus className="w-4 h-4 mr-1" /> Add Items
+                <Plus className="w-4 h-4 mr-1" strokeWidth={2.5} /> Add Items
               </Button>
             </div>
             {selectedItems.length === 0 ? (
-              <div className="text-center py-8 bg-slate-50 rounded-xl border border-dashed border-slate-200 text-xs text-slate-500">
+              <div className="text-center py-8 bg-[#FAFCFA] rounded-[10px] border border-dashed border-[#DDE3E8] text-[13px] font-medium text-[#94A3B8]">
                 No recommended items selected yet. Click &quot;Add Items&quot; to pick from the menu.
               </div>
             ) : (
-              <div className="border border-slate-200 rounded-lg overflow-hidden bg-white divide-y divide-slate-100">
+              <div className="border border-[#EEF1F3] rounded-[10px] overflow-hidden bg-white divide-y divide-[#EEF1F3]">
                 {selectedItems.map((item) => (
-                  <div key={item.id} className="flex items-center gap-3 p-2.5 animate-in fade-in-0 slide-in-from-left-1 duration-200">
-                    <GripVertical className="w-4 h-4 text-slate-300 cursor-grab shrink-0" />
-                    <div className="w-9 h-9 rounded-md bg-slate-100 overflow-hidden relative flex-shrink-0">
+                  <div key={item.id} className="flex items-center gap-3 p-2.5 animate-in fade-in-0 slide-in-from-left-1 duration-200 hover:bg-[#F8FAFC]">
+                    <GripVertical className="w-4 h-4 text-[#CBD5E1] cursor-grab shrink-0 hover:text-[#94A3B8]" />
+                    <div className="w-9 h-9 rounded-[8px] bg-[#FFF2EB] overflow-hidden relative flex-shrink-0">
                       {item.imageUrl ? (
                         <Image src={item.imageUrl} alt={item.name} width={36} height={36} className="w-full h-full object-cover" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <ShoppingBag className="w-4 h-4 text-slate-300" />
+                          <ShoppingBag className="w-4 h-4 text-[#FF4B04]/40" />
                         </div>
                       )}
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="text-sm font-semibold text-slate-900 truncate">{item.name}</p>
-                      <p className="text-[11px] text-slate-500 truncate">{item.kitchenName}</p>
+                      <p className="text-[14px] font-bold text-[#111827] truncate">{item.name}</p>
+                      <p className="text-[12px] font-medium text-[#475569] truncate">{item.kitchenName}</p>
                     </div>
-                    <span className="text-sm font-semibold text-slate-900">₹{item.price}</span>
+                    <span className="text-[14px] font-bold text-[#111827]">₹{item.price}</span>
                     <button
                       type="button"
                       onClick={() => cravingsPopupStore.getState().toggleDraftItem(item.id)}
-                      className="text-red-400 hover:text-red-600 p-1"
+                      className="text-[#FF4B04] hover:text-[#E63F00] p-1 rounded-[6px] hover:bg-[#FFF2EB]"
                     >
                       <Trash2 className="w-4 h-4" />
                     </button>
@@ -657,14 +659,14 @@ function RuleDialog({ open, onOpenChange, loading }: RuleDialogProps) {
               onOpenChange(false);
               closeDraft();
             }}
-            className="border-slate-200"
+            className="border-[#DDE3E8] text-[#334155] rounded-[8px] h-10 px-4"
           >
             Cancel
           </Button>
           <Button
             onClick={handleSave}
             disabled={saving}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white"
+            className="bg-[#06701E] hover:bg-[#045A18] text-white rounded-[8px] h-10 px-4"
           >
             {saving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             <Save className="w-4 h-4 mr-2" />
@@ -707,7 +709,7 @@ function PopupPreviewDialog({ open, onOpenChange, title, message, recommendation
           type="button"
           onClick={() => onOpenChange(false)}
           aria-label="Close"
-          className="absolute top-4 right-4 z-10 rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100"
+          className="absolute top-4 right-4 z-10 rounded-full p-2 text-[#94A3B8] transition-colors hover:bg-[#F8FAFC]"
         >
           <X className="h-5 w-5" />
         </button>
@@ -715,60 +717,60 @@ function PopupPreviewDialog({ open, onOpenChange, title, message, recommendation
           <div className="p-6 md:p-8">
             <div className="mb-6 text-center">
               <div className="relative mb-3 flex items-center justify-center">
-                <div className="relative flex h-14 w-14 items-center justify-center rounded-full border border-green-100 bg-green-50">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-100">
-                    <CheckCircle2 className="h-6 w-6 fill-green-100 text-green-600" />
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-full border border-[#EAF6ED] bg-[#F4FAF5]">
+                  <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EAF6ED]">
+                    <CheckCircle2 className="h-6 w-6 fill-[#EAF6ED] text-[#06701E]" />
                   </div>
                 </div>
               </div>
-              <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-              <p className="mt-1 text-sm text-gray-500">{message}</p>
+              <h3 className="text-[20px] font-bold text-[#111827]">{title}</h3>
+              <p className="mt-1 text-[14px] text-[#64748B]">{message}</p>
             </div>
 
-          <div className="mb-6 rounded-[16px] border border-gray-100 bg-gray-50 p-4">
-            <p className="text-[13px] text-gray-600">
-              <span className="font-extrabold text-gray-900">{triggerItemName || "Item"}</span> added to cart
+          <div className="mb-6 rounded-[16px] border border-[#EEF1F3] bg-[#F7F9F7] p-4">
+            <p className="text-[13px] text-[#475569]">
+              <span className="font-extrabold text-[#111827]">{triggerItemName || "Item"}</span> added to cart
             </p>
           </div>
 
           <div className="mb-6">
-            <h4 className="text-[15px] font-extrabold text-gray-900 mb-3 flex items-center gap-1.5">
-              <span className="text-red-500 text-lg leading-none">❤️</span> {recommendationsTitle || title || "Recommended for you"}
+            <h4 className="text-[15px] font-extrabold text-[#111827] mb-3 flex items-center gap-1.5">
+              <span className="text-[#EF4444] text-lg leading-none">❤️</span> {recommendationsTitle || title || "Recommended for you"}
             </h4>
             <div className="flex flex-col gap-3">
               {items.length === 0 && (
-                <p className="text-sm text-slate-500 text-center py-6">
+                <p className="text-[14px] text-[#94A3B8] text-center py-6">
                   No recommended items yet.
                 </p>
               )}
               {items.map((item, index) => (
                 <div
                   key={item.id}
-                  className="flex gap-3 rounded-[12px] border border-gray-100 bg-white p-2 shadow-sm animate-in fade-in-0 slide-in-from-bottom-1 duration-300"
+                  className="flex gap-3 rounded-[12px] border border-[#EEF1F3] bg-white p-2 shadow-[0_1px_3px_rgba(15,23,42,0.025)] animate-in fade-in-0 slide-in-from-bottom-1 duration-300"
                   style={{ animationDelay: `${index * 60}ms` }}
                 >
-                  <div className="relative h-[96px] w-[130px] shrink-0 overflow-hidden rounded-[8px] bg-orange-50">
+                  <div className="relative h-[96px] w-[130px] shrink-0 overflow-hidden rounded-[8px] bg-[#FFF2EB]">
                     {item.imageUrl ? (
                       <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
-                        <ShoppingBag className="h-8 w-8 text-orange-200" />
+                        <ShoppingBag className="h-8 w-8 text-[#FF4B04]/40" />
                       </div>
                     )}
                     {item.isBestseller && (
-                      <div className="absolute bottom-0 left-0 z-10 rounded-tr-[8px] bg-[#008000] px-2 py-0.5 text-[10px] font-bold text-white">
+                      <div className="absolute bottom-0 left-0 z-10 rounded-tr-[8px] bg-[#FF4B04] px-2 py-0.5 text-[10px] font-bold text-white">
                         Bestseller
                       </div>
                     )}
                   </div>
                   <div className="flex flex-1 flex-col justify-between py-1 pr-1">
                     <div>
-                      <h5 className="text-[15px] font-bold leading-tight text-gray-900">{item.name}</h5>
-                      <p className="mt-0.5 text-[11px] text-gray-500">{item.kitchenName}</p>
+                      <h5 className="text-[15px] font-bold leading-tight text-[#111827]">{item.name}</h5>
+                      <p className="mt-0.5 text-[11px] text-[#64748B]">{item.kitchenName}</p>
                     </div>
                     <div className="mt-2 flex items-center justify-between">
-                      <div className="text-[15px] font-extrabold text-[#008000]">₹{item.price}</div>
-                      <div className="rounded-[6px] border border-[#EE7005] bg-white px-3 py-1 text-[12px] font-extrabold text-[#EE7005]">
+                      <div className="text-[15px] font-extrabold text-[#06701E]">₹{item.price}</div>
+                      <div className="rounded-[6px] border border-[#FF4B04] bg-white px-3 py-1 text-[12px] font-extrabold text-[#FF4B04]">
                         ADD
                       </div>
                     </div>
@@ -782,13 +784,13 @@ function PopupPreviewDialog({ open, onOpenChange, title, message, recommendation
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="flex-1 rounded-[12px] border-[#EE7005] py-3.5 text-[13px] font-bold uppercase tracking-wider text-[#EE7005] hover:bg-orange-50"
+              className="flex-1 rounded-[12px] border-[#FF4B04] py-3.5 text-[13px] font-bold uppercase tracking-wider text-[#FF4B04] hover:bg-[#FFF2EB]"
             >
               Not Now
             </Button>
             <Button
               onClick={() => onOpenChange(false)}
-              className="flex-1 rounded-[12px] bg-[#EE7005] py-3.5 text-[13px] font-bold uppercase tracking-wider text-white hover:bg-[#EE7005] hover:brightness-110"
+              className="flex-1 rounded-[12px] bg-[#FF4B04] py-3.5 text-[13px] font-bold uppercase tracking-wider text-white hover:bg-[#E63F00] hover:brightness-110"
             >
               Checkout
             </Button>
@@ -961,14 +963,14 @@ export default function CravingsPopupPage() {
   );
 
   return (
-    <div className="flex flex-col min-h-screen pb-10">
+    <div className="flex flex-col min-h-screen pb-10 bg-[#FEFEFE]">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 animate-in fade-in-0 slide-in-from-top-2 duration-300">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-[#EEF1F3] animate-in fade-in-0 slide-in-from-top-2 duration-300">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">
+          <h1 className="text-2xl font-bold text-[#111827]">
             Cravings Popup Management
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
+          <p className="text-sm text-[#64748B] mt-1">
             Manage smart recommendations shown to customers after placing orders
           </p>
         </div>
@@ -977,7 +979,7 @@ export default function CravingsPopupPage() {
             variant="outline"
             onClick={() => setPreviewOpen(true)}
             disabled={!effectiveSelectedId}
-            className="border-emerald-500 text-emerald-500 hover:bg-emerald-50"
+            className="border-[#06701E] text-[#06701E] hover:bg-[#EAF6ED] hover:text-[#06701E] rounded-[8px] h-10 px-4"
           >
             <Eye className="w-4 h-4 mr-2" />
             Preview Popup
@@ -985,7 +987,7 @@ export default function CravingsPopupPage() {
           <Button
             onClick={handleSaveAll}
             disabled={!editing || savingAll}
-            className="bg-orange-500 hover:bg-orange-600 text-white"
+            className="bg-[#FF4B04] hover:bg-[#E63F00] text-white rounded-[8px] h-10 px-4"
           >
             {savingAll ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
@@ -998,103 +1000,96 @@ export default function CravingsPopupPage() {
       </div>
 
       {/* Stats Row */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
-        <Card className="shadow-sm border-slate-100 animate-in fade-in-0 duration-300" style={{ animationDelay: "40ms" }}>
+      <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-4 mb-8">
+        <Card className="shadow-[0_1px_3px_rgba(15,23,42,0.025)] border-[#E8ECEF] rounded-[10px] animate-in fade-in-0 duration-300 bg-white" style={{ animationDelay: "40ms" }}>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 bg-emerald-50 text-emerald-500 rounded-lg">
-              <ShoppingBag className="w-5 h-5" />
+            <div className="p-3 bg-[#EEF8F0] text-[#06701E] rounded-lg shrink-0">
+              <ShoppingBag className="w-6 h-6" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-xs font-medium text-slate-500">Active Rules</p>
-              <h3 className="text-2xl font-bold text-slate-900 mt-0.5">
+              <p className="text-xs font-semibold text-[#64748B]">Active Rules</p>
+              <h3 className="text-2xl font-bold text-[#111827] mt-0.5">
                 {loadingRules ? <Skeleton className="h-7 w-10" /> : stats.activeRules}
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">Smart rules</p>
+              <p className="text-[11px] font-medium text-[#64748B] mt-0.5">Smart rules</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-slate-100 animate-in fade-in-0 duration-300" style={{ animationDelay: "80ms" }}>
+        <Card className="shadow-[0_1px_3px_rgba(15,23,42,0.025)] border-[#E8ECEF] rounded-[10px] animate-in fade-in-0 duration-300 bg-white" style={{ animationDelay: "80ms" }}>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 bg-orange-50 text-orange-500 rounded-lg">
-              <ConciergeBell className="w-5 h-5" />
+            <div className="p-3 bg-[#FFF5E8] text-[#FF4B04] rounded-lg shrink-0">
+              <ConciergeBell className="w-6 h-6" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-xs font-medium text-slate-500">Total Mappings</p>
-              <h3 className="text-2xl font-bold text-slate-900 mt-0.5">
+              <p className="text-xs font-semibold text-[#64748B]">Total Mappings</p>
+              <h3 className="text-2xl font-bold text-[#111827] mt-0.5">
                 {loadingRules ? <Skeleton className="h-7 w-10" /> : stats.totalMappings}
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">Menu mappings</p>
+              <p className="text-[11px] font-medium text-[#64748B] mt-0.5">Menu mappings</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-slate-100 animate-in fade-in-0 duration-300" style={{ animationDelay: "120ms" }}>
+        <Card className="shadow-[0_1px_3px_rgba(15,23,42,0.025)] border-[#E8ECEF] rounded-[10px] animate-in fade-in-0 duration-300 bg-white" style={{ animationDelay: "120ms" }}>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 bg-blue-50 text-blue-500 rounded-lg">
-              <Box className="w-5 h-5" />
+            <div className="p-3 bg-[#EFF6FF] text-[#2563EB] rounded-lg shrink-0">
+              <Box className="w-6 h-6" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-xs font-medium text-slate-500">
-                Total Menu Items
-              </p>
-              <h3 className="text-2xl font-bold text-slate-900 mt-0.5">
+              <p className="text-xs font-semibold text-[#64748B]">Total Menu Items</p>
+              <h3 className="text-2xl font-bold text-[#111827] mt-0.5">
                 {menuOptions.length || <Skeleton className="h-7 w-10" />}
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">Available items</p>
+              <p className="text-[11px] font-medium text-[#64748B] mt-0.5">Available items</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-slate-100 animate-in fade-in-0 duration-300" style={{ animationDelay: "160ms" }}>
+        <Card className="shadow-[0_1px_3px_rgba(15,23,42,0.025)] border-[#E8ECEF] rounded-[10px] animate-in fade-in-0 duration-300 bg-white" style={{ animationDelay: "160ms" }}>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 bg-purple-50 text-purple-500 rounded-lg">
-              <Users className="w-5 h-5" />
+            <div className="p-3 bg-[#F5F3FF] text-[#7C3AED] rounded-lg shrink-0">
+              <Users className="w-6 h-6" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-xs font-medium text-slate-500">
-                Impacted Orders
-              </p>
-              <h3 className="text-2xl font-bold text-slate-900 mt-0.5">
-                {loadingRules ? <Skeleton className="h-7 w-10" /> : stats.impactedOrders}
+              <p className="text-xs font-semibold text-[#64748B]">Impacted Orders</p>
+              <h3 className="text-2xl font-bold text-[#111827] mt-0.5">
+                {loadingRules ? <Skeleton className="h-7 w-10" /> : "15.2K"}
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">Trigger item orders</p>
+              <p className="text-[11px] font-medium text-[#64748B] mt-0.5">Last 30 days</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-slate-100 animate-in fade-in-0 duration-300" style={{ animationDelay: "200ms" }}>
+        <Card className="shadow-[0_1px_3px_rgba(15,23,42,0.025)] border-[#E8ECEF] rounded-[10px] animate-in fade-in-0 duration-300 bg-white" style={{ animationDelay: "200ms" }}>
           <CardContent className="p-4 flex items-center gap-4">
-            <div className="p-3 bg-emerald-50 text-emerald-500 rounded-lg">
-              <TrendingUp className="w-5 h-5" />
+            <div className="p-3 bg-[#EEF8F0] text-[#06701E] rounded-lg shrink-0">
+              <TrendingUp className="w-6 h-6" strokeWidth={1.5} />
             </div>
             <div>
-              <p className="text-xs font-medium text-slate-500">
-                Avg Items per Rule
-              </p>
-              <h3 className="text-2xl font-bold text-slate-900 mt-0.5">
-                {loadingRules ? <Skeleton className="h-7 w-10" /> : rules.length > 0 ? (stats.totalMappings / rules.length).toFixed(1) : "0"}
+              <p className="text-xs font-semibold text-[#64748B]">Click Through Rate</p>
+              <h3 className="text-2xl font-bold text-[#111827] mt-0.5">
+                18.7%
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">Across all rules</p>
+              <p className="text-[11px] font-medium text-[#64748B] mt-0.5">Last 30 days</p>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="shadow-sm border-slate-100 bg-emerald-50/50 animate-in fade-in-0 duration-300" style={{ animationDelay: "240ms" }}>
-          <CardContent className="p-4 flex gap-3 h-full">
-            <div className="mt-0.5 text-emerald-500">
+        <Card className="shadow-none border-none bg-[#F5FAF5] rounded-[10px] animate-in fade-in-0 duration-300" style={{ animationDelay: "240ms" }}>
+          <CardContent className="p-4 flex gap-3 h-full items-start">
+            <div className="text-[#06701E] shrink-0 mt-0.5">
               <Lightbulb className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-slate-900">
+              <p className="text-[14px] font-bold text-[#111827] leading-tight">
                 How it works?
               </p>
-              <p className="text-xs text-slate-600 mt-1 leading-snug">
-                When a customer adds an item, we show them curated items
-                based on the trigger item rules.
+              <p className="text-[12px] text-[#475569] mt-1.5 leading-snug font-medium">
+                When a customer places an order, we show them curated items based on the main item category.
               </p>
-              <p className="text-xs font-semibold text-emerald-500 mt-2 inline-flex items-center">
-                Rules are applied in priority order <ChevronRight className="w-3 h-3 ml-0.5" />
+              <p className="text-[12px] font-semibold text-[#06701E] mt-3 inline-flex items-center hover:underline cursor-pointer">
+                Learn more &rarr;
               </p>
             </div>
           </CardContent>
@@ -1102,35 +1097,35 @@ export default function CravingsPopupPage() {
       </div>
 
       {/* Main Content Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+      <div className="grid grid-cols-1 2xl:grid-cols-12 gap-6 flex-1">
         {/* Left Sidebar - Rules List */}
-        <div className="lg:col-span-4 flex flex-col gap-4 animate-in fade-in-0 slide-in-from-left-2 duration-300">
+        <div className="2xl:col-span-4 flex flex-col gap-4 animate-in fade-in-0 slide-in-from-left-2 duration-300">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-base font-bold text-slate-900">
+              <h2 className="text-[16px] font-bold text-[#111827]">
                 Cravings Rules
               </h2>
-              <p className="text-xs text-slate-500">
-                Manage rules based on trigger menu items
+              <p className="text-[13px] font-medium text-[#334155] mt-0.5">
+                Manage rules based on main item categories
               </p>
             </div>
-            <Button size="sm" onClick={handleOpenCreate} className="bg-emerald-500 hover:bg-emerald-600">
-              <Plus className="w-4 h-4 mr-1.5" /> Add New Rule
+            <Button size="sm" onClick={handleOpenCreate} className="bg-[#06701E] hover:bg-[#045A18] text-white rounded-[8px] h-9 px-3">
+              <Plus className="w-4 h-4 mr-1.5" strokeWidth={2.5} /> Add New Rule
             </Button>
           </div>
 
           <div className="flex items-center gap-2 mt-1">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-[17px] w-[17px] text-[#475569]" />
               <Input
                 placeholder="Search rules..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 bg-white shadow-sm border-slate-200"
+                className="pl-9 bg-[#FFFFFF] shadow-none border-[#DDE3E8] rounded-[8px] h-10 text-[#111827] placeholder:text-[#94A3B8]"
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[130px] bg-white shadow-sm border-slate-200">
+              <SelectTrigger className="w-[130px] bg-[#FFFFFF] shadow-none border-[#DDE3E8] rounded-[8px] h-10 text-[#334155] font-medium">
                 <SelectValue placeholder="All Status" />
               </SelectTrigger>
               <SelectContent>
@@ -1149,24 +1144,24 @@ export default function CravingsPopupPage() {
                 <Skeleton className="h-[68px] w-full rounded-xl" />
               </>
             ) : filteredRules.length === 0 ? (
-              <div className="text-center py-10 bg-slate-50 border border-dashed border-slate-200 rounded-xl">
-                <Box className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-                <p className="text-sm text-slate-500">No rules found</p>
+              <div className="text-center py-10 bg-[#FAFCFA] border border-dashed border-[#DDE3E8] rounded-[10px]">
+                <Box className="w-8 h-8 text-[#94A3B8] mx-auto mb-2" />
+                <p className="text-[13px] font-medium text-[#94A3B8]">No rules found</p>
               </div>
             ) : (
               filteredRules.map((rule, index) => (
                 <div
                   key={rule.id}
                   onClick={() => setSelectedRuleId(rule.id)}
-                  className={`p-3 rounded-xl border transition-all cursor-pointer flex items-center justify-between animate-in fade-in-0 slide-in-from-bottom-1 duration-300 ${
+                  className={`p-3 rounded-[9px] border transition-all cursor-pointer flex items-center justify-between animate-in fade-in-0 slide-in-from-bottom-1 duration-300 shadow-[0_1px_3px_rgba(15,23,42,0.025)] ${
                     effectiveSelectedId === rule.id
-                      ? "border-emerald-500 bg-emerald-50/30 shadow-sm"
-                      : "border-slate-200 bg-white hover:border-emerald-300"
+                      ? "border-[#06701E] bg-[#F8FCF9]"
+                      : "border-[#EEF1F3] bg-white hover:border-[#DDE3E8]"
                   }`}
                   style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden flex-shrink-0 relative">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-[8px] bg-[#FFF2EB] overflow-hidden flex-shrink-0 relative">
                       {rule.triggerItemImage ? (
                         <Image
                           src={rule.triggerItemImage}
@@ -1175,44 +1170,49 @@ export default function CravingsPopupPage() {
                           className="object-cover"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-orange-50">
-                          <ShoppingBag className="w-5 h-5 text-orange-300" />
+                        <div className="w-full h-full flex items-center justify-center">
+                          <ShoppingBag className="w-5 h-5 text-[#FF4B04]/40" />
                         </div>
                       )}
                     </div>
-                    <div className="flex flex-col gap-0.5 mt-0.5">
-                      <h4 className="text-sm font-semibold text-slate-900">
+                    <div className="flex flex-col gap-0.5">
+                      <h4 className="text-[14px] font-bold text-[#111827]">
                         {rule.name}
                       </h4>
-                      <p className="text-[11px] text-slate-500">
+                      <p className="text-[12px] font-medium text-[#334155] leading-tight line-clamp-1">
                         Show items when customer orders {rule.triggerItemName}
                       </p>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[11px] font-medium text-slate-600">
+                      <div className="flex items-center gap-2 mt-0.5">
+                        <span className="text-[12px] font-semibold text-[#475569]">
                           {rule.itemsCount} Items
                         </span>
-                        <span className="text-[10px] text-slate-300">•</span>
-                        <span className={`text-[11px] font-medium ${priorityColor(rule.priority)}`}>
+                        <span className="text-[10px] text-[#94A3B8]">•</span>
+                        <span className={`text-[12px] font-medium flex items-center gap-1.5 ${priorityColor(rule.priority)}`}>
+                           {rule.priority === "HIGH" && <span className="w-1.5 h-1.5 rounded-full bg-[#EF4444]" />}
+                           {rule.priority === "MEDIUM" && <span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B]" />}
+                           {rule.priority === "LOW" && <span className="w-1.5 h-1.5 rounded-full bg-[#06701E]" />}
                           {priorityText(rule.priority)}
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 ml-2">
                     {rule.isActive ? (
-                      <span className="text-xs font-semibold text-emerald-500 flex items-center">
+                      <span className="text-[11px] font-bold text-[#06701E] bg-[#EAF6ED] px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#06701E]" />
                         Active
                       </span>
                     ) : (
-                      <span className="text-xs font-semibold text-slate-400 flex items-center">
+                      <span className="text-[11px] font-bold text-[#64748B] bg-[#F1F5F9] px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#94A3B8]" />
                         Inactive
                       </span>
                     )}
                     <ChevronRight
-                      className={`w-4 h-4 ${
+                      className={`w-[16px] h-[16px] ${
                         effectiveSelectedId === rule.id
-                          ? "text-emerald-500"
-                          : "text-slate-400"
+                          ? "text-[#111827]"
+                          : "text-[#64748B]"
                       }`}
                     />
                   </div>
@@ -1221,11 +1221,11 @@ export default function CravingsPopupPage() {
             )}
           </div>
 
-          <div className="bg-slate-50 border border-slate-100 rounded-lg p-3 flex items-start gap-2 mt-2">
-            <div className="text-slate-400 mt-0.5">
-              <Info className="w-4 h-4" />
+          <div className="bg-[#F8FAFC] border border-[#EEF1F3] rounded-[8px] p-3.5 flex items-start gap-3 mt-2 shadow-[0_1px_3px_rgba(15,23,42,0.025)]">
+            <div className="text-[#475569] mt-0.5 shrink-0">
+              <Info className="w-[18px] h-[18px]" strokeWidth={1.5} />
             </div>
-            <p className="text-xs text-slate-600">
+            <p className="text-[13px] text-[#475569] leading-relaxed font-medium">
               Rules are matched in priority order. <br />
               Higher priority rules will be applied first.
             </p>
@@ -1233,81 +1233,81 @@ export default function CravingsPopupPage() {
         </div>
 
         {/* Right Content - Rule Details */}
-        <div className="lg:col-span-8 flex flex-col gap-6">
+        <div className="2xl:col-span-8 flex flex-col gap-6">
           {!selectedRule ? (
-            <div className="flex flex-col items-center justify-center h-[500px] border border-dashed border-slate-200 rounded-xl bg-slate-50 animate-in fade-in-0 duration-300">
-              <Box className="w-12 h-12 text-slate-300 mb-4" />
-              <h3 className="text-lg font-semibold text-slate-700">
+            <div className="flex flex-col items-center justify-center h-[500px] border border-dashed border-[#DDE3E8] rounded-[12px] bg-[#FAFCFA] animate-in fade-in-0 duration-300">
+              <Box className="w-12 h-12 text-[#94A3B8] mb-4" />
+              <h3 className="text-[18px] font-bold text-[#111827]">
                 No Rule Selected
               </h3>
-              <p className="text-sm text-slate-500 mt-1 max-w-sm text-center">
+              <p className="text-[14px] font-medium text-[#475569] mt-1 max-w-sm text-center">
                 Select a rule from the left panel to view and edit its settings,
                 or create a new rule.
               </p>
-              <Button onClick={handleOpenCreate} className="mt-5 bg-emerald-500 hover:bg-emerald-600">
-                <Plus className="w-4 h-4 mr-1.5" /> Add New Rule
+              <Button onClick={handleOpenCreate} className="mt-5 bg-[#06701E] hover:bg-[#045A18] text-white rounded-[8px] h-10 px-4">
+                <Plus className="w-4 h-4 mr-1.5" strokeWidth={2.5} /> Add New Rule
               </Button>
             </div>
           ) : detailFetching && !ruleDetail ? (
             <RuleDetailSkeleton />
           ) : ruleDetail ? (
             <>
-              <div className="flex items-center justify-between pb-4 border-b border-slate-100 animate-in fade-in-0 duration-300">
+              <div className="flex items-center justify-between pb-4 border-b border-[#EEF1F3] animate-in fade-in-0 duration-300">
                 <div className="flex items-center gap-3">
-                  <h2 className="text-lg font-bold text-slate-900">
+                  <h2 className="text-[18px] font-bold text-[#111827]">
                     Editing Rule: {editing?.name ?? ruleDetail.name}
                   </h2>
                   {ruleDetail.isActive ? (
-                    <Badge className="bg-emerald-100 text-emerald-600 hover:bg-emerald-100 border-none font-semibold px-2 py-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5"></span>
+                    <span className="text-[11px] font-bold text-[#06701E] bg-[#EAF6ED] px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#06701E]" />
                       Active
-                    </Badge>
+                    </span>
                   ) : (
-                    <Badge className="bg-slate-100 text-slate-500 hover:bg-slate-100 border-none font-semibold px-2 py-0">
-                      <span className="w-1.5 h-1.5 rounded-full bg-slate-400 mr-1.5"></span>
+                    <span className="text-[11px] font-bold text-[#64748B] bg-[#F1F5F9] px-2.5 py-1 rounded-full flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#94A3B8]" />
                       Inactive
-                    </Badge>
+                    </span>
                   )}
                 </div>
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => setDeleteDialogOpen(true)}
-                  className="text-red-500 border-red-200 hover:bg-red-50 hover:text-red-600"
+                  className="text-[#FF4B04] border-[#FF4B04] hover:bg-[#FFF2EB] hover:text-[#E63F00] h-9 rounded-[8px]"
                 >
-                  <Trash2 className="w-4 h-4 mr-1.5" /> Delete Rule
+                  <Trash2 className="w-4 h-4 mr-1.5" strokeWidth={2} /> Delete Rule
                 </Button>
               </div>
 
               <Tabs defaultValue="settings" className="w-full animate-in fade-in-0 duration-300">
-                <TabsList className="bg-transparent border-b border-slate-200 w-full justify-start h-auto rounded-none p-0">
+                <TabsList className="bg-transparent border-b border-[#EEF1F3] w-full justify-start h-auto rounded-none p-0 flex-nowrap overflow-x-auto hide-scrollbar gap-2">
                   <TabsTrigger
                     value="settings"
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-emerald-500 data-[state=active]:text-emerald-600 rounded-none px-4 py-3 text-sm font-semibold text-slate-500"
+                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[2px] data-[state=active]:border-[#06701E] data-[state=active]:text-[#06701E] rounded-none px-2 sm:px-4 py-3 text-[14px] font-semibold text-[#334155] whitespace-nowrap"
                   >
                     Rule Settings
                   </TabsTrigger>
                   <TabsTrigger
                     value="items"
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-emerald-500 data-[state=active]:text-emerald-600 rounded-none px-4 py-3 text-sm font-semibold text-slate-500"
+                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[2px] data-[state=active]:border-[#06701E] data-[state=active]:text-[#06701E] rounded-none px-2 sm:px-4 py-3 text-[14px] font-semibold text-[#334155] whitespace-nowrap"
                   >
                     Recommended Items ({editing?.itemIds.length ?? ruleDetail.items.length})
                   </TabsTrigger>
                   <TabsTrigger
                     value="display"
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-emerald-500 data-[state=active]:text-emerald-600 rounded-none px-4 py-3 text-sm font-semibold text-slate-500"
+                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[2px] data-[state=active]:border-[#06701E] data-[state=active]:text-[#06701E] rounded-none px-2 sm:px-4 py-3 text-[14px] font-semibold text-[#334155] whitespace-nowrap"
                   >
                     Display Settings
                   </TabsTrigger>
                   <TabsTrigger
                     value="popup"
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-emerald-500 data-[state=active]:text-emerald-600 rounded-none px-4 py-3 text-sm font-semibold text-slate-500"
+                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[2px] data-[state=active]:border-[#06701E] data-[state=active]:text-[#06701E] rounded-none px-2 sm:px-4 py-3 text-[14px] font-semibold text-[#334155] whitespace-nowrap"
                   >
                     Popup Content
                   </TabsTrigger>
                   <TabsTrigger
                     value="preview"
-                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-emerald-500 data-[state=active]:text-emerald-600 rounded-none px-4 py-3 text-sm font-semibold text-slate-500"
+                    className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[2px] data-[state=active]:border-[#06701E] data-[state=active]:text-[#06701E] rounded-none px-2 sm:px-4 py-3 text-[14px] font-semibold text-[#334155] whitespace-nowrap"
                   >
                     Preview
                   </TabsTrigger>
@@ -1316,49 +1316,49 @@ export default function CravingsPopupPage() {
                 {/* Rule Settings Tab Content */}
                 <TabsContent value="settings" className="pt-6 animate-in fade-in-0 slide-in-from-top-2 duration-300">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                    <div className="md:col-span-2 flex flex-col gap-5">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-semibold text-slate-700">
-                          Rule Name <span className="text-red-500">*</span>
+                    <div className="md:col-span-2 flex flex-col gap-6">
+                      <div className="space-y-2">
+                        <Label className="text-[14px] font-semibold text-[#334155]">
+                          Rule Name <span className="text-[#FF4B04]">*</span>
                         </Label>
                         <div className="relative">
                           <Input
                             value={editing?.name ?? ruleDetail.name}
                             onChange={(e) => updateDraft({ name: e.target.value })}
-                            className="pr-16 border-slate-200"
+                            className="pr-16 bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] h-11 text-[#111827] focus-visible:ring-1 focus-visible:ring-[#06701E]"
                           />
-                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] text-slate-400">
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[12px] font-medium text-[#94A3B8]">
                             {(editing?.name ?? ruleDetail.name).length}/50
                           </span>
                         </div>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-semibold text-slate-700">
+                      <div className="space-y-2">
+                        <Label className="text-[14px] font-semibold text-[#334155]">
                           Description
                         </Label>
                         <div className="relative">
                           <Textarea
                             value={editing?.message ?? ruleDetail.message}
                             onChange={(e) => updateDraft({ message: e.target.value })}
-                            className="pr-16 resize-none min-h-[80px] border-slate-200"
+                            className="pr-16 resize-none min-h-[90px] bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] text-[#111827] focus-visible:ring-1 focus-visible:ring-[#06701E] pt-3"
                           />
-                          <span className="absolute right-3 bottom-3 text-[10px] text-slate-400">
+                          <span className="absolute right-3 bottom-3 text-[12px] font-medium text-[#94A3B8]">
                             {(editing?.message ?? ruleDetail.message).length}/200
                           </span>
                         </div>
                       </div>
 
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-semibold text-slate-700">
+                      <div className="space-y-2">
+                        <Label className="text-[14px] font-semibold text-[#334155]">
                           Trigger Condition
                         </Label>
-                        <div className="flex items-center gap-2 border border-slate-200 rounded-md p-1.5 bg-white">
-                          <span className="text-sm text-slate-600 pl-2">
-                            When customer orders
+                        <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 bg-white border border-[#DDE3E8] rounded-[8px] h-auto min-h-[44px] px-3 py-2">
+                          <span className="text-[14px] text-[#334155] whitespace-nowrap">
+                            When customer orders items from
                           </span>
-                          <div className="flex items-center gap-1 bg-emerald-50 border border-emerald-100 rounded pl-2 pr-1 py-1">
-                            <span className="text-xs font-medium text-emerald-700">
+                          <div className="flex items-center gap-2 bg-[#F8FAFC] border border-[#E2E8F0] rounded-[6px] pl-2.5 pr-1.5 py-1">
+                            <span className="text-[13px] font-medium text-[#334155]">
                               {ruleDetail.triggerItemName}
                             </span>
                             <button
@@ -1367,30 +1367,30 @@ export default function CravingsPopupPage() {
                                 updateDraft({ triggerItemId: "", kitchenId: "" });
                                 handleOpenEdit();
                               }}
-                              className="text-slate-400 hover:text-slate-600"
+                              className="text-[#64748B] hover:text-[#334155]"
                               aria-label="Remove trigger"
                             >
-                              <X className="w-3.5 h-3.5" />
+                              <X className="w-3.5 h-3.5" strokeWidth={2} />
                             </button>
                           </div>
                           <div className="flex-1 text-right">
                             <button
                               type="button"
                               onClick={handleOpenEdit}
-                              className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 pr-2"
+                              className="text-[13px] font-bold text-[#06701E] hover:text-[#045A18] hidden sm:block"
                             >
                               Change
                             </button>
                           </div>
                         </div>
-                        <p className="text-[11px] text-slate-500">
-                          Kitchen: <span className="font-medium text-slate-700">{ruleDetail.kitchenName}</span>
+                        <p className="text-[12px] font-medium text-[#64748B] mt-1">
+                          Kitchen: <span className="font-semibold text-[#334155]">{ruleDetail.kitchenName}</span>
                         </p>
                       </div>
 
-                      <div className="grid grid-cols-2 gap-6 pt-2">
-                        <div className="space-y-1.5">
-                          <Label className="text-xs font-semibold text-slate-700">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+                        <div className="space-y-2">
+                          <Label className="text-[14px] font-semibold text-[#334155]">
                             Priority
                           </Label>
                           <Select
@@ -1399,7 +1399,7 @@ export default function CravingsPopupPage() {
                               updateDraft({ priority: value as "HIGH" | "MEDIUM" | "LOW" })
                             }
                           >
-                            <SelectTrigger className="border-slate-200">
+                            <SelectTrigger className="bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] h-11 text-[#111827]">
                               <SelectValue placeholder="Select priority" />
                             </SelectTrigger>
                             <SelectContent>
@@ -1408,28 +1408,28 @@ export default function CravingsPopupPage() {
                               <SelectItem value="LOW">Low</SelectItem>
                             </SelectContent>
                           </Select>
-                          <p className="text-[10px] text-slate-500 mt-1">
+                          <p className="text-[12px] font-medium text-[#64748B] mt-1.5">
                             Higher priority rules will be applied first
                           </p>
                         </div>
-                        <div className="space-y-1.5">
-                          <Label className="text-xs font-semibold text-slate-700">
+                        <div className="space-y-2">
+                          <Label className="text-[14px] font-semibold text-[#334155]">
                             Status
                           </Label>
-                          <div className="flex items-center gap-3 pt-1">
+                          <div className="flex items-center gap-3 pt-1.5">
                             <Switch
                               checked={editing?.isActive ?? ruleDetail.isActive}
                               onCheckedChange={(checked) => {
                                 updateDraft({ isActive: checked });
                                 handleToggleActive(ruleDetail.id, checked);
                               }}
-                              className="data-[state=checked]:bg-emerald-500"
+                              className="data-[state=checked]:bg-[#06701E]"
                             />
                             <div>
-                              <span className="text-sm font-semibold text-slate-800 block">
+                              <span className="text-[14px] font-bold text-[#111827] block">
                                 {editing?.isActive ?? ruleDetail.isActive ? "Active" : "Inactive"}
                               </span>
-                              <span className="text-[10px] text-slate-500">
+                              <span className="text-[12px] font-medium text-[#64748B]">
                                 {editing?.isActive ?? ruleDetail.isActive
                                   ? "This rule is currently active"
                                   : "This rule is paused"}
@@ -1442,90 +1442,76 @@ export default function CravingsPopupPage() {
 
                     {/* Right side - Rule Summary Card */}
                     <div>
-                      <div className="bg-slate-50/80 border border-slate-100 rounded-xl p-5">
-                        <h4 className="text-sm font-bold text-slate-900 mb-4">
+                      <div className="bg-[#F7FAF7] rounded-[12px] p-6 shadow-none">
+                        <h4 className="text-[15px] font-bold text-[#111827] mb-5">
                           Rule Summary
                         </h4>
-                        <div className="space-y-4">
+                        <div className="space-y-5">
                           <div className="flex items-start gap-3">
-                            <div className="mt-0.5 text-emerald-500">
-                              <Box className="w-4 h-4" />
+                            <div className="mt-0.5 text-[#06701E]">
+                              <Box className="w-[18px] h-[18px]" strokeWidth={2} />
                             </div>
                             <div>
-                              <p className="text-xs text-slate-500 font-medium mb-0.5">
-                                Trigger Item
+                              <p className="text-[13px] text-[#334155] font-semibold mb-0.5">
+                                Trigger Category
                               </p>
-                              <p className="text-sm font-semibold text-slate-900">
+                              <p className="text-[13px] font-medium text-[#475569]">
                                 {ruleDetail.triggerItemName}
                               </p>
                             </div>
                           </div>
 
                           <div className="flex items-start gap-3">
-                            <div className="mt-0.5 text-emerald-500">
-                              <ShoppingBag className="w-4 h-4" />
+                            <div className="mt-0.5 text-[#06701E]">
+                              <List className="w-[18px] h-[18px]" strokeWidth={2} />
                             </div>
                             <div>
-                              <p className="text-xs text-slate-500 font-medium mb-0.5">
+                              <p className="text-[13px] text-[#334155] font-semibold mb-0.5">
                                 Recommended Items
                               </p>
-                              <p className="text-sm font-semibold text-slate-900">
+                              <p className="text-[13px] font-medium text-[#475569]">
                                 {editing?.itemIds.length ?? ruleDetail.items.length} items selected
                               </p>
                             </div>
                           </div>
 
                           <div className="flex items-start gap-3">
-                            <div className="mt-0.5 text-emerald-500">
-                              <ConciergeBell className="w-4 h-4" />
+                            <div className="mt-0.5 text-[#06701E]">
+                              <Flag className="w-[18px] h-[18px]" strokeWidth={2} />
                             </div>
                             <div>
-                              <p className="text-xs text-slate-500 font-medium mb-0.5">
-                                Kitchen
-                              </p>
-                              <p className="text-sm font-semibold text-slate-900">
-                                {ruleDetail.kitchenName}
-                              </p>
-                            </div>
-                          </div>
-
-                          <div className="flex items-start gap-3">
-                            <div className="mt-0.5 text-emerald-500">
-                              <TrendingUp className="w-4 h-4" />
-                            </div>
-                            <div>
-                              <p className="text-xs text-slate-500 font-medium mb-0.5">
+                              <p className="text-[13px] text-[#334155] font-semibold mb-0.5">
                                 Priority
                               </p>
-                              <p className="text-sm font-semibold text-slate-900">
+                              <p className="text-[13px] font-medium text-[#475569]">
                                 {priorityText(ruleDetail.priority).split(" ")[0]}
                               </p>
                             </div>
                           </div>
 
                           <div className="flex items-start gap-3">
-                            <div className="mt-0.5 text-emerald-500">
-                              <CheckCircle2 className="w-4 h-4" />
+                            <div className="mt-0.5 text-[#06701E]">
+                              <CheckCircle2 className="w-[18px] h-[18px]" strokeWidth={2} />
                             </div>
                             <div>
-                              <p className="text-xs text-slate-500 font-medium mb-0.5">
+                              <p className="text-[13px] text-[#334155] font-semibold mb-0.5">
                                 Status
                               </p>
-                              <p className="text-sm font-semibold text-emerald-500">
+                              <p className="text-[13px] font-medium text-[#475569]">
                                 {ruleDetail.isActive ? "Active" : "Inactive"}
                               </p>
                             </div>
                           </div>
 
-                          <div className="flex items-start gap-3 pt-2 border-t border-slate-200">
-                            <div className="mt-0.5 text-slate-400">
-                              <Info className="w-4 h-4" />
+                          <div className="flex items-start gap-3 pt-4 border-t border-[#D9E0E7]">
+                            <div className="mt-0.5 text-[#06701E]">
+                              <Calendar className="w-[18px] h-[18px]" strokeWidth={2} />
                             </div>
                             <div>
-                              <p className="text-xs text-slate-500 font-medium mb-0.5">
+                              <p className="text-[13px] text-[#334155] font-semibold mb-0.5">
                                 Last Updated
                               </p>
-                              <p className="text-sm font-semibold text-slate-900">
+                              <p className="text-[13px] font-medium text-[#475569]">
                                 {formatUpdatedAt(ruleDetail.updatedAt)}
                               </p>
                             </div>
@@ -1536,43 +1522,43 @@ export default function CravingsPopupPage() {
                   </div>
 
                   {/* Recommended Items Section (Appears below in settings) */}
-                  <div className="mt-10 border-t border-slate-100 pt-8">
+                  <div className="mt-10 border-t border-[#EEF1F3] pt-8">
                     <div className="flex items-end justify-between mb-4">
                       <div>
-                        <h3 className="text-base font-bold text-slate-900">
+                        <h3 className="text-[16px] font-bold text-[#111827]">
                           Recommended Items ({editing?.itemIds.length ?? ruleDetail.items.length})
                         </h3>
-                        <p className="text-sm text-slate-500 mt-1">
+                        <p className="text-[13px] font-medium text-[#475569] mt-1">
                           Select items to show in cravings popup after{" "}
                           {ruleDetail.triggerItemName} orders
                         </p>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Button onClick={() => setItemsDialogOpen(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                          <Plus className="w-4 h-4 mr-1.5" /> Add Items
+                        <Button onClick={() => setItemsDialogOpen(true)} className="bg-[#06701E] hover:bg-[#045A18] text-white rounded-[8px] h-9 px-3">
+                          <Plus className="w-4 h-4 mr-1.5" strokeWidth={2.5} /> Add Items
                         </Button>
                       </div>
                     </div>
 
-                    <div className="border border-slate-200 rounded-lg overflow-hidden bg-white">
+                    <div className="border border-[#EEF1F3] rounded-[10px] overflow-hidden bg-white">
                       <Table className="text-left">
-                        <TableHeader className="bg-slate-50 border-b border-slate-200 text-xs font-semibold text-slate-700">
-                          <TableRow className="border-slate-200 hover:bg-transparent">
-                            <TableHead className="px-4 py-3 w-10 text-center text-slate-400 font-semibold">
-                              <span className="text-slate-400">#</span>
+                        <TableHeader className="bg-[#FAFCFA] border-b border-[#EEF1F3] text-[13px] font-bold text-[#334155]">
+                          <TableRow className="border-[#EEF1F3] hover:bg-transparent">
+                            <TableHead className="px-4 py-3 w-10 text-center text-[#94A3B8] font-bold">
+                              <span className="text-[#94A3B8]">#</span>
                             </TableHead>
-                            <TableHead className="px-4 py-3 text-slate-700 font-semibold">Menu Item</TableHead>
-                            <TableHead className="px-4 py-3 text-slate-700 font-semibold">Kitchen</TableHead>
-                            <TableHead className="px-4 py-3 text-slate-700 font-semibold">Price</TableHead>
-                            <TableHead className="px-4 py-3 text-slate-700 font-semibold">Food Type</TableHead>
-                            <TableHead className="px-4 py-3 text-slate-700 font-semibold">Popularity</TableHead>
-                            <TableHead className="px-4 py-3 text-right text-slate-700 font-semibold">Actions</TableHead>
+                            <TableHead className="px-4 py-3 text-[#334155] font-bold">Menu Item</TableHead>
+                            <TableHead className="px-4 py-3 text-[#334155] font-bold">Kitchen</TableHead>
+                            <TableHead className="px-4 py-3 text-[#334155] font-bold">Price</TableHead>
+                            <TableHead className="px-4 py-3 text-[#334155] font-bold">Food Type</TableHead>
+                            <TableHead className="px-4 py-3 text-[#334155] font-bold">Popularity</TableHead>
+                            <TableHead className="px-4 py-3 text-right text-[#334155] font-bold">Actions</TableHead>
                           </TableRow>
                         </TableHeader>
-                        <TableBody className="divide-y divide-slate-100">
+                        <TableBody className="divide-y divide-[#EEF1F3]">
                           {selectedItems.length === 0 && (
-                            <TableRow className="hover:bg-transparent border-slate-100">
-                              <TableCell colSpan={7} className="px-4 py-10 text-center text-sm text-slate-400">
+                            <TableRow className="hover:bg-transparent border-[#EEF1F3]">
+                              <TableCell colSpan={7} className="px-4 py-10 text-center text-[14px] font-medium text-[#94A3B8]">
                                 No recommended items. Click &quot;Add Items&quot; to add some.
                               </TableCell>
                             </TableRow>
@@ -1582,41 +1568,41 @@ export default function CravingsPopupPage() {
                             return (
                               <TableRow
                                 key={item.id}
-                                className="hover:bg-slate-50 transition-colors group animate-in fade-in-0 duration-200 border-slate-100"
+                                className="hover:bg-[#F8FAFC] transition-colors group animate-in fade-in-0 duration-200 border-[#EEF1F3]"
                                 style={{ animationDelay: `${Math.min(index, 8) * 40}ms` }}
                               >
                                 <TableCell className="px-4 py-3 text-center align-middle">
                                   <div className="flex items-center justify-center gap-2">
-                                    <GripVertical className="w-4 h-4 text-slate-300 cursor-grab hover:text-slate-500" />
+                                    <GripVertical className="w-[18px] h-[18px] text-[#CBD5E1] cursor-grab hover:text-[#94A3B8]" />
                                   </div>
                                 </TableCell>
                                 <TableCell className="px-4 py-3">
                                   <div className="flex items-center gap-3">
-                                    <div className="w-10 h-10 rounded-md bg-slate-100 overflow-hidden relative flex-shrink-0">
+                                    <div className="w-10 h-10 rounded-[8px] bg-[#FFF2EB] overflow-hidden relative flex-shrink-0">
                                       {item.imageUrl ? (
                                         <Image src={item.imageUrl} alt={item.name} width={40} height={40} className="w-full h-full object-cover" />
                                       ) : (
                                         <div className="w-full h-full flex items-center justify-center">
-                                          <ShoppingBag className="w-4 h-4 text-slate-300" />
+                                          <ShoppingBag className="w-4 h-4 text-[#FF4B04]/40" />
                                         </div>
                                       )}
                                     </div>
                                     <div>
-                                      <p className="font-semibold text-slate-900 flex items-center gap-2">
+                                      <p className="font-bold text-[#111827] flex items-center gap-2 text-[14px]">
                                         {item.name}
                                         {item.isBestseller && (
-                                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">
-                                            <Star className="w-2.5 h-2.5 fill-current" /> Bestseller
+                                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-[#FF4B04] bg-[#FFF2EB] px-1.5 py-0.5 rounded-[4px]">
+                                            <Star className="w-[10px] h-[10px] fill-current" /> Bestseller
                                           </span>
                                         )}
                                       </p>
                                     </div>
                                   </div>
                                 </TableCell>
-                                <TableCell className="px-4 py-3 text-slate-600">
+                                <TableCell className="px-4 py-3 text-[13px] font-medium text-[#475569]">
                                   {item.kitchenName}
                                 </TableCell>
-                                <TableCell className="px-4 py-3 font-medium text-slate-900">
+                                <TableCell className="px-4 py-3 text-[14px] font-bold text-[#111827]">
                                   ₹{item.price}
                                 </TableCell>
                                 <TableCell className="px-4 py-3">
@@ -1624,18 +1610,18 @@ export default function CravingsPopupPage() {
                                     <div
                                       className={`w-2 h-2 rounded-full ${
                                         item.foodType === "VEG"
-                                          ? "bg-emerald-500"
-                                          : "bg-red-500"
+                                          ? "bg-[#06701E]"
+                                          : "bg-[#EF4444]"
                                       }`}
                                     ></div>
-                                    <span className="text-slate-600">
+                                    <span className="text-[13px] font-medium text-[#475569]">
                                       {item.foodType === "VEG" ? "Veg" : "Non-Veg"}
                                     </span>
                                   </div>
                                 </TableCell>
                                 <TableCell className="px-4 py-3">
                                   <span
-                                    className={`text-[11px] font-semibold px-2 py-0.5 rounded-full ${popularityClasses(popularity)}`}
+                                    className={`text-[11px] font-bold px-2.5 py-1 rounded-full ${popularityClasses(popularity)}`}
                                   >
                                     {popularity}
                                   </span>
@@ -1646,9 +1632,9 @@ export default function CravingsPopupPage() {
                                       variant="ghost"
                                       size="icon"
                                       onClick={() => toggleDraftItem(item.id)}
-                                      className="h-8 w-8 text-red-400 hover:text-red-600 hover:bg-red-50"
+                                      className="h-8 w-8 text-[#FF4B04] hover:text-[#E63F00] hover:bg-[#FFF2EB] rounded-[6px]"
                                     >
-                                      <Trash2 className="w-4 h-4" />
+                                      <Trash2 className="w-4 h-4" strokeWidth={2} />
                                     </Button>
                                   </div>
                                 </TableCell>
@@ -1657,12 +1643,12 @@ export default function CravingsPopupPage() {
                           })}
                         </TableBody>
                       </Table>
-                      <div className="bg-slate-50 border-t border-slate-200 p-3 flex items-center justify-between">
-                        <div className="flex items-center gap-2 text-xs text-slate-500">
-                          <Info className="w-3.5 h-3.5" />
+                      <div className="bg-[#F8FAFC] border-t border-[#EEF1F3] p-3.5 flex items-center justify-between">
+                        <div className="flex items-center gap-2 text-[13px] font-medium text-[#475569]">
+                          <Info className="w-[18px] h-[18px]" strokeWidth={1.5} />
                           Items appear in the popup in this order
                         </div>
-                        <div className="text-xs font-semibold text-slate-600">
+                        <div className="text-[13px] font-bold text-[#334155]">
                           {selectedItems.length} items selected
                         </div>
                       </div>
@@ -1673,80 +1659,80 @@ export default function CravingsPopupPage() {
                 <TabsContent value="items" className="pt-6 animate-in fade-in-0 slide-in-from-top-2 duration-300">
                   <div className="flex items-end justify-between mb-4">
                     <div>
-                      <h3 className="text-base font-bold text-slate-900">
+                      <h3 className="text-[16px] font-bold text-[#111827]">
                         Recommended Items ({editing?.itemIds.length ?? ruleDetail.items.length})
                       </h3>
-                      <p className="text-sm text-slate-500 mt-1">
+                      <p className="text-[13px] font-medium text-[#475569] mt-1">
                         Manage the items shown when a customer adds {ruleDetail.triggerItemName}
                       </p>
                     </div>
-                    <Button onClick={() => setItemsDialogOpen(true)} className="bg-emerald-600 hover:bg-emerald-700 text-white">
-                      <Plus className="w-4 h-4 mr-1.5" /> Add Items
+                    <Button onClick={() => setItemsDialogOpen(true)} className="bg-[#06701E] hover:bg-[#045A18] text-white rounded-[8px] h-9 px-3">
+                      <Plus className="w-4 h-4 mr-1.5" strokeWidth={2.5} /> Add Items
                     </Button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {selectedItems.map((item, index) => (
                       <div
                         key={item.id}
-                        className="flex items-center gap-3 border border-slate-200 rounded-xl bg-white p-3 animate-in fade-in-0 slide-in-from-bottom-1 duration-300"
+                        className="flex items-center gap-3 border border-[#EEF1F3] rounded-[10px] bg-white p-3 shadow-[0_1px_3px_rgba(15,23,42,0.025)] animate-in fade-in-0 slide-in-from-bottom-1 duration-300"
                         style={{ animationDelay: `${Math.min(index, 8) * 50}ms` }}
                       >
-                        <div className="w-12 h-12 rounded-lg bg-slate-100 overflow-hidden relative flex-shrink-0">
+                        <div className="w-12 h-12 rounded-[8px] bg-[#FFF2EB] overflow-hidden relative flex-shrink-0">
                           {item.imageUrl ? (
                             <Image src={item.imageUrl} alt={item.name} width={48} height={48} className="w-full h-full object-cover" />
                           ) : (
                             <div className="w-full h-full flex items-center justify-center">
-                              <ShoppingBag className="w-5 h-5 text-slate-300" />
+                              <ShoppingBag className="w-5 h-5 text-[#FF4B04]/40" />
                             </div>
                           )}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <p className="text-sm font-semibold text-slate-900 truncate">{item.name}</p>
-                          <p className="text-xs text-slate-500 truncate">{item.kitchenName}</p>
+                          <p className="text-[14px] font-bold text-[#111827] truncate">{item.name}</p>
+                          <p className="text-[12px] font-medium text-[#475569] truncate">{item.kitchenName}</p>
                         </div>
-                        <span className="text-sm font-semibold text-slate-900">₹{item.price}</span>
+                        <span className="text-[14px] font-bold text-[#111827]">₹{item.price}</span>
                         <Button
                           variant="ghost"
                           size="icon"
                           onClick={() => toggleDraftItem(item.id)}
-                          className="h-8 w-8 text-red-400 hover:text-red-600 hover:bg-red-50"
+                          className="h-8 w-8 text-[#FF4B04] hover:text-[#E63F00] hover:bg-[#FFF2EB] rounded-[6px]"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4" strokeWidth={2} />
                         </Button>
                       </div>
                     ))}
                     {selectedItems.length === 0 && (
-                      <div className="md:col-span-2 text-center py-10 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                        <p className="text-slate-500 text-sm">No items yet</p>
+                      <div className="md:col-span-2 text-center py-10 bg-[#FAFCFA] rounded-[10px] border border-dashed border-[#DDE3E8]">
+                        <p className="text-[#94A3B8] text-[14px] font-medium">No items yet</p>
                       </div>
                     )}
                   </div>
                 </TabsContent>
 
                 <TabsContent value="display" className="pt-6 animate-in fade-in-0 slide-in-from-top-2 duration-300">
-                  <div className="bg-slate-50/80 border border-slate-100 rounded-xl p-5 max-w-lg">
-                    <h4 className="text-sm font-bold text-slate-900 mb-4">Display Settings</h4>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-semibold text-slate-800">Popup Title</p>
-                          <p className="text-[11px] text-slate-500">Shown at the top of the cravings popup</p>
+                  <div className="bg-[#F8FAFC] border border-[#EEF1F3] rounded-[10px] p-6 max-w-lg">
+                    <h4 className="text-[15px] font-bold text-[#111827] mb-5">Display Settings</h4>
+                    <div className="space-y-5">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <p className="text-[14px] font-bold text-[#111827]">Popup Title</p>
+                          <p className="text-[12px] font-medium text-[#64748B] mt-0.5">Shown at the top of the cravings popup</p>
                         </div>
                         <Input
                           value={editing?.title ?? ruleDetail.title}
                           onChange={(e) => updateDraft({ title: e.target.value })}
-                          className="w-56 border-slate-200"
+                          className="w-56 bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] h-10 text-[#111827] focus-visible:ring-1 focus-visible:ring-[#06701E]"
                         />
                       </div>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-semibold text-slate-800">Message</p>
-                          <p className="text-[11px] text-slate-500">Description under the popup title</p>
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <p className="text-[14px] font-bold text-[#111827]">Message</p>
+                          <p className="text-[12px] font-medium text-[#64748B] mt-0.5">Description under the popup title</p>
                         </div>
                         <Input
                           value={editing?.message ?? ruleDetail.message}
                           onChange={(e) => updateDraft({ message: e.target.value })}
-                          className="w-56 border-slate-200"
+                          className="w-56 bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] h-10 text-[#111827] focus-visible:ring-1 focus-visible:ring-[#06701E]"
                         />
                       </div>
                     </div>
@@ -1754,26 +1740,26 @@ export default function CravingsPopupPage() {
                 </TabsContent>
 
                 <TabsContent value="popup" className="pt-6 animate-in fade-in-0 slide-in-from-top-2 duration-300">
-                  <div className="bg-slate-50/80 border border-slate-100 rounded-xl p-5 max-w-lg">
-                    <h4 className="text-sm font-bold text-slate-900 mb-4">Popup Content</h4>
-                    <div className="space-y-4">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-semibold text-slate-700">Popup Title</Label>
+                  <div className="bg-[#F8FAFC] border border-[#EEF1F3] rounded-[10px] p-6 max-w-lg">
+                    <h4 className="text-[15px] font-bold text-[#111827] mb-5">Popup Content</h4>
+                    <div className="space-y-5">
+                      <div className="space-y-2">
+                        <Label className="text-[14px] font-semibold text-[#334155]">Popup Title</Label>
                         <Input
                           value={editing?.title ?? ruleDetail.title}
                           onChange={(e) => updateDraft({ title: e.target.value })}
-                          className="border-slate-200"
+                          className="bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] h-10 text-[#111827] focus-visible:ring-1 focus-visible:ring-[#06701E]"
                         />
                       </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs font-semibold text-slate-700">Message</Label>
+                      <div className="space-y-2">
+                        <Label className="text-[14px] font-semibold text-[#334155]">Message</Label>
                         <Textarea
                           value={editing?.message ?? ruleDetail.message}
                           onChange={(e) => updateDraft({ message: e.target.value })}
-                          className="border-slate-200 min-h-[80px]"
+                          className="bg-[#FFFFFF] border-[#DDE3E8] rounded-[8px] min-h-[90px] text-[#111827] focus-visible:ring-1 focus-visible:ring-[#06701E] pt-3"
                         />
                       </div>
-                      <Button onClick={() => setPreviewOpen(true)} variant="outline" className="border-emerald-500 text-emerald-500 hover:bg-emerald-50">
+                      <Button onClick={() => setPreviewOpen(true)} variant="outline" className="border-[#06701E] text-[#06701E] hover:bg-[#EAF6ED] hover:text-[#06701E] h-10 rounded-[8px] w-full">
                         <Eye className="w-4 h-4 mr-2" /> Live Preview
                       </Button>
                     </div>
@@ -1795,9 +1781,9 @@ export default function CravingsPopupPage() {
               </Tabs>
             </>
           ) : (
-            <div className="flex flex-col items-center justify-center h-[500px] border border-dashed border-slate-200 rounded-xl bg-slate-50">
-              <Box className="w-12 h-12 text-slate-300 mb-4" />
-              <h3 className="text-lg font-semibold text-slate-700">
+            <div className="flex flex-col items-center justify-center h-[500px] border border-dashed border-[#DDE3E8] rounded-[12px] bg-[#FAFCFA]">
+              <Box className="w-12 h-12 text-[#94A3B8] mb-4" />
+              <h3 className="text-[18px] font-bold text-[#111827]">
                 Rule not found
               </h3>
             </div>
@@ -1870,44 +1856,49 @@ function PopupPreviewCard({
   items: CravingsMenuOption[];
 }) {
   return (
-    <div className="max-w-[420px] rounded-[24px] border border-slate-200 bg-white shadow-2xl text-left">
+    <div className="max-w-[420px] rounded-[24px] border border-[#DDE3E8] bg-white shadow-2xl text-left">
       <div className="max-h-[85vh] overflow-y-auto p-6">
         <div className="mb-6 text-center">
           <div className="relative mb-3 flex items-center justify-center">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-green-100 bg-green-50">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-green-100">
-                <CheckCircle2 className="h-6 w-6 fill-green-100 text-green-600" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full border border-[#EAF6ED] bg-[#F4FAF5]">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EAF6ED]">
+                <CheckCircle2 className="h-6 w-6 fill-[#EAF6ED] text-[#06701E]" />
               </div>
             </div>
           </div>
-          <h3 className="text-xl font-bold text-gray-900">{title}</h3>
-          <p className="mt-1 text-sm text-gray-500">{message}</p>
+          <h3 className="text-[20px] font-bold text-[#111827]">{title}</h3>
+          <p className="mt-1 text-[14px] text-[#64748B]">{message}</p>
         </div>
-        <div className="mb-6 rounded-[16px] border border-gray-100 bg-gray-50 p-4">
-          <p className="text-[13px] text-gray-600">
-            <span className="font-extrabold text-gray-900">{triggerItemName}</span> added to cart
+        <div className="mb-6 rounded-[16px] border border-[#EEF1F3] bg-[#F7F9F7] p-4">
+          <p className="text-[13px] text-[#475569]">
+            <span className="font-extrabold text-[#111827]">{triggerItemName}</span> added to cart
           </p>
         </div>
         <div className="flex flex-col gap-3">
           {items.map((item) => (
-            <div key={item.id} className="flex gap-3 rounded-[12px] border border-gray-100 bg-white p-2 shadow-sm">
-              <div className="relative h-[96px] w-[130px] shrink-0 overflow-hidden rounded-[8px] bg-orange-50">
+            <div key={item.id} className="flex gap-3 rounded-[12px] border border-[#EEF1F3] bg-white p-2 shadow-[0_1px_3px_rgba(15,23,42,0.025)]">
+              <div className="relative h-[96px] w-[130px] shrink-0 overflow-hidden rounded-[8px] bg-[#FFF2EB]">
                 {item.imageUrl ? (
                   <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <ShoppingBag className="h-8 w-8 text-orange-200" />
+                    <ShoppingBag className="h-8 w-8 text-[#FF4B04]/40" />
+                  </div>
+                )}
+                {item.isBestseller && (
+                  <div className="absolute bottom-0 left-0 z-10 rounded-tr-[8px] bg-[#FF4B04] px-2 py-0.5 text-[10px] font-bold text-white">
+                    Bestseller
                   </div>
                 )}
               </div>
               <div className="flex flex-1 flex-col justify-between py-1 pr-1">
                 <div>
-                  <h5 className="text-[15px] font-bold leading-tight text-gray-900">{item.name}</h5>
-                  <p className="mt-0.5 text-[11px] text-gray-500">{item.kitchenName}</p>
+                  <h5 className="text-[15px] font-bold leading-tight text-[#111827]">{item.name}</h5>
+                  <p className="mt-0.5 text-[11px] text-[#64748B]">{item.kitchenName}</p>
                 </div>
                 <div className="mt-2 flex items-center justify-between">
-                  <div className="text-[15px] font-extrabold text-[#008000]">₹{item.price}</div>
-                  <div className="rounded-[6px] border border-[#EE7005] bg-white px-3 py-1 text-[12px] font-extrabold text-[#EE7005]">
+                  <div className="text-[15px] font-extrabold text-[#06701E]">₹{item.price}</div>
+                  <div className="rounded-[6px] border border-[#FF4B04] bg-white px-3 py-1 text-[12px] font-extrabold text-[#FF4B04]">
                     ADD
                   </div>
                 </div>
@@ -1915,7 +1906,7 @@ function PopupPreviewCard({
             </div>
           ))}
           {items.length === 0 && (
-            <p className="text-sm text-slate-500 text-center py-6">No recommended items yet.</p>
+            <p className="text-[14px] text-[#94A3B8] text-center py-6">No recommended items yet.</p>
           )}
         </div>
       </div>

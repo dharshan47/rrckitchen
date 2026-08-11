@@ -16,7 +16,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { useAblyOrderChannel } from "@/hooks/useAblySubscribe";
@@ -192,22 +191,22 @@ export function AddToCartPopup({ item, qty = 1, open, onOpenChange, orderId }: A
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
         showCloseButton={false}
-        className="max-w-[420px] gap-0 overflow-hidden rounded-[24px] border-0 p-0 shadow-2xl"
+        className="w-[95vw] max-w-[420px] gap-0 overflow-hidden rounded-[24px] border-0 p-0 shadow-2xl sm:w-full"
       >
         {/* Close Button */}
         <button
           type="button"
           onClick={() => onOpenChange(false)}
           aria-label="Close"
-          className="absolute top-4 right-4 z-10 rounded-full p-2 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-700"
+          className="absolute top-4 right-4 z-20 rounded-full bg-white/80 backdrop-blur-sm p-2 text-gray-400 shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-700"
         >
           <X className="h-5 w-5" />
         </button>
 
-        <ScrollArea className="h-[min(85vh,640px)]">
-          <div className="p-6 md:p-8">
+        <div className="flex flex-col max-h-[85vh]">
+          <div className="overflow-y-auto flex-1 p-5 md:p-8 pb-2 md:pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
             {/* Header / Success Icon */}
-          <DialogHeader className="mb-6 items-center text-center">
+          <DialogHeader className="mb-6 mt-2 items-center text-center">
             <div className="relative mb-3 flex items-center justify-center">
               <Sparkles className="absolute -top-1 -left-2 h-4 w-4 text-yellow-400 opacity-80" />
               <Sparkles className="absolute -bottom-1 -right-2 h-3 w-3 text-yellow-400 opacity-80" />
@@ -471,26 +470,27 @@ export function AddToCartPopup({ item, qty = 1, open, onOpenChange, orderId }: A
             </div>
           )}
 
-            {/* Footer Buttons */}
-            <div className="flex flex-row gap-3">
-              <Button
-                variant="outline"
-                size="lg"
-                onClick={() => onOpenChange(false)}
-                className="flex-1 rounded-[12px] border-[#EE7005] py-3.5 text-[13px] font-bold uppercase tracking-wider text-[#EE7005] hover:bg-orange-50"
-              >
-                Continue Shopping
-              </Button>
-              <Button
-                size="lg"
-                onClick={goToCart}
-                className="flex-1 rounded-[12px] bg-[#EE7005] py-3.5 text-[13px] font-bold uppercase tracking-wider text-white shadow-md shadow-[#EE7005]/20 hover:bg-[#EE7005] hover:brightness-110"
-              >
-                View Cart
-              </Button>
-            </div>
           </div>
-        </ScrollArea>
+
+          {/* Footer Buttons - Sticky at bottom */}
+          <div className="flex flex-row gap-2 sm:gap-3 p-4 sm:p-5 md:p-8 pt-4 md:pt-5 border-t border-gray-100 bg-white flex-shrink-0">
+            <Button
+              variant="outline"
+              size="lg"
+              onClick={() => onOpenChange(false)}
+              className="flex-1 rounded-[12px] border-[#EE7005] py-3.5 px-2 sm:px-4 text-[12px] sm:text-[13px] font-bold uppercase tracking-wider text-[#EE7005] hover:bg-orange-50 truncate"
+            >
+              Continue
+            </Button>
+            <Button
+              size="lg"
+              onClick={goToCart}
+              className="flex-1 rounded-[12px] bg-[#EE7005] py-3.5 px-2 sm:px-4 text-[12px] sm:text-[13px] font-bold uppercase tracking-wider text-white shadow-md shadow-[#EE7005]/20 hover:bg-[#EE7005] hover:brightness-110 truncate"
+            >
+              View Cart
+            </Button>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );

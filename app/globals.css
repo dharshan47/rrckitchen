@@ -48,6 +48,76 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+
+  /* ─── Brand Palette ─── */
+  --color-primary-dark: var(--primary-dark);
+  --color-primary-light: var(--primary-light);
+  --color-success-dark: var(--success-dark);
+  --color-success-light: var(--success-light);
+
+  /* ─── Backgrounds ─── */
+  --color-background-secondary: var(--background-secondary);
+  --color-background-preview: var(--background-preview);
+
+  /* ─── Text ─── */
+  --color-heading: var(--heading);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-disabled: var(--text-disabled);
+
+  /* ─── Borders ─── */
+  --color-border-light: var(--border-light);
+  --color-border-orange: var(--border-orange);
+  --color-border-green: var(--border-green);
+
+  /* ─── Status ─── */
+  --color-success-bg: var(--status-success-bg);
+  --color-success-border: var(--status-success-border);
+  --color-success-text: var(--status-success-text);
+  --color-warning-bg: var(--status-warning-bg);
+  --color-warning-border: var(--status-warning-border);
+  --color-warning-text: var(--status-warning-text);
+  --color-error-bg: var(--status-error-bg);
+  --color-error-border: var(--status-error-border);
+  --color-error-text: var(--status-error-text);
+  --color-info-bg: var(--status-info-bg);
+  --color-info-border: var(--status-info-border);
+  --color-info-text: var(--status-info-text);
+
+  /* ─── Badges ─── */
+  --color-badge-veg-bg: var(--badge-veg-bg);
+  --color-badge-veg-text: var(--badge-veg-text);
+  --color-badge-nonveg-bg: var(--badge-nonveg-bg);
+  --color-badge-nonveg-text: var(--badge-nonveg-text);
+  --color-badge-bestseller-bg: var(--badge-bestseller-bg);
+  --color-badge-bestseller-text: var(--badge-bestseller-text);
+  --color-badge-new-bg: var(--badge-new-bg);
+  --color-badge-new-text: var(--badge-new-text);
+  --color-badge-trending-bg: var(--badge-trending-bg);
+  --color-badge-trending-text: var(--badge-trending-text);
+
+  /* ─── Ratings ─── */
+  --color-star-fill: var(--star-fill);
+  --color-star-border: var(--star-border);
+
+  /* ─── Charts ─── */
+  --color-chart-revenue: var(--chart-revenue);
+  --color-chart-orders: var(--chart-orders);
+  --color-chart-users: var(--chart-users);
+  --color-chart-cancelled: var(--chart-cancelled);
+  --color-chart-pending: var(--chart-pending);
+  --color-chart-completed: var(--chart-completed);
+
+  /* ─── Admin Dashboard Cards ─── */
+  --color-admin-revenue-bg: var(--admin-card-revenue-bg);
+  --color-admin-revenue-icon: var(--admin-card-revenue-icon);
+  --color-admin-orders-bg: var(--admin-card-orders-bg);
+  --color-admin-orders-icon: var(--admin-card-orders-icon);
+  --color-admin-users-bg: var(--admin-card-users-bg);
+  --color-admin-users-icon: var(--admin-card-users-icon);
+  --color-admin-reviews-bg: var(--admin-card-reviews-bg);
+  --color-admin-reviews-icon: var(--admin-card-reviews-icon);
+
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -60,38 +130,120 @@
 
 }
 
-:root {
-  --background: #FFFFFF;
-  --foreground: #000000;
-  --card: #FFFFFF;
-  --card-foreground: #000000;
-  --popover: #FFFFFF;
-  --popover-foreground: #000000;
+/* ─── Static design tokens (emitted as CSS variables + utilities) ─── */
+@theme {
+  /* ─── Shadows ─── */
+  --shadow-small: 0 2px 8px rgba(0, 0, 0, 0.05);
+  --shadow-medium: 0 8px 24px rgba(0, 0, 0, 0.08);
+  --shadow-large: 0 18px 50px rgba(0, 0, 0, 0.12);
+  --shadow-orange-glow: 0 10px 30px rgba(249, 115, 22, 0.25);
+  --shadow-green-glow: 0 10px 30px rgba(22, 163, 74, 0.22);
 
-  --primary: #EE7005;
+  /* ─── Gradients ─── */
+  --gradient-orange: linear-gradient(135deg, #f97316, #fb923c);
+  --gradient-green: linear-gradient(135deg, #16a34a, #22c55e);
+  --gradient-brand: linear-gradient(135deg, #f97316, #16a34a);
+  --gradient-hero: linear-gradient(180deg, #fff7ed, #ffffff);
+
+  /* ─── Typography ─── */
+  --text-page-title: 2rem;
+  --text-section-title: 1.5rem;
+  --text-card-title: 1.25rem;
+  --text-normal: 1rem;
+  --text-small: 0.875rem;
+  --text-caption: 0.75rem;
+}
+
+:root {
+  --background: #FFFDF8;
+  --foreground: #111827;
+  --card: #FFFFFF;
+  --card-foreground: #111827;
+  --popover: #FFFFFF;
+  --popover-foreground: #111827;
+
+  --primary: #F97316;
   --primary-foreground: #FFFFFF;
-  --secondary: #1B2F45;
-  --secondary-foreground: #FFFFFF;
-  --accent: #EE7005;
-  --accent-foreground: #FFFFFF;
-  --muted: #F5F5F5;
-  --muted-foreground: #666666;
+  --primary-dark: #EA580C;
+  --primary-light: #FFF7ED;
+  --secondary: #FFFFFF;
+  --secondary-foreground: #374151;
+  --accent: #FFF7ED;
+  --accent-foreground: #EA580C;
+  --muted: #F8FAFC;
+  --muted-foreground: #6B7280;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --success: #22C55E;
+  --success: #16A34A;
   --success-foreground: #FFFFFF;
+  --success-dark: #15803D;
+  --success-light: #F0FDF4;
 
-  --border: #E5E5E5;
-  --border-primary: #EE7005;
-  --input: #E5E5E5;
-  --ring: #EE7005;
+  --border: #E5E7EB;
+  --border-light: #F1F5F9;
+  --border-primary: #F97316;
+  --border-orange: #FDBA74;
+  --border-green: #86EFAC;
+  --input: #E5E7EB;
+  --ring: #F97316;
   --radius: 0.625rem;
 
-  --chart-1: #EE7005;
-  --chart-2: #FF8C38;
-  --chart-3: #16A34A;
-  --chart-4: #6DC8F2;
-  --chart-5: #1B2F45;
+  --chart-1: #F97316;
+  --chart-2: #16A34A;
+  --chart-3: #2563EB;
+  --chart-4: #FACC15;
+  --chart-5: #22C55E;
+
+  --heading: #111827;
+  --text-primary: #374151;
+  --text-secondary: #6B7280;
+  --text-disabled: #9CA3AF;
+
+  --background-secondary: #F8FAFC;
+  --background-preview: #FDFCF8;
+
+  --status-success-bg: #DCFCE7;
+  --status-success-border: #86EFAC;
+  --status-success-text: #15803D;
+  --status-warning-bg: #FEF3C7;
+  --status-warning-border: #FCD34D;
+  --status-warning-text: #D97706;
+  --status-error-bg: #FEE2E2;
+  --status-error-border: #FCA5A5;
+  --status-error-text: #DC2626;
+  --status-info-bg: #DBEAFE;
+  --status-info-border: #93C5FD;
+  --status-info-text: #2563EB;
+
+  --badge-veg-bg: #DCFCE7;
+  --badge-veg-text: #15803D;
+  --badge-nonveg-bg: #FEE2E2;
+  --badge-nonveg-text: #DC2626;
+  --badge-bestseller-bg: #FFF7ED;
+  --badge-bestseller-text: #EA580C;
+  --badge-new-bg: #DBEAFE;
+  --badge-new-text: #2563EB;
+  --badge-trending-bg: #FEF3C7;
+  --badge-trending-text: #D97706;
+
+  --star-fill: #FACC15;
+  --star-border: #EAB308;
+
+  --chart-revenue: #16A34A;
+  --chart-orders: #F97316;
+  --chart-users: #2563EB;
+  --chart-cancelled: #EF4444;
+  --chart-pending: #FACC15;
+  --chart-completed: #22C55E;
+
+  --admin-card-revenue-bg: #ECFDF5;
+  --admin-card-revenue-icon: #16A34A;
+  --admin-card-orders-bg: #FFF7ED;
+  --admin-card-orders-icon: #F97316;
+  --admin-card-users-bg: #EFF6FF;
+  --admin-card-users-icon: #2563EB;
+  --admin-card-reviews-bg: #FEF3C7;
+  --admin-card-reviews-icon: #D97706;
 
   --nav-primary: #333333;
   --nav-primary-foreground: #FAFAFA;
@@ -109,45 +261,103 @@
 }
 
 .dark {
-  --background: #1B2F45;
-  --foreground: #FFFFFF;
-  --card: #233A55;
-  --card-foreground: #FFFFFF;
-  --popover: #233A55;
-  --popover-foreground: #FFFFFF;
+  --background: #111827;
+  --foreground: #F9FAFB;
+  --card: #1F2937;
+  --card-foreground: #F9FAFB;
+  --popover: #1F2937;
+  --popover-foreground: #F9FAFB;
 
-  --primary: #EE7005;
+  --primary: #F97316;
   --primary-foreground: #FFFFFF;
-  --secondary: #2A4A6B;
-  --secondary-foreground: #FFFFFF;
-  --accent: #EE7005;
-  --accent-foreground: #FFFFFF;
-  --muted: #233A55;
-  --muted-foreground: #AAAAAA;
+  --primary-dark: #EA580C;
+  --primary-light: #2A1A0E;
+  --secondary: #1F2937;
+  --secondary-foreground: #E5E7EB;
+  --accent: #374151;
+  --accent-foreground: #F9FAFB;
+  --muted: #1F2937;
+  --muted-foreground: #9CA3AF;
   --destructive: #EF4444;
   --destructive-foreground: #FFFFFF;
   --success: #22C55E;
   --success-foreground: #FFFFFF;
+  --success-dark: #15803D;
+  --success-light: #0F1F14;
 
-  --border: rgba(255, 255, 255, 0.1);
-  --border-primary: #EE7005;
+  --border: rgba(255, 255, 255, 0.12);
+  --border-light: rgba(255, 255, 255, 0.06);
+  --border-primary: #F97316;
+  --border-orange: rgba(251, 146, 60, 0.45);
+  --border-green: rgba(134, 239, 172, 0.45);
   --input: rgba(255, 255, 255, 0.15);
-  --ring: #EE7005;
+  --ring: #F97316;
 
-  --chart-1: #EE7005;
-  --chart-2: #FF8C38;
-  --chart-3: #22C55E;
-  --chart-4: #6DC8F2;
-  --chart-5: #FFD700;
+  --chart-1: #F97316;
+  --chart-2: #22C55E;
+  --chart-3: #3B82F6;
+  --chart-4: #FACC15;
+  --chart-5: #16A34A;
 
-  --sidebar: #1B2F45;
-  --sidebar-foreground: #FFFFFF;
-  --sidebar-primary: #EE7005;
+  --heading: #F9FAFB;
+  --text-primary: #E5E7EB;
+  --text-secondary: #9CA3AF;
+  --text-disabled: #6B7280;
+
+  --background-secondary: #1F2937;
+  --background-preview: #1A2333;
+
+  --status-success-bg: #0F2E1D;
+  --status-success-border: #16A34A;
+  --status-success-text: #4ADE80;
+  --status-warning-bg: #2E2408;
+  --status-warning-border: #F59E0B;
+  --status-warning-text: #FCD34D;
+  --status-error-bg: #331616;
+  --status-error-border: #EF4444;
+  --status-error-text: #FCA5A5;
+  --status-info-bg: #12253F;
+  --status-info-border: #3B82F6;
+  --status-info-text: #93C5FD;
+
+  --badge-veg-bg: #0F2E1D;
+  --badge-veg-text: #4ADE80;
+  --badge-nonveg-bg: #331616;
+  --badge-nonveg-text: #FCA5A5;
+  --badge-bestseller-bg: #2A1A0E;
+  --badge-bestseller-text: #FB923C;
+  --badge-new-bg: #12253F;
+  --badge-new-text: #93C5FD;
+  --badge-trending-bg: #2E2408;
+  --badge-trending-text: #FCD34D;
+
+  --star-fill: #FACC15;
+  --star-border: #EAB308;
+
+  --chart-revenue: #22C55E;
+  --chart-orders: #F97316;
+  --chart-users: #3B82F6;
+  --chart-cancelled: #EF4444;
+  --chart-pending: #FACC15;
+  --chart-completed: #22C55E;
+
+  --admin-card-revenue-bg: #0F2E1D;
+  --admin-card-revenue-icon: #4ADE80;
+  --admin-card-orders-bg: #2A1A0E;
+  --admin-card-orders-icon: #FB923C;
+  --admin-card-users-bg: #12253F;
+  --admin-card-users-icon: #93C5FD;
+  --admin-card-reviews-bg: #2E2408;
+  --admin-card-reviews-icon: #FCD34D;
+
+  --sidebar: #111827;
+  --sidebar-foreground: #F9FAFB;
+  --sidebar-primary: #F97316;
   --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: rgba(255, 255, 255, 0.1);
-  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-accent-foreground: #F9FAFB;
   --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #EE7005;
+  --sidebar-ring: #F97316;
   --search-bar: oklch(0.97 0 0);
 }
 
@@ -195,6 +405,22 @@
   }
 }
 
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -227,7 +453,7 @@
 .hero-blob-1 {
   width: 400px;
   height: 400px;
-  background: #EE7005;
+  background: #F97316;
   top: -100px;
   right: -50px;
   animation-delay: 0s;
@@ -236,7 +462,7 @@
 .hero-blob-2 {
   width: 300px;
   height: 300px;
-  background: #FF8C38;
+  background: #FB923C;
   bottom: -80px;
   left: -60px;
   animation-delay: -7s;
@@ -245,7 +471,7 @@
 .hero-blob-3 {
   width: 200px;
   height: 200px;
-  background: #FBBF24;
+  background: #FACC15;
   top: 40%;
   left: 30%;
   animation-delay: -14s;

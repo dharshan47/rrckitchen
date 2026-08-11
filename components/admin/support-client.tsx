@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -8,18 +8,15 @@ import {
   Ticket,
   MessageSquare,
   Loader2,
-  CheckCircle2,
-  Clock,
   AlertCircle,
   Search,
   Send,
-  User,
+  UserRound,
   Package,
   ChefHat,
   Truck,
   CreditCard,
-  HelpCircle,
-  Shield,
+  ShieldCheck,
   Download,
   Eye,
   X,
@@ -27,16 +24,20 @@ import {
   Copy,
   Phone,
   Mail,
-  Smile,
-  Paperclip,
-  ImageIcon,
-  Lock,
   Check,
   TrendingUp,
   ChevronLeft,
   ChevronRight,
+  BadgeHelp,
+  MessageCircle,
+  UserRoundCog,
+  BadgeCheck,
+  Tag,
+  Clock3,
+  RefreshCw,
+  Lock,
+  type LucideIcon,
 } from "lucide-react";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -53,6 +54,20 @@ import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { format, subDays, startOfDay } from "date-fns";
 import {
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+  createColumnHelper,
+} from "@tanstack/react-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
   useAdminSupportTicketsQuery,
   useAdminSelectedSupportTicket,
   useAdminSupportActions,
@@ -60,6 +75,7 @@ import {
   useAdminReplyToTicketMutation,
   type AdminSupportTicket,
 } from "@/stores";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const replySchema = z.object({
   message: z
@@ -68,114 +84,94 @@ const replySchema = z.object({
     .max(2000, "Message too long"),
 });
 
-const statusConfig: Record<
-  string,
-  { label: string; className: string; dotColor: string }
-> = {
+const statusConfig: Record<string, { label: string; className: string }> = {
   OPEN: {
     label: "OPEN",
-    className:
-      "text-blue-600 bg-blue-50 border border-blue-200 font-bold text-[10px] px-2.5 py-1 rounded-md",
-    dotColor: "bg-blue-600",
+    className: "text-[#2563EB] bg-[#EFF6FF] border border-[#BFDBFE] font-bold text-[10px] px-2.5 py-1 rounded-[5px]",
   },
   INPROGRESS: {
     label: "IN PROGRESS",
-    className:
-      "text-orange-600 bg-orange-50 border border-orange-200 font-bold text-[10px] px-2.5 py-1 rounded-md",
-    dotColor: "bg-orange-500",
+    className: "text-[#EA580C] bg-[#FFF7ED] border border-[#FED7AA] font-bold text-[10px] px-2.5 py-1 rounded-[5px]",
   },
   RESOLVED: {
     label: "RESOLVED",
-    className:
-      "text-emerald-600 bg-emerald-50 border border-emerald-200 font-bold text-[10px] px-2.5 py-1 rounded-md",
-    dotColor: "bg-emerald-500",
+    className: "text-[#15803D] bg-[#F0FDF4] border border-[#BBF7D0] font-bold text-[10px] px-2.5 py-1 rounded-[5px]",
   },
   CLOSED: {
     label: "CLOSED",
-    className:
-      "text-slate-500 bg-slate-100 border border-slate-200 font-bold text-[10px] px-2.5 py-1 rounded-md",
-    dotColor: "bg-slate-400",
+    className: "text-[#334155] bg-[#F1F5F9] border border-[#E2E8F0] font-bold text-[10px] px-2.5 py-1 rounded-[5px]",
   },
 };
 
-const priorityConfig: Record<
-  string,
-  { label: string; className: string }
-> = {
+const priorityConfig: Record<string, { label: string; className: string }> = {
   LOW: {
     label: "LOW",
-    className:
-      "text-slate-600 bg-slate-100 border border-slate-200 font-bold text-[10px] px-2.5 py-1 rounded-md",
+    className: "text-[#475569] bg-[#F1F5F9] border border-[#E2E8F0] font-bold text-[10px] px-2.5 py-1 rounded-[5px]",
   },
   MEDIUM: {
     label: "MEDIUM",
-    className:
-      "text-orange-600 bg-orange-50 border border-orange-200 font-bold text-[10px] px-2.5 py-1 rounded-md",
+    className: "text-[#F97316] bg-[#FFF7ED] border border-[#FED7AA] font-bold text-[10px] px-2.5 py-1 rounded-[5px]",
   },
   HIGH: {
     label: "HIGH",
-    className:
-      "text-red-600 bg-red-50 border border-red-200 font-bold text-[10px] px-2.5 py-1 rounded-md",
+    className: "text-[#EF4444] bg-[#FFF1F1] border border-[#FFD2D2] font-bold text-[10px] px-2.5 py-1 rounded-[5px]",
   },
   URGENT: {
     label: "URGENT",
-    className:
-      "text-red-700 bg-red-100 border border-red-300 font-bold text-[10px] px-2.5 py-1 rounded-md",
+    className: "text-[#EF3340] bg-[#FFF1F1] border border-[#FFD2D2] font-bold text-[10px] px-2.5 py-1 rounded-[5px]",
   },
 };
 
-const categoryConfig: Record<
-  string,
-  { icon: typeof HelpCircle; label: string; description: string }
-> = {
-  order: {
-    icon: Package,
-    label: "Order Issue",
-    description: "Related to order placement or status",
-  },
+const categoryConfig: Record<string, { icon: LucideIcon; label: string; description: string; barColor: string }> = {
   delivery: {
     icon: Truck,
     label: "Delivery Issue",
     description: "Related to delivery time, partner behavior, location or tracking issues.",
-  },
-  food: {
-    icon: ChefHat,
-    label: "Food Quality",
-    description: "Related to food quality or hygiene",
+    barColor: "bg-[#7C3AED]",
   },
   payment: {
     icon: CreditCard,
     label: "Payment",
     description: "Related to payment or refund issues",
+    barColor: "bg-[#F97316]",
+  },
+  food: {
+    icon: ChefHat,
+    label: "Food Quality",
+    description: "Related to food quality or hygiene",
+    barColor: "bg-[#3E9645]",
+  },
+  order: {
+    icon: Package,
+    label: "Order Issue",
+    description: "Related to order placement or status",
+    barColor: "bg-[#F59E0B]",
   },
   account: {
-    icon: User,
+    icon: UserRound,
     label: "Account",
     description: "Related to account access or settings",
-  },
-  kitchen: {
-    icon: ChefHat,
-    label: "Kitchen Issue",
-    description: "Related to kitchen operations",
+    barColor: "bg-[#64748B]",
   },
   coupons: {
-    icon: Package,
+    icon: Tag,
     label: "Coupons",
     description: "Related to coupon or offer issues",
+    barColor: "bg-[#16A34A]",
   },
   safety: {
-    icon: Shield,
+    icon: ShieldCheck,
     label: "Safety",
     description: "Related to safety concerns",
+    barColor: "bg-[#EF4444]",
   },
   other: {
-    icon: HelpCircle,
+    icon: BadgeHelp,
     label: "Other",
     description: "General queries",
+    barColor: "bg-[#64748B]",
   },
 };
-
-const PAGE_SIZE = 8;
 
 function getInitials(name: string | null | undefined) {
   if (!name) return "?";
@@ -191,129 +187,99 @@ function formatTicketId(id: string) {
   return `TKT-${format(new Date(), "yyyy")}-${id.slice(-4).toUpperCase()}`;
 }
 
-/* ------------------------- Skeleton components ------------------------- */
+const columnHelper = createColumnHelper<AdminSupportTicket>();
 
-function StatsRowSkeleton() {
+// --- Skeletons ---
+function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+    <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-3">
       {Array.from({ length: 6 }).map((_, i) => (
-        <div
-          key={i}
-          className="bg-white border border-slate-100 rounded-2xl p-4 flex flex-col gap-2 shadow-sm"
-        >
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-9 w-9 rounded-full" />
+        <div key={i} className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] p-4 flex items-start gap-3">
+          <Skeleton className="h-[44px] w-[44px] rounded-full flex-shrink-0" />
+          <div className="flex-1 space-y-2 pt-0.5">
+            <Skeleton className="h-2.5 w-20" />
+            <Skeleton className="h-6 w-14" />
+            <Skeleton className="h-2.5 w-24" />
           </div>
-          <Skeleton className="h-2.5 w-20 rounded-md" />
-          <Skeleton className="h-7 w-14 rounded-md" />
-          <Skeleton className="h-2.5 w-24 rounded-md" />
         </div>
       ))}
     </div>
   );
 }
 
+function FiltersSkeleton() {
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col md:flex-row gap-3 justify-between items-start md:items-center">
+        <Skeleton className="h-9 w-full md:max-w-[280px] rounded-[7px]" />
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-9 w-[130px] rounded-[7px]" />
+          <Skeleton className="h-9 w-[130px] rounded-[7px]" />
+          <Skeleton className="h-9 w-[140px] rounded-[7px]" />
+          <Skeleton className="h-9 w-[78px] rounded-[7px]" />
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <Skeleton className="h-[34px] w-[112px] rounded-[8px]" />
+        <Skeleton className="h-[34px] w-[88px] rounded-[8px]" />
+        <Skeleton className="h-[34px] w-[104px] rounded-[8px]" />
+        <Skeleton className="h-[34px] w-[92px] rounded-[8px]" />
+        <Skeleton className="h-[34px] w-[82px] rounded-[8px]" />
+      </div>
+    </div>
+  );
+}
+
+const tableCols = "grid-cols-[1.4fr_2fr_1.6fr_1.1fr_0.8fr_0.9fr_1fr_0.5fr]";
+
 function TableSkeleton() {
   return (
-    <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-      <div className="flex items-center gap-6 px-4 py-3.5 border-b border-slate-100 bg-slate-50/50">
-        <Skeleton className="h-2.5 w-24 rounded-md" />
-        <Skeleton className="h-2.5 w-28 rounded-md" />
-        <Skeleton className="h-2.5 w-32 rounded-md" />
-        <Skeleton className="h-2.5 w-20 rounded-md" />
-        <Skeleton className="h-2.5 w-14 rounded-md" />
-        <Skeleton className="h-2.5 w-16 rounded-md" />
-        <Skeleton className="h-2.5 w-20 rounded-md" />
-        <Skeleton className="h-2.5 w-12 rounded-md" />
+    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] shadow-none w-full overflow-hidden">
+      <div className={cn("grid items-center gap-4 px-5 py-4 border-b border-[#EEF0F2]", tableCols)}>
+        {Array.from({ length: 8 }).map((_, i) => (
+          <Skeleton key={i} className={cn("h-3", i === 7 ? "w-10" : "w-16")} />
+        ))}
       </div>
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div
-          key={i}
-          className="flex items-center gap-6 px-4 py-4 border-b border-slate-50"
-        >
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-6 w-0.5 rounded-full" />
-            <Skeleton className="h-3 w-24 rounded-md" />
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className={cn("grid items-center gap-4 px-5 py-3.5 border-b border-[#EEF0F2]", tableCols)}>
+          <div className="relative flex items-center">
+            <Skeleton className="absolute -left-4 w-[2px] h-[28px] rounded-r-md" />
+            <Skeleton className="h-3.5 w-24" />
           </div>
-          <div className="flex items-center gap-2.5">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <div className="space-y-1.5">
-              <Skeleton className="h-2.5 w-20 rounded-md" />
-              <Skeleton className="h-2 w-24 rounded-md" />
+          <div className="flex items-center gap-3 min-w-0">
+            <Skeleton className="h-[32px] w-[32px] rounded-full flex-shrink-0" />
+            <div className="space-y-1.5 min-w-0 flex-1">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-2.5 w-16" />
             </div>
           </div>
-          <Skeleton className="h-3 w-32 rounded-md" />
-          <Skeleton className="h-3 w-16 rounded-md" />
-          <Skeleton className="h-5 w-14 rounded-md" />
-          <Skeleton className="h-5 w-16 rounded-md" />
+          <Skeleton className="h-3.5 w-28" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-4 w-4 rounded-[4px]" />
+            <Skeleton className="h-3 w-16" />
+          </div>
+          <Skeleton className="h-[22px] w-14 rounded-[5px]" />
+          <Skeleton className="h-[22px] w-[72px] rounded-[5px]" />
           <div className="space-y-1.5">
-            <Skeleton className="h-2.5 w-20 rounded-md" />
-            <Skeleton className="h-2 w-12 rounded-md" />
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-2.5 w-14" />
           </div>
           <Skeleton className="h-8 w-8 rounded-full" />
         </div>
       ))}
-    </div>
-  );
-}
-
-function FilterRowSkeleton() {
-  return (
-    <div className="flex flex-col gap-3">
-      <div className="flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
-        <Skeleton className="h-10 w-full max-w-sm rounded-xl" />
-        <div className="flex items-center gap-2 flex-wrap">
-          <Skeleton className="h-10 w-[130px] rounded-xl" />
-          <Skeleton className="h-10 w-[140px] rounded-xl" />
-          <Skeleton className="h-10 w-[145px] rounded-xl" />
-          <Skeleton className="h-10 w-20 rounded-xl" />
+      <div className="flex items-center justify-between px-5 py-4">
+        <Skeleton className="h-3 w-48" />
+        <div className="flex items-center gap-1.5">
+          <Skeleton className="h-[32px] w-[32px] rounded-[7px]" />
+          <Skeleton className="h-[32px] w-[32px] rounded-[7px]" />
+          <Skeleton className="h-[32px] w-[32px] rounded-[7px]" />
+          <Skeleton className="h-[32px] w-[32px] rounded-[7px]" />
+          <Skeleton className="h-[32px] w-[32px] rounded-[7px]" />
+          <Skeleton className="h-[32px] w-[70px] rounded-[7px]" />
         </div>
       </div>
-      <div className="flex items-center gap-1 flex-wrap">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <Skeleton key={i} className="h-9 w-28 rounded-xl" />
-        ))}
-      </div>
     </div>
   );
-}
-
-function ticketsToCSV(tickets: AdminSupportTicket[]) {
-  const header = [
-    "Ticket ID",
-    "Customer",
-    "Email",
-    "Phone",
-    "Subject",
-    "Category",
-    "Priority",
-    "Status",
-    "Created At",
-  ];
-  const rows = tickets.map((t) => [
-    `TKT-${t.id.slice(-4).toUpperCase()}`,
-    `"${(t.user?.name ?? "Unknown").replace(/"/g, '""')}"`,
-    `"${(t.user?.email ?? "").replace(/"/g, '""')}"`,
-    `"${(t.user?.phoneNumber ?? "").replace(/"/g, '""')}"`,
-    `"${t.subject.replace(/"/g, '""')}"`,
-    t.category,
-    t.priority,
-    t.status,
-    format(new Date(t.createdAt), "dd MMM yyyy, hh:mm a"),
-  ]);
-  return [header, ...rows].map((r) => r.join(",")).join("\n");
-}
-
-function downloadCSV(filename: string, content: string) {
-  const blob = new Blob([content], { type: "text/csv;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
 }
 
 export default function AdminSupportPage() {
@@ -323,25 +289,19 @@ export default function AdminSupportPage() {
   const [priorityFilter, setPriorityFilter] = useState("ALL");
   const [categoryFilter, setCategoryFilter] = useState("ALL");
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(8);
   const [detailTab, setDetailTab] = useState("conversation");
   const chatBottomRef = useRef<HTMLDivElement>(null);
+  
   const selectedTicket = useAdminSelectedSupportTicket();
   const { setSelectedTicket } = useAdminSupportActions();
 
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<{ message: string }>({
+  const { register, handleSubmit, reset } = useForm<{ message: string }>({
     resolver: zodResolver(replySchema),
     defaultValues: { message: "" },
   });
-
-  const { data: tickets = [], isLoading, isError, refetch } = useAdminSupportTicketsQuery();
-
+  const { data: tickets = [], isLoading, isFetching, isError, refetch } = useAdminSupportTicketsQuery();
   const updateMutation = useAdminUpdateTicketStatusMutation();
-
   const replyMutation = useAdminReplyToTicketMutation();
 
   const handleStatusChange = (status: string) => {
@@ -356,7 +316,10 @@ export default function AdminSupportPage() {
     chatBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [selectedTicket?.messages]);
 
-  // Tab counts
+  useEffect(() => {
+    setDetailTab("conversation");
+  }, [selectedTicket?.id]);
+
   const tabCounts = {
     ALL: tickets.length,
     OPEN: tickets.filter((t) => t.status === "OPEN").length,
@@ -365,14 +328,12 @@ export default function AdminSupportPage() {
     CLOSED: tickets.filter((t) => t.status === "CLOSED").length,
   };
 
-  // Top stats (all real)
   const totalTickets = tickets.length;
   const openCount = tabCounts.OPEN;
   const inProgressCount = tabCounts.INPROGRESS;
   const resolvedCount = tabCounts.RESOLVED;
   const closedCount = tabCounts.CLOSED;
 
-  // Real weekly ticket change
   const weekStart = startOfDay(subDays(new Date(), 6)).getTime();
   const lastWeekStart = startOfDay(subDays(new Date(), 13)).getTime();
   const thisWeek = tickets.filter((t) => new Date(t.createdAt).getTime() >= weekStart).length;
@@ -380,10 +341,8 @@ export default function AdminSupportPage() {
     const ts = new Date(t.createdAt).getTime();
     return ts >= lastWeekStart && ts < weekStart;
   }).length;
-  const weeklyChange =
-    lastWeek > 0 ? ((thisWeek - lastWeek) / lastWeek) * 100 : null;
+  const weeklyChange = lastWeek > 0 ? ((thisWeek - lastWeek) / lastWeek) * 100 : null;
 
-  // Real avg response time: avg time from ticket creation to first admin reply
   let avgMs: number | null = null;
   const withAdminReply = tickets
     .filter((t) => t.messages.some((m) => m.senderId !== t.userId))
@@ -392,214 +351,261 @@ export default function AdminSupportPage() {
       return new Date(firstAdmin.createdAt).getTime() - new Date(t.createdAt).getTime();
     })
     .filter((d) => d > 0);
+  
   if (withAdminReply.length > 0) {
     avgMs = withAdminReply.reduce((s, d) => s + d, 0) / withAdminReply.length;
   }
-  const avgResponse =
-    avgMs === null
-      ? "—"
-      : avgMs < 3600000
-      ? `${Math.max(1, Math.round(avgMs / 60000))}m`
-      : `${(avgMs / 3600000).toFixed(1)}h`;
+  const avgResponse = avgMs === null ? "—" : avgMs < 3600000 ? `${Math.max(1, Math.round(avgMs / 60000))}m` : `${(avgMs / 3600000).toFixed(1)}h`;
 
-  // Filtering
   const filtered = tickets
     .filter((t) => activeTab === "ALL" || t.status === activeTab)
+    .filter((t) => statusFilter === "ALL" || t.status === statusFilter)
     .filter((t) => priorityFilter === "ALL" || t.priority === priorityFilter)
     .filter((t) => categoryFilter === "ALL" || t.category === categoryFilter)
-    .filter(
-      (t) =>
-        !search ||
-        t.subject.toLowerCase().includes(search.toLowerCase()) ||
-        t.id.toLowerCase().includes(search.toLowerCase()) ||
-        (t.user?.name || "").toLowerCase().includes(search.toLowerCase())
+    .filter((t) =>
+      !search ||
+      t.subject.toLowerCase().includes(search.toLowerCase()) ||
+      t.id.toLowerCase().includes(search.toLowerCase()) ||
+      (t.user?.name || "").toLowerCase().includes(search.toLowerCase())
     );
 
-  // Pagination
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-  const paginated = filtered.slice(
-    (currentPage - 1) * PAGE_SIZE,
-    currentPage * PAGE_SIZE
-  );
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const statCards = [
-    {
-      label: "Total Tickets",
-      value: totalTickets,
-      change: weeklyChange === null ? "New this week" : `${weeklyChange >= 0 ? "+" : ""}${weeklyChange.toFixed(1)}%`,
-      changeUp: weeklyChange === null ? true : weeklyChange >= 0,
-      icon: Ticket,
-      iconBg: "bg-emerald-50",
-      iconColor: "text-emerald-600",
-    },
-    {
-      label: "Open Tickets",
-      value: openCount,
-      sub: `${totalTickets > 0 ? ((openCount / totalTickets) * 100).toFixed(1) : 0}% of total`,
-      icon: AlertCircle,
-      iconBg: "bg-orange-50",
-      iconColor: "text-orange-500",
-    },
-    {
-      label: "In Progress",
-      value: inProgressCount,
-      sub: `${totalTickets > 0 ? ((inProgressCount / totalTickets) * 100).toFixed(1) : 0}% of total`,
-      icon: Clock,
-      iconBg: "bg-blue-50",
-      iconColor: "text-blue-500",
-    },
-    {
-      label: "Resolved",
-      value: resolvedCount,
-      sub: `${totalTickets > 0 ? ((resolvedCount / totalTickets) * 100).toFixed(1) : 0}% of total`,
-      icon: CheckCircle2,
-      iconBg: "bg-emerald-50",
-      iconColor: "text-emerald-500",
-    },
-    {
-      label: "Closed",
-      value: closedCount,
-      sub: `${totalTickets > 0 ? ((closedCount / totalTickets) * 100).toFixed(1) : 0}% of total`,
-      icon: Lock,
-      iconBg: "bg-purple-50",
-      iconColor: "text-purple-500",
-    },
-    {
-      label: "Avg. Response",
-      value: avgResponse,
-      sub: "First reply time",
-      icon: TrendingUp,
-      iconBg: "bg-rose-50",
-      iconColor: "text-rose-500",
-    },
-  ];
+  const handleExport = () => {
+    if (filtered.length === 0) {
+      toast.error("No tickets to export");
+      return;
+    }
+    const header = ["Ticket ID", "Customer", "Email", "Phone", "Subject", "Category", "Priority", "Status", "Created At"];
+    const rows = filtered.map((t) => [
+      `TKT-${t.id.slice(-4).toUpperCase()}`,
+      `"${(t.user?.name ?? "Unknown").replace(/"/g, '""')}"`,
+      `"${(t.user?.email ?? "").replace(/"/g, '""')}"`,
+      `"${(t.user?.phoneNumber ?? "").replace(/"/g, '""')}"`,
+      `"${t.subject.replace(/"/g, '""')}"`,
+      t.category,
+      t.priority,
+      t.status,
+      format(new Date(t.createdAt), "dd MMM yyyy, hh:mm a"),
+    ]);
+    const csvContent = [header, ...rows].map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "support-tickets.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast.success(`${filtered.length} tickets exported`);
+  };
+
+  const columns = useMemo(() => [
+    columnHelper.accessor("id", {
+      header: "Ticket ID",
+      cell: (info) => {
+        const ticket = info.row.original;
+        const catInfo = categoryConfig[ticket.category] || categoryConfig.other;
+        return (
+          <div className="flex items-center gap-3 relative">
+            <div className={cn("absolute -left-4 w-[2px] h-[28px] rounded-r-md", catInfo.barColor)} />
+            <span className="text-[12px] font-bold text-[#1F2937] font-mono">
+              {formatTicketId(ticket.id)}
+            </span>
+          </div>
+        );
+      }
+    }),
+    columnHelper.accessor("userId", {
+      header: "Customer",
+      cell: (info) => {
+        const ticket = info.row.original;
+        return (
+          <div className="flex items-center gap-3">
+            <Avatar className="h-[32px] w-[32px] border border-[#E5E7EB]">
+              {ticket.user?.image ? (
+                <AvatarImage src={ticket.user.image} alt={ticket.user.name ?? "Customer"} className="object-cover" />
+              ) : (
+                <AvatarFallback className="bg-[#FAFAFB] text-[#334155] text-[11px] font-bold">
+                  {getInitials(ticket.user?.name)}
+                </AvatarFallback>
+              )}
+            </Avatar>
+            <div>
+              <p className="text-[12px] font-semibold text-[#111827]">
+                {ticket.user?.name || "Unknown"}
+              </p>
+              <p className="text-[11px] text-[#64748B] font-medium mt-0.5">
+                {ticket.user?.phoneNumber || ticket.user?.email || "—"}
+              </p>
+            </div>
+          </div>
+        );
+      }
+    }),
+    columnHelper.accessor("subject", {
+      header: "Subject",
+      cell: (info) => (
+        <p className="text-[12px] font-medium text-[#334155] truncate max-w-[180px]">
+          {info.getValue()}
+        </p>
+      )
+    }),
+    columnHelper.accessor("category", {
+      header: "Category",
+      cell: (info) => {
+        const catInfo = categoryConfig[info.getValue()] || categoryConfig.other;
+        const CatIcon = catInfo.icon;
+        return (
+          <div className="flex items-center gap-2 text-[12px] text-[#334155] font-medium">
+            <CatIcon className="h-4 w-4 text-[#334155]" strokeWidth={1.8} />
+            <span className="capitalize">{catInfo.label}</span>
+          </div>
+        );
+      }
+    }),
+    columnHelper.accessor("priority", {
+      header: "Priority",
+      cell: (info) => {
+        const pri = priorityConfig[info.getValue()] || priorityConfig.LOW;
+        return <span className={pri.className}>{pri.label}</span>;
+      }
+    }),
+    columnHelper.accessor("status", {
+      header: "Status",
+      cell: (info) => {
+        const stat = statusConfig[info.getValue()] || statusConfig.OPEN;
+        return <span className={stat.className}>{stat.label}</span>;
+      }
+    }),
+    columnHelper.accessor("createdAt", {
+      header: "Created At",
+      cell: (info) => (
+        <div>
+          <p className="text-[12px] font-medium text-[#334155]">
+            {format(new Date(info.getValue()), "dd MMM yyyy")}
+          </p>
+          <p className="text-[11px] text-[#64748B] font-medium mt-0.5">
+            {format(new Date(info.getValue()), "hh:mm a")}
+          </p>
+        </div>
+      )
+    }),
+    columnHelper.display({
+      id: "actions",
+      header: "Actions",
+      cell: (info) => (
+        <div className="flex items-center gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setSelectedTicket(info.row.original);
+            }}
+            className="h-8 w-8 rounded-full bg-[#FFFFFF] border border-[#E5E7EB] flex items-center justify-center text-[#334155] hover:bg-[#FAFAFC] hover:border-[#CBD5E1] transition-colors shadow-sm"
+          >
+            <Eye className="h-4 w-4" strokeWidth={1.8} />
+          </button>
+        </div>
+      )
+    })
+  ], [setSelectedTicket]);
+
+  const table = useReactTable({
+    data: paginated,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
 
   return (
-    <div className="flex h-[calc(100vh-80px)] gap-0 overflow-hidden -m-4 md:-m-6 lg:-m-8">
+    <div className="flex h-screen md:h-[calc(100vh-80px)] gap-0 overflow-hidden -m-4 md:-m-6 lg:-m-8 bg-[#FEFEFE]">
       {/* Left Panel */}
-      <div
-        className={cn(
-          "flex flex-col flex-1 min-w-0 overflow-hidden",
-          selectedTicket ? "hidden lg:flex" : "flex"
-        )}
-      >
-        {/* Scrollable content */}
+      <div className={cn("flex flex-col flex-1 min-w-0 overflow-hidden", selectedTicket ? "hidden lg:flex" : "flex")}>
         <div className="flex-1 overflow-y-auto px-4 md:px-6 lg:px-8 py-6 space-y-6">
+          
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h1 className="text-2xl md:text-3xl font-extrabold text-slate-900">
+              <h1 className="text-[20px] md:text-[22px] font-bold text-[#111827]">
                 Support Ticket Management
               </h1>
-              <p className="text-slate-500 mt-1 text-sm font-medium">
+              <p className="text-[#475569] mt-1 text-[13px] font-medium">
                 Manage customer queries, complaints and requests efficiently
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-3">
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => {
-                  if (filtered.length === 0) {
-                    toast.error("No tickets to export");
-                    return;
-                  }
-                  downloadCSV("support-tickets.csv", ticketsToCSV(filtered));
-                  toast.success(`${filtered.length} tickets exported`);
-                }}
-                className="h-10 rounded-xl px-4 text-sm font-semibold text-slate-700 border-slate-200 gap-2"
+                onClick={handleExport}
+                className="h-9 rounded-[7px] px-4 text-[13px] font-semibold text-[#1F2937] bg-[#FFFFFF] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:border-[#CBD5E1] gap-2 shadow-none"
               >
-                <Download className="h-4 w-4" /> Export
+                <Download className="h-4 w-4 text-[#334155]" strokeWidth={1.8} /> Export
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => refetch()}
-                disabled={isLoading}
-                className="h-10 rounded-xl px-4 text-sm font-semibold text-slate-700 border-slate-200 gap-2"
+                disabled={isFetching}
+                className="h-9 rounded-[7px] px-4 text-[13px] font-semibold text-[#1F2937] bg-[#FFFFFF] border-[#E2E8F0] hover:bg-[#F8FAFC] hover:border-[#CBD5E1] gap-2 shadow-none"
               >
-                <RotateCcw className={cn("h-4 w-4", isLoading && "animate-spin")} /> Refresh
+                <RefreshCw className={`h-4 w-4 text-[#334155] ${isFetching ? "animate-spin" : ""}`} strokeWidth={1.8} /> Refresh
               </Button>
             </div>
           </div>
 
           {/* Stats Cards */}
           {isLoading ? (
-            <StatsRowSkeleton />
+            <StatsSkeleton />
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
-            {statCards.map((card) => (
-              <div
-                key={card.label}
-                className="bg-white border border-slate-100 rounded-2xl p-4 flex flex-col gap-2 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div
-                  className={cn(
-                    "h-9 w-9 rounded-full flex items-center justify-center",
-                    card.iconBg
-                  )}
-                >
-                  <card.icon className={cn("h-4 w-4", card.iconColor)} />
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">
-                    {card.label}
-                  </p>
-                  <p className="text-2xl font-extrabold text-slate-900 leading-tight">
-                    {isLoading ? (
-                      <Skeleton className="h-7 w-10 inline-block" />
+            <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-3">
+              {[
+                { label: "Total Tickets", value: totalTickets, change: weeklyChange === null ? "New this week" : `${weeklyChange >= 0 ? "+" : ""}${weeklyChange.toFixed(1)}% vs last week`, icon: Ticket, iconBg: "bg-[#EFF8F1]", iconColor: "text-[#3E9645]", border: "border-[#D9EDDB]", changeUp: true },
+                { label: "Open Tickets", value: openCount, sub: `${totalTickets > 0 ? ((openCount / totalTickets) * 100).toFixed(1) : 0}% of total`, icon: MessageCircle, iconBg: "bg-[#FFF5E8]", iconColor: "text-[#F97316]", border: "border-[#FDE3BF]" },
+                { label: "In Progress", value: inProgressCount, sub: `${totalTickets > 0 ? ((inProgressCount / totalTickets) * 100).toFixed(1) : 0}% of total`, icon: UserRoundCog, iconBg: "bg-[#EFF6FF]", iconColor: "text-[#2563EB]", border: "border-[#D8E7FF]" },
+                { label: "Resolved", value: resolvedCount, sub: `${totalTickets > 0 ? ((resolvedCount / totalTickets) * 100).toFixed(1) : 0}% of total`, icon: ShieldCheck, iconBg: "bg-[#F5F0FF]", iconColor: "text-[#7C3AED]", border: "border-[#E4D9FF]" },
+                { label: "Closed", value: closedCount, sub: `${totalTickets > 0 ? ((closedCount / totalTickets) * 100).toFixed(1) : 0}% of total`, icon: BadgeCheck, iconBg: "bg-[#EFF8F1]", iconColor: "text-[#3E9645]", border: "border-[#D9EDDB]" },
+                { label: "Avg. Response", value: avgResponse, sub: "This week", icon: MessageSquare, iconBg: "bg-[#FFF0F0]", iconColor: "text-[#EF4444]", border: "border-[#FFDADA]" },
+              ].map((card) => (
+                <div key={card.label} className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] p-4 flex items-start gap-3">
+                  <div className={cn("h-[44px] w-[44px] rounded-full flex items-center justify-center flex-shrink-0 border", card.border, card.iconBg)}>
+                    <card.icon className={cn("h-[22px] w-[22px]", card.iconColor)} strokeWidth={2} />
+                  </div>
+                  <div>
+                    <p className="text-[11px] font-semibold text-[#475569]">{card.label}</p>
+                    <p className="text-[22px] font-bold text-[#111827] leading-tight mt-1">{card.value}</p>
+                    {card.change ? (
+                      <p className="text-[11px] font-semibold text-[#16A34A] flex items-center gap-1 mt-1">
+                        <TrendingUp className="h-3 w-3" strokeWidth={2} /> {card.change}
+                      </p>
                     ) : (
-                      card.value
+                      <p className="text-[11px] font-medium text-[#475569] mt-1">{card.sub}</p>
                     )}
-                  </p>
-                  {card.changeUp !== undefined ? (
-                    <p
-                      className={cn(
-                        "text-[10px] font-semibold flex items-center gap-0.5",
-                        card.changeUp ? "text-emerald-600" : "text-rose-500"
-                      )}
-                    >
-                      <TrendingUp className={cn("h-3 w-3", !card.changeUp && "rotate-180")} />{" "}
-                      {card.change}
-                    </p>
-                  ) : (
-                    <p className="text-[10px] font-medium text-slate-400">
-                      {card.sub}
-                    </p>
-                  )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
             </div>
           )}
 
           {/* Filters Row */}
           {isLoading ? (
-            <FilterRowSkeleton />
+            <FiltersSkeleton />
           ) : (
-          <div className="flex flex-col gap-3">
-            <div className="flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
-              <div className="relative flex-1 max-w-sm">
-                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col md:flex-row gap-3 justify-between items-start md:items-center">
+              <div className="relative flex-1 w-full md:max-w-[280px]">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" strokeWidth={1.8} />
                 <Input
                   value={search}
-                  onChange={(e) => {
-                    setSearch(e.target.value);
-                    setCurrentPage(1);
-                  }}
+                  onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
                   placeholder="Search tickets..."
-                  className="pl-10 h-10 rounded-xl border-slate-200 text-sm font-medium"
+                  className="pl-9 h-9 w-full rounded-[7px] bg-[#FFFFFF] border-[#E2E8F0] text-[13px] text-[#334155] placeholder:text-[#94A3B8] focus-visible:ring-[#FF5709] focus-visible:border-[#FF5709] shadow-none"
                 />
               </div>
               <div className="flex items-center gap-2 flex-wrap">
-                <Select
-                  value={statusFilter}
-                  onValueChange={(v) => {
-                    setStatusFilter(v);
-                    setCurrentPage(1);
-                  }}
-                >
-                  <SelectTrigger className="h-10 w-[130px] rounded-xl border-slate-200 text-xs font-semibold">
+                <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
+                  <SelectTrigger className="h-9 w-[130px] rounded-[7px] bg-[#FFFFFF] border-[#E2E8F0] hover:bg-[#FAFAFB] hover:border-[#CBD5E1] text-[12px] font-semibold text-[#1F2937] shadow-none">
                     <SelectValue placeholder="Status: All" />
                   </SelectTrigger>
                   <SelectContent>
@@ -611,14 +617,8 @@ export default function AdminSupportPage() {
                   </SelectContent>
                 </Select>
 
-                <Select
-                  value={priorityFilter}
-                  onValueChange={(v) => {
-                    setPriorityFilter(v);
-                    setCurrentPage(1);
-                  }}
-                >
-                  <SelectTrigger className="h-10 w-[140px] rounded-xl border-slate-200 text-xs font-semibold">
+                <Select value={priorityFilter} onValueChange={(v) => { setPriorityFilter(v); setCurrentPage(1); }}>
+                  <SelectTrigger className="h-9 w-[130px] rounded-[7px] bg-[#FFFFFF] border-[#E2E8F0] hover:bg-[#FAFAFB] hover:border-[#CBD5E1] text-[12px] font-semibold text-[#1F2937] shadow-none">
                     <SelectValue placeholder="Priority: All" />
                   </SelectTrigger>
                   <SelectContent>
@@ -630,14 +630,8 @@ export default function AdminSupportPage() {
                   </SelectContent>
                 </Select>
 
-                <Select
-                  value={categoryFilter}
-                  onValueChange={(v) => {
-                    setCategoryFilter(v);
-                    setCurrentPage(1);
-                  }}
-                >
-                  <SelectTrigger className="h-10 w-[145px] rounded-xl border-slate-200 text-xs font-semibold">
+                <Select value={categoryFilter} onValueChange={(v) => { setCategoryFilter(v); setCurrentPage(1); }}>
+                  <SelectTrigger className="h-9 w-[140px] rounded-[7px] bg-[#FFFFFF] border-[#E2E8F0] hover:bg-[#FAFAFB] hover:border-[#CBD5E1] text-[12px] font-semibold text-[#1F2937] shadow-none">
                     <SelectValue placeholder="Category: All" />
                   </SelectTrigger>
                   <SelectContent>
@@ -656,265 +650,115 @@ export default function AdminSupportPage() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => {
-                    setSearch("");
-                    setStatusFilter("ALL");
-                    setPriorityFilter("ALL");
-                    setCategoryFilter("ALL");
-                    setActiveTab("ALL");
-                    setCurrentPage(1);
-                  }}
-                  className="h-10 rounded-xl text-xs font-semibold text-slate-500 gap-1.5 hover:bg-slate-100"
+                  onClick={() => { setSearch(""); setStatusFilter("ALL"); setPriorityFilter("ALL"); setCategoryFilter("ALL"); setActiveTab("ALL"); setCurrentPage(1); }}
+                  className="h-9 rounded-[7px] text-[12px] font-semibold text-[#1F2937] gap-1.5 hover:bg-[#FAFAFB]"
                 >
-                  <RotateCcw className="h-3.5 w-3.5" /> Reset
+                  <RotateCcw className="h-4 w-4 text-[#475569]" strokeWidth={1.8} /> Reset
                 </Button>
               </div>
             </div>
 
             {/* Tabs */}
-            <div className="flex items-center gap-1 flex-wrap">
+            <ScrollArea className="w-full pb-1">
+              <div className="flex items-center gap-2 w-max">
               {[
-                { key: "ALL", label: `All Tickets`, count: tabCounts.ALL },
-                { key: "OPEN", label: "Open", count: tabCounts.OPEN },
-                { key: "INPROGRESS", label: "In Progress", count: tabCounts.INPROGRESS },
-                { key: "RESOLVED", label: "Resolved", count: tabCounts.RESOLVED },
-                { key: "CLOSED", label: "Closed", count: tabCounts.CLOSED },
+                { key: "ALL", label: "All Tickets", count: tabCounts.ALL, colors: activeTab === "ALL" ? "bg-[#F2FAF3] text-[#15803D] border-[#A7DDAE]" : "bg-transparent text-[#64748B] border-transparent", countBg: activeTab === "ALL" ? "bg-[#DCF2DF] text-[#15803D]" : "bg-[#F1F5F9] text-[#64748B]" },
+                { key: "OPEN", label: "Open", count: tabCounts.OPEN, colors: activeTab === "OPEN" ? "bg-[#FFF8F1] text-[#F97316] border-[#FDE3BF]" : "bg-transparent text-[#64748B] border-transparent", countBg: activeTab === "OPEN" ? "bg-[#FFF0DD] text-[#EA580C]" : "bg-[#F1F5F9] text-[#64748B]" },
+                { key: "INPROGRESS", label: "In Progress", count: tabCounts.INPROGRESS, colors: activeTab === "INPROGRESS" ? "bg-[#F3F7FF] text-[#2563EB] border-[#D8E7FF]" : "bg-transparent text-[#64748B] border-transparent", countBg: activeTab === "INPROGRESS" ? "bg-[#E6EFFF] text-[#2563EB]" : "bg-[#F1F5F9] text-[#64748B]" },
+                { key: "RESOLVED", label: "Resolved", count: tabCounts.RESOLVED, colors: activeTab === "RESOLVED" ? "bg-[#F2FAF3] text-[#16A34A] border-[#A7DDAE]" : "bg-transparent text-[#64748B] border-transparent", countBg: activeTab === "RESOLVED" ? "bg-[#DCF2DF] text-[#16A34A]" : "bg-[#F1F5F9] text-[#64748B]" },
+                { key: "CLOSED", label: "Closed", count: tabCounts.CLOSED, colors: activeTab === "CLOSED" ? "bg-[#FFFFFF] text-[#334155] border-[#E2E8F0]" : "bg-transparent text-[#64748B] border-transparent", countBg: activeTab === "CLOSED" ? "bg-[#F1F5F9] text-[#334155]" : "bg-[#F1F5F9] text-[#64748B]" },
               ].map((tab) => (
                 <button
                   key={tab.key}
-                  onClick={() => {
-                    setActiveTab(tab.key);
-                    setCurrentPage(1);
-                  }}
-                  className={cn(
-                    "flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold transition-all",
-                    activeTab === tab.key
-                      ? "bg-emerald-600 text-white shadow-sm shadow-emerald-200"
-                      : "text-slate-500 hover:bg-slate-100"
-                  )}
+                  onClick={() => { setActiveTab(tab.key); setCurrentPage(1); }}
+                  className={cn("flex items-center gap-2 px-3.5 py-2 rounded-[8px] border text-[13px] font-bold transition-all whitespace-nowrap", tab.colors)}
                 >
                   {tab.label}
-                  <span
-                    className={cn(
-                      "rounded-full px-1.5 py-0.5 text-[10px] font-extrabold",
-                      activeTab === tab.key
-                        ? "bg-white/20 text-white"
-                        : "bg-slate-100 text-slate-600"
-                    )}
-                  >
-                    {isLoading ? "..." : tab.count}
+                  <span className={cn("rounded-[5px] px-1.5 py-0.5 text-[10px] font-extrabold", tab.countBg)}>
+                    {tab.count}
                   </span>
                 </button>
               ))}
-            </div>
+              </div>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
           </div>
           )}
 
           {/* Table */}
+          {isError && (
+            <div className="flex items-center gap-2.5 bg-[#FEF2F2] border border-[#FECACA] text-[#DC2626] text-[13px] font-semibold rounded-[10px] px-4 py-3">
+              <AlertCircle className="h-4 w-4 shrink-0" /> Failed to load tickets.
+              <button onClick={() => refetch()} className="underline font-bold ml-auto">Retry</button>
+            </div>
+          )}
           {isLoading ? (
             <TableSkeleton />
-          ) : isError ? (
-            <div className="flex flex-col items-center justify-center py-20 gap-4">
-              <AlertCircle className="h-12 w-12 text-red-400" />
-              <p className="text-red-500 font-semibold">Failed to load tickets</p>
-              <Button variant="outline" size="sm" onClick={() => refetch()}>
-                Retry
-              </Button>
-            </div>
-          ) : filtered.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-24 gap-3">
-              <div className="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center">
-                <Ticket className="h-8 w-8 text-slate-400" />
-              </div>
-              <p className="text-slate-600 font-semibold">No tickets found</p>
-              <p className="text-sm text-slate-400">Try adjusting your filters</p>
-            </div>
           ) : (
-            <div className="bg-white border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-slate-100 bg-slate-50/50">
-                      <th className="text-left py-3.5 px-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        Ticket ID
-                      </th>
-                      <th className="text-left py-3.5 px-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        Customer
-                      </th>
-                      <th className="text-left py-3.5 px-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        Subject
-                      </th>
-                      <th className="text-left py-3.5 px-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        Category
-                      </th>
-                      <th className="text-left py-3.5 px-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        Priority
-                      </th>
-                      <th className="text-left py-3.5 px-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="text-left py-3.5 px-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        Created At
-                      </th>
-                      <th className="text-center py-3.5 px-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {paginated.map((ticket) => {
-                      const categoryInfo =
-                        categoryConfig[ticket.category] || categoryConfig.other;
-                      const CategoryIcon = categoryInfo.icon;
-                      const isSelected = selectedTicket?.id === ticket.id;
-
-                      return (
-                        <tr
-                          key={ticket.id}
-                          onClick={() => setSelectedTicket(ticket)}
-                          className={cn(
-                            "border-b border-slate-50 cursor-pointer transition-colors group",
-                            isSelected
-                              ? "bg-emerald-50/40"
-                              : "hover:bg-slate-50/60"
-                          )}
+            <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] shadow-none w-full">
+              <ScrollArea className="w-full">
+                <Table className="w-full text-sm">
+                  <TableHeader>
+                    {table.getHeaderGroups().map((headerGroup) => (
+                      <TableRow key={headerGroup.id} className="border-b border-[#EEF0F2] hover:bg-[#FFFFFF]">
+                        {headerGroup.headers.map((header) => (
+                          <TableHead
+                            key={header.id}
+                            className="text-left py-4 px-4 text-[11px] font-semibold text-[#475569] h-auto"
+                          >
+                            {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableHeader>
+                  <TableBody>
+                    {table.getRowModel().rows?.length ? (
+                      table.getRowModel().rows.map((row) => (
+                        <TableRow
+                          key={row.id}
+                          onClick={() => setSelectedTicket(row.original)}
+                          className="border-b border-[#EEF0F2] hover:bg-[#FAFBFC] transition-colors cursor-pointer group"
                         >
-                          {/* Left accent bar */}
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-2">
-                              <div
-                                className={cn(
-                                  "w-0.5 h-7 rounded-full flex-shrink-0",
-                                  ticket.priority === "HIGH" || ticket.priority === "URGENT"
-                                    ? "bg-red-500"
-                                    : ticket.priority === "MEDIUM"
-                                    ? "bg-orange-400"
-                                    : "bg-slate-200"
-                                )}
-                              />
-                              <span className="text-xs font-bold text-slate-600 font-mono">
-                                {formatTicketId(ticket.id)}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-2.5">
-                              <Avatar className="h-8 w-8">
-                                {ticket.user?.image ? (
-                                  <AvatarImage asChild src={ticket.user.image} alt={ticket.user.name ?? "Customer"}>
-                                    <Image
-                                      src={ticket.user.image}
-                                      alt={ticket.user.name ?? "Customer"}
-                                      fill
-                                      sizes="32px"
-                                      className="object-cover"
-                                    />
-                                  </AvatarImage>
-                                ) : (
-                                  <AvatarFallback className="bg-gradient-to-br from-emerald-400 to-teal-500 text-white text-xs font-bold">
-                                    {getInitials(ticket.user?.name)}
-                                  </AvatarFallback>
-                                )}
-                              </Avatar>
-                              <div>
-                                <p className="text-xs font-bold text-slate-900">
-                                  {ticket.user?.name || "Unknown"}
-                                </p>
-                                <p className="text-[10px] text-slate-400 font-medium">
-                                  {ticket.user?.phoneNumber || ticket.user?.email || "—"}
-                                </p>
-                              </div>
-                            </div>
-                          </td>
-                          <td className="py-4 px-4 max-w-[200px]">
-                            <p className="text-xs font-semibold text-slate-800 truncate">
-                              {ticket.subject}
-                            </p>
-                          </td>
-                          <td className="py-4 px-4">
-                            <div className="flex items-center gap-1.5 text-xs text-slate-600 font-medium">
-                              <CategoryIcon className="h-3.5 w-3.5 text-slate-400 flex-shrink-0" />
-                              <span className="capitalize">
-                                {ticket.category.replace("-", " ")}
-                              </span>
-                            </div>
-                          </td>
-                          <td className="py-4 px-4">
-                            <span
-                              className={
-                                priorityConfig[ticket.priority]?.className || ""
-                              }
-                            >
-                              {ticket.priority}
-                            </span>
-                          </td>
-                          <td className="py-4 px-4">
-                            <span
-                              className={
-                                statusConfig[ticket.status]?.className || ""
-                              }
-                            >
-                              {statusConfig[ticket.status]?.label || ticket.status}
-                            </span>
-                          </td>
-                          <td className="py-4 px-4">
-                            <div>
-                              <p className="text-xs font-semibold text-slate-700">
-                                {format(new Date(ticket.createdAt), "dd MMM yyyy")}
-                              </p>
-                              <p className="text-[10px] text-slate-400 font-medium">
-                                {format(new Date(ticket.createdAt), "hh:mm a")}
-                              </p>
-                            </div>
-                          </td>
-                          <td className="py-4 px-4 text-center">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedTicket(ticket);
-                              }}
-                              className="h-8 w-8 rounded-full hover:bg-emerald-50 flex items-center justify-center mx-auto text-slate-400 hover:text-emerald-600 transition-colors"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell key={cell.id} className="py-3 px-4">
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))
+                    ) : (
+                      <TableRow>
+                        <TableCell colSpan={columns.length} className="h-24 text-center py-16 text-[#94A3B8] text-sm font-medium border-b-0">
+                          No tickets found
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
 
               {/* Pagination */}
-              <div className="flex items-center justify-between px-4 py-3.5 border-t border-slate-100 bg-slate-50/30">
-                <p className="text-xs font-medium text-slate-500">
-                  Showing {filtered.length === 0 ? 0 : (currentPage - 1) * PAGE_SIZE + 1} to{" "}
-                  {Math.min(currentPage * PAGE_SIZE, filtered.length)} of{" "}
-                  {filtered.length} tickets
+              <div className="flex flex-col sm:flex-row items-center justify-between px-5 py-4 border-t border-[#EEF0F2] bg-[#FFFFFF] gap-4">
+                <p className="text-[12px] font-medium text-[#64748B]">
+                  Showing {filtered.length === 0 ? 0 : (currentPage - 1) * pageSize + 1} to {Math.min(currentPage * pageSize, filtered.length)} of {filtered.length} tickets
                 </p>
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1.5 flex-wrap">
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-                    disabled={currentPage === 1}
-                    className="h-8 w-8 p-0 rounded-lg"
+                    variant="ghost" size="sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}
+                    className="h-[32px] w-[32px] p-0 rounded-[7px] border border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#334155]"
                   >
-                    <ChevronLeft className="h-4 w-4" />
+                    <ChevronLeft className="h-4 w-4" strokeWidth={1.8} />
                   </Button>
                   {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
                     const page = i + 1;
                     return (
                       <Button
-                        key={page}
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setCurrentPage(page)}
+                        key={page} variant="ghost" size="sm" onClick={() => setCurrentPage(page)}
                         className={cn(
-                          "h-8 w-8 p-0 rounded-lg text-xs font-bold",
-                          currentPage === page
-                            ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                            : "text-slate-600 hover:bg-slate-100"
+                          "h-[32px] w-[32px] p-0 rounded-[7px] text-[13px] font-bold border",
+                          currentPage === page ? "bg-[#3E9645] text-[#FFFFFF] border-[#3E9645]" : "bg-[#FFFFFF] text-[#334155] border-[#E2E8F0] hover:bg-[#F0F8F1] hover:text-[#15803D]"
                         )}
                       >
                         {page}
@@ -923,16 +767,12 @@ export default function AdminSupportPage() {
                   })}
                   {totalPages > 5 && (
                     <>
-                      <span className="text-xs text-slate-400 px-1">...</span>
+                      <span className="text-[12px] text-[#94A3B8] px-2 hidden sm:inline">...</span>
                       <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setCurrentPage(totalPages)}
+                        variant="ghost" size="sm" onClick={() => setCurrentPage(totalPages)}
                         className={cn(
-                          "h-8 w-8 p-0 rounded-lg text-xs font-bold",
-                          currentPage === totalPages
-                            ? "bg-emerald-600 text-white hover:bg-emerald-700"
-                            : "text-slate-600 hover:bg-slate-100"
+                          "h-[32px] w-[32px] p-0 rounded-[7px] text-[13px] font-bold border hidden sm:inline-flex",
+                          currentPage === totalPages ? "bg-[#3E9645] text-[#FFFFFF] border-[#3E9645]" : "bg-[#FFFFFF] text-[#334155] border-[#E2E8F0] hover:bg-[#F0F8F1] hover:text-[#15803D]"
                         )}
                       >
                         {totalPages}
@@ -940,20 +780,25 @@ export default function AdminSupportPage() {
                     </>
                   )}
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-                    disabled={currentPage === totalPages}
-                    className="h-8 w-8 p-0 rounded-lg"
+                    variant="ghost" size="sm" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}
+                    className="h-[32px] w-[32px] p-0 rounded-[7px] border border-[#E2E8F0] hover:bg-[#F8FAFC] text-[#334155]"
                   >
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4" strokeWidth={1.8} />
                   </Button>
-
-                  <div className="ml-3 flex items-center gap-1.5">
-                    <span className="text-xs text-slate-400 font-medium">Rows per page</span>
-                    <span className="text-xs font-bold text-slate-700 bg-slate-100 px-2 py-1 rounded-lg">
-                      {PAGE_SIZE}
-                    </span>
+                  
+                  <div className="ml-4 flex items-center gap-2">
+                    <span className="text-[12px] text-[#334155] font-medium hidden sm:inline">Rows per page</span>
+                    <Select value={String(pageSize)} onValueChange={(v) => { setPageSize(Number(v)); setCurrentPage(1); }}>
+                      <SelectTrigger className="h-[32px] w-[70px] rounded-[7px] border-[#E2E8F0] bg-[#FFFFFF] text-[12px] font-bold text-[#111827] shadow-none">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="8">8</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="20">20</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </div>
@@ -964,44 +809,41 @@ export default function AdminSupportPage() {
 
       {/* Right Panel: Ticket Details */}
       {selectedTicket && (
-        <div className="w-full lg:w-[380px] xl:w-[420px] flex-shrink-0 border-l border-slate-100 bg-white flex flex-col overflow-hidden">
-          {/* Ticket Details Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-100 flex-shrink-0">
-            <div className="flex items-center gap-2">
+        <div className="w-full lg:w-[420px] flex-shrink-0 border-l border-[#E5E7EB] bg-[#FFFFFF] flex flex-col overflow-hidden shadow-[-4px_0_24px_rgba(15,23,42,0.02)]">
+          {/* Header */}
+          <div className="flex items-center justify-between px-6 py-5 flex-shrink-0">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => setSelectedTicket(null)}
-                className="h-7 w-7 rounded-full hover:bg-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-700 lg:hidden"
+                className="h-8 w-8 rounded-full hover:bg-[#FAFAFB] flex items-center justify-center text-[#475569] lg:hidden"
               >
-                <ChevronLeft className="h-4 w-4" />
+                <ChevronLeft className="h-5 w-5" />
               </button>
-              <h2 className="text-sm font-extrabold text-slate-900">Ticket Details</h2>
+              <h2 className="text-[15px] font-bold text-[#111827]">Ticket Details</h2>
             </div>
             <button
               onClick={() => setSelectedTicket(null)}
-              className="h-7 w-7 rounded-full hover:bg-slate-100 hidden lg:flex items-center justify-center text-slate-400 hover:text-slate-700"
+              className="h-8 w-8 rounded-full hover:bg-[#FAFAFB] hidden lg:flex items-center justify-center text-[#334155] hover:text-[#111827] transition-colors"
             >
-              <X className="h-4 w-4" />
+              <X className="h-[18px] w-[18px]" strokeWidth={2} />
             </button>
           </div>
 
-          {/* Badges & Ticket ID */}
-          <div className="px-5 pt-4 pb-3 border-b border-slate-100 flex-shrink-0">
-            <div className="flex items-center gap-2 mb-3">
-              <span className={statusConfig[selectedTicket.status]?.className}>
-                {statusConfig[selectedTicket.status]?.label}
-              </span>
-              <span className={priorityConfig[selectedTicket.priority]?.className}>
-                {selectedTicket.priority}
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wider mb-0.5">
-                  Ticket ID
-                </p>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-sm font-extrabold text-slate-900 font-mono">
+          <div className="px-6 flex-shrink-0">
+            {/* Badges & ID */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-2">
+                <span className={statusConfig[selectedTicket.status]?.className}>
+                  {statusConfig[selectedTicket.status]?.label}
+                </span>
+                <span className={priorityConfig[selectedTicket.priority]?.className}>
+                  {selectedTicket.priority}
+                </span>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">Ticket ID</p>
+                <div className="flex items-center justify-end gap-1.5">
+                  <span className="text-[13px] font-bold text-[#1F2937] font-mono">
                     {formatTicketId(selectedTicket.id)}
                   </span>
                   <button
@@ -1009,111 +851,91 @@ export default function AdminSupportPage() {
                       navigator.clipboard.writeText(formatTicketId(selectedTicket.id));
                       toast.success("Copied!");
                     }}
-                    className="text-slate-400 hover:text-slate-600 transition-colors"
+                    className="text-[#64748B] hover:text-[#111827] transition-colors"
                   >
-                    <Copy className="h-3.5 w-3.5" />
+                    <Copy className="h-3.5 w-3.5" strokeWidth={1.8} />
                   </button>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Customer Info */}
-          <div className="px-5 py-4 border-b border-slate-100 flex-shrink-0">
-            <div className="flex items-start gap-3">
-              <Avatar className="h-11 w-11">
-                {selectedTicket.user?.image ? (
-                  <AvatarImage asChild src={selectedTicket.user.image} alt={selectedTicket.user.name ?? "Customer"}>
-                    <Image
-                      src={selectedTicket.user.image}
-                      alt={selectedTicket.user.name ?? "Customer"}
-                      fill
-                      sizes="44px"
-                      className="object-cover"
-                    />
-                  </AvatarImage>
-                ) : (
-                  <AvatarFallback className="bg-gradient-to-br from-emerald-400 to-teal-500 text-white font-bold">
-                    {getInitials(selectedTicket.user?.name)}
-                  </AvatarFallback>
-                )}
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-slate-900 text-sm">
-                  {selectedTicket.user?.name || "Unknown Customer"}
-                </p>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <Phone className="h-3 w-3 text-slate-400" />
-                  <span className="text-[11px] font-medium text-slate-600">
-                    {selectedTicket.user?.phoneNumber || "—"}
-                  </span>
-                </div>
-                <div className="flex items-center gap-1.5 mt-0.5">
-                  <Mail className="h-3 w-3 text-slate-400" />
-                  <span className="text-[11px] font-medium text-slate-600 truncate">
-                    {selectedTicket.user?.email || "—"}
-                  </span>
+            {/* Customer Info Box */}
+            <div className="flex items-start justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-[44px] w-[44px]">
+                  {selectedTicket.user?.image ? (
+                    <AvatarImage src={selectedTicket.user.image} alt={selectedTicket.user.name ?? "Customer"} className="object-cover" />
+                  ) : (
+                    <AvatarFallback className="bg-[#FAFAFB] border border-[#E5E7EB] text-[#334155] font-bold text-sm">
+                      {getInitials(selectedTicket.user?.name)}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div>
+                  <p className="font-bold text-[#111827] text-[14px]">
+                    {selectedTicket.user?.name || "Unknown Customer"}
+                  </p>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <Phone className="h-[12px] w-[12px] text-[#475569]" />
+                    <span className="text-[12px] font-medium text-[#475569]">
+                      {selectedTicket.user?.phoneNumber || "—"}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1.5 mt-0.5">
+                    <Mail className="h-[12px] w-[12px] text-[#334155]" />
+                    <span className="text-[12px] font-medium text-[#334155]">
+                      {selectedTicket.user?.email || "—"}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className="text-right flex-shrink-0">
-                {selectedTicket.orderId && (
-                  <div>
-                    <p className="text-[10px] text-slate-400 font-semibold">Order ID</p>
-                    <p className="text-xs font-bold text-emerald-600">
-                      ORD-{selectedTicket.orderId.slice(-8).toUpperCase()}
-                    </p>
-                  </div>
-                )}
-                <div className="mt-1">
-                  <p className="text-[10px] text-slate-400 font-semibold">Created At</p>
-                  <p className="text-[11px] font-semibold text-slate-700">
-                    {format(new Date(selectedTicket.createdAt), "dd MMM yyyy, hh:mm a")}
-                  </p>
-                </div>
+              <div className="text-right">
+                <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">Order ID</p>
+                <p className="text-[13px] font-bold text-[#16A34A] font-mono mb-2">
+                  {selectedTicket.orderId ? `ORD-${selectedTicket.orderId.slice(-8).toUpperCase()}` : "—"}
+                </p>
+                <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">Created At</p>
+                <p className="text-[11px] font-semibold text-[#334155]">
+                  {format(new Date(selectedTicket.createdAt), "dd MMM yyyy, hh:mm a")}
+                </p>
               </div>
             </div>
-          </div>
 
-          {/* Category Badge */}
-          {(() => {
-            const catInfo = categoryConfig[selectedTicket.category] || categoryConfig.other;
-            const CatIcon = catInfo.icon;
-            return (
-              <div className="px-5 py-3 border-b border-slate-100 flex-shrink-0">
-                <div className="flex items-center gap-3 bg-slate-50 rounded-xl p-3">
-                  <div className="h-9 w-9 rounded-full bg-white border border-slate-100 flex items-center justify-center flex-shrink-0 shadow-sm">
-                    <CatIcon className="h-4 w-4 text-emerald-600" />
+            {/* Category Card */}
+            {(() => {
+              const catInfo = categoryConfig[selectedTicket.category] || categoryConfig.other;
+              const CatIcon = catInfo.icon;
+              return (
+                <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] p-4 flex items-start gap-4 mb-6">
+                  <div className="h-[44px] w-[44px] rounded-[12px] bg-[#EFF8F1] flex items-center justify-center flex-shrink-0">
+                    <CatIcon className="h-[22px] w-[22px] text-[#16A34A]" strokeWidth={1.8} />
                   </div>
-                  <div>
-                    <p className="text-xs font-bold text-slate-800">{catInfo.label}</p>
-                    <p className="text-[10px] font-medium text-slate-500">
+                  <div className="pt-0.5">
+                    <p className="text-[14px] font-bold text-[#1F2937]">{catInfo.label}</p>
+                    <p className="text-[12px] font-medium text-[#64748B] mt-0.5 leading-relaxed">
                       {catInfo.description}
                     </p>
                   </div>
                 </div>
-              </div>
-            );
-          })()}
+              );
+            })()}
+          </div>
 
           {/* Detail Tabs */}
-          <div className="border-b border-slate-100 flex-shrink-0">
-            <div className="flex px-5 gap-0">
+          <div className="border-b border-[#E5E7EB] flex-shrink-0 px-6">
+            <div className="flex gap-6">
               {["conversation", "order", "customer", "notes"].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setDetailTab(tab)}
                   className={cn(
-                    "py-3 px-3 text-[11px] font-bold border-b-2 transition-colors capitalize",
+                    "py-3 text-[12px] font-bold border-b-[2px] transition-colors capitalize",
                     detailTab === tab
-                      ? "border-emerald-600 text-emerald-700"
-                      : "border-transparent text-slate-400 hover:text-slate-600"
+                      ? "border-[#16A34A] text-[#15803D]"
+                      : "border-transparent text-[#475569] hover:text-[#1F2937]"
                   )}
                 >
-                  {tab === "order"
-                    ? "Order Details"
-                    : tab === "customer"
-                    ? "Customer Info"
-                    : tab.charAt(0).toUpperCase() + tab.slice(1)}
+                  {tab === "order" ? "Order Details" : tab === "customer" ? "Customer Info" : tab}
                 </button>
               ))}
             </div>
@@ -1121,104 +943,43 @@ export default function AdminSupportPage() {
 
           {/* Conversation Thread */}
           {detailTab === "conversation" && (
-            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4">
+            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-5 bg-[#FFFFFF]">
               {selectedTicket.messages.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-10">
-                  <MessageSquare className="h-10 w-10 text-slate-300" />
-                  <p className="text-sm font-semibold text-slate-400">
-                    No messages yet
-                  </p>
-                  <p className="text-xs text-slate-400">
-                    Be the first to respond to this ticket
-                  </p>
+                  <MessageCircle className="h-10 w-10 text-[#64748B]" strokeWidth={1.5} />
+                  <p className="text-[13px] font-bold text-[#334155]">No messages yet</p>
                 </div>
               ) : (
                 selectedTicket.messages.map((msg) => {
                   const isAdmin = msg.senderId !== selectedTicket.userId;
                   return (
-                    <div
-                      key={msg.id}
-                      className={cn(
-                        "flex gap-3",
-                        isAdmin ? "flex-row-reverse" : "flex-row"
-                      )}
-                    >
-                      <Avatar className={cn("h-8 w-8", isAdmin && "bg-emerald-100 text-emerald-700")}>
+                    <div key={msg.id} className={cn("flex gap-3", isAdmin ? "flex-row-reverse" : "flex-row")}>
+                      <Avatar className="h-[32px] w-[32px]">
                         {!isAdmin && selectedTicket.user?.image ? (
-                          <AvatarImage asChild src={selectedTicket.user.image} alt={selectedTicket.user.name ?? "Customer"}>
-                            <Image
-                              src={selectedTicket.user.image}
-                              alt={selectedTicket.user.name ?? "Customer"}
-                              fill
-                              sizes="32px"
-                              className="object-cover"
-                            />
-                          </AvatarImage>
+                          <AvatarImage src={selectedTicket.user.image} alt="Customer" className="object-cover" />
                         ) : (
-                          <AvatarFallback
-                            className={cn(
-                              "text-xs font-bold",
-                              isAdmin
-                                ? "bg-emerald-100 text-emerald-700"
-                                : "bg-gradient-to-br from-emerald-400 to-teal-500 text-white"
-                            )}
-                          >
+                          <AvatarFallback className={cn("text-[11px] font-bold border border-[#E5E7EB]", isAdmin ? "bg-[#F0F8F1] text-[#15803D]" : "bg-[#FFFFFF] text-[#334155]")}>
                             {isAdmin ? "A" : getInitials(selectedTicket.user?.name)}
                           </AvatarFallback>
                         )}
                       </Avatar>
-                      <div
-                        className={cn(
-                          "flex-1",
-                          isAdmin ? "items-end flex flex-col" : ""
-                        )}
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <span
-                            className={cn(
-                              "text-[10px] font-bold",
-                              isAdmin ? "text-emerald-700" : "text-slate-700"
-                            )}
-                          >
+                      <div className={cn("flex-1", isAdmin ? "items-end flex flex-col" : "")}>
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className={cn("text-[11px] font-bold", isAdmin ? "text-[#15803D]" : "text-[#1F2937]")}>
                             {isAdmin ? "Admin Reply" : selectedTicket.user?.name}
                           </span>
-                          <span className="text-[10px] text-slate-400">
+                          <span className="text-[10px] text-[#94A3B8] font-medium">
                             {format(new Date(msg.createdAt), "dd MMM yyyy, hh:mm a")}
                           </span>
                         </div>
-                        <div
-                          className={cn(
-                            "rounded-2xl px-4 py-3 text-xs font-medium leading-relaxed max-w-[90%]",
-                            isAdmin
-                              ? "bg-emerald-50 text-emerald-900 rounded-tr-sm"
-                              : "bg-slate-100 text-slate-700 rounded-tl-sm"
-                          )}
-                        >
+                        <div className={cn("px-4 py-3 text-[13px] font-medium leading-relaxed max-w-[90%]", isAdmin ? "bg-[#F0F8F1] border border-[#DCEEDD] text-[#334155] rounded-[10px] rounded-tr-none" : "bg-[#FFFFFF] border border-[#EEF0F2] text-[#334155] rounded-[10px] rounded-tl-none")}>
                           {msg.message}
                           {isAdmin && (
-                            <div className="flex justify-end mt-1">
-                              <Check className="h-3 w-3 text-emerald-500" />
+                            <div className="flex justify-end mt-1.5">
+                              <Check className="h-3.5 w-3.5 text-[#16A34A]" strokeWidth={2.5} />
                             </div>
                           )}
                         </div>
-                        {msg.mediaUrls?.length > 0 && (
-                          <div className="flex gap-2 mt-2 flex-wrap">
-                            {msg.mediaUrls.map((url, i) => (
-                              <div
-                                key={i}
-                                className="relative h-20 w-20 rounded-xl overflow-hidden border border-slate-200"
-                              >
-                                <Image
-                                  src={url}
-                                  alt={`Media ${i + 1}`}
-                                  fill
-                                  className="object-cover"
-                                  sizes="80px"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        )}
                       </div>
                     </div>
                   );
@@ -1228,94 +989,145 @@ export default function AdminSupportPage() {
             </div>
           )}
 
+          {/* Order Details */}
           {detailTab === "order" && (
-            <div className="flex-1 overflow-y-auto px-5 py-4">
-              {selectedTicket.orderId ? (
-                <div className="bg-slate-50 rounded-xl p-4 space-y-2">
-                  <p className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    Order ID
-                  </p>
-                  <p className="font-bold text-slate-900 font-mono">
-                    ORD-{selectedTicket.orderId.slice(-8).toUpperCase()}
-                  </p>
-                </div>
+            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4 bg-[#FFFFFF]">
+              {selectedTicket.order ? (
+                <>
+                  <div className="rounded-[10px] border border-[#E5E7EB] p-4 flex flex-col gap-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-semibold text-[#475569]">Order ID</span>
+                      <span className="text-[13px] font-bold text-[#16A34A] font-mono">
+                        {selectedTicket.order.publicCode ? `ORD-${selectedTicket.order.publicCode}` : `ORD-${selectedTicket.order.id.slice(-8).toUpperCase()}`}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-semibold text-[#475569]">Order Amount</span>
+                      <span className="text-[13px] font-bold text-[#111827]">₹{Number(selectedTicket.order.totalAmount).toLocaleString("en-IN")}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-semibold text-[#475569]">Order Status</span>
+                      <span className="text-[11px] font-extrabold px-2.5 py-1 rounded-[5px] uppercase border bg-[#EFF6FF] text-[#2563EB] border-[#BFDBFE]">
+                        {selectedTicket.order.status}
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] font-semibold text-[#475569]">Placed On</span>
+                      <span className="text-[12px] font-semibold text-[#334155]">
+                        {format(new Date(selectedTicket.order.createdAt), "dd MMM yyyy, hh:mm a")}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="rounded-[10px] border border-[#E5E7EB] p-4 flex flex-col gap-3">
+                    <p className="text-[11px] font-bold text-[#475569]">Order Items</p>
+                    {selectedTicket.order.orderItems.length > 0 ? (
+                      selectedTicket.order.orderItems.map((item) => (
+                        <div key={item.id} className="flex items-center justify-between gap-3">
+                          <span className="text-[13px] font-medium text-[#334155] flex-1">{item.menuItem.name}</span>
+                          <span className="text-[12px] font-semibold text-[#64748B]">x{item.quantity}</span>
+                          <span className="text-[13px] font-bold text-[#111827]">₹{(Number(item.unitPrice) * item.quantity).toLocaleString("en-IN")}</span>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-[12px] font-medium text-[#94A3B8]">No items recorded for this order.</p>
+                    )}
+                  </div>
+                </>
               ) : (
-                <p className="text-sm text-slate-400 text-center py-10">
-                  No order linked to this ticket
-                </p>
+                <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-10">
+                  <Package className="h-10 w-10 text-[#64748B]" strokeWidth={1.5} />
+                  <p className="text-[13px] font-bold text-[#334155]">No order linked to this ticket</p>
+                  <p className="text-[12px] font-medium text-[#94A3B8] max-w-[240px]">This ticket was raised without a related order.</p>
+                </div>
               )}
             </div>
           )}
 
+          {/* Customer Info */}
           {detailTab === "customer" && (
-            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
-              {[
-                { label: "Name", value: selectedTicket.user?.name },
-                { label: "Email", value: selectedTicket.user?.email },
-                { label: "Phone", value: selectedTicket.user?.phoneNumber },
-              ].map((info) => (
-                <div key={info.label} className="flex justify-between py-2 border-b border-slate-50">
-                  <p className="text-xs font-bold text-slate-400">{info.label}</p>
-                  <p className="text-xs font-semibold text-slate-700">{info.value || "—"}</p>
+            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4 bg-[#FFFFFF]">
+              <div className="rounded-[10px] border border-[#E5E7EB] p-4 flex flex-col items-center gap-3 text-center">
+                <Avatar className="h-[64px] w-[64px]">
+                  {selectedTicket.user?.image ? (
+                    <AvatarImage src={selectedTicket.user.image} alt={selectedTicket.user.name ?? "Customer"} className="object-cover" />
+                  ) : (
+                    <AvatarFallback className="bg-[#FAFAFB] border border-[#E5E7EB] text-[#334155] font-bold text-lg">
+                      {getInitials(selectedTicket.user?.name)}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <div>
+                  <p className="font-bold text-[#111827] text-[15px]">{selectedTicket.user?.name || "Unknown Customer"}</p>
+                  <p className="text-[12px] font-medium text-[#64748B] mt-0.5">Customer ID: {selectedTicket.userId.slice(-8).toUpperCase()}</p>
                 </div>
-              ))}
+              </div>
+              <div className="rounded-[10px] border border-[#E5E7EB] p-4 flex flex-col gap-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-[32px] w-[32px] rounded-[8px] bg-[#F1F5F9] flex items-center justify-center">
+                    <Phone className="h-4 w-4 text-[#475569]" strokeWidth={1.8} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-semibold text-[#94A3B8]">Phone Number</p>
+                    <p className="text-[13px] font-bold text-[#334155]">{selectedTicket.user?.phoneNumber || "—"}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="h-[32px] w-[32px] rounded-[8px] bg-[#F1F5F9] flex items-center justify-center">
+                    <Mail className="h-4 w-4 text-[#475569]" strokeWidth={1.8} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-semibold text-[#94A3B8]">Email Address</p>
+                    <p className="text-[13px] font-bold text-[#334155] break-all">{selectedTicket.user?.email || "—"}</p>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
+          {/* Notes */}
           {detailTab === "notes" && (
-            <div className="flex-1 overflow-y-auto px-5 py-4">
-              <p className="text-sm text-slate-400 text-center py-10">
-                No notes added yet
-              </p>
+            <div className="flex-1 overflow-y-auto px-6 py-5 space-y-4 bg-[#FFFFFF]">
+              <div className="rounded-[10px] border border-[#E5E7EB] p-4 flex flex-col gap-3">
+                <p className="text-[11px] font-bold text-[#475569] flex items-center gap-2">
+                  <MessageSquare className="h-3.5 w-3.5" strokeWidth={1.8} /> Original Issue
+                </p>
+                <p className="text-[13px] font-medium text-[#334155] leading-relaxed">{selectedTicket.description}</p>
+                <p className="text-[10px] font-medium text-[#94A3B8]">
+                  {format(new Date(selectedTicket.createdAt), "dd MMM yyyy, hh:mm a")} · {categoryConfig[selectedTicket.category]?.label ?? "Other"}
+                </p>
+              </div>
+              <div className="rounded-[10px] border border-[#E5E7EB] p-4 flex flex-col gap-3">
+                <p className="text-[11px] font-bold text-[#475569]">Subject</p>
+                <p className="text-[13px] font-semibold text-[#111827]">{selectedTicket.subject}</p>
+              </div>
             </div>
           )}
 
-          {/* Reply Box - only for conversation tab */}
+          {/* Reply Box */}
           {detailTab === "conversation" && (
-            <div className="border-t border-slate-100 px-5 py-4 flex-shrink-0 space-y-3 bg-white">
-              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
-                Reply to customer
-              </p>
+            <div className="border-t border-[#EEF0F2] px-6 py-5 flex-shrink-0 bg-[#FFFFFF]">
+              <p className="text-[12px] font-bold text-[#111827] mb-3">Reply to customer</p>
               <Textarea
                 {...register("message")}
                 placeholder="Type your reply..."
                 rows={3}
-                className="resize-none rounded-xl border-slate-200 text-sm font-medium focus-visible:ring-emerald-500"
+                className="resize-none rounded-[7px] border-[#E2E8F0] bg-[#FFFFFF] text-[13px] text-[#334155] placeholder:text-[#94A3B8] focus-visible:ring-[#3E9645] focus-visible:border-[#3E9645] shadow-none mb-3"
               />
-              {errors.message && (
-                <p className="text-xs text-red-500">{errors.message.message}</p>
-              )}
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-slate-400">
-                  <button className="h-7 w-7 hover:bg-slate-100 rounded-lg flex items-center justify-center hover:text-slate-600 transition-colors">
-                    <Smile className="h-4 w-4" />
-                  </button>
-                  <button className="h-7 w-7 hover:bg-slate-100 rounded-lg flex items-center justify-center hover:text-slate-600 transition-colors">
-                    <Paperclip className="h-4 w-4" />
-                  </button>
-                  <button className="h-7 w-7 hover:bg-slate-100 rounded-lg flex items-center justify-center hover:text-slate-600 transition-colors">
-                    <ImageIcon className="h-4 w-4" />
-                  </button>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-medium text-[#94A3B8]">Replies are sent as Admin</span>
                 </div>
                 <Button
                   onClick={handleSubmit((data) =>
-                    replyMutation
-                      .mutateAsync({ ticketId: selectedTicket.id, message: data.message })
-                      .then(() => {
-                        reset();
-                        toast.success("Reply sent");
-                      })
+                    replyMutation.mutateAsync({ ticketId: selectedTicket.id, message: data.message })
+                      .then(() => { reset(); toast.success("Reply sent"); })
                       .catch(() => toast.error("Failed to send reply"))
                   )}
                   disabled={replyMutation.isPending}
                   size="sm"
-                  className="h-9 px-5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold gap-2 shadow-sm shadow-emerald-200"
+                  className="h-[36px] px-5 rounded-[7px] bg-[#159447] hover:bg-[#12803C] text-[#FFFFFF] font-bold gap-2 shadow-none border-none"
                 >
-                  {replyMutation.isPending ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                  ) : (
-                    <Send className="h-3.5 w-3.5" />
-                  )}
+                  {replyMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" strokeWidth={1.8} />}
                   Send Reply
                 </Button>
               </div>
@@ -1323,59 +1135,30 @@ export default function AdminSupportPage() {
           )}
 
           {/* Action Buttons */}
-          <div className="border-t border-slate-100 px-5 py-4 flex items-center gap-2 flex-shrink-0 bg-white">
+          <div className="border-t border-[#EEF0F2] px-6 py-4 flex items-center justify-between gap-3 flex-shrink-0 bg-[#FFFFFF]">
             <Button
-              size="sm"
-              variant="outline"
-              onClick={() =>
-                handleStatusChange("INPROGRESS")
-              }
+              size="sm" variant="outline"
+              onClick={() => handleStatusChange("INPROGRESS")}
               disabled={selectedTicket.status === "INPROGRESS" || updateMutation.isPending}
-              className={cn(
-                "flex-1 h-9 rounded-xl text-xs font-bold border gap-1.5",
-                selectedTicket.status === "INPROGRESS"
-                  ? "border-orange-200 text-orange-600 bg-orange-50"
-                  : "border-slate-200 text-slate-600 hover:bg-slate-50"
-              )}
+              className="flex-1 h-10 rounded-[7px] text-[12px] font-bold border border-[#D4EAD6] bg-[#F2FAF3] text-[#15803D] hover:bg-[#E8F5EA] gap-1.5 shadow-none"
             >
-              <Clock className="h-3.5 w-3.5" /> Mark In Progress
+              <Clock3 className="h-[14px] w-[14px] text-[#16A34A]" strokeWidth={2.5} /> Mark In Progress
             </Button>
             <Button
-              size="sm"
-              variant="outline"
-              onClick={() =>
-                handleStatusChange("RESOLVED")
-              }
+              size="sm" variant="outline"
+              onClick={() => handleStatusChange("RESOLVED")}
               disabled={selectedTicket.status === "RESOLVED" || updateMutation.isPending}
-              className={cn(
-                "flex-1 h-9 rounded-xl text-xs font-bold border gap-1.5",
-                selectedTicket.status === "RESOLVED"
-                  ? "border-emerald-200 text-emerald-600 bg-emerald-50"
-                  : "border-slate-200 text-slate-600 hover:bg-slate-50"
-              )}
+              className="flex-1 h-10 rounded-[7px] text-[12px] font-bold border border-[#D4EAD6] bg-[#F2FAF3] text-[#15803D] hover:bg-[#E8F5EA] gap-1.5 shadow-none"
             >
-              <Check className="h-3.5 w-3.5" /> Mark Resolved
+              <Check className="h-[14px] w-[14px] text-[#16A34A]" strokeWidth={2.5} /> Mark Resolved
             </Button>
             <Button
-              size="sm"
-              variant="outline"
-              onClick={() =>
-                handleStatusChange("CLOSED")
-              }
+              size="sm" variant="outline"
+              onClick={() => handleStatusChange("CLOSED")}
               disabled={selectedTicket.status === "CLOSED" || updateMutation.isPending}
-              className={cn(
-                "h-9 rounded-xl text-xs font-bold border px-3 gap-1.5",
-                selectedTicket.status === "CLOSED"
-                  ? "border-slate-300 text-slate-500 bg-slate-100"
-                  : "border-slate-200 text-slate-600 hover:bg-slate-50"
-              )}
+              className="flex-1 h-10 rounded-[7px] text-[12px] font-bold border border-[#E2E8F0] bg-[#F8FAFC] text-[#334155] hover:bg-[#F1F5F9] gap-1.5 shadow-none"
             >
-              <Lock className="h-3.5 w-3.5" />
-              {updateMutation.isPending ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : (
-                "Close"
-              )}
+              <Lock className="h-[14px] w-[14px] text-[#475569]" strokeWidth={2} /> Close Ticket
             </Button>
           </div>
         </div>

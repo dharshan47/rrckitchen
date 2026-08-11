@@ -16,9 +16,7 @@ import {
   ChevronDown,
   ExternalLink,
   Save,
-  FileEdit,
   Layout,
-  Settings as SettingsIcon,
   X,
   GripVertical,
   ChefHat,
@@ -51,11 +49,14 @@ import {
   Tag,
   Info,
   Check,
-  ChevronUp,
   ChevronsUpDown,
   ChevronLeft,
   HelpCircle,
   TrendingUp,
+  FileText,
+  Filter,
+  LayoutGrid,
+  Settings2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -104,6 +105,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import { CloudinaryUpload } from "@/components/patterns/cloudinary-upload";
 import Image from "next/image";
@@ -152,8 +154,8 @@ const COLOR_OPTIONS = [
   { value: "text-blue-500", label: "Blue" },
   { value: "text-pink-500", label: "Pink" },
   { value: "text-purple-500", label: "Purple" },
-  { value: "text-red-500", label: "Red" },
-  { value: "text-slate-600", label: "Slate" },
+  { value: "text-[#EF4444]", label: "Red" },
+  { value: "text-[#575757]", label: "Slate" },
 ];
 
 /* ===================================================================
@@ -209,7 +211,7 @@ function DashboardSkeleton() {
             <Skeleton className="h-10 w-36 rounded-md" />
           </div>
         </div>
-        <div className="overflow-x-auto bg-white">
+        <ScrollArea className="bg-white w-full">
           <Table>
             <TableHeader>
               <TableRow className="border-b-gray-100 bg-gray-50/50">
@@ -261,7 +263,8 @@ function DashboardSkeleton() {
               ))}
             </TableBody>
           </Table>
-        </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
         <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
           <Skeleton className="h-4 w-64 rounded-md" />
           <div className="flex items-center gap-1">
@@ -358,7 +361,7 @@ function ImageUploadField({
           placeholder="Paste image URL..."
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          className="h-9 text-sm flex-1 bg-white border-slate-200"
+          className="h-9 text-sm flex-1 bg-white border-[#E9E7E2]"
         />
         <Button
           type="button"
@@ -370,12 +373,12 @@ function ImageUploadField({
         </Button>
       </div>
 
-      <div className="border border-slate-200 rounded-lg overflow-hidden">
-        <div className={`${aspectClass} bg-slate-100 relative group`}>
+      <div className="border border-[#E9E7E2] rounded-lg overflow-hidden">
+        <div className={`${aspectClass} bg-[#F5F5F4] relative group`}>
           {value ? (
             <Image src={value} alt={label} fill className="object-cover" unoptimized />
           ) : (
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-slate-400">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-[#A1A1A1]">
               <Upload className="h-6 w-6" />
               <span className="text-xs font-medium">No image uploaded</span>
             </div>
@@ -391,7 +394,7 @@ function ImageUploadField({
             </button>
           )}
         </div>
-        <div className="p-3 bg-white border-t border-slate-200 flex justify-center">
+        <div className="p-3 bg-white border-t border-[#E9E7E2] flex justify-center">
           <CloudinaryUpload
             onUpload={(result) => {
               onChange(result.secure_url);
@@ -419,7 +422,7 @@ function ImageUploadField({
           </CloudinaryUpload>
         </div>
       </div>
-      {hint && <p className="text-[10px] text-slate-400 text-center">{hint}</p>}
+      {hint && <p className="text-[10px] text-[#A1A1A1] text-center">{hint}</p>}
     </div>
   );
 }
@@ -444,7 +447,6 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
     updateFeature,
     addFeature,
     removeFeature,
-    moveFeature,
     updateOffer,
     addOffer,
     removeOffer,
@@ -520,7 +522,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
       <div className="min-h-screen bg-gray-50/50 flex items-center justify-center p-8">
         <div className="flex flex-col items-center gap-4 text-center">
           <AlertTriangle className="h-12 w-12 text-red-400" />
-          <p className="text-red-500 font-semibold">Failed to load category page content</p>
+          <p className="text-[#EF4444] font-semibold">Failed to load category page content</p>
           <Button variant="outline" onClick={() => refetch()}>
             <RotateCcw className="h-4 w-4 mr-2" /> Retry
           </Button>
@@ -546,61 +548,28 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
   const enabledOffers = draft.offers.filter((o) => o.isEnabled);
 
   return (
-    <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300">
+    <div className="min-h-screen bg-[#FEFEFD] p-6 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-            Category Slug Page Editor
+          <h1 className="text-[24px] font-bold tracking-tight text-[#111111] leading-tight">
+            Category Slug Page Management
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Manage everything customers see at{" "}
-            <span className="font-semibold text-[#10b981]">/categories/{draft.slug}</span>
+          <p className="text-[14px] text-[#575757] mt-1">
+            Manage how each category page looks on the website
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           {dirty && (
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-3 py-1.5 animate-in fade-in">
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500" /> Unsaved changes
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F4511E] bg-[#FFF7ED] border border-[#FDBA74] rounded-full px-3 py-1.5 animate-in fade-in">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#F4511E]" /> Unsaved changes
             </span>
           )}
-          <Button
-            variant="outline"
-            className="text-slate-700 h-10 border-slate-200 bg-white shadow-sm hover:bg-slate-50"
-            onClick={onCancel}
-          >
-            <ChevronLeft className="h-4 w-4 mr-1" /> Back
-          </Button>
-          <a
-            href={liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 h-10 px-4 rounded-md text-sm font-medium border border-[#10b981] text-[#10b981] hover:bg-[#10b981]/5 transition-colors bg-white shadow-sm"
-          >
-            View Live Page <ExternalLink className="h-4 w-4" />
-          </a>
-          <Button
-            className="h-10 bg-[#10b981] hover:bg-[#059669] text-white shadow-sm shadow-[#10b981]/20"
-            onClick={() => saveMutation.mutate()}
-            disabled={saveMutation.isPending || !dirty}
-          >
-            {saveMutation.isPending ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            ) : (
-              <Save className="h-4 w-4 mr-2" />
-            )}
-            Save Changes
-          </Button>
-        </div>
-      </div>
-
-      {/* Category selector + tabs */}
-      <Tabs defaultValue="page-content" className="w-full">
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6 bg-white rounded-xl border border-slate-200 shadow-sm p-3">
-          <div className="flex items-center gap-2 px-2">
-            <span className="text-sm text-slate-500 whitespace-nowrap">Select Category</span>
+          
+          <div className="flex items-center gap-3 px-3 py-1.5 border border-[#E9E7E2] bg-white rounded-[7px] mr-2">
+            <span className="text-[14px] text-[#575757] whitespace-nowrap font-medium">Select Category</span>
             <Select value={draft.categoryId} onValueChange={handleCategoryChange}>
-              <SelectTrigger className="h-9 w-[200px] border-slate-200 bg-white font-semibold text-slate-900">
+              <SelectTrigger className="h-[32px] w-[180px] bg-white border-none text-[#292929] text-[14px] font-semibold focus:ring-0 shadow-none px-2">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -612,21 +581,69 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
               </SelectContent>
             </Select>
           </div>
-          <TabsList className="bg-slate-100 h-10 w-full lg:w-auto">
-            <TabsTrigger value="page-content" className="gap-1.5 text-sm">
-              <FileEdit className="h-4 w-4" /> Page Content
+
+          <a
+            href={liveUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 h-[40px] px-5 rounded-[7px] text-[14px] font-semibold border border-[#B9D8C7] text-[#075C30] hover:bg-[#F3FAF6] transition-colors bg-[#FFFFFF] shadow-none"
+          >
+            View Live Page <ExternalLink className="h-[16px] w-[16px]" />
+          </a>
+          <Button
+            className="h-[40px] px-5 rounded-[7px] bg-[#075C30] hover:bg-[#064A27] text-white font-medium border border-[#075C30] shadow-none"
+            onClick={() => saveMutation.mutate()}
+            disabled={saveMutation.isPending || !dirty}
+          >
+            {saveMutation.isPending ? (
+              <Loader2 className="h-[16px] w-[16px] mr-2 animate-spin" />
+            ) : (
+              <Save className="h-[16px] w-[16px] mr-2" />
+            )}
+            Save Changes
+          </Button>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <Tabs defaultValue="page-content" className="w-full">
+        <div className="mb-6 border-b border-[#E9E7E2]">
+          <TabsList className="bg-transparent h-auto p-0 w-full justify-start gap-8 rounded-none">
+            <TabsTrigger 
+              value="page-content" 
+              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1"
+            >
+              <FileText className="h-[18px] w-[18px]" /> Page Content
             </TabsTrigger>
-            <TabsTrigger value="features" className="gap-1.5 text-sm">
-              <Layers className="h-4 w-4" /> Features
+            <TabsTrigger 
+              value="filters" 
+              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1"
+            >
+              <Filter className="h-[18px] w-[18px]" /> Filters
             </TabsTrigger>
-            <TabsTrigger value="offers" className="gap-1.5 text-sm">
-              <Tag className="h-4 w-4" /> Offers
+            <TabsTrigger 
+              value="sort" 
+              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1"
+            >
+              <ArrowDown className="h-[18px] w-[18px]" /> Sort Options
             </TabsTrigger>
-            <TabsTrigger value="faqs" className="gap-1.5 text-sm">
-              <HelpCircle className="h-4 w-4" /> FAQs
+            <TabsTrigger 
+              value="kitchen-card" 
+              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1"
+            >
+              <ChefHat className="h-[18px] w-[18px]" /> Kitchen Card
             </TabsTrigger>
-            <TabsTrigger value="seo" className="gap-1.5 text-sm">
-              <SettingsIcon className="h-4 w-4" /> SEO & Settings
+            <TabsTrigger 
+              value="layout" 
+              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1"
+            >
+              <LayoutGrid className="h-[18px] w-[18px]" /> Layout & Display
+            </TabsTrigger>
+            <TabsTrigger 
+              value="seo" 
+              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1"
+            >
+              <Settings2 className="h-[18px] w-[18px]" /> SEO & Settings
             </TabsTrigger>
           </TabsList>
         </div>
@@ -636,10 +653,10 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
         <div className="flex-1 min-w-0 space-y-6">
           <TabsContent value="page-content" className="mt-0 space-y-6">
             {/* Hero Section Card */}
-            <Card className="border-slate-200 shadow-sm bg-white">
-              <div className="p-5 border-b border-slate-100">
-                <h2 className="text-lg font-bold text-slate-900">Hero Section</h2>
-                <p className="text-sm text-slate-500 mt-1">
+            <Card className="border-[#E9E7E2] rounded-[12px] shadow-sm bg-[#FFFFFF]">
+              <div className="p-5 border-b border-[#E9E7E2]">
+                <h2 className="text-[19px] font-semibold text-[#1F1F1F]">Hero Section</h2>
+                <p className="text-[14px] text-[#787878] mt-1">
                   Banner, icon and intro content shown at the top of the category page
                 </p>
               </div>
@@ -647,7 +664,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                   {/* Hero Layout */}
                   <div className="md:col-span-4">
-                    <p className="text-sm font-semibold text-slate-700 mb-3">Hero Layout</p>
+                    <p className="text-[14px] font-medium text-[#444444] mb-3">Hero Layout</p>
                     <div className="grid grid-cols-2 gap-3">
                       {[
                         { value: "LEFT_TEXT", label: "Left Text" },
@@ -659,17 +676,17 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                           key={opt.value}
                           type="button"
                           onClick={() => updateDraft({ heroLayout: opt.value })}
-                          className={`rounded-lg p-3 flex flex-col items-center justify-center gap-2 aspect-[4/3] transition-all ${
+                          className={`rounded-[8px] p-3 flex flex-col items-center justify-center gap-2 aspect-[4/3] transition-all ${
                             draft.heroLayout === opt.value
-                              ? "border-2 border-[#10b981] bg-[#10b981]/5 text-[#10b981]"
-                              : "border border-slate-200 text-slate-500 hover:bg-slate-50"
+                              ? "border-2 border-[#075C30] bg-[#F0FDF4] text-[#075C30]"
+                              : "border border-[#E9E7E2] text-[#787878] hover:bg-[#F5F5F4]"
                           }`}
                         >
                           <div
                             className={`w-8 h-6 rounded flex items-center p-1 ${
                               draft.heroLayout === opt.value
-                                ? "bg-white border border-[#10b981]"
-                                : "bg-white border border-slate-200"
+                                ? "bg-white border border-[#075C30]"
+                                : "bg-white border border-[#E9E7E2]"
                             } ${
                               opt.value === "LEFT_TEXT"
                                 ? ""
@@ -682,18 +699,18 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                           >
                             {opt.value === "FULL_WIDTH" ? (
                               <>
-                                <div className="w-4 h-1 bg-slate-300 rounded-sm mb-1"></div>
-                                <div className="w-6 h-1 bg-slate-300 rounded-sm"></div>
+                                <div className="w-4 h-1 bg-[#D6D3D1] rounded-sm mb-1"></div>
+                                <div className="w-6 h-1 bg-[#D6D3D1] rounded-sm"></div>
                               </>
                             ) : (
                               <div
                                 className={`w-2 h-2 rounded-sm ${
-                                  draft.heroLayout === opt.value ? "bg-[#10b981]" : "bg-slate-300"
+                                  draft.heroLayout === opt.value ? "bg-[#075C30]" : "bg-[#D6D3D1]"
                                 }`}
                               ></div>
                             )}
                           </div>
-                          <span className="text-xs font-semibold">{opt.label}</span>
+                          <span className="text-[12px] font-medium">{opt.label}</span>
                         </button>
                       ))}
                     </div>
@@ -701,7 +718,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
 
                   {/* Desktop Banner */}
                   <div className="md:col-span-4">
-                    <p className="text-sm font-semibold text-slate-700 mb-3">Desktop Banner Image</p>
+                    <p className="text-[14px] font-medium text-[#444444] mb-3">Desktop Banner Image</p>
                     <ImageUploadField
                       label="Desktop banner"
                       value={draft.desktopBannerUrl}
@@ -712,7 +729,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
 
                   {/* Mobile Banner */}
                   <div className="md:col-span-4">
-                    <p className="text-sm font-semibold text-slate-700 mb-3">Mobile Banner Image</p>
+                    <p className="text-[14px] font-medium text-[#444444] mb-3">Mobile Banner Image</p>
                     <ImageUploadField
                       label="Mobile banner"
                       value={draft.mobileBannerUrl}
@@ -725,22 +742,22 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
                   {/* Category Icon */}
                   <div className="md:col-span-2 flex flex-col items-center">
-                    <p className="text-sm font-semibold text-slate-700 mb-3 self-start">Category Icon</p>
+                    <p className="text-[14px] font-medium text-[#444444] mb-3 self-start">Category Icon</p>
                     <div className="relative mb-3 mt-2">
-                      <div className="h-20 w-20 rounded-full bg-[#10b981] flex items-center justify-center text-white border-4 border-white shadow-md overflow-hidden">
+                      <div className="h-20 w-20 rounded-full bg-[#075C30] flex items-center justify-center text-white border-4 border-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
                         {draft.iconUrl ? (
                           <Image src={draft.iconUrl} alt="Category icon" fill className="object-cover" unoptimized />
                         ) : (
-                          <ChefHat className="h-9 w-9" />
+                          <ChefHat className="h-9 w-9 text-white" />
                         )}
                       </div>
                       <button
                         type="button"
                         onClick={() => updateDraft({ iconUrl: "" })}
-                        className="absolute bottom-0 right-0 h-6 w-6 rounded-full bg-white border border-slate-200 shadow-sm flex items-center justify-center text-[#10b981] hover:bg-slate-50"
+                        className="absolute bottom-0 right-0 h-7 w-7 rounded-full bg-white border border-[#E9E7E2] shadow-[0_1px_3px_rgba(0,0,0,0.04)] flex items-center justify-center text-[#075C30] hover:bg-[#FAFAF9]"
                         aria-label="Remove icon"
                       >
-                        <X className="h-3 w-3" />
+                        <X className="h-[14px] w-[14px]" />
                       </button>
                     </div>
                     <CloudinaryUpload
@@ -754,16 +771,16 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                           type="button"
                           variant="outline"
                           size="sm"
-                          className="h-7 text-xs text-[#10b981] border-[#10b981]/30 hover:bg-[#10b981]/5 rounded-full px-3"
+                          className="h-[32px] text-[12px] text-[#075C30] border-[#E9E7E2] hover:bg-[#F5FAF7] rounded-[7px] px-3 font-medium"
                           onClick={startUpload}
                           disabled={uploading}
                         >
                           {uploading ? (
-                            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                            <Loader2 className="h-3 w-3 mr-1.5 animate-spin" />
                           ) : (
-                            <Edit2 className="h-3 w-3 mr-1" />
+                            <Edit2 className="h-3 w-3 mr-1.5" />
                           )}
-                          {uploading ? "Uploading..." : "Upload Icon"}
+                          {uploading ? "Uploading..." : "Change Icon"}
                         </Button>
                       )}
                     </CloudinaryUpload>
@@ -773,37 +790,37 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                   <div className="md:col-span-5 flex flex-col justify-between">
                     <div>
                       <div className="flex justify-between items-center mb-1.5">
-                        <p className="text-sm font-semibold text-slate-700">Title</p>
-                        <span className="text-[10px] text-slate-400">{draft.title.length} / 50</span>
+                        <p className="text-[14px] font-medium text-[#444444]">Title</p>
+                        <span className="text-[12px] text-[#A1A1A1]">{draft.title.length} / 60</span>
                       </div>
                       <Input
                         value={draft.title}
-                        maxLength={50}
+                        maxLength={60}
                         onChange={(e) => updateDraft({ title: e.target.value })}
-                        className="bg-slate-50 border-slate-200"
+                        className="bg-[#FFFFFF] border-[#E2E0DB] text-[#292929] rounded-[7px] focus:ring-[rgba(7,92,48,0.12)] focus:border-[#075C30] h-[40px]"
                       />
                     </div>
 
                     <div className="flex items-center gap-6 mt-6">
                       <div className="flex-1">
                         <div className="flex justify-between items-center mb-1.5">
-                          <p className="text-sm font-semibold text-slate-700">Kitchen Count Badge</p>
-                          <span className="text-[10px] text-slate-400">{draft.badgeText.length} / 20</span>
+                          <p className="text-[14px] font-medium text-[#444444]">Kitchen Count Badge</p>
+                          <span className="text-[12px] text-[#A1A1A1]">{draft.badgeText.length} / 20</span>
                         </div>
                         <Input
                           value={draft.badgeText}
                           maxLength={20}
                           onChange={(e) => updateDraft({ badgeText: e.target.value })}
                           placeholder="e.g. 120+ Kitchens"
-                          className="bg-slate-50 border-slate-200"
+                          className="bg-[#FFFFFF] border-[#E2E0DB] text-[#292929] rounded-[7px] focus:ring-[rgba(7,92,48,0.12)] focus:border-[#075C30] h-[40px]"
                         />
                       </div>
                       <div className="flex flex-col items-center gap-2">
-                        <p className="text-sm font-semibold text-slate-700">Show Hero</p>
+                        <p className="text-[14px] font-medium text-[#444444]">Show Hero Section</p>
                         <Switch
                           checked={draft.showHero}
                           onCheckedChange={(checked) => updateDraft({ showHero: checked })}
-                          className="data-[state=checked]:bg-[#10b981]"
+                          className="data-[state=checked]:bg-[#075C30]"
                         />
                       </div>
                     </div>
@@ -812,56 +829,54 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                   {/* Subtitle / Description */}
                   <div className="md:col-span-5">
                     <div className="flex justify-between items-center mb-1.5">
-                      <p className="text-sm font-semibold text-slate-700">Subtitle / Description</p>
-                      <span className="text-[10px] text-slate-400">{draft.description.length} / 400</span>
+                      <p className="text-[14px] font-medium text-[#444444]">Subtitle / Description</p>
+                      <span className="text-[12px] text-[#A1A1A1]">{draft.description.length} / 200</span>
                     </div>
                     <Textarea
                       value={draft.description}
-                      maxLength={400}
+                      maxLength={200}
                       onChange={(e) => updateDraft({ description: e.target.value })}
-                      className="bg-slate-50 border-slate-200 resize-none h-full min-h-[110px]"
+                      className="bg-[#FFFFFF] border-[#E2E0DB] text-[#292929] rounded-[7px] focus:ring-[rgba(7,92,48,0.12)] focus:border-[#075C30] resize-none h-full min-h-[120px] pt-3 text-[13px]"
                     />
                   </div>
                 </div>
               </div>
             </Card>
-          </TabsContent>
 
-          <TabsContent value="features" className="mt-0 space-y-6">
-            <Card className="border-slate-200 shadow-sm bg-white">
-              <div className="p-5 border-b border-slate-100 flex items-center justify-between gap-4">
+            <Card className="border-[#E9E7E2] rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.04)] bg-[#FFFFFF]">
+              <div className="p-5 border-b border-[#E9E7E2] flex items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">Features Section</h2>
-                  <p className="text-sm text-slate-500 mt-1">
-                    Top highlights shown below the hero section (max 6)
+                  <h2 className="text-[19px] font-semibold text-[#1F1F1F]">Features Section</h2>
+                  <p className="text-[14px] text-[#787878] mt-1">
+                    Add features shown below the hero section (max 6)
                   </p>
                 </div>
                 <Button
                   variant="outline"
-                  className="gap-2 h-9 border-[#10b981] text-[#10b981] hover:bg-[#10b981]/5"
+                  className="gap-2 h-[36px] border-[#E9E7E2] text-[#075C30] hover:bg-[#F5FAF7] rounded-[7px] font-medium px-4"
                   onClick={addFeature}
                   disabled={draft.features.length >= 6}
                 >
-                  <Plus className="h-4 w-4" /> Add Feature
+                  <Plus className="h-[16px] w-[16px]" /> Add Feature
                 </Button>
               </div>
-              <div className="overflow-x-auto">
+              <ScrollArea className="w-full">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-b-slate-100 bg-slate-50/50">
-                      <TableHead className="w-16 font-semibold text-slate-500 text-xs uppercase tracking-wider">Order</TableHead>
-                      <TableHead className="w-16 text-center font-semibold text-slate-500 text-xs uppercase tracking-wider">Icon</TableHead>
-                      <TableHead className="px-4 font-semibold text-slate-500 text-xs uppercase tracking-wider">Title</TableHead>
-                      <TableHead className="px-4 font-semibold text-slate-500 text-xs uppercase tracking-wider">Subtitle</TableHead>
-                      <TableHead className="w-28 font-semibold text-slate-500 text-xs uppercase tracking-wider">Color</TableHead>
-                      <TableHead className="text-center w-20 font-semibold text-slate-500 text-xs uppercase tracking-wider">Status</TableHead>
-                      <TableHead className="text-center w-40 font-semibold text-slate-500 text-xs uppercase tracking-wider">Actions</TableHead>
+                    <TableRow className="border-b-[#E9E7E2] bg-transparent hover:bg-transparent">
+                      <TableHead className="w-16 font-semibold text-[#1F1F1F] text-[13px] capitalize">Order</TableHead>
+                      <TableHead className="w-16 text-center font-semibold text-[#1F1F1F] text-[13px] capitalize">Icon</TableHead>
+                      <TableHead className="px-4 font-semibold text-[#1F1F1F] text-[13px] capitalize">Title</TableHead>
+                      <TableHead className="px-4 font-semibold text-[#1F1F1F] text-[13px] capitalize">Subtitle</TableHead>
+                      <TableHead className="w-28 font-semibold text-[#1F1F1F] text-[13px] capitalize">Color</TableHead>
+                      <TableHead className="text-center w-28 font-semibold text-[#1F1F1F] text-[13px] capitalize">Actions</TableHead>
+                      <TableHead className="text-center w-20 font-semibold text-[#1F1F1F] text-[13px] capitalize">Status</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {draft.features.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={7} className="h-32 text-center text-slate-400">
+                        <TableCell colSpan={7} className="h-32 text-center text-[#A1A1A1] text-[14px]">
                           No features yet. Click &quot;Add Feature&quot; to create one.
                         </TableCell>
                       </TableRow>
@@ -869,25 +884,25 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                       draft.features.map((feature, index) => {
                         const Icon = FEATURE_ICON_MAP[feature.icon] ?? ChefHat;
                         return (
-                          <TableRow key={feature.id ?? index} className="border-b-slate-100">
-                            <TableCell className="py-3">
-                              <div className="flex items-center gap-1 text-slate-400">
-                                <GripVertical className="h-4 w-4" />
-                                <span className="text-xs font-semibold">{index + 1}</span>
+                          <TableRow key={feature.id ?? index} className="border-b-[#F0EFEC] hover:bg-transparent">
+                            <TableCell className="py-4">
+                              <div className="flex items-center gap-2 text-[#8A8A8A]">
+                                <GripVertical className="h-[18px] w-[18px]" />
+                                <span className="text-[14px] font-semibold text-[#292929]">{index + 1}</span>
                               </div>
                             </TableCell>
-                            <TableCell className="py-3 text-center">
-                              <div className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[#f0fdf4] text-[#10b981] border border-[#dcfce7]">
-                                <Icon className="h-5 w-5" />
+                            <TableCell className="py-4 text-center">
+                              <div className="inline-flex h-[36px] w-[36px] items-center justify-center rounded-[8px] bg-[#F0FDF4] text-[#15803D] border border-[#DCFCE7]">
+                                <Icon className="h-[18px] w-[18px]" />
                               </div>
                             </TableCell>
-                            <TableCell className="py-3 px-4">
+                            <TableCell className="py-4 px-4">
                               <div className="flex items-center gap-2">
                                 <Select
                                   value={feature.icon}
                                   onValueChange={(icon) => updateFeature(index, { icon })}
                                 >
-                                  <SelectTrigger className="h-8 w-[120px] bg-white border-slate-200">
+                                  <SelectTrigger className="h-[38px] w-[120px] bg-[#FFFFFF] border-[#E2E0DB] text-[#292929] rounded-[7px] focus:ring-[rgba(7,92,48,0.12)] focus:border-[#075C30]">
                                     <SelectValue />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -901,23 +916,23 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                                 <Input
                                   value={feature.title}
                                   onChange={(e) => updateFeature(index, { title: e.target.value })}
-                                  className="h-8 bg-white border-slate-200"
+                                  className="h-[38px] bg-[#FFFFFF] border-[#E2E0DB] text-[#292929] rounded-[7px] focus:ring-[rgba(7,92,48,0.12)] focus:border-[#075C30]"
                                 />
                               </div>
                             </TableCell>
-                            <TableCell className="py-3 px-4">
+                            <TableCell className="py-4 px-4">
                               <Input
                                 value={feature.subtitle}
                                 onChange={(e) => updateFeature(index, { subtitle: e.target.value })}
-                                className="h-8 bg-white border-slate-200"
+                                className="h-[38px] bg-[#FFFFFF] border-[#E2E0DB] text-[#292929] rounded-[7px] focus:ring-[rgba(7,92,48,0.12)] focus:border-[#075C30]"
                               />
                             </TableCell>
-                            <TableCell className="py-3 px-4">
+                            <TableCell className="py-4 px-4">
                               <Select
                                 value={feature.color}
                                 onValueChange={(color) => updateFeature(index, { color })}
                               >
-                                <SelectTrigger className="h-8 w-[110px] bg-white border-slate-200">
+                                <SelectTrigger className="h-[38px] w-[110px] bg-[#FFFFFF] border-[#E2E0DB] text-[#292929] rounded-[7px] focus:ring-[rgba(7,92,48,0.12)] focus:border-[#075C30]">
                                   <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -932,45 +947,34 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                                 </SelectContent>
                               </Select>
                             </TableCell>
-                            <TableCell className="py-3 text-center">
-                              <Switch
-                                checked={feature.isEnabled}
-                                onCheckedChange={(checked) => updateFeature(index, { isEnabled: checked })}
-                                className="data-[state=checked]:bg-[#10b981]"
-                              />
-                            </TableCell>
-                            <TableCell className="py-3">
-                              <div className="flex justify-center gap-1.5">
+                            <TableCell className="py-4">
+                              <div className="flex justify-center gap-2">
                                 <Button
                                   variant="ghost"
                                   size="icon"
-                                  className="h-8 w-8 text-slate-400 hover:text-slate-600"
-                                  onClick={() => moveFeature(index, -1)}
-                                  disabled={index === 0}
-                                  aria-label="Move up"
+                                  className="h-8 w-8 text-[#075C30] hover:bg-[#F0FDF4] hover:text-[#064A27] rounded-[7px]"
+                                  onClick={() => updateFeature(index, { isEnabled: !feature.isEnabled })}
+                                  aria-label="Edit feature"
                                 >
-                                  <ChevronUp className="h-4 w-4" />
-                                </Button>
-                                <Button
-                                  variant="ghost"
-                                  size="icon"
-                                  className="h-8 w-8 text-slate-400 hover:text-slate-600"
-                                  onClick={() => moveFeature(index, 1)}
-                                  disabled={index === draft.features.length - 1}
-                                  aria-label="Move down"
-                                >
-                                  <ChevronDown className="h-4 w-4" />
+                                  <Edit2 className="h-4 w-4" />
                                 </Button>
                                 <Button
                                   variant="outline"
                                   size="icon"
-                                  className="h-8 w-8 text-red-500 border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                                  className="h-8 w-8 text-[#EF4444] border-[#FECACA] hover:bg-[#FEF2F2] hover:text-[#DC2626] rounded-[7px]"
                                   onClick={() => removeFeature(index)}
                                   aria-label="Delete feature"
                                 >
-                                  <Trash2 className="h-3.5 w-3.5" />
+                                  <Trash2 className="h-4 w-4" />
                                 </Button>
                               </div>
+                            </TableCell>
+                            <TableCell className="py-4 text-center">
+                              <Switch
+                                checked={feature.isEnabled}
+                                onCheckedChange={(checked) => updateFeature(index, { isEnabled: checked })}
+                                className="data-[state=checked]:bg-[#075C30]"
+                              />
                             </TableCell>
                           </TableRow>
                         );
@@ -978,16 +982,17 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                     )}
                   </TableBody>
                 </Table>
-              </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
             </Card>
           </TabsContent>
 
-          <TabsContent value="offers" className="mt-0 space-y-6">
-            <Card className="border-slate-200 shadow-sm bg-white">
-              <div className="p-5 border-b border-slate-100 flex items-center justify-between gap-4">
+          <TabsContent value="kitchen-card" className="mt-0 space-y-6">
+            <Card className="border-[#E9E7E2] shadow-sm bg-white">
+              <div className="p-5 border-b border-[#E9E7E2] flex items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">Promotional Offers</h2>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <h2 className="text-lg font-bold text-[#1F1F1F]">Promotional Offers</h2>
+                  <p className="text-sm text-[#787878] mt-1">
                     Offer cards displayed automatically on the category page
                   </p>
                 </div>
@@ -999,22 +1004,22 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                   <Plus className="h-4 w-4" /> Add Offer
                 </Button>
               </div>
-              <div className="overflow-x-auto">
+              <ScrollArea className="w-full">
                 <Table>
                   <TableHeader>
-                    <TableRow className="border-b-slate-100 bg-slate-50/50">
-                      <TableHead className="w-16 font-semibold text-slate-500 text-xs uppercase tracking-wider">Order</TableHead>
-                      <TableHead className="px-4 font-semibold text-slate-500 text-xs uppercase tracking-wider">Title</TableHead>
-                      <TableHead className="px-4 font-semibold text-slate-500 text-xs uppercase tracking-wider">Subtitle</TableHead>
-                      <TableHead className="px-4 font-semibold text-slate-500 text-xs uppercase tracking-wider">Badge</TableHead>
-                      <TableHead className="text-center w-20 font-semibold text-slate-500 text-xs uppercase tracking-wider">Status</TableHead>
-                      <TableHead className="text-center w-24 font-semibold text-slate-500 text-xs uppercase tracking-wider">Actions</TableHead>
+                    <TableRow className="border-b-slate-100 bg-[#FAFAF9]/50">
+                      <TableHead className="w-16 font-semibold text-[#787878] text-xs uppercase tracking-wider">Order</TableHead>
+                      <TableHead className="px-4 font-semibold text-[#787878] text-xs uppercase tracking-wider">Title</TableHead>
+                      <TableHead className="px-4 font-semibold text-[#787878] text-xs uppercase tracking-wider">Subtitle</TableHead>
+                      <TableHead className="px-4 font-semibold text-[#787878] text-xs uppercase tracking-wider">Badge</TableHead>
+                      <TableHead className="text-center w-20 font-semibold text-[#787878] text-xs uppercase tracking-wider">Status</TableHead>
+                      <TableHead className="text-center w-24 font-semibold text-[#787878] text-xs uppercase tracking-wider">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {draft.offers.length === 0 ? (
                       <TableRow>
-                        <TableCell colSpan={6} className="h-32 text-center text-slate-400">
+                        <TableCell colSpan={6} className="h-32 text-center text-[#A1A1A1]">
                           No offers yet. Click &quot;Add Offer&quot; to create one.
                         </TableCell>
                       </TableRow>
@@ -1022,7 +1027,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                       draft.offers.map((offer, index) => (
                         <TableRow key={offer.id ?? index} className="border-b-slate-100">
                           <TableCell className="py-3">
-                            <div className="flex items-center gap-1 text-slate-400">
+                            <div className="flex items-center gap-1 text-[#A1A1A1]">
                               <GripVertical className="h-4 w-4" />
                               <span className="text-xs font-semibold">{index + 1}</span>
                             </div>
@@ -1031,14 +1036,14 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                             <Input
                               value={offer.title}
                               onChange={(e) => updateOffer(index, { title: e.target.value })}
-                              className="h-8 bg-white border-slate-200"
+                              className="h-8 bg-white border-[#E9E7E2]"
                             />
                           </TableCell>
                           <TableCell className="py-3 px-4">
                             <Input
                               value={offer.subtitle}
                               onChange={(e) => updateOffer(index, { subtitle: e.target.value })}
-                              className="h-8 bg-white border-slate-200"
+                              className="h-8 bg-white border-[#E9E7E2]"
                             />
                           </TableCell>
                           <TableCell className="py-3 px-4">
@@ -1046,7 +1051,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                               value={offer.badge}
                               onChange={(e) => updateOffer(index, { badge: e.target.value })}
                               placeholder="e.g. 20% OFF"
-                              className="h-8 bg-white border-slate-200"
+                              className="h-8 bg-white border-[#E9E7E2]"
                             />
                           </TableCell>
                           <TableCell className="py-3 text-center">
@@ -1061,7 +1066,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                               <Button
                                 variant="outline"
                                 size="icon"
-                                className="h-8 w-8 text-red-500 border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                                className="h-8 w-8 text-[#EF4444] border-[#E9E7E2] hover:bg-[#FEF2F2] hover:text-[#DC2626] hover:border-[#FECACA]"
                                 onClick={() => removeOffer(index)}
                                 aria-label="Delete offer"
                               >
@@ -1074,16 +1079,17 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                     )}
                   </TableBody>
                 </Table>
-              </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
             </Card>
           </TabsContent>
 
-          <TabsContent value="faqs" className="mt-0 space-y-6">
-            <Card className="border-slate-200 shadow-sm bg-white">
-              <div className="p-5 border-b border-slate-100 flex items-center justify-between gap-4">
+          <TabsContent value="layout" className="mt-0 space-y-6">
+            <Card className="border-[#E9E7E2] shadow-sm bg-white">
+              <div className="p-5 border-b border-[#E9E7E2] flex items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-lg font-bold text-slate-900">FAQ Section</h2>
-                  <p className="text-sm text-slate-500 mt-1">
+                  <h2 className="text-lg font-bold text-[#1F1F1F]">Frequently Asked Questions</h2>
+                  <p className="text-sm text-[#787878] mt-1">
                     Frequently asked questions displayed at the bottom of the page
                   </p>
                 </div>
@@ -1097,21 +1103,21 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
               </div>
               <div className="p-5 space-y-4">
                 {draft.faqs.length === 0 ? (
-                  <div className="text-center py-10 text-slate-400 text-sm">
+                  <div className="text-center py-10 text-[#A1A1A1] text-sm">
                     No FAQs yet. Click &quot;Add FAQ&quot; to create one.
                   </div>
                 ) : (
                   draft.faqs.map((faq, index) => (
                     <div
                       key={faq.id ?? index}
-                      className="border border-slate-200 rounded-lg p-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300"
+                      className="border border-[#E9E7E2] rounded-lg p-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-300"
                     >
                       <div className="flex items-center justify-between gap-3">
-                        <span className="text-xs font-bold text-slate-400">Q{index + 1}</span>
+                        <span className="text-xs font-bold text-[#A1A1A1]">Q{index + 1}</span>
                         <Button
                           variant="outline"
                           size="icon"
-                          className="h-8 w-8 text-red-500 border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+                          className="h-8 w-8 text-[#EF4444] border-[#E9E7E2] hover:bg-[#FEF2F2] hover:text-[#DC2626] hover:border-[#FECACA]"
                           onClick={() => removeFaq(index)}
                           aria-label="Delete FAQ"
                         >
@@ -1122,13 +1128,13 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                         value={faq.question}
                         onChange={(e) => updateFaq(index, { question: e.target.value })}
                         placeholder="Question"
-                        className="h-9 bg-white border-slate-200 font-semibold"
+                        className="h-9 bg-white border-[#E9E7E2] font-semibold"
                       />
                       <Textarea
                         value={faq.answer}
                         onChange={(e) => updateFaq(index, { answer: e.target.value })}
                         placeholder="Answer"
-                        className="bg-white border-slate-200 resize-none"
+                        className="bg-white border-[#E9E7E2] resize-none"
                       />
                     </div>
                   ))
@@ -1138,10 +1144,10 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
           </TabsContent>
 
           <TabsContent value="seo" className="mt-0 space-y-6">
-            <Card className="border-slate-200 shadow-sm bg-white">
-              <div className="p-5 border-b border-slate-100">
-                <h2 className="text-lg font-bold text-slate-900">SEO & Settings</h2>
-                <p className="text-sm text-slate-500 mt-1">
+            <Card className="border-[#E9E7E2] shadow-sm bg-white">
+              <div className="p-5 border-b border-[#E9E7E2]">
+                <h2 className="text-lg font-bold text-[#1F1F1F]">SEO & Settings</h2>
+                <p className="text-sm text-[#787878] mt-1">
                   Search engine metadata and category page behaviour
                 </p>
               </div>
@@ -1149,61 +1155,61 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   <div>
                     <div className="flex justify-between items-center mb-1.5">
-                      <p className="text-sm font-semibold text-slate-700">Meta Title</p>
-                      <span className="text-[10px] text-slate-400">{draft.metaTitle.length} / 60</span>
+                      <p className="text-sm font-semibold text-[#444444]">Meta Title</p>
+                      <span className="text-[10px] text-[#A1A1A1]">{draft.metaTitle.length} / 60</span>
                     </div>
                     <Input
                       value={draft.metaTitle}
                       maxLength={60}
                       onChange={(e) => updateDraft({ metaTitle: e.target.value })}
-                      className="bg-slate-50 border-slate-200"
+                      className="bg-[#FAFAF9] border-[#E9E7E2]"
                     />
                   </div>
                   <div>
                     <div className="flex justify-between items-center mb-1.5">
-                      <p className="text-sm font-semibold text-slate-700">Canonical URL</p>
+                      <p className="text-sm font-semibold text-[#444444]">Canonical URL</p>
                     </div>
                     <Input
                       value={draft.canonicalUrl}
                       onChange={(e) => updateDraft({ canonicalUrl: e.target.value })}
                       placeholder="https://rrckitchen.in/categories/{slug}"
-                      className="bg-slate-50 border-slate-200"
+                      className="bg-[#FAFAF9] border-[#E9E7E2]"
                     />
                   </div>
                 </div>
 
                 <div>
                   <div className="flex justify-between items-center mb-1.5">
-                    <p className="text-sm font-semibold text-slate-700">Meta Description</p>
-                    <span className="text-[10px] text-slate-400">{draft.metaDescription.length} / 160</span>
+                    <p className="text-sm font-semibold text-[#444444]">Meta Description</p>
+                    <span className="text-[10px] text-[#A1A1A1]">{draft.metaDescription.length} / 160</span>
                   </div>
                   <Textarea
                     value={draft.metaDescription}
                     maxLength={160}
                     onChange={(e) => updateDraft({ metaDescription: e.target.value })}
-                    className="bg-slate-50 border-slate-200 resize-none"
+                    className="bg-[#FAFAF9] border-[#E9E7E2] resize-none"
                   />
                 </div>
 
                 <div>
-                  <p className="text-sm font-semibold text-slate-700 mb-1.5">Keywords</p>
+                  <p className="text-sm font-semibold text-[#444444] mb-1.5">Keywords</p>
                   <Input
                     value={draft.keywords}
                     onChange={(e) => updateDraft({ keywords: e.target.value })}
                     placeholder="biryani, dum biryani, hyderabadi"
-                    className="bg-slate-50 border-slate-200"
+                    className="bg-[#FAFAF9] border-[#E9E7E2]"
                   />
-                  <p className="text-xs text-slate-400 mt-1">Comma separated keywords</p>
+                  <p className="text-xs text-[#A1A1A1] mt-1">Comma separated keywords</p>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                   <div>
-                    <p className="text-sm font-semibold text-slate-700 mb-1.5">Default Sort</p>
+                    <p className="text-sm font-semibold text-[#444444] mb-1.5">Default Sort</p>
                     <Select
                       value={draft.defaultSort}
                       onValueChange={(defaultSort) => updateDraft({ defaultSort })}
                     >
-                      <SelectTrigger className="h-10 bg-white border-slate-200">
+                      <SelectTrigger className="h-10 bg-white border-[#E9E7E2]">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -1216,7 +1222,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                     </Select>
                   </div>
                   <div>
-                    <p className="text-sm font-semibold text-slate-700 mb-1.5">Cards Per Page</p>
+                    <p className="text-sm font-semibold text-[#444444] mb-1.5">Cards Per Page</p>
                     <Input
                       type="number"
                       min={4}
@@ -1225,12 +1231,12 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                       onChange={(e) =>
                         updateDraft({ cardsPerPage: Math.max(4, Number(e.target.value) || 12) })
                       }
-                      className="bg-slate-50 border-slate-200"
+                      className="bg-[#FAFAF9] border-[#E9E7E2]"
                     />
                   </div>
                   <div className="flex items-end gap-6 pb-1">
                     <div className="flex flex-col items-center gap-2">
-                      <p className="text-sm font-semibold text-slate-700">Show Ratings</p>
+                      <p className="text-sm font-semibold text-[#444444]">Show Ratings</p>
                       <Switch
                         checked={draft.showRatings}
                         onCheckedChange={(checked) => updateDraft({ showRatings: checked })}
@@ -1238,7 +1244,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                       />
                     </div>
                     <div className="flex flex-col items-center gap-2">
-                      <p className="text-sm font-semibold text-slate-700">Publish on Website</p>
+                      <p className="text-sm font-semibold text-[#444444]">Publish on Website</p>
                       <Switch
                         checked={draft.isActive}
                         onCheckedChange={(checked) => updateDraft({ isActive: checked })}
@@ -1248,10 +1254,10 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-lg px-4 py-3">
+                <div className="flex items-center justify-between bg-[#FAFAF9] border border-[#E9E7E2] rounded-lg px-4 py-3">
                   <div>
-                    <p className="text-sm font-semibold text-slate-700">Page URL</p>
-                    <p className="text-xs text-slate-500 mt-0.5">Customer-visible category page</p>
+                    <p className="text-sm font-semibold text-[#444444]">Page URL</p>
+                    <p className="text-xs text-[#787878] mt-0.5">Customer-visible category page</p>
                   </div>
                   <a
                     href={liveUrl}
@@ -1268,13 +1274,13 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
         </div>
 
         {/* RIGHT SIDE - LIVE PREVIEW */}
-        <div className="w-full lg:w-[480px] xl:w-[560px] shrink-0">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-full sticky top-6">
-            <div className="p-4 border-b border-slate-100">
-              <h2 className="text-lg font-bold text-slate-900">Live Preview</h2>
-              <p className="text-xs text-slate-500 mt-1">This is how the category page looks to your users</p>
+        <div className="w-full lg:w-[480px] 2xl:w-[600px] shrink-0">
+          <div className="bg-[#FFFCF9] rounded-[12px] border border-[#EEEAE4] shadow-sm overflow-hidden flex flex-col h-full sticky top-6">
+            <div className="p-5 border-b border-[#EEEAE4]">
+              <h2 className="text-[19px] font-semibold text-[#1F1F1F]">Live Preview</h2>
+              <p className="text-[14px] text-[#787878] mt-1">This is how the category page looks to your users</p>
 
-              <div className="flex items-center mt-5 bg-slate-50 p-1 rounded-lg border border-slate-200">
+              <div className="flex items-center mt-6 border-b border-[#E9E7E2]">
                 {[
                   { id: "Desktop", icon: Monitor },
                   { id: "Tablet", icon: Tablet },
@@ -1284,55 +1290,57 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                     key={device.id}
                     type="button"
                     onClick={() => setPreviewDevice(device.id)}
-                    className={`flex-1 flex justify-center items-center gap-2 py-1.5 rounded-md text-sm font-semibold transition-all ${
+                    className={`flex-1 flex justify-center items-center gap-2 pb-3 text-[14px] font-semibold transition-all border-b-2 ${
                       previewDevice === device.id
-                        ? "bg-white text-[#10b981] shadow-sm"
-                        : "text-slate-500 hover:text-slate-700"
+                        ? "text-[#075C30] border-[#075C30]"
+                        : "text-[#575757] border-transparent hover:text-[#292929]"
                     }`}
                   >
-                    <device.icon className="h-4 w-4" /> {device.id}
+                    <device.icon className="h-[18px] w-[18px]" /> {device.id}
                   </button>
                 ))}
               </div>
             </div>
 
             {/* Preview Container */}
-            <div
-              className={`bg-white flex-1 overflow-y-auto p-4 custom-scrollbar transition-all duration-500 ${
-                previewDevice === "Desktop"
-                  ? "w-full"
-                  : previewDevice === "Tablet"
-                  ? "w-full max-w-[640px] mx-auto border-x border-slate-100"
-                  : "w-full max-w-[375px] mx-auto border-x border-slate-100"
-              }`}
-              style={{ maxHeight: "800px" }}
-            >
-              {/* Breadcrumb */}
-              <div className="flex items-center gap-1.5 text-[10px] text-slate-500 mb-4 font-medium">
-                <span>Home</span> <ChevronRight className="h-3 w-3" /> <span>Categories</span>{" "}
-                <ChevronRight className="h-3 w-3" />{" "}
-                <span className="text-slate-900 font-bold">{draft.title || draft.categoryName}</span>
-              </div>
+            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+              <div
+                className={`bg-[#FFFFFF] transition-all duration-500 rounded-b-[12px] min-h-[500px] ${
+                  previewDevice === "Desktop"
+                    ? "w-full"
+                    : previewDevice === "Tablet"
+                    ? "w-full max-w-[768px] mx-auto border-x border-b border-[#EEEAE4] shadow-sm"
+                    : "w-full max-w-[375px] mx-auto border-x border-b border-[#EEEAE4] shadow-sm"
+                }`}
+                style={{ maxHeight: "800px" }}
+              >
+                <div className="p-6">
+                  {/* Breadcrumb */}
+                  <div className="flex items-center gap-2 text-[12px] font-semibold text-[#777777] mb-6">
+                    <span>Home</span> <ChevronRight className="h-[14px] w-[14px] text-[#A1A1A1]" /> <span className="text-[#999999]">Categories</span>{" "}
+                    <ChevronRight className="h-[14px] w-[14px] text-[#A1A1A1]" />{" "}
+                    <span className="text-[#222222]">{draft.title || draft.categoryName}</span>
+                  </div>
 
               {/* Hero Section */}
               <div className="flex gap-4 mb-6 relative animate-in fade-in duration-500">
                 <div className="flex-1 z-10 pt-2">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className="h-12 w-12 rounded-full bg-[#10b981] flex items-center justify-center text-white shrink-0 shadow-md overflow-hidden relative">
+                    <div className="h-12 w-12 rounded-full bg-[#075C30] flex items-center justify-center text-white shrink-0 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden relative border-2 border-white">
                       {draft.iconUrl ? (
                         <Image src={draft.iconUrl} alt="Icon" fill className="object-cover" unoptimized />
                       ) : (
-                        <ChefHat className="h-6 w-6" />
+                        <ChefHat className="h-6 w-6 text-white" />
                       )}
                     </div>
                     <div className="flex flex-col items-start gap-1">
-                      <h2 className="text-xl font-bold text-slate-900">
+                      <h2 className="text-[20px] font-bold text-[#111111]">
                         {draft.title || draft.categoryName}
                       </h2>
                       {draft.badgeText && (
                         <Badge
                           variant="outline"
-                          className="text-[9px] font-bold text-red-600 border-red-200 bg-red-50 rounded-full px-2 py-0"
+                          className="text-[10px] font-bold text-[#D92D20] border-[#FEE4E2] bg-[#FEF3F2] rounded-full px-2 py-0 h-[20px] inline-flex items-center"
                         >
                           {draft.badgeText}
                         </Badge>
@@ -1340,7 +1348,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                     </div>
                   </div>
                   {draft.showHero && (
-                    <p className="text-[11px] text-slate-600 leading-relaxed max-w-[200px]">
+                    <p className="text-[11px] text-[#575757] leading-relaxed max-w-[200px]">
                       {draft.description || "No description added yet."}
                     </p>
                   )}
@@ -1356,7 +1364,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                     />
                   ) : (
                     <div className="absolute inset-0 bg-[#f0fdf4] flex items-center justify-center">
-                      <span className="text-[9px] text-slate-400 font-medium">No banner</span>
+                      <span className="text-[9px] text-[#A1A1A1] font-medium">No banner</span>
                     </div>
                   )}
                   <div className="absolute inset-0 bg-gradient-to-r from-white via-white/40 to-transparent"></div>
@@ -1379,13 +1387,13 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                     return (
                       <div
                         key={feature.id ?? i}
-                        className="flex flex-col items-center text-center gap-1.5 p-2 bg-white rounded-lg shadow-sm border border-slate-100 animate-in fade-in slide-in-from-bottom-2 duration-300"
+                        className="flex flex-col items-center text-center gap-1.5 p-2 bg-white rounded-lg shadow-sm border border-[#E9E7E2] animate-in fade-in slide-in-from-bottom-2 duration-300"
                         style={{ animationDelay: `${i * 60}ms` }}
                       >
                         <Icon className={`h-4 w-4 ${feature.color}`} />
                         <div>
-                          <p className="text-[9px] font-bold text-slate-900">{feature.title}</p>
-                          <p className="text-[8px] text-slate-500">{feature.subtitle}</p>
+                          <p className="text-[9px] font-bold text-[#1F1F1F]">{feature.title}</p>
+                          <p className="text-[8px] text-[#787878]">{feature.subtitle}</p>
                         </div>
                       </div>
                     );
@@ -1396,7 +1404,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
               {/* Offers Row */}
               {enabledOffers.length > 0 && (
                 <div className="mb-6 space-y-2">
-                  <span className="text-xs font-bold text-slate-900">Offers</span>
+                  <span className="text-xs font-bold text-[#1F1F1F]">Offers</span>
                   <div className="grid grid-cols-2 gap-2">
                     {enabledOffers.map((offer, i) => (
                       <div
@@ -1409,8 +1417,8 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                             {offer.badge}
                           </Badge>
                         )}
-                        <p className="text-[10px] font-bold text-slate-900">{offer.title}</p>
-                        <p className="text-[8px] text-slate-500 mt-0.5">{offer.subtitle}</p>
+                        <p className="text-[10px] font-bold text-[#1F1F1F]">{offer.title}</p>
+                        <p className="text-[8px] text-[#787878] mt-0.5">{offer.subtitle}</p>
                       </div>
                     ))}
                   </div>
@@ -1422,16 +1430,16 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                 {/* Filters Sidebar */}
                 <div className="w-[120px] shrink-0 space-y-4">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-bold text-slate-900">Filters</span>
+                    <span className="text-xs font-bold text-[#1F1F1F]">Filters</span>
                     <span className="text-[9px] text-[#f97316] font-semibold cursor-pointer">
                       Clear All
                     </span>
                   </div>
 
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between pb-1 border-b border-slate-100 cursor-pointer">
-                      <span className="text-[10px] font-bold text-slate-800">Meal Type</span>
-                      <ChevronDown className="h-3 w-3 text-slate-400" />
+                    <div className="flex items-center justify-between pb-1 border-b border-[#E9E7E2] cursor-pointer">
+                      <span className="text-[10px] font-bold text-[#292929]">Meal Type</span>
+                      <ChevronDown className="h-3 w-3 text-[#A1A1A1]" />
                     </div>
                     <div className="space-y-1.5 pt-1">
                       {["Breakfast", "Lunch", "Dinner"].map((meal) => (
@@ -1439,16 +1447,16 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                           <div className="w-3 h-3 rounded bg-[#f97316] flex items-center justify-center">
                             <CheckCircle2 className="h-2.5 w-2.5 text-white" />
                           </div>
-                          <span className="text-[10px] font-medium text-slate-700">{meal}</span>
+                          <span className="text-[10px] font-medium text-[#444444]">{meal}</span>
                         </label>
                       ))}
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between pb-1 border-b border-slate-100 cursor-pointer">
-                      <span className="text-[10px] font-bold text-slate-800">Veg Preference</span>
-                      <ChevronDown className="h-3 w-3 text-slate-400" />
+                    <div className="flex items-center justify-between pb-1 border-b border-[#E9E7E2] cursor-pointer">
+                      <span className="text-[10px] font-bold text-[#292929]">Veg Preference</span>
+                      <ChevronDown className="h-3 w-3 text-[#A1A1A1]" />
                     </div>
                     <div className="space-y-1.5 pt-1">
                       {["All", "Pure Veg", "Veg"].map((v) => (
@@ -1457,12 +1465,12 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                             className={`w-3 h-3 rounded-full ${
                               v === "All"
                                 ? "border-[3px] border-[#f97316]"
-                                : "border border-slate-300"
+                                : "border border-[#D9D7D2]"
                             }`}
                           ></div>
                           <span
                             className={`text-[10px] ${
-                              v === "All" ? "font-medium text-slate-700" : "text-slate-500"
+                              v === "All" ? "font-medium text-[#444444]" : "text-[#787878]"
                             }`}
                           >
                             {v}
@@ -1483,7 +1491,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                 {/* Kitchen Grid */}
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-[10px] font-bold text-slate-900">
+                    <span className="text-[10px] font-bold text-[#1F1F1F]">
                       {previewKitchens.length === 0
                         ? "No kitchens found"
                         : `Showing ${previewKitchens.length} Kitchen${
@@ -1491,8 +1499,8 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                           }`}
                     </span>
                     <div className="flex items-center gap-1">
-                      <span className="text-[9px] text-slate-500">Sort by:</span>
-                      <div className="flex items-center gap-1 text-[9px] font-bold text-slate-900 border border-slate-200 rounded px-1.5 py-0.5">
+                      <span className="text-[9px] text-[#787878]">Sort by:</span>
+                      <div className="flex items-center gap-1 text-[9px] font-bold text-[#1F1F1F] border border-[#E9E7E2] rounded px-1.5 py-0.5">
                         {draft.defaultSort} <ChevronDown className="h-2.5 w-2.5" />
                       </div>
                     </div>
@@ -1500,8 +1508,8 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
 
                   <div className="grid grid-cols-2 gap-3 mb-4">
                     {previewKitchens.length === 0 ? (
-                      <div className="col-span-2 border border-dashed border-slate-200 rounded-xl p-6 text-center">
-                        <span className="text-[10px] text-slate-400">
+                      <div className="col-span-2 border border-dashed border-[#E9E7E2] rounded-xl p-6 text-center">
+                        <span className="text-[10px] text-[#A1A1A1]">
                           No active kitchens found for this category yet.
                         </span>
                       </div>
@@ -1512,10 +1520,10 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                           href={`/kitchen/${kitchen.slug}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="border border-slate-100 rounded-xl overflow-hidden shadow-sm bg-white group transition-all hover:shadow-md hover:-translate-y-0.5 animate-in fade-in slide-in-from-bottom-2 duration-300"
+                          className="border border-[#E9E7E2] rounded-[8px] overflow-hidden shadow-[0_1px_3px_rgba(0,0,0,0.04)] bg-[#FFFFFF] group transition-all hover:-translate-y-0.5 animate-in fade-in slide-in-from-bottom-2 duration-300"
                           style={{ animationDelay: `${i * 80}ms` }}
                         >
-                          <div className="aspect-[4/3] relative bg-slate-100">
+                          <div className="aspect-[4/3] relative bg-[#F5F5F4]">
                             {kitchen.imageUrl ? (
                               <Image
                                 src={kitchen.imageUrl}
@@ -1525,24 +1533,24 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                                 unoptimized
                               />
                             ) : (
-                              <div className="absolute inset-0 bg-slate-100 flex items-center justify-center">
-                                <ChefHat className="h-6 w-6 text-slate-300" />
+                              <div className="absolute inset-0 bg-[#F5F5F4] flex items-center justify-center">
+                                <ChefHat className="h-6 w-6 text-[#D6D3D1]" />
                               </div>
                             )}
                             {i === 0 && (
                               <div className="absolute top-1.5 left-1.5">
-                                <Badge className="bg-[#f97316] hover:bg-[#f97316] border-none text-[8px] px-1 py-0 h-4">
+                                <Badge className="bg-[#F4511E] hover:bg-[#F4511E] border-none text-[8px] px-1 py-0 h-4 text-white">
                                   Bestseller
                                 </Badge>
                               </div>
                             )}
                             <div className="absolute top-1.5 right-1.5 flex gap-1">
-                              <Badge className="bg-white text-[#10b981] border border-[#10b981] text-[8px] px-1 py-0 h-4 font-bold shadow-sm">
+                              <Badge className="bg-[#F0FDF4] text-[#15803D] border border-[#BBF7D0] text-[8px] px-1 py-0 h-4 font-bold shadow-none">
                                 {kitchen.cuisineTags[0] ?? "Home"}
                               </Badge>
                             </div>
                             {kitchen.profileImage && (
-                              <div className="absolute bottom-1.5 left-1.5 h-6 w-6 rounded-full border-2 border-white overflow-hidden bg-slate-200">
+                              <div className="absolute bottom-1.5 left-1.5 h-6 w-6 rounded-[50%] border-2 border-white overflow-hidden bg-[#E7E5E4]">
                                 <Image
                                   src={kitchen.profileImage}
                                   alt="Chef"
@@ -1555,24 +1563,24 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                           </div>
                           <div className="p-2">
                             <div className="flex items-center justify-between mb-1">
-                              <h3 className="text-[11px] font-bold text-slate-900 truncate">
+                              <h3 className="text-[11px] font-bold text-[#222222] truncate">
                                 {kitchen.displayName}
                               </h3>
-                              <div className="flex items-center justify-center bg-white rounded-full p-0.5 shadow-sm border border-slate-100">
-                                <CheckCircle2 className="h-2.5 w-2.5 text-blue-500" />
+                              <div className="flex items-center justify-center bg-[#FFFFFF] rounded-full p-0.5 shadow-none border border-[#E9E7E2]">
+                                <CheckCircle2 className="h-2.5 w-2.5 text-[#15803D]" />
                               </div>
                             </div>
-                            <div className="flex items-center gap-1 text-[9px] text-slate-600 mb-1.5 font-medium">
-                              <Star className="h-2.5 w-2.5 text-yellow-400 fill-yellow-400" />
-                              <span className="font-bold text-[#f97316]">
+                            <div className="flex items-center gap-1 text-[9px] text-[#777777] mb-1.5 font-medium">
+                              <Star className="h-2.5 w-2.5 text-[#F59E0B] fill-[#F59E0B]" />
+                              <span className="font-bold text-[#D97706]">
                                 {kitchen.avgRating ? kitchen.avgRating.toFixed(1) : "New"}
                               </span>
-                              <span className="text-slate-400">({kitchen.totalReviews})</span>
+                              <span className="text-[#777777]">({kitchen.totalReviews})</span>
                             </div>
-                            <p className="text-[8px] text-slate-400 truncate mb-1.5">
+                            <p className="text-[8px] text-[#777777] truncate mb-1.5">
                               {kitchen.cuisineTags.join(" • ") || "Home Kitchen"}
                             </p>
-                            <div className="flex items-center justify-between text-[8px] text-slate-500 pb-2 border-b border-slate-100">
+                            <div className="flex items-center justify-between text-[8px] text-[#777777] pb-2 border-b border-[#E9E7E2]">
                               <div className="flex items-center gap-1">
                                 <Clock className="h-2.5 w-2.5" /> Home cooked
                               </div>
@@ -1581,11 +1589,11 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                               </div>
                             </div>
                             <div className="flex items-center justify-between mt-2">
-                              <div className="flex items-center gap-1 text-[#10b981]">
+                              <div className="flex items-center gap-1 text-[#15803D] bg-[#F0FDF4] border border-[#DCFCE7] px-1 py-0.5 rounded-[4px]">
                                 <ShieldCheck className="h-2.5 w-2.5" />
                                 <span className="text-[8px] font-bold">100% Hygienic</span>
                               </div>
-                              <span className="text-[8px] font-bold text-[#f97316]">View Menu</span>
+                              <span className="text-[8px] font-bold text-[#F4511E] bg-[#FFFDFC] border border-[#F4A58B] px-1.5 py-0.5 rounded-[4px] hover:bg-[#FFF4EF] transition-colors">View Menu</span>
                             </div>
                           </div>
                         </a>
@@ -1605,8 +1613,10 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
             </div>
           </div>
         </div>
-        </div>
-      </Tabs>
+      </div>
+    </div>
+  </div>
+</Tabs>
     </div>
   );
 }
@@ -1642,7 +1652,7 @@ function CategoryPageTable({
           {row.original.isActive && <div className="w-2 h-2 rounded-full bg-emerald-600" />}
           <div className="flex flex-col">
             <span className="font-semibold text-emerald-800 capitalize">{row.original.categoryName}</span>
-            <span className="text-xs text-slate-400">/categories/{row.original.slug}</span>
+            <span className="text-xs text-[#A1A1A1]">/categories/{row.original.slug}</span>
           </div>
         </div>
       ),
@@ -1652,7 +1662,7 @@ function CategoryPageTable({
       header: "Banner Preview",
       enableSorting: false,
       cell: ({ row }) => (
-        <div className="w-[170px] h-[52px] rounded-md overflow-hidden relative border border-slate-100 bg-slate-50">
+        <div className="w-[170px] h-[52px] rounded-md overflow-hidden relative border border-[#E9E7E2] bg-[#FAFAF9]">
           {row.original.desktopBannerUrl ? (
             <Image
               src={row.original.desktopBannerUrl}
@@ -1707,7 +1717,7 @@ function CategoryPageTable({
             onCheckedChange={(checked) => onToggle(row.original, checked)}
             className="data-[state=checked]:bg-[#10b981]"
           />
-          <span className={`text-xs font-semibold ${row.original.isActive ? "text-emerald-600" : "text-slate-400"}`}>
+          <span className={`text-xs font-semibold ${row.original.isActive ? "text-emerald-600" : "text-[#A1A1A1]"}`}>
             {row.original.isActive ? "Live" : "Draft"}
           </span>
         </div>
@@ -1717,7 +1727,7 @@ function CategoryPageTable({
       accessorKey: "version",
       header: "Version",
       cell: ({ row }) => (
-        <Badge className="bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-100 text-[10px] font-semibold">
+        <Badge className="bg-[#F5F5F4] text-[#575757] border border-[#E9E7E2] hover:bg-[#F5F5F4] text-[10px] font-semibold">
           v{row.original.version}
         </Badge>
       ),
@@ -1726,13 +1736,13 @@ function CategoryPageTable({
       accessorKey: "updatedBy",
       header: "Updated By",
       enableSorting: false,
-      cell: ({ row }) => <span className="text-sm text-slate-500">{row.original.updatedBy ?? "—"}</span>,
+      cell: ({ row }) => <span className="text-sm text-[#787878]">{row.original.updatedBy ?? "—"}</span>,
     },
     {
       accessorKey: "updatedAt",
       header: "Updated At",
       cell: ({ row }) => (
-        <span className="text-sm text-slate-500 whitespace-nowrap">
+        <span className="text-sm text-[#787878] whitespace-nowrap">
           {new Date(row.original.updatedAt).toLocaleDateString("en-IN", {
             day: "numeric",
             month: "short",
@@ -1750,7 +1760,7 @@ function CategoryPageTable({
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8 text-slate-500 border-slate-200 hover:border-[#10b981]/30 hover:text-[#10b981]"
+            className="h-8 w-8 text-[#787878] border-[#E9E7E2] hover:border-[#10b981]/30 hover:text-[#10b981]"
             onClick={(e) => {
               e.stopPropagation();
               onView(row.original);
@@ -1763,7 +1773,7 @@ function CategoryPageTable({
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8 text-[#10b981] border-slate-200 hover:bg-[#10b981]/5"
+            className="h-8 w-8 text-[#10b981] border-[#E9E7E2] hover:bg-[#10b981]/5"
             onClick={(e) => {
               e.stopPropagation();
               onEdit(row.original.id);
@@ -1776,7 +1786,7 @@ function CategoryPageTable({
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8 text-red-500 border-slate-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200"
+            className="h-8 w-8 text-[#EF4444] border-[#E9E7E2] hover:bg-[#FEF2F2] hover:text-[#DC2626] hover:border-[#FECACA]"
             onClick={(e) => {
               e.stopPropagation();
               onDelete(row.original);
@@ -1810,16 +1820,16 @@ function CategoryPageTable({
 
   return (
     <>
-      <div className="overflow-x-auto bg-white">
+      <ScrollArea className="bg-white w-full">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-b-slate-100 bg-slate-50/50 hover:bg-slate-50/50">
+              <TableRow key={headerGroup.id} className="border-b-slate-100 bg-[#FAFAF9]/50 hover:bg-[#FAFAF9]/50">
                 {headerGroup.headers.map((header) => (
                   <TableHead
                     key={header.id}
                     onClick={header.column.getToggleSortingHandler()}
-                    className={`h-12 font-semibold text-slate-600 text-xs uppercase tracking-wider py-4 ${
+                    className={`h-12 font-semibold text-[#575757] text-xs uppercase tracking-wider py-4 ${
                       header.column.id === "actions" ? "text-right" : ""
                     } ${header.column.getCanSort() ? "cursor-pointer select-none" : ""}`}
                   >
@@ -1831,7 +1841,7 @@ function CategoryPageTable({
                         ) : header.column.getIsSorted() === "desc" ? (
                           <ArrowDown className="h-3 w-3 text-[#10b981]" />
                         ) : (
-                          <ChevronsUpDown className="h-3 w-3 text-slate-300" />
+                          <ChevronsUpDown className="h-3 w-3 text-[#D6D3D1]" />
                         ))}
                     </span>
                   </TableHead>
@@ -1842,7 +1852,7 @@ function CategoryPageTable({
           <TableBody>
             {pageItems.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-32 text-center text-slate-400">
+                <TableCell colSpan={columns.length} className="h-32 text-center text-[#A1A1A1]">
                   No category pages found. Click &quot;Add New Category Page&quot; to create one.
                 </TableCell>
               </TableRow>
@@ -1850,7 +1860,7 @@ function CategoryPageTable({
               pageItems.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="border-b-slate-100 hover:bg-slate-50/80 transition-colors cursor-pointer"
+                  className="border-b-slate-100 hover:bg-[#FAFAF9]/80 transition-colors cursor-pointer"
                   onClick={() => onEdit(row.original.id)}
                 >
                   {row.getVisibleCells().map((cell) => (
@@ -1863,21 +1873,22 @@ function CategoryPageTable({
             )}
           </TableBody>
         </Table>
-      </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
 
       {/* Pagination */}
-      <div className="p-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <p className="text-sm text-slate-500">
-          Showing <span className="font-semibold text-slate-700">{showingFrom}</span>–
-          <span className="font-semibold text-slate-700">{showingTo}</span> of{" "}
-          <span className="font-semibold text-slate-700">{rows.length}</span> category pages
+      <div className="p-4 border-t border-[#E9E7E2] flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p className="text-sm text-[#787878]">
+          Showing <span className="font-semibold text-[#444444]">{showingFrom}</span>–
+          <span className="font-semibold text-[#444444]">{showingTo}</span> of{" "}
+          <span className="font-semibold text-[#444444]">{rows.length}</span> category pages
         </p>
         <div className="flex items-center gap-3">
           <Select
             value={String(pagination.pageSize)}
             onValueChange={(v) => table.setPageSize(Number(v))}
           >
-            <SelectTrigger className="w-24 h-8 text-xs bg-white border-slate-200 text-slate-700 font-medium">
+            <SelectTrigger className="w-24 h-8 text-xs bg-white border-[#E9E7E2] text-[#444444] font-medium">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -1909,7 +1920,7 @@ function CategoryPageTable({
                   className={`h-8 w-8 ${
                     page === safePage
                       ? "bg-[#10b981] hover:bg-[#059669]"
-                      : "text-slate-600 border-slate-200"
+                      : "text-[#575757] border-[#E9E7E2]"
                   }`}
                   onClick={() => table.setPageIndex(page - 1)}
                 >
@@ -2079,7 +2090,7 @@ export default function CategoryPagesManagement() {
       <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 max-w-[1400px] mx-auto flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
           <AlertTriangle className="h-12 w-12 text-red-400" />
-          <p className="text-red-500 font-semibold">Failed to load category page content</p>
+          <p className="text-[#EF4444] font-semibold">Failed to load category page content</p>
           <Button variant="outline" onClick={() => refetch()}>
             <RotateCcw className="h-4 w-4 mr-2" /> Retry
           </Button>
@@ -2097,10 +2108,10 @@ export default function CategoryPagesManagement() {
             <Layout className="h-6 w-6 text-[#10b981]" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">
+            <h1 className="text-2xl font-bold tracking-tight text-[#1F1F1F]">
               Category Slug Page Management
             </h1>
-            <p className="text-sm text-slate-500 mt-0.5">
+            <p className="text-sm text-[#787878] mt-0.5">
               Manage how each category page looks on the website
             </p>
           </div>
@@ -2133,9 +2144,9 @@ export default function CategoryPagesManagement() {
                 <Layout className="h-6 w-6 text-[#10b981]" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-500">Total Category Pages</p>
+                <p className="text-sm font-medium text-[#787878]">Total Category Pages</p>
                 <h3 className="text-3xl font-bold text-[#10b981] mt-1">{stats.total}</h3>
-                <p className="text-xs text-slate-400 mt-1">Managed category pages</p>
+                <p className="text-xs text-[#A1A1A1] mt-1">Managed category pages</p>
               </div>
             </div>
           </CardContent>
@@ -2148,9 +2159,9 @@ export default function CategoryPagesManagement() {
                 <CheckCircle2 className="h-6 w-6 text-emerald-600" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-500">Live on Website</p>
+                <p className="text-sm font-medium text-[#787878]">Live on Website</p>
                 <h3 className="text-3xl font-bold text-emerald-600 mt-1">{stats.live}</h3>
-                <p className="text-xs text-slate-400 mt-1">Currently visible to users</p>
+                <p className="text-xs text-[#A1A1A1] mt-1">Currently visible to users</p>
               </div>
             </div>
           </CardContent>
@@ -2163,9 +2174,9 @@ export default function CategoryPagesManagement() {
                 <History className="h-6 w-6 text-blue-500" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-500">Recently Updated</p>
+                <p className="text-sm font-medium text-[#787878]">Recently Updated</p>
                 <h3 className="text-3xl font-bold text-blue-600 mt-1">{stats.recentlyUpdated}</h3>
-                <p className="text-xs text-slate-400 mt-1">In last 7 days</p>
+                <p className="text-xs text-[#A1A1A1] mt-1">In last 7 days</p>
               </div>
             </div>
           </CardContent>
@@ -2178,9 +2189,9 @@ export default function CategoryPagesManagement() {
                 <Layers className="h-6 w-6 text-purple-500" />
               </div>
               <div>
-                <p className="text-sm font-medium text-slate-500">Total Features</p>
+                <p className="text-sm font-medium text-[#787878]">Total Features</p>
                 <h3 className="text-3xl font-bold text-purple-600 mt-1">{stats.totalFeatures}</h3>
-                <p className="text-xs text-slate-400 mt-1">Across all category pages</p>
+                <p className="text-xs text-[#A1A1A1] mt-1">Across all category pages</p>
               </div>
             </div>
           </CardContent>
@@ -2188,15 +2199,15 @@ export default function CategoryPagesManagement() {
       </div>
 
       {/* Main Table Section */}
-      <Card className="shadow-sm border-slate-200/60 overflow-hidden bg-white">
-        <div className="p-5 border-b border-slate-100 bg-white flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+      <Card className="shadow-sm border-[#E9E7E2]/60 overflow-hidden bg-white">
+        <div className="p-5 border-b border-[#E9E7E2] bg-white flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <div className="bg-blue-50 p-2 rounded-md">
               <List className="h-5 w-5 text-blue-500" />
             </div>
             <div>
               <div className="flex items-center gap-2.5">
-                <h2 className="text-lg font-bold text-slate-900">Category Pages</h2>
+                <h2 className="text-lg font-bold text-[#1F1F1F]">Category Pages</h2>
                 <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">
                   <span
                     className={`h-1.5 w-1.5 rounded-full bg-emerald-500 ${
@@ -2206,7 +2217,7 @@ export default function CategoryPagesManagement() {
                   LIVE · AUTO-REFRESH 30S
                 </span>
               </div>
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-[#787878]">
                 View and manage all category slug page configurations.
               </p>
             </div>
@@ -2214,19 +2225,19 @@ export default function CategoryPagesManagement() {
 
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#A1A1A1]" />
               <Input
                 placeholder="Search by category..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9 h-10 bg-slate-50/50 border-slate-200"
+                className="pl-9 h-10 bg-[#FAFAF9]/50 border-[#E9E7E2]"
               />
             </div>
             <Select
               value={statusFilter}
               onValueChange={setStatusFilter}
             >
-              <SelectTrigger className="w-32 h-10 bg-white border-slate-200 text-slate-700 font-medium">
+              <SelectTrigger className="w-32 h-10 bg-white border-[#E9E7E2] text-[#444444] font-medium">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -2239,8 +2250,8 @@ export default function CategoryPagesManagement() {
               value={sortBy}
               onValueChange={setSortBy}
             >
-              <SelectTrigger className="w-36 h-10 bg-white border-slate-200 text-slate-700 font-medium">
-                <SelectValue className="text-slate-700" />
+              <SelectTrigger className="w-36 h-10 bg-white border-[#E9E7E2] text-[#444444] font-medium">
+                <SelectValue className="text-[#444444]" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Latest">Sort: Latest</SelectItem>
@@ -2250,7 +2261,7 @@ export default function CategoryPagesManagement() {
             </Select>
             <Button
               variant="ghost"
-              className="h-10 text-slate-500 hover:text-slate-900"
+              className="h-10 text-[#787878] hover:text-[#1F1F1F]"
               onClick={() => {
                 setSearchTerm("");
                 setStatusFilter("All");
@@ -2284,12 +2295,12 @@ export default function CategoryPagesManagement() {
           </DialogHeader>
           <div className="space-y-4 py-2">
             <Select value={addCategoryId} onValueChange={setAddCategoryId}>
-              <SelectTrigger className="h-10 bg-white border-slate-200">
+              <SelectTrigger className="h-10 bg-white border-[#E9E7E2]">
                 <SelectValue placeholder="Select a category..." />
               </SelectTrigger>
               <SelectContent>
                 {unmanagedCategories.length === 0 ? (
-                  <div className="px-3 py-2 text-sm text-slate-400">
+                  <div className="px-3 py-2 text-sm text-[#A1A1A1]">
                     All categories already have pages.
                   </div>
                 ) : (
@@ -2329,7 +2340,7 @@ export default function CategoryPagesManagement() {
             <AlertDialogTitle>Delete category page?</AlertDialogTitle>
             <AlertDialogDescription>
               This will permanently delete the managed page for{" "}
-              <span className="font-semibold text-slate-700">{deleteTarget?.categoryName}</span>. The
+              <span className="font-semibold text-[#444444]">{deleteTarget?.categoryName}</span>. The
               category itself will not be affected.
             </AlertDialogDescription>
           </AlertDialogHeader>

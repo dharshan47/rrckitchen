@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import crypto from "crypto";
 import type { Prisma } from "@/lib/generated/prisma/client";
+import { TimeSlot } from "@/lib/generated/prisma/enums";
 import prisma from "@/lib/prisma";
 import { getRazorpayClient } from "@/lib/razorpay";
 import { getAblyRest } from "@/lib/ably/server";
@@ -13,10 +14,13 @@ export interface CreateOrderInput {
   items: { id: string; qty: number; price: number }[];
   idempotencyKey?: string;
   couponCode?: string;
-  serviceDateType?: "TODAY" | "TOMORROW";
+  serviceDateType?: "TODAY" | "TOMORROW" | "FUTURE";
+  serviceDate?: string;
+  timeSlot?: string;
+  addressId?: string;
 }
 
-export async function createPaymentOrder({ userId, items, idempotencyKey, couponCode, serviceDateType }: CreateOrderInput) {
+export async function createPaymentOrder({ userId, items, idempotencyKey, couponCode, serviceDateType, serviceDate: serviceDateIso, timeSlot: selectedTimeSlot, addressId }: CreateOrderInput) {
   if (!items?.length) {
     throw new Error("Cart is empty");
   }
@@ -47,17 +51,40 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
     throw new Error("Some menu items not found");
   }
 
-  const serviceDate = new Date();
-  if (serviceDateType === "TODAY") {
-    serviceDate.setHours(0, 0, 0, 0);
+  let serviceDate: Date;
+  let resolvedServiceDateType: "TODAY" | "TOMORROW" | "FUTURE";
+
+  if (serviceDateIso) {
+    const [year, month, day] = serviceDateIso.split("-").map(Number);
+    if (!year || !month || !day || Number.isNaN(new Date(year, month - 1, day).getTime())) {
+      throw new Error("Invalid delivery date");
+    }
+    const picked = new Date(year, month - 1, day);
+    picked.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    if (picked.getTime() < tomorrow.getTime()) {
+      throw new Error("Same day delivery is not available. Please choose a future date.");
+    }
+    serviceDate = picked;
+    resolvedServiceDateType = picked.getTime() === tomorrow.getTime() ? "TOMORROW" : "FUTURE";
   } else {
-    serviceDate.setDate(serviceDate.getDate() + 1);
-    serviceDate.setHours(0, 0, 0, 0);
+    serviceDate = new Date();
+    if (serviceDateType === "TODAY") {
+      serviceDate.setHours(0, 0, 0, 0);
+      resolvedServiceDateType = "TODAY";
+    } else {
+      serviceDate.setDate(serviceDate.getDate() + 1);
+      serviceDate.setHours(0, 0, 0, 0);
+      resolvedServiceDateType = "TOMORROW";
+    }
   }
 
   const firstItem = items[0];
   const firstMenuItem = menuItems.find((m) => m.id === firstItem.id)!;
-  const timeSlot = firstMenuItem.timeSlot;
+  const timeSlot = selectedTimeSlot || firstMenuItem.timeSlot;
 
   const slot = await prisma.deliverySlot.findFirst({
     where: { isActive: true },
@@ -74,7 +101,7 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
     }
   }
 
-  let totalAmount = items.reduce((sum, i) => {
+  const itemTotal = items.reduce((sum, i) => {
     const menuItem = menuItems.find((m) => m.id === i.id)!;
     return sum + Number(menuItem.price) * i.qty;
   }, 0);
@@ -84,17 +111,37 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
   if (couponCode) {
     const coupon = await prisma.coupon.findUnique({ where: { code: couponCode } });
     if (coupon && coupon.isActive && coupon.validFrom <= new Date() && coupon.validTo >= new Date()) {
-      if (totalAmount >= Number(coupon.minOrderValue ?? 0)) {
+      if (itemTotal >= Number(coupon.minOrderValue ?? 0)) {
         if (coupon.discountType === "PERCENTAGE") {
           appliedDiscount = Math.min(
-            totalAmount * Number(coupon.discountValue) / 100,
+            itemTotal * Number(coupon.discountValue) / 100,
             Number(coupon.maxDiscount ?? Infinity)
           );
         } else {
           appliedDiscount = Number(coupon.discountValue);
         }
-        totalAmount -= appliedDiscount;
+        appliedDiscount = Math.min(appliedDiscount, itemTotal);
       }
+    }
+  }
+
+  // Mirror the cart page charges so the Razorpay amount matches what the
+  // customer sees: item total - coupon + packaging + delivery (free above min).
+  const packagingCharge = Number(process.env.PACKAGING_CHARGE) || 10;
+  const deliveryCharge = Number(process.env.DELIVERY_CHARGE) || 20;
+  const freeDeliveryMin = Number(process.env.FREE_DELIVERY_MIN) || 299;
+  const effectiveDeliveryCharge = itemTotal >= freeDeliveryMin ? 0 : deliveryCharge;
+
+  const totalAmount =
+    itemTotal - appliedDiscount + packagingCharge + effectiveDeliveryCharge;
+
+  let resolvedAddressId = addressId ?? null;
+  if (resolvedAddressId) {
+    const address = await prisma.address.findFirst({
+      where: { id: resolvedAddressId, userId },
+    });
+    if (!address) {
+      resolvedAddressId = null;
     }
   }
 
@@ -103,9 +150,10 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
       data: {
         publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.ORDER),
         userId,
+        addressId: resolvedAddressId,
         serviceDate,
-        serviceDateType: serviceDateType ?? "TOMORROW",
-        timeSlot,
+        serviceDateType: resolvedServiceDateType,
+        timeSlot: timeSlot as TimeSlot,
         totalAmount,
         discountAmount: appliedDiscount,
         commissionAmount: Math.round(totalAmount * 0.15 * 100) / 100,

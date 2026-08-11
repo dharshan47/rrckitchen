@@ -55,22 +55,29 @@ export function useAdminTwoFactorSetupActions() {
 /* ------------------------- TanStack Query hooks ------------------------- */
 
 /**
- * Enables 2FA for the current admin and returns the TOTP provisioning URI
- * used to render the QR code.
+ * Enables 2FA for the current admin with their password. Better-auth requires
+ * the account password on this endpoint whenever the user has a credential
+ * account, even with `allowPasswordless: true`. The response contains the TOTP
+ * provisioning URI (for the QR code) and the backup codes, so both are stored
+ * here and the flow advances to the verification step.
  */
 export function useAdminEnableTwoFactorMutation() {
   return useMutation({
-    mutationFn: async () => {
-      const res = await twoFactor.enable({});
+    mutationFn: async (password: string) => {
+      const res = await twoFactor.enable({ password });
       if (res?.error) throw new Error(res.error.message || "Failed to enable 2FA");
-      return res.data as { totpURI?: string } | undefined;
+      return res.data as { totpURI?: string; backupCodes?: string[] } | undefined;
+    },
+    onSuccess: (data) => {
+      adminTwoFactorSetupStore.getState().setBackupCodes(data?.backupCodes ?? null);
+      adminTwoFactorSetupStore.getState().setStep("verify");
     },
   });
 }
 
 /**
  * Verifies the 6-digit TOTP code during setup. Moves the flow to the
- * password step on success.
+ * backup codes step on success.
  */
 export function useAdminVerifyTotpCodeMutation() {
   return useMutation({
@@ -79,24 +86,6 @@ export function useAdminVerifyTotpCodeMutation() {
       if (res?.error) throw new Error(res.error.message || "Verification failed");
     },
     onSuccess: () => {
-      adminTwoFactorSetupStore.getState().setStep("password");
-    },
-  });
-}
-
-/**
- * Generates backup codes after confirming the admin password. Stores the
- * codes and moves the flow to the final step on success.
- */
-export function useAdminGenerateBackupCodesMutation() {
-  return useMutation({
-    mutationFn: async (password: string) => {
-      const res = await twoFactor.generateBackupCodes({ password });
-      if (res?.error) throw new Error(res.error.message || "Failed to generate backup codes");
-      return res.data as { backupCodes?: string[] } | undefined;
-    },
-    onSuccess: (data) => {
-      adminTwoFactorSetupStore.getState().setBackupCodes(data?.backupCodes ?? null);
       adminTwoFactorSetupStore.getState().setStep("codes");
     },
   });

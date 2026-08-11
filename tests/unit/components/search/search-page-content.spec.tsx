@@ -24,10 +24,9 @@ vi.mock("@/lib/recent-searches", () => ({
   addRecentKitchen: vi.fn(),
 }))
 
-
-
-vi.mock("@/components/kitchen/kitchen-wishlist-button", () => ({
-  KitchenWishlistButton: () => <button data-testid="kitchen-wishlist-btn">Wishlist</button>,
+vi.mock("@/stores", () => ({
+  useMenuDeliveryLat: vi.fn(() => null),
+  useMenuDeliveryLng: vi.fn(() => null),
 }))
 
 vi.mock("@/components/ui/dropdown-menu", () => ({
@@ -53,8 +52,21 @@ const mockSearchResults = {
     { id: "d2", name: "Plain Dosa", price: 40, compareAtPrice: 50, foodType: "VEG", timeSlot: "MORNING", kitchenName: "Test Kitchen", kitchenId: "k1", imageUrl: null, slug: "plain-dosa" },
   ],
   kitchens: [
-    { id: "k1", slug: "test-kitchen", displayName: "Test Kitchen", imageUrl: "/kitchen.jpg", avgRating: 4.5, totalReviews: 120, cuisineTags: ["South Indian"], items: [{ id: "d1", name: "Masala Dosa", price: 60, imageUrl: "/dosa.jpg" }] },
+    { id: "k1", slug: "test-kitchen", displayName: "Test Kitchen", imageUrl: "/kitchen.jpg", avgRating: 4.5, totalReviews: 120, cuisineTags: ["South Indian"], lat: 10.8, lng: 79.13, estimatedPrepTime: 25, items: [{ id: "d1", name: "Masala Dosa", price: 60, foodType: "VEG", timeSlot: "MORNING", imageUrl: "/dosa.jpg" }] },
   ],
+  nextCursor: null,
+}
+
+function mockFetchByUrl(results: unknown, content: unknown = { content: null }) {
+  ;(global.fetch as ReturnType<typeof vi.fn>).mockImplementation((url: string) => {
+    if (url.includes("/api/search/content")) {
+      return Promise.resolve({ ok: true, json: async () => content })
+    }
+    if (url.includes("/api/kitchen/categories")) {
+      return Promise.resolve({ ok: true, json: async () => [] })
+    }
+    return Promise.resolve({ ok: true, json: async () => results })
+  })
 }
 
 describe("SearchPageContent", () => {
@@ -65,184 +77,113 @@ describe("SearchPageContent", () => {
 
   it("renders search input", () => {
     render(<SearchPageContent />, { wrapper: createWrapper() })
-    expect(screen.getByPlaceholderText("Search for dishes and kitchens...")).toBeInTheDocument()
+    expect(screen.getByPlaceholderText("Search for kitchens and food")).toBeInTheDocument()
   })
 
   it("shows loading skeleton while fetching", () => {
     ;(global.fetch as ReturnType<typeof vi.fn>).mockImplementation(() => new Promise(() => {}))
     render(<SearchPageContent />, { wrapper: createWrapper() })
-    expect(screen.getByPlaceholderText("Search for dishes and kitchens...")).toBeInTheDocument()
+    expect(screen.getByPlaceholderText("Search for kitchens and food")).toBeInTheDocument()
   })
 
   it("shows no results message when search returns empty", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ dishes: [], kitchens: [] }),
-    })
+    mockFetchByUrl({ dishes: [], kitchens: [], nextCursor: null })
     render(<SearchPageContent />, { wrapper: createWrapper() })
     await waitFor(() => {
       expect(screen.getByText("No results found")).toBeInTheDocument()
     })
   })
 
-  it("renders dishes tab by default", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockSearchResults,
-    })
-    render(<SearchPageContent />, { wrapper: createWrapper() })
-    await waitFor(() => {
-      expect(screen.getByText("Dishes")).toBeInTheDocument()
-    })
-  })
-
-  it("shows dish count in tab", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockSearchResults,
-    })
-    render(<SearchPageContent />, { wrapper: createWrapper() })
-    await waitFor(() => {
-      expect(screen.getByText("(2)")).toBeInTheDocument()
-    })
-  })
-
-  it("switches to kitchens tab", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockSearchResults,
-    })
-    render(<SearchPageContent />, { wrapper: createWrapper() })
-    await waitFor(() => {
-      expect(screen.getByText("Kitchens")).toBeInTheDocument()
-    })
-    fireEvent.click(screen.getByText("Kitchens"))
-    await waitFor(() => {
-      expect(screen.getByText("KITCHENS")).toBeInTheDocument()
-    })
-  })
-
   it("displays kitchen name in results", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockSearchResults,
-    })
+    mockFetchByUrl(mockSearchResults)
     render(<SearchPageContent />, { wrapper: createWrapper() })
     await waitFor(() => {
       expect(screen.getByText("Test Kitchen")).toBeInTheDocument()
     })
   })
 
-  it("displays dish names in results", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockSearchResults,
-    })
-    render(<SearchPageContent />, { wrapper: createWrapper() })
-    await waitFor(() => {
-      expect(screen.getByText("Masala Dosa")).toBeInTheDocument()
-    })
-  })
-
-  it("displays dish prices", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockSearchResults,
-    })
-    render(<SearchPageContent />, { wrapper: createWrapper() })
-    await waitFor(() => {
-      expect(screen.getByText("₹60")).toBeInTheDocument()
-    })
-  })
-
   it("displays kitchen rating", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockSearchResults,
-    })
+    mockFetchByUrl(mockSearchResults)
     render(<SearchPageContent />, { wrapper: createWrapper() })
     await waitFor(() => {
       expect(screen.getByText("4.5")).toBeInTheDocument()
     })
   })
 
-  it("displays cuisine tags in kitchen view", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockSearchResults,
-    })
+  it("displays cuisine tags in kitchen results", async () => {
+    mockFetchByUrl(mockSearchResults)
     render(<SearchPageContent />, { wrapper: createWrapper() })
-    await waitFor(() => {
-      expect(screen.getByText("Kitchens")).toBeInTheDocument()
-    })
-    fireEvent.click(screen.getByText("Kitchens"))
     await waitFor(() => {
       expect(screen.getByText("South Indian")).toBeInTheDocument()
     })
   })
 
-  it("renders sort dropdown for dishes", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockSearchResults,
-    })
+  it("shows the real kitchen count", async () => {
+    mockFetchByUrl(mockSearchResults)
     render(<SearchPageContent />, { wrapper: createWrapper() })
     await waitFor(() => {
-      expect(screen.getByText(/Sort/)).toBeInTheDocument()
-    })
-  })
-
-  it("renders sort dropdown for kitchens", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockSearchResults,
-    })
-    render(<SearchPageContent />, { wrapper: createWrapper() })
-    await waitFor(() => {
-      expect(screen.getByText("Kitchens")).toBeInTheDocument()
-    })
-    fireEvent.click(screen.getByText("Kitchens"))
-    await waitFor(() => {
-      expect(screen.getByText(/Sort/)).toBeInTheDocument()
+      expect(screen.getByText(/Showing 1 - 1 of 1 Kitchens/)).toBeInTheDocument()
     })
   })
 
   it("links kitchen to kitchen page", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => mockSearchResults,
-    })
+    mockFetchByUrl(mockSearchResults)
     render(<SearchPageContent />, { wrapper: createWrapper() })
     await waitFor(() => {
-      expect(screen.getByText("Kitchens")).toBeInTheDocument()
-    })
-    fireEvent.click(screen.getByText("Kitchens"))
-    await waitFor(() => {
       const links = screen.getAllByRole("link")
-      const kitchenLink = links.find((l) => l.getAttribute("href")?.includes("/kitchens/"))
+      const kitchenLink = links.find((l) => l.getAttribute("href") === "/kitchens/test-kitchen")
       expect(kitchenLink).toBeTruthy()
     })
   })
 
-  it("shows no results text with query", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ dishes: [], kitchens: [] }),
-    })
+  it("renders the sort dropdown", async () => {
+    mockFetchByUrl(mockSearchResults)
     render(<SearchPageContent />, { wrapper: createWrapper() })
     await waitFor(() => {
-      expect(screen.getByText(/We couldn't find anything for/)).toBeInTheDocument()
+      expect(screen.getAllByText(/Sort by:/).length).toBeGreaterThan(0)
     })
   })
 
-  it("shows no dishes found message when dishes tab is active but empty", async () => {
-    ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ dishes: [], kitchens: [] }),
+  it("applies filters from backend content and clears them", async () => {
+    mockFetchByUrl(mockSearchResults, {
+      content: {
+        id: "c1",
+        keyword: "dosa",
+        bannerImageUrl: "",
+        heading: "Dosa",
+        subHeading: "",
+        cardsPerPage: 12,
+        defaultSort: "relevance",
+        showRatings: true,
+        kitchensCount: 1,
+        filters: [{ id: "f1", name: "Cuisine", options: ["South Indian", "North Indian"] }],
+        badges: [],
+        infoItems: [],
+      },
     })
     render(<SearchPageContent />, { wrapper: createWrapper() })
     await waitFor(() => {
-      expect(screen.getByText("No results found")).toBeInTheDocument()
+      expect(screen.getByText("Cuisine")).toBeInTheDocument()
     })
+
+    fireEvent.click(screen.getByText("North Indian"))
+    fireEvent.click(screen.getByText("APPLY FILTERS"))
+    await waitFor(() => {
+      expect(screen.getByText("No kitchens match your filters")).toBeInTheDocument()
+    })
+
+    fireEvent.click(screen.getByText("Clear Filters"))
+    await waitFor(() => {
+      expect(screen.getByText("Test Kitchen")).toBeInTheDocument()
+    })
+  })
+
+  it("search submit navigates with the query", () => {
+    mockFetchByUrl(mockSearchResults)
+    render(<SearchPageContent />, { wrapper: createWrapper() })
+    const input = screen.getByPlaceholderText("Search for kitchens and food")
+    fireEvent.change(input, { target: { value: "biryani" } })
+    fireEvent.submit(input.closest("form") as HTMLFormElement)
+    expect(mockPush).toHaveBeenCalledWith("/search?q=biryani")
   })
 })

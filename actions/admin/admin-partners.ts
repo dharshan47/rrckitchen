@@ -40,12 +40,19 @@ export async function getAdminKitchenPartners() {
     email: p.user?.email,
     imageUrl: p.kitchenAlias?.imageUrl,
     customOfferText: p.kitchenAlias?.customOfferText,
+    description: p.kitchenAlias?.description ?? null,
     displayName: p.kitchenAlias?.displayName ?? p.user?.name,
     status: p.status,
+    avgRating: Number(p.avgRating) || 0,
+    totalReviews: p.totalReviews,
+    operatingHours: p.operatingHours as Record<string, { open: string; close: string }> | null,
     orders: p._count.orderItems,
     menuCount: p._count.menus,
     revenue: p.orderItems.reduce((sum, oi) => sum + Number(oi.unitPrice) * oi.quantity, 0),
     estimatedPrepTime: p.estimatedPrepTime,
+    minOrder: p.minOrder,
+    deliveryRadiusKm: p.deliveryRadiusKm,
+    publicCode: p.publicCode,
     address: p.kitchenAddress,
     cuisines: p.kitchenCategories.map((kc) => ({ id: kc.category.id, name: kc.category.name })),
     kyc: p.kitchenKyc
@@ -58,6 +65,9 @@ export async function getAdminKitchenPartners() {
           gpayNumber: p.kitchenKyc.gpayNumber,
           phoneNumber: p.kitchenKyc.phoneNumber,
           aadhaarVerified: p.kitchenKyc.aadhaarVerified,
+          fssaiNumber: p.kitchenKyc.fssaiNumber,
+          fssaiValidTill: p.kitchenKyc.fssaiValidTill,
+          gstNumber: p.kitchenKyc.gstNumber,
         }
       : null,
     createdAt: p.createdAt,
@@ -76,31 +86,63 @@ export async function getAdminDeliveryPartners() {
     },
   })
 
-  return partners.map((p) => ({
-    id: p.id,
-    userId: p.userId,
-    name: p.user?.name ?? "",
-    phoneNumber: p.user?.phoneNumber ?? null,
-    email: p.user?.email ?? null,
-    status: p.status,
-    orders: p._count.kitchenAssignments,
-    avgRating: Number(p.avgRating),
-    totalReviews: p.totalReviews,
-    isOnline: p.isOnline,
-    kyc: p.kyc
-      ? {
-          bankName: p.kyc.bankName,
-          bankAccountNumber: p.kyc.bankAccountNumber,
-          ifscCode: p.kyc.ifscCode,
-          accountHolderName: p.kyc.accountHolderName,
-          upiId: p.kyc.upiId,
-          googlePayNumber: p.kyc.googlePayNumber,
-          phonePeNumber: p.kyc.phonePeNumber,
-          verifiedAt: p.kyc.verifiedAt,
-        }
-      : null,
-    createdAt: p.createdAt,
-  }))
+  const partnerIds = partners.map((p) => p.id)
+  const assignments = partnerIds.length > 0
+    ? await prisma.deliveryAssignment.findMany({
+        where: { deliveryPartnerId: { in: partnerIds } },
+        orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          deliveryPartnerId: true,
+          status: true,
+          createdAt: true,
+          order: { select: { id: true, status: true, createdAt: true } },
+        },
+      })
+    : []
+  const assignmentsByPartner = new Map<string, typeof assignments>()
+  for (const a of assignments) {
+    const list = assignmentsByPartner.get(a.deliveryPartnerId) ?? []
+    list.push(a)
+    assignmentsByPartner.set(a.deliveryPartnerId, list)
+  }
+
+  return partners.map((p) => {
+    const partnerAssignments = assignmentsByPartner.get(p.id) ?? []
+    const deliveredCount = partnerAssignments.filter((a) => a.status === "DELIVERED").length
+    return {
+      id: p.id,
+      userId: p.userId,
+      name: p.user?.name ?? "",
+      phoneNumber: p.user?.phoneNumber ?? null,
+      email: p.user?.email ?? null,
+      status: p.status,
+      orders: p._count.kitchenAssignments,
+      totalAssignments: partnerAssignments.length,
+      deliveredCount,
+      avgRating: Number(p.avgRating),
+      totalReviews: p.totalReviews,
+      isOnline: p.isOnline,
+      kyc: p.kyc
+        ? {
+            bankName: p.kyc.bankName,
+            bankAccountNumber: p.kyc.bankAccountNumber,
+            ifscCode: p.kyc.ifscCode,
+            accountHolderName: p.kyc.accountHolderName,
+            upiId: p.kyc.upiId,
+            googlePayNumber: p.kyc.googlePayNumber,
+            phonePeNumber: p.kyc.phonePeNumber,
+            verifiedAt: p.kyc.verifiedAt,
+          }
+        : null,
+      recentDeliveries: partnerAssignments.slice(0, 3).map((a) => ({
+        id: a.order.id,
+        status: a.order.status,
+        createdAt: a.order.createdAt,
+      })),
+      createdAt: p.createdAt,
+    }
+  })
 }
 
 export async function updateKitchenPartnerStatus(id: string, status: string) {
@@ -194,7 +236,13 @@ export async function updateKitchenDetails(
     latitude?: number
     longitude?: number
     displayName?: string
+    description?: string | null
     operatingHours?: Record<string, { open: string; close: string }> | null
+    minOrder?: number | null
+    deliveryRadiusKm?: number | null
+    fssaiNumber?: string | null
+    fssaiValidTill?: string | null
+    gstNumber?: string | null
   },
 ) {
   let session
@@ -203,14 +251,32 @@ export async function updateKitchenDetails(
   }
 
   try {
-    const { estimatedPrepTime, displayName, operatingHours, ...addressFields } = details
+    const {
+      estimatedPrepTime,
+      displayName,
+      description,
+      operatingHours,
+      minOrder,
+      deliveryRadiusKm,
+      fssaiNumber,
+      fssaiValidTill,
+      gstNumber,
+      ...addressFields
+    } = details
 
-    if (estimatedPrepTime !== undefined || operatingHours !== undefined) {
+    if (
+      estimatedPrepTime !== undefined ||
+      operatingHours !== undefined ||
+      minOrder !== undefined ||
+      deliveryRadiusKm !== undefined
+    ) {
       await prisma.kitchenPartner.update({
         where: { id: kitchenId },
         data: {
           ...(estimatedPrepTime !== undefined ? { estimatedPrepTime } : {}),
           ...(operatingHours !== undefined ? { operatingHours: operatingHours as object } : {}),
+          ...(minOrder !== undefined ? { minOrder } : {}),
+          ...(deliveryRadiusKm !== undefined ? { deliveryRadiusKm } : {}),
         },
       })
     }
@@ -219,6 +285,30 @@ export async function updateKitchenDetails(
       await prisma.kitchenAlias.update({
         where: { kitchenPartnerId: kitchenId },
         data: { displayName },
+      })
+    }
+
+    if (description !== undefined) {
+      await prisma.kitchenAlias.update({
+        where: { kitchenPartnerId: kitchenId },
+        data: { description: description?.trim() ? description : null },
+      })
+    }
+
+    if (fssaiNumber !== undefined || fssaiValidTill !== undefined || gstNumber !== undefined) {
+      await prisma.kitchenPartnerKyc.upsert({
+        where: { kitchenPartnerId: kitchenId },
+        create: {
+          kitchenPartnerId: kitchenId,
+          fssaiNumber: fssaiNumber ?? null,
+          fssaiValidTill: fssaiValidTill ? new Date(fssaiValidTill) : null,
+          gstNumber: gstNumber ?? null,
+        },
+        update: {
+          ...(fssaiNumber !== undefined ? { fssaiNumber } : {}),
+          ...(fssaiValidTill !== undefined ? { fssaiValidTill: fssaiValidTill ? new Date(fssaiValidTill) : null } : {}),
+          ...(gstNumber !== undefined ? { gstNumber } : {}),
+        },
       })
     }
 

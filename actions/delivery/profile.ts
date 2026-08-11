@@ -75,3 +75,18 @@ export async function getDeliveryProfileData() {
     }
   }
 }
+
+export async function updateDeliveryPartnerImage(imageUrl: string | null) {
+  const session = await getSession()
+  if (!session?.user) return { success: false, error: "Unauthorized" }
+
+  try {
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { image: imageUrl },
+    })
+    return { success: true }
+  } catch {
+    return { success: false, error: "Failed to update image" }
+  }
+}

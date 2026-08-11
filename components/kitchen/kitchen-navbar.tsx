@@ -4,7 +4,6 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboard, Menu, X } from "lucide-react";
 import { useState } from "react";
-import Image from "next/image";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -19,16 +18,12 @@ export function KitchenNavbar({ isLoggedIn }: { isLoggedIn?: boolean }) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white shadow-[0_4px_20px_rgba(0,0,0,0.05)]">
+    <header className="sticky top-0 z-50 bg-[#FFFFFF] shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 h-16 sm:h-20">
         <Link href="/" className="flex items-center shrink-0">
-          <div className="relative h-10 w-32 sm:h-12 sm:w-40">
-            <Image 
-              src="/icon.png" 
-              alt="RRC Kitchen" 
-              fill
-              className="object-contain object-left" 
-            />
+          <div className="flex flex-col">
+            <span className="text-2xl sm:text-3xl font-bold font-serif italic text-[#FD4F03] leading-none">RRC <span className="text-[#006F3D]">Kitchen</span></span>
+            <p className="text-[10px] sm:text-xs italic text-[#222222] mt-0.5 font-serif leading-none">Every Homemaker is a Chef</p>
           </div>
         </Link>
 
@@ -37,7 +32,7 @@ export function KitchenNavbar({ isLoggedIn }: { isLoggedIn?: boolean }) {
             <Link
               key={link.href}
               href={link.href}
-              className="text-sm font-semibold text-gray-700 hover:text-[#EE7005] transition-colors whitespace-nowrap"
+              className="text-sm font-semibold text-[#222222] hover:text-[#006F3D] transition-colors whitespace-nowrap"
             >
               {link.label}
             </Link>
@@ -46,7 +41,7 @@ export function KitchenNavbar({ isLoggedIn }: { isLoggedIn?: boolean }) {
 
         <div className="hidden lg:flex items-center gap-4 shrink-0">
           {isLoggedIn ? (
-            <Button asChild className="bg-[#EE7005] hover:bg-[#EE7005]/90 text-white rounded-full px-6 shadow-md shadow-[#EE7005]/20">
+            <Button asChild className="bg-[#FD4F03] hover:bg-[#E94700] text-[#FFFFFF] rounded-[7px] px-6 shadow-[0_3px_12px_rgba(253,79,3,0.2)]">
               <Link href="/kitchen/dashboard">
                 <LayoutDashboard className="h-4 w-4 mr-2" />
                 Dashboard
@@ -54,10 +49,10 @@ export function KitchenNavbar({ isLoggedIn }: { isLoggedIn?: boolean }) {
             </Button>
           ) : (
             <>
-              <Button asChild variant="outline" className="border-2 border-[#007A33] text-[#007A33] hover:bg-[#007A33] hover:text-white rounded-full px-6">
+              <Button asChild variant="outline" className="border-[1.5px] border-[#006F3D] text-[#006F3D] bg-[#FFFFFF] hover:bg-[#F1F8F3] hover:text-[#006F3D] rounded-[7px] px-6">
                 <Link href="/kitchen/login">Login</Link>
               </Button>
-              <Button asChild className="bg-[#EE7005] hover:bg-[#EE7005]/90 text-white rounded-full px-6 shadow-md shadow-[#EE7005]/20">
+              <Button asChild className="bg-[#FD4F03] hover:bg-[#E94700] text-[#FFFFFF] rounded-[7px] px-6 shadow-[0_3px_12px_rgba(253,79,3,0.2)]">
                 <Link href="/kitchen/signup">Register</Link>
               </Button>
             </>
@@ -65,7 +60,7 @@ export function KitchenNavbar({ isLoggedIn }: { isLoggedIn?: boolean }) {
         </div>
 
         <button
-          className="lg:hidden p-2 -mr-2 text-gray-700"
+          className="lg:hidden p-2 -mr-2 text-[#222222]"
           onClick={() => setMobileOpen(!mobileOpen)}
           aria-label={mobileOpen ? "Close menu" : "Open menu"}
         >
@@ -74,20 +69,20 @@ export function KitchenNavbar({ isLoggedIn }: { isLoggedIn?: boolean }) {
       </div>
 
       {mobileOpen && (
-        <div className="lg:hidden border-t border-gray-100 bg-white px-4 sm:px-6 py-4 space-y-2 shadow-lg absolute w-full left-0">
+        <div className="lg:hidden border-t border-[#E8E8E8] bg-[#FFFFFF] px-4 sm:px-6 py-4 space-y-2 shadow-[0_6px_18px_rgba(0,0,0,0.09)] absolute w-full left-0">
           {navLinks.map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className="block text-base font-semibold text-gray-700 hover:text-[#EE7005] py-2"
+              className="block text-base font-semibold text-[#222222] hover:text-[#006F3D] py-2"
               onClick={() => setMobileOpen(false)}
             >
               {link.label}
             </Link>
           ))}
-          <div className="flex flex-col gap-3 pt-4 pb-2 border-t border-gray-100">
+          <div className="flex flex-col gap-3 pt-4 pb-2 border-t border-[#E8E8E8]">
             {isLoggedIn ? (
-              <Button asChild className="bg-[#EE7005] hover:bg-[#EE7005]/90 text-white w-full rounded-full">
+              <Button asChild className="bg-[#FD4F03] hover:bg-[#E94700] text-[#FFFFFF] w-full rounded-[7px]">
                 <Link href="/kitchen/dashboard">
                   <LayoutDashboard className="h-4 w-4 mr-2" />
                   Dashboard
@@ -95,10 +90,10 @@ export function KitchenNavbar({ isLoggedIn }: { isLoggedIn?: boolean }) {
               </Button>
             ) : (
               <>
-                <Button asChild variant="outline" className="border-2 border-[#007A33] text-[#007A33] hover:bg-[#007A33] hover:text-white w-full rounded-full">
+                <Button asChild variant="outline" className="border-[1.5px] border-[#006F3D] text-[#006F3D] bg-[#FFFFFF] hover:bg-[#F1F8F3] hover:text-[#006F3D] w-full rounded-[7px]">
                   <Link href="/kitchen/login">Login</Link>
                 </Button>
-                <Button asChild className="bg-[#EE7005] hover:bg-[#EE7005]/90 text-white w-full rounded-full">
+                <Button asChild className="bg-[#FD4F03] hover:bg-[#E94700] text-[#FFFFFF] w-full rounded-[7px]">
                   <Link href="/kitchen/signup">Register</Link>
                 </Button>
               </>

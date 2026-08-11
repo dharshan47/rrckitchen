@@ -29,6 +29,7 @@ export interface AdminSearchPageFilter {
 export interface AdminSearchPageBadge {
   id: string
   name: string
+  position: string
   isEnabled: boolean
   sortOrder: number
 }
@@ -58,9 +59,32 @@ export interface AdminSearchPageDetail {
   updatedBy: string | null
   updatedAt: string
   createdAt: string
+  backgroundColor: string
+  metaTitle: string
+  metaDescription: string
+  keywords: string
+  showKitchens: boolean
+  showKitchensLimit: string
+  showDishes: boolean
+  showDishesLimit: string
+  showCategories: boolean
+  showCategoriesLimit: string
+  autoSuggest: boolean
+  recentSearches: boolean
+  showKitchenBadges: boolean
+  showDistance: boolean
   filters: AdminSearchPageFilter[]
   badges: AdminSearchPageBadge[]
   infoItems: AdminSearchPageInfoItem[]
+  kitchenCards: AdminSearchPageKitchenCard[]
+}
+
+export interface AdminSearchPageKitchenCard {
+  id: string
+  kitchenPartnerId: string
+  imageUrl: string | null
+  badge: string | null
+  sortOrder: number
 }
 
 export interface AdminSearchPageSaveInput {
@@ -71,9 +95,24 @@ export interface AdminSearchPageSaveInput {
   cardsPerPage: number
   defaultSort: string
   showRatings: boolean
+  backgroundColor: string
+  metaTitle: string
+  metaDescription: string
+  keywords: string
+  showKitchens: boolean
+  showKitchensLimit: string
+  showDishes: boolean
+  showDishesLimit: string
+  showCategories: boolean
+  showCategoriesLimit: string
+  autoSuggest: boolean
+  recentSearches: boolean
+  showKitchenBadges: boolean
+  showDistance: boolean
   filters: { name: string; options: string[]; isEnabled: boolean }[]
-  badges: { name: string; isEnabled: boolean }[]
+  badges: { name: string; position?: string; isEnabled: boolean }[]
   infoItems: { icon: string; title: string; subtitle: string; color: string; isEnabled: boolean }[]
+  kitchenCards: { kitchenPartnerId: string; imageUrl: string | null; badge: string | null }[]
 }
 
 const DEFAULT_FILTERS = [
@@ -209,6 +248,7 @@ export async function getSearchPageContent(id: string): Promise<AdminSearchPageD
       filters: { orderBy: { sortOrder: "asc" } },
       badges: { orderBy: { sortOrder: "asc" } },
       infoItems: { orderBy: { sortOrder: "asc" } },
+      kitchenCards: { orderBy: { sortOrder: "asc" } },
     },
   })
 
@@ -229,6 +269,20 @@ export async function getSearchPageContent(id: string): Promise<AdminSearchPageD
     updatedBy: content.updatedBy,
     updatedAt: content.updatedAt.toISOString(),
     createdAt: content.createdAt.toISOString(),
+    backgroundColor: content.backgroundColor,
+    metaTitle: content.metaTitle,
+    metaDescription: content.metaDescription,
+    keywords: content.keywords,
+    showKitchens: content.showKitchens,
+    showKitchensLimit: content.showKitchensLimit,
+    showDishes: content.showDishes,
+    showDishesLimit: content.showDishesLimit,
+    showCategories: content.showCategories,
+    showCategoriesLimit: content.showCategoriesLimit,
+    autoSuggest: content.autoSuggest,
+    recentSearches: content.recentSearches,
+    showKitchenBadges: content.showKitchenBadges,
+    showDistance: content.showDistance,
     filters: content.filters.map((f) => ({
       id: f.id,
       name: f.name,
@@ -239,6 +293,7 @@ export async function getSearchPageContent(id: string): Promise<AdminSearchPageD
     badges: content.badges.map((b) => ({
       id: b.id,
       name: b.name,
+      position: b.position ?? "left",
       isEnabled: b.isEnabled,
       sortOrder: b.sortOrder,
     })),
@@ -250,6 +305,13 @@ export async function getSearchPageContent(id: string): Promise<AdminSearchPageD
       color: i.color,
       isEnabled: i.isEnabled,
       sortOrder: i.sortOrder,
+    })),
+    kitchenCards: content.kitchenCards.map((c) => ({
+      id: c.id,
+      kitchenPartnerId: c.kitchenPartnerId,
+      imageUrl: c.imageUrl,
+      badge: c.badge,
+      sortOrder: c.sortOrder,
     })),
   }
 }
@@ -278,11 +340,25 @@ export async function createSearchPageContent(input: { keyword: string }): Promi
       kitchensCount: kitchens,
       version: 1,
       updatedBy: session.user.name ?? "Admin",
+      backgroundColor: "#F0FDF4",
+      metaTitle: `Best ${toTitleCase(keyword)} Near You | RRC Kitchen`,
+      metaDescription: `Find the best ${keyword} near you. Order from ${kitchens}+ home kitchens offering delicious ${keyword} with fast delivery.`,
+      keywords: `${keyword}, south indian, breakfast, home food`,
+      showKitchens: true,
+      showKitchensLimit: "32 kitchens",
+      showDishes: true,
+      showDishesLimit: "16 dishes",
+      showCategories: true,
+      showCategoriesLimit: "15 categories",
+      autoSuggest: true,
+      recentSearches: true,
+      showKitchenBadges: true,
+      showDistance: true,
       filters: {
         create: DEFAULT_FILTERS.map((f, i) => ({ name: f.name, options: f.options, isEnabled: true, sortOrder: i })),
       },
       badges: {
-        create: DEFAULT_BADGES.map((name, i) => ({ name, isEnabled: true, sortOrder: i })),
+        create: DEFAULT_BADGES.map((name, i) => ({ name, position: "left", isEnabled: true, sortOrder: i })),
       },
       infoItems: {
         create: DEFAULT_INFO_ITEMS.map((item, i) => ({ ...item, isEnabled: true, sortOrder: i })),
@@ -310,6 +386,20 @@ export async function saveSearchPageContent(id: string, input: AdminSearchPageSa
         cardsPerPage: input.cardsPerPage,
         defaultSort: input.defaultSort,
         showRatings: input.showRatings,
+        backgroundColor: input.backgroundColor,
+        metaTitle: input.metaTitle,
+        metaDescription: input.metaDescription,
+        keywords: input.keywords,
+        showKitchens: input.showKitchens,
+        showKitchensLimit: input.showKitchensLimit,
+        showDishes: input.showDishes,
+        showDishesLimit: input.showDishesLimit,
+        showCategories: input.showCategories,
+        showCategoriesLimit: input.showCategoriesLimit,
+        autoSuggest: input.autoSuggest,
+        recentSearches: input.recentSearches,
+        showKitchenBadges: input.showKitchenBadges,
+        showDistance: input.showDistance,
         version: { increment: 1 },
         updatedBy: session.user.name ?? "Admin",
       },
@@ -331,6 +421,7 @@ export async function saveSearchPageContent(id: string, input: AdminSearchPageSa
       data: input.badges.map((b, i) => ({
         searchPageContentId: id,
         name: b.name,
+        position: b.position ?? "left",
         isEnabled: b.isEnabled,
         sortOrder: i,
       })),
@@ -347,6 +438,60 @@ export async function saveSearchPageContent(id: string, input: AdminSearchPageSa
         isEnabled: item.isEnabled,
         sortOrder: i,
       })),
+    })
+
+    await tx.searchPageKitchenCard.deleteMany({ where: { searchPageContentId: id } })
+    await tx.searchPageKitchenCard.createMany({
+      data: input.kitchenCards.map((c, i) => ({
+        searchPageContentId: id,
+        kitchenPartnerId: c.kitchenPartnerId,
+        imageUrl: c.imageUrl,
+        badge: c.badge,
+        sortOrder: i,
+      })),
+    })
+  })
+
+  return { success: true }
+}
+
+export async function saveSearchPageKitchenCard(
+  contentId: string,
+  kitchenPartnerId: string,
+  patch: { imageUrl?: string | null; badge?: string | null },
+): Promise<{ success: boolean; error?: string }> {
+  const { session } = await requirePermission("MANAGE_CMS")
+
+  const existing = await prisma.searchPageContent.findUnique({ where: { id: contentId } })
+  if (!existing) return { success: false, error: "Search content not found" }
+
+  const card = await prisma.searchPageKitchenCard.findFirst({
+    where: { searchPageContentId: contentId, kitchenPartnerId },
+  })
+
+  await prisma.$transaction(async (tx) => {
+    if (card) {
+      await tx.searchPageKitchenCard.update({
+        where: { id: card.id },
+        data: {
+          imageUrl: patch.imageUrl === undefined ? card.imageUrl : patch.imageUrl,
+          badge: patch.badge === undefined ? card.badge : (patch.badge?.trim() ? patch.badge : null),
+        },
+      })
+    } else {
+      await tx.searchPageKitchenCard.create({
+        data: {
+          searchPageContentId: contentId,
+          kitchenPartnerId,
+          imageUrl: patch.imageUrl ?? null,
+          badge: patch.badge?.trim() ? patch.badge : null,
+        },
+      })
+    }
+
+    await tx.searchPageContent.update({
+      where: { id: contentId },
+      data: { version: { increment: 1 }, updatedBy: session.user.name ?? "Admin" },
     })
   })
 

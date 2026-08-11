@@ -112,6 +112,7 @@ export const ModelName = {
   WishlistItem: 'WishlistItem',
   KitchenWishlist: 'KitchenWishlist',
   SearchPageContent: 'SearchPageContent',
+  SearchPageKitchenCard: 'SearchPageKitchenCard',
   SearchPageFilter: 'SearchPageFilter',
   SearchPageBadge: 'SearchPageBadge',
   SearchPageInfoItem: 'SearchPageInfoItem',
@@ -295,6 +296,8 @@ export const KitchenPartnerScalarFieldEnum = {
   operatingHours: 'operatingHours',
   createdAt: 'createdAt',
   estimatedPrepTime: 'estimatedPrepTime',
+  minOrder: 'minOrder',
+  deliveryRadiusKm: 'deliveryRadiusKm',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
 } as const
@@ -316,7 +319,10 @@ export const KitchenPartnerKycScalarFieldEnum = {
   accountHolderName: 'accountHolderName',
   upiId: 'upiId',
   gpayNumber: 'gpayNumber',
-  phoneNumber: 'phoneNumber'
+  phoneNumber: 'phoneNumber',
+  fssaiNumber: 'fssaiNumber',
+  fssaiValidTill: 'fssaiValidTill',
+  gstNumber: 'gstNumber'
 } as const
 
 export type KitchenPartnerKycScalarFieldEnum = (typeof KitchenPartnerKycScalarFieldEnum)[keyof typeof KitchenPartnerKycScalarFieldEnum]
@@ -1054,11 +1060,37 @@ export const SearchPageContentScalarFieldEnum = {
   kitchensCount: 'kitchensCount',
   version: 'version',
   updatedBy: 'updatedBy',
+  backgroundColor: 'backgroundColor',
+  metaTitle: 'metaTitle',
+  metaDescription: 'metaDescription',
+  keywords: 'keywords',
+  showKitchens: 'showKitchens',
+  showKitchensLimit: 'showKitchensLimit',
+  showDishes: 'showDishes',
+  showDishesLimit: 'showDishesLimit',
+  showCategories: 'showCategories',
+  showCategoriesLimit: 'showCategoriesLimit',
+  autoSuggest: 'autoSuggest',
+  recentSearches: 'recentSearches',
+  showKitchenBadges: 'showKitchenBadges',
+  showDistance: 'showDistance',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type SearchPageContentScalarFieldEnum = (typeof SearchPageContentScalarFieldEnum)[keyof typeof SearchPageContentScalarFieldEnum]
+
+
+export const SearchPageKitchenCardScalarFieldEnum = {
+  id: 'id',
+  searchPageContentId: 'searchPageContentId',
+  kitchenPartnerId: 'kitchenPartnerId',
+  imageUrl: 'imageUrl',
+  badge: 'badge',
+  sortOrder: 'sortOrder'
+} as const
+
+export type SearchPageKitchenCardScalarFieldEnum = (typeof SearchPageKitchenCardScalarFieldEnum)[keyof typeof SearchPageKitchenCardScalarFieldEnum]
 
 
 export const SearchPageFilterScalarFieldEnum = {
@@ -1077,6 +1109,7 @@ export const SearchPageBadgeScalarFieldEnum = {
   id: 'id',
   searchPageContentId: 'searchPageContentId',
   name: 'name',
+  position: 'position',
   isEnabled: 'isEnabled',
   sortOrder: 'sortOrder'
 } as const

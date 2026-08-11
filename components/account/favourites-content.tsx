@@ -2,12 +2,13 @@
 
 import { useRef, useEffect } from "react";
 import Link from "next/link";
-import { Heart, Trash2, Loader2, Store, Soup } from "lucide-react";
+import { Heart, Loader2, Store, Soup } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { useSession } from "@/lib/auth-client";
+import { useCartActions } from "@/stores";
 import { RelatedKitchensGrid } from "@/components/kitchen/related-kitchens-grid";
 import { KitchenCard as KitchenCardComponent } from "@/components/kitchen/kitchen-card";
 import type { KitchenData } from "@/hooks/useExploreKitchens";
@@ -69,6 +70,9 @@ function KitchenSkeleton() {
 }
 
 function MenuCard({ item, onRemove, isRemoving }: { item: MenuWishlistItem; onRemove: (id: string) => void; isRemoving: boolean }) {
+  const { addToCart } = useCartActions();
+  const kitchenName = item.menuItem.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "";
+
   const menuCardItem: MenuCardItem = {
     id: item.menuItem.id,
     slug: item.menuItem.slug ?? "",
@@ -76,23 +80,38 @@ function MenuCard({ item, onRemove, isRemoving }: { item: MenuWishlistItem; onRe
     price: Number(item.menuItem.price),
     foodType: item.menuItem.foodType,
     timeSlot: item.menuItem.timeSlot,
-    kitchenName: item.menuItem.menu?.kitchenPartner?.kitchenAlias?.displayName ?? "",
+    kitchenName,
     description: item.menuItem.description,
     imageUrl: item.menuItem.photos?.[0]?.imageUrl ?? null,
   };
 
   return (
     <div className="relative group">
-      <CompoundMenuCard.Root item={menuCardItem}>
-        <CompoundMenuCard.ImageSection />
+      <CompoundMenuCard.Root
+        item={menuCardItem}
+        onAddToCart={(id) => {
+          if (id !== item.menuItem.id) return;
+          addToCart({
+            id: item.menuItem.id,
+            name: item.menuItem.name,
+            price: Number(item.menuItem.price),
+            qty: 1,
+            foodType: item.menuItem.foodType,
+            timeSlot: item.menuItem.timeSlot,
+            kitchenName,
+            imageUrl: item.menuItem.photos?.[0]?.imageUrl ?? undefined,
+          });
+        }}
+      >
+        <CompoundMenuCard.ImageSection hideWishlistButton />
         <CompoundMenuCard.Header />
       </CompoundMenuCard.Root>
       <button
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemove(item.menuItem.id); }}
         disabled={isRemoving}
-        className="absolute top-2 left-2 z-20 h-8 w-8 rounded-full bg-white shadow-sm flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50 border border-gray-100"
+        className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 h-10 w-10 md:h-11 md:w-11 rounded-[12px] bg-white shadow-sm flex items-center justify-center text-[#F97316] hover:bg-[#FEF2F2] transition-colors disabled:opacity-50 border border-[#FEF2F2]"
       >
-        <Trash2 className="h-4 w-4" />
+        <Heart className="h-5 w-5 md:h-6 md:w-6 fill-[#F97316]" strokeWidth={2} />
       </button>
     </div>
   );
@@ -125,9 +144,9 @@ function KitchenCard({ item, onRemove, isRemoving }: { item: KitchenWishlistItem
       <button
         onClick={(e) => { e.preventDefault(); e.stopPropagation(); onRemove(kitchen.id); }}
         disabled={isRemoving}
-        className="absolute top-3 right-3 z-20 h-9 w-9 rounded-full bg-white shadow-sm flex items-center justify-center text-red-500 hover:bg-red-50 transition-colors disabled:opacity-50 border border-gray-100"
+        className="absolute top-3 right-3 sm:top-5 sm:right-5 z-20 h-10 w-10 md:h-11 md:w-11 rounded-[12px] bg-white shadow-sm flex items-center justify-center text-[#F97316] hover:bg-[#FEF2F2] transition-colors disabled:opacity-50 border border-[#FEF2F2]"
       >
-        <Trash2 className="h-4 w-4" />
+        <Heart className="h-5 w-5 md:h-6 md:w-6 fill-[#F97316]" strokeWidth={2} />
       </button>
     </div>
   );
@@ -196,14 +215,14 @@ function VirtualGrid<T>({
 
   if (!items || items.length === 0) {
     return (
-      <Card className="border-dashed border-2 bg-slate-50/50">
+      <Card className="border-dashed border-2 bg-[#FAFAFA]">
         <CardContent className="flex flex-col items-center py-16 text-center">
           <div className="h-16 w-16 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm border border-gray-100">
-            <EmptyIcon className="h-8 w-8 text-emerald-600/60" />
+            <EmptyIcon className="h-8 w-8 text-[#16A34A]/60" />
           </div>
           <h2 className="text-lg font-bold">{emptyTitle}</h2>
           <p className="text-sm text-muted-foreground mt-1 mb-6">{emptyDesc}</p>
-          <Button asChild className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl"><Link href={emptyHref}>{emptyAction}</Link></Button>
+          <Button asChild className="bg-[#16A34A] hover:bg-[#15803D] text-white rounded-xl"><Link href={emptyHref}>{emptyAction}</Link></Button>
         </CardContent>
       </Card>
     );
@@ -222,7 +241,7 @@ function VirtualGrid<T>({
       <div ref={sentinelRef} className="h-4" />
       {isFetchingNextPage && (
         <div className="flex justify-center py-6">
-          <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
+          <Loader2 className="h-6 w-6 animate-spin text-[#16A34A]" />
         </div>
       )}
     </div>
@@ -259,49 +278,51 @@ export function FavouritesContent() {
 
   if (!isLoggedIn) {
     return (
-      <main className="min-h-screen bg-[#fcfdfd] text-foreground">
+      <main className="min-h-screen bg-[#FAFAFA] text-foreground">
         <div className="mx-auto flex max-w-2xl flex-col items-center justify-center gap-6 px-4 py-24 text-center">
-          <div className="h-20 w-20 bg-emerald-50 rounded-full flex items-center justify-center">
-            <Heart className="h-10 w-10 text-emerald-600" />
+          <div className="h-20 w-20 bg-[#ECFDF3] rounded-full flex items-center justify-center">
+            <Heart className="h-10 w-10 text-[#16A34A]" />
           </div>
           <div>
             <h1 className="text-3xl font-bold">Login to view Favourites</h1>
             <p className="mt-3 text-base text-muted-foreground">Please log in to see your favourite items and kitchens.</p>
           </div>
-          <Button asChild size="lg" className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl px-8"><Link href="/login">Login</Link></Button>
+          <Button asChild size="lg" className="bg-[#16A34A] hover:bg-[#15803D] text-white rounded-xl px-8"><Link href="/login">Login</Link></Button>
         </div>
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-[#fafcfa] text-foreground pb-20">
+    <main className="min-h-screen bg-[#FAFAFA] text-foreground pb-20">
       <div className="mx-auto max-w-5xl px-4 lg:px-8 py-8">
         
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-              My <span className="text-[#0b6623]">Favorites</span>
+              My <span className="text-[#166534]">Favorites</span>
             </h1>
             <p className="text-sm md:text-base text-muted-foreground mt-2">Your saved kitchens and menu items</p>
           </div>
         </div>
 
-        <Tabs defaultValue="kitchen" className="space-y-8">
-          <div className="bg-[#f3f4f6]/60 p-1.5 rounded-2xl w-full sm:w-[500px]">
-            <TabsList className="w-full grid grid-cols-2 bg-transparent h-auto p-0 gap-1">
+        <Tabs defaultValue="kitchen" className="space-y-8 w-full">
+          <div className="bg-[#F3F4F6] border border-gray-100 p-1.5 rounded-2xl w-full">
+            <TabsList className="w-full grid grid-cols-2 bg-transparent h-auto p-0 gap-1 relative">
               <TabsTrigger 
                 value="kitchen" 
-                className="data-[state=active]:bg-white data-[state=active]:text-[#0b6623] data-[state=active]:shadow-sm rounded-xl py-3 text-sm md:text-base font-semibold gap-2 text-muted-foreground"
+                className="group relative data-[state=active]:bg-white data-[state=active]:text-[#166534] data-[state=active]:shadow-sm rounded-xl py-3.5 text-sm md:text-base font-semibold gap-2 text-gray-500 transition-all"
               >
-                <Store className="h-4 w-4 md:h-5 md:w-5" /> Kitchens
+                <Store className="h-5 w-5" /> Kitchens
+                <span className="absolute bottom-0 left-[20%] right-[20%] h-[2px] bg-[#15803D] hidden group-data-[state=active]:block rounded-t-full" />
               </TabsTrigger>
               <TabsTrigger 
                 value="menu" 
-                className="data-[state=active]:bg-white data-[state=active]:text-[#0b6623] data-[state=active]:shadow-sm rounded-xl py-3 text-sm md:text-base font-semibold gap-2 text-muted-foreground"
+                className="group relative data-[state=active]:bg-white data-[state=active]:text-[#166534] data-[state=active]:shadow-sm rounded-xl py-3.5 text-sm md:text-base font-semibold gap-2 text-gray-500 transition-all"
               >
-                <Soup className="h-4 w-4 md:h-5 md:w-5" /> Menu Items
+                <Soup className="h-5 w-5" /> Menu Items
+                <span className="absolute bottom-0 left-[20%] right-[20%] h-[2px] bg-[#15803D] hidden group-data-[state=active]:block rounded-t-full" />
               </TabsTrigger>
             </TabsList>
           </div>
@@ -312,7 +333,7 @@ export function FavouritesContent() {
                 Favorite Kitchens <span className="text-muted-foreground font-medium text-base">({kitchenItems.length})</span>
               </h2>
               {kitchenItems.length > 0 && (
-                <Link href="/search" className="text-[#ff4500] text-sm font-semibold hover:underline">
+                <Link href="/kitchens" className="text-[#F97316] text-sm font-semibold hover:underline">
                   View All
                 </Link>
               )}
@@ -341,7 +362,7 @@ export function FavouritesContent() {
               emptyTitle="No favorite kitchens yet"
               emptyDesc="Discover amazing kitchens and save your favorites"
               emptyAction="Browse Kitchens"
-              emptyHref="/"
+              emptyHref="/kitchens"
             />
           </TabsContent>
 
@@ -351,7 +372,7 @@ export function FavouritesContent() {
                 Favorite Menu Items <span className="text-muted-foreground font-medium text-base">({menuItems.length})</span>
               </h2>
               {menuItems.length > 0 && (
-                <Link href="/search" className="text-[#ff4500] text-sm font-semibold hover:underline">
+                <Link href="/search" className="text-[#F97316] text-sm font-semibold hover:underline">
                   View All
                 </Link>
               )}
@@ -379,7 +400,7 @@ export function FavouritesContent() {
               emptyTitle="No favorite items yet"
               emptyDesc="Browse the menu and save items you love"
               emptyAction="Browse Menu"
-              emptyHref="/"
+              emptyHref="/search"
             />
           </TabsContent>
         </Tabs>

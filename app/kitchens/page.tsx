@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function KitchensPage() {
   return (
-    <div className="bg-[#f0f2f5] min-h-screen">
+    <div className="bg-[#fcfbf9] min-h-screen">
       <Suspense fallback={<KitchensPageSkeleton />}>
         <InfiniteKitchenGrid />
       </Suspense>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState,useRef } from "react";
+import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender, createColumnHelper } from "@tanstack/react-table";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
@@ -13,12 +14,11 @@ import {
   Filter,
   List,
   ChevronDown,
-  Edit2,
+  Pencil,
   Trash2,
   FileText,
   ChevronLeft,
   ChevronRight,
-  MoreHorizontal,
   X,
   Save,
   Check,
@@ -34,19 +34,19 @@ import {
   Users,
   Loader2,
   RotateCcw,
-  ChevronUp,
-  ExternalLink,
   AlertTriangle,
   Tag,
   Info,
   Upload,
   ChefHat,
+  BadgeCheck,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
+import { cn } from "@/lib/utils";
 import {
   Table,
   TableBody,
@@ -86,6 +86,10 @@ import { toast } from "sonner";
 
 import { CloudinaryUpload } from "@/components/patterns/cloudinary-upload";
 import Image from "next/image";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Trophy, Sparkles, Egg, Drumstick, Image as ImageIcon } from "lucide-react";
 
 import {
   getSearchPageContents,
@@ -105,6 +109,7 @@ import {
   useSearchEditorDirty,
   toSaveInput,
 } from "@/stores/searchEditorStore";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const WEEK_START = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
@@ -120,119 +125,6 @@ const INFO_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>>
    SKELETONS — exact shape with animation
    =================================================================== */
 
-function DashboardSkeleton() {
-  return (
-    <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto animate-in fade-in duration-300">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
-          <Skeleton className="h-12 w-12 rounded-lg" />
-          <div className="space-y-2">
-            <Skeleton className="h-6 w-60 rounded-md" />
-            <Skeleton className="h-4 w-80 rounded-md" />
-          </div>
-        </div>
-        <div className="flex gap-3">
-          <Skeleton className="h-10 w-40 rounded-md" />
-          <Skeleton className="h-10 w-52 rounded-md" />
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="border-gray-100/80 shadow-sm bg-white">
-            <CardContent className="p-5">
-              <div className="flex items-start gap-4">
-                <Skeleton className="h-12 w-12 rounded-lg" />
-                <div className="flex-1 space-y-2 pt-0.5">
-                  <Skeleton className="h-3 w-32 rounded-md" />
-                  <Skeleton className="h-8 w-16 rounded-md" />
-                  <Skeleton className="h-3 w-36 rounded-md" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      <Card className="shadow-sm border-gray-200/60 overflow-hidden bg-white">
-        <div className="p-5 border-b border-gray-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-9 w-9 rounded-md" />
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-48 rounded-md" />
-              <Skeleton className="h-4 w-72 rounded-md" />
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-64 rounded-md" />
-            <Skeleton className="h-10 w-24 rounded-md" />
-            <Skeleton className="h-10 w-36 rounded-md" />
-          </div>
-        </div>
-        <div className="overflow-x-auto bg-white">
-          <Table>
-            <TableHeader>
-              <TableRow className="border-b-gray-100 bg-gray-50/50">
-                {Array.from({ length: 7 }).map((_, i) => (
-                  <TableHead key={i} className="h-12">
-                    <Skeleton className="h-3.5 w-20 rounded-md" />
-                  </TableHead>
-                ))}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i} className="border-b-gray-100">
-                  <TableCell className="py-4">
-                    <div className="flex items-center gap-3">
-                      <Skeleton className="h-2 w-2 rounded-full" />
-                      <div className="space-y-1.5">
-                        <Skeleton className="h-4 w-20 rounded-md" />
-                        <Skeleton className="h-3 w-12 rounded-md" />
-                      </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-[60px] w-[180px] rounded-md" />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Skeleton className="h-4 w-14 rounded-md" />
-                      <Skeleton className="h-5 w-16 rounded-full" />
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-16 rounded-md" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-20 rounded-md" />
-                  </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-24 rounded-md" />
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Skeleton className="h-8 w-16 rounded-md" />
-                      <Skeleton className="h-8 w-8 rounded-md" />
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-        <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Skeleton className="h-4 w-64 rounded-md" />
-          <div className="flex items-center gap-1">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-8 w-8 rounded-md" />
-            ))}
-          </div>
-        </div>
-      </Card>
-    </div>
-  );
-}
 
 function EditorSkeleton() {
   return (
@@ -388,14 +280,11 @@ function Editor({ contentId, onCancel }: EditorProps) {
     updateDraft,
     updateFilter,
     addFilter,
-    removeFilter,
-    addFilterOption,
-    removeFilterOption,
     updateBadge,
     addBadge,
-    removeBadge,
     updateInfoItem,
     markSaved,
+    updateKitchenCard,
   } = useSearchEditorActions();
 
   const { data: detail, isFetching, isError, refetch } = useQuery({
@@ -463,540 +352,476 @@ function Editor({ contentId, onCancel }: EditorProps) {
   const enabledFilters = draft.filters.filter((f) => f.isEnabled);
   const enabledBadges = draft.badges.filter((b) => b.isEnabled);
 
-  const moveFilter = (index: number, dir: -1 | 1) => {
-    const next = [...draft.filters];
-    const target = index + dir;
-    if (target < 0 || target >= next.length) return;
-    [next[index], next[target]] = [next[target], next[index]];
-    updateDraft({ filters: next });
-  };
-
-  const moveInfoItem = (index: number, dir: -1 | 1) => {
-    const next = [...draft.infoItems];
-    const target = index + dir;
-    if (target < 0 || target >= next.length) return;
-    [next[index], next[target]] = [next[target], next[index]];
-    updateDraft({ infoItems: next });
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300">
-      {/* Header */}
+    <div className="min-h-screen bg-[#FFFFFF] p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300 text-[#111827]">
+      {/* Page Header */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-            Search Page Editor
+          <h1 className="text-[22px] md:text-[26px] font-bold tracking-tight text-[#0F172A]">
+            Search Page Content
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            Customize everything customers see when they search{" "}
-            <span className="font-semibold text-[#FF5722]">&ldquo;{draft.keyword}&rdquo;</span>.
+          <p className="text-sm text-[#64748B] mt-1">
+            Manage what customers see on the search page.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <Button
             variant="outline"
-            className="text-gray-700 h-10 border-gray-200 bg-white shadow-sm hover:bg-gray-50"
-            onClick={onCancel}
-          >
-            <X className="mr-2 h-4 w-4" />
-            Cancel
-          </Button>
-          <Button
-            variant="outline"
-            className="border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 h-10 bg-white shadow-sm"
+            className="border-[#9DD4B4] text-[#087A3E] hover:bg-[#EAF7EF] hover:text-[#056331] h-10 bg-[#FFFFFF] shadow-sm rounded-[8px]"
             onClick={() => window.open(`/search?q=${encodeURIComponent(draft.keyword)}`, "_blank")}
           >
-            <ExternalLink className="mr-2 h-4 w-4" />
+            <Eye className="mr-2 h-4 w-4 text-[#087A3E]" />
             Preview Live Page
           </Button>
           <Button
-            className="bg-[#FF5722] hover:bg-[#F4511E] text-white h-10 shadow-sm shadow-orange-200"
+            className="bg-[#FF4D00] hover:bg-[#E84300] text-[#FFFFFF] h-10 border border-[#FF4D00] shadow-[0_2px_6px_rgba(255,77,0,0.12)] rounded-[8px]"
             disabled={saveMutation.isPending}
             onClick={() => saveMutation.mutate()}
           >
             {saveMutation.isPending ? (
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
             ) : (
-              <Save className="mr-2 h-4 w-4" />
+              <Save className="mr-2 h-4 w-4 text-[#FFFFFF]" />
             )}
-            {dirty ? "Save Changes" : "Saved"}
+            {dirty ? "Save Changes" : "Save Changes"}
           </Button>
         </div>
       </div>
 
       {/* Warn if dirty */}
       {dirty && (
-        <div className="mb-5 flex items-center gap-2 text-[13px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 w-fit">
+        <div className="mb-5 flex items-center gap-2 text-[13px] text-[#D97706] bg-[#FFF7E8] border border-[#F8DFA8] rounded-lg px-3 py-2 w-fit">
           <AlertTriangle className="h-4 w-4" />
           You have unsaved changes. Click Save Changes to publish.
         </div>
       )}
 
-      {/* Tabs header (informational) */}
-      <div className="border-b border-gray-200 mb-6 flex gap-8">
-        {["Search Content", "Images", "Filters", "Settings"].map((tab, i) => (
-          <div
-            key={tab}
-            className={
-              i === 0
-                ? "text-[#FF5722] font-semibold border-b-2 border-[#FF5722] pb-3 cursor-pointer"
-                : "text-gray-500 hover:text-gray-700 font-medium pb-3 cursor-pointer"
-            }
-          >
-            {tab}
-          </div>
-        ))}
-      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start relative">
+        <div className="lg:col-span-7 flex flex-col">
+          <Tabs defaultValue="search_content" className="w-full">
+            <TabsList className="bg-transparent border-b border-[#E5E7EB] rounded-none w-full justify-start h-auto p-0 mb-6 space-x-6 md:space-x-8 overflow-x-auto custom-scrollbar flex-nowrap">
+              <TabsTrigger value="search_content" className="data-[state=active]:border-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-b-2 border-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap">Search Content</TabsTrigger>
+              <TabsTrigger value="images" className="data-[state=active]:border-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-b-2 border-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap">Images</TabsTrigger>
+              <TabsTrigger value="filters" className="data-[state=active]:border-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-b-2 border-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap">Filters</TabsTrigger>
+              <TabsTrigger value="settings" className="data-[state=active]:border-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-b-2 border-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap">Settings</TabsTrigger>
+            </TabsList>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* Left Column 1 */}
-        <div className="lg:col-span-3 flex flex-col gap-6">
-          {/* Search Banner Block */}
-          <Card className="shadow-sm border-gray-200/60 bg-white">
-            <div className="p-4 border-b border-gray-100 flex items-center gap-2">
-              <h3 className="font-semibold text-gray-900 text-[15px]">Search Banner</h3>
-              <Badge className="bg-emerald-50 text-emerald-600 border-emerald-100 hover:bg-emerald-50 text-[10px] px-1.5 py-0 h-5">
-                Active
-              </Badge>
-            </div>
-            <div className="p-4 space-y-4">
-              <p className="text-[13px] text-gray-500">
-                Customize the banner that appears on top of search results.
-              </p>
-              <div className="rounded-md overflow-hidden border border-gray-200 bg-orange-50 relative h-[140px]">
-                {banner ? (
-                  <Image
-                    src={banner}
-                    fill
-                    sizes="320px"
-                    className="object-cover"
-                    alt="Banner"
-                  />
-                ) : null}
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-50 via-orange-50/90 to-transparent p-4 flex flex-col justify-center">
-                  <p className="text-[10px] font-semibold text-gray-600 mb-0.5">
-                    Search Results for
-                  </p>
-                  <h2 className="text-2xl font-bold text-emerald-800 tracking-tight">
-                    &ldquo;{draft.keyword}&rdquo;
-                  </h2>
-                  <p className="text-[10px] text-gray-600 mt-2 max-w-[70%] font-medium leading-snug">
-                    {draft.subHeading || `We found ${draft.kitchensCount} kitchens.`}
-                  </p>
-                </div>
-              </div>
-              <ImageUrlInput
-                value={draft.bannerImageUrl}
-                onChange={(url) => updateDraft({ bannerImageUrl: url })}
-              />
+            <TabsContent value="search_content" className="mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                
+                {/* Left Sub-Column */}
+                <div className="flex flex-col gap-6">
+                  {/* Search Banner Block */}
+                  <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+                    <div className="p-4 flex flex-col gap-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className="font-semibold text-[#111827] text-[15px]">Search Banner</h3>
+                        <div className="bg-[#EAF7EF] text-[#087A3E] text-[10px] font-bold px-2 py-0.5 rounded-full">
+                          Active
+                        </div>
+                      </div>
+                      <p className="text-[13px] text-[#64748B]">
+                        Customize the banner that appears on top of search results.
+                      </p>
+                    </div>
+                    <div className="px-4 pb-5 space-y-4">
+                      <div className="rounded-[10px] overflow-hidden border border-[#E8ECEA] bg-[#FFF8F3] relative h-[120px]">
+                        {banner ? (
+                          <div className="absolute right-0 top-0 bottom-0 w-1/2">
+                            <Image
+                              src={banner}
+                              fill
+                              sizes="320px"
+                              className="object-cover"
+                              alt="Banner"
+                            />
+                          </div>
+                        ) : null}
+                        <div className="absolute inset-0 p-4 flex flex-col justify-center z-10">
+                          <p className="text-[10px] font-semibold text-[#334155] mb-0.5">
+                            Search Results for
+                          </p>
+                          <h2 className="text-xl md:text-2xl font-bold text-[#087A3E] tracking-tight flex items-center">
+                            <span className="text-[#FF4D00]">“</span>{draft.keyword}<span className="text-[#FF4D00]">”</span>
+                          </h2>
+                          <p className="text-[10px] text-[#334155] mt-1.5 max-w-[65%] font-medium leading-snug">
+                            We found <span className="text-[#FF4D00] font-bold">{draft.kitchensCount} kitchens</span> serving delicious {draft.keyword} near you.
+                          </p>
+                        </div>
+                      </div>
+                      
+                      <div className="flex justify-end mt-2">
+                         <div className="relative cursor-pointer bg-[#FFFFFF] text-[#FF4D00] border border-[#FFB89A] hover:bg-[#FFF1EB] rounded-[7px] px-3 py-1.5 flex items-center gap-1.5 text-xs font-semibold shadow-sm transition-colors">
+                           <ImageIcon className="h-3.5 w-3.5" /> Change Image
+                           <div className="absolute inset-0 opacity-0 overflow-hidden cursor-pointer">
+                              <ImageUrlInput
+                                value={draft.bannerImageUrl}
+                                onChange={(url) => updateDraft({ bannerImageUrl: url })}
+                              />
+                           </div>
+                         </div>
+                      </div>
 
-              <div className="space-y-4 pt-2">
-                <div>
-                  <div className="flex justify-between mb-1.5">
-                    <label className="text-xs font-semibold text-gray-700">
-                      Banner Heading
-                    </label>
-                    <span className="text-[10px] text-gray-400">
-                      {draft.heading.length}/60
-                    </span>
-                  </div>
-                  <Input
-                    value={draft.heading}
-                    maxLength={60}
-                    onChange={(e) => updateDraft({ heading: e.target.value })}
-                    className="h-9 text-sm text-gray-800"
-                  />
-                </div>
-                <div>
-                  <div className="flex justify-between mb-1.5">
-                    <label className="text-xs font-semibold text-gray-700">
-                      Banner Sub Text
-                    </label>
-                    <span className="text-[10px] text-gray-400">
-                      {draft.subHeading.length}/120
-                    </span>
-                  </div>
-                  <textarea
-                    className="flex w-full rounded-md border border-input bg-white px-3 py-2 text-sm text-gray-800 shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring min-h-[70px] resize-none"
-                    value={draft.subHeading}
-                    maxLength={120}
-                    onChange={(e) => updateDraft({ subHeading: e.target.value })}
-                  />
-                </div>
-              </div>
-            </div>
-          </Card>
-
-          {/* Top Info Items Block */}
-          <Card className="shadow-sm border-gray-200/60 bg-white">
-            <div className="p-4 border-b border-gray-100">
-              <h3 className="font-semibold text-gray-900 text-[15px]">
-                Top Info Items
-              </h3>
-            </div>
-            <div className="p-4 space-y-5">
-              <p className="text-[13px] text-gray-500 mb-2">
-                Manage the quick info items shown below the search results.
-              </p>
-
-              <div className="space-y-4">
-                {draft.infoItems.map((item, i) => {
-                  const IconComp = INFO_ICON_MAP[item.icon] ?? Heart;
-                  const style = INFO_TOP_STYLES(item.icon, item.color);
-                  return (
-                    <div key={item.id ?? i} className="flex items-center justify-between group">
-                      <div className="flex gap-3 items-center">
-                        <div className={`p-1.5 rounded border ${style.bg}`}>
-                          <IconComp className={`h-4 w-4 ${style.color}`} />
+                      <div className="space-y-4 pt-1">
+                        <div>
+                          <div className="flex justify-between mb-1.5">
+                            <label className="text-xs font-semibold text-[#111827]">
+                              Banner Heading
+                            </label>
+                            <span className="text-[10px] text-[#64748B]">
+                              {draft.heading.length}/60
+                            </span>
+                          </div>
+                          <Input
+                            value={draft.heading}
+                            maxLength={60}
+                            onChange={(e) => updateDraft({ heading: e.target.value })}
+                            className="h-9 text-sm text-[#111827] border-[#DDE3E0] rounded-[7px] focus-visible:border-[#FF4D00] focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:shadow-[0_0_0_3px_rgba(255,77,0,0.10)]"
+                          />
                         </div>
                         <div>
-                          <input
-                            className="text-xs font-semibold text-gray-800 bg-transparent outline-none border border-transparent hover:border-gray-200 rounded px-1 -mx-1 w-40"
-                            value={item.title}
-                            onChange={(e) =>
-                              updateInfoItem(i, { title: e.target.value })
-                            }
-                          />
-                          <input
-                            className="text-[10px] text-gray-500 mt-0.5 bg-transparent outline-none border border-transparent hover:border-gray-200 rounded px-1 -mx-1 w-40 block"
-                            value={item.subtitle}
-                            onChange={(e) =>
-                              updateInfoItem(i, { subtitle: e.target.value })
-                            }
+                          <div className="flex justify-between mb-1.5">
+                            <label className="text-xs font-semibold text-[#111827]">
+                              Banner Sub Text
+                            </label>
+                            <span className="text-[10px] text-[#64748B]">
+                              {draft.subHeading.length}/120
+                            </span>
+                          </div>
+                          <textarea
+                            className="flex w-full rounded-[7px] border border-[#DDE3E0] bg-[#FFFFFF] px-3 py-2 text-sm text-[#111827] focus-visible:outline-none focus-visible:border-[#FF4D00] focus-visible:shadow-[0_0_0_3px_rgba(255,77,0,0.10)] min-h-[70px] resize-none"
+                            value={draft.subHeading}
+                            maxLength={120}
+                            onChange={(e) => updateDraft({ subHeading: e.target.value })}
                           />
                         </div>
                       </div>
-                      <Switch
-                        checked={item.isEnabled}
-                        onCheckedChange={(checked) =>
-                          updateInfoItem(i, { isEnabled: checked })
-                        }
-                        className={
-                          item.isEnabled
-                            ? "data-[state=checked]:bg-emerald-500 scale-90"
-                            : "scale-90"
-                        }
-                      />
                     </div>
-                  );
-                })}
-              </div>
-              <div className="flex items-center justify-end gap-1">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-6 w-6 border-gray-200 text-gray-400"
-                  disabled
-                >
-                  <GripVertical className="h-3.5 w-3.5" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-6 w-6 border-gray-200 text-gray-500 hover:text-orange-600"
-                  onClick={() => moveInfoItem(0, -1)}
-                  title="Reorder"
-                >
-                  <ChevronUp className="h-3.5 w-3.5" />
-                </Button>
-              </div>
-            </div>
-          </Card>
+                  </div>
 
-          {/* Results Settings Block */}
-          <Card className="shadow-sm border-gray-200/60 bg-white">
-            <div className="p-4 border-b border-gray-100">
-              <h3 className="font-semibold text-gray-900 text-[15px]">
-                Results Settings
-              </h3>
-            </div>
-            <div className="p-4 space-y-4">
-              <p className="text-[13px] text-gray-500 mb-1">
-                Configure how results are displayed.
-              </p>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-xs font-semibold text-gray-800 block mb-1.5">
-                    Kitchens Per Page
-                  </label>
-                  <Select
-                    value={String(draft.cardsPerPage)}
-                    onValueChange={(v) =>
-                      updateDraft({ cardsPerPage: Number(v) })
-                    }
-                  >
-                    <SelectTrigger className="h-9 w-full bg-white text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="12">12</SelectItem>
-                      <SelectItem value="24">24</SelectItem>
-                      <SelectItem value="48">48</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-gray-800 block mb-1.5">
-                    Default Sort By
-                  </label>
-                  <Select
-                    value={draft.defaultSort}
-                    onValueChange={(v) => updateDraft({ defaultSort: v })}
-                  >
-                    <SelectTrigger className="h-9 w-full bg-white text-sm">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["Relevance", "Rating", "Distance", "Newest", "Recommended"].map(
-                        (s) => (
-                          <SelectItem key={s} value={s}>
-                            {s}
-                          </SelectItem>
-                        )
-                      )}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-              <div className="flex items-center justify-between pt-3 mt-1 border-t border-gray-50">
-                <label className="text-xs font-semibold text-gray-800">
-                  Show Ratings on cards
-                </label>
-                <Switch
-                  checked={draft.showRatings}
-                  onCheckedChange={(checked) =>
-                    updateDraft({ showRatings: checked })
-                  }
-                  className="data-[state=checked]:bg-emerald-500 scale-90"
-                />
-              </div>
-              <div className="flex items-center justify-between pt-1 border-t border-gray-50">
-                <label className="text-xs font-semibold text-gray-800">
-                  Search page active
-                </label>
-                <Switch
-                  checked={draft.isActive}
-                  onCheckedChange={(checked) => updateDraft({ isActive: checked })}
-                  className="data-[state=checked]:bg-emerald-500 scale-90"
-                />
-              </div>
-            </div>
-          </Card>
-        </div>
+                  {/* Top Info Items Block */}
+                  <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+                    <div className="p-4 pb-2">
+                      <h3 className="font-semibold text-[#111827] text-[15px]">
+                        Top Info Items
+                      </h3>
+                      <p className="text-[13px] text-[#64748B] mt-1">
+                        Manage the quick info items shown below the search results.
+                      </p>
+                    </div>
+                    <div className="px-4 pb-5 space-y-4 mt-2">
+                      <div className="space-y-4">
+                        {draft.infoItems.map((item, i) => {
+                          const IconComp = INFO_ICON_MAP[item.icon] ?? Heart;
+                          const isGreen = ["ShieldCheck", "Leaf"].includes(item.icon);
+                          const iconBg = isGreen ? "bg-[#EAF7EF]" : "bg-[#FFF1EB]";
+                          const iconColor = isGreen ? "text-[#087A3E]" : "text-[#FF4D00]";
 
-        {/* Left Column 2: Filters + Badges */}
-        <div className="lg:col-span-3 flex flex-col gap-6">
-          {/* Filters Configuration */}
-          <Card className="shadow-sm border-gray-200/60 bg-white">
-            <div className="p-4 border-b border-gray-100">
-              <h3 className="font-semibold text-gray-900 text-[15px]">
-                Filters Configuration
-              </h3>
-            </div>
-            <div className="p-4 space-y-4">
-              <p className="text-[13px] text-gray-500">
-                Choose, order, and configure filters shown on the search page.
-              </p>
+                          return (
+                            <div key={item.id ?? i} className="flex items-center justify-between group">
+                              <div className="flex gap-2.5 items-center w-full min-w-0 pr-2">
+                                <GripVertical className="h-4 w-4 text-[#FF4D00] opacity-85 cursor-grab shrink-0" />
+                                <div className={`w-8 h-8 rounded-[8px] flex items-center justify-center shrink-0 ${iconBg}`}>
+                                  <IconComp className={`h-4 w-4 ${iconColor}`} />
+                                </div>
+                                <div className="flex flex-col flex-1 min-w-0">
+                                  <input
+                                    className="text-xs font-semibold text-[#111827] bg-transparent outline-none border border-transparent hover:border-[#E8ECEA] rounded px-1 -mx-1 w-full truncate"
+                                    value={item.title}
+                                    onChange={(e) =>
+                                      updateInfoItem(i, { title: e.target.value })
+                                    }
+                                  />
+                                  <input
+                                    className="text-[10px] text-[#64748B] bg-transparent outline-none border border-transparent hover:border-[#E8ECEA] rounded px-1 -mx-1 w-full block truncate"
+                                    value={item.subtitle}
+                                    onChange={(e) =>
+                                      updateInfoItem(i, { subtitle: e.target.value })
+                                    }
+                                  />
+                                </div>
+                              </div>
+                              <Switch
+                                checked={item.isEnabled}
+                                onCheckedChange={(checked) =>
+                                  updateInfoItem(i, { isEnabled: checked })
+                                }
+                                className="data-[state=checked]:bg-[#087A3E] data-[state=unchecked]:bg-[#D1D5DB] scale-90 shrink-0"
+                              />
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
 
-              <div className="space-y-2.5">
-                {draft.filters.map((filter, i) => (
-                  <div
-                    key={filter.id ?? i}
-                    className="bg-white border border-gray-100 p-3 rounded-lg shadow-sm hover:border-orange-200 transition-colors"
-                  >
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-3 w-full">
-                        <GripVertical className="h-4 w-4 text-gray-300 cursor-grab shrink-0" />
-                        <div className="flex-1 min-w-0">
-                          <input
-                            className="text-xs font-semibold text-gray-800 bg-transparent outline-none border border-transparent hover:border-gray-200 rounded px-1 -mx-1 w-full"
-                            value={filter.name}
-                            onChange={(e) =>
-                              updateFilter(i, { name: e.target.value })
+                  {/* Results Settings Block */}
+                  <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+                    <div className="p-4 pb-2">
+                      <h3 className="font-semibold text-[#111827] text-[15px]">
+                        Results Settings
+                      </h3>
+                      <p className="text-[13px] text-[#64748B] mt-1">
+                        Configure how results are displayed.
+                      </p>
+                    </div>
+                    <div className="px-4 pb-5 space-y-4 mt-2">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-xs font-semibold text-[#111827] block mb-1.5">
+                            Kitchens Per Page
+                          </label>
+                          <Select
+                            value={String(draft.cardsPerPage)}
+                            onValueChange={(v) =>
+                              updateDraft({ cardsPerPage: Number(v) })
                             }
-                          />
+                          >
+                            <SelectTrigger className="h-9 w-full bg-[#FFFFFF] border-[#DDE3E0] rounded-[7px] text-sm text-[#111827] focus:ring-0 focus:border-[#FF4D00]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="12">12</SelectItem>
+                              <SelectItem value="24">24</SelectItem>
+                              <SelectItem value="48">48</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
+                        <div>
+                          <label className="text-xs font-semibold text-[#111827] block mb-1.5">
+                            Default Sort By
+                          </label>
+                          <Select
+                            value={draft.defaultSort}
+                            onValueChange={(v) => updateDraft({ defaultSort: v })}
+                          >
+                            <SelectTrigger className="h-9 w-full bg-[#FFFFFF] border-[#DDE3E0] rounded-[7px] text-sm text-[#111827] focus:ring-0 focus:border-[#FF4D00]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {["Relevance", "Rating", "Distance", "Newest", "Recommended"].map(
+                                (s) => (
+                                  <SelectItem key={s} value={s}>
+                                    {s}
+                                  </SelectItem>
+                                )
+                              )}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between pt-1">
+                        <label className="text-xs font-semibold text-[#111827]">
+                          Show Ratings
+                        </label>
                         <Switch
-                          checked={filter.isEnabled}
+                          checked={draft.showRatings}
                           onCheckedChange={(checked) =>
-                            updateFilter(i, { isEnabled: checked })
+                            updateDraft({ showRatings: checked })
                           }
-                          className={
-                            filter.isEnabled
-                              ? "data-[state=checked]:bg-emerald-500 scale-90"
-                              : "scale-90"
-                          }
+                          className="data-[state=checked]:bg-[#087A3E] data-[state=unchecked]:bg-[#D1D5DB] scale-90"
                         />
                       </div>
-                      <div className="flex items-center gap-1 shrink-0">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 text-gray-400 hover:text-gray-700"
-                          disabled={i === 0}
-                          onClick={() => moveFilter(i, -1)}
-                        >
-                          <ChevronUp className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 text-gray-400 hover:text-gray-700"
-                          disabled={i === draft.filters.length - 1}
-                          onClick={() => moveFilter(i, 1)}
-                        >
-                          <ChevronDown className="h-3.5 w-3.5" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-6 w-6 text-red-400 hover:text-red-600"
-                          onClick={() => removeFilter(i)}
-                        >
-                          <Trash2 className="h-3.5 w-3.5" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    {/* Options */}
-                    <div className="mt-2.5 flex flex-wrap items-center gap-1.5 pl-6">
-                      {filter.options.map((option, oi) => (
-                        <span
-                          key={`${option}-${oi}`}
-                          className="inline-flex items-center gap-1 bg-orange-50 text-orange-700 border border-orange-100 rounded-full text-[10px] font-medium px-2 py-0.5"
-                        >
-                          {option}
-                          <button
-                            type="button"
-                            className="text-orange-400 hover:text-red-500"
-                            onClick={() => removeFilterOption(i, option)}
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </span>
-                      ))}
-                      <FilterOptionButton
-                        onAdd={(option: string) => addFilterOption(i, option)}
-                      />
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
 
-              <Button
-                variant="outline"
-                className="w-full text-[#FF5722] border-orange-200 hover:bg-orange-50 hover:text-orange-600 h-10 border-dashed mt-1 bg-orange-50/50"
-                onClick={addFilter}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Add Filter
-              </Button>
-            </div>
-          </Card>
+                {/* Right Sub-Column */}
+                <div className="flex flex-col gap-6">
+                  {/* Filters Configuration */}
+                  <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+                    <div className="p-4 pb-2">
+                      <h3 className="font-semibold text-[#111827] text-[15px]">
+                        Filters Configuration
+                      </h3>
+                      <p className="text-[13px] text-[#64748B] mt-1">
+                        Choose and order filters to show on the search page.
+                      </p>
+                    </div>
+                    <div className="px-4 pb-5 space-y-4 mt-2">
+                      <div className="space-y-2">
+                        {draft.filters.map((filter, i) => (
+                          <div
+                            key={filter.id ?? i}
+                            className="bg-[#FFFFFF] border border-[#E8ECEA] p-3 rounded-[8px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] flex items-center justify-between hover:border-[#FFB89A] transition-colors"
+                          >
+                            <div className="flex items-center gap-3 w-full">
+                              <GripVertical className="h-4 w-4 text-[#94A3B8] cursor-grab shrink-0" />
+                              <Checkbox
+                                checked={filter.isEnabled}
+                                onCheckedChange={(checked) =>
+                                  updateFilter(i, { isEnabled: !!checked })
+                                }
+                                className="h-4 w-4 rounded-sm border-[#CBD5E1] data-[state=checked]:bg-[#FF4D00] data-[state=checked]:border-[#FF4D00]"
+                              />
+                              <div className="flex-1 min-w-0 flex flex-col">
+                                <input
+                                  className="text-xs font-semibold text-[#111827] bg-transparent outline-none border border-transparent hover:border-[#E8ECEA] rounded px-1 -mx-1 w-full truncate"
+                                  value={filter.name}
+                                  onChange={(e) =>
+                                    updateFilter(i, { name: e.target.value })
+                                  }
+                                />
+                                <span className="text-[10px] text-[#64748B] ml-0.5">
+                                  {filter.options.length} options
+                                </span>
+                              </div>
+                              <ChevronDown className="h-4 w-4 text-[#475569]" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
 
-          {/* Featured Badges */}
-          <Card className="shadow-sm border-gray-200/60 bg-white">
-            <div className="p-4 border-b border-gray-100">
-              <h3 className="font-semibold text-gray-900 text-[15px]">
-                Featured Badges
-              </h3>
-            </div>
-            <div className="p-4 space-y-5">
-              <p className="text-[13px] text-gray-500 mb-2">
-                Manage badges shown on kitchen cards.
-              </p>
-
-              <div className="space-y-4">
-                {draft.badges.map((badge, i) => (
-                  <div key={badge.id ?? i} className="flex items-center justify-between gap-3 group">
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
-                      <Tag className="h-3.5 w-3.5 text-gray-300 shrink-0" />
-                      <Input
-                        value={badge.name}
-                        onChange={(e) => updateBadge(i, { name: e.target.value })}
-                        className="h-8 text-xs font-semibold flex-1 min-w-0"
-                      />
                       <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-6 w-6 text-red-400 hover:text-red-600 shrink-0"
-                        onClick={() => removeBadge(i)}
+                        variant="outline"
+                        className="w-full text-[#FF4D00] border-[#FFB89A] hover:bg-[#FFF1EB] hover:text-[#FF4D00] h-10 rounded-[8px] mt-2 bg-[#FFFFFF]"
+                        onClick={addFilter}
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Filter
                       </Button>
                     </div>
-                    <Switch
-                      checked={badge.isEnabled}
-                      onCheckedChange={(checked) =>
-                        updateBadge(i, { isEnabled: checked })
-                      }
-                      className={
-                        badge.isEnabled
-                          ? "data-[state=checked]:bg-emerald-500 scale-90"
-                          : "scale-90"
-                      }
-                    />
                   </div>
-                ))}
-              </div>
 
-              <Button
-                variant="outline"
-                className="w-full text-[#FF5722] border-orange-200 hover:bg-orange-50 hover:text-orange-600 h-10 border-dashed mt-1 bg-orange-50/50"
-                onClick={addBadge}
-              >
-                <Plus className="mr-2 h-4 w-4" />
-                Add New Badge
-              </Button>
-            </div>
-          </Card>
+                  {/* Featured Badges */}
+                  <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+                    <div className="p-4 pb-2">
+                      <h3 className="font-semibold text-[#111827] text-[15px]">
+                        Featured Badges
+                      </h3>
+                      <p className="text-[13px] text-[#64748B] mt-1">
+                        Manage badges shown on kitchen cards.
+                      </p>
+                    </div>
+                    <div className="px-4 pb-5 space-y-4 mt-2">
+                      <div className="space-y-4 pl-1">
+                        {draft.badges.map((badge, i) => {
+                           let badgeClass = "text-[#FF4D00] bg-[#FFF1EB] border-[#FFD0BF]";
+                           let IconB = Trophy;
+                           const nameLow = badge.name.toLowerCase();
+                           if(nameLow.includes("top rated")) { badgeClass = "text-[#0891B2] bg-[#EFFAFF] border-[#BCEAF3]"; IconB = Star; }
+                           else if(nameLow.includes("new")) { badgeClass = "text-[#7C3AED] bg-[#F4EEFF] border-[#DDD0FF]"; IconB = Sparkles; }
+                           else if(nameLow.includes("pure veg")) { badgeClass = "text-[#087A3E] bg-[#EAF7EF] border-[#C9E8D4]"; IconB = Leaf; }
+                           else if(nameLow.includes("egg")) { badgeClass = "text-[#D97706] bg-[#FFF7E8] border-[#F8DFA8]"; IconB = Egg; }
+                           else if(nameLow.includes("chicken")) { badgeClass = "text-[#EA580C] bg-[#FFF1EB] border-[#FFD0BF]"; IconB = Drumstick; }
+
+                           return (
+                              <div key={badge.id ?? i} className="flex items-center justify-between gap-3 group">
+                                <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-bold ${badgeClass}`}>
+                                  <IconB className="h-3.5 w-3.5" />
+                                  <input
+                                    value={badge.name}
+                                    onChange={(e) => updateBadge(i, { name: e.target.value })}
+                                    className="bg-transparent outline-none w-20 md:w-24 placeholder:text-current/50 truncate"
+                                  />
+                                </div>
+                                <div className="flex items-center gap-2">
+                                   <div className="flex items-center gap-0.5 rounded-full border border-[#E5E7EB] bg-[#F9FAFB] p-0.5">
+                                     <button
+                                       type="button"
+                                       onClick={() => updateBadge(i, { position: "left" })}
+                                       title="Show on left side of kitchen card"
+                                       className={cn(
+                                         "text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors",
+                                         badge.position === "left"
+                                           ? "bg-[#FF4D00] text-[#FFFFFF]"
+                                           : "text-[#64748B] hover:text-[#111827]"
+                                       )}
+                                     >
+                                       Left
+                                     </button>
+                                     <button
+                                       type="button"
+                                       onClick={() => updateBadge(i, { position: "right" })}
+                                       title="Show on right side of kitchen card"
+                                       className={cn(
+                                         "text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors",
+                                         badge.position === "right"
+                                           ? "bg-[#FF4D00] text-[#FFFFFF]"
+                                           : "text-[#64748B] hover:text-[#111827]"
+                                       )}
+                                     >
+                                       Right
+                                     </button>
+                                   </div>
+                                   <Switch
+                                     checked={badge.isEnabled}
+                                     onCheckedChange={(checked) =>
+                                       updateBadge(i, { isEnabled: checked })
+                                     }
+                                     className="data-[state=checked]:bg-[#087A3E] data-[state=unchecked]:bg-[#D1D5DB] scale-90"
+                                   />
+                                </div>
+                              </div>
+                           )
+                        })}
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        className="w-full text-[#FF4D00] border-[#FFB89A] hover:bg-[#FFF1EB] hover:text-[#FF4D00] h-10 rounded-[8px] mt-2 bg-[#FFFFFF]"
+                        onClick={addBadge}
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add New Badge
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Right Column: Live Preview */}
-        <div className="lg:col-span-6 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col h-[calc(100vh-140px)] sticky top-6">
-          <div className="bg-gray-50/80 border-b border-gray-100 p-4 flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-              <h3 className="font-bold text-gray-900 text-sm">Live Preview</h3>
+        <div className="lg:col-span-5 bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] shadow-[0_2px_8px_rgba(15,23,42,0.04)] overflow-hidden flex flex-col h-[700px] lg:h-[calc(100vh-120px)] lg:sticky lg:top-6 mt-6 lg:mt-0">
+          <div className="bg-[#FFFFFF] border-b border-[#EEF1EF] p-4 flex flex-col gap-1 z-20 shadow-sm relative">
+            <div className="flex items-center justify-between">
+               <div className="flex items-center gap-2">
+                 <div className="w-2.5 h-2.5 rounded-full bg-[#087A3E] animate-pulse" />
+                 <h3 className="font-bold text-[#111827] text-sm">Live Preview</h3>
+               </div>
+               <span className="text-[10px] text-[#94A3B8] hidden sm:inline-block">(Scroll to preview full page)</span>
             </div>
-            <p className="text-[11px] text-gray-500">
-              This is how the search page appears to customers.
+            <p className="text-[11px] text-[#64748B]">
+              This is exactly how the search page appears to customers on desktop devices.
             </p>
           </div>
 
-          <div className="flex-1 overflow-y-auto bg-gray-50/50 pb-8 relative">
-            <div className="bg-white min-h-full w-full mx-auto shadow-sm pb-8">
+          <div className="flex-1 overflow-y-auto bg-[#FAFBFA] pb-8 relative custom-scrollbar">
+            <div className="bg-[#FFFFFF] min-h-full w-full mx-auto pb-8 overflow-x-hidden">
               {/* Navbar mock */}
-              <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between bg-white sticky top-0 z-10">
+              <div className="px-4 py-3 border-b border-[#EEF1EF] flex items-center justify-between bg-[#FFFFFF] sticky top-0 z-10">
                 <div className="flex flex-col">
-                  <span className="text-orange-500 font-bold italic text-xl leading-tight">
-                    RRC Kitchen
+                  <span className="font-bold italic text-base md:text-lg leading-tight flex gap-1 text-[#087A3E]">
+                    <span className="text-[#FF4D00]">RRC</span> Kitchen
                   </span>
-                  <span className="text-[9px] text-gray-500 tracking-wider">
+                  <span className="text-[6px] md:text-[7px] text-[#64748B] tracking-wider uppercase font-medium mt-0.5">
                     Every Homemaker is a Chef
                   </span>
                 </div>
-                <div className="hidden sm:flex items-center text-xs font-semibold text-gray-600 gap-2 px-3 py-1.5">
-                  <MapPin className="h-3.5 w-3.5 text-orange-500" />
+                <div className="hidden sm:flex items-center text-[10px] font-semibold text-[#111827] gap-1">
+                  <MapPin className="h-3 w-3 text-[#FF4D00]" />
                   <span>Select Location</span>
-                  <ChevronDown className="h-3.5 w-3.5 opacity-60" />
+                  <ChevronDown className="h-3 w-3 opacity-60" />
                 </div>
-                <div className="hidden md:flex relative flex-1 max-w-sm mx-6">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                <div className="hidden md:flex relative flex-1 max-w-[200px] mx-4">
+                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-[#475569]" />
                   <input
-                    className="w-full border border-gray-200 rounded-md pl-9 py-2 text-xs bg-gray-50 outline-none font-medium text-gray-700"
+                    className="w-full border border-[#DDE3E0] rounded-[7px] pl-7 py-1.5 text-[10px] bg-[#FFFFFF] outline-none font-medium text-[#111827]"
                     value={draft.keyword}
                     readOnly
                   />
-                  <X className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-gray-400 cursor-pointer" />
+                  <X className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-[#475569] cursor-pointer" />
                 </div>
-                <div className="flex items-center gap-6 text-xs font-semibold text-gray-700">
-                  <div className="flex items-center gap-1.5">
-                    <User className="h-4 w-4 text-gray-500" /> Login / Signup
+                <div className="flex items-center gap-3 text-[10px] font-semibold text-[#334155]">
+                  <div className="hidden sm:flex items-center gap-1 cursor-pointer">
+                    <User className="h-3.5 w-3.5 text-[#334155]" /> Login
                   </div>
-                  <div className="relative">
-                    <ShoppingCart className="h-5 w-5 text-gray-600" />
-                    <span className="absolute -top-1.5 -right-1.5 bg-orange-500 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center border-2 border-white">
+                  <div className="relative cursor-pointer">
+                    <ShoppingCart className="h-4 w-4 text-[#334155]" />
+                    <span className="absolute -top-1.5 -right-1.5 bg-[#FF4D00] text-[#FFFFFF] text-[8px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center border-2 border-[#FFFFFF]">
                       3
                     </span>
                   </div>
@@ -1004,15 +829,15 @@ function Editor({ contentId, onCancel }: EditorProps) {
               </div>
 
               {/* Nav links mock */}
-              <div className="flex items-center justify-center gap-8 py-3 border-b border-gray-100 text-[10px] font-bold text-gray-700 tracking-wider">
-                {["HOME", "CATEGORIES", "KITCHENS", "TODAY'S SPECIALS", "ABOUT US", "BECOME A CHEF", "CONTACT US"].map(
+              <div className="hidden md:flex items-center justify-center gap-4 lg:gap-6 py-2.5 border-b border-[#EEF1EF] text-[8px] font-bold text-[#111827] tracking-wider bg-[#FFFFFF]">
+                {["HOME", "CATEGORIES", "KITCHENS", "TODAY'S SPECIALS", "ABOUT US", "BECOME A CHEF"].map(
                   (item, i) => (
                     <span
                       key={item}
                       className={
                         i === 2
-                          ? "text-orange-500 cursor-pointer border-b-2 border-orange-500 pb-0.5 -mb-0.5"
-                          : "hover:text-orange-500 cursor-pointer"
+                          ? "text-[#FF4D00] cursor-pointer"
+                          : "hover:text-[#FF4D00] cursor-pointer"
                       }
                     >
                       {item}
@@ -1022,72 +847,77 @@ function Editor({ contentId, onCancel }: EditorProps) {
               </div>
 
               {/* Banner */}
-              <div className="w-full h-40 md:h-48 relative overflow-hidden bg-orange-50">
+              <div className="w-full h-32 md:h-40 relative overflow-hidden bg-[#FFF8F3]">
                 {banner ? (
-                  <Image
-                    src={banner}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                    className="object-cover"
-                    alt="Banner"
-                  />
+                  <div className="absolute right-0 top-0 bottom-0 w-[60%] sm:w-[55%]">
+                     <Image
+                       src={banner}
+                       fill
+                       sizes="(max-width: 768px) 100vw, 50vw"
+                       className="object-cover"
+                       alt="Banner"
+                     />
+                     <div className="absolute inset-0 bg-gradient-to-r from-[#FFF8F3] to-transparent" />
+                  </div>
                 ) : null}
-                <div className="absolute inset-0 bg-gradient-to-r from-orange-50 via-orange-50/90 to-transparent p-6 md:p-10 flex flex-col justify-center">
-                  <p className="text-xs font-semibold text-gray-600 mb-1">
+                <div className="absolute inset-0 p-4 md:p-8 flex flex-col justify-center z-10 w-3/4 sm:w-2/3">
+                  <p className="text-[10px] font-semibold text-[#334155] mb-0.5">
                     Search Results for
                   </p>
-                  <h2 className="text-3xl md:text-5xl font-bold text-emerald-800 tracking-tight">
-                    &ldquo;{draft.keyword}&rdquo;
+                  <h2 className="text-xl md:text-3xl font-bold text-[#087A3E] tracking-tight">
+                    <span className="text-[#FF4D00]">“</span>{draft.keyword}<span className="text-[#FF4D00]">”</span>
                   </h2>
-                  <p className="text-[13px] text-gray-700 mt-4 font-medium max-w-sm leading-relaxed">
-                    {draft.subHeading ||
-                      `We found ${draft.kitchensCount} kitchens near you.`}
+                  <p className="text-[9px] md:text-[10px] text-[#334155] mt-1.5 md:mt-2 font-medium leading-relaxed max-w-[90%]">
+                    We found <span className="text-[#FF4D00] font-bold">{draft.kitchensCount} kitchens</span> serving delicious {draft.keyword} near you.
                   </p>
                 </div>
               </div>
 
               {/* Content Layout */}
-              <div className="p-6 flex gap-8">
-                {/* Left Filters */}
-                <div className="hidden md:block w-48 shrink-0">
-                  <div className="flex justify-between items-center mb-5 pb-2 border-b border-gray-100">
-                    <h4 className="font-bold text-[13px] text-gray-900">Filters</h4>
-                    <span className="text-[10px] text-orange-500 font-semibold cursor-pointer">
+              <div className="p-3 md:p-5 flex gap-4 md:gap-5 flex-col md:flex-row">
+                {/* Left Filters - Responsive Hidden */}
+                <div className="hidden md:block w-32 xl:w-36 shrink-0">
+                  <div className="flex justify-between items-center mb-4 pb-2 border-b border-[#EEF1EF]">
+                    <h4 className="font-bold text-xs text-[#111827]">Filters</h4>
+                    <span className="text-[9px] text-[#FF4D00] font-semibold cursor-pointer">
                       Clear All
                     </span>
                   </div>
 
-                  <div className="space-y-5">
+                  <div className="space-y-4">
                     {enabledFilters.map((filter, fi) => (
                       <div
                         key={filter.id ?? fi}
-                        className={fi === 0 ? "" : "pt-3 border-t border-gray-100"}
+                        className={fi === 0 ? "" : "pt-3 border-t border-[#EEF1EF]"}
                       >
-                        <div className="flex justify-between items-center text-[11px] font-bold text-gray-800 mb-2.5">
+                        <div className="flex justify-between items-center text-[10px] font-bold text-[#111827] mb-2">
                           <span>{filter.name}</span>
-                          <ChevronDown className="h-3 w-3 text-gray-400" />
+                          <ChevronDown className="h-3 w-3 text-[#475569]" />
                         </div>
                         <div className="space-y-2">
-                          {(filter.options.length ? filter.options : ["Option 1", "Option 2"]).slice(0, 3).map(
-                            (option, oi) => (
-                              <div
-                                key={`${option}-${oi}`}
-                                className="flex items-center gap-2.5"
-                              >
-                                <div className="w-3.5 h-3.5 rounded-sm border flex items-center justify-center transition-colors bg-orange-500 border-orange-500">
-                                  <Check className="h-2.5 w-2.5 text-white" />
-                                </div>
-                                <span className="text-[11px] text-gray-600 font-medium">
-                                  {option}
-                                </span>
-                              </div>
-                            )
+                          {(filter.options.length ? filter.options : ["Option 1", "Option 2"]).slice(0, 5).map(
+                            (option, oi) => {
+                               const isChecked = fi === 0 && oi < 2; // Mock some checked states
+                               return (
+                                  <div
+                                    key={`${option}-${oi}`}
+                                    className="flex items-center gap-2 cursor-pointer group"
+                                  >
+                                    <div className={`w-3 h-3 rounded-[3px] border flex items-center justify-center transition-colors ${isChecked ? "bg-[#FF4D00] border-[#FF4D00]" : "bg-[#FFFFFF] border-[#CBD5E1] group-hover:border-[#FFB89A]"}`}>
+                                      {isChecked && <Check className="h-2 w-2 text-[#FFFFFF]" />}
+                                    </div>
+                                    <span className="text-[10px] text-[#475569] font-medium group-hover:text-[#111827] transition-colors">
+                                      {option}
+                                    </span>
+                                  </div>
+                               )
+                            }
                           )}
                         </div>
                       </div>
                     ))}
                     {enabledFilters.length === 0 && (
-                      <p className="text-[11px] text-gray-400 font-medium">
+                      <p className="text-[10px] text-[#94A3B8] font-medium">
                         No active filters.
                       </p>
                     )}
@@ -1095,145 +925,190 @@ function Editor({ contentId, onCancel }: EditorProps) {
                 </div>
 
                 {/* Right Products */}
-                <div className="flex-1">
-                  <div className="flex justify-between items-center mb-5 pb-2 border-b border-gray-100 text-[11px] font-bold">
-                    <span className="text-gray-800">
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4 pb-2 border-b border-[#EEF1EF] text-[10px] font-bold">
+                    <span className="text-[#111827]">
                       Showing 1 - {previewKitchens.length} of {previewKitchens.length} Kitchens
                     </span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-gray-500">Sort by:</span>
-                      <div className="flex items-center gap-1.5 border border-gray-200 px-2.5 py-1.5 rounded-md bg-white shadow-sm cursor-pointer hover:border-gray-300 transition-colors">
-                        <span className="text-gray-700">{draft.defaultSort}</span>
-                        <ChevronDown className="h-3 w-3 text-gray-400" />
+                    <div className="flex items-center gap-1.5 self-end sm:self-auto">
+                      <span className="text-[#475569] font-medium">Sort by:</span>
+                      <div className="flex items-center gap-1 border border-[#DDE3E0] px-2 py-1 rounded-[7px] bg-[#FFFFFF] cursor-pointer hover:border-[#FFB89A]">
+                        <span className="text-[#111827]">{draft.defaultSort}</span>
+                        <ChevronDown className="h-3 w-3 text-[#475569]" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                    {previewKitchens.map((kitchen, i) => (
-                      <div
-                        key={kitchen.id}
-                        className="border border-gray-100 rounded-xl overflow-hidden bg-white shadow-sm flex flex-col group hover:shadow-md transition-shadow"
-                      >
-                        <div className="relative h-28 overflow-hidden bg-gray-100">
-                          {kitchen.imageUrl ? (
-                            <Image
-                              src={kitchen.imageUrl}
-                              fill
-                              sizes="200px"
-                              className="object-cover group-hover:scale-105 transition-transform duration-500"
-                              alt={kitchen.displayName}
-                            />
-                          ) : (
-                            <div className="flex items-center justify-center h-full bg-orange-50">
-                              <ChefHat className="h-8 w-8 text-orange-300" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 xl:gap-4">
+                    {previewKitchens.map((kitchen, i) => {
+                       const leftBadges = enabledBadges.filter((b) => b.position !== "right");
+                       const rightBadges = enabledBadges.filter((b) => b.position === "right");
+                       const badge = leftBadges[i % Math.max(leftBadges.length, 1)];
+                       const rightBadge = rightBadges[i % Math.max(rightBadges.length, 1)];
+                       let badgeClass = "text-[#FFFFFF] bg-[#FF4D00]"; // Default bestseller
+                       if(badge) {
+                          const nameLow = badge.name.toLowerCase();
+                          if(nameLow.includes("top rated")) badgeClass = "text-[#FFFFFF] bg-[#087A3E]";
+                          else if(nameLow.includes("new")) badgeClass = "text-[#FFFFFF] bg-[#7C3AED]";
+                       }
+
+                       // Find if the image was explicitly overridden in this draft
+                       const override = draft.kitchenCards?.find(c => c.kitchenPartnerId === kitchen.id);
+                       const displayImage = override?.imageUrl ?? kitchen.imageUrl;
+
+                       return (
+                          <div
+                            key={kitchen.id}
+                            className="border border-[#E5E7EB] rounded-[10px] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.05)] hover:shadow-md transition-shadow flex flex-col group relative"
+                          >
+                            <div className="relative h-28 sm:h-24 overflow-hidden rounded-t-[9px] bg-[#F3F4F6]">
+                              {displayImage ? (
+                                <Image
+                                  src={displayImage}
+                                  fill
+                                  sizes="(max-width: 640px) 100vw, 200px"
+                                  className="object-cover transition-transform group-hover:scale-105"
+                                  alt={kitchen.displayName}
+                                />
+                              ) : (
+                                <div className="flex items-center justify-center h-full bg-[#FFF1EB]">
+                                  <ChefHat className="h-6 w-6 text-[#FFB89A]" />
+                                </div>
+                              )}
+
+                              {/* Kitchen Card Image Upload Button */}
+                              <CloudinaryUpload
+                                onUpload={(result) => {
+                                  updateKitchenCard(kitchen.id, { imageUrl: result.secure_url });
+                                }}
+                              >
+                                {({ uploading, startUpload }) => (
+                                   <button
+                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); startUpload(); }}
+                                     disabled={uploading}
+                                     className="absolute top-2 right-2 bg-white/90 hover:bg-white text-gray-700 hover:text-[#FF4D00] shadow-sm p-1.5 rounded-[6px] z-20 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+                                     title="Change kitchen image for this search"
+                                   >
+                                     {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : <ImageIcon className="h-3 w-3" />}
+                                   </button>
+                                )}
+                              </CloudinaryUpload>
+
+                              {badge && (
+                                <div className={`absolute top-2 left-2 text-[8px] font-bold px-1.5 py-0.5 rounded-[4px] shadow-sm ${badgeClass} z-10`}>
+                                  {badge.name}
+                                </div>
+                              )}
+                              
+                              {rightBadge && (
+                                <div className="absolute top-2 right-2 text-[8px] font-bold px-1.5 py-0.5 rounded-[4px] shadow-sm text-[#FFFFFF] bg-[#00512F] z-10">
+                                  {rightBadge.name}
+                                </div>
+                              )}
+                              
+                              <div className="absolute -bottom-3 left-2.5 w-8 h-8 rounded-full border-[1.5px] border-[#FFFFFF] overflow-hidden shadow-sm bg-[#FFF1EB] z-10 flex items-center justify-center text-[#FF4D00] font-bold text-xs">
+                                {kitchen.displayName.charAt(0).toUpperCase()}
+                                {kitchen.profileImage && <Image src={kitchen.profileImage} fill className="object-cover" alt="" />}
+                              </div>
                             </div>
-                          )}
-                          {enabledBadges[i % Math.max(enabledBadges.length, 1)] && (
-                            <div className="absolute top-2 left-2 bg-orange-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm">
-                              {enabledBadges[i % enabledBadges.length].name}
+                            
+                            <div className="p-3 pt-4 flex-1 flex flex-col">
+                              <h5 className="font-bold text-[#111827] text-[11px] xl:text-xs leading-tight flex items-center gap-1 truncate">
+                                <span className="truncate">{kitchen.displayName}</span>
+                                <BadgeCheck className="h-3 w-3 xl:h-3.5 xl:w-3.5 text-[#087A3E] shrink-0" />
+                              </h5>
+                              
+                              <div className="flex items-center gap-1 mt-1 mb-2 text-[#475569] text-[8px] xl:text-[9px] font-medium truncate">
+                                 <span className="truncate">{kitchen.cuisineTags[0] || "South Indian"}</span>
+                                 <span>·</span>
+                                 <span className="truncate">{kitchen.cuisineTags[1] || "Homemade"}</span>
+                              </div>
+
+                              <div className="flex items-center gap-2 mb-2">
+                                <div className="flex items-center gap-0.5 text-[#FF4D00]">
+                                  <Star className="h-2 w-2 xl:h-2.5 xl:w-2.5 fill-[#FF4D00]" />
+                                  <span className="text-[9px] xl:text-[10px] font-bold ml-0.5">
+                                    {kitchen.avgRating > 0 ? kitchen.avgRating.toFixed(1) : "NEW"}
+                                  </span>
+                                </div>
+                                <span className="text-[8px] xl:text-[9px] text-[#64748B] font-medium">
+                                  ({kitchen.totalReviews.toLocaleString()})
+                                </span>
+                              </div>
+                              
+                              <div className="flex items-center justify-between text-[8px] xl:text-[9px] font-medium text-[#475569] mt-auto pt-2 border-t border-[#EEF1EF]">
+                                <div className="flex items-center gap-1">
+                                  <Clock className="h-2.5 w-2.5 xl:h-3 xl:w-3 text-[#475569]" /> {kitchen.estimatedPrepTime ?? 25}-{kitchen.estimatedPrepTime ? kitchen.estimatedPrepTime + 15 : 40} mins
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <MapPin className="h-2.5 w-2.5 xl:h-3 xl:w-3 text-[#475569]" /> 2.1 km
+                                </div>
+                              </div>
+                              
+                              <div className="flex items-center justify-between mt-2.5">
+                                <div className="flex items-center gap-1 text-[7px] xl:text-[8px] font-bold text-[#087A3E] bg-[#F0FAF3] px-1.5 py-1 rounded-[4px] border border-[#CFE9D8]">
+                                  <ShieldCheck className="h-2.5 w-2.5" /> 100% Hygienic
+                                </div>
+                                <Button
+                                  variant="outline"
+                                  className="h-5 xl:h-6 text-[8px] xl:text-[9px] px-1.5 xl:px-2 font-bold text-[#FF4D00] border-[#FF8F6B] hover:bg-[#FFF1EB] hover:text-[#FF4D00] rounded-[4px] xl:rounded-[6px] shadow-none"
+                                >
+                                  View Menu
+                                </Button>
+                              </div>
                             </div>
-                          )}
-                          <div className="absolute top-2 right-2 bg-white text-gray-800 text-[9px] font-bold px-1.5 py-0.5 rounded shadow-sm border border-gray-100">
-                            {draft.keyword}
                           </div>
-                          <div className="absolute -bottom-3 left-3 w-10 h-10 rounded-full border-2 border-white overflow-hidden shadow-sm bg-white z-10 flex items-center justify-center bg-orange-100 text-orange-500 font-bold">
-                            {kitchen.displayName.charAt(0).toUpperCase()}
-                          </div>
-                        </div>
-                        <div className="p-4 pt-5 flex-1 flex flex-col">
-                          <h5 className="font-bold text-gray-900 text-sm leading-tight flex items-center gap-1.5">
-                            {kitchen.displayName}
-                            <CheckCircle2 className="h-3.5 w-3.5 text-emerald-500 fill-emerald-500/20" />
-                          </h5>
-                          <div className="flex items-center gap-2 mt-2 mb-3">
-                            <div className="flex items-center gap-0.5 text-orange-500">
-                              <Star className="h-3 w-3 fill-orange-500" />
-                              <span className="text-[11px] font-bold ml-0.5">
-                                {kitchen.avgRating > 0 ? kitchen.avgRating.toFixed(1) : "NEW"}
-                              </span>
-                            </div>
-                            <span className="text-[10px] text-gray-400 font-medium">
-                              ({kitchen.totalReviews.toLocaleString()})
-                            </span>
-                            {!draft.showRatings && <Badge className="text-[9px]">hidden</Badge>}
-                          </div>
-                          <div className="text-[10px] text-gray-500 flex items-center gap-1.5 font-medium">
-                            {kitchen.cuisineTags.length > 0 ? (
-                              kitchen.cuisineTags.slice(0, 2).join(" · ")
-                            ) : (
-                              "Homemade"
-                            )}
-                          </div>
-                          <div className="flex items-center justify-between text-[11px] font-medium text-gray-600 mt-auto pt-3 border-t border-gray-50">
-                            <div className="flex items-center gap-1.5">
-                              <Clock className="h-3.5 w-3.5 text-gray-400" /> {kitchen.estimatedPrepTime ?? 25} mins
-                            </div>
-                          </div>
-                          <div className="flex items-center justify-between mt-3">
-                            <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-1 rounded border border-emerald-100">
-                              <ShieldCheck className="h-3.5 w-3.5" /> 100% Hygienic
-                            </div>
-                            <Button
-                              variant="outline"
-                              className="h-7 text-[11px] px-3 font-bold text-orange-500 border-orange-200 hover:bg-orange-50 hover:text-orange-600 rounded-md"
-                            >
-                              View Menu
-                            </Button>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
+                       )
+                    })}
                   </div>
 
                   {/* Pagination */}
-                  <div className="flex justify-center mt-8">
-                    <div className="flex items-center gap-1.5">
-                      <Button variant="outline" size="icon" className="h-8 w-8 rounded-md border-gray-200 bg-white text-gray-500 hover:text-gray-900 shadow-sm" disabled>
-                        <ChevronLeft className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8 w-8 rounded-md border-transparent bg-[#FF5722] text-white hover:bg-[#F4511E] shadow-sm p-0 flex items-center justify-center font-bold text-xs"
-                      >
-                        1
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="h-8 w-8 rounded-md border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 shadow-sm p-0 flex items-center justify-center font-bold text-xs"
-                      >
-                        2
-                      </Button>
-                      <Button variant="outline" size="sm" className="h-8 w-8 rounded-md border-gray-200 bg-white text-gray-500 hover:text-gray-900 shadow-sm p-0 flex items-center justify-center font-bold text-xs">
-                        3
-                      </Button>
-                      <Button variant="outline" size="icon" className="h-8 w-8 rounded-md border-gray-200 bg-white text-gray-500 hover:text-gray-900 shadow-sm">
-                        <ChevronRight className="h-4 w-4" />
-                      </Button>
-                    </div>
+                  <div className="flex justify-center mt-6 mb-4">
+                     <Pagination>
+                       <PaginationContent className="flex-wrap justify-center gap-1">
+                         <PaginationItem>
+                           <PaginationPrevious href="#" className="h-6 w-6 xl:h-7 xl:w-7 text-[#64748B] border border-[#E5E7EB] bg-[#FFFFFF] rounded-[7px] p-0 flex items-center justify-center opacity-50 hover:bg-[#F3F4F6]" />
+                         </PaginationItem>
+                         <PaginationItem>
+                           <PaginationLink href="#" isActive className="h-6 w-6 xl:h-7 xl:w-7 bg-[#FF4D00] text-[#FFFFFF] border border-[#FF4D00] rounded-[7px] font-bold text-[10px] xl:text-[11px] flex items-center justify-center hover:bg-[#FF4D00] hover:text-[#FFFFFF]">1</PaginationLink>
+                         </PaginationItem>
+                         <PaginationItem>
+                           <PaginationLink href="#" className="h-6 w-6 xl:h-7 xl:w-7 bg-[#FFFFFF] text-[#334155] border border-[#E5E7EB] rounded-[7px] font-bold text-[10px] xl:text-[11px] flex items-center justify-center hover:bg-[#F3F4F6]">2</PaginationLink>
+                         </PaginationItem>
+                         <PaginationItem className="hidden sm:inline-block">
+                           <PaginationLink href="#" className="h-6 w-6 xl:h-7 xl:w-7 bg-[#FFFFFF] text-[#334155] border border-[#E5E7EB] rounded-[7px] font-bold text-[10px] xl:text-[11px] flex items-center justify-center hover:bg-[#F3F4F6]">3</PaginationLink>
+                         </PaginationItem>
+                         <PaginationItem>
+                           <PaginationEllipsis className="h-6 w-6 xl:h-7 xl:w-7 flex items-center justify-center text-[#64748B]" />
+                         </PaginationItem>
+                         <PaginationItem>
+                           <PaginationLink href="#" className="h-6 w-6 xl:h-7 xl:w-7 bg-[#FFFFFF] text-[#334155] border border-[#E5E7EB] rounded-[7px] font-bold text-[10px] xl:text-[11px] flex items-center justify-center hover:bg-[#F3F4F6]">6</PaginationLink>
+                         </PaginationItem>
+                         <PaginationItem>
+                           <PaginationNext href="#" className="h-6 w-6 xl:h-7 xl:w-7 text-[#64748B] border border-[#E5E7EB] bg-[#FFFFFF] rounded-[7px] p-0 flex items-center justify-center hover:bg-[#F3F4F6]" />
+                         </PaginationItem>
+                       </PaginationContent>
+                     </Pagination>
                   </div>
                 </div>
               </div>
 
               {/* Bottom Info Bar mock */}
-              <div className="border-t border-gray-100 bg-white py-6 mt-8">
-                <div className="flex flex-wrap justify-center gap-x-12 gap-y-6 max-w-5xl mx-auto px-6">
+              <div className="border-t border-[#EEF1EF] bg-[#FFFFFF] py-4 mt-2">
+                <div className="flex flex-wrap justify-center gap-x-6 lg:gap-x-8 gap-y-4 max-w-5xl mx-auto px-4">
                   {enabledInfoItems.length ? (
                     enabledInfoItems.map((item, i) => {
                       const IconComp = INFO_ICON_MAP[item.icon] ?? Heart;
-                      const style = INFO_TOP_STYLES(item.icon, item.color);
+                      const isGreen = ["ShieldCheck", "Leaf"].includes(item.icon);
+                      const iconColor = isGreen ? "text-[#087A3E]" : "text-[#FF4D00]";
                       return (
-                        <div key={item.id ?? i} className="flex items-center gap-3.5">
-                          <div className={`p-2.5 rounded-full ${style.bg.replace(" border-orange-100", "").replace(" border-emerald-100", "").replace(" border-blue-100", "").replace(" border-green-100", "")}`}>
-                            <IconComp className={`h-5 w-5 ${style.color}`} />
-                          </div>
+                        <div key={item.id ?? i} className="flex items-center gap-1.5 md:gap-2">
+                          <IconComp className={`h-4 w-4 md:h-5 md:w-5 ${iconColor}`} />
                           <div className="flex flex-col">
-                            <span className="text-[13px] font-bold text-gray-800">
+                            <span className="text-[9px] md:text-[10px] font-bold text-[#111827]">
                               {item.title}
                             </span>
-                            <span className="text-[11px] text-gray-500 font-medium mt-0.5">
+                            <span className="text-[7px] md:text-[8px] text-[#64748B] font-medium mt-0.5 max-w-[80px] md:max-w-none truncate">
                               {item.subtitle}
                             </span>
                           </div>
@@ -1241,7 +1116,7 @@ function Editor({ contentId, onCancel }: EditorProps) {
                       );
                     })
                   ) : (
-                    <p className="text-[11px] text-gray-400 font-medium py-2">
+                    <p className="text-[10px] text-[#94A3B8] font-medium py-2">
                       No info items enabled.
                     </p>
                   )}
@@ -1253,69 +1128,7 @@ function Editor({ contentId, onCancel }: EditorProps) {
       </div>
     </div>
   );
-}
 
-function INFO_TOP_STYLES(icon: string, color: string) {
-  const known = INFO_TOP_STYLES_MAP[icon];
-  return { color: known?.color ?? color, bg: known?.bg ?? "bg-orange-50 border-orange-100" };
-}
-
-const INFO_TOP_STYLES_STATIC = {
-  Heart: { color: "text-orange-500", bg: "bg-orange-50 border-orange-100" },
-  ShieldCheck: { color: "text-emerald-500", bg: "bg-emerald-50 border-emerald-100" },
-  Clock: { color: "text-blue-500", bg: "bg-blue-50 border-blue-100" },
-  Leaf: { color: "text-green-500", bg: "bg-green-50 border-green-100" },
-  Users: { color: "text-orange-500", bg: "bg-orange-50 border-orange-100" },
-};
-
-const INFO_TOP_STYLES_MAP: Record<string, { color: string; bg: string }> = Object.fromEntries(
-  Object.entries(INFO_TOP_STYLES_STATIC).map(([k, v]) => [k, v])
-);
-
-/* ======================================================================
-   FILTER OPTION BUTTON (inline add)
-   ====================================================================== */
-
-function FilterOptionButton({ onAdd }: { onAdd: (option: string) => void }) {
-  const [value, setValue] = useState("");
-  const [open, setOpen] = useState(false);
-  return open ? (
-    <form
-      className="inline-flex items-center gap-1"
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (value.trim()) {
-          onAdd(value.trim());
-          setValue("");
-          setOpen(false);
-        }
-      }}
-    >
-      <Input
-        autoFocus
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        placeholder="Add option..."
-        className="h-6 w-28 text-[10px] px-2"
-      />
-      <Button type="submit" variant="ghost" size="icon" className="h-6 w-6 text-emerald-600">
-        <Check className="h-3.5 w-3.5" />
-      </Button>
-      <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-400" onClick={() => setOpen(false)}>
-        <X className="h-3.5 w-3.5" />
-      </Button>
-    </form>
-  ) : (
-    <Button
-      variant="ghost"
-      size="icon"
-      className="h-6 w-6 text-gray-400 hover:text-orange-600"
-      onClick={() => setOpen(true)}
-      title="Add option"
-    >
-      <Plus className="h-3.5 w-3.5" />
-    </Button>
-  );
 }
 
 /* ======================================================================
@@ -1327,13 +1140,12 @@ export default function SearchPageContent() {
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Latest");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminSearchPageRow | null>(null);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [addKeyword, setAddKeyword] = useState("");
   const [pendingToggleId, setPendingToggleId] = useState<string | null>(null);
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
   const {
     data: contents = [],
@@ -1417,21 +1229,201 @@ export default function SearchPageContent() {
     return arr;
   }, [filtered, sortBy]);
 
-  const totalPages = Math.max(1, Math.ceil(sorted.length / rowsPerPage));
-  const safePage = Math.min(currentPage, totalPages);
-  const pageItems = sorted.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
-  const showingFrom = sorted.length === 0 ? 0 : (safePage - 1) * rowsPerPage + 1;
-  const showingTo = Math.min(safePage * rowsPerPage, sorted.length);
-
   const stats = useMemo(() => {
     return {
       total: contents.length,
       live: contents.filter((c) => c.isActive).length,
       recentlyUpdated: contents.filter((c) => +new Date(c.updatedAt) >= WEEK_START).length,
       totalFilters: contents.reduce((sum, c) => sum + c.filtersCount, 0),
-      totalKitchens: contents[0]?.kitchensCount ?? 0,
     };
   }, [contents]);
+
+  const columnHelper = createColumnHelper<AdminSearchPageRow>();
+
+  const columns = useMemo(() => [
+    columnHelper.accessor("keyword", {
+      header: "Search Keyword",
+      cell: (info) => {
+        const row = info.row.original;
+        return (
+          <div className="flex items-center gap-2">
+            {row.isActive && (
+              <div className="w-2.5 h-2.5 rounded-full bg-[#15803D]" />
+            )}
+            <div className="flex flex-col">
+              <span className="font-semibold text-[#166534] capitalize">
+                {row.keyword}
+              </span>
+              {row.keyword === "default" && (
+                <span className="text-xs text-[#94A3B8]">
+                  Fallback search page
+                </span>
+              )}
+            </div>
+          </div>
+        );
+      },
+    }),
+    columnHelper.accessor("bannerImageUrl", {
+      header: "Banner Preview",
+      cell: (info) => {
+        const row = info.row.original;
+        return (
+          <div className="w-[120px] h-[40px] rounded-[10px] overflow-hidden relative border border-[#E5E7EB] bg-gray-50">
+            {row.keyword === "default" ? (
+              <div className="absolute inset-0 bg-[#FFF3EC] flex flex-col items-center justify-center">
+                <span className="text-[#F4511E] font-bold italic text-[10px]">
+                  RRC Kitchen
+                </span>
+              </div>
+            ) : row.bannerImageUrl ? (
+              <Image
+                src={row.bannerImageUrl}
+                alt={row.keyword}
+                fill
+                sizes="120px"
+                className="object-cover"
+              />
+            ) : (
+              <div className="absolute inset-0 bg-[#FFF3EC] flex flex-col items-center justify-center">
+                <span className="text-[#F4511E] font-bold italic text-[10px]">
+                  RRC Kitchen
+                </span>
+              </div>
+            )}
+          </div>
+        );
+      },
+    }),
+    columnHelper.accessor("filtersCount", {
+      header: "Filters",
+      cell: (info) => {
+        const count = info.getValue();
+        return (
+          <div className="flex flex-row items-center gap-2">
+            <span className="text-sm font-medium text-[#334155]">
+              {count} filters
+            </span>
+            {count > 0 && (
+              <Badge variant="outline" className="bg-[#ECFDF3] text-[#15803D] border-[#D1FAE5] px-2 py-0 h-5 text-[11px] rounded-[7px]">
+                Modified
+              </Badge>
+            )}
+          </div>
+        );
+      },
+    }),
+    columnHelper.display({
+      id: "section",
+      header: "Section",
+      cell: (info) => {
+        const row = info.row.original;
+        return (
+          <div className="flex items-center gap-1.5 flex-wrap max-w-[140px]">
+            <Badge variant="outline" className="bg-[#FFF3EC] text-[#F4511E] border-[#FED7C3] px-2 py-0 h-5 text-[11px] gap-1 rounded-[7px]">
+              <Tag className="h-3 w-3" />
+              {row.badgesCount}
+            </Badge>
+            <Badge variant="outline" className="bg-[#EFF6FF] text-[#2563EB] border-[#DBEAFE] px-2 py-0 h-5 text-[11px] gap-1 rounded-[7px]">
+              <Info className="h-3 w-3" />
+              {row.infoItemsCount}
+            </Badge>
+          </div>
+        );
+      },
+    }),
+    columnHelper.accessor("kitchensCount", {
+      header: "Kitchens",
+      cell: (info) => (
+        <span className="text-sm font-medium text-[#334155]">
+          {info.getValue()} kitchens
+        </span>
+      ),
+    }),
+    columnHelper.accessor("isActive", {
+      header: "Status",
+      cell: (info) => {
+        const row = info.row.original;
+        return (
+          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+            <Switch
+              checked={row.isActive}
+              disabled={pendingToggleId === row.id}
+              onCheckedChange={(checked) =>
+                toggleMutation.mutate({ id: row.id, isActive: checked })
+              }
+              className={row.isActive ? "data-[state=checked]:bg-[#15803D]" : ""}
+            />
+            <Badge
+              variant="outline"
+              className={
+                row.isActive
+                  ? "bg-[#ECFDF3] text-[#15803D] border-[#D1FAE5] px-2 py-0 h-5 text-[11px] rounded-[7px]"
+                  : "bg-gray-100 text-gray-500 border-gray-200 px-2 py-0 h-5 text-[11px] rounded-[7px]"
+              }
+            >
+              {row.isActive ? "Active" : "Inactive"}
+            </Badge>
+          </div>
+        );
+      },
+    }),
+    columnHelper.accessor("updatedBy", {
+      header: "Updated By",
+      cell: (info) => (
+        <span className="text-sm font-medium text-[#334155]">
+          {info.getValue() ?? "Admin"}
+        </span>
+      ),
+    }),
+    columnHelper.accessor("updatedAt", {
+      header: "Updated At",
+      cell: (info) => (
+        <span className="text-sm text-[#64748B]">
+          {formatDateStats(info.getValue())}
+        </span>
+      ),
+    }),
+    columnHelper.display({
+      id: "actions",
+      header: () => <div className="text-right w-full">Actions</div>,
+      cell: (info) => {
+        const row = info.row.original;
+        return (
+          <div className="flex gap-2 justify-end" onClick={(e) => e.stopPropagation()}>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setEditingId(row.id)}
+              className="h-8 border-[#9BD5B2] text-[#15803D] hover:bg-[#F0FDF4] hover:border-[#15803D] hover:text-[#15803D] px-3 flex gap-1 font-medium rounded-[8px]"
+            >
+              <Pencil className="h-3.5 w-3.5" />
+              Edit
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setDeleteTarget(row)}
+              className="h-8 w-8 p-0 border-[#FCA5A5] text-[#EF4444] hover:bg-[#FEF2F2] hover:border-[#FCA5A5] hover:text-[#EF4444] shrink-0 rounded-[8px]"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </div>
+        );
+      },
+    }),
+  ], [pendingToggleId, toggleMutation, columnHelper]);
+
+  const table = useReactTable({
+    data: sorted,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: setPagination,
+    state: {
+      pagination,
+    },
+  });
 
   const onSubmitAdd = () => {
     if (!addKeyword.trim()) {
@@ -1458,10 +1450,10 @@ export default function SearchPageContent() {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 max-w-[1400px] mx-auto flex items-center justify-center">
+      <div className="min-h-screen bg-[#FFFFFF] p-6 md:p-8 max-w-[1400px] mx-auto flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
-          <AlertTriangle className="h-12 w-12 text-red-400" />
-          <p className="text-red-500 font-semibold">Failed to load search page content</p>
+          <AlertTriangle className="h-12 w-12 text-[#EF4444]" />
+          <p className="text-[#EF4444] font-semibold">Failed to load search page content</p>
           <Button variant="outline" onClick={() => refetch()}>
             <RotateCcw className="h-4 w-4 mr-2" /> Retry
           </Button>
@@ -1471,18 +1463,18 @@ export default function SearchPageContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto animate-in fade-in duration-300">
+    <div className="min-h-screen bg-[#FFFFFF] p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto animate-in fade-in duration-300 text-[#111827]">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="bg-orange-100 p-2.5 rounded-lg flex items-center justify-center">
-            <Search className="h-6 w-6 text-orange-500" />
+          <div className="bg-[#FFF1EA] h-16 w-16 rounded-[16px] flex items-center justify-center">
+            <Search className="h-8 w-8 text-[#F4511E]" strokeWidth={2} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-2xl font-bold tracking-tight text-[#111827]">
               Search Page Content
             </h1>
-            <p className="text-sm text-muted-foreground mt-0.5">
+            <p className="text-sm text-[#475569] mt-0.5">
               Manage search page content, images and filters that customers see
             </p>
           </div>
@@ -1490,17 +1482,17 @@ export default function SearchPageContent() {
         <div className="flex flex-wrap items-center gap-3">
           <Button
             variant="outline"
-            className="border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 font-medium h-10 bg-white shadow-sm"
+            className="border-[#86CFA6] text-[#166534] hover:bg-[#F0FDF4] hover:text-[#166534] hover:border-[#15803D] font-medium h-10 bg-[#FFFFFF] shadow-none rounded-[8px]"
             onClick={() => window.open("/search", "_blank")}
           >
-            <Eye className="mr-2 h-4 w-4" />
+            <Eye className="mr-2 h-4 w-4 text-[#15803D]" />
             Preview Live Page
           </Button>
           <Button
-            className="bg-[#FF5722] hover:bg-[#F4511E] text-white font-medium h-10 shadow-sm shadow-orange-200"
+            className="bg-[#F4511E] hover:bg-[#EA3F0C] text-[#FFFFFF] font-medium h-10 shadow-none border-none rounded-[8px]"
             onClick={() => setAddDialogOpen(true)}
           >
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="mr-2 h-4 w-4 text-[#FFFFFF]" />
             Add New Search Content
           </Button>
         </div>
@@ -1508,61 +1500,61 @@ export default function SearchPageContent() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <Card className="border-orange-100 shadow-sm bg-white">
+        <Card className="bg-[#FFFFFF] border-[#E5E7EB] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
           <CardContent className="p-5">
             <div className="flex items-start gap-4">
-              <div className="bg-orange-50 p-3 rounded-lg mt-0.5">
-                <Layers className="h-6 w-6 text-orange-500" />
+              <div className="bg-[#FFF0E8] border border-[#FDE2D3] p-3 rounded-[10px] mt-0.5">
+                <Layers className="h-6 w-6 text-[#F4511E]" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Total Search Contents</p>
-                <h3 className="text-3xl font-bold text-orange-500 mt-1">{stats.total}</h3>
-                <p className="text-xs text-gray-400 mt-1">Active search configurations</p>
+                <p className="text-sm font-medium text-[#64748B]">Total Search Contents</p>
+                <h3 className="text-3xl font-bold text-[#F4511E] mt-1">{stats.total}</h3>
+                <p className="text-xs text-[#94A3B8] mt-1">Active search configurations</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-emerald-100 shadow-sm bg-white">
+        <Card className="bg-[#FFFFFF] border-[#E5E7EB] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
           <CardContent className="p-5">
             <div className="flex items-start gap-4">
-              <div className="bg-emerald-50 p-3 rounded-full mt-0.5 border border-emerald-100">
-                <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+              <div className="bg-[#EAF8EF] border border-[#D9F0E1] p-3 rounded-[10px] mt-0.5">
+                <CheckCircle2 className="h-6 w-6 text-[#15803D]" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Live on Website</p>
-                <h3 className="text-3xl font-bold text-emerald-600 mt-1">{stats.live}</h3>
-                <p className="text-xs text-gray-400 mt-1">Currently visible to users</p>
+                <p className="text-sm font-medium text-[#64748B]">Live on Website</p>
+                <h3 className="text-3xl font-bold text-[#15803D] mt-1">{stats.live}</h3>
+                <p className="text-xs text-[#94A3B8] mt-1">Currently visible to users</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-blue-100 shadow-sm bg-white">
+        <Card className="bg-[#FFFFFF] border-[#E5E7EB] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
           <CardContent className="p-5">
             <div className="flex items-start gap-4">
-              <div className="bg-blue-50 p-3 rounded-lg mt-0.5">
-                <History className="h-6 w-6 text-blue-500" />
+              <div className="bg-[#EDF4FF] border border-[#DCE8FA] p-3 rounded-[10px] mt-0.5">
+                <History className="h-6 w-6 text-[#2563EB]" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Recently Updated</p>
-                <h3 className="text-3xl font-bold text-blue-600 mt-1">{stats.recentlyUpdated}</h3>
-                <p className="text-xs text-gray-400 mt-1">In last 7 days</p>
+                <p className="text-sm font-medium text-[#64748B]">Recently Updated</p>
+                <h3 className="text-3xl font-bold text-[#2563EB] mt-1">{stats.recentlyUpdated}</h3>
+                <p className="text-xs text-[#94A3B8] mt-1">In last 7 days</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-purple-100 shadow-sm bg-white">
+        <Card className="bg-[#FFFFFF] border-[#E5E7EB] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
           <CardContent className="p-5">
             <div className="flex items-start gap-4">
-              <div className="bg-purple-50 p-3 rounded-lg mt-0.5">
-                <Filter className="h-6 w-6 text-purple-500" />
+              <div className="bg-[#F3EDFF] border border-[#E9DFFF] p-3 rounded-[10px] mt-0.5">
+                <Filter className="h-6 w-6 text-[#7C3AED]" />
               </div>
               <div>
-                <p className="text-sm font-medium text-gray-500">Total Filters Used</p>
-                <h3 className="text-3xl font-bold text-purple-600 mt-1">{stats.totalFilters}</h3>
-                <p className="text-xs text-gray-400 mt-1">Across all search contents</p>
+                <p className="text-sm font-medium text-[#64748B]">Total Filters Used</p>
+                <h3 className="text-3xl font-bold text-[#7C3AED] mt-1">{stats.totalFilters}</h3>
+                <p className="text-xs text-[#94A3B8] mt-1">Across all search contents</p>
               </div>
             </div>
           </CardContent>
@@ -1570,16 +1562,16 @@ export default function SearchPageContent() {
       </div>
 
       {/* Main Table Section */}
-      <Card className="shadow-sm border-gray-200/60 overflow-hidden bg-white">
+      <Card className="bg-[#FFFFFF] border-[#E5E7EB] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.035)] overflow-hidden">
         {/* Table Header Controls */}
-        <div className="p-5 border-b border-gray-100 bg-white flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+        <div className="p-5 border-b border-[#E5E7EB] bg-white flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <div className="bg-blue-50 p-2 rounded-md">
-              <List className="h-5 w-5 text-blue-500" />
+            <div className="bg-[#EFF6FF] p-2.5 rounded-[10px]">
+              <List className="h-5 w-5 text-[#2563EB]" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-gray-900">Search Content History</h2>
-              <p className="text-sm text-gray-500">
+              <h2 className="text-lg font-bold text-[#111827]">Search Content History</h2>
+              <p className="text-sm text-[#475569]">
                 View and manage all search page configurations.
               </p>
             </div>
@@ -1587,25 +1579,25 @@ export default function SearchPageContent() {
 
           <div className="flex flex-wrap items-center gap-3">
             <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748B]" />
               <Input
                 placeholder="Search by keyword..."
                 value={searchTerm}
                 onChange={(e) => {
                   setSearchTerm(e.target.value);
-                  setCurrentPage(1);
+                  table.setPageIndex(0);
                 }}
-                className="pl-9 h-10 bg-gray-50/50 border-gray-200"
+                className="pl-9 h-10 bg-[#FFFFFF] border-[#DDE3EA] text-[#334155] placeholder:text-[#94A3B8] rounded-[8px]"
               />
             </div>
             <Select
               value={statusFilter}
               onValueChange={(v) => {
                 setStatusFilter(v);
-                setCurrentPage(1);
+                table.setPageIndex(0);
               }}
             >
-              <SelectTrigger className="w-32 h-10 bg-white border-gray-200 text-gray-700 font-medium">
+              <SelectTrigger className="w-32 h-10 bg-[#FFFFFF] border-[#DDE3EA] text-[#334155] font-medium rounded-[8px]">
                 <SelectValue placeholder="Status" />
               </SelectTrigger>
               <SelectContent>
@@ -1618,11 +1610,11 @@ export default function SearchPageContent() {
               value={sortBy}
               onValueChange={(v) => {
                 setSortBy(v);
-                setCurrentPage(1);
+                table.setPageIndex(0);
               }}
             >
-              <SelectTrigger className="w-36 h-10 bg-white border-gray-200 text-gray-700 font-medium">
-                <SelectValue className="text-gray-700" />
+              <SelectTrigger className="w-36 h-10 bg-[#FFFFFF] border-[#DDE3EA] text-[#334155] font-medium rounded-[8px]">
+                <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="Latest">Sort: Latest</SelectItem>
@@ -1633,12 +1625,12 @@ export default function SearchPageContent() {
             </Select>
             <Button
               variant="ghost"
-              className="h-10 text-gray-500 hover:text-gray-900"
+              className="h-10 text-[#64748B] hover:text-[#111827] rounded-[8px]"
               onClick={() => {
                 setSearchTerm("");
                 setStatusFilter("All");
                 setSortBy("Latest");
-                setCurrentPage(1);
+                table.setPageIndex(0);
               }}
             >
               Reset
@@ -1647,213 +1639,70 @@ export default function SearchPageContent() {
         </div>
 
         {/* Table */}
-        <div className="overflow-x-auto bg-white">
+        <ScrollArea className="bg-[#FFFFFF] w-full">
           <Table>
             <TableHeader>
-              <TableRow className="border-b-gray-100 bg-gray-50/50 hover:bg-gray-50/50">
-                <TableHead className="h-12 font-semibold text-gray-600 text-xs uppercase tracking-wider py-4">
-                  Search Keyword
-                </TableHead>
-                <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-4">
-                  Banner Preview
-                </TableHead>
-                <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-4">
-                  Filters
-                </TableHead>
-                <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-4">
-                  Section
-                </TableHead>
-                <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-4">
-                  Kitchens
-                </TableHead>
-                <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-4">
-                  Status
-                </TableHead>
-                <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-4">
-                  Updated By
-                </TableHead>
-                <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-4">
-                  Updated At
-                </TableHead>
-                <TableHead className="font-semibold text-gray-600 text-xs uppercase tracking-wider py-4 text-right">
-                  Actions
-                </TableHead>
-              </TableRow>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id} className="border-b-[#E5E7EB] bg-[#FCFDFE] hover:bg-[#FCFDFE]">
+                  {headerGroup.headers.map((header) => (
+                    <TableHead key={header.id} className="h-12 font-semibold text-[#334155] text-[13px] tracking-wider py-4">
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(header.column.columnDef.header, header.getContext())}
+                    </TableHead>
+                  ))}
+                </TableRow>
+              ))}
             </TableHeader>
             <TableBody>
-              {pageItems.length === 0 ? (
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="border-b-[#EEF1F4] bg-[#FFFFFF] hover:bg-[#FAFCFB] transition-colors cursor-pointer"
+                    onClick={() => setEditingId(row.original.id)}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="py-4 align-middle">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
                 <TableRow>
-                  <TableCell colSpan={9} className="h-32 text-center text-muted-foreground">
+                  <TableCell colSpan={columns.length} className="h-32 text-center text-[#94A3B8]">
                     No search content found.
                   </TableCell>
                 </TableRow>
-              ) : (
-                pageItems.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    className="border-b-gray-100 hover:bg-gray-50/80 transition-colors cursor-pointer"
-                    onClick={() => setEditingId(row.id)}
-                  >
-                    <TableCell className="py-4 align-middle">
-                      <div className="flex items-center gap-2">
-                        {row.isActive && (
-                          <div className="w-2 h-2 rounded-full bg-emerald-600" />
-                        )}
-                        <div className="flex flex-col">
-                          <span className="font-semibold text-emerald-800 capitalize">
-                            {row.keyword}
-                          </span>
-                          {row.keyword === "default" && (
-                            <span className="text-xs text-muted-foreground">
-                              Fallback search page
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-4 align-middle">
-                      <div className="w-[170px] h-[52px] rounded-md overflow-hidden relative border border-gray-100 bg-gray-50">
-                        {row.keyword === "default" ? (
-                          <div className="absolute inset-0 bg-orange-50 flex flex-col items-center justify-center">
-                            <span className="text-orange-500 font-bold italic text-sm">
-                              RRC Kitchen
-                            </span>
-                            <span className="text-[10px] text-gray-500">
-                              Every Homemaker is a Chef
-                            </span>
-                          </div>
-                        ) : row.bannerImageUrl ? (
-                          <Image
-                            src={row.bannerImageUrl}
-                            alt={row.keyword}
-                            fill
-                            sizes="170px"
-                            className="object-cover"
-                          />
-                        ) : (
-                          <div className="absolute inset-0 bg-orange-50 flex flex-col items-center justify-center">
-                            <span className="text-orange-500 font-bold italic text-sm">
-                              RRC Kitchen
-                            </span>
-                            <span className="text-[10px] text-gray-500">
-                              Every Homemaker is a Chef
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-4 align-middle">
-                      <div className="flex flex-row items-center gap-2">
-                        <span className="text-sm font-medium text-gray-600">
-                          {row.filtersCount} filters
-                        </span>
-                        {row.filtersCount > 0 && (
-                          <Badge variant="outline" className="bg-emerald-50 text-emerald-600 border-emerald-100 px-2 py-0 h-5 text-[11px]">
-                            Modified
-                          </Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-4 align-middle">
-                      <div className="flex items-center gap-1.5 flex-wrap max-w-[140px]">
-                        <Badge variant="outline" className="bg-orange-50 text-orange-600 border-orange-100 px-2 py-0 h-5 text-[11px] gap-1">
-                          <Tag className="h-3 w-3" />
-                          {row.badgesCount}
-                        </Badge>
-                        <Badge variant="outline" className="bg-blue-50 text-blue-600 border-blue-100 px-2 py-0 h-5 text-[11px] gap-1">
-                          <Info className="h-3 w-3" />
-                          {row.infoItemsCount}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-4 align-middle">
-                      <span className="text-sm font-medium text-gray-600">
-                        {row.kitchensCount} kitchens
-                      </span>
-                    </TableCell>
-                    <TableCell className="py-4 align-middle">
-                      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                        <Switch
-                          checked={row.isActive}
-                          disabled={pendingToggleId === row.id}
-                          onCheckedChange={(checked) =>
-                            toggleMutation.mutate({ id: row.id, isActive: checked })
-                          }
-                          className={
-                            row.isActive
-                              ? "data-[state=checked]:bg-emerald-500"
-                              : ""
-                          }
-                        />
-                        <Badge
-                          variant="outline"
-                          className={
-                            row.isActive
-                              ? "bg-emerald-50 text-emerald-600 border-emerald-100 px-2 py-0 h-5 text-[11px]"
-                              : "bg-gray-100 text-gray-500 border-gray-200 px-2 py-0 h-5 text-[11px]"
-                          }
-                        >
-                          {row.isActive ? "Active" : "Inactive"}
-                        </Badge>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-4 align-middle">
-                      <span className="text-sm font-medium text-gray-600">
-                        {row.updatedBy ?? "Admin"}
-                      </span>
-                    </TableCell>
-                    <TableCell className="py-4 align-middle">
-                      <span className="text-sm text-gray-500">
-                        {formatDateStats(row.updatedAt)}
-                      </span>
-                    </TableCell>
-                    <TableCell className="py-4 align-middle text-right">
-                      <div className="flex gap-2 justify-end" onClick={(e) => e.stopPropagation()}>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setEditingId(row.id)}
-                          className="h-8 border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 px-3 flex gap-1 font-medium"
-                        >
-                          <Edit2 className="h-3.5 w-3.5" />
-                          Edit
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setDeleteTarget(row)}
-                          className="h-8 w-8 p-0 border-red-200 text-red-500 hover:bg-red-50 hover:text-red-600 shrink-0"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
               )}
             </TableBody>
           </Table>
-        </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
 
         {/* Pagination & Footer */}
-        <div className="p-4 border-t border-gray-100 bg-white flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-gray-600">
+        <div className="p-4 border-t border-[#E5E7EB] bg-[#FFFFFF] flex flex-col sm:flex-row items-center justify-between gap-4 text-sm text-[#475569]">
           <div className="flex items-center gap-2">
-            <div className="bg-emerald-50 p-1.5 rounded text-emerald-600">
+            <div className="bg-[#EFF6FF] p-1.5 rounded-[6px] text-[#2563EB]">
               <FileText className="h-4 w-4" />
             </div>
-            <span className="font-medium">
-              Showing {showingFrom} to {showingTo} of {sorted.length} entries
+            <span className="font-medium text-[#475569]">
+              Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{" "}
+              {Math.min(
+                (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
+                sorted.length
+              )}{" "}
+              of {sorted.length} entries
             </span>
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">Rows</span>
+            <div className="flex items-center gap-2 ml-4">
+              <span className="text-xs text-[#94A3B8]">Rows</span>
               <Select
-                value={String(rowsPerPage)}
-                onValueChange={(v) => {
-                  setRowsPerPage(Number(v));
-                  setCurrentPage(1);
-                }}
+                value={String(table.getState().pagination.pageSize)}
+                onValueChange={(v) => table.setPageSize(Number(v))}
               >
-                <SelectTrigger className="h-8 w-16 bg-white border-gray-200">
+                <SelectTrigger className="h-8 w-16 bg-[#FFFFFF] border-[#DDE3EA] rounded-[8px] text-[#334155]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -1866,116 +1715,135 @@ export default function SearchPageContent() {
           </div>
 
           <div className="flex items-center gap-1">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 rounded-md border-gray-200 bg-white text-gray-500 hover:text-gray-900 shadow-sm"
-              disabled={safePage <= 1}
-              onClick={() => setCurrentPage(safePage - 1)}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            {Array.from({ length: totalPages }).slice(0, 5).map((_, idx) => {
-              const pageNum = totalPages > 5 ? safePage + idx - 2 : idx + 1;
-              if (pageNum < 1 || pageNum > totalPages) return null;
-              return (
-                <Button
-                  key={pageNum}
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setCurrentPage(pageNum)}
-                  className={
-                    pageNum === safePage
-                      ? "h-8 w-8 rounded-md border-transparent bg-[#FF5722] text-white hover:bg-[#F4511E] shadow-sm p-0 flex items-center justify-center font-medium"
-                      : "h-8 w-8 rounded-md border-gray-200 bg-white text-gray-600 hover:bg-gray-50 shadow-sm p-0 flex items-center justify-center font-medium"
-                  }
-                >
-                  {pageNum}
-                </Button>
-              );
-            })}
-            {totalPages > 5 && (
-              <div className="px-1 text-gray-400">
-                <MoreHorizontal className="h-4 w-4" />
-              </div>
-            )}
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 rounded-md border-gray-200 bg-white text-gray-500 hover:text-gray-900 shadow-sm"
-              disabled={safePage >= totalPages}
-              onClick={() => setCurrentPage(safePage + 1)}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </Button>
+             <Pagination>
+               <PaginationContent className="gap-1">
+                 <PaginationItem>
+                   <Button
+                     variant="outline"
+                     size="icon"
+                     className="h-8 w-8 rounded-[8px] border-[#E2E8F0] bg-[#FFFFFF] text-[#64748B] hover:text-[#111827] shadow-none disabled:opacity-50"
+                     onClick={(e) => { e.preventDefault(); table.previousPage(); }}
+                     disabled={!table.getCanPreviousPage()}
+                   >
+                     <ChevronLeft className="h-4 w-4" />
+                   </Button>
+                 </PaginationItem>
+                 
+                 {table.getPageOptions().slice(0, 5).map((pageIdx) => {
+                   const isActive = pageIdx === table.getState().pagination.pageIndex;
+                   return (
+                     <PaginationItem key={pageIdx}>
+                       <PaginationLink
+                         href="#"
+                         onClick={(e) => { e.preventDefault(); table.setPageIndex(pageIdx); }}
+                         className={`h-8 w-8 rounded-[8px] font-medium text-[13px] flex items-center justify-center border transition-colors ${
+                           isActive 
+                             ? "bg-[#F4511E] text-[#FFFFFF] border-[#F4511E] hover:bg-[#F4511E] hover:text-[#FFFFFF]" 
+                             : "bg-[#FFFFFF] text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC]"
+                         }`}
+                       >
+                         {pageIdx + 1}
+                       </PaginationLink>
+                     </PaginationItem>
+                   );
+                 })}
+                 
+                 {table.getPageCount() > 5 && (
+                   <PaginationItem>
+                     <PaginationEllipsis className="h-8 w-8 text-[#64748B]" />
+                   </PaginationItem>
+                 )}
+
+                 <PaginationItem>
+                   <Button
+                     variant="outline"
+                     size="icon"
+                     className="h-8 w-8 rounded-[8px] border-[#E2E8F0] bg-[#FFFFFF] text-[#64748B] hover:text-[#111827] shadow-none disabled:opacity-50"
+                     onClick={(e) => { e.preventDefault(); table.nextPage(); }}
+                     disabled={!table.getCanNextPage()}
+                   >
+                     <ChevronRight className="h-4 w-4" />
+                   </Button>
+                 </PaginationItem>
+               </PaginationContent>
+             </Pagination>
           </div>
         </div>
       </Card>
-
-      {/* Add New Search Content Dialog */}
+      
+      {/* Add Dialog */}
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="max-w-md rounded-[12px]">
           <DialogHeader>
-            <DialogTitle>Add New Search Content</DialogTitle>
+            <DialogTitle>Add Search Page Content</DialogTitle>
             <DialogDescription>
-              Create an entirely new search experience for a keyword. You can
-              customise the banner, filters, badges and settings next.
+              Create a new search configuration for a specific keyword.
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-2 py-2">
-            <label className="text-xs font-semibold text-gray-700">
-              Search Keyword
-            </label>
-            <Input
-              placeholder="e.g. pizza, dosa, idli..."
-              value={addKeyword}
-              onChange={(e) => setAddKeyword(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && onSubmitAdd()}
-              autoFocus
-            />
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-[#111827]">
+                Search Keyword
+              </label>
+              <Input
+                placeholder="e.g. biryani, pizza, sweet"
+                value={addKeyword}
+                onChange={(e) => setAddKeyword(e.target.value)}
+                className="border-[#DDE3EA] rounded-[8px]"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") onSubmitAdd();
+                }}
+              />
+              <p className="text-xs text-[#64748B]">
+                This will trigger when users search for this exact term.
+              </p>
+            </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAddDialogOpen(false)}>
+            <Button
+              variant="outline"
+              onClick={() => setAddDialogOpen(false)}
+              className="rounded-[8px]"
+            >
               Cancel
             </Button>
             <Button
               onClick={onSubmitAdd}
-              disabled={createMutation.isPending}
-              className="bg-[#FF5722] hover:bg-[#F4511E] text-white gap-2"
+              disabled={createMutation.isPending || !addKeyword.trim()}
+              className="bg-[#F4511E] text-[#FFFFFF] hover:bg-[#EA3F0C] rounded-[8px]"
             >
               {createMutation.isPending && (
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               )}
-              Create & Open Editor
+              Create Configuration
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
       {/* Delete Confirmation */}
-      <AlertDialog open={deleteTarget !== null} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-        <AlertDialogContent>
+      <AlertDialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null);
+        }}
+      >
+        <AlertDialogContent className="rounded-[12px]">
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="h-5 w-5 text-red-500" />
-              Delete &ldquo;{deleteTarget?.keyword}&rdquo; search page?
-            </AlertDialogTitle>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This permanently removes the search configuration for{" "}
-              <span className="font-semibold text-gray-800">
-                &ldquo;{deleteTarget?.keyword}&rdquo;
+              This will permanently delete the search configuration for &quot;
+              <span className="font-semibold text-[#111827]">
+                {deleteTarget?.keyword}
               </span>
-              . Customers searching this keyword will fall back to the default
-              search page. This action cannot be undone.
+              &quot;. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="border-gray-200 bg-white text-gray-700">
-              Cancel
-            </AlertDialogCancel>
+            <AlertDialogCancel className="rounded-[8px]">Cancel</AlertDialogCancel>
             <AlertDialogAction
+              className="bg-[#EF4444] text-[#FFFFFF] hover:bg-[#DC2626] rounded-[8px]"
               disabled={deleteMutation.isPending}
-              className="bg-red-600 hover:bg-red-700 text-white"
               onClick={(e) => {
                 e.preventDefault();
                 if (deleteTarget) deleteMutation.mutate(deleteTarget.id);
@@ -1993,7 +1861,107 @@ export default function SearchPageContent() {
   );
 }
 
-/* Small helpers kept at the bottom to avoid JSX hoisting issues */
+function DashboardSkeleton() {
+  return (
+    <div className="min-h-screen bg-[#FFFFFF] p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto animate-in fade-in duration-300">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-16 w-16 rounded-[16px]" />
+          <div className="space-y-2">
+            <Skeleton className="h-8 w-48 rounded-md" />
+            <Skeleton className="h-4 w-72 rounded-md" />
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-10 w-40 rounded-[8px]" />
+          <Skeleton className="h-10 w-48 rounded-[8px]" />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Card key={i} className="border-[#E5E7EB] shadow-[0_1px_3px_rgba(15,23,42,0.04)] bg-[#FFFFFF] rounded-[12px]">
+            <CardContent className="p-5">
+              <div className="flex items-start gap-4">
+                <Skeleton className="h-12 w-12 rounded-[10px]" />
+                <div className="flex-1 space-y-2 pt-0.5">
+                  <Skeleton className="h-3 w-32 rounded-md" />
+                  <Skeleton className="h-8 w-16 rounded-md" />
+                  <Skeleton className="h-3 w-36 rounded-md" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <Card className="shadow-[0_1px_3px_rgba(15,23,42,0.035)] border-[#E5E7EB] rounded-[12px] overflow-hidden bg-[#FFFFFF]">
+        <div className="p-5 border-b border-[#E5E7EB] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-10 w-10 rounded-[10px]" />
+            <div className="space-y-2">
+              <Skeleton className="h-5 w-48 rounded-md" />
+              <Skeleton className="h-4 w-72 rounded-md" />
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-10 w-64 rounded-[8px]" />
+            <Skeleton className="h-10 w-32 rounded-[8px]" />
+            <Skeleton className="h-10 w-36 rounded-[8px]" />
+          </div>
+        </div>
+        <ScrollArea className="bg-[#FFFFFF] w-full">
+          <Table>
+            <TableHeader>
+              <TableRow className="border-b-[#E5E7EB] bg-[#FCFDFE]">
+                {Array.from({ length: 7 }).map((_, i) => (
+                  <TableHead key={i} className="h-12">
+                    <Skeleton className="h-3.5 w-20 rounded-md" />
+                  </TableHead>
+                ))}
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <TableRow key={i} className="border-b-[#EEF1F4]">
+                  <TableCell className="py-4">
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="h-2.5 w-2.5 rounded-full" />
+                      <div className="space-y-1.5">
+                        <Skeleton className="h-4 w-20 rounded-md" />
+                        <Skeleton className="h-3 w-12 rounded-md" />
+                      </div>
+                    </div>
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-[40px] w-[120px] rounded-[10px]" />
+                  </TableCell>
+                  <TableCell><Skeleton className="h-5 w-20 rounded-[7px]" /></TableCell>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      <Skeleton className="h-5 w-12 rounded-[7px]" />
+                      <Skeleton className="h-5 w-12 rounded-[7px]" />
+                    </div>
+                  </TableCell>
+                  <TableCell><Skeleton className="h-4 w-20 rounded-md" /></TableCell>
+                  <TableCell><Skeleton className="h-6 w-24 rounded-[7px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-20 rounded-md" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-32 rounded-md" /></TableCell>
+                  <TableCell className="text-right flex justify-end gap-2">
+                    <Skeleton className="h-8 w-16 rounded-[8px]" />
+                    <Skeleton className="h-8 w-8 rounded-[8px]" />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </Card>
+    </div>
+  );
+}
+
 function formatDateStats(iso: string) {
   try {
     return format(new Date(iso), "dd MMM yyyy, hh:mm a");

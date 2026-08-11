@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CartItem } from "@/stores/cartStore";
 
@@ -10,6 +10,9 @@ interface CreateOrderInput {
   items: { id: string; qty: number; price: number }[];
   couponCode?: string;
   serviceDateType?: string;
+  serviceDate?: string;
+  timeSlot?: string;
+  addressId?: string;
 }
 
 interface CreateOrderResponse {
@@ -127,6 +130,9 @@ async function fetchCreateOrder(input: CreateOrderInput): Promise<CreateOrderRes
         items: input.items,
         couponCode: input.couponCode,
         serviceDateType: input.serviceDateType ?? "TOMORROW",
+        serviceDate: input.serviceDate,
+        timeSlot: input.timeSlot,
+        addressId: input.addressId,
       }),
       signal: controller.signal,
     });
@@ -205,29 +211,34 @@ export const razorpayMutationKeys = {
 
 export function useRazorpay() {
   const queryClient = useQueryClient();
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   // ── Mutation 1: create Razorpay order ──────────────────────────────────────
+  // retry: 0 — each attempt creates a new Razorpay order, so retries would
+  // duplicate orders on flaky networks.
   const createOrderMutation = useMutation<CreateOrderResponse, Error, CreateOrderInput>({
     mutationKey: razorpayMutationKeys.createOrder,
     mutationFn: fetchCreateOrder,
-    retry: 2,
-    retryDelay: (attempt) => Math.min(1000 * 2 ** attempt, 5000),
+    retry: 0,
   });
 
   // ── Mutation 2: verify payment signature + confirm order ───────────────────
+  // retry: 0 — confirmPayment is not idempotent (double payouts/loyalty on retry).
   const verifyPaymentMutation = useMutation<VerifyPaymentResponse, Error, VerifyPaymentInput>({
     mutationKey: razorpayMutationKeys.verifyPayment,
     mutationFn: fetchVerifyPayment,
-    retry: 1,
-    retryDelay: 1_000,
+    retry: 0,
   });
 
   // ── Derived state ──────────────────────────────────────────────────────────
 
+  const [modalOpen, setModalOpen] = useState(false);
+
   /** True while creating the order OR while the Razorpay modal is open (verifying) */
   const isProcessing =
     createOrderMutation.isPending ||
-    verifyPaymentMutation.isPending;
+    verifyPaymentMutation.isPending ||
+    modalOpen;
 
   const paymentResult: { success: boolean; orderId?: string; error?: string } | null = (() => {
     if (verifyPaymentMutation.isSuccess) {
@@ -238,6 +249,9 @@ export function useRazorpay() {
     }
     if (createOrderMutation.isError) {
       return { success: false, error: createOrderMutation.error.message };
+    }
+    if (checkoutError) {
+      return { success: false, error: checkoutError };
     }
     return null;
   })();
@@ -250,14 +264,15 @@ export function useRazorpay() {
     phoneNumber: string,
     couponCode?: string,
     serviceDateType?: string,
+    serviceDate?: string,
+    timeSlot?: string,
+    addressId?: string,
     prefill?: { name?: string; email?: string },
   ) => {
     if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
       verifyPaymentMutation.reset();
       createOrderMutation.reset();
-      // Surface error via createOrderMutation by faking a failed state is complex;
-      // instead we use the returned paymentResult which reads from mutation state.
-      // Here we just return early — callers should check env before calling.
+      setCheckoutError("Online payment is temporarily unavailable.");
       console.error("[Razorpay] NEXT_PUBLIC_RAZORPAY_KEY_ID is not set.");
       return;
     }
@@ -265,6 +280,7 @@ export function useRazorpay() {
     // Reset both mutations so paymentResult starts null
     createOrderMutation.reset();
     verifyPaymentMutation.reset();
+    setCheckoutError(null);
 
     try {
       // Ensure Razorpay SDK is loaded before creating the order
@@ -281,6 +297,9 @@ export function useRazorpay() {
         items: items.map((i) => ({ id: i.id, qty: i.qty, price: i.price })),
         couponCode,
         serviceDateType,
+        serviceDate,
+        timeSlot,
+        addressId,
       });
 
       const RazorpayCtor = getRazorpaySdk();
@@ -291,7 +310,7 @@ export function useRazorpay() {
         amount: order.amount,
         currency: order.currency,
         name: "RRC Kitchen",
-        description: `Order for ${items.length} item(s)  •  ₹${(total / 100).toFixed(2)}`,
+        description: `Order for ${items.length} item(s)  •  ₹${total.toFixed(2)}`,
         order_id: order.orderId,
         prefill: { contact: phoneNumber, name: prefill?.name, email: prefill?.email },
         theme: { color: "#EE7005" },
@@ -300,10 +319,12 @@ export function useRazorpay() {
         modal: {
           confirm_close: true,
           ondismiss: async () => {
+            setModalOpen(false);
             await fetchFailPayment(order.orderId);
             // Reset so paymentResult goes back to null (modal dismissed ≠ failure)
             createOrderMutation.reset();
             verifyPaymentMutation.reset();
+            setCheckoutError(null);
           },
         },
         handler: async (response) => {
@@ -315,21 +336,30 @@ export function useRazorpay() {
             if (rest[key] !== undefined) detail[key] = rest[key];
           }
 
-          await verifyPaymentMutation.mutateAsync({
-            razorpay_order_id,
-            razorpay_payment_id,
-            razorpay_signature,
-            payment_method_detail: Object.keys(detail).length > 0 ? detail : undefined,
-          });
+          try {
+            await verifyPaymentMutation.mutateAsync({
+              razorpay_order_id,
+              razorpay_payment_id,
+              razorpay_signature,
+              payment_method_detail: Object.keys(detail).length > 0 ? detail : undefined,
+            });
 
-          // Invalidate any order-related queries so order lists refresh
-          await queryClient.invalidateQueries({ queryKey: ["orders"] });
+            // Invalidate any order-related queries so order lists refresh
+            await queryClient.invalidateQueries({ queryKey: ["orders"] });
+          } catch {
+            // Verification errors surface via paymentResult
+          } finally {
+            setModalOpen(false);
+          }
         },
       });
 
       razorpay.open();
+      setModalOpen(true);
     } catch (error) {
-      // Errors surface automatically via createOrderMutation.error / verifyPaymentMutation.error
+      // Errors surface automatically via createOrderMutation.error,
+      // verifyPaymentMutation.error, or checkoutError below.
+      setCheckoutError(error instanceof Error ? error.message : "Payment could not be completed. Please try again.");
       console.error("[Razorpay] Checkout failed:", error);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -338,6 +368,7 @@ export function useRazorpay() {
   const resetPayment = useCallback(() => {
     createOrderMutation.reset();
     verifyPaymentMutation.reset();
+    setCheckoutError(null);
   }, [createOrderMutation, verifyPaymentMutation]);
 
   return {

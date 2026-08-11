@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { useRouter } from "next/navigation"
-import { Upload, X, Loader2, Plus, Eye, Utensils, Calendar, Leaf, Drumstick, Search, CheckCircle2, XCircle, Sun, Moon, CloudSun, Sunset, ImageIcon, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react"
+import { X, Loader2, Plus, Eye, Utensils, Calendar, Leaf, Drumstick, Search, CheckCircle2, XCircle, Sun, Moon, ImageIcon, ChevronLeft, ChevronRight, ArrowUpDown, ArrowUp, ArrowDown, CloudUpload, Send } from "lucide-react"
 import { CloudinaryUpload } from "@/components/patterns/cloudinary-upload"
 import Image from "next/image"
 import { Badge } from "@/components/ui/badge"
@@ -150,33 +150,35 @@ function MenuForm() {
   })
 
   return (
-    <Card id="menu-form" className="rounded-2xl border-none shadow-sm overflow-hidden h-fit">
-      <CardHeader className="pb-4 pt-6 px-6 flex flex-row items-center gap-2 border-b border-gray-50 bg-white">
-        <Utensils className="h-5 w-5 text-green-600" />
-        <CardTitle className="text-[16px] font-bold text-gray-900">Add New Menu Item</CardTitle>
+    <Card id="menu-form" className="rounded-[12px] border border-[#E7E9EB] shadow-[0_1px_3px_rgba(16,24,40,0.04),0_2px_8px_rgba(16,24,40,0.03)] bg-[#FFFFFF] overflow-hidden h-fit">
+      <CardHeader className="pb-4 pt-6 px-6 flex flex-row items-center gap-3 border-b border-[#E8EAEC] bg-[#FFFFFF]">
+        <div className="h-[42px] w-[42px] rounded-full bg-[#EAF6ED] flex items-center justify-center shrink-0">
+          <Utensils className="h-[20px] w-[20px] text-[#3D8B5A]" />
+        </div>
+        <CardTitle className="text-[16px] font-[600] text-[#202831]">Add New Menu Item</CardTitle>
       </CardHeader>
-      <CardContent className="px-6 py-6 bg-white">
+      <CardContent className="px-6 py-6 bg-[#FFFFFF]">
         <form onSubmit={form.handleSubmit((data) => addMutation.mutate(data))} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
             {/* Food Name */}
             <div className="grid gap-2">
-              <Label htmlFor="foodName" className="text-[13px] font-bold text-gray-700">Food Name <span className="text-red-500">*</span></Label>
+              <Label htmlFor="foodName" className="text-[13px] font-[500] text-[#252D36]">Food Name <span className="text-[#E53935]">*</span></Label>
               <Input 
                 id="foodName" 
                 {...form.register("name")} 
                 placeholder="Enter dish name" 
-                className="h-11 rounded-xl border-gray-200 text-[13px]"
+                className="h-[36px] rounded-[8px] border-[#E1E5E8] text-[#252D36] placeholder:text-[#8A939D] focus-visible:border-[#9BC8A8] focus-visible:ring-0 focus-visible:shadow-[0_0_0_2px_rgba(61,139,90,0.08)] text-[13px]"
               />
               {form.formState.errors.name && (
-                <p className="text-xs text-red-500">{form.formState.errors.name.message}</p>
+                <p className="text-xs text-[#FF2B20]">{form.formState.errors.name.message}</p>
               )}
             </div>
 
             {/* Category */}
             <div className="grid gap-2">
-              <Label className="text-[13px] font-bold text-gray-700">Category <span className="text-red-500">*</span></Label>
+              <Label className="text-[13px] font-[500] text-[#252D36]">Category <span className="text-[#E53935]">*</span></Label>
               <Select value={form.watch("category")} onValueChange={(v) => form.setValue("category", v, { shouldValidate: true })}>
-                <SelectTrigger className="h-11 rounded-xl border-gray-200 text-[13px]">
+                <SelectTrigger className="h-[36px] rounded-[8px] border-[#E1E5E8] text-[#252D36] focus:border-[#9BC8A8] focus:ring-0 focus:shadow-[0_0_0_2px_rgba(61,139,90,0.08)] text-[13px]">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent>
@@ -186,46 +188,46 @@ function MenuForm() {
                 </SelectContent>
               </Select>
               {form.formState.errors.category && (
-                <p className="text-xs text-red-500">{form.formState.errors.category.message}</p>
+                <p className="text-xs text-[#FF2B20]">{form.formState.errors.category.message}</p>
               )}
             </div>
 
             {/* Veg / Non-Veg */}
             <div className="grid gap-2">
-              <Label className="text-[13px] font-bold text-gray-700">Veg / Non-Veg <span className="text-red-500">*</span></Label>
+              <Label className="text-[13px] font-[500] text-[#252D36]">Veg / Non-Veg <span className="text-[#E53935]">*</span></Label>
               <div className="flex gap-2">
                 <Button
                   type="button"
                   variant="outline"
-                  className={`flex-1 h-11 rounded-xl font-bold text-[13px] transition-all border-2 ${
+                  className={`flex-1 h-[36px] rounded-[8px] font-[500] text-[13px] transition-all border ${
                     foodType === "veg" 
-                      ? "border-green-600 bg-green-50 text-green-700" 
-                      : "border-gray-100 text-gray-500 hover:bg-gray-50"
+                      ? "border-[#9BC8A8] bg-[#FFFFFF] text-[#3D8B5A]" 
+                      : "border-[#E1E5E8] bg-[#FFFFFF] text-[#68727D] hover:bg-[#F3FAF4]"
                   }`}
                   onClick={() => form.setValue("foodType", "veg", { shouldValidate: true })}
                 >
-                  <Leaf className={`h-4 w-4 mr-2 ${foodType === "veg" ? "text-green-600" : "text-gray-400"}`} /> Veg
+                  <Leaf className={`h-[16px] w-[16px] mr-2 ${foodType === "veg" ? "text-[#3D8B5A]" : "text-[#8A939D]"}`} /> Veg
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
-                  className={`flex-1 h-11 rounded-xl font-bold text-[13px] transition-all border-2 ${
+                  className={`flex-1 h-[36px] rounded-[8px] font-[500] text-[13px] transition-all border ${
                     foodType === "nonveg" 
-                      ? "border-[#FF6B00] bg-orange-50 text-[#FF6B00]" 
-                      : "border-gray-100 text-gray-500 hover:bg-gray-50"
+                      ? "border-[#FF9A78] bg-[#FFFFFF] text-[#FF4D00]" 
+                      : "border-[#E1E5E8] bg-[#FFFFFF] text-[#68727D] hover:bg-[#FFF1EB]"
                   }`}
                   onClick={() => form.setValue("foodType", "nonveg", { shouldValidate: true })}
                 >
-                  <Drumstick className={`h-4 w-4 mr-2 ${foodType === "nonveg" ? "text-[#FF6B00]" : "text-gray-400"}`} /> Non-Veg
+                  <Drumstick className={`h-[16px] w-[16px] mr-2 ${foodType === "nonveg" ? "text-[#FF4D00]" : "text-[#8A939D]"}`} /> Non-Veg
                 </Button>
               </div>
             </div>
 
             {/* Time Slot */}
             <div className="grid gap-2">
-              <Label className="text-[13px] font-bold text-gray-700">Time Slot <span className="text-red-500">*</span></Label>
+              <Label className="text-[13px] font-[500] text-[#252D36]">Time Slot <span className="text-[#E53935]">*</span></Label>
               <Select value={form.watch("timeSlot")} onValueChange={(v) => form.setValue("timeSlot", v, { shouldValidate: true })}>
-                <SelectTrigger className="h-11 rounded-xl border-gray-200 text-[13px]">
+                <SelectTrigger className="h-[36px] rounded-[8px] border-[#E1E5E8] text-[#252D36] focus:border-[#9BC8A8] focus:ring-0 focus:shadow-[0_0_0_2px_rgba(61,139,90,0.08)] text-[13px]">
                   <SelectValue placeholder="Select time slot" />
                 </SelectTrigger>
                 <SelectContent>
@@ -236,30 +238,30 @@ function MenuForm() {
                 </SelectContent>
               </Select>
               {form.formState.errors.timeSlot && (
-                <p className="text-xs text-red-500">{form.formState.errors.timeSlot.message}</p>
+                <p className="text-xs text-[#FF2B20]">{form.formState.errors.timeSlot.message}</p>
               )}
             </div>
 
             {/* Price */}
             <div className="grid gap-2">
-              <Label htmlFor="price" className="text-[13px] font-bold text-gray-700">Price (₹) <span className="text-red-500">*</span></Label>
+              <Label htmlFor="price" className="text-[13px] font-[500] text-[#252D36]">Price (₹) <span className="text-[#E53935]">*</span></Label>
               <Input 
                 id="price" 
                 type="number" 
                 {...form.register("price", { valueAsNumber: true })} 
                 placeholder="Enter price" 
-                className="h-11 rounded-xl border-gray-200 text-[13px]"
+                className="h-[36px] rounded-[8px] border-[#E1E5E8] text-[#252D36] placeholder:text-[#8A939D] focus-visible:border-[#9BC8A8] focus-visible:ring-0 focus-visible:shadow-[0_0_0_2px_rgba(61,139,90,0.08)] text-[13px]"
               />
               {form.formState.errors.price && (
-                <p className="text-xs text-red-500">{form.formState.errors.price.message}</p>
+                <p className="text-xs text-[#FF2B20]">{form.formState.errors.price.message}</p>
               )}
             </div>
 
             {/* Available For */}
             <div className="grid gap-2">
-              <Label className="text-[13px] font-bold text-gray-700">Available For <span className="text-red-500">*</span></Label>
+              <Label className="text-[13px] font-[500] text-[#252D36]">Available For <span className="text-[#E53935]">*</span></Label>
               <Select value="TOMORROW" disabled>
-                <SelectTrigger className="h-11 rounded-xl border-gray-200 bg-gray-50 text-[13px] text-gray-500">
+                <SelectTrigger className="h-[36px] rounded-[8px] border-[#E1E5E8] bg-[#FAFAFA] text-[#252D36] text-[13px]">
                   <SelectValue placeholder="Tomorrow (Pre-Orders)" />
                 </SelectTrigger>
                 <SelectContent>
@@ -271,30 +273,30 @@ function MenuForm() {
 
           {/* Description */}
           <div className="grid gap-2">
-            <Label htmlFor="description" className="text-[13px] font-bold text-gray-700">Description</Label>
+            <Label htmlFor="description" className="text-[13px] font-[500] text-[#252D36]">Description</Label>
             <Textarea 
               id="description" 
               {...form.register("description")} 
               placeholder="Describe the dish, ingredients and special notes..." 
-              className="min-h-[80px] rounded-xl border-gray-200 text-[13px] resize-none"
+              className="min-h-[80px] rounded-[8px] border-[#E1E5E8] text-[#252D36] placeholder:text-[#8A939D] focus-visible:border-[#9BC8A8] focus-visible:ring-0 focus-visible:shadow-[0_0_0_2px_rgba(61,139,90,0.08)] text-[13px] resize-none"
             />
           </div>
 
           {/* Images */}
           <div className="grid gap-2">
-            <Label className="text-[13px] font-bold text-gray-700">Images (Max 5)</Label>
-            <div className="flex flex-wrap gap-4 items-center bg-green-50/30 p-4 rounded-xl border-2 border-dashed border-green-200 min-h-[140px]">
+            <Label className="text-[13px] font-[500] text-[#252D36]">Images (Max 5)</Label>
+            <div className="flex flex-wrap gap-4 items-center bg-[#FCFEFC] p-4 rounded-[8px] border border-dashed border-[#BFD8C5] min-h-[140px]">
               
               {/* Image Previews */}
               {images.map((img) => (
-                <div key={img.public_id} className="relative h-24 w-24 shrink-0 rounded-xl overflow-hidden border-2 border-white shadow-sm group">
+                <div key={img.public_id} className="relative h-24 w-24 shrink-0 rounded-[8px] overflow-hidden group">
                   <Image src={img.secure_url} alt="" fill className="object-cover" />
                   <button
                     type="button"
                     onClick={() => removeImage(img.public_id)}
-                    className="absolute top-1 right-1 h-5 w-5 flex items-center justify-center rounded-full bg-white text-gray-600 shadow-sm opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity hover:text-red-500"
+                    className="absolute top-1 right-1 h-[18px] w-[18px] flex items-center justify-center rounded-full bg-[#4A4A4A] text-[#FFFFFF] opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
                   >
-                    <X className="h-3 w-3 font-bold" />
+                    <X className="h-3 w-3" />
                   </button>
                 </div>
               ))}
@@ -312,24 +314,26 @@ function MenuForm() {
                       type="button"
                       onClick={startUpload}
                       disabled={uploading}
-                      className={`flex flex-col items-center justify-center gap-2 h-24 w-24 shrink-0 rounded-xl border-2 border-dashed transition-colors ${
+                      className={`flex flex-col items-center justify-center gap-1 h-24 shrink-0 rounded-[8px] border border-dashed transition-colors ${
                         images.length === 0 
-                          ? "bg-transparent border-green-300 text-green-600 hover:bg-green-50 w-full sm:w-[240px]" 
-                          : "bg-white border-green-200 text-green-600 hover:bg-green-50"
+                          ? "bg-transparent border-[#BFD8C5] text-[#3D8B5A] hover:bg-[#EAF6ED] w-full sm:w-[240px]" 
+                          : "bg-[#FCFEFC] border-[#C8DDD0] text-[#3D8B5A] hover:bg-[#EAF6ED] w-24"
                       }`}
                     >
                       {uploading ? (
-                        <Loader2 className="h-5 w-5 animate-spin text-green-600" />
+                        <Loader2 className="h-[20px] w-[20px] animate-spin text-[#3D8B5A]" />
                       ) : images.length === 0 ? (
                         <div className="flex flex-col items-center">
-                          <Upload className="h-6 w-6 mb-2" />
-                          <span className="text-[13px] font-bold">Upload images of your dish</span>
-                          <span className="text-[10px] text-gray-500 font-medium">JPG, PNG up to 5MB each</span>
+                          <div className="h-[42px] w-[42px] rounded-full bg-[#EAF6ED] flex items-center justify-center mb-2">
+                            <CloudUpload className="h-[20px] w-[20px] text-[#3D8B5A]" />
+                          </div>
+                          <span className="text-[13px] font-[600]">Upload images of your dish</span>
+                          <span className="text-[11px] text-[#8A939D] font-[400] mt-1">JPG, PNG up to 5MB each</span>
                         </div>
                       ) : (
                         <div className="flex flex-col items-center">
-                          <Plus className="h-6 w-6 text-green-500 mb-1" />
-                          <span className="text-[11px] font-bold">Add More</span>
+                          <Plus className="h-[20px] w-[20px] text-[#3D8B5A] mb-1" />
+                          <span className="text-[11px] font-[600]">Add More</span>
                         </div>
                       )}
                     </button>
@@ -343,13 +347,13 @@ function MenuForm() {
           <div className="flex justify-end pt-2">
             <Button 
               type="submit" 
-              className="bg-[#FF6B00] hover:bg-[#E66000] text-white font-bold px-6 h-11 rounded-xl shadow-sm w-full sm:w-auto" 
+              className="bg-[#FF4D00] hover:bg-[#E94300] text-[#FFFFFF] font-[600] px-6 h-[36px] rounded-[8px] border border-[#FF4D00] shadow-[0_1px_3px_rgba(255,77,0,0.12)] w-full sm:w-auto transition-all" 
               disabled={addMutation.isPending}
             >
               {addMutation.isPending ? (
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="h-[16px] w-[16px] mr-2 animate-spin text-[#FFFFFF]" />
               ) : (
-                <Plus className="h-4 w-4 mr-2" />
+                <Send className="h-[16px] w-[16px] mr-2 text-[#FFFFFF]" />
               )}
               {addMutation.isPending ? "Adding..." : "Add Item"}
             </Button>
@@ -360,68 +364,117 @@ function MenuForm() {
   )
 }
 
-function AvailabilityCard({ tomorrowAvail, onSetTomorrow }: { tomorrowAvail: boolean | null; onSetTomorrow: (v: boolean) => void }) {
+function AvailabilityCard({ todayAvail, tomorrowAvail, onSetToday, onSetTomorrow }: { todayAvail: boolean | null; tomorrowAvail: boolean | null; onSetToday: (v: boolean) => void; onSetTomorrow: (v: boolean) => void }) {
   return (
-    <Card className="rounded-2xl border-none shadow-sm h-fit sticky top-28 bg-white">
-      <CardHeader className="pb-4 pt-6 px-6 flex flex-row items-center gap-2 border-b border-gray-50">
-        <Calendar className="h-5 w-5 text-green-600" />
+    <Card className="rounded-[12px] border border-[#E7E9EB] shadow-[0_1px_3px_rgba(16,24,40,0.04),0_2px_8px_rgba(16,24,40,0.03)] h-fit sticky top-28 bg-[#FFFFFF]">
+      <CardHeader className="pb-4 pt-6 px-6 flex flex-row items-center gap-3 border-b border-[#E8EAEC] bg-[#FFFFFF]">
+        <div className="h-[42px] w-[42px] rounded-full bg-[#EEF8F0] flex items-center justify-center shrink-0">
+          <Calendar className="h-[20px] w-[20px] text-[#3D8B5A]" />
+        </div>
         <div>
-          <CardTitle className="text-[16px] font-bold text-gray-900 leading-tight">Kitchen Availability</CardTitle>
-          <p className="text-[11px] text-gray-500 font-medium mt-0.5">Set when your kitchen is accepting orders</p>
+          <CardTitle className="text-[16px] font-[600] text-[#202831] leading-tight">Kitchen Availability</CardTitle>
+          <p className="text-[13px] text-[#68727D] mt-0.5">Set when your kitchen is accepting orders</p>
         </div>
       </CardHeader>
       
       <CardContent className="px-6 py-6 space-y-6">
         {/* Tomorrow (Pre-Orders) */}
-        <div className="bg-gray-50 border border-gray-100 rounded-2xl p-5 shadow-sm">
-          <div className="flex items-center gap-3 mb-5">
-            <div className="h-12 w-12 bg-green-50 text-green-600 rounded-xl flex items-center justify-center shrink-0">
-              <Calendar className="h-6 w-6" />
+        <div className="space-y-5 pb-5 border-b border-[#E8EAEC]">
+          <div className="flex items-center gap-3">
+            <div className="h-[42px] w-[42px] bg-[#EEF8F0] text-[#3D8B5A] rounded-full flex items-center justify-center shrink-0">
+              <Calendar className="h-[20px] w-[20px]" />
             </div>
             <div className="flex-1">
               <div className="flex items-center justify-between gap-2">
-                <h4 className="text-[15px] font-bold text-gray-900 leading-tight">Tomorrow (Pre-Orders)</h4>
-                <Badge className={`border-none px-2.5 py-1 text-[10px] font-bold shadow-sm ${
-                  tomorrowAvail === true ? "bg-[#DCFCE7] text-[#166534]" : "bg-[#FEE2E2] text-[#991B1B]"
+                <h4 className="text-[15px] font-[600] text-[#18212B] leading-tight">Tomorrow (Pre-Orders)</h4>
+                <Badge className={`border-none px-3 py-1 text-[11px] font-[600] rounded-[999px] shadow-none ${
+                  tomorrowAvail === true ? "bg-[#EAF6ED] text-[#3D8B5A]" : "bg-[#FFF0EE] text-[#FF2B20]"
                 }`}>
                   {tomorrowAvail === true ? "Available" : "Unavailable"}
                 </Badge>
               </div>
-              <p className="text-[11px] text-gray-500 font-medium mt-1">Accept pre-orders for tomorrow</p>
+              <p className="text-[13px] text-[#68727D] mt-1">Accept pre-orders for tomorrow</p>
             </div>
           </div>
           
           <div className="flex gap-3">
             <Button
               variant="outline"
-              className={`flex-1 rounded-xl h-11 font-bold text-[13px] border-2 transition-all ${
+              className={`flex-1 rounded-[8px] h-[36px] font-[500] text-[13px] border transition-all ${
                 tomorrowAvail === true
-                  ? "bg-white border-green-600 text-green-700 shadow-sm"
-                  : "bg-white border-gray-100 text-gray-500 hover:bg-gray-50"
+                  ? "bg-[#EAF6ED] border-[#9BC8A8] text-[#3D8B5A] shadow-none"
+                  : "bg-[#FFFFFF] border-[#9BC8A8] text-[#3D8B5A] hover:bg-[#F3FAF4]"
               }`}
               onClick={() => onSetTomorrow(true)}
             >
-              <CheckCircle2 className={`h-4 w-4 mr-1.5 ${tomorrowAvail === true ? "text-green-600" : "text-gray-400"}`} /> Available
+              <CheckCircle2 className={`h-[16px] w-[16px] mr-1.5 ${tomorrowAvail === true ? "text-[#3D8B5A]" : "text-[#3D8B5A]"}`} /> Available
             </Button>
             <Button
               variant="outline"
-              className={`flex-1 rounded-xl h-11 font-bold text-[13px] border-2 transition-all ${
+              className={`flex-1 rounded-[8px] h-[36px] font-[500] text-[13px] border transition-all ${
                 tomorrowAvail === false
-                  ? "bg-white border-red-500 text-red-600 shadow-sm"
-                  : "bg-white border-gray-100 text-gray-500 hover:bg-gray-50 hover:text-red-500 hover:border-red-200"
+                  ? "bg-[#FF2B20] border-[#FF2B20] text-[#FFFFFF] shadow-none"
+                  : "bg-[#FFFFFF] border-[#FF7B73] text-[#FF2B20] hover:bg-[#FFF0EE]"
               }`}
               onClick={() => onSetTomorrow(false)}
             >
-              <XCircle className={`h-4 w-4 mr-1.5 ${tomorrowAvail === false ? "text-red-500" : "text-gray-400"}`} /> Unavailable
+              <XCircle className={`h-[16px] w-[16px] mr-1.5 ${tomorrowAvail === false ? "text-[#FFFFFF]" : "text-[#FF2B20]"}`} /> Unavailable
+            </Button>
+          </div>
+        </div>
+
+        {/* Today */}
+        <div className="space-y-5 pb-5">
+          <div className="flex items-center gap-3">
+            <div className="h-[42px] w-[42px] bg-[#FFF0EE] text-[#FF2B20] rounded-full flex items-center justify-center shrink-0">
+              <Calendar className="h-[20px] w-[20px]" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center justify-between gap-2">
+                <h4 className="text-[15px] font-[600] text-[#18212B] leading-tight">Today</h4>
+                <Badge className={`border-none px-3 py-1 text-[11px] font-[600] rounded-[999px] shadow-none ${
+                  todayAvail === true ? "bg-[#EAF6ED] text-[#3D8B5A]" : "bg-[#FFF0EE] text-[#FF2B20]"
+                }`}>
+                  {todayAvail === true ? "Available" : "Unavailable"}
+                </Badge>
+              </div>
+              <p className="text-[13px] text-[#68727D] mt-1">Accept orders for today</p>
+            </div>
+          </div>
+          
+          <div className="flex gap-3">
+            <Button
+              variant="outline"
+              onClick={() => onSetToday(true)}
+              className={`flex-1 rounded-[8px] h-[36px] font-[500] text-[13px] border transition-all ${
+                todayAvail === true
+                  ? "bg-[#EAF6ED] border-[#9BC8A8] text-[#3D8B5A] shadow-none"
+                  : "bg-[#FFFFFF] border-[#9BC8A8] text-[#3D8B5A] hover:bg-[#F3FAF4]"
+              }`}
+            >
+              <CheckCircle2 className="h-[16px] w-[16px] mr-1.5 text-[#3D8B5A]" /> Available
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => onSetToday(false)}
+              className={`flex-1 rounded-[8px] h-[36px] font-[500] text-[13px] border transition-all ${
+                todayAvail === false
+                  ? "bg-[#FF2B20] border-[#FF2B20] text-[#FFFFFF] shadow-none"
+                  : "bg-[#FFFFFF] border-[#FF7B73] text-[#FF2B20] hover:bg-[#FFF0EE]"
+              }`}
+            >
+              <XCircle className="h-[16px] w-[16px] mr-1.5 text-[#FF2B20]" /> Unavailable
             </Button>
           </div>
         </div>
         
         {/* Tip Box */}
-        <div className="bg-[#F0FDF4] rounded-xl p-4 flex gap-3 border border-[#DCFCE7]">
-          <Utensils className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-          <p className="text-[12px] text-[#166534] font-medium leading-relaxed">
-            <span className="font-bold">Tip:</span> Keep your availability updated to receive more orders and grow your business.
+        <div className="bg-[#F3FAF4] rounded-[8px] p-4 flex gap-3 border border-[#F3FAF4]">
+          <div className="shrink-0 mt-0.5">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[#6FA477]"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.9 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>
+          </div>
+          <p className="text-[13px] text-[#5F8067] font-[400] leading-relaxed">
+            <span className="font-[600]">Tip:</span> Keep your availability updated to receive more orders and grow your business.
           </p>
         </div>
       </CardContent>
@@ -431,10 +484,10 @@ function AvailabilityCard({ tomorrowAvail, onSetTomorrow }: { tomorrowAvail: boo
 
 function getTimeSlotIcon(slot: string) {
   const s = slot.toLowerCase()
-  if (s.includes("morning") || s.includes("breakfast")) return <Sun className="h-4 w-4 text-orange-500" />
-  if (s.includes("lunch")) return <CloudSun className="h-4 w-4 text-amber-500" />
-  if (s.includes("dinner") || s.includes("evening")) return <Moon className="h-4 w-4 text-indigo-500" />
-  return <Sunset className="h-4 w-4 text-orange-500" />
+  if (s.includes("morning") || s.includes("breakfast")) return <Sun className="h-[16px] w-[16px] text-[#FFAA22]" />
+  if (s.includes("lunch")) return <Sun className="h-[16px] w-[16px] text-[#FFAA22]" />
+  if (s.includes("dinner") || s.includes("evening")) return <Moon className="h-[16px] w-[16px] text-[#FF8B45]" />
+  return <Sun className="h-[16px] w-[16px] text-[#FFAA22]" />
 }
 
 function getTimeSlotName(slot: string) {
@@ -460,7 +513,9 @@ export default function MenuPageClient() {
 
   const menuItems = useMemo<MenuItemRow[]>(() => data?.menuItems ?? [], [data])
   const tomorrowAvail = data?.tomorrowAvailability
+  const todayAvail = data?.todayAvailability
   const isAvailableTomorrow = tomorrowAvail?.isAvailable ?? null
+  const isAvailableToday = todayAvail?.isAvailable ?? null
 
   const filteredItems = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -499,7 +554,13 @@ export default function MenuPageClient() {
   const availableForLabel = (v?: string | null) => {
     if (v === "TODAY") return "Today"
     if (v === "TOMORROW") return "Tomorrow"
-    return "Today & Tomorrow"
+    return "Both"
+  }
+
+  const getAvailableForBadgeStyle = (v?: string | null) => {
+    if (v === "TODAY") return "bg-[#EAF4FF] text-[#4285D4]"
+    if (v === "TOMORROW") return "bg-[#F2E9FF] text-[#7C4DCE]"
+    return "bg-[#EAF6ED] text-[#3D8B5A]"
   }
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: ["kitchen-dashboard"] })
@@ -519,10 +580,11 @@ export default function MenuPageClient() {
   })
 
   const availMutation = useMutation({
-    mutationFn: (isAvailable: boolean) => setKitchenAvailability(isAvailable, "TOMORROW"),
+    mutationFn: ({ isAvailable, dateType }: { isAvailable: boolean; dateType: "TODAY" | "TOMORROW" }) =>
+      setKitchenAvailability(isAvailable, dateType),
     onSuccess: (result, vars) => {
       if (result.success) {
-        toast.success(`Kitchen marked as ${vars ? "Available" : "Unavailable"} for tomorrow`)
+        toast.success(`Kitchen marked as ${vars.isAvailable ? "Available" : "Unavailable"} for ${vars.dateType === "TODAY" ? "today" : "tomorrow"}`)
         refresh()
       } else {
         toast.error(result.error ?? "Failed to update")
@@ -544,19 +606,19 @@ export default function MenuPageClient() {
           const item = row.original
           return (
             <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-xl overflow-hidden bg-gray-100 shrink-0 border border-gray-50 relative">
+              <div className="h-[40px] w-[48px] rounded-[7px] overflow-hidden bg-[#FFFFFF] shrink-0 relative">
                 {item.image ? (
                   <Image src={item.image} alt={item.name} fill sizes="48px" className="object-cover" />
                 ) : (
-                  <div className="h-full w-full flex items-center justify-center text-gray-300">
-                    <ImageIcon className="h-5 w-5" />
+                  <div className="h-full w-full flex items-center justify-center text-[#8A939D]">
+                    <ImageIcon className="h-[20px] w-[20px]" />
                   </div>
                 )}
               </div>
               <div>
-                <p className="font-bold text-[13px] text-gray-900">{item.name}</p>
+                <p className="font-[600] text-[13px] text-[#252D36]">{item.name}</p>
                 {item.description && (
-                  <p className="text-[11px] text-gray-500 mt-0.5 truncate max-w-[160px]">{item.description}</p>
+                  <p className="text-[11px] text-[#737C85] mt-0.5 truncate max-w-[160px]">{item.description}</p>
                 )}
               </div>
             </div>
@@ -567,7 +629,7 @@ export default function MenuPageClient() {
         accessorKey: "menuName",
         header: "Menu",
         cell: ({ row }) => (
-          <span className="text-[13px] font-medium text-gray-600">{row.original.menuName || "—"}</span>
+          <span className="text-[13px] text-[#68727D] font-[400]">{row.original.menuName || "—"}</span>
         ),
       },
       {
@@ -577,8 +639,8 @@ export default function MenuPageClient() {
           const isVeg = row.original.foodType === "VEG"
           return (
             <div className="flex items-center gap-1.5">
-              {isVeg ? <Leaf className="h-4 w-4 text-green-600" /> : <Drumstick className="h-4 w-4 text-[#FF6B00]" />}
-              <span className={`text-[12px] font-bold ${isVeg ? "text-green-700" : "text-[#FF6B00]"}`}>
+              {isVeg ? <Leaf className="h-[16px] w-[16px] text-[#3D8B5A]" /> : <Drumstick className="h-[16px] w-[16px] text-[#FF4D00]" />}
+              <span className={`text-[12px] font-[500] ${isVeg ? "text-[#3D8B5A]" : "text-[#FF4D00]"}`}>
                 {isVeg ? "Veg" : "Non-Veg"}
               </span>
             </div>
@@ -589,7 +651,7 @@ export default function MenuPageClient() {
         accessorKey: "timeSlot",
         header: "Time Slot",
         cell: ({ row }) => (
-          <div className="flex items-center gap-1.5 text-gray-700 font-medium text-[13px]">
+          <div className="flex items-center gap-1.5 text-[#252D36] font-[400] text-[13px]">
             {getTimeSlotIcon(row.original.timeSlot || "")}
             {getTimeSlotName(row.original.timeSlot || "")}
           </div>
@@ -599,14 +661,14 @@ export default function MenuPageClient() {
         accessorKey: "price",
         header: "Price",
         cell: ({ row }) => (
-          <span className="text-[13px] font-bold text-gray-900">₹{row.original.price}</span>
+          <span className="text-[13px] font-[400] text-[#252D36]">₹{row.original.price}</span>
         ),
       },
       {
         accessorKey: "availableFor",
         header: "Available For",
         cell: ({ row }) => (
-          <Badge className="bg-purple-50 text-purple-600 border-none px-2.5 py-1 text-[11px] font-bold hover:bg-purple-50">
+          <Badge className={`border-none px-2.5 py-1 text-[11px] font-[500] rounded-full hover:opacity-100 ${getAvailableForBadgeStyle(row.original.availableFor)}`}>
             {availableForLabel(row.original.availableFor)}
           </Badge>
         ),
@@ -615,10 +677,10 @@ export default function MenuPageClient() {
         accessorKey: "isAvailable",
         header: "Status",
         cell: ({ row }) => (
-          <Badge className={`border-none px-2.5 py-1 text-[11px] font-bold ${
+          <Badge className={`border-none px-2.5 py-1 text-[11px] font-[500] rounded-full hover:opacity-100 ${
             row.original.isAvailable
-              ? "bg-green-50 text-green-700 hover:bg-green-50"
-              : "bg-red-50 text-red-600 hover:bg-red-50"
+              ? "bg-[#EAF6ED] text-[#3D8B5A]"
+              : "bg-[#FFF0EE] text-[#FF2B20]"
           }`}>
             {row.original.isAvailable ? "Available" : "Unavailable"}
           </Badge>
@@ -626,7 +688,7 @@ export default function MenuPageClient() {
       },
       {
         id: "actions",
-        header: "",
+        header: "Actions",
         cell: ({ row }) => {
           const item = row.original
           return (
@@ -634,11 +696,7 @@ export default function MenuPageClient() {
               <Button
                 size="sm"
                 variant="outline"
-                className={`h-8 px-3 rounded-lg text-[11px] font-bold transition-all border-2 ${
-                  item.isAvailable
-                    ? "border-gray-200 text-gray-600 hover:border-red-200 hover:text-red-600 hover:bg-red-50"
-                    : "border-green-200 text-green-700 bg-green-50 hover:bg-green-100 hover:border-green-300"
-                }`}
+                className={`h-8 px-3 rounded-[7px] text-[11px] font-[500] transition-all bg-[#FFFFFF] border-[#9BC8A8] text-[#287044] hover:bg-[#F3FAF4]`}
                 disabled={toggleMutation.isPending}
                 onClick={() => toggleMutation.mutate({ itemId: item.id, isAvailable: !item.isAvailable })}
               >
@@ -782,196 +840,202 @@ export default function MenuPageClient() {
   }
 
   return (
-    <div className="space-y-6 pb-20 animate-in fade-in duration-500">
+    <div className="space-y-6 pb-20 animate-in fade-in duration-500 bg-[#FCFCFC] min-h-screen pt-4">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2 px-6">
         <div>
-          <h1 className="text-[24px] font-bold text-gray-900 tracking-tight">Menu Management</h1>
-          <p className="text-[14px] text-gray-500 font-medium mt-1">Add delicious items and manage your kitchen menu</p>
+          <h1 className="text-[24px] font-[700] text-[#18212B] tracking-tight">Menu Management</h1>
+          <p className="text-[14px] text-[#68727D] mt-1">Add delicious items and manage your kitchen menu</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="border-green-200 text-green-700 bg-white hover:bg-green-50 font-bold px-4 h-11 rounded-xl shadow-sm transition-all hidden sm:flex" onClick={() => data.kitchen?.slug && router.push(`/kitchens/${data.kitchen.slug}`)}>
-            <Eye className="h-4 w-4 mr-2" /> View Public Menu
+          <Button variant="outline" className="border-[#9BC8A8] text-[#287044] bg-[#FFFFFF] hover:bg-[#F3FAF4] font-[600] px-4 h-[36px] rounded-[8px] shadow-[0_1px_2px_rgba(16,24,40,0.04)] transition-all hidden sm:flex" onClick={() => data.kitchen?.slug && router.push(`/kitchens/${data.kitchen.slug}`)}>
+            <Eye className="h-[16px] w-[16px] mr-2 text-[#3D8B5A]" /> View Public Menu
           </Button>
-          <Button className="bg-[#FF6B00] hover:bg-[#E66000] text-white font-bold px-4 h-11 rounded-xl shadow-sm transition-all" onClick={scrollToForm}>
-            <Plus className="h-4 w-4 mr-2" /> Add Menu Item
+          <Button className="bg-[#FF4D00] hover:bg-[#E94300] text-[#FFFFFF] font-[600] px-4 h-[36px] rounded-[8px] border border-[#FF4D00] shadow-[0_1px_3px_rgba(255,77,0,0.12)] transition-all" onClick={scrollToForm}>
+            <Plus className="h-[16px] w-[16px] mr-2 text-[#FFFFFF]" /> Add Menu Item
           </Button>
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+      <div className="grid gap-6 xl:grid-cols-[1fr_360px] px-6">
         {/* Left Column: Form */}
         <MenuForm />
 
         {/* Right Column: Availability */}
         <AvailabilityCard 
+          todayAvail={isAvailableToday} 
           tomorrowAvail={isAvailableTomorrow} 
-          onSetTomorrow={(v) => availMutation.mutate(v)} 
+          onSetToday={(v) => availMutation.mutate({ isAvailable: v, dateType: "TODAY" })} 
+          onSetTomorrow={(v) => availMutation.mutate({ isAvailable: v, dateType: "TOMORROW" })} 
         />
       </div>
 
       {/* Current Menu Items */}
-      <Card className="rounded-2xl border-none shadow-sm mt-2 overflow-hidden">
-        <CardHeader className="pb-4 pt-6 px-6 flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-50 gap-4 bg-white">
-          <div className="flex items-center gap-2">
-            <Utensils className="h-5 w-5 text-green-600" />
-            <CardTitle className="text-[16px] font-bold text-gray-900">Current Menu Items</CardTitle>
-          </div>
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-              <Input
-                placeholder="Search menu items..."
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value)
-                  setPage(1)
-                }}
-                className="pl-9 h-10 rounded-xl border-gray-100 bg-gray-50 text-[13px] font-medium placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-green-500"
-              />
+      <div className="px-6">
+        <Card className="rounded-[12px] border border-[#E7E9EB] shadow-[0_1px_3px_rgba(16,24,40,0.04),0_2px_8px_rgba(16,24,40,0.03)] mt-2 bg-[#FFFFFF] overflow-hidden">
+          <CardHeader className="pb-4 pt-6 px-6 flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E8EAEC] gap-4 bg-[#FFFFFF]">
+            <div className="flex items-center gap-3">
+              <div className="h-[42px] w-[42px] rounded-full bg-[#EAF6ED] flex items-center justify-center shrink-0">
+                <Utensils className="h-[20px] w-[20px] text-[#3D8B5A]" />
+              </div>
+              <CardTitle className="text-[16px] font-[600] text-[#202831]">Current Menu Items</CardTitle>
             </div>
-            <Select value={slotFilter} onValueChange={(v) => { setSlotFilter(v); setPage(1) }}>
-              <SelectTrigger className="w-full sm:w-[140px] h-10 rounded-xl border-gray-100 bg-white text-[13px] font-bold text-gray-700 shadow-sm focus:ring-1 focus:ring-green-500">
-                <SelectValue placeholder="All Time Slots" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Time Slots</SelectItem>
-                <SelectItem value="morning">Breakfast</SelectItem>
-                <SelectItem value="lunch">Lunch</SelectItem>
-                <SelectItem value="dinner">Dinner</SelectItem>
-                <SelectItem value="snacks">Snacks</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardHeader>
-        
-        <CardContent className="p-0 bg-white overflow-x-auto">
-          {filteredItems.length === 0 ? (
-            <div className="py-16 flex flex-col items-center justify-center text-gray-400">
-              <Utensils className="h-12 w-12 mb-3 opacity-20" />
-              <p className="text-[14px] font-medium text-gray-500">
-                {menuItems.length === 0 ? "No menu items added yet." : "No items match your search."}
-              </p>
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
+              <div className="relative w-full sm:w-64">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-[16px] w-[16px] text-[#69737D]" />
+                <Input
+                  placeholder="Search menu items..."
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value)
+                    setPage(1)
+                  }}
+                  className="pl-9 h-[36px] rounded-[8px] border-[#E5E7EB] bg-[#FFFFFF] text-[13px] font-[400] text-[#252D36] placeholder:text-[#8A939D] focus-visible:border-[#9BC8A8] focus-visible:ring-0 focus-visible:shadow-[0_0_0_2px_rgba(61,139,90,0.08)]"
+                />
+              </div>
+              <Select value={slotFilter} onValueChange={(v) => { setSlotFilter(v); setPage(1) }}>
+                <SelectTrigger className="w-full sm:w-[140px] h-[36px] rounded-[8px] border-[#E5E7EB] bg-[#FFFFFF] text-[13px] font-[500] text-[#252D36] focus:border-[#9BC8A8] focus:ring-0 focus:shadow-[0_0_0_2px_rgba(61,139,90,0.08)]">
+                  <SelectValue placeholder="All Time Slots" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Time Slots</SelectItem>
+                  <SelectItem value="morning">Breakfast</SelectItem>
+                  <SelectItem value="lunch">Lunch</SelectItem>
+                  <SelectItem value="dinner">Dinner</SelectItem>
+                  <SelectItem value="snacks">Snacks</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
-          ) : (
-            <Table className="w-full min-w-[800px]">
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="bg-gray-50/50 hover:bg-gray-50/50 border-b border-gray-100">
-                    {headerGroup.headers.map((header) => (
-                      <TableHead
-                        key={header.id}
-                        className="font-bold text-[12px] text-gray-600 h-12 first:px-6 last:px-6"
-                      >
-                        {header.isPlaceholder ? null : (
-                          <button
-                            type="button"
-                            className={`inline-flex items-center gap-1 hover:text-gray-900 ${
-                              header.column.getCanSort() ? "cursor-pointer select-none" : "cursor-default"
-                            } ${header.column.id === "actions" ? "w-full justify-end" : ""}`}
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(header.column.columnDef.header, header.getContext())}
-                            {header.column.getCanSort() && (
-                              header.column.getIsSorted() === "asc" ? (
-                                <ArrowUp className="h-3 w-3" />
-                              ) : header.column.getIsSorted() === "desc" ? (
-                                <ArrowDown className="h-3 w-3" />
-                              ) : (
-                                <ArrowUpDown className="h-3 w-3 opacity-40" />
-                              )
-                            )}
-                          </button>
-                        )}
-                      </TableHead>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-              <TableBody>
-                {table.getRowModel().rows.map((row) => (
-                  <TableRow key={row.id} className="hover:bg-gray-50/50 transition-colors border-b border-gray-50">
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell
-                        key={cell.id}
-                        className={cell.column.id === "actions" ? "text-right px-6 py-4" : "px-6 py-4"}
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          )}
+          </CardHeader>
           
-          {/* Pagination */}
-          {filteredItems.length > 0 && (
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border-t border-gray-50 bg-white gap-4">
-              <span className="text-[12px] font-medium text-gray-500">
-                Showing {table.getState().pagination.pageIndex * pageSize + 1} to{" "}
-                {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, filteredItems.length)} of{" "}
-                {filteredItems.length} items
-              </span>
-              <div className="flex items-center gap-6">
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    className="h-8 w-8 p-0 rounded-lg border-gray-200 text-gray-400 bg-gray-50"
-                    disabled={!table.getCanPreviousPage()}
-                    onClick={() => table.previousPage()}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  {pageNumbers.map((p, i) =>
-                    p === "…" ? (
-                      <span key={`e-${i}`} className="text-gray-400">...</span>
-                    ) : (
-                      <Button
-                        key={p}
-                        variant="outline"
-                        className={`h-8 w-8 p-0 rounded-lg font-medium ${
-                          p === currentPage
-                            ? "border-green-200 text-green-700 bg-green-50 font-bold"
-                            : "border-transparent text-gray-600 hover:bg-gray-50"
-                        }`}
-                        onClick={() => goToPage(p)}
-                      >
-                        {p}
-                      </Button>
-                    )
-                  )}
-                  <Button
-                    variant="outline"
-                    className="h-8 w-8 p-0 rounded-lg border-gray-200 text-gray-600 hover:bg-gray-50"
-                    disabled={!table.getCanNextPage()}
-                    onClick={() => table.nextPage()}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-                <div className="hidden sm:flex items-center gap-2">
-                  <span className="text-[12px] font-medium text-gray-500">Rows per page:</span>
-                  <Select
-                    value={String(pageSize)}
-                    onValueChange={(v) => table.setPageSize(Number(v))}
-                  >
-                    <SelectTrigger className="w-[60px] h-8 rounded-lg border-gray-200 text-[12px] font-bold">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="5">5</SelectItem>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="25">25</SelectItem>
-                    </SelectContent>
-                  </Select>
+          <CardContent className="p-0 bg-[#FFFFFF] overflow-x-auto">
+            {filteredItems.length === 0 ? (
+              <div className="py-16 flex flex-col items-center justify-center text-[#8A939D]">
+                <Utensils className="h-12 w-12 mb-3 opacity-20" />
+                <p className="text-[14px] font-[500] text-[#68727D]">
+                  {menuItems.length === 0 ? "No menu items added yet." : "No items match your search."}
+                </p>
+              </div>
+            ) : (
+              <Table className="w-full min-w-[800px]">
+                <TableHeader>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id} className="bg-[#FAFAFA] hover:bg-[#FAFAFA] border-b border-[#E8EAEC]">
+                      {headerGroup.headers.map((header) => (
+                        <TableHead
+                          key={header.id}
+                          className="font-[600] text-[12px] text-[#59636E] h-12 first:px-6 last:px-6"
+                        >
+                          {header.isPlaceholder ? null : (
+                            <button
+                              type="button"
+                              className={`inline-flex items-center gap-1 hover:text-[#18212B] ${
+                                header.column.getCanSort() ? "cursor-pointer select-none" : "cursor-default"
+                              } ${header.column.id === "actions" ? "w-full justify-end" : ""}`}
+                              onClick={header.column.getToggleSortingHandler()}
+                            >
+                              {flexRender(header.column.columnDef.header, header.getContext())}
+                              {header.column.getCanSort() && (
+                                header.column.getIsSorted() === "asc" ? (
+                                  <ArrowUp className="h-3 w-3" />
+                                ) : header.column.getIsSorted() === "desc" ? (
+                                  <ArrowDown className="h-3 w-3" />
+                                ) : (
+                                  <ArrowUpDown className="h-3 w-3 opacity-40" />
+                                )
+                              )}
+                            </button>
+                          )}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows.map((row) => (
+                    <TableRow key={row.id} className="hover:bg-[#FCFDFC] transition-colors border-b border-[#E8EAEC]">
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          className={cell.column.id === "actions" ? "text-right px-6 py-4" : "px-6 py-4"}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            )}
+            
+            {/* Pagination */}
+            {filteredItems.length > 0 && (
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border-t border-[#E8EAEC] bg-[#FFFFFF] gap-4">
+                <span className="text-[12px] font-[400] text-[#68727D]">
+                  Showing {table.getState().pagination.pageIndex * pageSize + 1} to{" "}
+                  {Math.min((table.getState().pagination.pageIndex + 1) * pageSize, filteredItems.length)} of{" "}
+                  {filteredItems.length} items
+                </span>
+                <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      className="h-[36px] w-[36px] p-0 rounded-[8px] border-[#E5E7EB] bg-[#FFFFFF] text-[#4E5964] hover:bg-[#FCFCFC]"
+                      disabled={!table.getCanPreviousPage()}
+                      onClick={() => table.previousPage()}
+                    >
+                      <ChevronLeft className="h-[16px] w-[16px]" />
+                    </Button>
+                    {pageNumbers.map((p, i) =>
+                      p === "…" ? (
+                        <span key={`e-${i}`} className="text-[#8A939D]">...</span>
+                      ) : (
+                        <Button
+                          key={p}
+                          variant="outline"
+                          className={`h-[36px] w-[36px] p-0 rounded-[8px] font-[500] ${
+                            p === currentPage
+                              ? "border-[#EAF6ED] text-[#3D8B5A] bg-[#EAF6ED] font-[600]"
+                              : "border-[#E5E7EB] bg-[#FFFFFF] text-[#4E5964] hover:bg-[#FCFCFC]"
+                          }`}
+                          onClick={() => goToPage(p)}
+                        >
+                          {p}
+                        </Button>
+                      )
+                    )}
+                    <Button
+                      variant="outline"
+                      className="h-[36px] w-[36px] p-0 rounded-[8px] border-[#E5E7EB] bg-[#FFFFFF] text-[#4E5964] hover:bg-[#FCFCFC]"
+                      disabled={!table.getCanNextPage()}
+                      onClick={() => table.nextPage()}
+                    >
+                      <ChevronRight className="h-[16px] w-[16px]" />
+                    </Button>
+                  </div>
+                  <div className="hidden sm:flex items-center gap-2">
+                    <span className="text-[12px] font-[400] text-[#68727D]">Rows per page:</span>
+                    <Select
+                      value={String(pageSize)}
+                      onValueChange={(v) => table.setPageSize(Number(v))}
+                    >
+                      <SelectTrigger className="w-[60px] h-[36px] rounded-[8px] border-[#E5E7EB] text-[12px] font-[500] text-[#252D36] focus:border-[#9BC8A8] focus:ring-0 focus:shadow-[0_0_0_2px_rgba(61,139,90,0.08)]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="5">5</SelectItem>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="25">25</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }

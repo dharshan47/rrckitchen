@@ -6,10 +6,9 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import { Mail, Lock, ShieldCheck, ArrowLeft, User, EyeOff, Eye, ArrowRight, Smartphone, Calendar, Clock } from "lucide-react";
+import { Mail, Lock, ShieldCheck, ArrowLeft, User, EyeOff, Eye, Smartphone, Calendar, Clock, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
 import {
@@ -103,31 +102,31 @@ export default function AdminTwoFactorChallengePage() {
   const isProcessing = signInMutation.isPending || verifyTotpMutation.isPending || verifyBackupMutation.isPending;
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-      <Card className={`w-full shadow-sm border-slate-100 rounded-xl overflow-hidden transition-all duration-300 ${step === 'verify' ? 'max-w-4xl' : 'max-w-[440px]'}`}>
-        <CardContent className="p-0">
+    <div className="min-h-screen bg-[#FAFAFA] flex items-center justify-center p-4 font-sans">
+      <div className={`w-full bg-white rounded-[32px] shadow-[0_12px_40px_rgba(0,0,0,0.06)] overflow-hidden transition-all duration-300 border border-[#F0F0F0] ${step === 'verify' ? 'max-w-[700px]' : 'max-w-[480px]'}`}>
+        <div className="p-0">
           {step === "credentials" && (
-            <div className="p-8 flex flex-col">
-              <div className="flex justify-center mb-6">
-                <div className="h-16 w-16 rounded-full border border-green-200 bg-green-50 flex items-center justify-center">
-                  <User className="h-7 w-7 text-green-700" strokeWidth={2} />
+            <div className="p-8 sm:p-10 flex flex-col">
+              <div className="flex justify-center mb-5">
+                <div className="h-[80px] w-[80px] rounded-full border border-[#E6F4EA] bg-[#F7FCF8] flex items-center justify-center shadow-sm">
+                  <User className="h-[34px] w-[34px] text-[#006F3D]" strokeWidth={1.5} />
                 </div>
               </div>
-              <div className="text-center mb-8">
-                <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Welcome Back!</h1>
-                <p className="text-[15px] text-slate-500 mt-2">Sign in to your admin account</p>
+              <div className="text-center mb-10">
+                <h1 className="text-[32px] font-bold text-[#111111] tracking-tight mb-2">Welcome Back!</h1>
+                <p className="text-[16px] text-[#666666]">Sign in to your admin account</p>
               </div>
 
               <form onSubmit={handleSignIn} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-sm font-bold text-slate-900">Email Address</Label>
+                  <Label htmlFor="email" className="text-[14px] font-semibold text-[#111111] block mb-2">Email Address</Label>
                   <div className="relative">
-                    <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" strokeWidth={1.5} />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-[22px] w-[22px] text-[#777777]" strokeWidth={1.5} />
                     <Input
                       id="email"
                       type="email"
                       placeholder="admin@rrckitchen.com"
-                      className="pl-11 h-12 rounded-lg border-slate-200 bg-white text-slate-900 focus-visible:ring-[#10b981]"
+                      className="pl-[46px] h-[52px] rounded-[12px] border-[#E8E8E8] bg-white text-[#111111] text-[15px] focus-visible:ring-[#22C55E] focus-visible:border-[#22C55E]"
                       disabled={isProcessing}
                       {...credentialsForm.register("email")}
                     />
@@ -138,23 +137,23 @@ export default function AdminTwoFactorChallengePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-sm font-bold text-slate-900">Password</Label>
+                  <Label htmlFor="password" className="text-[14px] font-semibold text-[#111111] block mb-2">Password</Label>
                   <div className="relative">
-                    <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" strokeWidth={1.5} />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-[22px] w-[22px] text-[#777777]" strokeWidth={1.5} />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="••••••••••••"
-                      className="pl-11 pr-11 h-12 rounded-lg border-slate-200 bg-white text-slate-900 font-medium tracking-widest focus-visible:ring-[#10b981]"
+                      className="pl-[46px] pr-12 h-[52px] rounded-[12px] border-[#E8E8E8] bg-white text-[#111111] font-medium tracking-widest text-[18px] focus-visible:ring-[#22C55E] focus-visible:border-[#22C55E]"
                       disabled={isProcessing}
                       {...credentialsForm.register("password")}
                     />
                     <button 
                       type="button" 
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 focus:outline-none"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[#777777] hover:text-[#333333] focus:outline-none transition-colors"
                     >
-                      {showPassword ? <Eye className="h-5 w-5" strokeWidth={1.5} /> : <EyeOff className="h-5 w-5" strokeWidth={1.5} />}
+                      {showPassword ? <Eye className="h-[22px] w-[22px]" strokeWidth={1.5} /> : <EyeOff className="h-[22px] w-[22px]" strokeWidth={1.5} />}
                     </button>
                   </div>
                   {credentialsForm.formState.errors.password && (
@@ -162,33 +161,33 @@ export default function AdminTwoFactorChallengePage() {
                   )}
                 </div>
 
-                <div className="flex items-center space-x-3 pt-1 pb-2">
+                <div className="flex items-center space-x-3 pt-2 pb-2">
                   <Checkbox 
                     id="remember" 
                     checked={trustDevice}
                     onCheckedChange={(checked) => setTrustDevice(checked as boolean)}
-                    className="border-slate-300 data-[state=checked]:bg-[#10b981] data-[state=checked]:border-[#10b981] data-[state=checked]:text-white rounded w-5 h-5 flex items-center justify-center"
+                    className="border-[#006F3D] data-[state=checked]:bg-[#006F3D] data-[state=checked]:border-[#006F3D] data-[state=checked]:text-white rounded w-6 h-6 flex items-center justify-center shrink-0"
                   />
                   <label
                     htmlFor="remember"
-                    className="text-[15px] font-medium text-slate-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                    className="text-[15px] font-medium text-[#333333] cursor-pointer"
                   >
                     Remember this device
                   </label>
                 </div>
 
                 {credentialsForm.formState.errors.root?.message && (
-                  <p className="text-sm text-destructive text-center font-medium bg-red-50 py-2 rounded-lg">{credentialsForm.formState.errors.root.message}</p>
+                  <p className="text-sm text-destructive text-center font-medium bg-red-50 py-3 rounded-xl">{credentialsForm.formState.errors.root.message}</p>
                 )}
 
                 <Button 
                   type="submit" 
-                  className="w-full h-[52px] bg-[#f97316] hover:bg-[#ea580c] text-white text-[16px] font-bold rounded-lg shadow-sm" 
+                  className="w-full h-[56px] bg-[#FD4F03] hover:bg-[#E94700] text-white text-[17px] font-semibold rounded-[12px] shadow-[0_4px_14px_rgba(253,79,3,0.3)] transition-all flex items-center justify-center gap-2 mt-4" 
                   disabled={isProcessing}
                 >
                   {signInMutation.isPending ? "Signing in..." : (
                     <>
-                      Sign In <ArrowRight className="ml-2 h-5 w-5" strokeWidth={2.5} />
+                      Sign In <LogIn className="h-[22px] w-[22px]" strokeWidth={2} />
                     </>
                   )}
                 </Button>
@@ -198,39 +197,36 @@ export default function AdminTwoFactorChallengePage() {
 
           {step === "verify" && (
             <div className="flex flex-col">
-              <div className="p-8">
+              <div className="p-8 sm:p-10">
                 {/* Header actions */}
-                <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center justify-between mb-6">
                   <button
                     type="button"
                     onClick={() => {
                       setStep("credentials");
                       setAvailableMethods([]);
                     }}
-                    className="text-sm font-semibold text-[#10b981] hover:text-[#059669] transition-colors flex items-center gap-1.5"
+                    className="text-sm font-semibold text-[#006F3D] hover:text-[#00522B] transition-colors flex items-center gap-1.5"
                   >
                     <ArrowLeft className="h-4 w-4" strokeWidth={2.5} />
                     Back to Sign In
                   </button>
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-green-200 bg-green-50/50">
-                    <Lock className="h-3.5 w-3.5 text-[#10b981]" strokeWidth={2} />
-                    <span className="text-xs font-bold text-[#10b981]">Secure Connection</span>
-                    <div className="h-1.5 w-1.5 rounded-full bg-[#10b981] ml-1"></div>
+                  <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#E6F4EA] bg-[#F7FCF8]">
+                    <Lock className="h-3.5 w-3.5 text-[#22C55E]" strokeWidth={2} />
+                    <span className="text-[11px] font-bold text-[#006F3D]">Secure Connection</span>
+                    <div className="h-1.5 w-1.5 rounded-full bg-[#22C55E] ml-1"></div>
                   </div>
                 </div>
 
                 {/* Title Section */}
                 <div className="flex flex-col items-center mb-8">
-                  <div className="h-[72px] w-[72px] rounded-full border border-green-200 bg-green-50 flex items-center justify-center mb-5">
-                    <div className="h-[52px] w-[52px] rounded-full bg-white shadow-sm flex items-center justify-center relative">
-                      <ShieldCheck className="h-8 w-8 text-[#10b981]" strokeWidth={1.5} />
-                      <div className="absolute inset-0 flex items-center justify-center mt-1">
-                         <Lock className="h-3 w-3 text-[#f97316] fill-[#f97316]" strokeWidth={2} />
-                      </div>
+                  <div className="h-[80px] w-[80px] rounded-full border border-[#E6F4EA] bg-[#F7FCF8] flex items-center justify-center mb-5 relative before:absolute before:inset-1.5 before:rounded-full before:border before:border-[#E6F4EA] before:bg-transparent">
+                    <div className="h-[52px] w-[52px] rounded-full bg-[#22C55E] shadow-sm flex items-center justify-center relative z-10">
+                      <ShieldCheck className="h-7 w-7 text-white" strokeWidth={1.5} />
                     </div>
                   </div>
-                  <h1 className="text-[28px] font-bold text-slate-900 tracking-tight">Two-Factor Authentication</h1>
-                  <p className="text-[15px] text-slate-500 mt-2">Choose your preferred verification method and enter the code</p>
+                  <h1 className="text-[28px] sm:text-[32px] font-bold text-[#111111] tracking-tight mb-2">Two-Factor Authentication</h1>
+                  <p className="text-[15px] text-[#666666] text-center max-w-md mx-auto">Choose your preferred verification method and enter the code</p>
                 </div>
 
                 {/* Method Toggles */}
@@ -242,14 +238,14 @@ export default function AdminTwoFactorChallengePage() {
                       codeForm.setValue("code", "");
                       codeForm.clearErrors();
                     }}
-                    className={`flex items-center p-5 rounded-xl border text-left transition-all ${method === "totp" ? "border-[#10b981] bg-green-50/30 ring-1 ring-[#10b981]/10" : "border-slate-200 hover:border-slate-300 bg-white"}`}
+                    className={`flex items-center p-5 rounded-[16px] border text-left transition-all ${method === "totp" ? "border-[#22C55E] bg-[#F4FAF6] ring-1 ring-[#22C55E]/20" : "border-[#E8E8E8] hover:border-[#CCCCCC] bg-white"}`}
                   >
-                    <div className="h-10 w-10 rounded-lg flex items-center justify-center mr-4 shrink-0 bg-white shadow-sm border border-slate-100">
-                      <Smartphone className={`h-5 w-5 ${method === "totp" ? "text-[#10b981]" : "text-slate-400"}`} strokeWidth={2} />
+                    <div className="h-[44px] w-[44px] rounded-[12px] flex items-center justify-center mr-4 shrink-0 bg-white shadow-sm border border-[#E8E8E8]">
+                      <Smartphone className={`h-5 w-5 ${method === "totp" ? "text-[#22C55E]" : "text-[#777777]"}`} strokeWidth={2} />
                     </div>
                     <div>
-                      <h3 className={`text-sm font-bold ${method === "totp" ? "text-slate-900" : "text-slate-700"}`}>Authenticator App</h3>
-                      <p className="text-xs text-slate-500 mt-0.5">Use code from your app</p>
+                      <h3 className={`text-[15px] font-bold ${method === "totp" ? "text-[#111111]" : "text-[#333333]"}`}>Authenticator App</h3>
+                      <p className="text-[12px] text-[#777777] mt-0.5">Use code from your app</p>
                     </div>
                   </button>
 
@@ -261,34 +257,34 @@ export default function AdminTwoFactorChallengePage() {
                       codeForm.setValue("code", "");
                       codeForm.clearErrors();
                     }}
-                    className={`flex items-center p-5 rounded-xl border text-left transition-all ${method === "backup" ? "border-[#f97316] bg-orange-50/30 ring-1 ring-[#f97316]/10" : "border-slate-200 hover:border-slate-300 bg-white"}`}
+                    className={`flex items-center p-5 rounded-[16px] border text-left transition-all ${method === "backup" ? "border-[#FD4F03] bg-orange-50/50 ring-1 ring-[#FD4F03]/20" : "border-[#E8E8E8] hover:border-[#CCCCCC] bg-white"}`}
                   >
-                    <div className="h-10 w-10 rounded-lg flex items-center justify-center mr-4 shrink-0 bg-white shadow-sm border border-slate-100">
-                      <Calendar className={`h-5 w-5 ${method === "backup" ? "text-[#f97316]" : "text-slate-400"}`} strokeWidth={2} />
+                    <div className="h-[44px] w-[44px] rounded-[12px] flex items-center justify-center mr-4 shrink-0 bg-white shadow-sm border border-[#E8E8E8]">
+                      <Calendar className={`h-5 w-5 ${method === "backup" ? "text-[#FD4F03]" : "text-[#777777]"}`} strokeWidth={2} />
                     </div>
                     <div>
-                      <h3 className={`text-sm font-bold ${method === "backup" ? "text-slate-900" : "text-slate-700"}`}>Backup Code</h3>
-                      <p className="text-xs text-slate-500 mt-0.5">Use one of your backup codes</p>
+                      <h3 className={`text-[15px] font-bold ${method === "backup" ? "text-[#111111]" : "text-[#333333]"}`}>Backup Code</h3>
+                      <p className="text-[12px] text-[#777777] mt-0.5">Use one of your backup codes</p>
                     </div>
                   </button>
                 </div>
 
                 <form onSubmit={handleVerify} className="space-y-6">
                   {/* OTP Input Area */}
-                  <div className="bg-slate-50/50 border border-slate-100 rounded-2xl p-6 flex flex-col items-center mb-6">
-                    <h3 className="text-base font-bold text-slate-900">Enter Verification Code</h3>
-                    <p className="text-[13px] text-slate-500 mt-1 mb-6">
+                  <div className="bg-[#F9FCFA] border border-[#E6F4EA] rounded-[24px] p-6 sm:p-8 flex flex-col items-center mb-6">
+                    <h3 className="text-[16px] font-bold text-[#111111] mb-2">Enter Verification Code</h3>
+                    <p className="text-[14px] text-[#666666] mb-6 text-center">
                       {method === "totp" ? "Enter the 6-digit code from your authenticator app" : "Enter a 16-character backup code"}
                     </p>
                     
                     {method === "totp" ? (
-                      <div className="w-full max-w-sm mx-auto flex justify-center">
+                      <div className="w-full max-w-[360px] mx-auto flex justify-center">
                         <InputOTP
                           maxLength={6}
                           render={({ slots }) => (
                             <InputOTPGroup className="gap-2 sm:gap-3 w-full justify-center">
                               {slots.map((slot, index) => (
-                                <InputOTPSlot key={index} index={index} {...slot} className="w-12 h-14 sm:w-[52px] sm:h-[60px] text-2xl font-semibold border-slate-200 rounded-xl bg-white shadow-sm" />
+                                <InputOTPSlot key={index} index={index} {...slot} className="w-[48px] h-[52px] sm:w-[52px] sm:h-[60px] text-[24px] font-bold border-[#E8E8E8] rounded-[12px] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.01)]" />
                               ))}
                             </InputOTPGroup>
                           )}
@@ -298,11 +294,11 @@ export default function AdminTwoFactorChallengePage() {
                         />
                       </div>
                     ) : (
-                      <div className="w-full max-w-md mx-auto">
+                      <div className="w-full max-w-[400px] mx-auto">
                         <Input
                           id="code"
                           placeholder="Enter backup code"
-                          className="h-14 text-center tracking-widest text-lg font-semibold rounded-xl border-slate-200 bg-white shadow-sm"
+                          className="h-[60px] text-center tracking-widest text-[20px] font-semibold rounded-[12px] border-[#E8E8E8] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.01)] focus-visible:ring-[#FD4F03]"
                           disabled={isProcessing}
                           {...codeForm.register("code")}
                         />
@@ -310,89 +306,89 @@ export default function AdminTwoFactorChallengePage() {
                     )}
 
                     {codeForm.formState.errors.code && (
-                      <p className="text-xs text-destructive mt-4">{codeForm.formState.errors.code.message}</p>
+                      <p className="text-[13px] text-destructive mt-4 font-medium">{codeForm.formState.errors.code.message}</p>
                     )}
                   </div>
 
                   {codeForm.formState.errors.root?.message && !codeForm.formState.errors.root.message.includes("TOTP is not enabled") && (
-                    <p className="text-sm text-destructive text-center font-medium bg-red-50 py-2 rounded-lg">{codeForm.formState.errors.root.message}</p>
+                    <p className="text-[14px] text-destructive text-center font-medium bg-red-50 py-3 rounded-xl">{codeForm.formState.errors.root.message}</p>
                   )}
 
                   {totpNotEnabled && (
-                    <div className="text-center bg-red-50 p-4 rounded-xl border border-red-100">
-                      <p className="text-sm text-destructive">
+                    <div className="text-center bg-[#FFF5F5] p-5 rounded-[16px] border border-[#FFEAEA]">
+                      <p className="text-[14px] text-destructive">
                         TOTP is not enabled. Use a backup code or set up your authenticator app below.
                       </p>
                       <Link
                         href="/admin/2fa-setup"
-                        className="text-sm text-[#f97316] font-bold hover:underline mt-2 inline-block"
+                        className="text-[14px] text-[#FD4F03] font-bold hover:underline mt-2 inline-block"
                       >
                         Set up authenticator app →
                       </Link>
                     </div>
                   )}
 
-                  <div className="flex items-center space-x-3 pt-2 pl-2 bg-white rounded-xl p-4 border border-slate-100 shadow-sm">
+                  <div className="flex items-start space-x-4 p-5 bg-white rounded-[16px] border border-[#F0F0F0] shadow-sm mb-6">
                     <Checkbox
                       id="trust"
                       checked={trustDevice}
                       onCheckedChange={(checked) => setTrustDevice(checked as boolean)}
-                      className="border-slate-300 data-[state=checked]:bg-[#10b981] data-[state=checked]:border-[#10b981] data-[state=checked]:text-white rounded w-5 h-5 flex items-center justify-center mt-0.5 shrink-0"
+                      className="border-[#006F3D] data-[state=checked]:bg-[#006F3D] data-[state=checked]:border-[#006F3D] data-[state=checked]:text-white rounded w-6 h-6 flex items-center justify-center shrink-0 mt-0.5"
                     />
                     <div className="flex flex-col">
                       <label
                         htmlFor="trust"
-                        className="text-[15px] font-bold text-slate-900 leading-none cursor-pointer"
+                        className="text-[15px] font-bold text-[#111111] leading-none cursor-pointer mb-2"
                       >
                         Trust this device for 30 days
                       </label>
-                      <p className="text-[13px] text-slate-500 mt-1.5">You won&apos;t be asked for a code again on this device</p>
+                      <p className="text-[13px] text-[#666666]">You won&apos;t be asked for a code again on this device</p>
                     </div>
                   </div>
 
                   <Button 
                     type="submit" 
-                    className="w-full h-[52px] bg-[#f97316] hover:bg-[#ea580c] text-white text-[16px] font-bold rounded-xl shadow-sm mt-6" 
+                    className="w-full h-[56px] bg-[#FD4F03] hover:bg-[#E94700] text-white text-[17px] font-semibold rounded-[12px] shadow-[0_4px_14px_rgba(253,79,3,0.3)] transition-all flex items-center justify-center" 
                     disabled={isProcessing}
                   >
-                    <ShieldCheck className="h-5 w-5 mr-2" strokeWidth={2.5} />
+                    <ShieldCheck className="h-[22px] w-[22px] mr-2" strokeWidth={2} />
                     {isProcessing ? "Verifying..." : "Verify & Continue"}
                   </Button>
                 </form>
               </div>
               
               {/* Footer info bar */}
-              <div className="bg-[#f8fafc] border-t border-slate-100 p-6 md:px-8 grid grid-cols-2 md:grid-cols-4 gap-6 rounded-b-xl">
+              <div className="bg-[#FDFDFD] border-t border-[#F0F0F0] p-6 sm:p-8 grid grid-cols-2 sm:grid-cols-4 gap-6 rounded-b-[32px]">
                 <div className="flex items-start gap-3">
-                  <Lock className="h-5 w-5 text-[#10b981] mt-0.5 shrink-0" strokeWidth={2} />
+                  <Lock className="h-5 w-5 text-[#22C55E] mt-0.5 shrink-0" strokeWidth={1.5} />
                   <div>
-                    <h4 className="text-[13px] font-bold text-slate-900">Secure & Private</h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">Your data is encrypted</p>
+                    <h4 className="text-[13px] font-bold text-[#111111]">Secure & Private</h4>
+                    <p className="text-[11px] text-[#777777] mt-1">Your data is encrypted</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <Clock className="h-5 w-5 text-[#10b981] mt-0.5 shrink-0" strokeWidth={2} />
+                  <Clock className="h-5 w-5 text-[#22C55E] mt-0.5 shrink-0" strokeWidth={1.5} />
                   <div>
-                    <h4 className="text-[13px] font-bold text-slate-900">24/7 Protection</h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">Always monitoring</p>
+                    <h4 className="text-[13px] font-bold text-[#111111]">24/7 Protection</h4>
+                    <p className="text-[11px] text-[#777777] mt-1">Always monitoring</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
-                  <ShieldCheck className="h-5 w-5 text-[#10b981] mt-0.5 shrink-0" strokeWidth={2} />
+                  <ShieldCheck className="h-5 w-5 text-[#22C55E] mt-0.5 shrink-0" strokeWidth={1.5} />
                   <div>
-                    <h4 className="text-[13px] font-bold text-slate-900">Trusted Platform</h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">Enterprise security</p>
+                    <h4 className="text-[13px] font-bold text-[#111111]">Trusted Platform</h4>
+                    <p className="text-[11px] text-[#777777] mt-1">Enterprise security</p>
                   </div>
                 </div>
-                <div className="flex flex-col md:items-end md:text-right">
-                  <h4 className="text-[13px] font-bold text-slate-900">Need help?</h4>
-                  <Link href="#" className="text-[12px] font-bold text-[#f97316] hover:underline mt-0.5">Contact support team</Link>
+                <div className="flex flex-col sm:items-end sm:text-right">
+                  <h4 className="text-[13px] font-bold text-[#111111]">Need help?</h4>
+                  <Link href="#" className="text-[12px] font-bold text-[#FD4F03] hover:underline mt-1">Contact support</Link>
                 </div>
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

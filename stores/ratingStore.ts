@@ -21,6 +21,7 @@ interface RatingState {
   kitchenOverall: number;
   kitchenTags: string[];
   kitchenThoughts: string;
+  mediaUrls: string[];
   deliveryRating: number;
   speedRating: number;
   deliveryTags: string[];
@@ -39,6 +40,7 @@ interface RatingState {
   setKitchenOverall: (n: number) => void;
   setKitchenTags: (tags: string[]) => void;
   setKitchenThoughts: (text: string) => void;
+  setMediaUrls: (urls: string[]) => void;
   setDeliveryRating: (n: number) => void;
   setSpeedRating: (n: number) => void;
   setDeliveryTags: (tags: string[]) => void;
@@ -64,6 +66,7 @@ export const selectKitchenRatings = (s: RatingState) => ({
   kitchenOverall: s.kitchenOverall,
   kitchenTags: s.kitchenTags,
   kitchenThoughts: s.kitchenThoughts,
+  mediaUrls: s.mediaUrls,
   hoveredTaste: s.hoveredTaste,
   hoveredPackaging: s.hoveredPackaging,
   hoveredPortion: s.hoveredPortion,
@@ -88,6 +91,7 @@ export const selectRatingActions = (s: RatingState) => ({
   setKitchenOverall: s.setKitchenOverall,
   setKitchenTags: s.setKitchenTags,
   setKitchenThoughts: s.setKitchenThoughts,
+  setMediaUrls: s.setMediaUrls,
   setDeliveryRating: s.setDeliveryRating,
   setSpeedRating: s.setSpeedRating,
   setDeliveryTags: s.setDeliveryTags,
@@ -116,6 +120,7 @@ export const ratingStore = create<RatingState>()((set) => ({
   kitchenOverall: 0,
   kitchenTags: [],
   kitchenThoughts: "",
+  mediaUrls: [],
   deliveryRating: 0,
   speedRating: 0,
   deliveryTags: [],
@@ -134,6 +139,7 @@ export const ratingStore = create<RatingState>()((set) => ({
   setKitchenOverall: (kitchenOverall) => set({ kitchenOverall }),
   setKitchenTags: (kitchenTags) => set({ kitchenTags }),
   setKitchenThoughts: (kitchenThoughts) => set({ kitchenThoughts }),
+  setMediaUrls: (mediaUrls) => set({ mediaUrls }),
   setDeliveryRating: (deliveryRating) => set({ deliveryRating }),
   setSpeedRating: (speedRating) => set({ speedRating }),
   setDeliveryTags: (deliveryTags) => set({ deliveryTags }),
@@ -154,6 +160,7 @@ export const ratingStore = create<RatingState>()((set) => ({
       kitchenOverall: 0,
       kitchenTags: [],
       kitchenThoughts: "",
+      mediaUrls: [],
       deliveryRating: 0,
       speedRating: 0,
       deliveryTags: [],

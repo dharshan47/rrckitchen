@@ -3,8 +3,8 @@
 import { useMemo, useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import {
-  Eye, Plus, Search, Filter, Download, Store, UtensilsCrossed, CheckCircle2, XCircle,
-  Loader2, RotateCcw,
+  Eye, Plus, Search, Filter, Download, XCircle,
+  Loader2, RotateCcw, Utensils, ClipboardList, ChefHat, CircleAlert, List, Grid2X2
 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
@@ -201,58 +201,61 @@ export function MenuPageClient() {
     {
       label: "Total Kitchens",
       value: stats ? formatCompact(stats.totalKitchens) : "0",
-      sub: `${stats ? formatCompact(stats.activeKitchens) : "0"} active`,
-      icon: Store,
-      iconBg: "bg-orange-50",
-      iconColor: "text-orange-500",
+      sub: `${stats ? formatCompact(stats.activeKitchens) : "0"} active kitchens`,
+      icon: Utensils,
+      iconBg: "bg-[#FFF7E8]",
+      iconColor: "text-[#F59E0B]",
     },
     {
       label: "Total Menu Items",
       value: stats ? formatCompact(stats.totalMenuItems) : "0",
       sub: "Across all kitchens",
-      icon: UtensilsCrossed,
-      iconBg: "bg-green-50",
-      iconColor: "text-green-600",
+      icon: ClipboardList,
+      iconBg: "bg-[#EAF7EF]",
+      iconColor: "text-[#008A3D]",
+      valueColor: "text-[#087A36]",
     },
     {
       label: "Active Items",
       value: stats ? formatCompact(stats.activeItems) : "0",
       sub: "Currently visible",
-      icon: CheckCircle2,
-      iconBg: "bg-blue-50",
-      iconColor: "text-blue-500",
+      icon: ChefHat,
+      iconBg: "bg-[#EFF6FF]",
+      iconColor: "text-[#2563EB]",
+      valueColor: "text-[#2563EB]",
     },
     {
       label: "Inactive Items",
       value: stats ? formatCompact(stats.inactiveItems) : "0",
       sub: "Not visible",
-      icon: XCircle,
-      iconBg: "bg-red-50",
-      iconColor: "text-red-500",
+      icon: CircleAlert,
+      iconBg: "bg-[#FFF1F2]",
+      iconColor: "text-[#DC2626]",
+      valueColor: "text-[#C81E3A]",
     },
   ]
 
   return (
-    <div className="p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto space-y-8 bg-slate-50/50 min-h-screen">
+    <div className="p-6 lg:p-8 xl:px-10 max-w-[1600px] mx-auto space-y-8 bg-[#FEFEFE] min-h-screen">
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Menu Detail Management</h1>
-          <p className="text-sm text-slate-500 mt-1">Manage and customize menu details for all kitchens</p>
+          <h1 className="text-[26px] font-bold text-[#111827] tracking-tight">Menu Detail Management</h1>
+          <p className="text-[15px] text-[#64748B] mt-1 font-normal">Manage and customize menu details for all kitchens</p>
         </div>
         <div className="flex items-center gap-3">
           <Link href="/kitchens">
-            <Button variant="outline" className="text-green-700 border-green-200 bg-green-50 hover:bg-green-100 font-semibold h-10 px-4 shadow-sm">
-              <Eye className="h-4 w-4 mr-2" />
+            <Button variant="outline" className="text-[#087A36] border-[#A7D9B9] bg-[#FFFFFF] hover:bg-[#F1FAF4] hover:border-[#008A3D] font-medium h-[42px] px-4 shadow-none rounded-[8px]">
+              <Eye className="h-[18px] w-[18px] mr-2" strokeWidth={1.8} />
               Preview Live Menu
             </Button>
           </Link>
           <Button
-            className="bg-[#ff4500] hover:bg-[#ff4500]/90 text-white font-semibold h-10 px-4 shadow-sm"
+            className="bg-[#FF4B16] hover:bg-[#E63F0D] text-[#FFFFFF] font-medium h-[42px] px-4 shadow-[0_2px_6px_rgba(255,75,22,0.12)] rounded-[8px]"
             onClick={() => setAddDialogOpen(true)}
           >
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-[18px] w-[18px] mr-2" strokeWidth={1.8} />
             Add New Menu Item
           </Button>
         </div>
@@ -262,17 +265,17 @@ export function MenuPageClient() {
       {isLoading ? (
         <StatsSkeleton />
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {statCards.map((card) => (
-            <Card key={card.label} className="shadow-sm border-slate-200">
-              <CardContent className="p-5 flex items-center gap-4">
-                <div className={`h-12 w-12 rounded-xl ${card.iconBg} ${card.iconColor} flex items-center justify-center shrink-0`}>
-                  <card.icon className="h-6 w-6" />
+            <Card key={card.label} className="shadow-[0_1px_3px_rgba(15,23,42,0.03)] border-[#E7EBEF] rounded-[10px] bg-[#FFFFFF]">
+              <CardContent className="p-6 flex items-center gap-5">
+                <div className={`h-[48px] w-[48px] rounded-[14px] ${card.iconBg} ${card.iconColor} flex items-center justify-center shrink-0`}>
+                  <card.icon className="h-6 w-6" strokeWidth={1.8} />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-slate-500">{card.label}</p>
-                  <h3 className="text-2xl font-bold text-slate-900 mt-0.5">{card.value}</h3>
-                  <p className="text-xs font-medium text-slate-400 mt-1">{card.sub}</p>
+                  <p className="text-[13px] font-medium text-[#374151]">{card.label}</p>
+                  <h3 className={`text-[26px] font-bold mt-0.5 ${card.valueColor || "text-[#111827]"}`}>{card.value}</h3>
+                  <p className="text-[12px] font-medium text-[#64748B] mt-1">{card.sub}</p>
                 </div>
               </CardContent>
             </Card>
@@ -281,51 +284,20 @@ export function MenuPageClient() {
       )}
 
       {/* Main Table Area */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
-        <div className="p-5 border-b border-slate-100 flex flex-col xl:flex-row xl:items-center justify-between gap-4">
+      <div className="bg-[#FFFFFF] rounded-[10px] border border-[#E5E9ED] shadow-[0_1px_4px_rgba(15,23,42,0.025)] overflow-hidden flex flex-col">
+        <div className="p-6 border-b border-[#EDF0F2] flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-5">
           <div>
-            <h2 className="text-lg font-bold text-slate-900">
+            <h2 className="text-[18px] font-bold text-[#111827]">
               Kitchens ({rows.length})
-              {searchTerm && <span className="ml-2 text-sm font-medium text-slate-400">filtered to {filteredRows.length}</span>}
+              {searchTerm && <span className="ml-2 text-[14px] font-medium text-[#64748B]">filtered to {filteredRows.length}</span>}
             </h2>
-            <p className="text-sm text-slate-500">Select a kitchen to manage its menu details</p>
+            <p className="text-[14px] text-[#64748B] mt-0.5">Select a kitchen to manage its menu details</p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder="Search kitchens..."
-                className="pl-9 h-10 border-slate-200 bg-slate-50"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="h-10 w-[130px] border-slate-200 text-slate-600 shadow-sm bg-white font-medium">
-                <Filter className="h-4 w-4 mr-1" />
-                <SelectValue placeholder="Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Status</SelectItem>
-                <SelectItem value="Active">Active</SelectItem>
-                <SelectItem value="Inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="h-10 w-[150px] border-slate-200 bg-white shadow-sm font-medium text-slate-700">
-                <SelectValue placeholder="Sort by" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="az">Sort by: A - Z</SelectItem>
-                <SelectItem value="za">Sort by: Z - A</SelectItem>
-                <SelectItem value="newest">Recently Updated</SelectItem>
-              </SelectContent>
-            </Select>
-            <div className="w-px h-6 bg-slate-200 mx-1 hidden sm:block" />
+          <div className="flex flex-wrap items-center gap-3.5">
             <Button
               variant="outline"
-              className="h-10 border-slate-200 text-green-700 shadow-sm bg-white font-medium hover:bg-green-50 hover:text-green-800"
+              className="h-[44px] border-[#A7D9B9] text-[#087A36] bg-[#FFFFFF] font-medium hover:bg-[#F1FAF4] hover:border-[#008A3D] rounded-[8px] px-4"
               onClick={() => {
                 if (filteredRows.length === 0) {
                   toast.error("No kitchens to export")
@@ -335,10 +307,56 @@ export function MenuPageClient() {
                 toast.success(`${filteredRows.length} kitchens exported`)
               }}
             >
-              <Download className="h-4 w-4 mr-2" />
+              <Download className="h-4 w-4 mr-2" strokeWidth={1.8} />
               Export
             </Button>
+            <div className="w-px h-8 bg-[#E5E9ED] mx-1 hidden sm:block" />
+            <div className="flex items-center gap-2 bg-[#F8FAFC] p-1 rounded-[10px] border border-[#DDE3E8]">
+              <Button variant="ghost" className="h-[36px] bg-[#FFFFFF] border border-[#8BC7A0] text-[#087A36] font-medium shadow-[0_1px_2px_rgba(15,23,42,0.04)] px-3 rounded-[8px] hover:bg-[#F1FAF4] hover:text-[#087A36]">
+                <List className="h-4 w-4 mr-2" strokeWidth={1.8} />
+                Table View
+              </Button>
+              <Button variant="ghost" className="h-[36px] bg-transparent text-[#334155] font-medium hover:bg-[#FFFFFF] hover:text-[#111827] px-3 rounded-[8px]">
+                <Grid2X2 className="h-4 w-4 mr-2" strokeWidth={1.8} />
+                Grid View
+              </Button>
+            </div>
           </div>
+        </div>
+
+        <div className="p-4 border-b border-[#EDF0F2] flex flex-col md:flex-row items-stretch md:items-center justify-end gap-3 bg-[#FFFFFF]">
+            <div className="relative w-full md:w-64">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-[#334155]" strokeWidth={1.8} />
+              <Input
+                placeholder="Search kitchens..."
+                className="pl-9 h-[44px] border-[#DDE3E8] bg-[#FFFFFF] text-[#374151] placeholder:text-[#64748B] rounded-[8px] focus-visible:ring-0 focus-visible:border-[#008A3D] focus-visible:shadow-[0_0_0_3px_rgba(0,138,61,0.08)]"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <div className="flex items-center gap-3">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="h-[44px] flex-1 md:w-[110px] border-[#DDE3E8] text-[#1F2937] bg-[#FFFFFF] font-medium rounded-[8px] focus:ring-0 focus:border-[#008A3D]">
+                  <Filter className="h-[18px] w-[18px] text-[#334155] mr-1" strokeWidth={1.8} />
+                  <SelectValue placeholder="Filter" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="All">All Status</SelectItem>
+                  <SelectItem value="Active">Active</SelectItem>
+                  <SelectItem value="Inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={sortBy} onValueChange={setSortBy}>
+                <SelectTrigger className="h-[44px] flex-1 md:w-[160px] border-[#DDE3E8] bg-[#FFFFFF] font-medium text-[#1F2937] rounded-[8px] focus:ring-0 focus:border-[#008A3D]">
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="az">Sort by: A - Z</SelectItem>
+                  <SelectItem value="za">Sort by: Z - A</SelectItem>
+                  <SelectItem value="newest">Recently Updated</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
         </div>
 
         {isError ? (
@@ -414,7 +432,7 @@ export function MenuPageClient() {
             <Button
               onClick={handleAddItem}
               disabled={createMutation.isPending}
-              className="bg-[#ff4500] hover:bg-[#ff4500]/90 text-white gap-2"
+              className="bg-[#FF4B16] hover:bg-[#E63F0D] text-[#FFFFFF] gap-2 rounded-[8px]"
             >
               {createMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
               Create & Edit

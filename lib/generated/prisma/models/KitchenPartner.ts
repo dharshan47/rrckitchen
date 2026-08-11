@@ -30,12 +30,16 @@ export type KitchenPartnerAvgAggregateOutputType = {
   avgRating: runtime.Decimal | null
   totalReviews: number | null
   estimatedPrepTime: number | null
+  minOrder: number | null
+  deliveryRadiusKm: number | null
 }
 
 export type KitchenPartnerSumAggregateOutputType = {
   avgRating: runtime.Decimal | null
   totalReviews: number | null
   estimatedPrepTime: number | null
+  minOrder: number | null
+  deliveryRadiusKm: number | null
 }
 
 export type KitchenPartnerMinAggregateOutputType = {
@@ -51,6 +55,8 @@ export type KitchenPartnerMinAggregateOutputType = {
   totalReviews: number | null
   createdAt: Date | null
   estimatedPrepTime: number | null
+  minOrder: number | null
+  deliveryRadiusKm: number | null
   updatedAt: Date | null
   deletedAt: Date | null
 }
@@ -68,6 +74,8 @@ export type KitchenPartnerMaxAggregateOutputType = {
   totalReviews: number | null
   createdAt: Date | null
   estimatedPrepTime: number | null
+  minOrder: number | null
+  deliveryRadiusKm: number | null
   updatedAt: Date | null
   deletedAt: Date | null
 }
@@ -86,6 +94,8 @@ export type KitchenPartnerCountAggregateOutputType = {
   operatingHours: number
   createdAt: number
   estimatedPrepTime: number
+  minOrder: number
+  deliveryRadiusKm: number
   updatedAt: number
   deletedAt: number
   _all: number
@@ -96,12 +106,16 @@ export type KitchenPartnerAvgAggregateInputType = {
   avgRating?: true
   totalReviews?: true
   estimatedPrepTime?: true
+  minOrder?: true
+  deliveryRadiusKm?: true
 }
 
 export type KitchenPartnerSumAggregateInputType = {
   avgRating?: true
   totalReviews?: true
   estimatedPrepTime?: true
+  minOrder?: true
+  deliveryRadiusKm?: true
 }
 
 export type KitchenPartnerMinAggregateInputType = {
@@ -117,6 +131,8 @@ export type KitchenPartnerMinAggregateInputType = {
   totalReviews?: true
   createdAt?: true
   estimatedPrepTime?: true
+  minOrder?: true
+  deliveryRadiusKm?: true
   updatedAt?: true
   deletedAt?: true
 }
@@ -134,6 +150,8 @@ export type KitchenPartnerMaxAggregateInputType = {
   totalReviews?: true
   createdAt?: true
   estimatedPrepTime?: true
+  minOrder?: true
+  deliveryRadiusKm?: true
   updatedAt?: true
   deletedAt?: true
 }
@@ -152,6 +170,8 @@ export type KitchenPartnerCountAggregateInputType = {
   operatingHours?: true
   createdAt?: true
   estimatedPrepTime?: true
+  minOrder?: true
+  deliveryRadiusKm?: true
   updatedAt?: true
   deletedAt?: true
   _all?: true
@@ -257,6 +277,8 @@ export type KitchenPartnerGroupByOutputType = {
   operatingHours: runtime.JsonValue | null
   createdAt: Date
   estimatedPrepTime: number | null
+  minOrder: number | null
+  deliveryRadiusKm: number | null
   updatedAt: Date
   deletedAt: Date | null
   _count: KitchenPartnerCountAggregateOutputType | null
@@ -298,6 +320,8 @@ export type KitchenPartnerWhereInput = {
   operatingHours?: Prisma.JsonNullableFilter<"KitchenPartner">
   createdAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   estimatedPrepTime?: Prisma.IntNullableFilter<"KitchenPartner"> | number | null
+  minOrder?: Prisma.IntNullableFilter<"KitchenPartner"> | number | null
+  deliveryRadiusKm?: Prisma.FloatNullableFilter<"KitchenPartner"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"KitchenPartner"> | Date | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -332,6 +356,8 @@ export type KitchenPartnerOrderByWithRelationInput = {
   operatingHours?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   estimatedPrepTime?: Prisma.SortOrderInput | Prisma.SortOrder
+  minOrder?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryRadiusKm?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
@@ -369,6 +395,8 @@ export type KitchenPartnerWhereUniqueInput = Prisma.AtLeast<{
   operatingHours?: Prisma.JsonNullableFilter<"KitchenPartner">
   createdAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   estimatedPrepTime?: Prisma.IntNullableFilter<"KitchenPartner"> | number | null
+  minOrder?: Prisma.IntNullableFilter<"KitchenPartner"> | number | null
+  deliveryRadiusKm?: Prisma.FloatNullableFilter<"KitchenPartner"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"KitchenPartner"> | Date | string | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
@@ -403,6 +431,8 @@ export type KitchenPartnerOrderByWithAggregationInput = {
   operatingHours?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   estimatedPrepTime?: Prisma.SortOrderInput | Prisma.SortOrder
+  minOrder?: Prisma.SortOrderInput | Prisma.SortOrder
+  deliveryRadiusKm?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.KitchenPartnerCountOrderByAggregateInput
@@ -429,6 +459,8 @@ export type KitchenPartnerScalarWhereWithAggregatesInput = {
   operatingHours?: Prisma.JsonNullableWithAggregatesFilter<"KitchenPartner">
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"KitchenPartner"> | Date | string
   estimatedPrepTime?: Prisma.IntNullableWithAggregatesFilter<"KitchenPartner"> | number | null
+  minOrder?: Prisma.IntNullableWithAggregatesFilter<"KitchenPartner"> | number | null
+  deliveryRadiusKm?: Prisma.FloatNullableWithAggregatesFilter<"KitchenPartner"> | number | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"KitchenPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"KitchenPartner"> | Date | string | null
 }
@@ -445,6 +477,8 @@ export type KitchenPartnerCreateInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -479,6 +513,8 @@ export type KitchenPartnerUncheckedCreateInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -509,6 +545,8 @@ export type KitchenPartnerUpdateInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -543,6 +581,8 @@ export type KitchenPartnerUncheckedUpdateInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -575,6 +615,8 @@ export type KitchenPartnerCreateManyInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
 }
@@ -591,6 +633,8 @@ export type KitchenPartnerUpdateManyMutationInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -609,6 +653,8 @@ export type KitchenPartnerUncheckedUpdateManyInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -632,6 +678,8 @@ export type KitchenPartnerCountOrderByAggregateInput = {
   operatingHours?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   estimatedPrepTime?: Prisma.SortOrder
+  minOrder?: Prisma.SortOrder
+  deliveryRadiusKm?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
 }
@@ -640,6 +688,8 @@ export type KitchenPartnerAvgOrderByAggregateInput = {
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
   estimatedPrepTime?: Prisma.SortOrder
+  minOrder?: Prisma.SortOrder
+  deliveryRadiusKm?: Prisma.SortOrder
 }
 
 export type KitchenPartnerMaxOrderByAggregateInput = {
@@ -655,6 +705,8 @@ export type KitchenPartnerMaxOrderByAggregateInput = {
   totalReviews?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   estimatedPrepTime?: Prisma.SortOrder
+  minOrder?: Prisma.SortOrder
+  deliveryRadiusKm?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
 }
@@ -672,6 +724,8 @@ export type KitchenPartnerMinOrderByAggregateInput = {
   totalReviews?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   estimatedPrepTime?: Prisma.SortOrder
+  minOrder?: Prisma.SortOrder
+  deliveryRadiusKm?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   deletedAt?: Prisma.SortOrder
 }
@@ -680,6 +734,8 @@ export type KitchenPartnerSumOrderByAggregateInput = {
   avgRating?: Prisma.SortOrder
   totalReviews?: Prisma.SortOrder
   estimatedPrepTime?: Prisma.SortOrder
+  minOrder?: Prisma.SortOrder
+  deliveryRadiusKm?: Prisma.SortOrder
 }
 
 export type KitchenPartnerScalarRelationFilter = {
@@ -1001,6 +1057,8 @@ export type KitchenPartnerCreateWithoutUserInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasCreateNestedOneWithoutKitchenPartnerInput
@@ -1033,6 +1091,8 @@ export type KitchenPartnerUncheckedCreateWithoutUserInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1079,6 +1139,8 @@ export type KitchenPartnerUpdateWithoutUserInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUpdateOneWithoutKitchenPartnerNestedInput
@@ -1111,6 +1173,8 @@ export type KitchenPartnerUncheckedUpdateWithoutUserInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1141,6 +1205,8 @@ export type KitchenPartnerCreateWithoutKitchenKycInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1174,6 +1240,8 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenKycInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1219,6 +1287,8 @@ export type KitchenPartnerUpdateWithoutKitchenKycInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1252,6 +1322,8 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenKycInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1281,6 +1353,8 @@ export type KitchenPartnerCreateWithoutKitchenAliasInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1314,6 +1388,8 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAliasInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenKyc?: Prisma.KitchenPartnerKycUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1359,6 +1435,8 @@ export type KitchenPartnerUpdateWithoutKitchenAliasInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1392,6 +1470,8 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAliasInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenKyc?: Prisma.KitchenPartnerKycUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1421,6 +1501,8 @@ export type KitchenPartnerCreateWithoutKitchenCategoriesInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1454,6 +1536,8 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenCategoriesInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1499,6 +1583,8 @@ export type KitchenPartnerUpdateWithoutKitchenCategoriesInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1532,6 +1618,8 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenCategoriesInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1561,6 +1649,8 @@ export type KitchenPartnerCreateWithoutKitchenAvailabilityInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1594,6 +1684,8 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAvailabilityInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1639,6 +1731,8 @@ export type KitchenPartnerUpdateWithoutKitchenAvailabilityInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1672,6 +1766,8 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAvailabilityInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1701,6 +1797,8 @@ export type KitchenPartnerCreateWithoutMenusInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1734,6 +1832,8 @@ export type KitchenPartnerUncheckedCreateWithoutMenusInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1779,6 +1879,8 @@ export type KitchenPartnerUpdateWithoutMenusInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1812,6 +1914,8 @@ export type KitchenPartnerUncheckedUpdateWithoutMenusInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1841,6 +1945,8 @@ export type KitchenPartnerCreateWithoutDeliveryPartnerAssignmentsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -1874,6 +1980,8 @@ export type KitchenPartnerUncheckedCreateWithoutDeliveryPartnerAssignmentsInput 
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -1919,6 +2027,8 @@ export type KitchenPartnerUpdateWithoutDeliveryPartnerAssignmentsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -1952,6 +2062,8 @@ export type KitchenPartnerUncheckedUpdateWithoutDeliveryPartnerAssignmentsInput 
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -1981,6 +2093,8 @@ export type KitchenPartnerCreateWithoutServiceZoneInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2013,6 +2127,8 @@ export type KitchenPartnerUncheckedCreateWithoutServiceZoneInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -2074,6 +2190,8 @@ export type KitchenPartnerScalarWhereInput = {
   operatingHours?: Prisma.JsonNullableFilter<"KitchenPartner">
   createdAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   estimatedPrepTime?: Prisma.IntNullableFilter<"KitchenPartner"> | number | null
+  minOrder?: Prisma.IntNullableFilter<"KitchenPartner"> | number | null
+  deliveryRadiusKm?: Prisma.FloatNullableFilter<"KitchenPartner"> | number | null
   updatedAt?: Prisma.DateTimeFilter<"KitchenPartner"> | Date | string
   deletedAt?: Prisma.DateTimeNullableFilter<"KitchenPartner"> | Date | string | null
 }
@@ -2090,6 +2208,8 @@ export type KitchenPartnerCreateWithoutOrderItemsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2123,6 +2243,8 @@ export type KitchenPartnerUncheckedCreateWithoutOrderItemsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -2168,6 +2290,8 @@ export type KitchenPartnerUpdateWithoutOrderItemsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -2201,6 +2325,8 @@ export type KitchenPartnerUncheckedUpdateWithoutOrderItemsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -2230,6 +2356,8 @@ export type KitchenPartnerCreateWithoutReviewsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2263,6 +2391,8 @@ export type KitchenPartnerUncheckedCreateWithoutReviewsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -2308,6 +2438,8 @@ export type KitchenPartnerUpdateWithoutReviewsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -2341,6 +2473,8 @@ export type KitchenPartnerUncheckedUpdateWithoutReviewsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -2370,6 +2504,8 @@ export type KitchenPartnerCreateWithoutRrcKitchenReviewInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2403,6 +2539,8 @@ export type KitchenPartnerUncheckedCreateWithoutRrcKitchenReviewInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -2448,6 +2586,8 @@ export type KitchenPartnerUpdateWithoutRrcKitchenReviewInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -2481,6 +2621,8 @@ export type KitchenPartnerUncheckedUpdateWithoutRrcKitchenReviewInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -2510,6 +2652,8 @@ export type KitchenPartnerCreateWithoutCouponsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2543,6 +2687,8 @@ export type KitchenPartnerUncheckedCreateWithoutCouponsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -2588,6 +2734,8 @@ export type KitchenPartnerUpdateWithoutCouponsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -2621,6 +2769,8 @@ export type KitchenPartnerUncheckedUpdateWithoutCouponsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -2650,6 +2800,8 @@ export type KitchenPartnerCreateWithoutKitchenPayoutsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2683,6 +2835,8 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenPayoutsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -2728,6 +2882,8 @@ export type KitchenPartnerUpdateWithoutKitchenPayoutsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -2761,6 +2917,8 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenPayoutsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -2790,6 +2948,8 @@ export type KitchenPartnerCreateWithoutKitchenAddressInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2823,6 +2983,8 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAddressInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -2868,6 +3030,8 @@ export type KitchenPartnerUpdateWithoutKitchenAddressInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -2901,6 +3065,8 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAddressInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -2930,6 +3096,8 @@ export type KitchenPartnerCreateWithoutKitchenWishlistsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -2963,6 +3131,8 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenWishlistsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -3008,6 +3178,8 @@ export type KitchenPartnerUpdateWithoutKitchenWishlistsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -3041,6 +3213,8 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenWishlistsInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -3070,6 +3244,8 @@ export type KitchenPartnerCreateWithoutCravingsTriggerRulesInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
@@ -3103,6 +3279,8 @@ export type KitchenPartnerUncheckedCreateWithoutCravingsTriggerRulesInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
@@ -3148,6 +3326,8 @@ export type KitchenPartnerUpdateWithoutCravingsTriggerRulesInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -3181,6 +3361,8 @@ export type KitchenPartnerUncheckedUpdateWithoutCravingsTriggerRulesInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -3211,6 +3393,8 @@ export type KitchenPartnerCreateManyServiceZoneInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Date | string
   estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
   updatedAt?: Date | string
   deletedAt?: Date | string | null
 }
@@ -3227,6 +3411,8 @@ export type KitchenPartnerUpdateWithoutServiceZoneInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
@@ -3259,6 +3445,8 @@ export type KitchenPartnerUncheckedUpdateWithoutServiceZoneInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
@@ -3290,6 +3478,8 @@ export type KitchenPartnerUncheckedUpdateManyWithoutServiceZoneInput = {
   operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
@@ -3420,6 +3610,8 @@ export type KitchenPartnerSelect<ExtArgs extends runtime.Types.Extensions.Intern
   operatingHours?: boolean
   createdAt?: boolean
   estimatedPrepTime?: boolean
+  minOrder?: boolean
+  deliveryRadiusKm?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -3455,6 +3647,8 @@ export type KitchenPartnerSelectCreateManyAndReturn<ExtArgs extends runtime.Type
   operatingHours?: boolean
   createdAt?: boolean
   estimatedPrepTime?: boolean
+  minOrder?: boolean
+  deliveryRadiusKm?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -3475,6 +3669,8 @@ export type KitchenPartnerSelectUpdateManyAndReturn<ExtArgs extends runtime.Type
   operatingHours?: boolean
   createdAt?: boolean
   estimatedPrepTime?: boolean
+  minOrder?: boolean
+  deliveryRadiusKm?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
@@ -3495,11 +3691,13 @@ export type KitchenPartnerSelectScalar = {
   operatingHours?: boolean
   createdAt?: boolean
   estimatedPrepTime?: boolean
+  minOrder?: boolean
+  deliveryRadiusKm?: boolean
   updatedAt?: boolean
   deletedAt?: boolean
 }
 
-export type KitchenPartnerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicCode" | "slug" | "userId" | "status" | "approvedAt" | "rejectedReason" | "serviceZoneId" | "avgRating" | "totalReviews" | "operatingHours" | "createdAt" | "estimatedPrepTime" | "updatedAt" | "deletedAt", ExtArgs["result"]["kitchenPartner"]>
+export type KitchenPartnerOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "publicCode" | "slug" | "userId" | "status" | "approvedAt" | "rejectedReason" | "serviceZoneId" | "avgRating" | "totalReviews" | "operatingHours" | "createdAt" | "estimatedPrepTime" | "minOrder" | "deliveryRadiusKm" | "updatedAt" | "deletedAt", ExtArgs["result"]["kitchenPartner"]>
 export type KitchenPartnerInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   kitchenAlias?: boolean | Prisma.KitchenPartner$kitchenAliasArgs<ExtArgs>
@@ -3562,6 +3760,8 @@ export type $KitchenPartnerPayload<ExtArgs extends runtime.Types.Extensions.Inte
     operatingHours: runtime.JsonValue | null
     createdAt: Date
     estimatedPrepTime: number | null
+    minOrder: number | null
+    deliveryRadiusKm: number | null
     updatedAt: Date
     deletedAt: Date | null
   }, ExtArgs["result"]["kitchenPartner"]>
@@ -4016,6 +4216,8 @@ export interface KitchenPartnerFieldRefs {
   readonly operatingHours: Prisma.FieldRef<"KitchenPartner", 'Json'>
   readonly createdAt: Prisma.FieldRef<"KitchenPartner", 'DateTime'>
   readonly estimatedPrepTime: Prisma.FieldRef<"KitchenPartner", 'Int'>
+  readonly minOrder: Prisma.FieldRef<"KitchenPartner", 'Int'>
+  readonly deliveryRadiusKm: Prisma.FieldRef<"KitchenPartner", 'Float'>
   readonly updatedAt: Prisma.FieldRef<"KitchenPartner", 'DateTime'>
   readonly deletedAt: Prisma.FieldRef<"KitchenPartner", 'DateTime'>
 }

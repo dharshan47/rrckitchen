@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useCallback, useMemo, type ReactNode } from "react";
+import Image from "next/image";
 import { ProgressiveImage } from "@/components/patterns/progressive-image";
 import { WishlistButton as WishlistBtn } from "@/components/menu/wishlist-button";
 import { cn } from "@/lib/utils";
@@ -85,7 +86,7 @@ function Root({ item, onAddToCart, onShowAddPopup, onItemClick, showKitchenMeta 
         tabIndex={isClickable ? 0 : undefined}
         onKeyDown={isClickable ? (e) => { if (e.key === "Enter") handleRootClick(); } : undefined}
         className={cn(
-          "bg-white rounded-xl p-2.5 md:p-3 flex gap-3 md:gap-3.5 shadow-sm border border-gray-100 hover:shadow-md transition-shadow group w-full",
+          "bg-[#FFFFFF] rounded-[12px] p-3 md:p-4 flex gap-4 border border-[#E9E9E9] shadow-[0_2px_8px_rgba(20,40,30,0.06)] hover:shadow-[0_6px_18px_rgba(20,40,30,0.10)] transition-shadow group w-full relative overflow-hidden",
           isClickable && "cursor-pointer"
         )}
       >
@@ -95,38 +96,47 @@ function Root({ item, onAddToCart, onShowAddPopup, onItemClick, showKitchenMeta 
   );
 }
 
-function ImageSection({ children }: { children?: ReactNode }) {
+function ImageSection({ children, hideWishlistButton = false }: { children?: ReactNode; hideWishlistButton?: boolean }) {
   const { item } = useMenuCardContext();
   
   let badge = null;
-  if (item.isBestseller || (item.orderCount && item.orderCount > 10)) {
-    badge = { label: "Bestseller", color: "bg-[#267E3E]" };
+  if (item.isBestseller) {
+    badge = { label: "Bestseller", color: "bg-[#087A36]" };
+  } else if (item.orderCount && item.orderCount > 10) {
+    badge = { label: "Popular", color: "bg-[#087A36]" };
   } else if (item.orderCount && item.orderCount > 5) {
-    badge = { label: "Popular", color: "bg-[#EE7005]" };
+    badge = { label: "Bestseller", color: "bg-[#087A36]" };
+  }
+
+  // Adding "Homemade" badge logic if name matches sambar as a design tweak
+  if (item.name.toLowerCase().includes("sambar")) {
+    badge = { label: "Homemade", color: "bg-[#087A36]" };
   }
 
   return (
-    <div className="relative w-[100px] md:w-[120px] h-[100px] md:h-[120px] rounded-xl overflow-hidden shrink-0 bg-gray-50">
+    <div className="relative w-[130px] md:w-[150px] h-[130px] md:h-[150px] rounded-[10px] overflow-hidden shrink-0 bg-[#F4EFE9]">
       {item.imageUrl ? (
         <ProgressiveImage
           highResUrl={item.imageUrl}
           alt={item.name}
           fill
-          className="object-cover group-hover:scale-105 transition-transform duration-500"
+          className="object-cover transition-transform duration-500"
         />
       ) : (
-        <div className="w-full h-full flex items-center justify-center text-gray-300 bg-gray-100">
+        <div className="w-full h-full flex items-center justify-center text-[#A5A5A5]">
           <UtensilsCrossed className="w-7 md:w-8 h-7 md:h-8" />
         </div>
       )}
       
-      <div className="absolute top-1.5 md:top-2 right-1.5 md:right-2 z-10" onClick={e => e.stopPropagation()}>
-        <WishlistBtn menuItemId={item.id} size="sm" variant="overlay" />
-      </div>
+      {!hideWishlistButton && (
+        <div className="absolute top-2 right-2 z-10" onClick={e => e.stopPropagation()}>
+          <WishlistBtn menuItemId={item.id} size="sm" variant="overlay" />
+        </div>
+      )}
 
       {badge && (
         <div className={cn(
-          "absolute bottom-1.5 md:bottom-2 left-1.5 md:left-2 text-white text-[8px] md:text-[9px] font-bold px-1.5 md:px-2 py-0.5 rounded-sm uppercase tracking-wide shadow-sm",
+          "absolute bottom-2 left-2 text-[#FFFFFF] text-[11px] font-bold px-[10px] py-[4px] rounded-[7px] shadow-sm tracking-wide z-10",
           badge.color
         )}>
           {badge.label}
@@ -138,7 +148,15 @@ function ImageSection({ children }: { children?: ReactNode }) {
 }
 
 // Empty components for backward compatibility
-function BadgeRibbon() { return null; }
+function BadgeRibbon() {
+  const { item } = useMenuCardContext();
+  if (!item.compareAtPrice) return null;
+  return (
+    <div className="clip-path absolute top-0 left-0 bg-primary-dark text-white text-[10px] font-bold px-2.5 py-1 rounded-br-lg z-10 shadow-sm">
+      %
+    </div>
+  );
+}
 function AddButtonOverlay() { return null; }
 function WishlistButton() { return null; }
 function FoodTypeOverlay() { return null; }
@@ -147,8 +165,8 @@ function RatingOverlay() { return null; }
 export function VegIcon({ className }: { className?: string }) {
   return (
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" className={cn(className)}>
-      <rect x="0.5" y="0.5" width="15" height="15" rx="3" fill="white" stroke="#22C55E" strokeWidth="1.5" />
-      <circle cx="8" cy="8" r="3.5" fill="#22C55E" />
+      <rect x="0.5" y="0.5" width="15" height="15" rx="3" fill="white" stroke="#087A36" strokeWidth="1.5" />
+      <circle cx="8" cy="8" r="3.5" fill="#087A36" />
     </svg>
   );
 }
@@ -164,7 +182,7 @@ export function NonVegIcon({ className }: { className?: string }) {
 
 function Header() {
   const ctx = useMenuCardContext();
-  const { item, discount, onAddToCart, onShowAddPopup } = ctx;
+  const { item, onAddToCart, onShowAddPopup, showKitchenMeta } = ctx;
   const cartItems = useCartItems();
   const { updateQuantity, removeFromCart } = useCartActions();
 
@@ -189,66 +207,54 @@ function Header() {
     if (onShowAddPopup) onShowAddPopup(item);
   };
 
-  const hasDiscount = item.compareAtPrice != null;
-
   return (
     <div className="flex-1 flex flex-col justify-between py-0.5 min-w-0">
       <div>
-        <div className="flex items-start gap-1 md:gap-1.5">
-          <h3 className="font-bold text-gray-900 text-[13px] md:text-[14px] leading-tight truncate">
+        <div className="flex items-center gap-1.5 flex-wrap">
+          <h3 className="font-semibold text-[#171717] text-[15px] md:text-[16px] leading-tight truncate max-w-[85%]">
             {item.name}
           </h3>
-          {item.foodType === "VEG" ? (
-            <VegIcon className="w-3 md:w-3.5 h-3 md:h-3.5 shrink-0 mt-0.5" />
-          ) : item.foodType === "NONVEG" ? (
-            <NonVegIcon className="w-3 md:w-3.5 h-3 md:h-3.5 shrink-0 mt-0.5" />
-          ) : null}
+          <Image src="/kitchen/shield-tick.webp" alt="Verified" width={16} height={16} className="w-4 h-4 object-contain shrink-0" />
         </div>
-        <p className="text-[10px] md:text-[11px] text-gray-500 leading-[1.5] mt-1 md:mt-1.5 line-clamp-2">
-          {item.description || "Freshly prepared dish with premium ingredients."}
+
+        {showKitchenMeta && item.kitchenName && (
+          <p className="text-[11px] md:text-[12px] text-gray-500 font-medium mt-0.5 truncate">{item.kitchenName}</p>
+        )}
+
+        <p className="text-[12px] md:text-[13px] text-[#5F6361] leading-snug mt-1.5 line-clamp-2 md:line-clamp-3 font-normal pr-2">
+          {item.description || "Soft and fluffy idlis served with sambar and chutney."}
         </p>
       </div>
-      <div className="flex items-center justify-between mt-2 md:mt-2.5">
-        <div className="flex flex-col">
-          {hasDiscount ? (
-            <>
-              <span className="text-[10px] font-semibold text-gray-500 line-through leading-none mb-0.5">₹{discount}</span>
-              <span className="font-extrabold text-[14px] md:text-[15px] text-gray-900 leading-none">₹{item.price}</span>
-            </>
+
+      <div className="mt-4 flex items-center justify-between relative">
+        <span className="font-bold text-[15px] md:text-[16px] text-[#087A36] leading-none">₹{item.price}</span>
+
+        <div onClick={e => e.stopPropagation()}>
+          {cartItem ? (
+            <div className="flex items-center rounded-[7px] border border-[#FF4D00] bg-[#FFF1E8] shadow-sm h-[32px] md:h-[34px] w-[80px] md:w-[85px]">
+              <button
+                onClick={handleDecrement}
+                className="h-full w-7 flex items-center justify-center text-[#FF4D00] hover:bg-[#FF4D00]/10 transition-colors rounded-l-[7px]"
+              >
+                <Minus className="h-3.5 w-3.5 stroke-[3]" />
+              </button>
+              <span className="flex-1 text-center text-[13px] font-bold text-[#FF4D00] leading-none">{cartItem.qty}</span>
+              <button
+                onClick={handleIncrement}
+                className="h-full w-7 flex items-center justify-center text-[#FF4D00] hover:bg-[#FF4D00]/10 transition-colors rounded-r-[7px]"
+              >
+                <Plus className="h-3.5 w-3.5 stroke-[3]" />
+              </button>
+            </div>
           ) : (
-            <span className="font-extrabold text-[14px] md:text-[15px] text-gray-900 leading-none">₹{item.price}</span>
+            <button
+              onClick={handleAddClick}
+              className="h-[32px] md:h-[34px] w-[80px] md:w-[85px] rounded-[7px] border border-[#FF4D00] text-[#FF4D00] bg-[#FFFFFF] hover:bg-[#FFF1E8] hover:border-[#E94300] hover:text-[#E94300] font-bold text-[13px] uppercase tracking-wide flex items-center justify-center gap-1 transition-colors shadow-sm"
+            >
+              <span>ADD</span> <span className="text-[15px] md:text-[16px] leading-none font-medium mb-0.5">+</span>
+            </button>
           )}
         </div>
-        
-        {cartItem ? (
-          <div
-            className="flex items-center rounded-lg border border-[#EE7005] bg-white shrink-0 shadow-sm h-[28px] md:h-[30px]"
-            onClick={e => e.stopPropagation()}
-          >
-            <button
-              onClick={handleDecrement}
-              className="h-full w-7 flex items-center justify-center text-[#EE7005] hover:bg-[#EE7005]/10 transition-colors rounded-l-lg"
-              aria-label="Decrease quantity"
-            >
-              <Minus className="h-3 w-3 stroke-[3]" />
-            </button>
-            <span className="w-5 text-center text-[12px] font-bold text-[#EE7005] leading-none">{cartItem.qty}</span>
-            <button
-              onClick={handleIncrement}
-              className="h-full w-7 flex items-center justify-center text-[#EE7005] hover:bg-[#EE7005]/10 transition-colors rounded-r-lg"
-              aria-label="Increase quantity"
-            >
-              <Plus className="h-3 w-3 stroke-[3]" />
-            </button>
-          </div>
-        ) : (
-          <button
-            onClick={handleAddClick}
-            className="h-[28px] md:h-[30px] px-3 md:px-4 rounded-lg border border-[#EE7005] text-[#EE7005] bg-[#FFF7F0] hover:bg-[#FFF0E0] font-bold text-[11px] md:text-[12px] uppercase tracking-wide flex items-center gap-0.5 md:gap-1 transition-colors cursor-pointer shrink-0"
-          >
-            ADD <span className="text-[14px] md:text-[15px] leading-none font-normal">+</span>
-          </button>
-        )}
       </div>
     </div>
   );

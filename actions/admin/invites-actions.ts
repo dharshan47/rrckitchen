@@ -137,6 +137,19 @@ export async function getActiveAdmins() {
     for (const u of invitedByUsers) invitedByName.set(u.id, u.name ?? u.email ?? "")
   }
 
+  const adminUserIds = admins.map((a) => a.userId)
+  const lastSessionMap = new Map<string, string>()
+  if (adminUserIds.length > 0) {
+    const lastSessions = await prisma.session.findMany({
+      where: { userId: { in: adminUserIds } },
+      orderBy: { createdAt: "desc" },
+      select: { userId: true, createdAt: true },
+    })
+    for (const s of lastSessions) {
+      if (!lastSessionMap.has(s.userId)) lastSessionMap.set(s.userId, s.createdAt.toISOString())
+    }
+  }
+
   return admins.map((a) => ({
     id: a.id,
     userId: a.userId,
@@ -146,7 +159,91 @@ export async function getActiveAdmins() {
     permissions: a.permissions,
     invitedBy: a.invitedByUserId ? (invitedByName.get(a.invitedByUserId) ?? null) : null,
     joinedOn: a.createdAt.toISOString(),
-    lastActive: null,
+    lastActive: lastSessionMap.get(a.userId) ?? null,
     status: a.isActive ? "ACTIVE" : "INACTIVE",
   }))
+}
+
+/** Revoke a pending invite. */
+export async function revokeAdminInvite(inviteId: string) {
+  try {
+    const { session } = await requirePermission("MANAGE_ADMINS")
+    const invite = await prisma.adminInvite.findUnique({ where: { id: inviteId } })
+    if (!invite) return { ok: false as const, error: "Invite not found" }
+    if (invite.consumedAt) return { ok: false as const, error: "Invite already used" }
+    if (invite.revokedAt) return { ok: false as const, error: "Invite already revoked" }
+
+    await prisma.adminInvite.update({ where: { id: inviteId }, data: { revokedAt: new Date() } })
+    await logAdminAction({
+      actorUserId: session.user.id,
+      action: "REVOKE_ADMIN_INVITE",
+      targetType: "AdminInvite",
+      targetId: inviteId,
+    })
+    return { ok: true as const }
+  } catch (e) {
+    return { ok: false as const, error: e instanceof Error ? e.message : "Failed to revoke invite" }
+  }
+}
+
+/** Permanently delete an invite (revoked/expired cleanup). */
+export async function deleteAdminInvite(inviteId: string) {
+  try {
+    const { session } = await requirePermission("MANAGE_ADMINS")
+    const invite = await prisma.adminInvite.findUnique({ where: { id: inviteId } })
+    if (!invite) return { ok: false as const, error: "Invite not found" }
+    if (invite.consumedAt) return { ok: false as const, error: "Invite already used" }
+
+    await prisma.adminInvite.delete({ where: { id: inviteId } })
+    await logAdminAction({
+      actorUserId: session.user.id,
+      action: "DELETE_ADMIN_INVITE",
+      targetType: "AdminInvite",
+      targetId: inviteId,
+    })
+    return { ok: true as const }
+  } catch (e) {
+    return { ok: false as const, error: e instanceof Error ? e.message : "Failed to delete invite" }
+  }
+}
+
+/** Deactivate an admin profile (removes access). */
+export async function deactivateAdmin(profileId: string) {
+  try {
+    const { session } = await requirePermission("MANAGE_ADMINS")
+    const profile = await prisma.adminProfile.findUnique({ where: { id: profileId } })
+    if (!profile) return { ok: false as const, error: "Admin not found" }
+    if (profile.userId === session.user.id) return { ok: false as const, error: "You cannot deactivate your own account" }
+
+    await prisma.adminProfile.update({ where: { id: profileId }, data: { isActive: false } })
+    await logAdminAction({
+      actorUserId: session.user.id,
+      action: "DEACTIVATE_ADMIN",
+      targetType: "AdminProfile",
+      targetId: profileId,
+    })
+    return { ok: true as const }
+  } catch (e) {
+    return { ok: false as const, error: e instanceof Error ? e.message : "Failed to deactivate admin" }
+  }
+}
+
+/** Reactivate a deactivated admin profile. */
+export async function reactivateAdmin(profileId: string) {
+  try {
+    const { session } = await requirePermission("MANAGE_ADMINS")
+    const profile = await prisma.adminProfile.findUnique({ where: { id: profileId } })
+    if (!profile) return { ok: false as const, error: "Admin not found" }
+
+    await prisma.adminProfile.update({ where: { id: profileId }, data: { isActive: true } })
+    await logAdminAction({
+      actorUserId: session.user.id,
+      action: "REACTIVATE_ADMIN",
+      targetType: "AdminProfile",
+      targetId: profileId,
+    })
+    return { ok: true as const }
+  } catch (e) {
+    return { ok: false as const, error: e instanceof Error ? e.message : "Failed to reactivate admin" }
+  }
 }

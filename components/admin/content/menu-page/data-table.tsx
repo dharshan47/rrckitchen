@@ -63,14 +63,14 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <div className="rounded-xl border bg-white overflow-hidden shadow-sm">
+      <div className="rounded-[10px] border border-[#E5E9ED] bg-[#FFFFFF] shadow-[0_1px_4px_rgba(15,23,42,0.025)] overflow-hidden">
         <Table>
-          <TableHeader className="bg-slate-50 border-b">
+          <TableHeader className="bg-[#F7FBF8] border-b border-[#E5E9ED]">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-transparent">
+              <TableRow key={headerGroup.id} className="hover:bg-transparent border-none">
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="h-12 text-xs font-semibold text-slate-500 whitespace-nowrap px-4">
+                    <TableHead key={header.id} className="h-11 text-[13px] font-semibold text-[#1F2937] whitespace-nowrap px-4">
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -89,10 +89,10 @@ export function DataTable<TData, TValue>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
-                  className="hover:bg-slate-50/50 transition-colors"
+                  className="hover:bg-[#FAFCFB] transition-colors border-b border-[#EDF0F2]"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-4 py-3 align-top sm:align-middle">
+                    <TableCell key={cell.id} className="px-4 py-3 align-top sm:align-middle border-none">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -100,7 +100,7 @@ export function DataTable<TData, TValue>({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="h-24 text-center text-[#64748B]">
                   No results.
                 </TableCell>
               </TableRow>
@@ -110,33 +110,33 @@ export function DataTable<TData, TValue>({
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2 py-4">
-        <div className="text-sm text-slate-500 font-medium whitespace-nowrap">
+        <div className="text-[13px] text-[#64748B] font-medium whitespace-nowrap">
           Showing {from} to {to} of {data.length} kitchens
         </div>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1.5">
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8 rounded-md border-slate-200 text-slate-500"
+            className="h-8 w-8 rounded-[7px] border-[#DDE3E8] bg-[#FFFFFF] text-[#475569] hover:bg-slate-50 disabled:text-[#CBD5E1]"
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4" strokeWidth={1.8} />
           </Button>
           {pageSequence.map((p, i) =>
             p === "ellipsis" ? (
-              <span key={`e-${i}`} className="px-1 text-slate-400 hidden sm:inline">...</span>
+              <span key={`e-${i}`} className="px-1 text-[#94A3B8] hidden sm:inline">...</span>
             ) : (
               <Button
                 key={p}
                 variant="outline"
                 size="icon"
                 className={cn(
-                  "h-8 w-8 rounded-md text-xs font-medium",
+                  "h-8 w-8 rounded-[7px] text-[13px] font-medium",
                   pageIndex === p
-                    ? "bg-green-800 hover:bg-green-700 text-white border-green-800"
-                    : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                    ? "bg-[#087A36] hover:bg-[#065F2A] text-[#FFFFFF] border-[#087A36]"
+                    : "border-[#DDE3E8] text-[#1F2937] bg-[#FFFFFF] hover:bg-slate-50"
                 )}
                 onClick={() => table.setPageIndex(p)}
               >
@@ -147,28 +147,28 @@ export function DataTable<TData, TValue>({
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8 rounded-md border-slate-200 text-slate-500"
+            className="h-8 w-8 rounded-[7px] border-[#DDE3E8] bg-[#FFFFFF] text-[#475569] hover:bg-slate-50 disabled:text-[#CBD5E1]"
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4" strokeWidth={1.8} />
           </Button>
         </div>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-slate-500 font-medium whitespace-nowrap">Rows per page:</span>
+          <span className="text-[13px] text-[#64748B] font-medium whitespace-nowrap">Rows per page:</span>
           <Select
             value={`${pageSize}`}
             onValueChange={(value) => {
               table.setPageSize(Number(value))
             }}
           >
-            <SelectTrigger className="h-8 w-[70px] text-xs font-medium border-slate-200 bg-white">
+            <SelectTrigger className="h-8 w-[70px] text-[13px] font-medium border-[#DDE3E8] bg-[#FFFFFF] text-[#334155] rounded-[8px]">
               <SelectValue placeholder={pageSize} />
             </SelectTrigger>
             <SelectContent side="top">
               {[10, 20, 30, 40, 50].map((size) => (
-                <SelectItem key={size} value={`${size}`} className="text-xs">
+                <SelectItem key={size} value={`${size}`} className="text-[13px]">
                   {size}
                 </SelectItem>
               ))}

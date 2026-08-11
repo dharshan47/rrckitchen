@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import { useAblyOrderChannel, useAblyKitchenChannel, useAblyDeliveryPersonChannel } from '@/hooks/useAblySubscribe';
+import { useAblyOrderChannel, useAblyOrderListChannels, useAblyKitchenChannel, useAblyDeliveryPersonChannel } from '@/hooks/useAblySubscribe';
 
 const mockSubscribe = vi.fn();
 const mockUnsubscribe = vi.fn();
@@ -43,6 +43,37 @@ describe('useAblyOrderChannel', () => {
   it('does not subscribe when orderId is undefined', () => {
     const onMessage = vi.fn();
     renderHook(() => useAblyOrderChannel(undefined, onMessage, true));
+    expect(mockSubscribe).not.toHaveBeenCalled();
+  });
+});
+
+describe('useAblyOrderListChannels', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('subscribes to a channel for every order id', () => {
+    const onMessage = vi.fn();
+    renderHook(() => useAblyOrderListChannels(['o-1', 'o-2', 'o-3'], onMessage, true));
+    expect(mockSubscribe).toHaveBeenCalledTimes(3);
+  });
+
+  it('unsubscribes from every channel on unmount', () => {
+    const onMessage = vi.fn();
+    const { unmount } = renderHook(() => useAblyOrderListChannels(['o-1', 'o-2'], onMessage, true));
+    unmount();
+    expect(mockUnsubscribe).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not subscribe when disabled', () => {
+    const onMessage = vi.fn();
+    renderHook(() => useAblyOrderListChannels(['o-1'], onMessage, false));
+    expect(mockSubscribe).not.toHaveBeenCalled();
+  });
+
+  it('does not subscribe when the order list is empty', () => {
+    const onMessage = vi.fn();
+    renderHook(() => useAblyOrderListChannels([], onMessage, true));
     expect(mockSubscribe).not.toHaveBeenCalled();
   });
 });

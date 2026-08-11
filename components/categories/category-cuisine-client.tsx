@@ -24,7 +24,6 @@ import {
   MapPin,
   CheckCircle2,
   ChevronUp,
-  X,
 } from "lucide-react";
 import { KitchenCard } from "@/components/kitchen/kitchen-card";
 import type { KitchenData } from "@/hooks/useExploreKitchens";
@@ -105,12 +104,12 @@ function kitchenDeliveryTime(kitchen: PublicCategoryBundle["kitchens"][number], 
    =================================================================== */
 function CategoryPageSkeleton() {
   return (
-    <main className="min-h-screen bg-[#fafaf9] pb-16 animate-in fade-in duration-300">
+    <main className="min-h-screen bg-[#FDF9F6] pb-16 animate-in fade-in duration-300">
       <div className="max-w-7xl mx-auto px-4 py-3">
         <Skeleton className="h-4 w-64 rounded-md" />
       </div>
       <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="relative z-10 overflow-hidden md:rounded-[24px] bg-[#fdfbf7]">
+        <div className="relative z-10 overflow-hidden md:rounded-[24px] bg-[#FDF9F6]">
           <div className="flex flex-col md:flex-row items-center">
             <div className="w-full md:w-3/5 py-6 md:py-12 md:pr-8">
               <div className="flex items-center gap-4">
@@ -142,7 +141,7 @@ function CategoryPageSkeleton() {
       </div>
       <div className="max-w-7xl mx-auto px-4 md:px-8 mt-6 flex gap-8">
         <aside className="hidden lg:block w-65 shrink-0">
-          <div className="sticky top-24 bg-white rounded-2xl shadow-sm border border-gray-100 p-5 space-y-5">
+          <div className="sticky top-24 bg-[#FFFFFF] rounded-[8px] shadow-[0_2px_8px_rgba(35,25,20,0.04)] border border-[#EEE7E2] p-5 space-y-5">
             <Skeleton className="h-5 w-20 rounded-md" />
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="space-y-2">
@@ -157,7 +156,7 @@ function CategoryPageSkeleton() {
           <Skeleton className="h-5 w-64 mb-4 rounded-md" />
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-[20px] border border-gray-100 overflow-hidden">
+              <div key={i} className="bg-[#FFFFFF] rounded-[10px] border border-[#EEE7E2] overflow-hidden shadow-[0_2px_8px_rgba(35,25,20,0.05)]">
                 <Skeleton className="aspect-[4/3] w-full" />
                 <div className="p-3 space-y-2">
                   <Skeleton className="h-4 w-3/4 rounded-md" />
@@ -176,11 +175,67 @@ function CategoryPageSkeleton() {
 /* ===================================================================
    FILTER PANEL — real facets from backend data
    =================================================================== */
-interface FilterPanelProps {
-  data: PublicCategoryBundle;
+interface CheckRowProps {
+  label: string;
+  count?: number;
+  checked: boolean;
+  onToggle: () => void;
 }
 
-function FilterPanel({ data }: FilterPanelProps) {
+function CheckRow({ label, count, checked, onToggle }: CheckRowProps) {
+  return (
+    <label className="flex items-center gap-3 cursor-pointer group">
+      <Checkbox
+        checked={checked}
+        onCheckedChange={onToggle}
+        className="border-[#FF7A52] data-[state=checked]:bg-[#FF4B00] data-[state=checked]:border-[#FF4B00] data-[state=checked]:text-white cursor-pointer"
+      />
+      <span className={`text-[13px] font-semibold ${checked ? "text-[#FF4B00]" : "text-gray-600 group-hover:text-[#222222]"}`}>
+        {label}
+      </span>
+      {typeof count === "number" && (
+        <span className="ml-auto text-[11px] font-bold text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
+          {count}
+        </span>
+      )}
+    </label>
+  );
+}
+
+function RadioRow({ label, count, checked, onToggle }: CheckRowProps) {
+  return (
+    <label className="flex items-center gap-3 cursor-pointer group">
+      <div
+        onClick={onToggle}
+        className={`h-4 w-4 rounded-full flex items-center justify-center shrink-0 cursor-pointer ${
+          checked ? "border-2 border-[#FF4B00]" : "border border-[#FF6F48] bg-[#FFFFFF]"
+        }`}
+      >
+        {checked && <div className="h-2 w-2 rounded-full bg-[#FF4B00]" />}
+      </div>
+      <span
+        onClick={onToggle}
+        className={`text-[13px] font-semibold ${
+          checked ? "text-[#FF4B00]" : "text-gray-600 group-hover:text-[#222222]"
+        }`}
+      >
+        {label}
+      </span>
+      {typeof count === "number" && (
+        <span className="ml-auto text-[11px] font-bold text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
+          {count}
+        </span>
+      )}
+    </label>
+  );
+}
+
+interface FilterPanelProps {
+  data: PublicCategoryBundle;
+  onApply?: () => void;
+}
+
+function FilterPanel({ data, onApply }: FilterPanelProps) {
   const filters = useCategoryFilters();
   const { facets } = data;
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({
@@ -201,46 +256,18 @@ function FilterPanel({ data }: FilterPanelProps) {
     (filters.deliveryTime ? 1 : 0) +
     (filters.minRating ? 1 : 0);
 
-  const CheckRow = ({
-    label,
-    count,
-    checked,
-    onToggle,
-  }: {
-    label: string;
-    count?: number;
-    checked: boolean;
-    onToggle: () => void;
-  }) => (
-    <label className="flex items-center gap-3 cursor-pointer group">
-      <Checkbox
-        checked={checked}
-        onCheckedChange={onToggle}
-        className="border-gray-300 data-[state=checked]:bg-[#EE7005] data-[state=checked]:border-[#EE7005] data-[state=checked]:text-white cursor-pointer"
-      />
-      <span className={`text-[13px] font-semibold ${checked ? "text-[#EE7005]" : "text-gray-600 group-hover:text-gray-800"}`}>
-        {label}
-      </span>
-      {typeof count === "number" && (
-        <span className="ml-auto text-[11px] font-bold text-gray-400 bg-gray-100 rounded-full px-2 py-0.5">
-          {count}
-        </span>
-      )}
-    </label>
-  );
-
   return (
-    <div className="sticky top-24 bg-white rounded-2xl shadow-sm border border-gray-100 p-5">
+    <div className="sticky top-24 bg-[#FFFFFF] rounded-[8px] shadow-[0_2px_8px_rgba(35,25,20,0.04)] border border-[#EEE7E2] p-5">
       <div className="flex items-center justify-between mb-5">
-        <h3 className="font-black text-[18px] text-[#0A3D24]">Filters</h3>
+        <h3 className="font-black text-[18px] text-[#00512F]">Filters</h3>
         {filterCount > 0 && (
           <Button
             variant="ghost"
             size="sm"
             onClick={filters.clearFilters}
-            className="h-7 px-2 text-[12px] font-bold text-[#EE7005] hover:text-[#d96404] hover:bg-orange-50 flex items-center gap-1"
+            className="h-7 px-2 text-[12px] font-bold text-[#FF4B00] hover:text-[#E94300] hover:bg-[#FFF1EB] flex items-center gap-1"
           >
-            <X className="h-3 w-3" /> Clear All ({filterCount})
+            Clear All
           </Button>
         )}
       </div>
@@ -249,7 +276,7 @@ function FilterPanel({ data }: FilterPanelProps) {
       {facets.mealTypes.length > 0 && (
         <div className="mb-6 animate-in fade-in duration-300">
           <h4
-            className="font-bold text-[14px] text-gray-800 flex items-center justify-between mb-3 cursor-pointer"
+            className="font-bold text-[14px] text-[#222222] flex items-center justify-between mb-3 cursor-pointer"
             onClick={() => toggleSection("mealTypes")}
           >
             Meal Type{" "}
@@ -279,7 +306,7 @@ function FilterPanel({ data }: FilterPanelProps) {
       {facets.foodTypes.length > 0 && (
         <div className="mb-6 animate-in fade-in duration-300" style={{ animationDelay: "60ms" }}>
           <h4
-            className="font-bold text-[14px] text-gray-800 flex items-center justify-between mb-3 cursor-pointer"
+            className="font-bold text-[14px] text-[#222222] flex items-center justify-between mb-3 cursor-pointer"
             onClick={() => toggleSection("foodTypes")}
           >
             Veg Preference{" "}
@@ -291,13 +318,29 @@ function FilterPanel({ data }: FilterPanelProps) {
           </h4>
           {openSections.foodTypes && (
             <div className="space-y-2.5">
+              {/* Option to clear this filter - visually 'All' */}
+              <RadioRow
+                label="All"
+                checked={filters.foodTypes.length === 0}
+                onToggle={() => {
+                  filters.foodTypes.forEach((ft) => filters.toggleFoodType(ft));
+                }}
+              />
               {facets.foodTypes.map((option) => (
-                <CheckRow
+                <RadioRow
                   key={option.value}
                   label={option.label}
                   count={option.count}
                   checked={filters.foodTypes.includes(option.value)}
-                  onToggle={() => filters.toggleFoodType(option.value)}
+                  onToggle={() => {
+                    // Make it act like a radio button by clearing others
+                    filters.foodTypes.forEach((ft) => {
+                      if (ft !== option.value) filters.toggleFoodType(ft);
+                    });
+                    if (!filters.foodTypes.includes(option.value)) {
+                      filters.toggleFoodType(option.value);
+                    }
+                  }}
                 />
               ))}
             </div>
@@ -309,7 +352,7 @@ function FilterPanel({ data }: FilterPanelProps) {
       {facets.cuisines.length > 1 && (
         <div className="mb-6 animate-in fade-in duration-300" style={{ animationDelay: "120ms" }}>
           <h4
-            className="font-bold text-[14px] text-gray-800 flex items-center justify-between mb-3 cursor-pointer"
+            className="font-bold text-[14px] text-[#222222] flex items-center justify-between mb-3 cursor-pointer"
             onClick={() => toggleSection("cuisines")}
           >
             Cuisine{" "}
@@ -339,7 +382,7 @@ function FilterPanel({ data }: FilterPanelProps) {
       {facets.deliveryTimes.length > 0 && (
         <div className="mb-6 animate-in fade-in duration-300" style={{ animationDelay: "180ms" }}>
           <h4
-            className="font-bold text-[14px] text-gray-800 flex items-center justify-between mb-3 cursor-pointer"
+            className="font-bold text-[14px] text-[#222222] flex items-center justify-between mb-3 cursor-pointer"
             onClick={() => toggleSection("deliveryTimes")}
           >
             Delivery Time{" "}
@@ -373,7 +416,7 @@ function FilterPanel({ data }: FilterPanelProps) {
       {facets.ratings.length > 0 && (
         <div className="mb-6 animate-in fade-in duration-300" style={{ animationDelay: "240ms" }}>
           <h4
-            className="font-bold text-[14px] text-gray-800 flex items-center justify-between mb-3 cursor-pointer"
+            className="font-bold text-[14px] text-[#222222] flex items-center justify-between mb-3 cursor-pointer"
             onClick={() => toggleSection("ratings")}
           >
             Rating{" "}
@@ -402,6 +445,13 @@ function FilterPanel({ data }: FilterPanelProps) {
           )}
         </div>
       )}
+
+      <Button
+        className="w-full mt-2 h-[32px] bg-[#FF4B00] hover:bg-[#E94300] text-[#FFFFFF] font-[700] rounded-[5px] shadow-none uppercase tracking-wide text-[13px]"
+        onClick={onApply}
+      >
+        Apply Filters
+      </Button>
     </div>
   );
 }
@@ -554,14 +604,14 @@ export function CategoryCuisineClient({ categoryName }: Props) {
 
   if (isError) {
     return (
-      <main className="min-h-screen bg-[#fafaf9] flex items-center justify-center p-8">
+      <main className="min-h-screen bg-[#FDF9F6] flex items-center justify-center p-8">
         <div className="flex flex-col items-center gap-4 text-center animate-in fade-in duration-300">
           <RotateCcw className="h-12 w-12 text-red-400" />
           <p className="text-red-500 font-bold text-[15px]">Failed to load this category</p>
           <p className="text-[13px] text-gray-500">Please check your connection and try again.</p>
           <Button
             onClick={handleRetry}
-            className="px-5 py-2.5 bg-[#EE7005] hover:bg-[#d96404] text-white rounded-xl text-[14px] font-black shadow-md shadow-[#EE7005]/20"
+            className="px-5 py-2.5 bg-[#FF4B00] hover:bg-[#E94300] text-white rounded-xl text-[14px] font-black shadow-md shadow-[#FF4B00]/20"
           >
             Retry
           </Button>
@@ -575,14 +625,14 @@ export function CategoryCuisineClient({ categoryName }: Props) {
   }
 
   return (
-    <main className="min-h-screen bg-[#fafaf9] text-foreground font-sans pb-16">
+    <main className="min-h-screen bg-[#FDF9F6] text-foreground font-sans pb-16">
       {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-2 text-[12px] font-bold text-gray-800 animate-in fade-in duration-300">
-        <Link href="/" className="hover:text-[#EE7005] transition-colors">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-2 text-[12px] font-bold text-[#222222] animate-in fade-in duration-300">
+        <Link href="/" className="hover:text-[#FF4B00] transition-colors">
           Home
         </Link>
         <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-        <Link href="/categories" className="hover:text-[#EE7005] transition-colors">
+        <Link href="/categories" className="hover:text-[#FF4B00] transition-colors">
           Categories
         </Link>
         <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
@@ -592,7 +642,7 @@ export function CategoryCuisineClient({ categoryName }: Props) {
       {/* Hero Section */}
       {content?.showHero !== false && (
         <div
-          className={`max-w-7xl mx-auto px-4 md:px-8 relative z-10 overflow-hidden md:rounded-[24px] bg-[#fdfbf7] animate-in fade-in duration-500 ${
+          className={`max-w-7xl mx-auto px-4 md:px-8 relative z-10 overflow-hidden md:rounded-[24px] bg-[#FDF9F6] animate-in fade-in duration-500 ${
             isFullWidth ? "md:rounded-none" : ""
           }`}
         >
@@ -603,7 +653,7 @@ export function CategoryCuisineClient({ categoryName }: Props) {
               }`}
             >
               <div className={`flex ${isCenter ? "flex-col" : "flex-col md:flex-row"} items-center gap-4`}>
-                <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-[#0A3D24] flex items-center justify-center shrink-0 shadow-md overflow-hidden relative">
+                <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-[#00512F] flex items-center justify-center shrink-0 shadow-md overflow-hidden relative">
                   {content?.iconUrl ? (
                     <Image src={content.iconUrl} alt={displayName} fill className="object-cover" unoptimized />
                   ) : (
@@ -612,13 +662,13 @@ export function CategoryCuisineClient({ categoryName }: Props) {
                 </div>
                 <div>
                   <div className={`flex items-center gap-3 ${isCenter ? "justify-center flex-col" : isRight ? "justify-center md:justify-end" : "justify-center md:justify-start"}`}>
-                    <h1 className="text-3xl md:text-[42px] font-black text-[#0A3D24] leading-tight">
+                    <h1 className="text-3xl md:text-[42px] font-black text-[#00512F] leading-tight">
                       {displayName}
                     </h1>
                     {(content?.badgeText || data?.totalCount !== undefined) && (
                       <Badge
                         variant="outline"
-                        className="px-3 py-1 rounded-full border-[#EE7005] text-[#EE7005] text-[12px] font-bold shrink-0 bg-white shadow-sm animate-in zoom-in duration-300"
+                        className="px-3 py-1 rounded-[6px] border-[#FF6A43] text-[#FF4B00] text-[12px] font-bold shrink-0 bg-[#FFFFFF] shadow-sm animate-in zoom-in duration-300"
                       >
                         {content?.badgeText || `${data?.totalCount ?? 0}+ Kitchens`}
                       </Badge>
@@ -654,7 +704,7 @@ export function CategoryCuisineClient({ categoryName }: Props) {
                   priority
                 />
               ) : (
-                <div className="absolute inset-0 bg-linear-to-br from-[#0A3D24] to-[#146c43] flex flex-col items-center justify-center gap-2">
+                <div className="absolute inset-0 bg-linear-to-br from-[#00512F] to-[#146c43] flex flex-col items-center justify-center gap-2">
                   <ChefHat className="h-12 w-12 text-white/70" />
                   <span className="text-[12px] font-bold text-white/70">
                     {displayName} from home kitchens
@@ -670,7 +720,7 @@ export function CategoryCuisineClient({ categoryName }: Props) {
       {enabledFeatures.length > 0 && (
         <div className="max-w-7xl mx-auto px-4 md:px-8 mt-4 md:mt-6">
           <div
-            className={`bg-white rounded-2xl md:rounded-[20px] shadow-sm border border-gray-100 py-4 px-2 md:px-6 grid gap-4 md:gap-8 divide-x divide-gray-100 animate-in fade-in slide-in-from-top-2 duration-500 ${
+            className={`bg-[#FFFFFF] rounded-[9px] shadow-[0_2px_8px_rgba(35,25,20,0.04)] border border-[#EEE7E2] py-4 px-2 md:px-6 grid gap-4 md:gap-8 divide-x divide-[#EEE7E2] animate-in fade-in slide-in-from-top-2 duration-500 ${
               enabledFeatures.length === 3
                 ? "grid-cols-3"
                 : enabledFeatures.length <= 2
@@ -687,7 +737,7 @@ export function CategoryCuisineClient({ categoryName }: Props) {
                   style={{ animationDelay: `${i * 80}ms` }}
                 >
                   <Icon className={`h-6 w-6 ${feature.color} mb-1.5 group-hover:scale-110 transition-transform duration-300`} />
-                  <span className="text-[12px] md:text-[14px] font-black text-[#0A3D24]">{feature.title}</span>
+                  <span className="text-[12px] md:text-[14px] font-black text-[#222222]">{feature.title}</span>
                   {feature.subtitle && (
                     <span className="text-[10px] md:text-[12px] font-medium text-gray-500 mt-0.5">
                       {feature.subtitle}
@@ -710,16 +760,16 @@ export function CategoryCuisineClient({ categoryName }: Props) {
                 className="relative overflow-hidden rounded-2xl border border-orange-100 bg-gradient-to-br from-orange-50 via-amber-50 to-white p-4 md:p-5 flex items-center gap-4 animate-in fade-in slide-in-from-bottom-2 duration-300 hover:shadow-md hover:-translate-y-0.5 transition-all"
                 style={{ animationDelay: `${i * 100}ms` }}
               >
-                <div className="bg-[#EE7005] text-white rounded-full p-2.5 shrink-0 shadow-sm shadow-[#EE7005]/30">
+                <div className="bg-[#FF4B00] text-white rounded-full p-2.5 shrink-0 shadow-sm shadow-[#FF4B00]/30">
                   <Tag className="h-5 w-5" />
                 </div>
                 <div className="min-w-0">
                   {offer.badge && (
-                    <span className="inline-block px-2 py-0.5 bg-[#EE7005] text-white rounded-full text-[10px] font-black tracking-wide mb-1">
+                    <span className="inline-block px-2 py-0.5 bg-[#FF4B00] text-white rounded-full text-[10px] font-black tracking-wide mb-1">
                       {offer.badge}
                     </span>
                   )}
-                  <h3 className="text-[14px] font-black text-[#0A3D24] truncate">{offer.title}</h3>
+                  <h3 className="text-[14px] font-black text-[#00512F] truncate">{offer.title}</h3>
                   <p className="text-[11px] font-semibold text-gray-500 truncate">{offer.subtitle}</p>
                 </div>
               </div>
@@ -747,22 +797,16 @@ export function CategoryCuisineClient({ categoryName }: Props) {
                     variant="outline"
                     className="flex-1 flex items-center justify-center gap-2 h-11 bg-white border-gray-200 rounded-xl text-[14px] font-bold text-gray-700 shadow-sm"
                   >
-                    <Filter className="h-4 w-4 text-[#EE7005]" /> Filters
+                    <Filter className="h-4 w-4 text-[#FF4B00]" /> Filters
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="w-[90vw] rounded-2xl max-h-[85vh] flex flex-col overflow-hidden">
                   <DialogHeader>
                     <DialogTitle>Filters</DialogTitle>
                   </DialogHeader>
-                  <ScrollArea className="flex-1 min-h-0 pr-3">
+                  <ScrollArea className="flex-1 min-h-0 pr-3 pb-4">
                     <div className="pt-4">
-                      <FilterPanel data={data} />
-                      <Button
-                        onClick={handleCloseMobileFilters}
-                        className="w-full h-11 bg-[#EE7005] hover:bg-[#d96404] text-white rounded-xl text-[15px] font-black shadow-md shadow-[#EE7005]/20 mt-4"
-                      >
-                        Done
-                      </Button>
+                      <FilterPanel data={data} onApply={handleCloseMobileFilters} />
                     </div>
                   </ScrollArea>
                 </DialogContent>
@@ -771,7 +815,7 @@ export function CategoryCuisineClient({ categoryName }: Props) {
               <div className="flex-1 flex items-center justify-between px-3 bg-white border border-gray-200 rounded-xl shadow-sm">
                 <span className="text-[13px] font-bold text-gray-500">Sort by:</span>
                 <Select value={filters.sortBy} onValueChange={handleSortChange}>
-                  <SelectTrigger className="h-9 border-0 bg-transparent shadow-none text-[14px] font-bold text-gray-800 pl-1 pr-1 focus:ring-0">
+                  <SelectTrigger className="h-9 border-0 bg-transparent shadow-none text-[14px] font-bold text-[#222222] pl-1 pr-1 focus:ring-0">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -788,10 +832,10 @@ export function CategoryCuisineClient({ categoryName }: Props) {
             {/* Desktop Toolbar */}
             <div className="hidden lg:flex items-center justify-between w-full">
               <div className="flex items-center gap-3">
-                <p className="text-[14px] font-bold text-gray-800">
+                <p className="text-[14px] font-bold text-[#222222]">
                   Showing {visibleKitchens.length} of {filteredKitchens.length} Kitchens
                   {isFetching && !isLoading && (
-                    <Loader2 className="inline h-3.5 w-3.5 ml-2 text-[#EE7005] animate-spin" />
+                    <Loader2 className="inline h-3.5 w-3.5 ml-2 text-[#FF4B00] animate-spin" />
                   )}
                 </p>
                 <span className="hidden xl:inline-flex items-center gap-1 text-[12px] font-semibold text-gray-400">
@@ -801,7 +845,7 @@ export function CategoryCuisineClient({ categoryName }: Props) {
                   variant="outline"
                   className={`inline-flex items-center gap-1.5 text-[10px] font-bold rounded-full px-2 py-0.5 ${
                     isFetching
-                      ? "text-[#EE7005] bg-orange-50 border-orange-200"
+                      ? "text-[#FF4B00] bg-[#FFF1EB] border-orange-200"
                       : "text-emerald-600 bg-emerald-50 border-emerald-200"
                   }`}
                 >
@@ -812,7 +856,7 @@ export function CategoryCuisineClient({ categoryName }: Props) {
               <div className="flex items-center gap-2">
                 <span className="text-[14px] font-bold text-gray-600">Sort by:</span>
                 <Select value={filters.sortBy} onValueChange={handleSortChange}>
-                  <SelectTrigger className="w-[180px] h-10 bg-white border-gray-200 rounded-xl text-[14px] font-bold text-gray-800 shadow-sm hover:border-gray-300">
+                  <SelectTrigger className="w-[180px] h-10 bg-[#FFFFFF] border-[#E9E2DD] rounded-[6px] text-[14px] font-bold text-[#222222] hover:border-gray-300">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -835,21 +879,21 @@ export function CategoryCuisineClient({ categoryName }: Props) {
           {/* Grid */}
           {filteredKitchens.length === 0 ? (
             <div className="bg-white rounded-2xl border border-gray-100 p-10 text-center mt-4 animate-in fade-in duration-300">
-              <div className="mx-auto h-14 w-14 rounded-full bg-orange-50 flex items-center justify-center mb-3">
-                <Filter className="h-6 w-6 text-[#EE7005]" />
+              <div className="mx-auto h-14 w-14 rounded-full bg-[#FFF1EB] flex items-center justify-center mb-3">
+                <Filter className="h-6 w-6 text-[#FF4B00]" />
               </div>
               <p className="text-[15px] font-bold text-gray-700">No kitchens match your filters</p>
               <p className="text-[13px] text-gray-500 mt-1">Try clearing a few filters to see more kitchens.</p>
               <Button
                 onClick={filters.clearFilters}
-                className="mt-4 px-4 py-2 bg-[#EE7005] hover:bg-[#d96404] text-white rounded-xl text-[13px] font-black shadow-sm shadow-[#EE7005]/20"
+                className="mt-4 px-4 py-2 bg-[#FF4B00] hover:bg-[#E94300] text-white rounded-xl text-[13px] font-black shadow-sm shadow-[#FF4B00]/20"
               >
                 Clear All Filters
               </Button>
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
                 {visibleKitchens.map((kitchen, i) => (
                   <div
                     key={kitchen.id}
@@ -869,7 +913,7 @@ export function CategoryCuisineClient({ categoryName }: Props) {
                   <Button
                     variant="outline"
                     onClick={filters.loadMore}
-                    className="px-8 py-3 bg-white border-2 border-[#EE7005] text-[#EE7005] rounded-xl text-[14px] font-black shadow-sm hover:bg-[#EE7005] hover:text-white transition-all duration-300 hover:shadow-md hover:shadow-[#EE7005]/20"
+                    className="px-8 py-3 bg-white border-2 border-[#FF4B00] text-[#FF4B00] rounded-xl text-[14px] font-black shadow-sm hover:bg-[#FF4B00] hover:text-white transition-all duration-300 hover:shadow-md hover:shadow-[#FF4B00]/20"
                   >
                     Load More Kitchens ({filteredKitchens.length - visibleKitchens.length} remaining)
                   </Button>
@@ -885,10 +929,10 @@ export function CategoryCuisineClient({ categoryName }: Props) {
         <div className="max-w-7xl mx-auto px-4 md:px-8 mt-10 animate-in fade-in duration-500">
           <div className="bg-white rounded-2xl md:rounded-[24px] shadow-sm border border-gray-100 p-6 md:p-10">
             <div className="flex items-center gap-3 mb-6">
-              <div className="bg-[#0A3D24] rounded-full p-2 text-white">
+              <div className="bg-[#00512F] rounded-full p-2 text-white">
                 <HelpCircle className="h-5 w-5" />
               </div>
-              <h2 className="text-xl md:text-2xl font-black text-[#0A3D24]">
+              <h2 className="text-xl md:text-2xl font-black text-[#00512F]">
                 Frequently Asked Questions
               </h2>
             </div>
@@ -908,7 +952,7 @@ function FaqItem({ question, answer, index }: { question: string; answer: string
   const [open, setOpen] = useState(index === 0);
   return (
     <div
-      className="border border-gray-100 rounded-xl overflow-hidden bg-[#fafaf9]/60 animate-in fade-in slide-in-from-bottom-2 duration-300"
+      className="border border-gray-100 rounded-xl overflow-hidden bg-[#FDF9F6]/60 animate-in fade-in slide-in-from-bottom-2 duration-300"
       style={{ animationDelay: `${index * 80}ms` }}
     >
       <Button
@@ -916,9 +960,9 @@ function FaqItem({ question, answer, index }: { question: string; answer: string
         onClick={() => setOpen((prev) => !prev)}
         className="w-full h-auto flex items-center justify-between gap-4 px-4 md:px-5 py-4 text-left"
       >
-        <span className="text-[14px] md:text-[15px] font-black text-[#0A3D24]">{question}</span>
+        <span className="text-[14px] md:text-[15px] font-black text-[#00512F]">{question}</span>
         <span
-          className={`shrink-0 h-7 w-7 rounded-full bg-[#EE7005]/10 text-[#EE7005] flex items-center justify-center transition-transform duration-300 ${
+          className={`shrink-0 h-7 w-7 rounded-full bg-[#FF4B00]/10 text-[#FF4B00] flex items-center justify-center transition-transform duration-300 ${
             open ? "rotate-180" : ""
           }`}
         >

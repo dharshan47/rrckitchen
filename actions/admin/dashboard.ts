@@ -71,6 +71,10 @@ export async function getAdminDashboardData() {
     openSupportTickets,
     lowStockItems,
     monthlyOrders,
+    customersTrendData,
+    kitchensTrendData,
+    deliveryTrendData,
+    paymentSourcesData,
   ] = await Promise.all([
     prisma.payment.aggregate({ where: { status: "SUCCESS" }, _sum: { amount: true } }),
     prisma.order.count({ where: { createdAt: { gte: todayStart, lt: todayEnd } } }),
@@ -92,6 +96,23 @@ export async function getAdminDashboardData() {
     prisma.order.findMany({
       where: { createdAt: { gte: sixMonthsAgo }, payment: { status: "SUCCESS" } },
       select: { totalAmount: true, createdAt: true },
+    }),
+    prisma.user.findMany({
+      where: { role: "customer", createdAt: { gte: sixMonthsAgo } },
+      select: { createdAt: true },
+    }),
+    prisma.kitchenPartner.findMany({
+      where: { createdAt: { gte: sixMonthsAgo } },
+      select: { createdAt: true },
+    }),
+    prisma.deliveryPartner.findMany({
+      where: { createdAt: { gte: sixMonthsAgo } },
+      select: { createdAt: true },
+    }),
+    prisma.payment.groupBy({
+      by: ["paymentMethod"],
+      where: { status: "SUCCESS" },
+      _sum: { amount: true },
     }),
   ])
 
@@ -203,6 +224,32 @@ export async function getAdminDashboardData() {
     }
   }
 
+  const customerTrend = [0, 0, 0, 0, 0, 0]
+  const kitchenTrend = [0, 0, 0, 0, 0, 0]
+  const deliveryTrend = [0, 0, 0, 0, 0, 0]
+  for (const u of customersTrendData) {
+    const idx = 5 - ((nowMonth - u.createdAt.getMonth() + 12) % 12)
+    if (idx >= 0 && idx < 6) customerTrend[idx] += 1
+  }
+  for (const k of kitchensTrendData) {
+    const idx = 5 - ((nowMonth - k.createdAt.getMonth() + 12) % 12)
+    if (idx >= 0 && idx < 6) kitchenTrend[idx] += 1
+  }
+  for (const d of deliveryTrendData) {
+    const idx = 5 - ((nowMonth - d.createdAt.getMonth() + 12) % 12)
+    if (idx >= 0 && idx < 6) deliveryTrend[idx] += 1
+  }
+
+  const paymentSources = paymentSourcesData
+    .map((row) => ({
+      name: row.paymentMethod
+        ? row.paymentMethod.charAt(0).toUpperCase() + row.paymentMethod.slice(1)
+        : "Other",
+      value: Number(row._sum.amount ?? 0),
+    }))
+    .filter((row) => row.value > 0)
+    .sort((a, b) => b.value - a.value)
+
   const ordersByTimeSlotMap: Record<string, number> = { MORNING: 0, LUNCH: 0, EVENINGSNACKS: 0, DINNER: 0 }
   for (const row of ordersByTimeSlotData) {
     ordersByTimeSlotMap[row.timeSlot] = row._count.id
@@ -312,6 +359,10 @@ export async function getAdminDashboardData() {
       lowStockItems,
     },
     revenueTrend: monthlyRevenue,
+    customerTrend,
+    kitchenTrend,
+    deliveryTrend,
+    paymentSources,
     ordersByTimeSlot,
     vegNonVeg,
     orderStatusDist,
@@ -393,11 +444,15 @@ export async function getKitchenDashboardData() {
     todayCompletedCount,
     todayPendingCount,
     todayRevenueAgg,
+    yesterdayOrdersCount,
+    yesterdayCompletedCount,
+    yesterdayRevenueAgg,
     preOrderCount,
     preOrderRevenueAgg,
     monthRevenueAgg,
     todayAvailability,
     totalCustomerData,
+    kitchenOrderUsers,
     menus,
     recentOrderItems,
     popularItemsData,
@@ -423,6 +478,16 @@ export async function getKitchenDashboardData() {
       _sum: { unitPrice: true },
     }),
     prisma.orderItem.count({
+      where: { kitchenPartnerId: kitchenPartner.id, order: { serviceDate: startOfDay(new Date(now.getTime() - 86400000)) } },
+    }),
+    prisma.orderItem.count({
+      where: { kitchenPartnerId: kitchenPartner.id, order: { serviceDate: startOfDay(new Date(now.getTime() - 86400000)), status: "COMPLETED" } },
+    }),
+    prisma.orderItem.aggregate({
+      where: { kitchenPartnerId: kitchenPartner.id, order: { serviceDate: startOfDay(new Date(now.getTime() - 86400000)) } },
+      _sum: { unitPrice: true },
+    }),
+    prisma.orderItem.count({
       where: { kitchenPartnerId: kitchenPartner.id, order: { serviceDate: tomorrowServiceDate } },
     }),
     prisma.orderItem.aggregate({
@@ -445,6 +510,10 @@ export async function getKitchenDashboardData() {
       by: ["orderId"],
       where: { kitchenPartnerId: kitchenPartner.id },
       _count: { orderId: true },
+    }),
+    prisma.order.findMany({
+      where: { orderItems: { some: { kitchenPartnerId: kitchenPartner.id } } },
+      select: { userId: true },
     }),
     prisma.menu.findMany({
       where: { kitchenPartnerId: kitchenPartner.id },
@@ -574,6 +643,8 @@ export async function getKitchenDashboardData() {
     serviceDateType: oi.order.serviceDateType,
     paymentStatus: formatPaymentStatus(oi.order.payment?.status),
     time: format(oi.order.createdAt, "hh:mm a"),
+    date: format(oi.order.createdAt, "dd MMM yyyy"),
+    serviceDate: oi.order.serviceDate ? format(oi.order.serviceDate, "dd MMM yyyy") : undefined,
     customerName: oi.order.user?.name,
     customerPhone: oi.order.user?.phoneNumber,
     customerAddress: oi.order.address
@@ -625,8 +696,16 @@ export async function getKitchenDashboardData() {
 
   const todayRevenue = Number(todayRevenueAgg._sum.unitPrice ?? 0)
   const monthRevenue = Number(monthRevenueAgg._sum.unitPrice ?? 0)
+  const yesterdayRevenue = Number(yesterdayRevenueAgg._sum.unitPrice ?? 0)
   const uniqueCustomers = totalCustomerData.length
   const preOrderRevenue = Number(preOrderRevenueAgg._sum.unitPrice ?? 0)
+
+  const userIdCounts = new Map<string, number>()
+  for (const o of kitchenOrderUsers) {
+    if (!o.userId) continue
+    userIdCounts.set(o.userId, (userIdCounts.get(o.userId) ?? 0) + 1)
+  }
+  const repeatCustomers = [...userIdCounts.values()].filter((c) => c > 1).length
 
   return {
     kitchen: {
@@ -670,8 +749,12 @@ export async function getKitchenDashboardData() {
       todayCompleted: todayCompletedCount,
       todayPending: todayPendingCount,
       todayRevenue,
+      yesterdayOrders: yesterdayOrdersCount,
+      yesterdayCompleted: yesterdayCompletedCount,
+      yesterdayRevenue,
       monthRevenue,
       customers: uniqueCustomers,
+      repeatCustomers,
       menuItems: allMenuItems.length,
       preOrderCount,
       preOrderRevenue,
@@ -1247,11 +1330,9 @@ export async function getDeliveryDashboardData() {
       upi: kyc?.upiId,
       googlePayNumber: kyc?.googlePayNumber,
       phonePeNumber: kyc?.phonePeNumber,
-      isOnline: (deliveryPartner as Record<string, unknown>).isOnline ?? false,
-      avgRating: "avgRating" in deliveryPartner && typeof (deliveryPartner as Record<string, unknown>).avgRating === "number"
-        ? Math.round(Number((deliveryPartner as Record<string, unknown>).avgRating) * 10) / 10
-        : null,
-      totalReviews: (deliveryPartner as Record<string, unknown>).totalReviews as number | undefined,
+      isOnline: deliveryPartner.isOnline,
+      avgRating: Math.round(Number(deliveryPartner.avgRating) * 10) / 10,
+      totalReviews: deliveryPartner.totalReviews,
     },
     stats: {
       totalAssignments,
@@ -1290,3 +1371,5 @@ export async function getDeliveryDashboardData() {
     })),
   }
 }
+
+export type KitchenDashboardData = Awaited<ReturnType<typeof getKitchenDashboardData>>

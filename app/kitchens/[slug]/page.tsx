@@ -1,6 +1,8 @@
 import { notFound, redirect } from "next/navigation";
+import { Suspense } from "react";
 import { getKitchenDetail } from "@/actions/catalog/home-data";
 import { KitchenDetailClient } from "@/components/kitchen/kitchen-detail-client";
+import { KitchenDetailSkeleton } from "@/components/kitchen/kitchen-tab-skeletons";
 import type { Metadata } from "next";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
@@ -29,10 +31,12 @@ export default async function KitchenDetailPage({ params, searchParams }: Props)
   }
 
   return (
-    <KitchenDetailClient
-      kitchen={kitchen}
-      initialTimeSlot={timeSlot ?? null}
-      initialSearchQuery={q ?? null}
-    />
+    <Suspense fallback={<KitchenDetailSkeleton />}>
+      <KitchenDetailClient
+        kitchen={kitchen}
+        initialTimeSlot={timeSlot ?? null}
+        initialSearchQuery={q ?? null}
+      />
+    </Suspense>
   );
 }

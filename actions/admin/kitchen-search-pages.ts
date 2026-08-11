@@ -112,6 +112,10 @@ export interface AdminKitchenSearchPreviewKitchen {
   imageUrl: string | null
   cuisineTags: string[]
   estimatedPrepTime: number | null
+  isPureVeg: boolean
+  description: string | null
+  deliveryRadiusKm: number | null
+  operatingHours: Record<string, { open: string; close: string }> | null
 }
 
 export interface AdminKitchenSearchPreviewMenuItem {
@@ -121,6 +125,12 @@ export interface AdminKitchenSearchPreviewMenuItem {
   imageUrl: string | null
   foodType: string
   kitchenName: string
+  description: string | null
+  bestseller: boolean
+  avgRating: number
+  totalReviews: number
+  deliveryTimeMin: number | null
+  deliveryTimeMax: number | null
 }
 
 export interface AdminKitchenSearchPreview {
@@ -423,8 +433,15 @@ export async function getKitchenSearchPreview(keyword: string): Promise<AdminKit
         avgRating: true,
         totalReviews: true,
         estimatedPrepTime: true,
-        kitchenAlias: { select: { displayName: true, imageUrl: true } },
+        deliveryRadiusKm: true,
+        operatingHours: true,
+        kitchenAlias: { select: { displayName: true, imageUrl: true, description: true } },
         kitchenCategories: { select: { category: { select: { name: true } } } },
+        menus: {
+          select: {
+            menuItems: { where: { isAvailable: true }, select: { foodType: true } },
+          },
+        },
       },
     }),
     prisma.menuItem.findMany({
@@ -436,6 +453,12 @@ export async function getKitchenSearchPreview(keyword: string): Promise<AdminKit
         name: true,
         price: true,
         foodType: true,
+        description: true,
+        bestseller: true,
+        avgRating: true,
+        totalReviews: true,
+        deliveryTimeMin: true,
+        deliveryTimeMax: true,
         photos: { take: 1, orderBy: { sortOrder: "asc" }, select: { imageUrl: true } },
         menu: { select: { kitchenPartner: { select: { kitchenAlias: { select: { displayName: true } } } } } },
       },
@@ -446,16 +469,23 @@ export async function getKitchenSearchPreview(keyword: string): Promise<AdminKit
     keyword: clean,
     kitchenCount: kitchens.length,
     menuItemCount: menuItems.length,
-    kitchens: kitchens.map((k) => ({
-      id: k.id,
-      slug: k.slug || slugifyName(toTitleCase(k.kitchenAlias?.displayName ?? k.slug)),
-      displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
-      avgRating: Number(k.avgRating),
-      totalReviews: k.totalReviews,
-      imageUrl: k.kitchenAlias?.imageUrl ?? null,
-      cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
-      estimatedPrepTime: k.estimatedPrepTime ?? null,
-    })),
+    kitchens: kitchens.map((k) => {
+      const itemFoodTypes = k.menus.flatMap((m) => m.menuItems.map((mi) => mi.foodType));
+      return {
+        id: k.id,
+        slug: k.slug || slugifyName(toTitleCase(k.kitchenAlias?.displayName ?? k.slug)),
+        displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
+        avgRating: Number(k.avgRating),
+        totalReviews: k.totalReviews,
+        imageUrl: k.kitchenAlias?.imageUrl ?? null,
+        cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
+        estimatedPrepTime: k.estimatedPrepTime ?? null,
+        isPureVeg: itemFoodTypes.length > 0 && itemFoodTypes.every((f) => f === "VEG"),
+        description: k.kitchenAlias?.description ?? null,
+        deliveryRadiusKm: k.deliveryRadiusKm ?? null,
+        operatingHours: (k.operatingHours as Record<string, { open: string; close: string }> | null) ?? null,
+      };
+    }),
     menuItems: menuItems.map((i) => ({
       id: i.id,
       name: i.name,
@@ -463,6 +493,12 @@ export async function getKitchenSearchPreview(keyword: string): Promise<AdminKit
       imageUrl: i.photos[0]?.imageUrl ?? null,
       foodType: i.foodType,
       kitchenName: toTitleCase(i.menu.kitchenPartner.kitchenAlias?.displayName ?? "Home Kitchen"),
+      description: i.description,
+      bestseller: i.bestseller,
+      avgRating: Number(i.avgRating ?? 0),
+      totalReviews: i.totalReviews,
+      deliveryTimeMin: i.deliveryTimeMin,
+      deliveryTimeMax: i.deliveryTimeMax,
     })),
   }
 }

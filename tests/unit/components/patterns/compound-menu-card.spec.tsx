@@ -8,6 +8,16 @@ vi.mock("@/stores", () => ({
   useCartActions: vi.fn(() => ({ updateQuantity: vi.fn(), removeFromCart: vi.fn() })),
 }))
 
+vi.mock("@/components/patterns/progressive-image", () => ({
+  ProgressiveImage: ({ alt, highResUrl }: { alt: string; highResUrl: string }) => (
+    <img src={highResUrl} alt={alt} />
+  ),
+}))
+
+vi.mock("@/components/menu/wishlist-button", () => ({
+  WishlistButton: () => null,
+}))
+
 const mockItem: MenuCardItem = {
   id: "item1",
   slug: "test-item",
@@ -60,7 +70,7 @@ describe("CompoundMenuCard", () => {
   it("renders Bestseller badge when item is bestseller", () => {
     render(
       <CompoundMenuCard.Root item={mockItem}>
-        <CompoundMenuCard.Header />
+        <CompoundMenuCard.ImageSection />
       </CompoundMenuCard.Root>
     )
     expect(screen.getByText("Bestseller")).toBeInTheDocument()
@@ -76,14 +86,23 @@ describe("CompoundMenuCard", () => {
     expect(img).toBeInTheDocument()
   })
 
-  it("does not render ImageSection when imageUrl is null", () => {
+  it("does not render image when imageUrl is null", () => {
     const itemNoImg = { ...mockItem, imageUrl: null }
-    const { container } = render(
+    render(
       <CompoundMenuCard.Root item={itemNoImg}>
         <CompoundMenuCard.ImageSection />
       </CompoundMenuCard.Root>
     )
-    expect(container.querySelector(".aspect-square")).not.toBeInTheDocument()
+    expect(screen.queryByRole("img")).not.toBeInTheDocument()
+  })
+
+  it("does not render wishlist button when hideWishlistButton is true", () => {
+    render(
+      <CompoundMenuCard.Root item={mockItem}>
+        <CompoundMenuCard.ImageSection hideWishlistButton />
+      </CompoundMenuCard.Root>
+    )
+    expect(screen.getByRole("img")).toBeInTheDocument()
   })
 
   it("renders BadgeRibbon when compareAtPrice is present", () => {
@@ -155,6 +174,16 @@ describe("CompoundMenuCard", () => {
     )
     expect(screen.getByText("4.5")).toBeInTheDocument()
     expect(screen.getByText("(10)")).toBeInTheDocument()
+  })
+
+  it("does not render rating when no rating data is present", () => {
+    const itemNoRating = { ...mockItem, kitchenRating: null, avgRating: null, totalReviews: undefined } as any
+    render(
+      <CompoundMenuCard.Root item={itemNoRating}>
+        <CompoundMenuCard.Header />
+      </CompoundMenuCard.Root>
+    )
+    expect(screen.queryByText(/^\(\d+\)$/)).not.toBeInTheDocument()
   })
 
   it("does not show kitchen meta when showKitchenMeta is false", () => {

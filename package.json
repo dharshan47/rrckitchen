@@ -16,6 +16,9 @@
     "not dead",
     "> 0.5%"
   ],
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "dependencies": {
     "@base-ui/react": "^1.6.0",
     "@better-auth/infra": "^0.3.4",
@@ -46,6 +49,7 @@
     "next-cloudinary": "^6.17.5",
     "next-themes": "^0.4.6",
     "pg": "^8.22.0",
+    "prisma": "^7.8.0",
     "radix-ui": "^1.6.0",
     "razorpay": "^2.9.6",
     "react": "19.2.4",
@@ -85,7 +89,6 @@
     "eslint-config-next": "16.2.9",
     "jsdom": "^29.1.1",
     "leaflet": "^1.9.4",
-    "prisma": "^7.8.0",
     "react-leaflet": "^5.0.0",
     "tailwindcss": "^4",
     "tsx": "^4.22.4",

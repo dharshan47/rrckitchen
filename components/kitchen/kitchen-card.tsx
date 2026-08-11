@@ -3,24 +3,26 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import { Star, Clock, MapPin, CheckCircle2, ShieldCheck, ChefHat } from "lucide-react";
+import { Star, Clock, MapPin, ShieldCheck, ChefHat, BadgeCheck } from "lucide-react";
 import type { KitchenData } from "@/hooks/useExploreKitchens";
 import { getKitchenStatus, type KitchenStatus } from "@/components/kitchen/kitchen-timing-display";
 import { useMenuDeliveryLat, useMenuDeliveryLng } from "@/stores";
-import { haversineDistance } from "@/lib/geo";
+import { haversineDistance, THANJAVUR_CENTER } from "@/lib/geo";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 interface KitchenCardProps {
   kitchen: KitchenData;
-  variant?: "home" | "page";
+  variant?: "home" | "page" | "search";
   onClick?: () => void;
+  badges?: string[];
+  rightBadges?: string[];
+  query?: string;
 }
 
-export function KitchenCard({ kitchen, variant = "home", onClick }: KitchenCardProps) {
+export function KitchenCard({ kitchen, onClick, query, badges = [], rightBadges = [], variant }: KitchenCardProps) {
   const [status, setStatus] = useState<KitchenStatus>(() =>
     getKitchenStatus(kitchen.operatingHours ?? null)
   );
@@ -37,9 +39,14 @@ export function KitchenCard({ kitchen, variant = "home", onClick }: KitchenCardP
   const deliveryLat = useMenuDeliveryLat();
   const deliveryLng = useMenuDeliveryLng();
 
+  // Distance from the customer's delivery location to the kitchen.
+  // Falls back to the Thanjavur city center when the customer has not
+  // chosen a delivery location yet.
   const distanceKm = useMemo(() => {
-    if (deliveryLat == null || deliveryLng == null || kitchen.lat == null || kitchen.lng == null) return null;
-    return haversineDistance(deliveryLat, deliveryLng, kitchen.lat, kitchen.lng);
+    if (kitchen.lat == null || kitchen.lng == null) return null;
+    const fromLat = deliveryLat ?? THANJAVUR_CENTER[0];
+    const fromLng = deliveryLng ?? THANJAVUR_CENTER[1];
+    return haversineDistance(fromLat, fromLng, kitchen.lat, kitchen.lng);
   }, [deliveryLat, deliveryLng, kitchen.lat, kitchen.lng]);
 
   // Badges derived from real backend data.
@@ -47,279 +54,198 @@ export function KitchenCard({ kitchen, variant = "home", onClick }: KitchenCardP
   const isNew = kitchen.avgRating == null || kitchen.avgRating === 0;
 
   // Pure veg derived from the kitchen's actual menu items.
-  const isPureVeg =
-    kitchen.items.length > 0 && kitchen.items.every((i) => i.foodType === "VEG");
+  const hasVeg = kitchen.items?.some((i) => i.foodType === "VEG");
+  const hasNonVeg = kitchen.items?.some((i) => i.foodType === "NONVEG");
+  const isPureVeg = hasVeg && !hasNonVeg && (kitchen.items?.length ?? 0) > 0;
+  
+  const exactRankBadge = kitchen.customOfferText ? (
+    <div className="bg-[#F44A01] text-white text-[9.5px] font-bold px-2 py-0.5 rounded-[5px] tracking-wide shadow-sm">
+      {kitchen.customOfferText}
+    </div>
+  ) : isTopRated ? (
+    <div className="bg-[#08733F] text-white text-[9.5px] font-bold px-2 py-0.5 rounded-[5px] tracking-wide shadow-sm">
+      Top Rated
+    </div>
+  ) : isNew ? (
+    <div className="bg-[#6D28D9] text-white text-[9.5px] font-bold px-2 py-0.5 rounded-[5px] tracking-wide shadow-sm">
+      New
+    </div>
+  ) : (
+    <div className="bg-[#F44A01] text-white text-[9.5px] font-bold px-2 py-0.5 rounded-[5px] tracking-wide shadow-sm">
+      Bestseller
+    </div>
+  );
+
+  const exactDietBadge = isPureVeg ? (
+    <div className="flex items-center gap-1 bg-[#F5F8F2] border border-[#DCE8DC] px-1.5 py-0.5 rounded-[5px] shadow-sm">
+      <div className="flex items-center justify-center">
+        <div className="h-2.5 w-2.5 border-[1.2px] border-[#08733F] rounded-[2px] flex items-center justify-center">
+          <div className="h-1.5 w-1.5 bg-[#08733F] rounded-full" />
+        </div>
+      </div>
+      <span className="text-[9.5px] font-bold text-[#155B38]">Pure Veg</span>
+    </div>
+  ) : hasNonVeg ? (
+    <div className="flex items-center gap-1 bg-[#FFF5F3] border border-[#EBD8D4] px-1.5 py-0.5 rounded-[5px] shadow-sm">
+      <div className="flex items-center justify-center">
+        <div className="h-2.5 w-2.5 border-[1.2px] border-[#D92D20] rounded-[2px] flex items-center justify-center">
+          <div className="h-1.5 w-1.5 bg-[#D92D20] rounded-full" />
+        </div>
+      </div>
+      <span className="text-[9.5px] font-bold text-[#8F2118]">Non Veg</span>
+    </div>
+  ) : hasVeg ? (
+    <div className="flex items-center gap-1 bg-[#F5F8F2] border border-[#DCE8DC] px-1.5 py-0.5 rounded-[5px] shadow-sm">
+      <div className="flex items-center justify-center">
+        <div className="h-2.5 w-2.5 border-[1.2px] border-[#08733F] rounded-[2px] flex items-center justify-center">
+          <div className="h-1.5 w-1.5 bg-[#08733F] rounded-full" />
+        </div>
+      </div>
+      <span className="text-[9.5px] font-bold text-[#155B38]">Veg</span>
+    </div>
+  ) : null;
 
   const kitchenHref = `/kitchens/${kitchen.slug}`;
 
-  const statusBadge = (
-    <Badge
-      className={cn(
-        "gap-1 px-2 py-0.5 rounded-full border border-gray-100 text-[10px] font-black uppercase tracking-wide",
-        status.isOpen
-          ? "bg-white/95 text-green-700"
-          : "bg-white/95 text-red-600"
-      )}
-    >
-      <div className={cn("h-1.5 w-1.5 rounded-full", status.isOpen ? "bg-green-500" : "bg-red-500")} />
-      {status.isOpen ? "Open" : "Closed"}
-    </Badge>
-  );
-
-  const rankBadge = kitchen.customOfferText ? (
-    <Badge className="bg-[#EE7005] hover:bg-[#EE7005] text-white text-[11px] font-black px-2.5 py-1 rounded-sm uppercase tracking-wider">
-      {kitchen.customOfferText}
-    </Badge>
-  ) : isTopRated ? (
-    <Badge className="bg-[#168846] hover:bg-[#168846] text-white text-[11px] font-black px-2.5 py-1 rounded-sm uppercase tracking-wider">
-      Top Rated
-    </Badge>
-  ) : isNew ? (
-    <Badge className="bg-[#8b5cf6] hover:bg-[#8b5cf6] text-white text-[11px] font-black px-2.5 py-1 rounded-sm uppercase tracking-wider">
-      New
-    </Badge>
-  ) : null;
-
-  const chefAvatar = (
-    <Avatar className="h-full w-full rounded-full">
-      {kitchen.imageUrl ? (
-        <AvatarImage src={kitchen.imageUrl} alt={kitchen.displayName} className="object-cover" />
-      ) : null}
-      <AvatarFallback className="bg-gray-100 rounded-full">
-        <ChefHat className="h-5 w-5 text-gray-300" />
-      </AvatarFallback>
-    </Avatar>
-  );
-
-  if (variant === "home") {
-    return (
-      <Card className="flex flex-col overflow-hidden rounded-[20px] border-border shadow-sm transition-shadow hover:shadow-md w-full h-full">
-        <Link
-          href={kitchenHref}
-          onClick={onClick}
-          className="flex flex-col flex-1"
-        >
-          <div className="relative h-[180px] w-full bg-muted/50 shrink-0">
-            {kitchen.imageUrl ? (
+  return (
+    <Card className="flex flex-col rounded-[9px] shadow-[0_2px_8px_rgba(0,0,0,0.045)] border border-[#E7E7E7] overflow-visible transition-shadow hover:shadow-md bg-[#FFFFFF] w-full h-full relative group">
+      <Link href={kitchenHref} onClick={onClick} className="flex flex-col flex-1">
+        {/* Image Section */}
+        <div className="relative w-full h-[132px] sm:h-[140px] bg-muted rounded-t-[9px] shrink-0 overflow-hidden">
+          {kitchen.imageUrl ? (
+            <>
               <Image
                 src={kitchen.imageUrl}
                 alt={kitchen.displayName}
                 fill
-                className={cn("object-cover transition-transform duration-500 group-hover:scale-105", isClosed && "grayscale")}
-                sizes="300px"
+                className={cn("object-cover group-hover:scale-105 transition-transform duration-500", isClosed && "grayscale opacity-90")}
+                sizes="(max-width: 768px) 100vw, 300px"
               />
-            ) : (
-              <div className="flex items-center justify-center h-full bg-[#fdfbf7]">
-                <ChefHat className="h-8 w-8 text-gray-300" />
-              </div>
-            )}
-
-            {/* Top Left Badge */}
-            <div className="absolute top-3 left-3 z-10">{rankBadge}</div>
-
-            {/* Live status chip */}
-            <div className="absolute top-3 right-3 z-10">{statusBadge}</div>
-
-            {/* Chef Portrait */}
-            <div className="absolute -bottom-5 left-4 z-10">
-              <div className="h-11 w-11 rounded-full border-[3px] border-white bg-white shadow-sm overflow-hidden">
-                {chefAvatar}
-              </div>
-            </div>
-          </div>
-
-          <CardContent className="p-4 pt-7 flex flex-col flex-1">
-            <div className="flex items-center gap-1 mb-1">
-              <h3 className="font-bold text-[17px] text-[#0A3D24] leading-tight truncate">{kitchen.displayName}</h3>
-              <CheckCircle2 className="h-4 w-4 text-[#168846] fill-[#168846] text-white shrink-0" />
-            </div>
-
-            <div className="flex items-center gap-2 mt-1 text-[13px] font-bold text-gray-700">
-              <div className="flex items-center gap-0.5">
-                {kitchen.avgRating != null && kitchen.avgRating > 0 ? (
-                  <>
-                    <span className="text-primary">{kitchen.avgRating.toFixed(1)}</span>
-                    <Star className="h-3.5 w-3.5 fill-primary text-primary -mt-0.5" />
-                    {kitchen.totalReviews > 0 && (
-                      <span className="text-muted-foreground font-medium ml-0.5">({kitchen.totalReviews})</span>
-                    )}
-                  </>
-                ) : (
-                  <span className="text-muted-foreground font-medium">New</span>
-                )}
-              </div>
-              {isPureVeg && (
-                <>
-                  <span className="text-gray-300 font-medium">•</span>
-                  <span className="text-gray-600 font-medium">Pure Veg</span>
-                </>
-              )}
-            </div>
-
-            <div className="flex items-center gap-4 text-[12px] font-bold text-gray-600 mt-3">
-              {kitchen.estimatedPrepTime != null && (
-                <div className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-muted-foreground" /> {kitchen.estimatedPrepTime} mins
-                </div>
-              )}
-              {distanceKm != null && (
-                <div className="flex items-center gap-1.5">
-                  <MapPin className="h-4 w-4 text-muted-foreground" /> {distanceKm.toFixed(1)} km
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Link>
-
-        {/* Order Now */}
-        <div className="px-4 pb-4">
-          <Button asChild variant="outline" className="w-full h-auto py-2.5 rounded-md border-[1.5px] border-primary text-primary text-[13px] font-black uppercase tracking-wider hover:bg-primary/5">
-            <Link href={kitchenHref}>Order Now</Link>
-          </Button>
-        </div>
-      </Card>
-    );
-  }
-
-  // variant === "page"
-  return (
-    <Card className="flex flex-col md:rounded-2xl md:shadow-sm border-b md:border border-gray-100 md:border-border md:overflow-hidden transition-all relative py-4 md:p-0 gap-3 md:gap-0 shadow-none hover:shadow-md hover:border-gray-300 rounded-none md:rounded-2xl">
-      <Link
-        href={kitchenHref}
-        onClick={onClick}
-        className="flex flex-row md:flex-col flex-1 gap-3 md:gap-0 min-w-0"
-      >
-        {/* Image Container */}
-        <div className="relative w-[115px] md:w-full h-[130px] md:h-[180px] shrink-0 bg-muted/50 overflow-hidden rounded-xl md:rounded-none">
-          {kitchen.imageUrl ? (
-            <Image
-              src={kitchen.imageUrl}
-              alt={kitchen.displayName}
-              fill
-              className={cn("object-cover transition-transform duration-500 group-hover:scale-105", isClosed && "grayscale")}
-              sizes="(max-width: 768px) 100vw, 400px"
-            />
+              <div className="absolute inset-0 bg-[linear-gradient(rgba(0,0,0,0.02),rgba(0,0,0,0.02))] pointer-events-none" />
+            </>
           ) : (
             <div className="flex items-center justify-center h-full bg-[#fdfbf7]">
-              <ChefHat className="h-8 w-8 text-gray-300" />
+              <ChefHat className="h-10 w-10 text-gray-300" />
             </div>
           )}
 
           {/* Top Left Badge */}
-          <div className="absolute top-2 md:top-3 left-2 md:left-3 z-10">
-            {kitchen.customOfferText ? (
-              <Badge className="bg-[#EE7005] hover:bg-[#EE7005] text-white text-[9px] md:text-[11px] font-black px-1.5 py-0.5 md:py-1 md:px-2 rounded-sm uppercase tracking-wide">
-                {kitchen.customOfferText}
-              </Badge>
-            ) : isTopRated ? (
-              <Badge className="bg-[#168846] hover:bg-[#168846] text-white text-[9px] md:text-[11px] font-black px-1.5 py-0.5 md:py-1 md:px-2 rounded-sm uppercase tracking-wide">
-                Top Rated
-              </Badge>
-            ) : isNew ? (
-              <Badge className="bg-[#8b5cf6] hover:bg-[#8b5cf6] text-white text-[9px] md:text-[11px] font-black px-1.5 py-0.5 md:py-1 md:px-2 rounded-sm uppercase tracking-wide">
-                New
-              </Badge>
-            ) : null}
+          <div className="absolute top-2.5 left-2.5 z-10 flex flex-col items-start gap-1">
+            <div className="flex flex-wrap gap-1">{exactRankBadge}</div>
+            {badges.length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {badges.map((badge) => (
+                  <div
+                    key={badge}
+                    className="bg-[#00512F] text-white text-[9.5px] font-bold px-2 py-0.5 rounded-[5px] tracking-wide shadow-sm"
+                  >
+                    {badge}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Pure Veg Badge */}
-          {isPureVeg && (
-            <div className="absolute bottom-2 right-2 z-10">
-              <Badge className="gap-1 bg-white/95 hover:bg-white/95 border border-gray-100 px-1.5 py-0.5 md:px-2 md:py-1 rounded-sm shadow-sm text-[9px] md:text-[10px] font-black text-[#168846]">
-                <div className="h-2.5 w-2.5 md:h-3 md:w-3 rounded-sm border border-[#168846] flex items-center justify-center p-[1px]">
-                  <div className="h-1.5 w-1.5 rounded-full bg-[#168846]" />
-                </div>
-                Pure Veg
-              </Badge>
-            </div>
-          )}
+          {/* Top Right Diet Badge and Query */}
+          <div className="absolute top-2.5 right-2.5 z-10 flex flex-col gap-1 items-end">
+             {exactDietBadge}
+             {variant === "search" && rightBadges.length > 0 && (
+               <div className="flex flex-wrap gap-1 justify-end">
+                 {rightBadges.map((badge) => (
+                   <div
+                     key={badge}
+                     className="bg-[#00512F] text-white text-[9.5px] font-bold px-2 py-0.5 rounded-[5px] tracking-wide shadow-sm"
+                   >
+                     {badge}
+                   </div>
+                 ))}
+               </div>
+             )}
+             {query && (
+               <div className="bg-[#F5F8F2] text-[#155B38] border border-[#DCE8DC] text-[9.5px] font-bold px-1.5 py-0.5 rounded-[5px] capitalize tracking-wide shadow-sm">
+                 {query}
+               </div>
+             )}
+          </div>
 
-          {/* Live status chip */}
-          <div className="absolute top-2 md:top-3 right-2 md:right-3 z-20">{statusBadge}</div>
-
-          {/* Chef Portrait */}
-          <div className="absolute bottom-2 md:-bottom-5 left-2 md:left-4 z-10">
-            <div className="h-8 w-8 md:h-11 md:w-11 rounded-full border-2 border-white bg-white shadow-sm overflow-hidden">
-              {chefAvatar}
+          {/* Chef Avatar with Checkmark */}
+          <div className="absolute -bottom-[22px] left-3 z-20">
+            <div className="relative">
+              <Avatar className="h-11 w-11 rounded-full border-[2px] border-[#FFFFFF] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.18)] overflow-hidden">
+                <AvatarImage src={kitchen.profileImage ?? "/kitchen/profile.webp"} alt={kitchen.displayName} className="object-cover" />
+                <AvatarFallback className="bg-gray-100">
+                  <ChefHat className="h-5 w-5 text-gray-300" />
+                </AvatarFallback>
+              </Avatar>
+              <div className="absolute bottom-0 -right-1 h-3.5 w-3.5 bg-[#FFFFFF] rounded-full flex items-center justify-center z-20">
+                <BadgeCheck className="h-3.5 w-3.5 text-[#08733F] fill-[#FFFFFF]" strokeWidth={1.8} />
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Content Container */}
-        <CardContent className="flex-1 p-0 md:p-4 pt-1 md:pt-7 flex flex-col justify-between min-w-0">
-          <div>
-            {/* Title & Hygienic Badge */}
-            <div className="flex items-start justify-between gap-2">
-              <h3 className="font-bold text-[15px] md:text-[18px] text-[#0A3D24] leading-tight flex items-center gap-1 line-clamp-1">
-                {kitchen.displayName}
-                <CheckCircle2 className="h-4 w-4 text-[#168846] fill-[#168846] text-white shrink-0" />
-              </h3>
-
-              {/* Hygienic badge on right for mobile */}
-              <Badge className="md:hidden gap-0.5 bg-[#e8f5ed] hover:bg-[#e8f5ed] text-[#168846] px-1.5 py-0.5 rounded-sm text-[9px] font-black items-center shrink-0 whitespace-nowrap">
-                <ShieldCheck className="h-3 w-3" /> 100% Hygienic
-              </Badge>
-            </div>
-
-            {/* Rating */}
-            <div className="flex items-center gap-1 mt-1 text-[12px] md:text-[13px] font-bold">
-              {kitchen.avgRating != null && kitchen.avgRating > 0 ? (
-                <>
-                  <span className="text-gray-900">{kitchen.avgRating.toFixed(1)}</span>
-                  <Star className="h-3 md:h-3.5 w-3 md:w-3.5 fill-[#F59E0B] text-[#F59E0B] -mt-0.5" />
-                  {kitchen.totalReviews > 0 && (
-                    <span className="text-gray-500 font-medium ml-0.5">({kitchen.totalReviews})</span>
-                  )}
-                </>
-              ) : (
-                <span className="text-gray-500 font-medium">New</span>
-              )}
-            </div>
-
-            {/* Tags */}
-            {kitchen.cuisineTags.length > 0 && (
-              <p className="text-[12px] md:text-[13px] font-medium text-gray-600 mt-1.5 md:mt-2 line-clamp-1">
-                {kitchen.cuisineTags.join(" • ")}
-              </p>
+        {/* Content Section */}
+        <CardContent className="px-3.5 pb-3.5 pt-7 flex flex-col flex-1">
+          {/* Kitchen Name */}
+          <h3 className="font-bold text-[14px] text-[#111111] leading-tight truncate">{kitchen.displayName}</h3>
+          
+          {/* Rating & Reviews */}
+          <div className="flex items-center gap-1 text-[11px] mt-1.5">
+            {kitchen.avgRating != null && kitchen.avgRating > 0 ? (
+              <>
+                <span className="text-[#111111] font-bold">{kitchen.avgRating.toFixed(1)}</span>
+                <Star className="h-3 w-3 fill-[#F44A01] text-[#F44A01] -mt-0.5" />
+                {kitchen.totalReviews > 0 && (
+                  <span className="text-[#777777] font-normal ml-0.5">({kitchen.totalReviews})</span>
+                )}
+              </>
+            ) : (
+              <span className="text-[#777777] font-medium">New</span>
             )}
+          </div>
 
-            {/* Time & Distance */}
-            <div className="flex items-center gap-3 text-[11px] md:text-[12px] font-bold text-gray-600 mt-1.5 md:mt-2">
-              {kitchen.estimatedPrepTime != null && (
-                <div className="flex items-center gap-1 md:gap-1.5">
-                  <Clock className="h-3 md:h-3.5 w-3 md:w-3.5 text-gray-400" /> {kitchen.estimatedPrepTime} mins
-                </div>
-              )}
-              {distanceKm != null && (
-                <div className="flex items-center gap-1 md:gap-1.5 text-gray-400">•</div>
-              )}
-              {distanceKm != null && (
-                <div className="flex items-center gap-1 md:gap-1.5">
-                  <span className="text-[#EE7005] font-black text-[14px] leading-none mb-1">.</span>{" "}
-                  {distanceKm.toFixed(1)} km
-                </div>
-              )}
-            </div>
+          {/* Cuisines */}
+          <p className="text-[11px] text-[#555555] mt-1.5 line-clamp-1">
+            {kitchen.cuisineTags && kitchen.cuisineTags.length > 0 
+              ? kitchen.cuisineTags.slice(0, 2).join(" · ") 
+              : "Kitchen"}
+            {kitchen.locality && ` · ${kitchen.locality}`}
+          </p>
+
+          {/* Time & Distance */}
+          <div className="flex items-center text-[11px] text-[#555555] mt-1.5">
+            {kitchen.estimatedPrepTime != null && (
+              <div className="flex items-center gap-1.5">
+                <Clock className="h-[13px] w-[13px] text-[#222222]" strokeWidth={1.8} /> {kitchen.estimatedPrepTime} mins
+              </div>
+            )}
+            {kitchen.estimatedPrepTime != null && distanceKm != null && (
+              <span className="text-[#F44A01] mx-2 text-[14px] leading-none mb-1">•</span>
+            )}
+            {distanceKm != null && (
+              <div className="flex items-center gap-1">
+                <MapPin className="h-[13px] w-[13px] text-[#F44A01]" strokeWidth={1.8} />
+                {distanceKm < 1 ? `${Math.round(distanceKm * 1000)} m` : `${distanceKm.toFixed(1)} km`} away
+              </div>
+            )}
           </div>
         </CardContent>
+
+        {/* Footer Section */}
+        <div className="px-3.5 pb-3.5 mt-auto flex items-center justify-between">
+          <div className="flex items-center gap-1.5 bg-[#EEF8F1] border border-[#D7EBDD] px-2 py-1 rounded-[5px]">
+            <ShieldCheck className="h-3.5 w-3.5 text-[#176B43]" strokeWidth={1.8} />
+            <span className="text-[#176B43] text-[9.5px] font-bold tracking-wide">100% Hygienic</span>
+          </div>
+          <Button
+            asChild
+            variant="outline"
+            className="px-3 py-1 h-[26px] rounded-[5px] border border-[#F44A01] bg-[#FFFFFF] text-[#F44A01] text-[10px] font-bold hover:bg-[#FFF1EB] hover:border-[#E94300] hover:text-[#E94300] shadow-none"
+          >
+            <span className="cursor-pointer">View Menu</span>
+          </Button>
+        </div>
       </Link>
-
-      {/* Footer Row */}
-      <div className="mt-2 md:mt-0 pt-2 md:pt-4 md:border-t border-gray-100 flex items-center justify-between md:px-4 md:pb-4">
-        {/* Hygienic badge on left for desktop */}
-        <Badge className="hidden md:flex gap-1 bg-transparent hover:bg-transparent text-[#168846] px-1 py-1 rounded-md text-[12px] font-black items-center">
-          <ShieldCheck className="h-4 w-4" /> 100% Hygienic
-        </Badge>
-
-        {/* View Menu */}
-        <Button
-          asChild
-          variant="outline"
-          className="px-4 py-1.5 md:px-5 md:py-1.5 h-auto rounded-md border-[#EE7005] text-[#EE7005] text-[11px] md:text-[13px] font-bold hover:bg-[#EE7005]/5 hover:text-[#EE7005]"
-        >
-          <Link href={kitchenHref}>View Menu</Link>
-        </Button>
-      </div>
     </Card>
   );
 }

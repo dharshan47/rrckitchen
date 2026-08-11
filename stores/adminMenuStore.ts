@@ -4,6 +4,8 @@ import { useShallow } from "zustand/react/shallow";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   getAllMenuItems,
+  getAdminKitchensWithMenus,
+  createMenuItem,
   updateMenuItem,
   deleteMenuItem,
   addMenuItemPhoto,
@@ -31,8 +33,12 @@ export type AdminMenuItemRow = {
   orderCount: number;
   imageUrl: string | null;
   kitchenName: string | null;
+  menuId: string;
+  menuName: string;
+  cuisine: string | null;
   photos: { id: string; imageUrl: string }[];
   createdAt: Date;
+  updatedAt: Date;
 };
 
 /** State shape for the admin menu store. */
@@ -99,6 +105,30 @@ export function useAdminMenuItemsQuery() {
   }, [data]);
 
   return { data, ...rest };
+}
+
+/**
+ * Fetches active kitchens with their menus (for create / move flows).
+ */
+export function useAdminKitchensWithMenusQuery() {
+  return useQuery({
+    queryKey: ["admin-kitchens-menus"],
+    queryFn: getAdminKitchensWithMenus,
+    staleTime: 60_000,
+  });
+}
+
+/**
+ * Creates a menu item. Invalidates the menu items query on success.
+ */
+export function useCreateMenuItemMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (data: Parameters<typeof createMenuItem>[0]) => createMenuItem(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-menu-items"] });
+    },
+  });
 }
 
 /**

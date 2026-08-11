@@ -2,6 +2,15 @@
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  getFilteredRowModel,
+  flexRender,
+  createColumnHelper,
+} from "@tanstack/react-table";
 import { formatDistanceToNow } from "date-fns";
 import {
   Search,
@@ -9,7 +18,6 @@ import {
   ExternalLink,
   Filter,
   Download,
-  Edit,
   Star,
   Clock,
   X,
@@ -37,11 +45,13 @@ import {
   ChefHat,
   UtensilsCrossed,
   ShoppingBag,
-  Eye,
-  Layers,
   Tag,
   ListOrdered,
-  Sparkles,
+  MoreVertical,
+  SquarePen,
+  Lightbulb,
+  Flame,
+  Users,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -82,6 +92,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -93,6 +111,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import Image from "next/image";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 import {
   getKitchenSearchPageContents,
@@ -101,7 +120,6 @@ import {
   createKitchenSearchPageContent,
   saveKitchenSearchPageContent,
   deleteKitchenSearchPageContent,
-  toggleKitchenSearchPageContent,
   type AdminKitchenSearchRow,
 } from "@/actions/admin/kitchen-search-pages";
 
@@ -201,13 +219,13 @@ function EditorSkeleton() {
           <Skeleton className="h-10 w-40" />
         </div>
       </div>
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 mt-6">
-        <div className="xl:col-span-7 space-y-4">
+      <div className="grid grid-cols-1 2xl:grid-cols-12 gap-8 mt-6">
+        <div className="2xl:col-span-7 space-y-4">
           <Skeleton className="h-10 w-full" />
           <Skeleton className="h-64 w-full rounded-xl" />
           <Skeleton className="h-40 w-full rounded-xl" />
         </div>
-        <div className="xl:col-span-5">
+        <div className="2xl:col-span-5">
           <Skeleton className="h-[600px] w-full rounded-2xl" />
         </div>
       </div>
@@ -221,12 +239,13 @@ function EditorSkeleton() {
 
 interface EditorProps {
   contentId: string;
-  onCancel: () => void;
 }
 
-function Editor({ contentId, onCancel }: EditorProps) {
+function Editor({ contentId }: EditorProps) {
   const queryClient = useQueryClient();
   const [device, setDevice] = useState<"desktop" | "tablet" | "mobile">("desktop");
+  const [selectedFilterIndex, setSelectedFilterIndex] = useState(0);
+  const [editingFilterIndex, setEditingFilterIndex] = useState<number | null>(null);
 
   const draft = useKitchenSearchEditorDraft();
   const dirty = useKitchenSearchEditorDirty();
@@ -330,6 +349,18 @@ function Editor({ contentId, onCancel }: EditorProps) {
   const previewKitchens = preview?.kitchens ?? [];
   const previewItems = preview?.menuItems ?? [];
   const firstKitchen = previewKitchens[0];
+  const safeFilterIndex = Math.min(Math.max(selectedFilterIndex, 0), Math.max(draft.filters.length - 1, 0));
+  const selectedFilter = draft.filters[safeFilterIndex];
+
+  const getFilterIcon = (name: string) => {
+    const n = name.toLowerCase();
+    if (n.includes("type") || n.includes("style")) return <ChefHat className="h-4 w-4 text-[#FF4B0B]" strokeWidth={1.8} />;
+    if (n.includes("protein")) return <UtensilsCrossed className="h-4 w-4 text-[#10B981]" strokeWidth={1.8} />;
+    if (n.includes("spice")) return <Flame className="h-4 w-4 text-[#FF4B0B]" strokeWidth={1.8} />;
+    if (n.includes("rice")) return <Leaf className="h-4 w-4 text-[#10B981]" strokeWidth={1.8} />;
+    if (n.includes("serve")) return <Users className="h-4 w-4 text-[#F59E0B]" strokeWidth={1.8} />;
+    return <Filter className="h-4 w-4 text-[#94A3B8]" strokeWidth={1.8} />;
+  };
 
   const infoItems: {
     key: BooleanDraftKey;
@@ -350,50 +381,46 @@ function Editor({ contentId, onCancel }: EditorProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] p-6 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300 font-sans pb-20">
+    <div className="min-h-screen bg-[#FEFEFE] p-6 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300 font-sans pb-20">
       {/* Editor Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-4">
         <div className="flex items-center gap-4">
-          <div className="p-3 bg-orange-50 text-[#ff5a1f] rounded-xl border border-orange-100/50 hidden sm:block">
-            <ChefHat className="h-8 w-8" strokeWidth={1.5} />
+          <div className="p-2.5 bg-[#FFF3ED] text-[#FF4B0B] rounded-xl border border-[#FFD6B8] hidden sm:block">
+            <ChefHat className="h-7 w-7" strokeWidth={1.8} />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 mb-1 flex items-center gap-2">
-              Search Experience Editor
-              <Badge className="bg-[#ff5a1f]/10 text-[#ff5a1f] border-[#ff5a1f]/20 capitalize text-xs font-bold">
-                &ldquo;{draft.keyword}&rdquo;
-              </Badge>
+            <h1 className="text-[22px] font-bold tracking-tight text-[#111827] mb-0.5 flex items-center gap-2">
+              Kitchen Detail Page Management
             </h1>
-            <p className="text-sm text-slate-500">
-              How kitchen detail pages look when customers click <strong className="text-slate-700">View Menu</strong> after searching{" "}
-              <strong className="text-slate-700">&ldquo;{draft.keyword}&rdquo;</strong>
+            <p className="text-[13px] text-[#64748B]">
+              Manage how kitchen detail page looks after customer clicks <strong className="text-[#334155]">View Menu</strong> from search results
             </p>
           </div>
         </div>
         <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
-          <Button variant="ghost" size="icon" onClick={onCancel} className="h-10 w-10 text-slate-500 hover:bg-slate-200">
-            <X className="h-5 w-5" />
-          </Button>
           <Button
             variant="outline"
-            className="h-10 bg-white border-slate-200 text-slate-700 font-semibold shadow-sm flex-1 md:flex-none"
+            className="h-[36px] bg-white border-[#E5E7EB] text-[#334155] font-semibold text-[13px] shadow-sm flex-1 md:flex-none"
             onClick={() => window.open(`/search?q=${encodeURIComponent(draft.keyword)}`, "_blank")}
           >
-            View Live Site <ExternalLink className="h-4 w-4 ml-2" />
+            <ExternalLink className="h-4 w-4 mr-2" strokeWidth={1.8} /> View Live Site 
           </Button>
           <Button
-            className="h-10 bg-green-600 hover:bg-green-700 text-white font-semibold shadow-sm flex-1 md:flex-none"
+            className="h-[36px] bg-[#187A45] hover:bg-[#14663A] text-white font-semibold text-[13px] shadow-sm flex-1 md:flex-none px-5"
             disabled={saveMutation.isPending}
             onClick={handleSave}
           >
             {saveMutation.isPending ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
             ) : (
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="h-4 w-4 mr-2" strokeWidth={1.8} />
             )}
-            {dirty ? "Save All Changes" : "Saved"}
+            Save All Changes
           </Button>
         </div>
+      </div>
+      <div className="flex justify-end mb-4">
+        <div className="text-[12px] text-[#64748B] font-medium">Last updated: {formatRelativeTime(draft.updatedAt)}</div>
       </div>
 
       {dirty && (
@@ -404,13 +431,25 @@ function Editor({ contentId, onCancel }: EditorProps) {
       )}
 
       {/* Editor Subheader */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 py-4 mb-2 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[#EEF0F2]">
         <div className="flex flex-wrap items-center gap-6">
           <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-wide">Status</span>
+            <span className="text-[12px] font-bold text-[#64748B]">Apply To</span>
+            <Select defaultValue="all">
+              <SelectTrigger className="h-[36px] w-[180px] bg-white border-[#E5E7EB] text-[#111827] font-semibold shadow-sm text-[13px] rounded-lg">
+                <SelectValue placeholder="All Kitchens" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Kitchens</SelectItem>
+                <SelectItem value="specific">Specific Kitchens</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div className="flex items-center gap-3">
+            <span className="text-[12px] font-bold text-[#64748B]">Status</span>
             {draft.isActive ? (
-              <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700 gap-1.5 px-2.5 py-1 font-bold shadow-sm">
-                <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div> Published
+              <Badge variant="outline" className="border-[#A7F3D0] bg-[#ECFDF5] text-[#047857] gap-1.5 px-2.5 py-1 font-bold shadow-sm">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#10B981]"></div> Published
               </Badge>
             ) : (
               <Badge variant="outline" className="border-slate-200 bg-slate-50 text-slate-600 gap-1.5 px-2.5 py-1 font-bold shadow-sm">
@@ -418,25 +457,11 @@ function Editor({ contentId, onCancel }: EditorProps) {
               </Badge>
             )}
           </div>
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-600 uppercase tracking-wide">Live</span>
-            <Switch
-              checked={draft.isActive}
-              onCheckedChange={(checked) => updateDraft({ isActive: checked })}
-              className="data-[state=checked]:bg-green-500"
-            />
-          </div>
-          <div className="flex items-center gap-2 text-xs text-slate-500 font-semibold">
-            <Layers className="h-4 w-4 text-slate-400" /> v{draft.version}
-          </div>
-          <div className="flex items-center gap-2 text-xs text-slate-500 font-semibold">
-            <Clock className="h-4 w-4 text-slate-400" /> Updated {formatRelativeTime(draft.updatedAt)}
-          </div>
         </div>
 
         <div className="flex items-center gap-3">
-          <span className="text-xs font-bold text-slate-600 uppercase tracking-wide hidden sm:block">Preview As</span>
-          <div className="flex items-center p-1 bg-white border border-slate-200 shadow-sm rounded-lg">
+          <span className="text-[12px] font-bold text-[#64748B] hidden sm:block">Preview As</span>
+          <div className="flex items-center p-1 bg-white border border-[#E5E7EB] shadow-sm rounded-[8px]">
             {(
               [
                 { id: "desktop", icon: Monitor, label: "Desktop" },
@@ -448,14 +473,14 @@ function Editor({ contentId, onCancel }: EditorProps) {
                 key={d.id}
                 variant="ghost"
                 size="sm"
-                className={`h-7 px-3 rounded-md font-semibold ${
+                className={`h-7 px-3 rounded-md font-semibold text-[12px] ${
                   device === d.id
-                    ? "bg-green-50 text-green-700 border border-green-100"
-                    : "text-slate-500 hover:text-slate-900"
+                    ? "bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]"
+                    : "text-[#64748B] hover:text-[#111827]"
                 }`}
                 onClick={() => setDevice(d.id)}
               >
-                <d.icon className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">{d.label}</span>
+                <d.icon className="h-3.5 w-3.5 sm:mr-1.5" strokeWidth={device===d.id?2:1.8} /> <span className="hidden sm:inline">{d.label}</span>
               </Button>
             ))}
           </div>
@@ -463,94 +488,77 @@ function Editor({ contentId, onCancel }: EditorProps) {
       </div>
 
       {/* Main Content Area */}
-      <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 mt-6">
+      <div className="grid grid-cols-1 2xl:grid-cols-12 gap-6 2xl:gap-8 mt-6">
         {/* Left Panel */}
-        <div className="xl:col-span-7 space-y-6">
+        <div className="2xl:col-span-7 space-y-6">
           <Tabs defaultValue="page-settings" className="w-full">
-            <TabsList className="bg-transparent border-b border-slate-200 rounded-none w-full justify-start h-auto p-0 space-x-8 overflow-x-auto hide-scrollbar">
-              <TabsTrigger value="page-settings" className="data-[state=active]:border-b-2 data-[state=active]:border-[#ff5a1f] data-[state=active]:text-[#ff5a1f] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-slate-500 data-[state=active]:bg-transparent">
+            <TabsList className="bg-transparent border-b border-[#EEF0F2] rounded-none w-full justify-start h-auto p-0 space-x-6 sm:space-x-8 overflow-x-auto hide-scrollbar">
+              <TabsTrigger value="page-settings" className="data-[state=active]:border-b-[3px] data-[state=active]:border-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
                 Page Settings
               </TabsTrigger>
-              <TabsTrigger value="chips-filters" className="data-[state=active]:border-b-2 data-[state=active]:border-[#ff5a1f] data-[state=active]:text-[#ff5a1f] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-slate-500 data-[state=active]:bg-transparent">
-                Chips & Filters
+              <TabsTrigger value="filters-chips" className="data-[state=active]:border-b-[3px] data-[state=active]:border-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
+                Filters & Chips
               </TabsTrigger>
-              <TabsTrigger value="menu" className="data-[state=active]:border-b-2 data-[state=active]:border-[#ff5a1f] data-[state=active]:text-[#ff5a1f] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-slate-500 data-[state=active]:bg-transparent">
+              <TabsTrigger value="menu-display" className="data-[state=active]:border-b-[3px] data-[state=active]:border-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
                 Menu Display
               </TabsTrigger>
-              <TabsTrigger value="info" className="data-[state=active]:border-b-2 data-[state=active]:border-[#ff5a1f] data-[state=active]:text-[#ff5a1f] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-slate-500 data-[state=active]:bg-transparent">
+              <TabsTrigger value="kitchen-info" className="data-[state=active]:border-b-[3px] data-[state=active]:border-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
                 Kitchen Info
+              </TabsTrigger>
+              <TabsTrigger value="layout-design" className="data-[state=active]:border-b-[3px] data-[state=active]:border-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
+                Layout & Design
               </TabsTrigger>
             </TabsList>
 
             {/* ----------------------- PAGE SETTINGS ----------------------- */}
-            <TabsContent value="page-settings" className="pt-8 space-y-10">
-              {/* 1. Hero Banners */}
+            <TabsContent value="page-settings" className="pt-6 space-y-8">
+              {/* 1. Hero Section Images */}
               <div>
-                <div className="flex justify-between items-center mb-5">
-                  <div>
-                    <h3 className="font-bold text-slate-900 mb-1 text-sm">1. Hero Banner</h3>
-                    <p className="text-xs text-slate-500 font-medium">
-                      A search-specific banner instead of the kitchen banner
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs font-bold text-slate-600">Show Hero</span>
-                    <Switch
-                      checked={draft.showHero}
-                      onCheckedChange={(checked) => updateDraft({ showHero: checked })}
-                      className="scale-[0.8] data-[state=checked]:bg-green-500"
-                    />
-                  </div>
-                </div>
+                <h3 className="font-bold text-[#111827] mb-1 text-[15px]">1. Hero Section Images</h3>
+                <p className="text-[13px] text-[#64748B] font-medium mb-4">
+                  These images will be shown at the top of kitchen detail page
+                </p>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   {(
                     [
                       { key: "desktopBannerUrl" as const, res: "1200x400px" },
-                      { key: "mobileBannerUrl" as const, res: "768x400px" },
+                      { key: "tabletBannerUrl" as const, res: "768x400px" },
+                      { key: "mobileBannerUrl" as const, res: "375x400px" },
                     ]
-                  ).map((h) => {
-                    const value = draft[h.key];
+                  ).map((h, i) => {
+                    const value = i === 1 ? draft.mobileBannerUrl : draft.desktopBannerUrl;
                     return (
-                      <div key={h.key} className="space-y-3 p-3 border border-slate-100 bg-white rounded-xl shadow-sm">
-                        <div className="relative h-28 bg-slate-100 rounded-lg overflow-hidden group border border-slate-200">
+                      <div key={h.key} className="space-y-3">
+                        <div className="relative h-28 bg-slate-100 rounded-[10px] overflow-hidden group border border-[#E5E7EB]">
                           {value ? (
                             <Image src={value} alt={`${h.key} hero`} fill className="object-cover" />
                           ) : (
                             <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 text-slate-400">
-                              <ChefHat className="h-8 w-8" strokeWidth={1.5} />
-                              <span className="text-[10px] font-semibold">No banner set</span>
+                              <ImageIcon className="h-6 w-6" strokeWidth={1.5} />
+                              <span className="text-[10px] font-semibold">No image</span>
                             </div>
                           )}
-                          {value && (
-                            <Badge
-                              className="absolute top-2 right-2 bg-white text-slate-700 hover:bg-slate-50 text-[10px] border border-slate-200 shadow-sm font-semibold px-2 py-0.5 cursor-pointer"
-                              onClick={() => updateDraft({ [h.key]: "" })}
-                            >
-                              <X className="h-3 w-3 mr-1" /> Remove
-                            </Badge>
-                          )}
                         </div>
-                        <p className="text-[11px] text-slate-500 font-semibold text-center">
+                        <p className="text-[11px] text-[#64748B] font-medium">
                           Recommended: {h.res}
                         </p>
                         <CloudinaryUpload
-                          onUpload={({ secure_url }) => updateDraft({ [h.key]: secure_url })}
+                          onUpload={({ secure_url }) => updateDraft({ [h.key as "desktopBannerUrl" | "mobileBannerUrl"]: secure_url })}
                         >
                           {({ uploading, startUpload }) => (
                             <Button
                               variant="outline"
-                              size="sm"
-                              className="w-full text-green-700 border-green-200 bg-green-50/50 hover:bg-green-100 font-bold h-8"
+                              className="w-full text-[#187A45] border-[#187A45] hover:bg-[#F3FAF5] font-bold h-9 text-[13px]"
                               onClick={startUpload}
                               disabled={uploading}
                             >
                               {uploading ? (
-                                <Loader2 className="h-3.5 w-3.5 mr-2 animate-spin" />
+                                <Loader2 className="h-4 w-4 mr-1.5 animate-spin" />
                               ) : (
-                                <ImageIcon className="h-3.5 w-3.5 mr-2" />
+                                <ImageIcon className="h-4 w-4 mr-1.5" strokeWidth={2} />
                               )}
-                              {value ? "Change Image" : "Upload Image"}
+                              Change Image
                             </Button>
                           )}
                         </CloudinaryUpload>
@@ -560,311 +568,443 @@ function Editor({ contentId, onCancel }: EditorProps) {
                 </div>
               </div>
 
-              <hr className="border-slate-200" />
+              <hr className="border-[#EEF0F2]" />
 
-              {/* 2. Search Title */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <Label htmlFor="search-title" className="text-sm font-bold text-slate-900">
-                    2. Search Title
-                  </Label>
-                  <p className="text-xs text-slate-500 font-medium">
-                    Shown instead of the kitchen name, e.g.{" "}
-                    <span className="text-[#ff5a1f] font-semibold">&ldquo;Best Biryani from Lakshmi Kitchen&rdquo;</span>
-                  </p>
-                  <Input
-                    id="search-title"
-                    value={draft.searchTitle}
-                    onChange={(e) => updateDraft({ searchTitle: e.target.value })}
-                    placeholder={`Best ${draft.keyword} near you`}
-                    className="bg-white border-slate-200 shadow-sm h-10"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="badge-text" className="text-sm font-bold text-slate-900">
-                    Badge Text
-                  </Label>
-                  <p className="text-xs text-slate-500 font-medium">Small badge near the title, e.g. &ldquo;68+ Kitchens&rdquo;</p>
-                  <Input
-                    id="badge-text"
-                    value={draft.badgeText}
-                    onChange={(e) => updateDraft({ badgeText: e.target.value })}
-                    placeholder={`${draft.kitchensCount}+ Kitchens`}
-                    className="bg-white border-slate-200 shadow-sm h-10"
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description" className="text-sm font-bold text-slate-900">
-                  3. Description
-                </Label>
-                <p className="text-xs text-slate-500 font-medium">Short intro shown under the kitchen header</p>
-                <Textarea
-                  id="description"
-                  value={draft.description}
-                  onChange={(e) => updateDraft({ description: e.target.value })}
-                  placeholder={`Explore the best ${draft.keyword} from verified home kitchens near you.`}
-                  rows={3}
-                  className="bg-white border-slate-200 shadow-sm resize-none"
-                />
-              </div>
-
-              <hr className="border-slate-200" />
-
-              {/* 4. Default Sorting */}
-              <div className="space-y-2 max-w-md">
-                <Label htmlFor="default-sort" className="text-sm font-bold text-slate-900">
-                  4. Default Sorting
-                </Label>
-                <p className="text-xs text-slate-500 font-medium">
-                  How menu items are ordered when the customer opens the page
-                </p>
-                <Select
-                  value={draft.defaultSort}
-                  onValueChange={(value) =>
-                    updateDraft({ defaultSort: value as (typeof KITCHEN_SEARCH_SORT_OPTIONS)[number] })
-                  }
-                >
-                  <SelectTrigger id="default-sort" className="bg-white border-slate-200 shadow-sm h-10 font-semibold">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {KITCHEN_SEARCH_SORT_OPTIONS.map((option) => (
-                      <SelectItem key={option} value={option}>
-                        {option}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </TabsContent>
-
-            {/* ----------------------- CHIPS & FILTERS ----------------------- */}
-            <TabsContent value="chips-filters" className="pt-8 space-y-10">
-              {/* Search Chips */}
+              {/* 2. Search Chips */}
               <div>
-                <div className="flex justify-between items-center mb-5">
+                <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="font-bold text-slate-900 text-sm mb-1">1. Search Chips <span className="text-slate-500 font-medium">(Quick Filters)</span></h3>
-                    <p className="text-xs text-slate-500 font-medium">Pills shown below the search title. Clicking a chip filters the menu.</p>
+                    <h3 className="font-bold text-[#111827] text-[15px] mb-1">2. Search Chips <span className="text-[#64748B] font-medium">(Top Pills)</span></h3>
+                    <p className="text-[13px] text-[#64748B] font-medium">Manage the quick filter chips shown below the search title</p>
                   </div>
-                  <Button variant="outline" size="sm" className="text-[#ff5a1f] border-[#ff5a1f]/30 hover:bg-[#ff5a1f]/10 font-bold h-8 px-4 bg-white shadow-sm" onClick={addChip}>
-                    <Plus className="h-4 w-4 mr-1.5 stroke-[3]" /> Add Chip
+                  <Button variant="outline" className="text-[#FF4B0B] border-[#FF4B0B] hover:bg-[#FFF3ED] font-bold h-9 px-4 shadow-sm text-[13px]" onClick={addChip}>
+                    <Plus className="h-4 w-4 mr-1.5 stroke-[2.5]" /> Add Chip
                   </Button>
                 </div>
 
-                <div className="space-y-2.5">
-                  {draft.chips.map((chip, index) => (
-                    <div key={chip.id ?? index} className="flex items-center gap-2.5 py-2 px-3 bg-white border border-slate-200 rounded-xl shadow-sm">
-                      <GripVertical className="h-4 w-4 text-slate-400 cursor-grab opacity-70 flex-shrink-0" />
-                      <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0" onClick={() => moveChip(index, -1)}>
-                        <ChevronUp className="h-4 w-4 text-slate-400" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0" onClick={() => moveChip(index, 1)}>
-                        <ChevronDown className="h-4 w-4 text-slate-400" />
-                      </Button>
-                      <Input
-                        value={chip.label}
-                        onChange={(e) => updateChip(index, { label: e.target.value })}
-                        className="h-9 bg-white border-slate-200 shadow-sm font-semibold text-sm flex-1 min-w-0"
-                      />
+                <div className="flex flex-wrap gap-3">
+                  {draft.chips.map((chip, idx) => (
+                    <div key={idx} className="flex items-center gap-2.5 bg-white border border-[#E5E7EB] rounded-full shadow-sm px-3 h-[36px]">
+                      <GripVertical className="h-4 w-4 text-[#CBD5E1] cursor-grab hidden md:block" />
                       <Switch
                         checked={chip.isEnabled}
-                        onCheckedChange={(checked) => updateChip(index, { isEnabled: checked })}
-                        className="scale-[0.7] origin-right data-[state=checked]:bg-green-500 shadow-sm flex-shrink-0"
+                        onCheckedChange={(c) => updateChip(idx, { isEnabled: c })}
+                        className="scale-[0.65] origin-left data-[state=checked]:bg-[#10B981]"
                       />
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 flex-shrink-0" onClick={() => removeChip(index)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                      <span className={`text-[13px] font-bold ${chip.isEnabled ? "text-[#334155]" : "text-[#94A3B8] line-through"}`}>
+                        {chip.label}
+                      </span>
+                      <X className="h-3.5 w-3.5 ml-1 text-[#94A3B8] cursor-pointer hover:text-red-500" onClick={() => removeChip(idx)} />
                     </div>
                   ))}
                   {draft.chips.length === 0 && (
-                    <p className="text-xs text-slate-400 font-semibold text-center py-6 border border-dashed border-slate-200 rounded-xl bg-white/50">
-                      No chips yet. Add chips customers can tap to filter the menu.
-                    </p>
+                    <div className="text-[13px] text-[#94A3B8] font-medium py-2">
+                      No chips yet. Click &ldquo;Add Chip&rdquo; to create a quick filter pill.
+                    </div>
                   )}
                 </div>
               </div>
 
-              <hr className="border-slate-200" />
+              <hr className="border-[#EEF0F2]" />
 
-              {/* Filters */}
-              <div>
-                <div className="flex justify-between items-center mb-5">
+              <div className={`grid grid-cols-1 ${device === 'mobile' ? 'grid-cols-1' : 'lg:grid-cols-2'} gap-8`}>
+                {/* 3. Filter Categories */}
+                <div className="space-y-4">
                   <div>
-                    <h3 className="font-bold text-slate-900 text-sm mb-1">2. Filters <span className="text-slate-500 font-medium">(Sidebar)</span></h3>
-                    <p className="text-xs text-slate-500 font-medium">Enable / disable and manage filter groups shown on the kitchen page</p>
+                    <h3 className="font-bold text-[#111827] text-[15px] mb-1">3. Filter Categories <span className="text-[#64748B] font-medium">(Left Sidebar)</span></h3>
+                    <p className="text-[13px] text-[#64748B] font-medium">Enable/Disable and manage filters shown in the left sidebar</p>
                   </div>
-                  <Button variant="outline" size="sm" className="text-[#ff5a1f] border-[#ff5a1f]/30 hover:bg-[#ff5a1f]/10 font-bold h-8 px-4 bg-white shadow-sm" onClick={addFilter}>
-                    <Plus className="h-4 w-4 mr-1.5 stroke-[3]" /> Add Filter
+                  
+                  <div className="border border-[#E5E7EB] rounded-xl overflow-hidden bg-white shadow-sm">
+                    <Table className="w-full text-left">
+                      <TableHeader>
+                        <TableRow className="border-b border-[#E5E7EB] bg-[#F8FAFC] hover:bg-[#F8FAFC]">
+                          <TableHead className="font-semibold text-[11px] text-[#64748B] uppercase px-4 py-3 text-center"></TableHead>
+                          <TableHead className="font-semibold text-[11px] text-[#64748B] uppercase px-2 py-3">Filter Category</TableHead>
+                          <TableHead className="font-semibold text-[11px] text-[#64748B] uppercase px-2 py-3 text-center">Visible</TableHead>
+                          <TableHead className="font-semibold text-[11px] text-[#64748B] uppercase px-2 py-3 text-center">Values</TableHead>
+                          <TableHead className="font-semibold text-[11px] text-[#64748B] uppercase px-4 py-3 text-center">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {draft.filters.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={5} className="px-4 py-8 text-center text-[13px] text-[#94A3B8] font-medium">
+                              No filter categories yet. Add one below to show filters in the left sidebar.
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          draft.filters.map((filter, idx) => (
+                            <TableRow
+                              key={idx}
+                              onClick={() => setSelectedFilterIndex(idx)}
+                              className={`cursor-pointer hover:bg-[#F8FAFC] ${idx !== draft.filters.length - 1 ? "border-b border-[#F1F5F9]" : ""} ${safeFilterIndex === idx ? "bg-[#FFF9F5]" : "bg-white"}`}
+                            >
+                              <TableCell className="px-4 py-2 w-10 text-center"><GripVertical className="h-4 w-4 text-[#CBD5E1] cursor-grab mx-auto" /></TableCell>
+                              <TableCell className="px-2 py-2">
+                                {editingFilterIndex === idx ? (
+                                  <Input
+                                    autoFocus
+                                    defaultValue={filter.name}
+                                    onKeyDown={(e) => {
+                                      if (e.key === "Enter") {
+                                        updateFilter(idx, { name: e.currentTarget.value.trim() || filter.name });
+                                        setEditingFilterIndex(null);
+                                      }
+                                    }}
+                                    onBlur={(e) => {
+                                      updateFilter(idx, { name: e.target.value.trim() || filter.name });
+                                      setEditingFilterIndex(null);
+                                    }}
+                                    className="h-8 w-[180px] bg-white border-slate-200 shadow-sm text-[13px]"
+                                  />
+                                ) : (
+                                  <div className="flex items-center gap-2">
+                                    {getFilterIcon(filter.name)}
+                                    <span className="text-[13px] font-semibold text-[#334155]">{filter.name}</span>
+                                  </div>
+                                )}
+                              </TableCell>
+                              <TableCell className="px-2 py-2 text-center">
+                                <Switch
+                                  checked={filter.isEnabled}
+                                  onCheckedChange={(c) => updateFilter(idx, { isEnabled: c })}
+                                  className="scale-[0.75] data-[state=checked]:bg-[#10B981] mx-auto"
+                                />
+                              </TableCell>
+                              <TableCell className="px-2 py-2 text-center">
+                                <span className="text-[12px] font-semibold text-[#64748B]">{filter.options.length} values</span>
+                              </TableCell>
+                              <TableCell className="px-4 py-2">
+                                <div className="flex items-center justify-center gap-1" onClick={(e) => e.stopPropagation()}>
+                                  <Button variant="ghost" size="icon" className="h-7 w-7" disabled={idx === 0} onClick={() => moveFilter(idx, -1)}>
+                                    <ChevronUp className="h-4 w-4 text-[#94A3B8] hover:text-[#111827]" strokeWidth={1.8} />
+                                  </Button>
+                                  <Button variant="ghost" size="icon" className="h-7 w-7" disabled={idx === draft.filters.length - 1} onClick={() => moveFilter(idx, 1)}>
+                                    <ChevronDown className="h-4 w-4 text-[#94A3B8] hover:text-[#111827]" strokeWidth={1.8} />
+                                  </Button>
+                                  <SquarePen
+                                    className="h-4 w-4 text-[#94A3B8] cursor-pointer hover:text-[#111827] ml-1"
+                                    strokeWidth={1.8}
+                                    onClick={() => setEditingFilterIndex(editingFilterIndex === idx ? null : idx)}
+                                  />
+                                  <Trash2 className="h-4 w-4 text-[#FF4B0B] cursor-pointer hover:text-red-700 ml-1" strokeWidth={1.8} onClick={() => removeFilter(idx)} />
+                                </div>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </div>
+                  
+                  <Button variant="outline" className="w-full text-[#FF4B0B] border-[#FF4B0B] hover:bg-[#FFF3ED] font-bold h-[40px] shadow-sm text-[13px]" onClick={addFilter}>
+                    <Plus className="h-4 w-4 mr-2 stroke-[2.5]" /> Add Filter Category
                   </Button>
                 </div>
 
-                <div className="space-y-4">
-                  {draft.filters.map((filter, index) => (
-                    <div key={filter.id ?? index} className="border border-slate-100 bg-white rounded-xl shadow-sm overflow-hidden">
-                      <div className="flex items-center gap-2.5 p-3 border-b border-slate-50 bg-slate-50/40">
-                        <GripVertical className="h-4 w-4 text-slate-400 cursor-grab opacity-70 flex-shrink-0" />
-                        <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0" onClick={() => moveFilter(index, -1)}>
-                          <ChevronUp className="h-4 w-4 text-slate-400" />
-                        </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0" onClick={() => moveFilter(index, 1)}>
-                          <ChevronDown className="h-4 w-4 text-slate-400" />
-                        </Button>
-                        <Input
-                          value={filter.name}
-                          onChange={(e) => updateFilter(index, { name: e.target.value })}
-                          className="h-9 bg-white border-slate-200 shadow-sm font-bold text-sm flex-1 min-w-0"
-                        />
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          <span className="text-[11px] font-bold text-slate-600">Visible</span>
-                          <Switch
-                            checked={filter.isEnabled}
-                            onCheckedChange={(checked) => updateFilter(index, { isEnabled: checked })}
-                            className="scale-[0.7] origin-right data-[state=checked]:bg-green-500 shadow-sm"
-                          />
-                        </div>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 flex-shrink-0" onClick={() => removeFilter(index)}>
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-
-                      <div className="p-3">
-                        <p className="text-[11px] font-bold text-slate-700 uppercase tracking-wider mb-2">Values</p>
-                        <div className="flex flex-wrap gap-2 mb-3">
-                          {filter.options.map((option) => (
-                            <span
-                              key={option}
-                              className="flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 border border-slate-200 text-slate-700 rounded-full text-xs font-bold"
-                            >
-                              {option}
-                              <X
-                                className="h-3.5 w-3.5 text-slate-400 hover:text-red-500 cursor-pointer"
-                                onClick={() => removeFilterOption(index, option)}
-                              />
-                            </span>
+                {/* 4. Filter Values & 5. Kitchen Info */}
+                <div className="space-y-8">
+                  {/* Filter Values */}
+                  <div>
+                    <h3 className="font-bold text-[#111827] text-[15px] mb-1">4. Filter Values</h3>
+                    <p className="text-[13px] text-[#64748B] font-medium mb-4">Manage values for selected filter</p>
+                    
+                    <div className="flex items-center justify-between mb-4">
+                      <span className="text-[13px] font-bold text-[#111827]">Select Filter</span>
+                      <Select
+                        value={draft.filters.length > 0 ? String(safeFilterIndex) : undefined}
+                        onValueChange={(v) => setSelectedFilterIndex(Number(v))}
+                      >
+                        <SelectTrigger className="h-[36px] w-[220px] bg-white border-[#E5E7EB] text-[#111827] font-semibold shadow-sm text-[13px] rounded-lg" disabled={draft.filters.length === 0}>
+                          <SelectValue placeholder="No filters yet" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {draft.filters.map((f, i) => (
+                            <SelectItem key={i} value={String(i)}>{f.name}</SelectItem>
                           ))}
-                          {filter.options.length === 0 && (
-                            <span className="text-xs text-slate-400 font-semibold">No values yet</span>
-                          )}
-                        </div>
-                        <AddValueInput onAdd={(value) => addFilterOption(index, value)} />
-                      </div>
+                        </SelectContent>
+                      </Select>
                     </div>
-                  ))}
-                  {draft.filters.length === 0 && (
-                    <p className="text-xs text-slate-400 font-semibold text-center py-6 border border-dashed border-slate-200 rounded-xl bg-white/50">
-                      No filters configured.
-                    </p>
+
+                    {selectedFilter ? (
+                      <>
+                        <div className="space-y-2 mb-4">
+                          <span className="text-[13px] font-bold text-[#111827] block mb-2">Filter Values</span>
+                          {selectedFilter.options.length === 0 && (
+                            <div className="text-[13px] text-[#94A3B8] font-medium py-2">No values yet. Add a value below.</div>
+                          )}
+                          {selectedFilter.options.map((val, idx) => (
+                            <div key={idx} className="flex items-center justify-between py-2 border-b border-[#F1F5F9] last:border-0">
+                              <div className="flex items-center gap-3">
+                                <GripVertical className="h-4 w-4 text-[#CBD5E1] cursor-grab" />
+                                <span className="text-[13px] font-semibold text-[#334155]">{val}</span>
+                              </div>
+                              <Trash2
+                                className="h-4 w-4 text-[#FF4B0B] cursor-pointer hover:text-red-700"
+                                strokeWidth={1.8}
+                                onClick={() => removeFilterOption(safeFilterIndex, val)}
+                              />
+                            </div>
+                          ))}
+                        </div>
+
+                        <AddValueInput onAdd={(value) => addFilterOption(safeFilterIndex, value)} />
+                      </>
+                    ) : (
+                      <div className="text-[13px] text-[#94A3B8] font-medium py-6 border border-dashed border-[#E5E7EB] rounded-xl text-center">
+                        Add a filter category in section 3 to manage its values here.
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+            
+            {/* ----------------------- FILTERS & CHIPS ----------------------- */}
+            <TabsContent value="filters-chips" className="pt-6 space-y-8">
+              <div>
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h3 className="font-bold text-[#111827] text-[15px] mb-1">Search Chips <span className="text-[#64748B] font-medium">(Top Pills)</span></h3>
+                    <p className="text-[13px] text-[#64748B] font-medium">Edit chip labels, enable/disable, and reorder how they appear below the search title</p>
+                  </div>
+                  <Button variant="outline" className="text-[#FF4B0B] border-[#FF4B0B] hover:bg-[#FFF3ED] font-bold h-9 px-4 shadow-sm text-[13px]" onClick={addChip}>
+                    <Plus className="h-4 w-4 mr-1.5 stroke-[2.5]" /> Add Chip
+                  </Button>
+                </div>
+
+                <div className="border border-[#E5E7EB] rounded-xl overflow-hidden bg-white shadow-sm">
+                  {draft.chips.length === 0 ? (
+                    <div className="p-8 text-center text-[13px] text-[#94A3B8] font-medium">
+                      No chips yet. Add a chip to show quick filter pills above the menu.
+                    </div>
+                  ) : (
+                    <Table className="w-full text-left">
+                      <TableHeader>
+                        <TableRow className="border-b border-[#E5E7EB] bg-[#F8FAFC] hover:bg-[#F8FAFC]">
+                          <TableHead className="font-semibold text-[11px] text-[#64748B] uppercase px-4 py-3 text-center"></TableHead>
+                          <TableHead className="font-semibold text-[11px] text-[#64748B] uppercase px-2 py-3">Chip Label</TableHead>
+                          <TableHead className="font-semibold text-[11px] text-[#64748B] uppercase px-2 py-3 text-center">Enabled</TableHead>
+                          <TableHead className="font-semibold text-[11px] text-[#64748B] uppercase px-4 py-3 text-center">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {draft.chips.map((chip, idx) => (
+                          <TableRow key={idx} className={`hover:bg-[#F8FAFC] ${idx !== draft.chips.length - 1 ? "border-b border-[#F1F5F9]" : "border-0"}`}>
+                            <TableCell className="px-4 py-2 w-10 text-center"><GripVertical className="h-4 w-4 text-[#CBD5E1] cursor-grab mx-auto" /></TableCell>
+                            <TableCell className="px-2 py-2">
+                              <Input
+                                value={chip.label}
+                                onChange={(e) => updateChip(idx, { label: e.target.value })}
+                                className="h-8 w-[240px] bg-white border-slate-200 shadow-sm text-[13px]"
+                              />
+                            </TableCell>
+                            <TableCell className="px-2 py-2 text-center">
+                              <Switch
+                                checked={chip.isEnabled}
+                                onCheckedChange={(c) => updateChip(idx, { isEnabled: c })}
+                                className="scale-[0.75] data-[state=checked]:bg-[#10B981] mx-auto"
+                              />
+                            </TableCell>
+                            <TableCell className="px-4 py-2">
+                              <div className="flex items-center justify-center gap-1">
+                                <Button variant="ghost" size="icon" className="h-7 w-7" disabled={idx === 0} onClick={() => moveChip(idx, -1)}>
+                                  <ChevronUp className="h-4 w-4 text-[#94A3B8] hover:text-[#111827]" strokeWidth={1.8} />
+                                </Button>
+                                <Button variant="ghost" size="icon" className="h-7 w-7" disabled={idx === draft.chips.length - 1} onClick={() => moveChip(idx, 1)}>
+                                  <ChevronDown className="h-4 w-4 text-[#94A3B8] hover:text-[#111827]" strokeWidth={1.8} />
+                                </Button>
+                                <Trash2 className="h-4 w-4 text-[#FF4B0B] cursor-pointer hover:text-red-700 ml-1" strokeWidth={1.8} onClick={() => removeChip(idx)} />
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
                   )}
                 </div>
               </div>
             </TabsContent>
 
             {/* ----------------------- MENU DISPLAY ----------------------- */}
-            <TabsContent value="menu" className="pt-8 space-y-10">
-              {/* Menu Categories */}
-              <div>
-                <div className="flex justify-between items-center mb-5">
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-sm mb-1">1. Menu Categories</h3>
-                    <p className="text-xs text-slate-500 font-medium">
-                      Category sections shown instead of the kitchen&apos;s usual ones (e.g. Breakfast, Juices)
-                    </p>
+            <TabsContent value="menu-display" className="pt-6 space-y-8">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div>
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="font-bold text-[#111827] text-[15px] mb-1">Menu Categories</h3>
+                      <p className="text-[13px] text-[#64748B] font-medium">Categories shown as sections in the kitchen menu preview</p>
+                    </div>
+                    <Button variant="outline" className="text-[#FF4B0B] border-[#FF4B0B] hover:bg-[#FFF3ED] font-bold h-9 px-4 shadow-sm text-[13px]" onClick={addMenuCategory}>
+                      <Plus className="h-4 w-4 mr-1.5 stroke-[2.5]" /> Add Category
+                    </Button>
                   </div>
-                  <Button variant="outline" size="sm" className="text-[#ff5a1f] border-[#ff5a1f]/30 hover:bg-[#ff5a1f]/10 font-bold h-8 px-4 bg-white shadow-sm" onClick={addMenuCategory}>
-                    <Plus className="h-4 w-4 mr-1.5 stroke-[3]" /> Add Category
-                  </Button>
+                  <div className="border border-[#E5E7EB] rounded-xl overflow-hidden bg-white shadow-sm">
+                    {draft.menuCategories.length === 0 ? (
+                      <div className="p-8 text-center text-[13px] text-[#94A3B8] font-medium">
+                        No menu categories yet.
+                      </div>
+                    ) : (
+                      draft.menuCategories.map((cat, idx) => (
+                        <div key={idx} className={`flex items-center gap-3 px-4 py-2.5 ${idx !== draft.menuCategories.length - 1 ? "border-b border-[#F1F5F9]" : ""}`}>
+                          <GripVertical className="h-4 w-4 text-[#CBD5E1] cursor-grab" />
+                          <Input
+                            value={cat.name}
+                            onChange={(e) => updateMenuCategory(idx, e.target.value)}
+                            className="h-8 flex-1 bg-white border-slate-200 shadow-sm text-[13px]"
+                          />
+                          <Button variant="ghost" size="icon" className="h-7 w-7" disabled={idx === 0} onClick={() => moveMenuCategory(idx, -1)}>
+                            <ChevronUp className="h-4 w-4 text-[#94A3B8] hover:text-[#111827]" strokeWidth={1.8} />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" disabled={idx === draft.menuCategories.length - 1} onClick={() => moveMenuCategory(idx, 1)}>
+                            <ChevronDown className="h-4 w-4 text-[#94A3B8] hover:text-[#111827]" strokeWidth={1.8} />
+                          </Button>
+                          <Trash2 className="h-4 w-4 text-[#FF4B0B] cursor-pointer hover:text-red-700" strokeWidth={1.8} onClick={() => removeMenuCategory(idx)} />
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
 
-                <div className="space-y-2.5">
-                  {draft.menuCategories.map((category, index) => (
-                    <div key={category.id ?? index} className="flex items-center gap-2.5 py-2 px-3 bg-white border border-slate-200 rounded-xl shadow-sm">
-                      <GripVertical className="h-4 w-4 text-slate-400 cursor-grab opacity-70 flex-shrink-0" />
-                      <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0" onClick={() => moveMenuCategory(index, -1)}>
-                        <ChevronUp className="h-4 w-4 text-slate-400" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0" onClick={() => moveMenuCategory(index, 1)}>
-                        <ChevronDown className="h-4 w-4 text-slate-400" />
-                      </Button>
-                      <Input
-                        value={category.name}
-                        onChange={(e) => updateMenuCategory(index, e.target.value)}
-                        className="h-9 bg-white border-slate-200 shadow-sm font-semibold text-sm flex-1 min-w-0"
-                      />
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 flex-shrink-0" onClick={() => removeMenuCategory(index)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
+                <div>
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="font-bold text-[#111827] text-[15px] mb-1">Recommended Items</h3>
+                      <p className="text-[13px] text-[#64748B] font-medium">Featured items highlighted in the kitchen menu preview</p>
                     </div>
-                  ))}
+                    <Button variant="outline" className="text-[#FF4B0B] border-[#FF4B0B] hover:bg-[#FFF3ED] font-bold h-9 px-4 shadow-sm text-[13px]" onClick={addRecommendedItem}>
+                      <Plus className="h-4 w-4 mr-1.5 stroke-[2.5]" /> Add Item
+                    </Button>
+                  </div>
+                  <div className="border border-[#E5E7EB] rounded-xl overflow-hidden bg-white shadow-sm">
+                    {draft.recommendedItems.length === 0 ? (
+                      <div className="p-8 text-center text-[13px] text-[#94A3B8] font-medium">
+                        No recommended items yet.
+                      </div>
+                    ) : (
+                      draft.recommendedItems.map((item, idx) => (
+                        <div key={idx} className={`flex items-center gap-3 px-4 py-2.5 ${idx !== draft.recommendedItems.length - 1 ? "border-b border-[#F1F5F9]" : ""}`}>
+                          <GripVertical className="h-4 w-4 text-[#CBD5E1] cursor-grab" />
+                          <Input
+                            value={item.name}
+                            onChange={(e) => updateRecommendedItem(idx, e.target.value)}
+                            className="h-8 flex-1 bg-white border-slate-200 shadow-sm text-[13px]"
+                          />
+                          <Button variant="ghost" size="icon" className="h-7 w-7" disabled={idx === 0} onClick={() => moveRecommendedItem(idx, -1)}>
+                            <ChevronUp className="h-4 w-4 text-[#94A3B8] hover:text-[#111827]" strokeWidth={1.8} />
+                          </Button>
+                          <Button variant="ghost" size="icon" className="h-7 w-7" disabled={idx === draft.recommendedItems.length - 1} onClick={() => moveRecommendedItem(idx, 1)}>
+                            <ChevronDown className="h-4 w-4 text-[#94A3B8] hover:text-[#111827]" strokeWidth={1.8} />
+                          </Button>
+                          <Trash2 className="h-4 w-4 text-[#FF4B0B] cursor-pointer hover:text-red-700" strokeWidth={1.8} onClick={() => removeRecommendedItem(idx)} />
+                        </div>
+                      ))
+                    )}
+                  </div>
                 </div>
               </div>
+            </TabsContent>
 
-              <hr className="border-slate-200" />
-
-              {/* Recommended Items */}
+            {/* ----------------------- KITCHEN INFO ----------------------- */}
+            <TabsContent value="kitchen-info" className="pt-6 space-y-8">
               <div>
-                <div className="flex justify-between items-center mb-5">
-                  <div>
-                    <h3 className="font-bold text-slate-900 text-sm mb-1">2. Recommended Items <span className="text-slate-500 font-medium">(Recommended for You)</span></h3>
-                    <p className="text-xs text-slate-500 font-medium">Side dishes & combos shown as recommendations alongside {draft.keyword}</p>
-                  </div>
-                  <Button variant="outline" size="sm" className="text-[#ff5a1f] border-[#ff5a1f]/30 hover:bg-[#ff5a1f]/10 font-bold h-8 px-4 bg-white shadow-sm" onClick={addRecommendedItem}>
-                    <Plus className="h-4 w-4 mr-1.5 stroke-[3]" /> Add Item
-                  </Button>
-                </div>
+                <h3 className="font-bold text-[#111827] text-[15px] mb-1">Kitchen Info Section <span className="text-[#64748B] font-medium">(Right Sidebar / Top)</span></h3>
+                <p className="text-[13px] text-[#64748B] font-medium mb-4">Choose which kitchen information to show on the detail page</p>
 
-                <div className="space-y-2.5">
-                  {draft.recommendedItems.map((item, index) => (
-                    <div key={item.id ?? index} className="flex items-center gap-2.5 py-2 px-3 bg-white border border-slate-200 rounded-xl shadow-sm">
-                      <GripVertical className="h-4 w-4 text-slate-400 cursor-grab opacity-70 flex-shrink-0" />
-                      <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0" onClick={() => moveRecommendedItem(index, -1)}>
-                        <ChevronUp className="h-4 w-4 text-slate-400" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 flex-shrink-0" onClick={() => moveRecommendedItem(index, 1)}>
-                        <ChevronDown className="h-4 w-4 text-slate-400" />
-                      </Button>
-                      <Input
-                        value={item.name}
-                        onChange={(e) => updateRecommendedItem(index, e.target.value)}
-                        className="h-9 bg-white border-slate-200 shadow-sm font-semibold text-sm flex-1 min-w-0"
+                <div className="border border-[#E5E7EB] rounded-xl overflow-hidden bg-white shadow-sm">
+                  {infoItems.map((item, idx) => (
+                    <div key={item.key} className={`flex items-center justify-between px-4 py-3 ${idx !== infoItems.length - 1 ? "border-b border-[#F1F5F9]" : ""}`}>
+                      <div className="flex items-center gap-3">
+                        <div className="h-[36px] w-[36px] rounded-[10px] bg-[#FFF3ED] flex items-center justify-center">
+                          <item.icon className="h-4 w-4 text-[#FF4B0B]" />
+                        </div>
+                        <span className="text-[13px] font-semibold text-[#334155]">{item.label}</span>
+                      </div>
+                      <Switch
+                        checked={Boolean(draft[item.key])}
+                        onCheckedChange={(c) => {
+                          const patch: Partial<typeof draft> = {};
+                          patch[item.key] = c;
+                          updateDraft(patch);
+                        }}
+                        className="scale-[0.8] origin-right data-[state=checked]:bg-[#10B981]"
                       />
-                      <Button variant="ghost" size="icon" className="h-8 w-8 text-slate-400 hover:text-red-500 hover:bg-red-50 flex-shrink-0" onClick={() => removeRecommendedItem(index)}>
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
                     </div>
                   ))}
                 </div>
               </div>
             </TabsContent>
 
-            {/* ----------------------- KITCHEN INFO ----------------------- */}
-            <TabsContent value="info" className="pt-8">
+            {/* ----------------------- LAYOUT & DESIGN ----------------------- */}
+            <TabsContent value="layout-design" className="pt-6 space-y-8">
               <div>
-                <h3 className="font-bold text-slate-900 text-sm mb-1">Kitchen Information Sections</h3>
-                <p className="text-xs text-slate-500 font-medium mb-5">Choose which kitchen information appears on this search-specific page</p>
+                <h3 className="font-bold text-[#111827] text-[15px] mb-1">Header Content</h3>
+                <p className="text-[13px] text-[#64748B] font-medium mb-4">Text shown at the top of the kitchen detail page</p>
 
-                <div className="space-y-3">
-                  {infoItems.map((item) => {
-                    const Icon = item.icon;
-                    const enabled = draft[item.key] as boolean;
-                    return (
-                      <div key={item.key} className="flex items-center justify-between py-2.5 px-4 bg-white border border-slate-100 rounded-xl shadow-sm">
-                        <div className="flex items-center gap-3">
-                          <div className={`p-1.5 rounded-lg ${enabled ? "bg-green-50 text-green-600" : "bg-slate-50 text-slate-400"}`}>
-                            <Icon className="h-4 w-4" />
-                          </div>
-                          <span className="text-[13px] font-bold text-slate-700">{item.label}</span>
-                        </div>
-                        <Switch
-                          checked={enabled}
-                          onCheckedChange={(checked) => updateDraft({ [item.key]: checked })}
-                          className="scale-[0.75] origin-right data-[state=checked]:bg-green-500 shadow-sm"
-                        />
-                      </div>
-                    );
-                  })}
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  <div className="space-y-2">
+                    <Label className="text-[13px] font-bold text-[#111827]">Search Title</Label>
+                    <Input
+                      value={draft.searchTitle}
+                      onChange={(e) => updateDraft({ searchTitle: e.target.value })}
+                      placeholder="e.g. Best Biryani in Chennai"
+                      className="bg-white border-[#E5E7EB] shadow-sm h-10 text-[13px]"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[13px] font-bold text-[#111827]">Badge Text</Label>
+                    <Input
+                      value={draft.badgeText}
+                      onChange={(e) => updateDraft({ badgeText: e.target.value })}
+                      placeholder="e.g. Top Rated"
+                      className="bg-white border-[#E5E7EB] shadow-sm h-10 text-[13px]"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2 mt-5">
+                  <Label className="text-[13px] font-bold text-[#111827]">Description</Label>
+                  <Textarea
+                    value={draft.description}
+                    onChange={(e) => updateDraft({ description: e.target.value })}
+                    rows={4}
+                    placeholder="Short description shown below the kitchen name"
+                    className="bg-white border-[#E5E7EB] shadow-sm text-[13px]"
+                  />
+                </div>
+
+                <hr className="border-[#EEF0F2] my-8" />
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                  <div className="flex items-center justify-between bg-white border border-[#E5E7EB] rounded-xl px-4 py-3.5 shadow-sm">
+                    <div>
+                      <p className="text-[13px] font-bold text-[#111827]">Show Hero Section</p>
+                      <p className="text-[12px] text-[#64748B] font-medium">Display the banner image at the top</p>
+                    </div>
+                    <Switch
+                      checked={draft.showHero}
+                      onCheckedChange={(c) => updateDraft({ showHero: c })}
+                      className="scale-[0.85] data-[state=checked]:bg-[#10B981]"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label className="text-[13px] font-bold text-[#111827]">Default Sort</Label>
+                    <Select
+                      value={draft.defaultSort}
+                      onValueChange={(v) => updateDraft({ defaultSort: v as (typeof KITCHEN_SEARCH_SORT_OPTIONS)[number] })}
+                    >
+                      <SelectTrigger className="h-[44px] bg-white border-[#E5E7EB] shadow-sm text-[13px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {KITCHEN_SEARCH_SORT_OPTIONS.map((opt) => (
+                          <SelectItem key={opt} value={opt}>{opt}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
             </TabsContent>
@@ -872,133 +1012,114 @@ function Editor({ contentId, onCancel }: EditorProps) {
         </div>
 
         {/* Right Preview Panel */}
-        <div className="xl:col-span-5">
-          <div className="bg-white rounded-2xl shadow-md border border-slate-200 overflow-hidden sticky top-6">
-            <div className="px-5 py-4 border-b border-slate-100 flex items-center justify-between bg-white">
+        <div className="2xl:col-span-5">
+          <div className="bg-white rounded-[24px] shadow-sm border border-[#E5E7EB] overflow-hidden 2xl:sticky top-6">
+            <div className="px-5 py-[18px] border-b border-[#F1F5F9] flex items-center justify-between bg-white">
               <div>
-                <h3 className="font-bold text-slate-900 text-base">Live Preview</h3>
-                <p className="text-[11px] font-medium text-slate-500 mt-0.5">
+                <h3 className="font-bold text-[#111827] text-[15px]">Live Preview</h3>
+                <p className="text-[12px] font-medium text-[#64748B] mt-0.5">
                   How the kitchen page looks for &ldquo;{draft.keyword}&rdquo;
                 </p>
               </div>
-              <Badge className="bg-[#ff5a1f] hover:bg-[#ff5a1f] text-white border-0 font-bold text-[10px] rounded-md">
-                {draft.kitchensCount}+ Kitchens
-              </Badge>
             </div>
 
-            <div className="p-4 bg-slate-50/80">
+            <div className="p-4 sm:p-6 bg-[#F8FAFC]">
               <div
-                className={`bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden mx-auto transition-all duration-300 ${
-                  device === "mobile" ? "max-w-[360px]" : device === "tablet" ? "max-w-[600px]" : "max-w-full"
+                className={`bg-white rounded-[16px] border border-[#E5E7EB] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden mx-auto transition-all duration-300 ${
+                  device === "mobile" ? "max-w-[360px]" : device === "tablet" ? "max-w-[600px]" : "max-w-[800px]"
                 }`}
               >
                 {/* Preview Hero */}
-                <div className="relative h-40 w-full bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50">
+                <div className="relative h-[160px] w-full bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50">
                   {heroUrl && draft.showHero ? (
                     <Image src={heroUrl} alt="preview hero" fill className="object-cover" />
                   ) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
-                      <ChefHat className="h-12 w-12 text-[#ff5a1f]/60" strokeWidth={1.25} />
-                      <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider">No hero banner</span>
+                      <ChefHat className="h-10 w-10 text-[#FF4B0B]/40" strokeWidth={1.5} />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-b from-black/25 via-transparent to-transparent" />
-                  <div className="absolute top-3 left-3">
-                    <Badge className="bg-[#ff5a1f] hover:bg-[#ff5a1f] text-white border-0 font-bold px-2 py-0.5 shadow-sm text-[10px] rounded-md">
-                      {draft.badgeText || `${draft.kitchensCount}+ Kitchens`}
-                    </Badge>
-                  </div>
                   <div className="absolute top-3 right-3 flex gap-2">
-                    {draft.showPureVegBadge && (
-                      <Badge variant="outline" className="bg-white text-green-700 border-green-200 shadow-sm gap-1.5 py-0.5 px-2 rounded-md">
-                        <div className="h-1.5 w-1.5 rounded-full bg-green-500"></div>{" "}
-                        <span className="font-bold text-[9px] uppercase tracking-wider">Pure Veg</span>
-                      </Badge>
-                    )}
-                    <Button variant="secondary" size="icon" className="h-6 w-6 rounded-full bg-white text-slate-400 hover:text-red-500 shadow-sm">
-                      <Heart className="h-3 w-3" />
+                    <Button variant="secondary" size="icon" className="h-[32px] w-[32px] rounded-full bg-white/90 hover:bg-white text-[#94A3B8] hover:text-red-500 shadow-sm">
+                      <Heart className="h-4 w-4" />
                     </Button>
                   </div>
                 </div>
 
                 {/* Preview Info */}
-                <div className="px-5 relative pb-5 border-b border-slate-100">
-                  <div className="absolute -top-10 left-5 h-20 w-20 rounded-full border-4 border-white overflow-hidden bg-slate-100 shadow-md flex items-center justify-center">
+                <div className="px-5 relative pb-6 border-b border-[#F1F5F9]">
+                  <div className="absolute -top-10 left-5 h-[76px] w-[76px] rounded-full border-4 border-white overflow-hidden bg-white shadow-sm flex items-center justify-center">
                     {firstKitchen?.imageUrl ? (
                       <Image src={firstKitchen.imageUrl} alt="Avatar" fill className="object-cover" />
                     ) : (
-                      <ChefHat className="h-8 w-8 text-slate-300" strokeWidth={1.5} />
+                      <ChefHat className="h-8 w-8 text-[#CBD5E1]" strokeWidth={1.5} />
                     )}
                   </div>
 
                   <div className="pt-12">
-                    <h2 className="text-lg font-bold flex items-center gap-1.5 text-slate-900">
-                      {draft.searchTitle || `Best ${draft.keyword} from ${firstKitchen?.displayName ?? "Home Kitchen"}`}
-                      <Check className="h-4 w-4 text-green-500" />
+                    <h2 className="text-[18px] font-bold flex items-center gap-1.5 text-[#111827]">
+                      {draft.searchTitle || `Best ${draft.keyword} from ${firstKitchen?.displayName ?? "Lakshmi's Kitchen"}`}
+                      <Check className="h-4 w-4 text-white bg-[#3B82F6] rounded-full p-[2px]" />
                     </h2>
-                    <div className="flex flex-wrap items-center gap-3 text-[10px] text-slate-600 mt-2 font-bold">
+                    
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-[#64748B] mt-1.5 font-semibold">
                       {draft.showRatings && (
-                        <span className="flex items-center text-amber-500">
-                          <Star className="h-3 w-3 mr-1 fill-current" /> {firstKitchen?.avgRating.toFixed(1) ?? "4.5"}{" "}
-                          <span className="text-slate-400 ml-1 font-medium">({firstKitchen?.totalReviews ?? 0} Reviews)</span>
+                        <span className="flex items-center text-[#111827] font-bold">
+                          <Star className="h-3.5 w-3.5 mr-1 fill-[#F59E0B] text-[#F59E0B]" /> 
+                          {firstKitchen?.avgRating.toFixed(1) ?? "4.5"}
+                          <span className="text-[#64748B] ml-1 font-semibold underline underline-offset-2">(1.2k+ Reviews)</span>
                         </span>
                       )}
+                      
+                      {draft.showRatings && (draft.showDeliveryTime || draft.showDistance || draft.showPureVegBadge) && (
+                        <span className="w-1 h-1 rounded-full bg-[#CBD5E1]"></span>
+                      )}
+                      
                       {draft.showDeliveryTime && (
                         <span className="flex items-center gap-1">
-                          <Clock className="h-3 w-3 text-slate-400" /> {firstKitchen?.estimatedPrepTime ?? 25}-{(firstKitchen?.estimatedPrepTime ?? 25) + 5} mins
+                          <Clock className="h-3.5 w-3.5 text-[#64748B]" /> 25 - 30 min
                         </span>
                       )}
+                      
+                      {draft.showDeliveryTime && (draft.showDistance || draft.showPureVegBadge) && (
+                        <span className="w-1 h-1 rounded-full bg-[#CBD5E1]"></span>
+                      )}
+                      
                       {draft.showDistance && (
                         <span className="flex items-center gap-1">
-                          <MapPin className="h-3 w-3 text-slate-400" /> 2.1 km
+                          <MapPin className="h-3.5 w-3.5 text-[#64748B]" /> 1.5 km
                         </span>
                       )}
+                      
+                      {draft.showDistance && draft.showPureVegBadge && (
+                        <span className="w-1 h-1 rounded-full bg-[#CBD5E1]"></span>
+                      )}
+                      
                       {draft.showPureVegBadge && (
-                        <span className="flex items-center gap-1 text-green-700">
-                          <div className="h-1.5 w-1.5 rounded-full bg-green-500"></div> Pure Veg
+                        <span className="flex items-center gap-1 text-[#087A3D] font-bold">
+                          <Leaf className="h-3.5 w-3.5" /> Pure Veg
                         </span>
                       )}
                     </div>
-                    <p className="text-[11px] text-slate-500 mt-3 leading-relaxed font-medium">
-                      {draft.description || `Explore the best ${draft.keyword} from verified home kitchens near you.`}
+                    
+                    <p className="text-[13px] text-[#64748B] mt-3 leading-[1.6] font-medium">
+                      {draft.description || "Craving home-cooked meals? Lakshmi's Kitchen brings you authentic flavors, prepared with love and fresh ingredients."}
                     </p>
 
-                    {/* Search Chips */}
-                    <div className="flex flex-wrap gap-2 mt-4">
-                      {enabledChips.map((chip) => (
-                        <Badge
-                          key={chip.id ?? chip.label}
-                          variant="outline"
-                          className="text-[10px] border-[#ff5a1f]/30 bg-orange-50/30 text-[#ff5a1f] py-1 px-2.5 font-bold rounded-full shadow-sm"
-                        >
-                          {chip.label}
-                        </Badge>
-                      ))}
-                      {enabledChips.length === 0 && (
-                        <span className="text-[10px] text-slate-400 font-semibold">No chips enabled</span>
-                      )}
-                    </div>
-
                     {/* Info badges */}
-                    <div className="flex flex-wrap gap-2 mt-3">
+                    <div className="flex flex-wrap gap-2 mt-4">
                       {draft.showHygienicBadge && (
-                        <Badge variant="outline" className="text-slate-600 border-slate-200 bg-white shadow-sm gap-1.5 py-1 px-2.5 font-semibold rounded-md">
-                          <ShieldCheck className="h-3.5 w-3.5 text-green-600" /> Hygienic Kitchen
-                        </Badge>
-                      )}
-                      {draft.showFreshIngredients && (
-                        <Badge variant="outline" className="text-slate-600 border-slate-200 bg-white shadow-sm gap-1.5 py-1 px-2.5 font-semibold rounded-md">
-                          <Leaf className="h-3.5 w-3.5 text-green-600" /> Fresh Ingredients
-                        </Badge>
-                      )}
-                      {draft.showPackaging && (
-                        <Badge variant="outline" className="text-slate-600 border-slate-200 bg-white shadow-sm gap-1.5 py-1 px-2.5 font-semibold rounded-md">
-                          <ShoppingBag className="h-3.5 w-3.5 text-[#ff5a1f]" /> Safe & Secure Packaging
+                        <Badge variant="outline" className="text-[#334155] border-[#E5E7EB] bg-white shadow-sm gap-1.5 py-1 px-3 font-semibold rounded-full text-[12px]">
+                          <ShieldCheck className="h-3.5 w-3.5 text-[#087A3D]" /> Hygienic Kitchen
                         </Badge>
                       )}
                       {draft.showSupportLocalWomen && (
-                        <Badge variant="outline" className="text-slate-600 border-slate-200 bg-white shadow-sm gap-1.5 py-1 px-2.5 font-semibold rounded-md">
-                          <Heart className="h-3.5 w-3.5 text-rose-500" /> Support Local Women
+                        <Badge variant="outline" className="text-[#334155] border-[#E5E7EB] bg-white shadow-sm gap-1.5 py-1 px-3 font-semibold rounded-full text-[12px]">
+                          <Heart className="h-3.5 w-3.5 text-[#E11D48] fill-[#E11D48]" /> Support Local Women
+                        </Badge>
+                      )}
+                      {draft.showFreshIngredients && (
+                        <Badge variant="outline" className="text-[#334155] border-[#E5E7EB] bg-white shadow-sm gap-1.5 py-1 px-3 font-semibold rounded-full text-[12px]">
+                          <Leaf className="h-3.5 w-3.5 text-[#087A3D]" /> Fresh Ingredients
                         </Badge>
                       )}
                     </div>
@@ -1006,53 +1127,85 @@ function Editor({ contentId, onCancel }: EditorProps) {
                 </div>
 
                 {/* Preview Tabs */}
-                <div className="flex items-center justify-between px-5 border-b border-slate-100 overflow-x-auto hide-scrollbar">
-                  <div className="py-3 border-b-2 border-[#ff5a1f] text-[#ff5a1f] font-bold text-[11px] flex items-center gap-1.5 whitespace-nowrap">
-                    <UtensilsCrossed className="h-3.5 w-3.5" /> Menu
+                <div className="flex items-center gap-6 px-5 border-b border-[#F1F5F9] overflow-x-auto hide-scrollbar">
+                  <div className="py-3.5 border-b-[3px] border-[#FF4B0B] text-[#FF4B0B] font-bold text-[13px] flex items-center whitespace-nowrap">
+                    Menu
                   </div>
                   {draft.showKitchenStory && (
-                    <div className="py-3 text-slate-500 font-bold text-[11px] flex items-center gap-1.5 whitespace-nowrap">
-                      <Info className="h-3.5 w-3.5" /> About Kitchen
+                    <div className="py-3.5 text-[#64748B] hover:text-[#111827] font-semibold text-[13px] flex items-center whitespace-nowrap cursor-pointer transition-colors">
+                      About Kitchen
                     </div>
                   )}
                   {draft.showRatings && (
-                    <div className="py-3 text-slate-500 font-bold text-[11px] flex items-center gap-1.5 whitespace-nowrap">
-                      <Star className="h-3.5 w-3.5" /> Reviews ({firstKitchen?.totalReviews ?? 0})
+                    <div className="py-3.5 text-[#64748B] hover:text-[#111827] font-semibold text-[13px] flex items-center whitespace-nowrap cursor-pointer transition-colors">
+                      Reviews ({firstKitchen?.totalReviews ?? 1240})
                     </div>
                   )}
-                  <div className="py-3 text-slate-500 font-bold text-[11px] flex items-center gap-1.5 whitespace-nowrap">
-                    <Info className="h-3.5 w-3.5" /> Kitchen Information
+                  <div className="py-3.5 text-[#64748B] hover:text-[#111827] font-semibold text-[13px] flex items-center whitespace-nowrap cursor-pointer transition-colors">
+                    Kitchen Information
                   </div>
                 </div>
 
+                {/* Search Chips in Preview */}
+                <div className="px-5 py-4 flex gap-2 overflow-x-auto hide-scrollbar">
+                  {enabledChips.length > 0 ? enabledChips.map((chip, idx) => (
+                    <Badge
+                      key={chip.id ?? chip.label}
+                      variant={idx === 0 ? "default" : "outline"}
+                      className={`text-[12px] py-1.5 px-4 font-bold rounded-full whitespace-nowrap flex-shrink-0 cursor-pointer ${
+                        idx === 0 
+                          ? "bg-[#FF4B0B] text-white hover:bg-[#E63E00] border-transparent shadow-sm" 
+                          : "border-[#E5E7EB] text-[#334155] hover:bg-[#F8FAFC] shadow-sm bg-white"
+                      }`}
+                    >
+                      {chip.label}
+                    </Badge>
+                  )) : (
+                    <>
+                      <Badge variant="default" className="text-[12px] py-1.5 px-4 font-bold rounded-full bg-[#FF4B0B] text-white shadow-sm border-transparent">
+                        All Biryani (6)
+                      </Badge>
+                      <Badge variant="outline" className="text-[12px] py-1.5 px-4 font-bold rounded-full border-[#E5E7EB] text-[#334155] bg-white shadow-sm">
+                        Veg Biryani (3)
+                      </Badge>
+                      <Badge variant="outline" className="text-[12px] py-1.5 px-4 font-bold rounded-full border-[#E5E7EB] text-[#334155] bg-white shadow-sm">
+                        Chicken Biryani (3)
+                      </Badge>
+                    </>
+                  )}
+                </div>
+
                 {/* Preview Menu Content */}
-                <div className="flex p-4 gap-4 bg-slate-50/50">
+                <div className="flex px-5 pb-6 gap-6">
                   {/* Filters Sidebar */}
                   {enabledFilters.length > 0 && (
-                    <div className="w-[120px] flex-shrink-0 hidden sm:block">
-                      <div className="flex items-center justify-between mb-4">
-                        <span className="font-bold text-[11px] text-slate-900">Filters</span>
-                        <span className="text-[#ff5a1f] text-[9px] font-bold cursor-pointer">Clear All</span>
+                    <div className="w-[180px] flex-shrink-0 hidden sm:block border-r border-[#F1F5F9] pr-5">
+                      <div className="flex items-center justify-between mb-5">
+                        <span className="font-bold text-[14px] text-[#111827]">Filters</span>
+                        <span className="text-[#FF4B0B] text-[11px] font-bold cursor-pointer">Clear All</span>
                       </div>
-                      <div className="space-y-5">
+                      
+                      <div className="space-y-6">
                         {enabledFilters.slice(0, 3).map((filter) => (
                           <div key={filter.id ?? filter.name}>
-                            <div className="flex items-center justify-between mb-2">
-                              <span className="font-bold text-[10px] text-slate-900">{filter.name}</span>
-                              <ChevronDown className="h-3.5 w-3.5 text-slate-400" />
+                            <div className="flex items-center justify-between mb-3 cursor-pointer">
+                              <span className="font-bold text-[13px] text-[#334155]">{filter.name}</span>
+                              <ChevronDown className="h-4 w-4 text-[#94A3B8]" />
                             </div>
-                            {filter.options.slice(0, 4).map((option, i) => (
-                              <div key={option} className="flex items-center gap-2 text-[10px] font-semibold text-slate-600 mb-2">
-                                <div
-                                  className={`w-3.5 h-3.5 rounded-[3px] shadow-sm border flex items-center justify-center ${
-                                    i === 0 ? "bg-[#ff5a1f] border-[#ff5a1f]" : "bg-white border-slate-300"
-                                  }`}
-                                >
-                                  {i === 0 && <Check className="h-2.5 w-2.5 text-white stroke-[3]" />}
-                                </div>
-                                {option}
-                              </div>
-                            ))}
+                            <div className="space-y-3">
+                              {filter.options.slice(0, 4).map((option, i) => (
+                                <label key={option} className="flex items-center gap-2.5 text-[12px] font-semibold text-[#64748B] cursor-pointer">
+                                  <div
+                                    className={`w-4 h-4 rounded-[4px] border flex items-center justify-center ${
+                                      i === 0 ? "bg-[#FF4B0B] border-[#FF4B0B]" : "bg-white border-[#CBD5E1]"
+                                    }`}
+                                  >
+                                    {i === 0 && <Check className="h-3 w-3 text-white stroke-[3]" />}
+                                  </div>
+                                  {option}
+                                </label>
+                              ))}
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -1061,100 +1214,84 @@ function Editor({ contentId, onCancel }: EditorProps) {
 
                   {/* Menu Items */}
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="font-bold text-sm text-slate-900">Menu for &ldquo;{draft.keyword}&rdquo;</h3>
-                        <p className="text-[10px] text-slate-500 font-semibold mt-0.5">
-                          Showing {Math.min(previewItems.length, 6)} of {draft.menuItemsCount} results
-                        </p>
-                      </div>
-                      <div className="flex flex-col items-end gap-2">
-                        <div className="flex items-center gap-1.5 text-[9px]">
-                          <span className="text-slate-500 font-semibold">Sort by:</span>
-                          <span className="font-bold flex items-center border border-slate-200 px-2 py-1 rounded bg-white shadow-sm">
-                            {draft.defaultSort} <ChevronDown className="h-3 w-3 ml-1" />
-                          </span>
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="font-bold text-[16px] text-[#111827]">Menu for &ldquo;{draft.keyword}&rdquo;</h3>
+                      <div className="flex items-center gap-4">
+                        <Search className="h-4 w-4 text-[#64748B] cursor-pointer" />
+                        <div className="flex items-center gap-1.5 cursor-pointer">
+                          <span className="text-[12px] font-semibold text-[#64748B]">Relevance</span>
+                          <ChevronDown className="h-3.5 w-3.5 text-[#64748B]" />
                         </div>
-                        {draft.showKitchenTiming && (
-                          <Button variant="outline" size="sm" className="h-7 px-2.5 text-[10px] font-bold bg-white shadow-sm">
-                            <Clock className="h-3 w-3 mr-1.5" /> Kitchen Timings
-                          </Button>
-                        )}
+                        <div className="h-6 w-6 bg-white border border-[#E5E7EB] rounded-[4px] flex items-center justify-center shadow-sm cursor-pointer">
+                           <MoreHorizontal className="h-4 w-4 text-[#64748B]" />
+                        </div>
                       </div>
                     </div>
+                    
+                    <p className="text-[12px] text-[#64748B] font-semibold mb-5">Showing {Math.min(previewItems.length, 6)} of {preview?.menuItemCount ?? previewItems.length} results</p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                      {previewItems.slice(0, 6).map((item) => (
-                        <div key={item.id} className="flex border border-slate-200 bg-white rounded-xl overflow-hidden shadow-sm p-2 gap-2.5">
-                          <div className="h-16 w-16 relative rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 border border-slate-100">
+                    <div className={`grid gap-4 ${device === "desktop" ? "md:grid-cols-2" : "grid-cols-1"}`}>
+                      {previewItems.slice(0, 6).map((item, idx) => (
+                        <div key={item.id} className="flex bg-white rounded-[16px] border border-[#E5E7EB] p-3 gap-4 shadow-sm hover:shadow-md transition-shadow">
+                          
+                          <div className="flex flex-col flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-1">
+                               <div
+                                 className={`h-[14px] w-[14px] rounded-[3px] border flex items-center justify-center flex-shrink-0 ${
+                                   item.foodType === "VEG" ? "border-green-600 text-green-600" : "border-red-600 text-red-600"
+                                 }`}
+                               >
+                                 <div className={`h-[8px] w-[8px] rounded-full ${item.foodType === "VEG" ? "bg-green-600" : "bg-red-600"}`} />
+                               </div>
+                               <h4 className="font-bold text-[14px] text-[#111827] leading-tight truncate">{item.name}</h4>
+                            </div>
+                            
+                            <div className="flex items-center gap-2 mb-1.5">
+                              <span className="font-bold text-[14px] text-[#111827]">₹{item.price}</span>
+                            </div>
+                            
+                            <div className="flex items-center gap-2 mb-2">
+                              <span className="flex items-center text-[#111827] text-[11px] font-bold">
+                                <Star className="h-3.5 w-3.5 mr-0.5 fill-[#087A3D] text-[#087A3D]" /> 4.2
+                              </span>
+                              <span className="text-[#E5E7EB]">|</span>
+                              <span className="text-[11px] text-[#64748B] font-semibold">45 mins</span>
+                            </div>
+                            
+                            <p className="text-[11px] text-[#64748B] font-medium line-clamp-2 leading-[1.6]">
+                              Traditional Hyderabadi biryani cooked with fragrant basmati rice, tender chicken, and secret spices...
+                            </p>
+                          </div>
+
+                          <div className="h-[100px] w-[110px] relative rounded-[12px] overflow-visible flex-shrink-0 bg-slate-100 border border-[#F1F5F9]">
                             {item.imageUrl ? (
-                              <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
+                              <Image src={item.imageUrl} alt={item.name} fill className="object-cover rounded-[12px]" />
                             ) : (
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <UtensilsCrossed className="h-5 w-5 text-slate-300" />
+                              <div className="absolute inset-0 flex items-center justify-center bg-orange-50 rounded-[12px]">
+                                <Image src="/placeholder-food.jpg" alt={item.name} fill className="object-cover opacity-30 rounded-[12px]" />
                               </div>
                             )}
-                          </div>
-                          <div className="flex flex-col flex-1 justify-between py-0.5 min-w-0">
-                            <div>
-                              <div className="flex items-start justify-between gap-1 mb-1">
-                                <h4 className="font-bold text-[11px] text-slate-900 leading-tight truncate">{item.name}</h4>
-                                <div
-                                  className={`h-3 w-3 rounded-[3px] border flex items-center justify-center flex-shrink-0 ${
-                                    item.foodType === "VEG" ? "border-green-600 text-green-600" : "border-red-600 text-red-600"
-                                  }`}
-                                >
-                                  <div className={`h-1.5 w-1.5 rounded-full ${item.foodType === "VEG" ? "bg-green-600" : "bg-red-600"}`} />
-                                </div>
-                              </div>
-                              <p className="text-[9px] text-slate-500 font-medium line-clamp-1">{item.kitchenName}</p>
-                            </div>
-                            <div className="mt-1 flex items-center justify-between">
-                              <span className="font-bold text-[12px] text-green-700">₹{item.price}</span>
+                            <div className="absolute -bottom-3.5 left-1/2 -translate-x-1/2 z-10 w-[80%]">
                               <Button
                                 variant="outline"
-                                size="sm"
-                                className="h-6 px-2.5 text-[9px] border-[#ff5a1f]/40 text-[#ff5a1f] font-bold hover:bg-[#ff5a1f]/5 bg-white rounded-md shadow-sm"
+                                className="w-full h-[32px] text-[13px] border-[#E5E7EB] text-[#087A3D] hover:bg-[#F3FAF5] font-bold bg-white rounded-[8px] shadow-[0_2px_4px_rgba(0,0,0,0.05)]"
                               >
-                                ADD <Plus className="h-2.5 w-2.5 ml-1 stroke-[3]" />
+                                ADD
                               </Button>
                             </div>
+                            {idx === 3 && (
+                               <Badge className="absolute -top-2 left-1/2 -translate-x-1/2 bg-[#FF4B0B] text-white hover:bg-[#FF4B0B] border-0 font-bold text-[8px] px-1.5 py-0 rounded-[4px] h-[16px] whitespace-nowrap shadow-sm">
+                                 Bestseller
+                               </Badge>
+                            )}
                           </div>
                         </div>
                       ))}
-                      {previewItems.length === 0 && (
-                        <div className="col-span-full py-8 flex flex-col items-center gap-2 text-center">
-                          <Search className="h-6 w-6 text-slate-300" />
-                          <p className="text-[11px] text-slate-400 font-semibold">
-                            No live menu items match &ldquo;{draft.keyword}&rdquo; yet
-                          </p>
-                        </div>
-                      )}
                     </div>
-
-                    {/* Recommended */}
-                    {draft.recommendedItems.length > 0 && (
-                      <div className="mt-5">
-                        <h4 className="font-bold text-[11px] text-slate-900 mb-2.5 flex items-center gap-1.5">
-                          <Sparkles className="h-3.5 w-3.5 text-[#ff5a1f]" /> Recommended for You
-                        </h4>
-                        <div className="flex flex-wrap gap-2">
-                          {draft.recommendedItems.map((item) => (
-                            <Badge
-                              key={item.id ?? item.name}
-                              variant="outline"
-                              className="text-slate-700 border-slate-200 bg-white shadow-sm gap-1.5 py-1 px-2.5 font-bold rounded-full text-[9px]"
-                            >
-                              <Plus className="h-2.5 w-2.5 text-[#ff5a1f] stroke-[3]" /> {item.name}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
 
                     <Button
                       variant="outline"
-                      className="w-full mt-4 text-[#ff5a1f] border-[#ff5a1f]/30 font-bold hover:bg-[#ff5a1f]/5 h-9 text-[11px] bg-white shadow-sm"
+                      className="w-full mt-8 text-[#111827] border-[#E5E7EB] font-bold hover:bg-[#F8FAFC] h-10 text-[13px] bg-white shadow-sm rounded-xl"
                     >
                       VIEW FULL MENU
                     </Button>
@@ -1216,13 +1353,11 @@ export default function KitchenSearchPageManagement() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [rowsPerPage] = useState(10);
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminKitchenSearchRow | null>(null);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [addKeyword, setAddKeyword] = useState("");
-  const [pendingToggleId, setPendingToggleId] = useState<string | null>(null);
 
   const {
     data: contents = [],
@@ -1269,39 +1404,190 @@ export default function KitchenSearchPageManagement() {
     },
   });
 
-  const toggleMutation = useMutation({
-    mutationFn: ({ id, isActive }: { id: string; isActive: boolean }) =>
-      toggleKitchenSearchPageContent(id, isActive),
-    onMutate: ({ id }) => setPendingToggleId(id),
-    onSuccess: (res) => {
-      if (!res.success) {
-        toast.error(res.error || "Failed to update status");
-      } else {
-        queryClient.invalidateQueries({ queryKey: ["admin-kitchen-search-page"] });
-        toast.success("Status updated");
-      }
-    },
-    onError: () => toast.error("Failed to update status"),
-    onSettled: () => setPendingToggleId(null),
-  });
+  const categoryOptions = useMemo(() => {
+    const set = new Set<string>();
+    contents.forEach((c) => {
+      const firstWord = c.keyword.trim().split(/\s+/)[0];
+      if (firstWord) set.add(firstWord.toLowerCase());
+    });
+    return Array.from(set);
+  }, [contents]);
 
   const filtered = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
     return contents.filter((c) => {
       const matchesSearch = !term || c.keyword.toLowerCase().includes(term);
+      const matchesCategory =
+        categoryFilter === "all" ||
+        c.keyword.trim().toLowerCase().startsWith(categoryFilter);
       const matchesStatus =
         statusFilter === "All" ||
         (statusFilter === "Published" && c.isActive) ||
         (statusFilter === "Draft" && !c.isActive);
-      return matchesSearch && matchesStatus;
+      return matchesSearch && matchesCategory && matchesStatus;
     });
-  }, [contents, searchTerm, statusFilter]);
+  }, [contents, searchTerm, categoryFilter, statusFilter]);
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / rowsPerPage));
-  const safePage = Math.min(currentPage, totalPages);
-  const pageItems = filtered.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
-  const showingFrom = filtered.length === 0 ? 0 : (safePage - 1) * rowsPerPage + 1;
-  const showingTo = Math.min(safePage * rowsPerPage, filtered.length);
+  const stats = useMemo(() => {
+    const total = contents.length;
+    const published = contents.filter((c) => c.isActive).length;
+    const topItems = contents.filter((c) => /biryani|dosa/.test(c.keyword.toLowerCase())).length;
+    const categories = new Set(
+      contents.map((c) => c.keyword.trim().split(/\s+/)[0].toLowerCase()).filter(Boolean)
+    ).size;
+    const lastUpdated = contents.reduce((max, c) => (c.updatedAt > max ? c.updatedAt : max), "");
+    return { total, published, draftCount: total - published, topItems, categories, lastUpdated };
+  }, [contents]);
+
+  const hasActiveFilters = searchTerm.trim() !== "" || categoryFilter !== "all" || statusFilter !== "All";
+
+  const resetFilters = () => {
+    setSearchTerm("");
+    setStatusFilter("All");
+    setCategoryFilter("all");
+  };
+
+  const columnHelper = createColumnHelper<AdminKitchenSearchRow>();
+
+  const columns = useMemo(
+    () => [
+      columnHelper.display({
+        id: "index",
+        header: "#",
+        cell: (info) => (
+          <span className="text-slate-500 font-medium text-[13px]">
+            {info.row.index + 1}
+          </span>
+        ),
+      }),
+      columnHelper.accessor("keyword", {
+        header: "Item Name",
+        cell: (info) => {
+          const keyword = info.getValue();
+          // Mock image logic based on keyword for visual match
+          const getMockImage = (k: string) => {
+            const kl = k.toLowerCase();
+            if (kl.includes("biryani")) return "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=200&h=150&fit=crop";
+            if (kl.includes("dosa")) return "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?w=200&h=150&fit=crop";
+            if (kl.includes("idli")) return "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=200&h=150&fit=crop";
+            if (kl.includes("parotta")) return "https://images.unsplash.com/photo-1625398407796-a29b205bce20?w=200&h=150&fit=crop";
+            if (kl.includes("meal")) return "https://images.unsplash.com/photo-1601050690597-df0568f70950?w=200&h=150&fit=crop";
+            if (kl.includes("chicken")) return "https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?w=200&h=150&fit=crop";
+            if (kl.includes("pongal")) return "https://images.unsplash.com/photo-1651840403316-25805e94bbfb?w=200&h=150&fit=crop";
+            return "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=150&fit=crop"; // generic
+          };
+          
+          const isTopItem = ["biryani", "dosa"].some(k => keyword.toLowerCase().includes(k));
+
+          return (
+            <div className="flex items-center gap-4">
+              <div className="relative h-[44px] w-[68px] rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 border border-slate-100">
+                <Image src={getMockImage(keyword)} alt={keyword} fill className="object-cover" />
+              </div>
+              <div className="flex items-center gap-3">
+                <span className="font-bold text-[#111827] capitalize text-[14px]">{keyword}</span>
+                {isTopItem && (
+                  <Badge variant="outline" className="bg-[#EAF7EF] text-[#087A3D] border-0 rounded-full px-2.5 py-0.5 text-[12px] font-semibold h-6 flex items-center justify-center">
+                    Top Item
+                  </Badge>
+                )}
+              </div>
+            </div>
+          );
+        },
+      }),
+      columnHelper.accessor("keyword", {
+        id: "category",
+        header: "Category",
+        cell: (info) => {
+          const keyword = info.getValue();
+          const categoryName = keyword.split(' ')[0] || keyword;
+          
+          // Icon selection logic
+          const getIcon = () => {
+            const kl = keyword.toLowerCase();
+            if (kl.includes("meal")) return <ShoppingBag className="h-4 w-4" strokeWidth={1.8} />;
+            if (kl.includes("chicken") || kl.includes("starter")) return <UtensilsCrossed className="h-4 w-4" strokeWidth={1.8} />;
+            if (kl.includes("dosa") || kl.includes("parotta")) return <SquarePen className="h-4 w-4" strokeWidth={1.8} />;
+            return <ChefHat className="h-4 w-4" strokeWidth={1.8} />;
+          };
+
+          return (
+            <div className="flex items-center gap-2 text-[#475569] text-[14px]">
+              <div className="text-[#FF4B0B] flex items-center justify-center">
+                {getIcon()}
+              </div>
+              <span className="capitalize">{categoryName}</span>
+            </div>
+          );
+        },
+      }),
+      columnHelper.accessor("updatedAt", {
+        header: "Last Edited",
+        cell: (info) => {
+          const dateStr = info.getValue();
+          const date = new Date(dateStr);
+          return (
+            <div className="flex flex-col gap-0.5">
+              <span className="text-[#111827] font-semibold text-[13px]">{formatRelativeTime(dateStr).replace('about ', '')}</span>
+              <span className="text-[#64748B] text-[12px]">
+                {date.toLocaleString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                  hour: "numeric",
+                  minute: "2-digit",
+                  hour12: true
+                })}
+              </span>
+            </div>
+          );
+        },
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: () => <div className="text-right">Actions</div>,
+        cell: (info) => {
+          const row = info.row.original;
+          return (
+            <div className="flex items-center justify-end gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setEditingId(row.id)}
+                className="h-[36px] w-[36px] border-[#E5E7EB] rounded-lg bg-white text-[#334155] hover:bg-slate-50 shadow-sm"
+              >
+                <SquarePen className="h-[18px] w-[18px]" strokeWidth={1.8} />
+              </Button>
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => setDeleteTarget(row)}
+                className="h-[36px] w-[36px] border-[#E5E7EB] rounded-lg bg-white text-[#334155] hover:bg-slate-50 shadow-sm"
+              >
+                <MoreVertical className="h-[18px] w-[18px]" strokeWidth={1.8} />
+              </Button>
+            </div>
+          );
+        },
+      }),
+    ],
+    [columnHelper]
+  );
+
+  const table = useReactTable({
+    data: filtered,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 8,
+      },
+    },
+  });
 
   const onSubmitAdd = () => {
     const validation = validateKitchenSearchCreate({ keyword: addKeyword });
@@ -1335,12 +1621,7 @@ export default function KitchenSearchPageManagement() {
 
   if (editingId) {
     return (
-      <Editor
-        contentId={editingId}
-        onCancel={() => {
-          setEditingId(null);
-        }}
-      />
+      <Editor contentId={editingId} />
     );
   }
 
@@ -1350,7 +1631,7 @@ export default function KitchenSearchPageManagement() {
 
   if (isError) {
     return (
-      <div className="min-h-screen bg-[#f8fafc] p-6 md:p-8 max-w-[1400px] mx-auto flex items-center justify-center">
+      <div className="min-h-screen bg-[#FEFEFE] p-6 md:p-8 max-w-[1440px] mx-auto flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
           <AlertTriangle className="h-12 w-12 text-red-400" />
           <p className="text-red-500 font-semibold">Failed to load search configurations</p>
@@ -1363,247 +1644,349 @@ export default function KitchenSearchPageManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] p-6 md:p-8 max-w-[1400px] mx-auto animate-in fade-in duration-300 font-sans">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-        <div className="flex items-center gap-4">
-          <div className="p-3 bg-orange-50 text-[#ff5a1f] rounded-xl border border-orange-100/50">
-            <ChefHat className="h-8 w-8" strokeWidth={1.5} />
-          </div>
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 mb-1">
-              Search Experience Management
-            </h1>
-            <p className="text-sm text-slate-500">
-              How every kitchen detail page looks for a specific search keyword — without changing the kitchen itself.
-            </p>
-          </div>
-        </div>
-        <div className="flex flex-col items-end gap-2 w-full md:w-auto">
-          <div className="flex w-full md:w-auto items-center gap-3">
-            <Button
-              variant="outline"
-              className="w-full md:w-auto bg-white border-slate-200 text-slate-700 hover:bg-slate-50 shadow-sm h-10 font-medium"
-              onClick={() => window.open("/search", "_blank")}
-            >
-              <Eye className="h-4 w-4 mr-2" /> View Live Site
-            </Button>
-            <Button
-              className="w-full md:w-auto bg-[#ff5a1f] hover:bg-[#e04918] text-white shadow-sm shadow-[#ff5a1f]/20 h-10 font-medium"
-              onClick={() => setAddDialogOpen(true)}
-            >
-              <Plus className="h-4 w-4 mr-2" /> Add New Search Item
-            </Button>
-          </div>
-          <p className="text-xs text-slate-400 font-medium hidden md:block">
-            {contents.length} configurations · auto-refreshes
-          </p>
-        </div>
-      </div>
-
-      {/* Table */}
-      <Card className="border-slate-200 shadow-sm overflow-hidden mb-8 bg-white rounded-xl">
-        <div className="p-4 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex flex-col md:flex-row items-center gap-3 w-full lg:w-auto">
-            <div className="relative w-full md:w-[350px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-              <Input
-                placeholder="Search keyword (e.g., biryani, dosa...)"
-                value={searchTerm}
-                onChange={(e) => {
-                  setSearchTerm(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="pl-9 bg-white border-slate-200 shadow-sm h-10"
-              />
+    <div className="min-h-screen bg-[#FEFEFE] p-6 md:p-8 max-w-[1440px] mx-auto animate-in fade-in duration-300 font-sans pb-24">
+      {/* Outer Shell Wrapper (White with large border radius and subtle shadow) */}
+      <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[24px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+        
+        {/* Header Section */}
+        <div className="px-8 py-6 border-b border-[#EEF0F2] bg-[#FFFFFF]">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <div className="flex items-center gap-4">
+              <div className="text-[#FF4B0B] stroke-[1.8px]">
+                <ChefHat className="h-8 w-8" strokeWidth={1.8} />
+              </div>
+              <div>
+                <h1 className="text-[24px] font-bold text-[#111827]">
+                  Kitchen Detail Page Management
+                </h1>
+                <p className="text-[14px] text-[#64748B] mt-1">
+                  Manage search related items that appear in search suggestions and kitchen detail pages.
+                </p>
+              </div>
             </div>
-            <Select
-              value={statusFilter}
-              onValueChange={(value) => {
-                setStatusFilter(value);
-                setCurrentPage(1);
-              }}
-            >
-              <SelectTrigger className="w-full md:w-[180px] bg-white border-slate-200 shadow-sm h-10">
-                <SelectValue placeholder="All Statuses" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Statuses</SelectItem>
-                <SelectItem value="Published">Published</SelectItem>
-                <SelectItem value="Draft">Draft</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button variant="outline" className="w-full md:w-auto bg-white border-slate-200 shadow-sm text-slate-700 h-10" onClick={() => { setSearchTerm(""); setStatusFilter("All"); setCurrentPage(1); }}>
-              <Filter className="h-4 w-4 mr-2" /> Clear
-            </Button>
-          </div>
-          <Button variant="outline" className="w-full lg:w-auto bg-white border-slate-200 shadow-sm text-slate-700 h-10" onClick={onExport}>
-            <Download className="h-4 w-4 mr-2" /> Export
-          </Button>
-        </div>
-
-        <div className="overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow className="border-b-slate-100 bg-slate-50/50 hover:bg-slate-50/50">
-                <TableHead className="text-slate-600 font-semibold h-11 text-xs pl-5">#</TableHead>
-                <TableHead className="text-slate-600 font-semibold h-11 text-xs">Search Keyword</TableHead>
-                <TableHead className="text-slate-600 font-semibold h-11 text-xs text-center">Kitchens</TableHead>
-                <TableHead className="text-slate-600 font-semibold h-11 text-xs text-center">Menu Items</TableHead>
-                <TableHead className="text-slate-600 font-semibold h-11 text-xs">Status</TableHead>
-                <TableHead className="text-slate-600 font-semibold h-11 text-xs">Updated</TableHead>
-                <TableHead className="text-slate-600 font-semibold h-11 text-xs text-right pr-5">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {pageItems.length ? (
-                pageItems.map((row, index) => (
-                  <TableRow key={row.id} className="border-b-slate-100 hover:bg-slate-50/50 transition-colors">
-                    <TableCell className="py-3 align-middle pl-5 text-slate-500 font-medium text-sm">
-                      {(safePage - 1) * rowsPerPage + index + 1}
-                    </TableCell>
-                    <TableCell className="py-3 align-middle">
-                      <div className="flex items-center gap-2">
-                        <Tag className="h-4 w-4 text-[#ff5a1f]" />
-                        <span className="font-bold text-slate-900 capitalize">{row.keyword}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-3 align-middle text-center">
-                      <Badge variant="outline" className="border-slate-200 bg-white text-slate-700 font-bold shadow-sm">
-                        {row.kitchensCount}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="py-3 align-middle text-center">
-                      <Badge variant="outline" className="border-slate-200 bg-white text-slate-700 font-bold shadow-sm">
-                        {row.menuItemsCount}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="py-3 align-middle">
-                      {row.isActive ? (
-                        <Badge variant="outline" className="border-green-200 bg-green-50 text-green-700 gap-1.5 px-2.5 py-1 font-bold shadow-sm">
-                          <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div> Published
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="border-slate-200 bg-slate-50 text-slate-600 gap-1.5 px-2.5 py-1 font-bold shadow-sm">
-                          <div className="w-1.5 h-1.5 rounded-full bg-slate-400"></div> Draft
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="py-3 align-middle">
-                      <div className="flex flex-col">
-                        <span className="text-slate-900 font-medium text-sm">{formatRelativeTime(row.updatedAt)}</span>
-                        <span className="text-slate-500 text-xs mt-0.5">
-                          {new Date(row.updatedAt).toLocaleString(undefined, {
-                            month: "short",
-                            day: "numeric",
-                            hour: "numeric",
-                            minute: "2-digit",
-                          })}
-                        </span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="py-3 align-middle pr-5">
-                      <div className="flex items-center justify-end gap-2">
-                        <Switch
-                          checked={row.isActive}
-                          disabled={pendingToggleId === row.id}
-                          onCheckedChange={(checked) => toggleMutation.mutate({ id: row.id, isActive: checked })}
-                          className="scale-[0.8] data-[state=checked]:bg-green-500"
-                        />
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => setEditingId(row.id)}
-                          className="h-8 w-8 border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          onClick={() => setDeleteTarget(row)}
-                          className="h-8 w-8 border-slate-200 text-red-500 hover:text-red-600 hover:bg-red-50"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell colSpan={7} className="h-40 text-center">
-                    <div className="flex flex-col items-center gap-3">
-                      <ListOrdered className="h-8 w-8 text-slate-300" />
-                      <p className="text-slate-500 font-medium text-sm">
-                        {contents.length === 0
-                          ? "No search configurations yet. Create your first one."
-                          : "No configurations match your filters."}
-                      </p>
-                      {contents.length === 0 && (
-                        <Button className="bg-[#ff5a1f] hover:bg-[#e04918] text-white h-9 font-medium" onClick={() => setAddDialogOpen(true)}>
-                          <Plus className="h-4 w-4 mr-2" /> Add New Search Item
-                        </Button>
-                      )}
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </div>
-
-        <div className="p-4 border-t border-slate-100 bg-white flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="text-sm text-slate-500">
-            Showing <span className="font-medium text-slate-900">{showingFrom}</span> to{" "}
-            <span className="font-medium text-slate-900">{showingTo}</span> of{" "}
-            <span className="font-medium text-slate-900">{filtered.length}</span> configurations
-          </div>
-          <div className="flex items-center gap-1.5">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 border-slate-200 text-slate-600 hover:bg-slate-50"
-              disabled={safePage === 1}
-              onClick={() => setCurrentPage(safePage - 1)}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-            {Array.from({ length: Math.min(totalPages, 5) }).map((_, i) => {
-              const page = i + 1;
-              return (
+            
+            <div className="flex flex-col items-end gap-2 w-full lg:w-auto">
+              <div className="flex w-full lg:w-auto items-center gap-3">
                 <Button
-                  key={page}
+                  variant="outline"
+                  className="w-full lg:w-auto bg-[#FFFFFF] border-[#9BD0AE] text-[#087A3D] hover:bg-[#EAF7EF] rounded-[8px] h-[40px] px-4 font-semibold text-[14px]"
+                  onClick={() => window.open("/search", "_blank")}
+                >
+                  View Live Site <ExternalLink className="h-4 w-4 ml-2" strokeWidth={1.8} />
+                </Button>
+                <Button
+                  className="w-full lg:w-auto bg-[#FF4B0B] hover:bg-[#E94106] text-[#FFFFFF] rounded-[10px] h-[44px] px-[18px] font-semibold text-[14px] shadow-[0_2px_5px_rgba(255,75,11,0.12)]"
+                  onClick={() => setAddDialogOpen(true)}
+                >
+                  <Plus className="h-[18px] w-[18px] mr-2" strokeWidth={2} /> Add New Search Item
+                </Button>
+              </div>
+              <p className="text-[#64748B] text-[12px] pr-1">
+                Last updated: {stats.lastUpdated ? formatRelativeTime(stats.lastUpdated).replace("about ", "") : "No activity yet"}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Content inside Shell */}
+        <div className="p-8">
+          
+          {/* Controls Row */}
+          <div className="flex flex-col lg:flex-row items-center justify-between gap-4 mb-6">
+            <div className="flex flex-col md:flex-row items-center gap-3 w-full lg:w-auto">
+              {/* Search Input */}
+              <div className="relative w-full md:w-[420px]">
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-[#475569]" strokeWidth={1.8} />
+                <Input
+                  placeholder="Search items by name (e.g., biryani, dosa...)"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-[38px] bg-[#FFFFFF] border-[#E2E8F0] rounded-[8px] h-[44px] text-[#1E293B] placeholder:text-[#94A3B8] focus-visible:ring-0 focus-visible:border-[#FF4B0B] focus-visible:shadow-[0_0_0_3px_rgba(255,75,11,0.10)]"
+                />
+              </div>
+              
+              {/* Categories Dropdown */}
+              <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+                <SelectTrigger className="w-full md:w-[200px] bg-[#FFFFFF] border-[#E2E8F0] rounded-[8px] h-[44px] text-[#1E293B] font-medium">
+                  <SelectValue placeholder="All Categories" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Categories</SelectItem>
+                  {categoryOptions.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              
+              {/* Filter Button */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className={`w-full md:w-auto bg-[#FFFFFF] border-[#E2E8F0] rounded-[8px] h-[44px] px-5 font-medium shadow-none hover:bg-slate-50 ${
+                      hasActiveFilters ? "border-[#FF4B0B] text-[#FF4B0B]" : "text-[#1E293B]"
+                    }`}
+                  >
+                    <Filter className="h-[17px] w-[17px] mr-2 text-[#334155]" strokeWidth={1.8} />
+                    {statusFilter === "All" ? "Filter" : statusFilter}
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-44">
+                  <DropdownMenuLabel className="text-[12px] font-semibold text-[#64748B]">Status</DropdownMenuLabel>
+                  <DropdownMenuItem onClick={() => setStatusFilter("All")}>All</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter("Published")}>Published</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => setStatusFilter("Draft")}>Draft</DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={resetFilters} className="text-[#FF4B0B] font-semibold">
+                    Reset all filters
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+            
+            {/* Export Button */}
+            <Button 
+              variant="outline" 
+              className="w-full lg:w-auto bg-[#FFFFFF] border-[#E5E7EB] text-[#1E293B] rounded-[8px] h-[44px] px-5 font-medium shadow-none hover:bg-slate-50" 
+              onClick={onExport}
+            >
+              <Download className="h-[17px] w-[17px] mr-2 text-[#087A3D]" strokeWidth={1.8} /> Export
+            </Button>
+          </div>
+
+          {/* Table Container */}
+          <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] overflow-hidden">
+            <ScrollArea className="w-full">
+              <Table>
+                <TableHeader>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id} className="border-b-[#EEF0F2] bg-[#FAFCFB] hover:bg-[#FAFCFB]">
+                      {headerGroup.headers.map((header) => (
+                        <TableHead 
+                          key={header.id} 
+                          className="text-[#1E293B] font-semibold text-[13px] h-[52px] first:pl-6 last:pr-6"
+                        >
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+                <TableBody>
+                  {table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && "selected"}
+                        className="border-b-[#EEF0F2] hover:bg-[#FAFCFB] transition-colors"
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell 
+                            key={cell.id}
+                            className="py-[16px] first:pl-6 last:pr-6 align-middle"
+                          >
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
+                  ) : (
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="h-40 text-center">
+                        <div className="flex flex-col items-center gap-3">
+                          <Search className="h-8 w-8 text-slate-300" strokeWidth={1.5} />
+                          <p className="text-slate-500 font-medium text-sm">
+                            {contents.length === 0
+                              ? "No search items found."
+                              : "No items match your search."}
+                          </p>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+            
+            {/* Pagination Row */}
+            <div className="p-4 border-t border-[#EEF0F2] bg-[#FFFFFF] flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="text-[14px] text-[#64748B]">
+                Showing {table.getRowModel().rows.length > 0 ? table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1 : 0} to{" "}
+                {Math.min((table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize, table.getFilteredRowModel().rows.length)} of{" "}
+                {table.getFilteredRowModel().rows.length} items
+              </div>
+              
+              <div className="flex items-center gap-2">
+                <Button
                   variant="outline"
                   size="icon"
-                  className={`h-8 w-8 font-medium text-sm ${
-                    page === safePage
-                      ? "border-[#ff5a1f] text-[#ff5a1f] bg-[#ff5a1f]/10 hover:bg-[#ff5a1f]/20 hover:text-[#ff5a1f]"
-                      : "border-slate-200 text-slate-600 hover:bg-slate-50"
-                  }`}
-                  onClick={() => setCurrentPage(page)}
+                  className="h-[32px] w-[32px] border-[#E5E7EB] bg-[#FFFFFF] text-[#1E293B] hover:bg-slate-50 rounded-[7px] shadow-none p-0"
+                  onClick={() => table.previousPage()}
+                  disabled={!table.getCanPreviousPage()}
                 >
-                  {page}
+                  <ChevronLeft className="h-[16px] w-[16px] text-[#64748B]" />
                 </Button>
-              );
-            })}
-            {totalPages > 5 && (
-              <div className="h-8 w-8 flex items-center justify-center text-slate-400">
-                <MoreHorizontal className="h-4 w-4" />
+                
+                {Array.from({ length: Math.min(table.getPageCount(), 5) }).map((_, i) => {
+                  const page = i;
+                  const isActive = table.getState().pagination.pageIndex === page;
+                  return (
+                    <Button
+                      key={page}
+                      variant="outline"
+                      className={`h-[32px] w-[32px] rounded-[7px] shadow-none p-0 text-[14px] ${
+                        isActive 
+                          ? "border-[#FF4B0B] bg-[#FF4B0B] text-[#FFFFFF] font-semibold" 
+                          : "border-[#E5E7EB] bg-[#FFFFFF] text-[#1E293B] hover:bg-slate-50 font-medium"
+                      }`}
+                      onClick={() => table.setPageIndex(page)}
+                    >
+                      {page + 1}
+                    </Button>
+                  );
+                })}
+
+                {table.getPageCount() > 5 && (
+                  <div className="flex items-center justify-center h-[32px] w-[32px] text-[#64748B]">
+                    ...
+                  </div>
+                )}
+                {table.getPageCount() > 5 && (
+                  <Button
+                    variant="outline"
+                    className={`h-[32px] w-[32px] rounded-[7px] shadow-none p-0 text-[14px] ${
+                      table.getState().pagination.pageIndex === table.getPageCount() - 1 
+                        ? "border-[#FF4B0B] bg-[#FF4B0B] text-[#FFFFFF] font-semibold" 
+                        : "border-[#E5E7EB] bg-[#FFFFFF] text-[#1E293B] hover:bg-slate-50 font-medium"
+                    }`}
+                    onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+                  >
+                    {table.getPageCount()}
+                  </Button>
+                )}
+
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="h-[32px] w-[32px] border-[#E5E7EB] bg-[#FFFFFF] text-[#1E293B] hover:bg-slate-50 rounded-[7px] shadow-none p-0"
+                  onClick={() => table.nextPage()}
+                  disabled={!table.getCanNextPage()}
+                >
+                  <ChevronRight className="h-[16px] w-[16px] text-[#64748B]" />
+                </Button>
               </div>
-            )}
+            </div>
+          </div>
+
+          {/* Statistics Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6 gap-5 mt-8">
+            {/* Total Items */}
+            <div className="flex items-center gap-4 bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] p-[16px] shadow-[0_1px_3px_rgba(15,23,42,0.025)]">
+              <div className="h-[48px] w-[48px] rounded-[12px] bg-[#EAF7EF] flex items-center justify-center flex-shrink-0">
+                <ListOrdered className="h-[22px] w-[22px] text-[#087A3D]" strokeWidth={2} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[12px] font-medium text-[#64748B] mb-0.5">Total Items</p>
+                <h4 className="text-[18px] font-bold text-[#111827] leading-none mb-1">{stats.total}</h4>
+                <p className="text-[11px] text-[#94A3B8] truncate">All search items</p>
+              </div>
+            </div>
+            
+            {/* Published Items */}
+            <div className="flex items-center gap-4 bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] p-[16px] shadow-[0_1px_3px_rgba(15,23,42,0.025)]">
+              <div className="h-[48px] w-[48px] rounded-[12px] bg-[#EEF4FF] flex items-center justify-center flex-shrink-0">
+                <Save className="h-[22px] w-[22px] text-[#2563EB]" strokeWidth={2} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[12px] font-medium text-[#64748B] mb-0.5">Published Items</p>
+                <h4 className="text-[18px] font-bold text-[#111827] leading-none mb-1">{stats.published}</h4>
+                <p className="text-[11px] text-[#94A3B8] truncate">Currently live</p>
+              </div>
+            </div>
+
+            {/* Draft Items */}
+            <div className="flex items-center gap-4 bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] p-[16px] shadow-[0_1px_3px_rgba(15,23,42,0.025)]">
+              <div className="h-[48px] w-[48px] rounded-[12px] bg-[#FFF7E8] flex items-center justify-center flex-shrink-0">
+                <SquarePen className="h-[22px] w-[22px] text-[#F59E0B]" strokeWidth={2} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[12px] font-medium text-[#64748B] mb-0.5">Draft Items</p>
+                <h4 className="text-[18px] font-bold text-[#111827] leading-none mb-1">{stats.draftCount}</h4>
+                <p className="text-[11px] text-[#94A3B8] truncate">Need publishing</p>
+              </div>
+            </div>
+
+            {/* Top Items */}
+            <div className="flex items-center gap-4 bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] p-[16px] shadow-[0_1px_3px_rgba(15,23,42,0.025)]">
+              <div className="h-[48px] w-[48px] rounded-[12px] bg-[#F5EDFF] flex items-center justify-center flex-shrink-0">
+                <Star className="h-[22px] w-[22px] text-[#9333EA]" strokeWidth={2} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[12px] font-medium text-[#64748B] mb-0.5">Top Items</p>
+                <h4 className="text-[18px] font-bold text-[#111827] leading-none mb-1">{stats.topItems}</h4>
+                <p className="text-[11px] text-[#94A3B8] truncate">High priority items</p>
+              </div>
+            </div>
+
+            {/* Categories */}
+            <div className="flex items-center gap-4 bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] p-[16px] shadow-[0_1px_3px_rgba(15,23,42,0.025)]">
+              <div className="h-[48px] w-[48px] rounded-[12px] bg-[#EAF9FC] flex items-center justify-center flex-shrink-0">
+                <Tag className="h-[22px] w-[22px] text-[#0891B2]" strokeWidth={2} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[12px] font-medium text-[#64748B] mb-0.5">Categories</p>
+                <h4 className="text-[18px] font-bold text-[#111827] leading-none mb-1">{stats.categories}</h4>
+                <p className="text-[11px] text-[#94A3B8] truncate">Used categories</p>
+              </div>
+            </div>
+
+            {/* Last Updated */}
+            <div className="flex items-center gap-4 bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] p-[16px] shadow-[0_1px_3px_rgba(15,23,42,0.025)]">
+              <div className="h-[48px] w-[48px] rounded-[12px] bg-[#FFF0F2] flex items-center justify-center flex-shrink-0">
+                <Clock className="h-[22px] w-[22px] text-[#EF233C]" strokeWidth={2} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-[12px] font-medium text-[#64748B] mb-0.5">Last Updated</p>
+                <h4 className="text-[18px] font-bold text-[#111827] leading-none mb-1">
+                  {stats.lastUpdated ? formatRelativeTime(stats.lastUpdated).replace("about ", "") : "—"}
+                </h4>
+                <p className="text-[11px] text-[#94A3B8] truncate">Recent activity</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Pro Tip Section */}
+          <div className="mt-8 bg-[#FFFAF2] border border-[#FFD6B8] rounded-[12px] p-[20px] flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+            <div className="flex items-start gap-4">
+              <div className="h-[48px] w-[48px] rounded-[12px] bg-[#FFF2D9] flex items-center justify-center flex-shrink-0 mt-1 md:mt-0">
+                <Lightbulb className="h-[24px] w-[24px] text-[#F59E0B]" strokeWidth={1.8} />
+              </div>
+              <div>
+                <h4 className="text-[#7C2D12] font-bold text-[16px] mb-1">Pro Tip</h4>
+                <p className="text-[#475569] text-[14px]">
+                  Mark important items as &quot;Top Item&quot; to highlight them in search suggestions and improve visibility on kitchen detail pages.
+                </p>
+              </div>
+            </div>
             <Button
               variant="outline"
-              size="icon"
-              className="h-8 w-8 border-slate-200 text-slate-600 hover:bg-slate-50"
-              disabled={safePage === totalPages}
-              onClick={() => setCurrentPage(safePage + 1)}
+              className="w-full md:w-auto flex-shrink-0 h-[40px] px-5 rounded-[8px] border-[#FFB49A] text-[#FF4B0B] bg-[#FFFFFF] hover:bg-[#FFF3ED] font-semibold text-[14px]"
+              onClick={() => window.open("/search", "_blank")}
             >
-              <ChevronRight className="h-4 w-4" />
+              Learn More <ExternalLink className="h-4 w-4 ml-2" strokeWidth={2} />
             </Button>
           </div>
+
         </div>
-      </Card>
+      </div>
 
       {/* Add Dialog */}
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
@@ -1672,3 +2055,4 @@ export default function KitchenSearchPageManagement() {
     </div>
   );
 }
+

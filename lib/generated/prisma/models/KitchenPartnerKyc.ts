@@ -39,6 +39,9 @@ export type KitchenPartnerKycMinAggregateOutputType = {
   upiId: string | null
   gpayNumber: string | null
   phoneNumber: string | null
+  fssaiNumber: string | null
+  fssaiValidTill: Date | null
+  gstNumber: string | null
 }
 
 export type KitchenPartnerKycMaxAggregateOutputType = {
@@ -56,6 +59,9 @@ export type KitchenPartnerKycMaxAggregateOutputType = {
   upiId: string | null
   gpayNumber: string | null
   phoneNumber: string | null
+  fssaiNumber: string | null
+  fssaiValidTill: Date | null
+  gstNumber: string | null
 }
 
 export type KitchenPartnerKycCountAggregateOutputType = {
@@ -73,6 +79,9 @@ export type KitchenPartnerKycCountAggregateOutputType = {
   upiId: number
   gpayNumber: number
   phoneNumber: number
+  fssaiNumber: number
+  fssaiValidTill: number
+  gstNumber: number
   _all: number
 }
 
@@ -92,6 +101,9 @@ export type KitchenPartnerKycMinAggregateInputType = {
   upiId?: true
   gpayNumber?: true
   phoneNumber?: true
+  fssaiNumber?: true
+  fssaiValidTill?: true
+  gstNumber?: true
 }
 
 export type KitchenPartnerKycMaxAggregateInputType = {
@@ -109,6 +121,9 @@ export type KitchenPartnerKycMaxAggregateInputType = {
   upiId?: true
   gpayNumber?: true
   phoneNumber?: true
+  fssaiNumber?: true
+  fssaiValidTill?: true
+  gstNumber?: true
 }
 
 export type KitchenPartnerKycCountAggregateInputType = {
@@ -126,6 +141,9 @@ export type KitchenPartnerKycCountAggregateInputType = {
   upiId?: true
   gpayNumber?: true
   phoneNumber?: true
+  fssaiNumber?: true
+  fssaiValidTill?: true
+  gstNumber?: true
   _all?: true
 }
 
@@ -216,6 +234,9 @@ export type KitchenPartnerKycGroupByOutputType = {
   upiId: string | null
   gpayNumber: string | null
   phoneNumber: string | null
+  fssaiNumber: string | null
+  fssaiValidTill: Date | null
+  gstNumber: string | null
   _count: KitchenPartnerKycCountAggregateOutputType | null
   _min: KitchenPartnerKycMinAggregateOutputType | null
   _max: KitchenPartnerKycMaxAggregateOutputType | null
@@ -254,6 +275,9 @@ export type KitchenPartnerKycWhereInput = {
   upiId?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
   gpayNumber?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
+  fssaiNumber?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
+  fssaiValidTill?: Prisma.DateTimeNullableFilter<"KitchenPartnerKyc"> | Date | string | null
+  gstNumber?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerScalarRelationFilter, Prisma.KitchenPartnerWhereInput>
 }
 
@@ -272,6 +296,9 @@ export type KitchenPartnerKycOrderByWithRelationInput = {
   upiId?: Prisma.SortOrderInput | Prisma.SortOrder
   gpayNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  fssaiNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  fssaiValidTill?: Prisma.SortOrderInput | Prisma.SortOrder
+  gstNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   kitchenPartner?: Prisma.KitchenPartnerOrderByWithRelationInput
 }
 
@@ -293,6 +320,9 @@ export type KitchenPartnerKycWhereUniqueInput = Prisma.AtLeast<{
   upiId?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
   gpayNumber?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
   phoneNumber?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
+  fssaiNumber?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
+  fssaiValidTill?: Prisma.DateTimeNullableFilter<"KitchenPartnerKyc"> | Date | string | null
+  gstNumber?: Prisma.StringNullableFilter<"KitchenPartnerKyc"> | string | null
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerScalarRelationFilter, Prisma.KitchenPartnerWhereInput>
 }, "id" | "kitchenPartnerId">
 
@@ -311,6 +341,9 @@ export type KitchenPartnerKycOrderByWithAggregationInput = {
   upiId?: Prisma.SortOrderInput | Prisma.SortOrder
   gpayNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   phoneNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  fssaiNumber?: Prisma.SortOrderInput | Prisma.SortOrder
+  fssaiValidTill?: Prisma.SortOrderInput | Prisma.SortOrder
+  gstNumber?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.KitchenPartnerKycCountOrderByAggregateInput
   _max?: Prisma.KitchenPartnerKycMaxOrderByAggregateInput
   _min?: Prisma.KitchenPartnerKycMinOrderByAggregateInput
@@ -334,6 +367,9 @@ export type KitchenPartnerKycScalarWhereWithAggregatesInput = {
   upiId?: Prisma.StringNullableWithAggregatesFilter<"KitchenPartnerKyc"> | string | null
   gpayNumber?: Prisma.StringNullableWithAggregatesFilter<"KitchenPartnerKyc"> | string | null
   phoneNumber?: Prisma.StringNullableWithAggregatesFilter<"KitchenPartnerKyc"> | string | null
+  fssaiNumber?: Prisma.StringNullableWithAggregatesFilter<"KitchenPartnerKyc"> | string | null
+  fssaiValidTill?: Prisma.DateTimeNullableWithAggregatesFilter<"KitchenPartnerKyc"> | Date | string | null
+  gstNumber?: Prisma.StringNullableWithAggregatesFilter<"KitchenPartnerKyc"> | string | null
 }
 
 export type KitchenPartnerKycCreateInput = {
@@ -350,6 +386,9 @@ export type KitchenPartnerKycCreateInput = {
   upiId?: string | null
   gpayNumber?: string | null
   phoneNumber?: string | null
+  fssaiNumber?: string | null
+  fssaiValidTill?: Date | string | null
+  gstNumber?: string | null
   kitchenPartner: Prisma.KitchenPartnerCreateNestedOneWithoutKitchenKycInput
 }
 
@@ -368,6 +407,9 @@ export type KitchenPartnerKycUncheckedCreateInput = {
   upiId?: string | null
   gpayNumber?: string | null
   phoneNumber?: string | null
+  fssaiNumber?: string | null
+  fssaiValidTill?: Date | string | null
+  gstNumber?: string | null
 }
 
 export type KitchenPartnerKycUpdateInput = {
@@ -384,6 +426,9 @@ export type KitchenPartnerKycUpdateInput = {
   upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gpayNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fssaiNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fssaiValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gstNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneRequiredWithoutKitchenKycNestedInput
 }
 
@@ -402,6 +447,9 @@ export type KitchenPartnerKycUncheckedUpdateInput = {
   upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gpayNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fssaiNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fssaiValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gstNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type KitchenPartnerKycCreateManyInput = {
@@ -419,6 +467,9 @@ export type KitchenPartnerKycCreateManyInput = {
   upiId?: string | null
   gpayNumber?: string | null
   phoneNumber?: string | null
+  fssaiNumber?: string | null
+  fssaiValidTill?: Date | string | null
+  gstNumber?: string | null
 }
 
 export type KitchenPartnerKycUpdateManyMutationInput = {
@@ -435,6 +486,9 @@ export type KitchenPartnerKycUpdateManyMutationInput = {
   upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gpayNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fssaiNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fssaiValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gstNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type KitchenPartnerKycUncheckedUpdateManyInput = {
@@ -452,6 +506,9 @@ export type KitchenPartnerKycUncheckedUpdateManyInput = {
   upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gpayNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fssaiNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fssaiValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gstNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type KitchenPartnerKycNullableScalarRelationFilter = {
@@ -474,6 +531,9 @@ export type KitchenPartnerKycCountOrderByAggregateInput = {
   upiId?: Prisma.SortOrder
   gpayNumber?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
+  fssaiNumber?: Prisma.SortOrder
+  fssaiValidTill?: Prisma.SortOrder
+  gstNumber?: Prisma.SortOrder
 }
 
 export type KitchenPartnerKycMaxOrderByAggregateInput = {
@@ -491,6 +551,9 @@ export type KitchenPartnerKycMaxOrderByAggregateInput = {
   upiId?: Prisma.SortOrder
   gpayNumber?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
+  fssaiNumber?: Prisma.SortOrder
+  fssaiValidTill?: Prisma.SortOrder
+  gstNumber?: Prisma.SortOrder
 }
 
 export type KitchenPartnerKycMinOrderByAggregateInput = {
@@ -508,6 +571,9 @@ export type KitchenPartnerKycMinOrderByAggregateInput = {
   upiId?: Prisma.SortOrder
   gpayNumber?: Prisma.SortOrder
   phoneNumber?: Prisma.SortOrder
+  fssaiNumber?: Prisma.SortOrder
+  fssaiValidTill?: Prisma.SortOrder
+  gstNumber?: Prisma.SortOrder
 }
 
 export type KitchenPartnerKycCreateNestedOneWithoutKitchenPartnerInput = {
@@ -556,6 +622,9 @@ export type KitchenPartnerKycCreateWithoutKitchenPartnerInput = {
   upiId?: string | null
   gpayNumber?: string | null
   phoneNumber?: string | null
+  fssaiNumber?: string | null
+  fssaiValidTill?: Date | string | null
+  gstNumber?: string | null
 }
 
 export type KitchenPartnerKycUncheckedCreateWithoutKitchenPartnerInput = {
@@ -572,6 +641,9 @@ export type KitchenPartnerKycUncheckedCreateWithoutKitchenPartnerInput = {
   upiId?: string | null
   gpayNumber?: string | null
   phoneNumber?: string | null
+  fssaiNumber?: string | null
+  fssaiValidTill?: Date | string | null
+  gstNumber?: string | null
 }
 
 export type KitchenPartnerKycCreateOrConnectWithoutKitchenPartnerInput = {
@@ -604,6 +676,9 @@ export type KitchenPartnerKycUpdateWithoutKitchenPartnerInput = {
   upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gpayNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fssaiNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fssaiValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gstNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type KitchenPartnerKycUncheckedUpdateWithoutKitchenPartnerInput = {
@@ -620,6 +695,9 @@ export type KitchenPartnerKycUncheckedUpdateWithoutKitchenPartnerInput = {
   upiId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   gpayNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fssaiNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fssaiValidTill?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  gstNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -639,6 +717,9 @@ export type KitchenPartnerKycSelect<ExtArgs extends runtime.Types.Extensions.Int
   upiId?: boolean
   gpayNumber?: boolean
   phoneNumber?: boolean
+  fssaiNumber?: boolean
+  fssaiValidTill?: boolean
+  gstNumber?: boolean
   kitchenPartner?: boolean | Prisma.KitchenPartnerDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["kitchenPartnerKyc"]>
 
@@ -657,6 +738,9 @@ export type KitchenPartnerKycSelectCreateManyAndReturn<ExtArgs extends runtime.T
   upiId?: boolean
   gpayNumber?: boolean
   phoneNumber?: boolean
+  fssaiNumber?: boolean
+  fssaiValidTill?: boolean
+  gstNumber?: boolean
   kitchenPartner?: boolean | Prisma.KitchenPartnerDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["kitchenPartnerKyc"]>
 
@@ -675,6 +759,9 @@ export type KitchenPartnerKycSelectUpdateManyAndReturn<ExtArgs extends runtime.T
   upiId?: boolean
   gpayNumber?: boolean
   phoneNumber?: boolean
+  fssaiNumber?: boolean
+  fssaiValidTill?: boolean
+  gstNumber?: boolean
   kitchenPartner?: boolean | Prisma.KitchenPartnerDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["kitchenPartnerKyc"]>
 
@@ -693,9 +780,12 @@ export type KitchenPartnerKycSelectScalar = {
   upiId?: boolean
   gpayNumber?: boolean
   phoneNumber?: boolean
+  fssaiNumber?: boolean
+  fssaiValidTill?: boolean
+  gstNumber?: boolean
 }
 
-export type KitchenPartnerKycOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kitchenPartnerId" | "aadhaarVerified" | "aadhaarDocumentUrl" | "addressProofUrl" | "reviewedByAdminId" | "reviewedAt" | "bankName" | "bankAccountNumber" | "ifscCode" | "accountHolderName" | "upiId" | "gpayNumber" | "phoneNumber", ExtArgs["result"]["kitchenPartnerKyc"]>
+export type KitchenPartnerKycOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kitchenPartnerId" | "aadhaarVerified" | "aadhaarDocumentUrl" | "addressProofUrl" | "reviewedByAdminId" | "reviewedAt" | "bankName" | "bankAccountNumber" | "ifscCode" | "accountHolderName" | "upiId" | "gpayNumber" | "phoneNumber" | "fssaiNumber" | "fssaiValidTill" | "gstNumber", ExtArgs["result"]["kitchenPartnerKyc"]>
 export type KitchenPartnerKycInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   kitchenPartner?: boolean | Prisma.KitchenPartnerDefaultArgs<ExtArgs>
 }
@@ -726,6 +816,9 @@ export type $KitchenPartnerKycPayload<ExtArgs extends runtime.Types.Extensions.I
     upiId: string | null
     gpayNumber: string | null
     phoneNumber: string | null
+    fssaiNumber: string | null
+    fssaiValidTill: Date | null
+    gstNumber: string | null
   }, ExtArgs["result"]["kitchenPartnerKyc"]>
   composites: {}
 }
@@ -1164,6 +1257,9 @@ export interface KitchenPartnerKycFieldRefs {
   readonly upiId: Prisma.FieldRef<"KitchenPartnerKyc", 'String'>
   readonly gpayNumber: Prisma.FieldRef<"KitchenPartnerKyc", 'String'>
   readonly phoneNumber: Prisma.FieldRef<"KitchenPartnerKyc", 'String'>
+  readonly fssaiNumber: Prisma.FieldRef<"KitchenPartnerKyc", 'String'>
+  readonly fssaiValidTill: Prisma.FieldRef<"KitchenPartnerKyc", 'DateTime'>
+  readonly gstNumber: Prisma.FieldRef<"KitchenPartnerKyc", 'String'>
 }
     
 

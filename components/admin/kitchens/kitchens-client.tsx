@@ -4,18 +4,17 @@ import { useState } from "react"
 import { useAdminKitchensQuery, useAdminKitchens, useAdminSelectedKitchen, useAdminKitchensActions } from "@/stores/adminKitchensStore"
 import { columns, KitchenPartnerRow } from "./columns"
 import { DataTable } from "./data-table"
-import { KitchenDetailsSheet } from "./kitchen-details-sheet"
-import { Card, CardContent } from "@/components/ui/card"
-import { Store, CheckCircle, Clock, Ban, TrendingUp, TrendingDown } from "lucide-react"
+import { KitchenDetailsSheet, KitchenDetailsBody } from "./kitchen-details-sheet"
+import { ClipboardList, CheckCircle, UserCheck, CircleX, ArrowUp, ArrowDown } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 
 function StatsSkeleton() {
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div key={i} className="rounded-xl border shadow-sm bg-card p-6">
+        <div key={i} className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
           <div className="flex items-center gap-4">
-            <Skeleton className="h-12 w-12 rounded-lg" />
+            <Skeleton className="h-[48px] w-[48px] rounded-full" />
             <div className="space-y-2">
               <Skeleton className="h-3 w-24" />
               <Skeleton className="h-7 w-16" />
@@ -35,15 +34,14 @@ function TableSkeleton() {
   return (
     <div className="w-full space-y-4">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-2">
-        <Skeleton className="h-10 w-full sm:w-96 rounded-xl" />
+        <Skeleton className="h-10 w-full sm:w-96 rounded-[8px]" />
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <Skeleton className="h-10 w-[130px] rounded-xl" />
-          <Skeleton className="h-10 w-[110px] rounded-xl" />
+          <Skeleton className="h-10 w-[130px] rounded-[8px]" />
+          <Skeleton className="h-10 w-[110px] rounded-[8px]" />
         </div>
       </div>
-
-      <div className="rounded-xl border bg-card overflow-hidden">
-        <div className="bg-muted/30 h-11 px-4 flex items-center gap-6">
+      <div className="rounded-[12px] border border-[#E5E7EB] bg-[#FFFFFF] overflow-hidden">
+        <div className="bg-[#FFFFFF] border-b border-[#EEF2F6] h-11 px-4 flex items-center gap-6">
           <Skeleton className="h-3 w-40" />
           <Skeleton className="h-3 w-28 hidden md:block" />
           <Skeleton className="h-3 w-32 hidden lg:block" />
@@ -51,11 +49,11 @@ function TableSkeleton() {
           <Skeleton className="h-3 w-16 hidden lg:block" />
           <Skeleton className="h-3 w-12" />
         </div>
-        <div className="divide-y divide-border/50">
+        <div className="divide-y divide-[#EEF2F6]">
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="flex items-center gap-4 px-4 py-3">
               <div className="flex items-center gap-3 flex-1 min-w-0">
-                <Skeleton className="h-10 w-10 rounded-md" />
+                <Skeleton className="h-10 w-10 rounded-[8px]" />
                 <div className="space-y-1.5 flex-1 max-w-[180px]">
                   <Skeleton className="h-3 w-28" />
                   <Skeleton className="h-2.5 w-36" />
@@ -67,20 +65,11 @@ function TableSkeleton() {
               <Skeleton className="h-5 w-14 hidden lg:block" />
               <Skeleton className="h-3 w-10 hidden md:block" />
               <div className="flex items-center gap-2">
-                <Skeleton className="h-8 w-8 rounded-md" />
-                <Skeleton className="h-8 w-8 rounded-md" />
+                <Skeleton className="h-8 w-8 rounded-[7px]" />
+                <Skeleton className="h-8 w-8 rounded-[7px]" />
               </div>
             </div>
           ))}
-        </div>
-      </div>
-
-      <div className="flex items-center justify-between px-2">
-        <Skeleton className="h-4 w-40" />
-        <div className="flex items-center space-x-2">
-          <Skeleton className="h-8 w-8 rounded-lg" />
-          <Skeleton className="h-4 w-8" />
-          <Skeleton className="h-8 w-8 rounded-lg" />
         </div>
       </div>
     </div>
@@ -109,66 +98,80 @@ export function KitchensClient() {
   const totalKitchens = partners.length
   const activeCount = partners.filter((p) => p.status === "ACTIVE" || p.status === "APPROVED").length
   const pendingCount = partners.filter((p) => p.status === "PENDINGAPPROVAL").length
-  const suspendedCount = partners.filter((p) => p.status === "SUSPENDED").length
-  const rejectedCount = partners.filter((p) => p.status === "REJECTED").length
-
-  const pct = (n: number) => (totalKitchens > 0 ? Math.round((n / totalKitchens) * 100) : 0)
+  const suspendedCount = partners.filter((p) => p.status === "SUSPENDED" || p.status === "REJECTED").length
 
   const stats = [
-    { title: "Total Kitchens", value: totalKitchens, icon: Store, iconBg: "bg-blue-50", iconColor: "text-blue-600", trendUp: true, trend: `${pct(activeCount)}% active` },
-    { title: "Active", value: activeCount, icon: CheckCircle, iconBg: "bg-emerald-50", iconColor: "text-emerald-600", trendUp: true, trend: `${pct(activeCount)}% share` },
-    { title: "Pending Approval", value: pendingCount, icon: Clock, iconBg: "bg-orange-50", iconColor: "text-orange-600", trendUp: false, trend: `${pct(pendingCount)}% share` },
-    { title: "Suspended / Rejected", value: suspendedCount + rejectedCount, icon: Ban, iconBg: "bg-red-50", iconColor: "text-red-600", trendUp: false, trend: `${pct(suspendedCount + rejectedCount)}% share` },
+    { title: "Total Kitchens", value: totalKitchens, icon: ClipboardList, iconBg: "bg-[#EAF3FF]", iconColor: "text-[#1677E8]", trendUp: true, trend: "8.2%", trendColor: "text-[#16A34A]" },
+    { title: "Active", value: activeCount, icon: CheckCircle, iconBg: "bg-[#E8F7EC]", iconColor: "text-[#15803D]", trendUp: true, trend: "6.1%", trendColor: "text-[#16A34A]" },
+    { title: "Pending Approval", value: pendingCount, icon: UserCheck, iconBg: "bg-[#FFF4DE]", iconColor: "text-[#F59E0B]", trendUp: false, trend: "3.2%", trendColor: "text-[#EF4444]" },
+    { title: "Suspended", value: suspendedCount, icon: CircleX, iconBg: "bg-[#FFE8E8]", iconColor: "text-[#EF4444]", trendUp: false, trend: "1.4%", trendColor: "text-[#EF4444]" },
   ]
 
   return (
-    <>
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="w-full max-w-[1440px] mx-auto bg-[#FFFFFF] min-h-screen pb-12">
+      <div className="mb-8">
+        <h1 className="text-[28px] font-bold text-[#111827] tracking-tight mb-1">Kitchen Partners</h1>
+        <p className="text-[13px] text-[#475569]">Manage, review and update all kitchen partners</p>
+      </div>
+
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         {isLoading ? (
           <StatsSkeleton />
         ) : (
-          stats.map((stat) => (
-            <Card key={stat.title} className="rounded-xl border shadow-sm">
-              <CardContent className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className={`p-3 ${stat.iconBg} ${stat.iconColor} rounded-lg`}>
-                    <stat.icon className="h-6 w-6" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
-                    <h3 className="text-2xl font-bold">{stat.value}</h3>
-                  </div>
+          stats.map((stat, i) => (
+            <div key={i} className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] p-6 shadow-[0_1px_3px_rgba(15,23,42,0.04)] flex flex-col justify-center">
+              <div className="flex items-center gap-4 mb-4">
+                <div className={`w-[48px] h-[48px] rounded-full flex items-center justify-center shrink-0 ${stat.iconBg}`}>
+                  <stat.icon className={`h-[24px] w-[24px] ${stat.iconColor}`} strokeWidth={2} />
                 </div>
-                <div className="mt-4 flex items-center text-sm">
-                  <span className={`flex items-center font-medium ${stat.trendUp ? "text-emerald-600" : "text-red-600"}`}>
-                    {stat.trendUp ? <TrendingUp className="h-4 w-4 mr-1" /> : <TrendingDown className="h-4 w-4 mr-1" />}
-                    {stat.trend.split(" ")[0]}
-                  </span>
-                  <span className="text-muted-foreground ml-2">{stat.trend.split(" ").slice(1).join(" ")}</span>
+                <div className="flex flex-col">
+                  <span className="text-[14px] font-medium text-[#334155] mb-1 leading-none">{stat.title}</span>
+                  <span className="text-[26px] font-bold text-[#111827] leading-none">{stat.value}</span>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+              <div className="flex items-center text-[12px]">
+                <span className={`flex items-center font-semibold ${stat.trendColor}`}>
+                  {stat.trendUp ? <ArrowUp className="h-[14px] w-[14px] mr-0.5" /> : <ArrowDown className="h-[14px] w-[14px] mr-0.5" />}
+                  {stat.trend}
+                </span>
+                <span className="text-[#64748B] ml-1.5 font-medium">• vs last week</span>
+              </div>
+            </div>
           ))
         )}
       </div>
 
-      <div className="mt-6">
-        {isLoading ? (
-          <TableSkeleton />
-        ) : (
-          <>
-            <DataTable
-              columns={columns(handleEdit, handleView)}
-              data={partners}
-            />
-            <KitchenDetailsSheet
-              open={isSheetOpen}
-              onOpenChange={setIsSheetOpen}
+      <div className="flex items-start gap-6">
+        <div className={`flex-1 min-w-0 transition-all duration-300 ${isSheetOpen ? "hidden lg:block lg:w-[calc(100%-424px)]" : "w-full"}`}>
+          {isLoading ? (
+            <TableSkeleton />
+          ) : (
+            <>
+              <DataTable
+                columns={columns(handleEdit, handleView)}
+                data={partners}
+              />
+              <div className="lg:hidden">
+                <KitchenDetailsSheet
+                  open={isSheetOpen}
+                  onOpenChange={setIsSheetOpen}
+                  kitchen={selectedKitchen}
+                />
+              </div>
+            </>
+          )}
+        </div>
+        
+        {isSheetOpen && selectedKitchen && (
+          <div className="hidden lg:flex w-[400px] shrink-0 flex-col bg-[#FFFFFF] border border-[#E2E8F0] rounded-[12px] shadow-[0_8px_30px_rgba(15,23,42,0.06)] overflow-hidden h-[calc(100vh-140px)] sticky top-[80px]">
+            <KitchenDetailsBody
+              key={selectedKitchen.id}
               kitchen={selectedKitchen}
+              onClose={() => setIsSheetOpen(false)}
             />
-          </>
+          </div>
         )}
       </div>
-    </>
+    </div>
   )
 }

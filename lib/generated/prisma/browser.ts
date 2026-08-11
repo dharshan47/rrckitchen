@@ -323,6 +323,11 @@ export type KitchenWishlist = Prisma.KitchenWishlistModel
  */
 export type SearchPageContent = Prisma.SearchPageContentModel
 /**
+ * Model SearchPageKitchenCard
+ * 
+ */
+export type SearchPageKitchenCard = Prisma.SearchPageKitchenCardModel
+/**
  * Model SearchPageFilter
  * 
  */

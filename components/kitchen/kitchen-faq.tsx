@@ -51,11 +51,11 @@ export function KitchenFAQ() {
       <div className="grid md:grid-cols-2 gap-4 md:gap-8">
         <div className="space-y-4">
           {leftFaqs.map((faq, i) => (
-            <AccordionItem key={i} value={`left-item-${i}`} className="border bg-white rounded-xl shadow-sm px-4">
-              <AccordionTrigger className="text-left font-semibold text-gray-800 hover:no-underline hover:text-[#EE7005]">
+            <AccordionItem key={i} value={`left-item-${i}`} className="border border-[#EEEEEE] bg-[#FFFFFF] rounded-[10px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] px-6 overflow-hidden transition-colors hover:bg-[#FEFBF8] hover:border-[#E8E8E8]">
+              <AccordionTrigger className="text-left font-semibold text-[#222222] hover:no-underline py-5 [&[data-state=open]>svg]:text-[#FD4F03] [&>svg]:text-[#222222]">
                 {faq.q}
               </AccordionTrigger>
-              <AccordionContent className="text-gray-600 text-sm leading-relaxed">
+              <AccordionContent className="text-[#666666] text-sm leading-relaxed pb-5">
                 {faq.a}
               </AccordionContent>
             </AccordionItem>
@@ -63,11 +63,11 @@ export function KitchenFAQ() {
         </div>
         <div className="space-y-4">
           {rightFaqs.map((faq, i) => (
-            <AccordionItem key={i} value={`right-item-${i}`} className="border bg-white rounded-xl shadow-sm px-4">
-              <AccordionTrigger className="text-left font-semibold text-gray-800 hover:no-underline hover:text-[#EE7005]">
+            <AccordionItem key={i} value={`right-item-${i}`} className="border border-[#EEEEEE] bg-[#FFFFFF] rounded-[10px] shadow-[0_2px_8px_rgba(0,0,0,0.05)] px-6 overflow-hidden transition-colors hover:bg-[#FEFBF8] hover:border-[#E8E8E8]">
+              <AccordionTrigger className="text-left font-semibold text-[#222222] hover:no-underline py-5 [&[data-state=open]>svg]:text-[#FD4F03] [&>svg]:text-[#222222]">
                 {faq.q}
               </AccordionTrigger>
-              <AccordionContent className="text-gray-600 text-sm leading-relaxed">
+              <AccordionContent className="text-[#666666] text-sm leading-relaxed pb-5">
                 {faq.a}
               </AccordionContent>
             </AccordionItem>

@@ -139,6 +139,8 @@ export async function getAdminOrders() {
       },
       payment: { select: { status: true, provider: true, paymentMethod: true, providerOrderId: true } },
       deliveryPartner: { include: { user: { select: { name: true, phoneNumber: true } } } },
+      address: { select: { lineOne: true, lineTwo: true, pincode: true, label: true } },
+      statusHistory: { orderBy: { changedAt: "asc" }, select: { id: true, status: true, changedAt: true, note: true } },
     },
     orderBy: { createdAt: "desc" },
     take: 50,
@@ -171,11 +173,29 @@ export async function getAdminOrders() {
       })),
       date: o.createdAt.toISOString(),
       amount: Number(o.totalAmount),
+      discountAmount: Number(o.discountAmount),
+      serviceDate: o.serviceDate.toISOString(),
+      timeSlot: o.timeSlot,
       status: o.status,
+      deliveryStatus: o.deliveryStatus,
       payment: o.payment?.status,
       paymentProvider: o.payment?.provider,
       paymentMethod: o.payment?.paymentMethod,
       providerOrderId: o.payment?.providerOrderId,
+      deliveryAddress: o.address
+        ? {
+            lineOne: o.address.lineOne,
+            lineTwo: o.address.lineTwo,
+            pincode: o.address.pincode,
+            label: o.address.label,
+          }
+        : null,
+      statusHistory: o.statusHistory.map((h) => ({
+        id: h.id,
+        status: h.status,
+        changedAt: h.changedAt.toISOString(),
+        note: h.note,
+      })),
       deliveryPartner: o.deliveryPartner
         ? {
             id: o.deliveryPartner.id,
@@ -403,10 +423,12 @@ export async function getOrderForTracking(orderId: string) {
         },
       },
       address: { select: { latitude: true, longitude: true, lineOne: true, lineTwo: true, pincode: true, label: true } },
+      user: { select: { phoneNumber: true } },
       payment: { select: { provider: true, status: true } },
       deliveryLocations: { orderBy: { updatedAt: "desc" }, take: 1 },
-      deliveryPartner: { select: { id: true, user: { select: { name: true, image: true } } } },
+      deliveryPartner: { select: { id: true, user: { select: { name: true, image: true, phoneNumber: true } } } },
       deliveryAssignment: { select: { status: true } },
+      statusHistory: { orderBy: { changedAt: "asc" } },
     },
   })
 
@@ -434,9 +456,15 @@ export async function getOrderForTracking(orderId: string) {
     status: order.status,
     deliveryStatus: order.deliveryStatus,
     totalAmount: order.totalAmount.toString(),
+    discountAmount: order.discountAmount.toString(),
     createdAt: order.createdAt.toISOString(),
     serviceDate: order.serviceDate.toISOString(),
     timeSlot: order.timeSlot,
+    statusHistory: order.statusHistory.map((h) => ({
+      status: h.status,
+      changedAt: h.changedAt.toISOString(),
+      note: h.note,
+    })),
     items: order.orderItems.map((i) => ({
       name: i.menuItem.name,
       quantity: i.quantity,
@@ -453,6 +481,7 @@ export async function getOrderForTracking(orderId: string) {
       ? `${order.address.lineOne}${order.address.lineTwo ? `, ${order.address.lineTwo}` : ""}, ${order.address.pincode}`
       : null,
     customerAddressLabel: order.address?.label,
+    customerPhone: order.user?.phoneNumber ?? null,
     deliveryPersonName: order.deliveryPartner?.user?.name,
     deliveryPersonLat: livePos?.lat ?? order.deliveryLocations[0]?.latitude,
     deliveryPersonLng: livePos?.lng ?? order.deliveryLocations[0]?.longitude,
@@ -464,6 +493,7 @@ export async function getOrderForTracking(orderId: string) {
           id: order.deliveryPartner.id,
           name: order.deliveryPartner.user?.name,
           image: order.deliveryPartner.user?.image,
+          phone: order.deliveryPartner.user?.phoneNumber,
         }
       : null,
   }

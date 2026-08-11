@@ -2,7 +2,7 @@
 
 import { useSearchParams, useRouter } from "next/navigation"
 import { useQuery, useInfiniteQuery, keepPreviousData } from "@tanstack/react-query"
-import { UtensilsCrossed, Star, Search, X, ChevronLeft, Heart, ShieldCheck, Clock, Leaf, Users } from "lucide-react"
+import { UtensilsCrossed, Search, X, ChevronLeft, Heart, ShieldCheck, Clock, Leaf, Users, ChevronUp } from "lucide-react"
 import Image from 'next/image'
 import Link from "next/link"
 import { useState, useMemo, useRef, useEffect, startTransition, useCallback } from "react"
@@ -11,10 +11,13 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { getRecentKitchens, addRecentKitchen } from "@/lib/recent-searches"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { cn } from "@/lib/utils"
-import { getKitchenStatus } from "@/components/kitchen/kitchen-timing-display"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { KitchenCard } from "@/components/kitchen/kitchen-card"
+import type { KitchenData } from "@/hooks/useExploreKitchens"
+import type { LucideIcon } from "lucide-react"
 
-import { useMenuDeliveryLat, useMenuDeliveryLng } from "@/stores"
-import { haversineDistance } from "@/lib/geo"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,8 +59,9 @@ interface SearchKitchen {
   lng: number | null
   profileImage?: string | null
   estimatedPrepTime?: number | null
-  items: { id: string; name: string; price: number; imageUrl: string | null }[]
+  items: { id: string; name: string; price: number; foodType: string; timeSlot: string; imageUrl: string | null }[]
   operatingHours?: Record<string, { open: string; close: string }> | null
+  customOfferText?: string | null
 }
 
 interface SearchResult {
@@ -86,16 +90,44 @@ interface SearchPageContentData {
   showRatings: boolean
   kitchensCount: number
   filters: { id: string; name: string; options: string[] }[]
-  badges: { id: string; name: string }[]
+  badges: { id: string; name: string; position: string }[]
   infoItems: { id: string; icon: string; title: string; subtitle: string; color: string }[]
 }
 
-const INFO_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+const INFO_ICON_MAP: Record<string, LucideIcon> = {
   Heart,
   ShieldCheck,
   Clock,
   Leaf,
   Users,
+}
+
+function toKitchenData(kitchen: SearchKitchen): KitchenData {
+  return {
+    id: kitchen.id,
+    slug: kitchen.slug,
+    displayName: kitchen.displayName,
+    profileImage: kitchen.profileImage ?? null,
+    avgRating: kitchen.avgRating,
+    totalReviews: kitchen.totalReviews,
+    imageUrl: kitchen.imageUrl,
+    customOfferText: kitchen.customOfferText ?? null,
+    cuisineTags: kitchen.cuisineTags ?? [],
+    locality: kitchen.locality ?? null,
+    items: kitchen.items.map((i) => ({
+      id: i.id,
+      name: i.name,
+      price: i.price,
+      imageUrl: i.imageUrl,
+      foodType: i.foodType ?? "",
+      timeSlot: i.timeSlot ?? "",
+    })),
+    timeSlots: [],
+    lat: kitchen.lat,
+    lng: kitchen.lng,
+    estimatedPrepTime: kitchen.estimatedPrepTime ?? null,
+    operatingHours: kitchen.operatingHours ?? null,
+  }
 }
 
 function SearchSkeleton() {
@@ -129,6 +161,9 @@ export function SearchPageContent() {
   const [recentKitchens, setRecentKitchens] = useState<{ id: string; slug: string; name: string }[]>(!q ? getRecentKitchens() : [])
   const [selectedIndex, setSelectedIndex] = useState(-1)
   const [showAutocomplete, setShowAutocomplete] = useState(false)
+  const [draftFilters, setDraftFilters] = useState<Record<string, string[]>>({})
+  const [appliedFilters, setAppliedFilters] = useState<Record<string, string[]>>({})
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const debouncedQuery = useDebouncedValue(localQuery, 300)
@@ -218,6 +253,14 @@ export function SearchPageContent() {
   const enabledFilters = useMemo(() => (pageContent ? pageContent.filters : []), [pageContent])
   const enabledInfoItems = useMemo(() => (pageContent ? pageContent.infoItems : []), [pageContent])
   const enabledBadges = useMemo(() => (pageContent ? pageContent.badges : []), [pageContent])
+  const leftBadges = useMemo(
+    () => enabledBadges.filter((b) => b.position !== "right").map((b) => b.name),
+    [enabledBadges]
+  )
+  const rightBadges = useMemo(
+    () => enabledBadges.filter((b) => b.position === "right").map((b) => b.name),
+    [enabledBadges]
+  )
 
   const dishes = useMemo(() => data?.pages[0]?.dishes ?? [], [data])
   const kitchens = useMemo(() => {
@@ -270,6 +313,49 @@ export function SearchPageContent() {
     }
   }, [kitchens, kitchenSort])
 
+  const toggleFilterOption = useCallback((filterId: string, option: string) => {
+    setDraftFilters((prev) => {
+      const current = prev[filterId] ?? []
+      const next = current.includes(option)
+        ? current.filter((o) => o !== option)
+        : [...current, option]
+      return { ...prev, [filterId]: next }
+    })
+  }, [])
+
+  const applyFilters = useCallback(() => {
+    setAppliedFilters(draftFilters)
+    setMobileFiltersOpen(false)
+  }, [draftFilters])
+
+  const clearFilters = useCallback(() => {
+    setDraftFilters({})
+    setAppliedFilters({})
+  }, [])
+
+  const isFilterSelected = useCallback(
+    (filterId: string, option: string) => (draftFilters[filterId] ?? []).includes(option),
+    [draftFilters]
+  )
+
+  const activeFilterCount = useMemo(
+    () => Object.values(appliedFilters).reduce((sum, opts) => sum + opts.length, 0),
+    [appliedFilters]
+  )
+
+  const activeFilterOptions = useMemo(
+    () => Object.values(appliedFilters).flat().map((o) => o.toLowerCase()),
+    [appliedFilters]
+  )
+
+  const filteredKitchens = useMemo(() => {
+    if (activeFilterOptions.length === 0) return sortedKitchens
+    return sortedKitchens.filter((k) => {
+      const tags = (k.cuisineTags ?? []).map((t) => t.toLowerCase())
+      return activeFilterOptions.some((opt) => tags.some((t) => t.includes(opt) || opt.includes(t)))
+    })
+  }, [sortedKitchens, activeFilterOptions])
+
   const [colCount, setColCount] = useState(1);
   useEffect(() => {
     const updateCols = () => {
@@ -300,7 +386,7 @@ export function SearchPageContent() {
     return () => observer.disconnect()
   }, [hasNextPage, isFetchingNextPage, fetchNextPage])
 
-  const rowCount = Math.ceil(sortedKitchens.length / colCount);
+  const rowCount = Math.ceil(filteredKitchens.length / colCount);
   const virtualizer = useWindowVirtualizer({
     count: rowCount,
     estimateSize: () => 390,
@@ -358,14 +444,14 @@ export function SearchPageContent() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="mx-auto w-full max-w-215">
+      <div className="mx-auto w-full max-w-[1440px]">
         {/* Sticky Search Header */}
-        <div ref={wrapperRef} className="sticky top-0 z-30 bg-white pt-6 pb-2 px-4 sm:px-0">
-          <form onSubmit={handleSearchSubmit} className="relative flex items-center h-14 border border-gray-300 rounded-lg shadow-sm bg-white overflow-hidden transition-all focus-within:border-gray-400 focus-within:shadow-md">
+        <div ref={wrapperRef} className="sticky top-0 z-30 bg-[#FCF8F5] pt-6 pb-2 px-4 sm:px-0 lg:hidden border-b border-[#EEE8E4]">
+          <form onSubmit={handleSearchSubmit} className="relative flex items-center h-14 border border-[#ECE8E5] rounded-lg shadow-sm bg-white overflow-hidden transition-all focus-within:border-[#F44A01] focus-within:shadow-md">
             <button 
               type="button"
               onClick={() => router.back()}
-              className="px-4 text-muted-foreground hover:text-gray-700 flex items-center justify-center h-full"
+              className="px-4 text-[#333333] hover:text-[#111111] flex items-center justify-center h-full"
               aria-label="Back"
             >
               <ChevronLeft className="h-5 w-5" />
@@ -553,44 +639,63 @@ export function SearchPageContent() {
           ) : (
             <div className="flex flex-col min-h-screen bg-[#FDFDFD]">
               {/* Header Banner */}
-              <div className="bg-[#FFF4EB] relative overflow-hidden">
+              <div className="bg-[#FCF8F5] relative overflow-hidden border-b border-[#EEE8E4]">
                  {pageContent?.bannerImageUrl ? (
-                   <div className="absolute top-0 right-0 h-full w-1/3 opacity-30 pointer-events-none">
-                      <Image src={pageContent.bannerImageUrl} alt="" fill className="object-cover" unoptimized={pageContent.bannerImageUrl.startsWith("http")} />
-                      <div className="absolute inset-0 bg-linear-to-r from-[#FFF4EB] via-[#FFF4EB]/80 to-transparent"></div>
-                   </div>
+                   <div className="absolute top-0 right-0 h-full w-[60%] lg:w-1/2 opacity-90 pointer-events-none" style={{
+                      background: "linear-gradient(90deg, #FCF8F5 0%, rgba(252,248,245,0.85) 25%, rgba(252,248,245,0.15) 60%, transparent 100%)",
+                      zIndex: 1
+                   }}></div>
                  ) : null}
-                 <div className="relative max-w-350 mx-auto px-4 sm:px-6 py-12 lg:py-16">
-                   <p className="text-[15px] font-bold text-gray-700 mb-1">Search Results for</p>
-                   <h1 className="text-4xl lg:text-5xl font-extrabold text-[#00A300] mb-3">&ldquo;{debouncedQuery}&rdquo;</h1>
-                   <p className="text-[15px] font-medium text-muted-foreground">
-                     {pageContent?.subHeading || `We found ${sortedKitchens.length} kitchens serving delicious ${debouncedQuery} near you.`}
+                 {pageContent?.bannerImageUrl && (
+                   <div className="absolute top-0 right-0 h-full w-[60%] lg:w-1/2 pointer-events-none">
+                      <Image src={pageContent.bannerImageUrl} alt="" fill className="object-cover" unoptimized={pageContent.bannerImageUrl.startsWith("http")} />
+                   </div>
+                 )}
+                 <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 py-12 lg:py-16 z-10">
+                   <p className="text-[14px] font-bold text-[#111111] mb-1">Search Results for</p>
+                   <h1 className="text-4xl lg:text-5xl font-bold text-[#00512F] mb-3">
+                     <span className="text-[#F44A01]">“</span>{debouncedQuery}<span className="text-[#F44A01]">”</span>
+                   </h1>
+                   <p className="text-[15px] font-normal text-[#333333]">
+                     We found <span className="text-[#F44A01] font-bold">{kitchens.length} kitchens</span> serving delicious <strong>{debouncedQuery}</strong> near you.
                    </p>
                  </div>
               </div>
 
               {/* Main Content */}
-              <div className="max-w-350 mx-auto w-full px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8">
+              <div className="max-w-[1440px] mx-auto w-full px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8">
                  {/* Sidebar */}
                  <div className="hidden lg:block w-64 shrink-0 space-y-6">
-                    <div className="flex items-center justify-between pb-3 border-b border-border">
-                       <h2 className="text-[17px] font-bold text-foreground">Filters</h2>
-                       <button className="text-[13px] font-bold text-primary hover:underline">Clear All</button>
+                    <div className="bg-[#FFFFFF] border border-[#ECE8E5] rounded-[8px] p-5 shadow-[0_2px_8px_rgba(40,30,25,0.035)]">
+                    <div className="flex items-center justify-between pb-3 border-b border-[#EEEAE7] mb-5">
+                       <h2 className="text-[16px] font-bold text-[#111111]">Filters</h2>
+                       <button
+                         type="button"
+                         onClick={clearFilters}
+                         disabled={activeFilterCount === 0}
+                         className="text-[13px] font-semibold text-[#F44A01] hover:underline disabled:text-[#9CA3AF] disabled:hover:no-underline disabled:cursor-not-allowed"
+                       >
+                         Clear All
+                       </button>
                     </div>
 
                     <div className="space-y-5">
                        {enabledFilters.length > 0 ? (
                          enabledFilters.map((filter, fi) => (
-                           <div key={filter.id} className={fi === 0 ? "" : "pt-5 border-t border-border"}>
+                           <div key={filter.id} className={fi === 0 ? "" : "pt-5 border-t border-[#EEEAE7]"}>
                               <div className="flex items-center justify-between mb-3 cursor-pointer">
-                                 <h3 className="text-[14px] font-bold text-foreground">{filter.name}</h3>
-                                 <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                                 <h3 className="text-[14px] font-bold text-[#222222]">{filter.name}</h3>
+                                 <ChevronUp className="w-4 h-4 text-[#222222] stroke-[1.8px]" />
                               </div>
                               <div className="space-y-3">
-                                 {filter.options.map((item, i) => (
+                                 {filter.options.map((item) => (
                                    <label key={item} className="flex items-center gap-3 cursor-pointer group">
-                                      <input type="checkbox" defaultChecked={i < 1} className="w-4.5 h-4.5 rounded-sm border-gray-300 text-primary focus:ring-primary bg-white" />
-                                      <span className="text-[14px] font-medium text-muted-foreground group-hover:text-foreground">{item}</span>
+                                      <Checkbox
+                                        checked={isFilterSelected(filter.id, item)}
+                                        onCheckedChange={() => toggleFilterOption(filter.id, item)}
+                                        className="w-4.5 h-4.5 border-[#FF8A69] data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] text-white rounded-sm"
+                                      />
+                                      <span className="text-[12px] font-normal text-[#333333] group-hover:text-[#111111]">{item}</span>
                                    </label>
                                  ))}
                               </div>
@@ -599,22 +704,31 @@ export function SearchPageContent() {
                        ) : (
                          (categoriesData ?? []).length > 0 && (
                            <div>
-                              <h3 className="text-[14px] font-bold text-foreground mb-3">Cuisine</h3>
+                              <h3 className="text-[14px] font-bold text-[#222222] mb-3">Cuisine</h3>
                               <div className="space-y-3">
                                  {(categoriesData ?? []).map((cat) => (
                                    <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
-                                      <input type="checkbox" className="w-4.5 h-4.5 rounded-sm border-gray-300 text-primary focus:ring-primary bg-white" />
-                                      <span className="text-[14px] font-medium text-muted-foreground group-hover:text-foreground">{cat.name}</span>
+                                      <Checkbox
+                                        checked={isFilterSelected("cuisine", cat.name)}
+                                        onCheckedChange={() => toggleFilterOption("cuisine", cat.name)}
+                                        className="w-4.5 h-4.5 border-[#FF8A69] data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] text-white rounded-sm"
+                                      />
+                                      <span className="text-[12px] font-normal text-[#333333] group-hover:text-[#111111]">{cat.name}</span>
                                    </label>
                                  ))}
                               </div>
                            </div>
                          )
-)}
+                       )}
 
-                        <button className="w-full bg-primary text-white py-3.5 rounded-lg font-extrabold text-[15px] hover:bg-primary/90 transition-colors mt-4 shadow-sm">
+                        <Button
+                          type="button"
+                          onClick={applyFilters}
+                          className="w-full bg-[#F44A01] hover:bg-[#E94300] text-white h-[44px] rounded-[5px] font-bold text-[14px] mt-6 shadow-[0_1px_3px_rgba(244,74,1,0.12)] border-none"
+                        >
                            APPLY FILTERS
-                        </button>
+                        </Button>
+                    </div>
                     </div>
                  </div>
 
@@ -622,9 +736,13 @@ export function SearchPageContent() {
                  <div className="flex-1 min-w-0">
                     {/* Mobile Filters and Sort */}
                     <div className="flex lg:hidden items-center gap-4 mb-6">
-                       <button className="flex-1 flex items-center justify-center gap-2 py-2.5 border border-border rounded-lg bg-white text-[14px] font-bold text-gray-800 shadow-sm">
+                       <button
+                         type="button"
+                         onClick={() => setMobileFiltersOpen(true)}
+                         className="flex-1 flex items-center justify-center gap-2 py-2.5 border border-border rounded-lg bg-white text-[14px] font-bold text-gray-800 shadow-sm"
+                       >
                           <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z"></path></svg>
-                          Filters <span className="bg-primary text-white text-[11px] px-1.5 py-0.5 rounded-full leading-none">{enabledFilters.length}</span>
+                          Filters {activeFilterCount > 0 && <span className="bg-primary text-white text-[11px] px-1.5 py-0.5 rounded-full leading-none">{activeFilterCount}</span>}
                        </button>
                        <DropdownMenu>
                          <DropdownMenuTrigger asChild>
@@ -645,9 +763,10 @@ export function SearchPageContent() {
                        </DropdownMenu>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 lg:mb-8 gap-4 border-b border-border pb-4">
-                       <span className="text-[15px] font-bold text-gray-800">
-                         Showing 1 - {sortedKitchens.length} of {sortedKitchens.length} Kitchens
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 lg:mb-8 gap-4 border-b border-[#EEEAE7] pb-4">
+                       <span className="text-[15px] font-bold text-[#111111]">
+                         Showing {filteredKitchens.length > 0 ? `1 - ${filteredKitchens.length}` : "0"} of {sortedKitchens.length} Kitchens
+                         {activeFilterCount > 0 && <span className="ml-2 text-[13px] font-bold text-[#F44A01]">({activeFilterCount} filter{activeFilterCount === 1 ? "" : "s"} applied)</span>}
                        </span>
                        <div className="hidden lg:flex items-center gap-3">
                          <span className="text-[14px] font-bold text-gray-700">Sort by:</span>
@@ -669,15 +788,15 @@ export function SearchPageContent() {
                        </div>
                     </div>
                     
-                    {sortedKitchens.length > 0 && (
+                    {filteredKitchens.length > 0 ? (
                       <>
                        <div style={{ height: `${virtualizer.getTotalSize()}px`, width: '100%', position: 'relative' }}>
                          {virtualizer.getVirtualItems().map((virtualRow) => {
                            const startIndex = virtualRow.index * colCount;
-                           const rowItems = sortedKitchens.slice(startIndex, startIndex + colCount);
+                           const rowItems = filteredKitchens.slice(startIndex, startIndex + colCount);
                            
                            return (
-                             <div
+                              <div
                                key={virtualRow.key}
                                data-index={virtualRow.index}
                                ref={virtualizer.measureElement}
@@ -688,29 +807,31 @@ export function SearchPageContent() {
                                  width: '100%',
                                  transform: `translateY(${virtualRow.start}px)`,
                                }}
-                               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-x-6 pb-6 lg:pb-10"
+                               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 pb-6 lg:pb-10"
                              >
-{rowItems.map((kitchen) => (
-                                  <KitchenSearchCard
+                                {rowItems.map((kitchen) => (
+                                  <KitchenCard
                                     key={kitchen.id}
-                                    kitchen={kitchen}
+                                    kitchen={toKitchenData(kitchen)}
+                                    variant="search"
                                     query={localQuery}
-                                    badges={enabledBadges.map((b) => b.name)}
-                                    showRatings={pageContent?.showRatings ?? true}
+                                    badges={leftBadges}
+                                    rightBadges={rightBadges}
                                   />
                                 ))}
                              </div>
                            );
                          })}
                        </div>
+                        
                        {(hasNextPage || isFetchingNextPage) && (
                          <div ref={sentinelRef} className="mt-4">
-                           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-x-6 pb-6 lg:pb-10 animate-pulse">
+                           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 pb-6 lg:pb-10 animate-pulse">
                              {Array.from({ length: 6 }).map((_, i) => (
-                               <div key={i} className="flex flex-col bg-white border border-border rounded-xl overflow-hidden">
-                                 <div className="relative w-full h-45 bg-muted">
+                               <div key={i} className="flex flex-col bg-[#FFFFFF] border border-[#EAEAEA] rounded-[9px] shadow-[0_2px_8px_rgba(30,25,20,0.045)] overflow-hidden">
+                                 <div className="relative w-full h-40 bg-muted">
                                    <Skeleton className="h-full w-full rounded-none" />
-                                   <div className="absolute -bottom-5 left-4 h-11 w-11 rounded-full border-2 border-white overflow-hidden">
+                                   <div className="absolute -bottom-5 left-4 h-11 w-11 rounded-full border-[2px] border-white overflow-hidden">
                                      <Skeleton className="h-full w-full rounded-full" />
                                    </div>
                                  </div>
@@ -726,25 +847,116 @@ export function SearchPageContent() {
                          </div>
                        )}
                       </>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center py-16 text-center px-4 bg-white rounded-[8px] border border-[#ECE8E5]">
+                        <UtensilsCrossed className="h-12 w-12 text-muted-foreground/20 mb-3" />
+                        <p className="text-[16px] font-bold text-[#111111]">No kitchens match your filters</p>
+                        <p className="text-[13px] font-medium text-muted-foreground mt-1">Try clearing or changing the applied filters.</p>
+                        <Button
+                          type="button"
+                          onClick={clearFilters}
+                          className="mt-5 bg-[#F44A01] hover:bg-[#E94300] text-white h-[40px] rounded-[5px] font-bold text-[13px]"
+                        >
+                          Clear Filters
+                        </Button>
+                      </div>
                     )}
                  </div>
-              </div>
+               </div>
 
-              {/* Bottom Feature Banner */}
+               {/* Mobile Filters Dialog */}
+               <Dialog open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
+                 <DialogContent className="sm:max-w-[420px] max-h-[85vh] overflow-y-auto rounded-[16px] p-0">
+                   <DialogHeader className="px-5 pt-5 pb-3 border-b border-[#EEEAE7]">
+                     <div className="flex items-center justify-between">
+                       <DialogTitle className="text-[16px] font-bold text-[#111111]">Filters</DialogTitle>
+                       <button
+                         type="button"
+                         onClick={clearFilters}
+                         disabled={activeFilterCount === 0}
+                         className="text-[13px] font-semibold text-[#F44A01] hover:underline disabled:text-[#9CA3AF] disabled:hover:no-underline disabled:cursor-not-allowed"
+                       >
+                         Clear All
+                       </button>
+                     </div>
+                   </DialogHeader>
+                   <div className="px-5 py-4 space-y-5">
+                     {enabledFilters.length > 0 ? (
+                       enabledFilters.map((filter) => (
+                         <div key={filter.id}>
+                           <h3 className="text-[14px] font-bold text-[#222222] mb-3">{filter.name}</h3>
+                           <div className="space-y-3">
+                             {filter.options.map((item) => (
+                               <label key={item} className="flex items-center gap-3 cursor-pointer group">
+                                 <Checkbox
+                                   checked={isFilterSelected(filter.id, item)}
+                                   onCheckedChange={() => toggleFilterOption(filter.id, item)}
+                                   className="w-4.5 h-4.5 border-[#FF8A69] data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] text-white rounded-sm"
+                                 />
+                                 <span className="text-[13px] font-normal text-[#333333] group-hover:text-[#111111]">{item}</span>
+                               </label>
+                             ))}
+                           </div>
+                         </div>
+                       ))
+                     ) : (
+                       (categoriesData ?? []).length > 0 && (
+                         <div>
+                           <h3 className="text-[14px] font-bold text-[#222222] mb-3">Cuisine</h3>
+                           <div className="space-y-3">
+                             {(categoriesData ?? []).map((cat) => (
+                               <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
+                                 <Checkbox
+                                   checked={isFilterSelected("cuisine", cat.name)}
+                                   onCheckedChange={() => toggleFilterOption("cuisine", cat.name)}
+                                   className="w-4.5 h-4.5 border-[#FF8A69] data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] text-white rounded-sm"
+                                 />
+                                 <span className="text-[13px] font-normal text-[#333333] group-hover:text-[#111111]">{cat.name}</span>
+                               </label>
+                             ))}
+                           </div>
+                         </div>
+                       )
+                     )}
+                   </div>
+                   <div className="px-5 py-4 border-t border-[#EEEAE7] flex gap-3">
+                     <Button
+                       type="button"
+                       variant="outline"
+                       onClick={clearFilters}
+                       className="flex-1 h-[44px] rounded-[5px] border-[#E8E5E2] text-[#333333] font-bold text-[14px]"
+                     >
+                       Clear
+                     </Button>
+                     <Button
+                       type="button"
+                       onClick={applyFilters}
+                       className="flex-1 bg-[#F44A01] hover:bg-[#E94300] text-white h-[44px] rounded-[5px] font-bold text-[14px] shadow-[0_1px_3px_rgba(244,74,1,0.12)] border-none"
+                     >
+                       Apply Filters
+                     </Button>
+                   </div>
+                 </DialogContent>
+               </Dialog>
+
+               {/* Bottom Feature Banner */}
               {enabledInfoItems.length > 0 && (
-                <div className="bg-[#FAF8F5] border-t border-border mt-16">
-                   <div className="max-w-350 mx-auto px-4 py-8 lg:py-10 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+                <div className="bg-[#FFFFFF] border border-[#EEE7E3] rounded-[10px] mx-4 sm:mx-6 lg:mx-auto max-w-[1400px] mb-12 shadow-[0_2px_8px_rgba(40,30,20,0.035)] mt-8">
+                   <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between px-6 py-6 divide-y lg:divide-y-0 lg:divide-x divide-[#E9E5E2]">
                       {enabledInfoItems.map((item, i) => {
                         const IconComp = INFO_ICON_MAP[item.icon] ?? Heart;
-                        const colorClass = item.color && /^text-(primary|\[\#|emerald|orange|blue|green|red|purple)/.test(item.color) ? item.color : "text-primary";
+                        const iconColor = 
+                          item.title.includes("Homemade") || item.title.includes("Pre-book") || item.title.includes("Women") 
+                          ? "#F44A01" 
+                          : "#00512F";
                         return (
-                          <div key={item.id ?? i} className="flex items-center gap-4">
-                             <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center shrink-0 shadow-sm border border-primary/20">
-                               <IconComp className={`w-6 h-6 ${colorClass}`} />
+                          <div key={item.id ?? i} className="flex items-center gap-4 py-4 lg:py-0 lg:px-6 first:pt-0 lg:first:pl-0 last:pb-0 lg:last:pr-0 flex-1">
+                             <div className="flex items-center justify-center shrink-0">
+                               <IconComp className="w-8 h-8" style={{ color: iconColor, strokeWidth: 1.8 }} />
                              </div>
                              <div>
-                                <p className="text-[14px] font-extrabold text-foreground">{item.title}</p>
-                                <p className="text-[12px] font-medium text-muted-foreground mt-0.5">{item.subtitle}</p>
+                                <p className="text-[14px] font-bold text-[#171717]">{item.title}</p>
+                                <p className="text-[12px] font-normal text-[#555555] mt-0.5">{item.subtitle}</p>
                              </div>
                           </div>
                         )
@@ -757,128 +969,6 @@ export function SearchPageContent() {
         </div>
       </div>
     </div>
-  )
-}
-
-function KitchenSearchCard({ kitchen, query, badges = [], showRatings = true }: { kitchen: SearchKitchen; query: string; badges?: string[]; showRatings?: boolean }) {
-  const status = useMemo(() => getKitchenStatus(kitchen.operatingHours ?? null), [kitchen.operatingHours]);
-  const isClosed = !status.isOpen;
-  const deliveryLat = useMenuDeliveryLat();
-  const deliveryLng = useMenuDeliveryLng();
-
-  const distanceKm = useMemo(() => {
-    if (deliveryLat == null || deliveryLng == null || kitchen.lat == null || kitchen.lng == null) return null
-    return haversineDistance(deliveryLat, deliveryLng, kitchen.lat, kitchen.lng)
-  }, [deliveryLat, deliveryLng, kitchen.lat, kitchen.lng])
-
-  let badge = null;
-  let badgeColor = "";
-  if (badges.length > 0) {
-    if (kitchen.avgRating >= 4.7) {
-      badge = badges[0];
-      badgeColor = "bg-primary";
-    } else if (kitchen.avgRating >= 4.3) {
-      badge = badges[1] ?? badges[0];
-      badgeColor = "bg-[#008A00]";
-    } else if (kitchen.avgRating === 0) {
-      badge = badges[2] ?? badges[0];
-      badgeColor = "bg-[#8A2BE2]";
-    } else {
-      badge = badges[3] ?? badges[badges.length - 1];
-      badgeColor = "bg-[#37474F]";
-    }
-  }
-
-  return (
-    <Link
-      href={`/kitchens/${kitchen.slug}${query ? `?q=${encodeURIComponent(query)}` : ""}`}
-      className="flex flex-col bg-white border border-border rounded-xl hover:shadow-md transition-all group overflow-hidden"
-    >
-      <div className="relative w-full h-45 bg-muted">
-        {kitchen.imageUrl ? (
-          <Image src={kitchen.imageUrl} alt={kitchen.displayName} fill className={cn("object-cover group-hover:scale-105 transition-transform duration-500", isClosed && "grayscale opacity-80")} sizes="(max-width: 768px) 100vw, 33vw" />
-        ) : (
-          <div className="flex items-center justify-center h-full bg-linear-to-br from-primary/10 to-muted">
-            <UtensilsCrossed className="h-8 w-8 text-muted-foreground/30" />
-          </div>
-        )}
-        
-        {badge && (
-          <div className={cn("absolute top-3 left-3 text-white text-[10px] font-bold px-2 py-0.5 rounded-sm shadow-sm", badgeColor)}>
-            {badge}
-          </div>
-        )}
-
-        <div className="absolute top-3 right-3 flex items-center gap-3 z-10">
-          {query && (
-            <div className="bg-white text-gray-800 text-[11px] font-bold px-2.5 py-1 rounded-sm shadow-sm capitalize">
-              {query}
-            </div>
-          )}
-          <button className="text-white hover:text-primary transition-colors drop-shadow-md" onClick={(e) => { e.preventDefault(); }}>
-             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-          </button>
-        </div>
-
-        {kitchen.isAd && !badge && (
-          <div className="absolute top-3 left-3 bg-black/60 backdrop-blur-xs text-white text-[10px] font-bold px-2 py-0.5 rounded-sm shadow-sm uppercase tracking-wide">Ad</div>
-        )}
-
-        <div className="absolute -bottom-5 left-4 h-11 w-11 rounded-full border-2 border-white bg-gray-200 overflow-hidden shadow-sm z-10">
-           {kitchen.profileImage ? (
-             <Image src={kitchen.profileImage} alt={kitchen.displayName} fill className="object-cover" />
-           ) : (
-             <div className="flex items-center justify-center h-full bg-gray-200 text-muted-foreground text-xs font-bold uppercase">
-               {kitchen.displayName.charAt(0)}
-             </div>
-           )}
-        </div>
-      </div>
-
-      <div className="p-4 pt-7 flex flex-col gap-2 relative">
-        <div className="flex items-center justify-between gap-2">
-           <h3 className="font-bold text-[16px] text-foreground truncate flex items-center gap-1.5">
-             {kitchen.displayName}
-             <svg className="w-4 h-4 text-[#00A300] fill-current" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-           </h3>
-        </div>
-        
-        {showRatings && (
-          <div className="flex items-center gap-1.5 text-[13px] font-bold text-muted-foreground">
-            <Star className="h-3.5 w-3.5 fill-primary text-primary" />
-            <span className="text-primary">{kitchen.avgRating > 0 ? kitchen.avgRating.toFixed(1) : "NEW"}</span>
-            <span className="text-muted-foreground font-normal">({kitchen.totalReviews})</span>
-          </div>
-        )}
-
-        <div className="text-[13px] text-muted-foreground truncate">
-          {kitchen.locality ? `${kitchen.locality} • ` : ""}{kitchen.cuisineTags.slice(0, 2).join(", ")}
-        </div>
-
-        <div className="flex items-center gap-4 text-[12px] text-muted-foreground font-medium mt-1">
-          <div className="flex items-center gap-1.5">
-            <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-            {kitchen.estimatedPrepTime ?? 25} mins
-          </div>
-          {distanceKm != null && (
-            <div className="flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
-              {distanceKm.toFixed(1)} km
-            </div>
-          )}
-        </div>
-
-        <div className="mt-3 pt-3 border-t border-border flex lg:hidden items-center justify-between">
-          <div className="flex items-center gap-1.5 bg-[#F0FDF4] px-2 py-1 rounded-md text-[#16A34A] text-[11px] font-bold">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path></svg>
-            100% Hygienic
-          </div>
-          <div className="text-primary border border-primary px-3 py-1 rounded-md text-[12px] font-bold hover:bg-primary hover:text-white transition-colors">
-            View Menu
-          </div>
-        </div>
-      </div>
-    </Link>
   )
 }
 

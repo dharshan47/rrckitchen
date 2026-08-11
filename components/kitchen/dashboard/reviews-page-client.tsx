@@ -9,6 +9,11 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Progress } from "@/components/ui/progress"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { PieChart, Pie } from "recharts"
 import { toast } from "sonner"
 import { getRrcKitchenReview, submitRrcKitchenReview } from "@/actions/kitchen/rrc-review"
 import {
@@ -17,11 +22,26 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { Calendar } from "@/components/ui/calendar"
 import {
-  Star, MessageSquare, Users, ShieldCheck, RefreshCw, ChefHat, 
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
+import {
+  Star, MessageSquare, UsersRound, ShieldCheck, RefreshCw, ChefHat, 
   Package, Search, ChevronDown, CheckCircle2, 
-  Calendar, UtensilsCrossed, AlertTriangle, ArrowUpRight,
-  ChevronLeft, ChevronRight, Loader2, Send, ThumbsUp, ThumbsDown
+  CalendarDays, UtensilsCrossed, TriangleAlert, ArrowUpRight,
+  Loader2, Send, ThumbsUp, ThumbsDown,
+  CookingPot, Utensils, Smile, ArrowRight, CircleCheck
 } from "lucide-react"
 
 const PAGE_SIZE = 5
@@ -45,23 +65,21 @@ function RrcKitchenReviewCard({ initial }: { initial: RrcReview | null }) {
   })
 
   return (
-    <Card className="rounded-2xl border-none shadow-sm overflow-hidden">
+    <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden w-full">
       <div className="bg-gradient-to-br from-[#FFF7ED] via-white to-[#F0FDF4] p-6 sm:p-8">
-        <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10">
-          {/* Brand */}
-          <div className="flex items-center gap-4 shrink-0">
-            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-[#FF6B00] to-[#FF8A3D] flex items-center justify-center shrink-0 shadow-sm">
+        <div className="flex flex-col xl:flex-row xl:items-start gap-6 xl:gap-10">
+          <div className="flex items-center gap-4 shrink-0 xl:w-[240px]">
+            <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-[#FF9800] to-[#FF8A3D] flex items-center justify-center shrink-0 shadow-sm">
               <Star className="h-7 w-7 text-white" fill="white" />
             </div>
             <div>
-              <h2 className="text-[18px] font-bold text-gray-900 tracking-tight">
-                Rate <span className="text-[#FF6B00]">RRC</span> <span className="text-[#10B981]">Kitchen</span>
+              <h2 className="text-[18px] font-bold text-[#111827] tracking-tight">
+                Rate <span className="text-[#FF9800]">RRC</span> <span className="text-[#087A2B]">Kitchen</span>
               </h2>
-              <p className="text-[12px] text-gray-600 font-medium mt-0.5">Share your experience working with RRC Kitchen as a partner</p>
+              <p className="text-[12px] text-[#6B7280] font-medium mt-0.5">Share your experience working with RRC Kitchen as a partner</p>
             </div>
           </div>
 
-          {/* Star picker + comment */}
           <div className="flex-1 flex flex-col xl:flex-row xl:items-center gap-5 xl:gap-8 w-full">
             <div className="flex items-center gap-4 shrink-0">
               <div className="flex items-center gap-1" onMouseLeave={() => setHoverRating(0)}>
@@ -76,13 +94,13 @@ function RrcKitchenReviewCard({ initial }: { initial: RrcReview | null }) {
                   >
                     <Star
                       className={`h-9 w-9 transition-colors ${
-                        i <= (hoverRating || rating) ? "fill-[#FF9800] text-[#FF9800]" : "fill-gray-200 text-gray-200"
+                        i <= (hoverRating || rating) ? "fill-[#FF9800] text-[#FF9800]" : "fill-[#E5E7EB] text-[#E5E7EB]"
                       }`}
                     />
                   </button>
                 ))}
               </div>
-              <span className="text-[14px] font-bold text-gray-800 w-10">{rating ? `${rating}/5` : "0/5"}</span>
+              <span className="text-[14px] font-bold text-[#111827] w-10">{rating ? `${rating}/5` : "0/5"}</span>
             </div>
 
             <div className="flex-1 w-full">
@@ -91,58 +109,44 @@ function RrcKitchenReviewCard({ initial }: { initial: RrcReview | null }) {
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
                 rows={2}
-                className="bg-white border-gray-200 rounded-xl text-[13px] font-medium placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-[#FF6B00] resize-none"
+                className="bg-[#FFFFFF] border-[#E5E7EB] rounded-[8px] text-[13px] font-medium placeholder:text-[#9CA3AF] focus-visible:ring-1 focus-visible:ring-[#087A2B] resize-none"
               />
             </div>
           </div>
 
-            <div className="flex flex-col sm:flex-row xl:flex-col items-stretch sm:items-center xl:items-stretch gap-3 shrink-0 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row xl:flex-col items-stretch gap-3 shrink-0 w-full xl:w-[180px]">
+            <Button
+              onClick={() => rrcMutation.mutate({ rating, recommendation: recommend, comment: comment || null })}
+              disabled={!rating || rrcMutation.isPending}
+              className="h-11 px-6 rounded-[8px] bg-[#087A2B] hover:bg-[#075F22] text-[#FFFFFF] font-bold shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full"
+            >
+              {rrcMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
+              {initial ? "Update Review" : "Submit Review"}
+            </Button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
               <Button
-                onClick={() => rrcMutation.mutate({ rating, recommendation: recommend, comment: comment || null })}
-                disabled={!rating || rrcMutation.isPending}
-                className="h-11 px-6 rounded-xl bg-[#FF6B00] hover:bg-[#E65E00] text-white font-bold shadow-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full"
+                variant="outline"
+                type="button"
+                className={`flex-1 sm:flex-none h-9 px-3 rounded-[8px] text-[11px] font-bold border transition-all ${
+                  recommend === true ? "bg-[#EAF6ED] border-[#087A2B] text-[#087A2B]" : "border-[#E5E7EB] text-[#6B7280] hover:bg-[#F9FAFB]"
+                }`}
+                onClick={() => setRecommend(recommend === true ? null : true)}
               >
-                {rrcMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
-                {initial ? "Update Review" : "Submit Review"}
+                <ThumbsUp className="h-3.5 w-3.5 mr-1.5" /> Recommend
               </Button>
-              <div className="flex items-center gap-2 w-full sm:w-auto">
-                <Button
-                  variant="outline"
-                  type="button"
-                  className={`flex-1 sm:flex-none h-9 px-3 rounded-lg text-[11px] font-bold border transition-all ${
-                    recommend === true ? "bg-green-50 border-green-200 text-green-700" : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                  }`}
-                  onClick={() => setRecommend(recommend === true ? null : true)}
-                >
-                  <ThumbsUp className="h-3.5 w-3.5 mr-1.5" /> Recommend
-                </Button>
-                <Button
-                  variant="outline"
-                  type="button"
-                  className={`flex-1 sm:flex-none h-9 px-3 rounded-lg text-[11px] font-bold border transition-all ${
-                    recommend === false ? "bg-red-50 border-red-200 text-red-600" : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                  }`}
-                  onClick={() => setRecommend(recommend === false ? null : false)}
-                >
-                  <ThumbsDown className="h-3.5 w-3.5 mr-1.5" /> Not Yet
-                </Button>
-              </div>
+              <Button
+                variant="outline"
+                type="button"
+                className={`flex-1 sm:flex-none h-9 px-3 rounded-[8px] text-[11px] font-bold border transition-all ${
+                  recommend === false ? "bg-[#FFF0F0] border-[#EF4444] text-[#EF4444]" : "border-[#E5E7EB] text-[#6B7280] hover:bg-[#F9FAFB]"
+                }`}
+                onClick={() => setRecommend(recommend === false ? null : false)}
+              >
+                <ThumbsDown className="h-3.5 w-3.5 mr-1.5" /> Not Yet
+              </Button>
             </div>
-        </div>
-
-        {initial && (
-          <div className="mt-5 pt-5 border-t border-gray-200/70 flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-green-600 shrink-0" />
-            <p className="text-[12px] font-medium text-gray-600">
-              You rated RRC Kitchen <span className="font-bold text-gray-900">{initial.rating}/5</span> on{" "}
-              <span className="font-bold text-gray-900">
-                {new Date(initial.updatedAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
-              </span>
-              {initial.recommendation === true && " · You recommend RRC Kitchen to other partners"}
-              {initial.recommendation === false && " · You would not recommend RRC Kitchen yet"}
-            </p>
           </div>
-        )}
+        </div>
       </div>
     </Card>
   )
@@ -150,22 +154,30 @@ function RrcKitchenReviewCard({ initial }: { initial: RrcReview | null }) {
 
 const TABS = [
   { id: "overview", label: "Overview", icon: Star },
+  { id: "rate", label: "Rate RRC Kitchen", icon: ThumbsUp },
   { id: "all", label: "All Reviews", icon: MessageSquare },
-  { id: "food", label: "Food Reviews", icon: UtensilsCrossed },
+  { id: "food", label: "Food Reviews", icon: Utensils },
   { id: "packaging", label: "Packaging Reviews", icon: Package },
   { id: "kitchen", label: "Kitchen Reviews", icon: ChefHat },
 ] as const
+
+const CHART_CONFIG = {
+  Food: { label: "Food", color: "#087A2B" },
+  Packaging: { label: "Packaging", color: "#FF5A1F" },
+  Kitchen: { label: "Kitchen", color: "#8B5CF6" },
+  Delivery: { label: "Delivery", color: "#2196F3" },
+}
 
 export default function ReviewsPageClient() {
   const [activeTab, setActiveTab] = useState<(typeof TABS)[number]["id"]>("overview")
   const [search, setSearch] = useState("")
   const [ratingFilter, setRatingFilter] = useState<number | null>(null)
   const [sortBy, setSortBy] = useState<"recent" | "highest" | "lowest">("recent")
-  const [dateFilter, setDateFilter] = useState<"all" | "week" | "month">("all")
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null)
+  const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [page, setPage] = useState(1)
 
   const data = useKitchenDashboardData()
-
   const reviews = useMemo(() => data?.reviews ?? [], [data])
 
   const { data: rrcReview, isLoading: rrcReviewLoading } = useQuery({
@@ -182,22 +194,16 @@ export default function ReviewsPageClient() {
     return `${min.toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' })} - ${max.toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' })}`
   }, [reviews])
 
-  const reviewsThisWeek = useMemo(() => {
-    const now = new Date()
-    const start = new Date(now)
-    start.setHours(0, 0, 0, 0)
-    start.setDate(now.getDate() - now.getDay())
-    return reviews.filter(r => new Date(r.createdAt) >= start).length
-  }, [reviews])
-
-  const commentsCount = useMemo(() => reviews.filter(r => r.comment).length, [reviews])
-
   const filteredReviews = useMemo(() => {
     let list = reviews
     if (activeTab === "food") list = list.filter(r => r.tasteRating != null)
     if (activeTab === "packaging") list = list.filter(r => r.packagingRating != null)
     if (activeTab === "kitchen") list = list.filter(r => r.portionSizeRating != null)
     if (ratingFilter != null) list = list.filter(r => Math.round(r.rating) === ratingFilter)
+    if (selectedDate) {
+      const target = selectedDate.toDateString()
+      list = list.filter(r => new Date(r.createdAt).toDateString() === target)
+    }
     if (search.trim()) {
       const q = search.trim().toLowerCase()
       list = list.filter(r =>
@@ -206,19 +212,12 @@ export default function ReviewsPageClient() {
         (r.itemName?.toLowerCase().includes(q) ?? false)
       )
     }
-    const now = new Date()
-    const startOfWeek = new Date(now)
-    startOfWeek.setHours(0, 0, 0, 0)
-    startOfWeek.setDate(now.getDate() - now.getDay())
-    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1)
-    if (dateFilter === "week") list = list.filter(r => new Date(r.createdAt) >= startOfWeek)
-    if (dateFilter === "month") list = list.filter(r => new Date(r.createdAt) >= startOfMonth)
     const sorted = [...list]
     if (sortBy === "highest") sorted.sort((a, b) => b.rating - a.rating)
     else if (sortBy === "lowest") sorted.sort((a, b) => a.rating - b.rating)
     else sorted.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
     return sorted
-  }, [reviews, activeTab, ratingFilter, search, dateFilter, sortBy])
+  }, [reviews, activeTab, ratingFilter, search, sortBy, selectedDate])
 
   const totalPages = Math.max(1, Math.ceil(filteredReviews.length / PAGE_SIZE))
   const currentPage = Math.min(page, totalPages)
@@ -229,154 +228,78 @@ export default function ReviewsPageClient() {
     fn()
   }
 
-  const topComments = useMemo(() => {
-    return filteredReviews
-      .filter(r => r.comment && r.comment.length > 10)
-      .slice(0, 3)
-  }, [filteredReviews])
-
   if (!data) {
     return (
       <div className="space-y-6 pb-20 animate-in fade-in duration-500">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-8 w-8 rounded-xl" />
-            <div>
-              <Skeleton className="h-8 w-56 rounded" />
-              <Skeleton className="h-5 w-72 rounded mt-1" />
-            </div>
-          </div>
+          <Skeleton className="h-10 w-64 rounded-xl" />
           <Skeleton className="h-11 w-56 rounded-xl" />
         </div>
-
-        {/* Tabs */}
-        <div className="flex items-center gap-6 border-b border-gray-200 overflow-x-auto pb-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-5 w-32 shrink-0" />
-          ))}
+        <Skeleton className="h-14 w-full" />
+        <div className="grid lg:grid-cols-5 gap-4">
+          {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-32 rounded-[10px]" />)}
         </div>
-
-        {/* Summary cards */}
-        <div className="flex overflow-x-auto pb-4 lg:pb-0 lg:grid lg:grid-cols-5 gap-4 hide-scrollbar snap-x">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="rounded-2xl border border-gray-100 bg-white shadow-sm min-w-[220px] lg:min-w-0 snap-start shrink-0 p-5 flex flex-col items-center justify-center text-center space-y-3">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-3 w-24" />
-              <Skeleton className="h-7 w-16" />
-              <Skeleton className="h-3 w-28" />
-            </div>
-          ))}
+        <div className="grid xl:grid-cols-3 gap-6">
+          {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-64 rounded-[10px]" />)}
         </div>
-
-        {/* Analytics grid */}
-        <div className="grid gap-6 xl:grid-cols-3">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="rounded-2xl border border-gray-100 bg-white shadow-sm p-6 space-y-4">
-              <Skeleton className="h-5 w-40" />
-              {Array.from({ length: 5 }).map((_, j) => (
-                <div key={j} className="flex items-center gap-3">
-                  <Skeleton className="h-3 w-12" />
-                  <Skeleton className="h-2 flex-1 rounded-full" />
-                  <Skeleton className="h-3 w-12" />
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-
-        {/* List + sidebar */}
-        <div className="grid gap-6 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px]">
-          <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
-            <div className="pb-4 pt-6 px-6 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-              <Skeleton className="h-5 w-40" />
-              <div className="flex items-center gap-3">
-                <Skeleton className="h-9 w-[200px] rounded-lg" />
-                <Skeleton className="h-9 w-28 rounded-lg" />
-                <Skeleton className="h-9 w-28 rounded-lg" />
-              </div>
-            </div>
-            <div className="divide-y divide-gray-50">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="p-6 flex flex-col sm:flex-row gap-4 sm:gap-6">
-                  <div className="w-full sm:w-[120px] shrink-0 flex items-center sm:items-start gap-3">
-                    <Skeleton className="h-8 w-8 rounded-full" />
-                    <div className="space-y-1.5 flex-1">
-                      <Skeleton className="h-3.5 w-16" />
-                      <Skeleton className="h-3 w-14" />
-                    </div>
-                  </div>
-                  <div className="flex-1 space-y-2">
-                    <div className="flex items-center gap-2">
-                      <Skeleton className="h-3 w-24" />
-                      <Skeleton className="h-3 w-8" />
-                    </div>
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-2/3" />
-                    <Skeleton className="h-5 w-32 rounded-full" />
-                  </div>
-                  <div className="w-full sm:w-[160px] shrink-0 flex sm:flex-col justify-between sm:justify-start items-center sm:items-end gap-3 sm:gap-2">
-                    <div className="flex items-center gap-3">
-                      <Skeleton className="h-10 w-10 rounded-lg" />
-                      <div className="space-y-1.5">
-                        <Skeleton className="h-3 w-20" />
-                        <Skeleton className="h-2.5 w-14" />
-                      </div>
-                    </div>
-                    <Skeleton className="h-3 w-24" />
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="flex items-center justify-between p-6 border-t border-gray-50">
-              <Skeleton className="h-3.5 w-48" />
-              <div className="flex items-center gap-2">
-                <Skeleton className="h-8 w-8 rounded-lg" />
-                <Skeleton className="h-8 w-8 rounded-lg" />
-                <Skeleton className="h-8 w-8 rounded-lg" />
-                <Skeleton className="h-8 w-8 rounded-lg" />
-              </div>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-gray-100 bg-white shadow-sm p-6 space-y-4">
-            <Skeleton className="h-5 w-36" />
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex items-start gap-3">
-                <Skeleton className="h-5 w-5 rounded-full" />
-                <Skeleton className="h-4 flex-1" />
-              </div>
-            ))}
-          </div>
+        <div className="grid lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px] gap-6">
+          <Skeleton className="h-96 rounded-[10px]" />
+          <Skeleton className="h-96 rounded-[10px]" />
         </div>
       </div>
     )
   }
 
   const k = data.kitchen
-  
-  const totalReviews = reviews.length
-  const avgRating = k.avgRating || 0
+  const avgRating = k.avgRating
+  const totalReviews = k.totalReviews ?? reviews.length
 
-  const starCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
-  let tasteSum = 0, packSum = 0, portionSum = 0
-  let tasteCount = 0, packCount = 0, portionCount = 0
+  const totalCustomers = data.stats?.customers ?? 0
 
-  reviews.forEach(r => {
-    const rounded = Math.round(r.rating)
-    if (rounded >= 1 && rounded <= 5) {
-      starCounts[rounded as 1|2|3|4|5]++
-    }
-    if (r.tasteRating) { tasteSum += r.tasteRating; tasteCount++ }
-    if (r.packagingRating) { packSum += r.packagingRating; packCount++ }
-    if (r.portionSizeRating) { portionSum += r.portionSizeRating; portionCount++ }
+  const starCounts = [5, 4, 3, 2, 1].map((star) => {
+    const count = reviews.filter((r) => Math.round(r.rating) === star).length
+    return { stars: star, count, pct: reviews.length > 0 ? Math.round((count / reviews.length) * 100) : 0 }
   })
 
-  const avgTaste = tasteCount ? (tasteSum / tasteCount).toFixed(1) : avgRating.toFixed(1)
-  const avgPack = packCount ? (packSum / packCount).toFixed(1) : avgRating.toFixed(1)
-  const avgPortion = portionCount ? (portionSum / portionCount).toFixed(1) : avgRating.toFixed(1)
+  const avgOf = (vals: (number | null | undefined)[]) => {
+    const nums = vals.filter((v): v is number => typeof v === "number")
+    if (nums.length === 0) return null
+    return Math.round((nums.reduce((a, b) => a + b, 0) / nums.length) * 10) / 10
+  }
 
-  const renderStars = (rating: number, size = "h-3.5 w-3.5") => {
+  const categoryRatings = [
+    { label: "Food Quality", icon: Utensils, iconBg: "bg-[#EAF6ED]", iconColor: "text-[#087A2B]", score: avgOf(reviews.map((r) => r.rating)) },
+    { label: "Taste", icon: CookingPot, iconBg: "bg-[#FFF3E5]", iconColor: "text-[#FF9800]", score: avgOf(reviews.map((r) => r.tasteRating)) },
+    { label: "Packaging", icon: Package, iconBg: "bg-[#F3EDFF]", iconColor: "text-[#8B5CF6]", score: avgOf(reviews.map((r) => r.packagingRating)) },
+    { label: "Portion Size", icon: UtensilsCrossed, iconBg: "bg-[#EAF4FF]", iconColor: "text-[#2196F3]", score: avgOf(reviews.map((r) => r.portionSizeRating)) },
+  ]
+
+  const chartCounts = [
+    { label: "Food Quality", key: "rating" as const, color: "bg-[#087A2B]" },
+    { label: "Packaging", key: "packagingRating" as const, color: "bg-[#FF5A1F]" },
+    { label: "Taste", key: "tasteRating" as const, color: "bg-[#8B5CF6]" },
+    { label: "Portion Size", key: "portionSizeRating" as const, color: "bg-[#2196F3]" },
+  ]
+  const chartTotal = chartCounts.reduce((sum, c) => sum + reviews.filter((r) => r[c.key] != null).length, 0) || 1
+  const chartData = chartCounts.map((c) => ({
+    name: c.label,
+    value: reviews.filter((r) => r[c.key] != null).length,
+    fill: c.color,
+  }))
+  const chartPct = (count: number) => `${Math.round((count / chartTotal) * 100)}%`
+
+  const highlights = reviews
+    .filter((r) => r.comment)
+    .slice(0, 3)
+    .map((r, idx) => ({
+      comment: r.comment,
+      user: r.customerName || "Customer",
+      icon: [Smile, Package, ChefHat][idx % 3],
+      color: ["text-[#087A2B]", "text-[#FF6B00]", "text-[#8B5CF6]"][idx % 3],
+      bg: ["bg-[#EAF6ED]", "bg-[#FFF1E8]", "bg-[#F3EDFF]"][idx % 3],
+    }))
+
+  const renderStars = (rating: number, size = "h-[14px] w-[14px]") => {
     const full = Math.floor(rating)
     const half = rating - full >= 0.25 && rating - full < 0.75
     const rounded = rating - full >= 0.75 ? full + 1 : full
@@ -388,7 +311,7 @@ export default function ReviewsPageClient() {
             className={`${size} ${
               i <= rounded ? "fill-[#FF9800] text-[#FF9800]" :
               i - 0.5 <= rating || half ? "fill-[#FF9800] text-[#FF9800] opacity-50" :
-              "fill-gray-200 text-gray-200"
+              "fill-[#E5E7EB] text-[#E5E7EB]"
             }`}
           />
         ))}
@@ -397,263 +320,293 @@ export default function ReviewsPageClient() {
   }
 
   return (
-    <div className="space-y-6 pb-20 animate-in fade-in duration-500">
+    <div className="space-y-6 pb-20 animate-in fade-in duration-500 bg-[#FEFEFE] font-sans">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
-        <div className="flex items-center gap-3">
-          <Star className="h-8 w-8 text-[#FF6B00] hidden sm:block" />
+      <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-2">
+        <div className="flex items-start gap-3">
+          <Star className="h-8 w-8 text-[#FF9800] hidden sm:block mt-0.5" strokeWidth={1.8} />
           <div>
-            <h1 className="text-[24px] font-bold text-gray-900 tracking-tight flex items-center gap-2">
-              Ratings & Reviews <Star className="h-6 w-6 text-[#FF6B00] sm:hidden" />
+            <h1 className="text-[28px] font-bold text-[#111827] tracking-tight flex items-center gap-2">
+              Ratings & Reviews <Star className="h-6 w-6 text-[#FF9800] sm:hidden" strokeWidth={1.8} />
             </h1>
-            <p className="text-[14px] text-gray-500 font-medium mt-0.5">View and manage all your ratings and reviews</p>
+            <p className="text-[14px] text-[#6B7280] font-medium mt-0.5">View and manage all your ratings and reviews</p>
           </div>
         </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="flex items-center gap-2 border-gray-200 text-gray-700 bg-white hover:bg-gray-50 rounded-xl h-11 px-4 shadow-sm font-medium transition-colors w-full sm:w-auto justify-center sm:justify-start">
-              <Calendar className="h-4 w-4 text-gray-500" />
-              {dateFilter === "week" ? "This Week" : dateFilter === "month" ? "This Month" : dateRange}
-              <ChevronDown className="h-4 w-4 ml-1 text-gray-400" />
+        <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="flex items-center gap-2 border-[#E5E7EB] text-[#374151] bg-[#FFFFFF] hover:bg-[#F9FAFB] rounded-[8px] h-10 px-4 shadow-none font-medium transition-colors w-full sm:w-auto justify-center sm:justify-start">
+              <CalendarDays className="h-[18px] w-[18px] text-[#374151]" strokeWidth={1.8} />
+              {selectedDate
+                ? selectedDate.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+                : dateRange}
+              <ChevronDown className="h-4 w-4 ml-1 text-[#6B7280]" />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-44">
-            <DropdownMenuItem onClick={() => resetPage(() => setDateFilter("all"))}>All Time</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => resetPage(() => setDateFilter("month"))}>This Month</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => resetPage(() => setDateFilter("week"))}>This Week</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </PopoverTrigger>
+          <PopoverContent align="end" className="w-auto p-0 rounded-[8px] border-[#E5E7EB]">
+            <Calendar
+              mode="single"
+              selected={selectedDate ?? undefined}
+              onSelect={(d) => {
+                resetPage(() => {
+                  setSelectedDate(d ?? null)
+                  setDatePickerOpen(false)
+                })
+              }}
+            />
+            <div className="border-t border-[#EEF0F2] p-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full text-[#087A2B] font-semibold"
+                onClick={() =>
+                  resetPage(() => {
+                    setSelectedDate(null)
+                    setDatePickerOpen(false)
+                  })
+                }
+              >
+                All Time
+              </Button>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
-
-      {/* Rate RRC Kitchen */}
-      {!rrcReviewLoading && <RrcKitchenReviewCard initial={rrcReview ?? null} />}
 
       {/* Tabs */}
-      <div className="flex items-center gap-6 border-b border-gray-200 overflow-x-auto hide-scrollbar">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => resetPage(() => setActiveTab(tab.id))}
-            className={`text-[13px] font-bold border-b-2 pb-3 flex items-center gap-2 shrink-0 transition-colors ${
-              activeTab === tab.id ? "text-green-700 border-green-600" : "text-gray-500 hover:text-gray-900 border-transparent"
-            }`}
-          >
-            <tab.icon className="h-4 w-4" /> {tab.label}
-          </button>
-        ))}
-      </div>
+      <Tabs value={activeTab} onValueChange={(val: string) => resetPage(() => setActiveTab(val as (typeof TABS)[number]["id"]))} className="w-full">
+        <ScrollArea className="w-full border-b border-[#EEF0F2]">
+          <TabsList className="flex items-center justify-start gap-8 w-max pb-0 bg-transparent h-auto p-0 rounded-none border-none">
+            {TABS.map((tab) => (
+              <TabsTrigger
+                key={tab.id}
+                value={tab.id}
+                className={`flex items-center gap-2 pb-3.5 pt-0 px-0 rounded-none border-b-[2px] whitespace-nowrap text-[14px] font-semibold transition-colors shadow-none bg-transparent ${
+                  activeTab === tab.id 
+                    ? "border-[#087A2B] text-[#087A2B]" 
+                    : "border-transparent text-[#374151] hover:text-[#087A2B]"
+                }`}
+              >
+                <tab.icon className={`h-[18px] w-[18px] ${activeTab === tab.id ? 'text-[#087A2B]' : 'text-[#374151]'}`} strokeWidth={1.8} />
+                {tab.label}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          <ScrollBar orientation="horizontal" className="hidden" />
+        </ScrollArea>
+      </Tabs>
 
-      {/* Top Summary Cards (Horizontal scroll on mobile) */}
-      <div className="flex overflow-x-auto pb-4 lg:pb-0 lg:grid lg:grid-cols-5 gap-4 hide-scrollbar snap-x">
+      {activeTab === "rate" ? (
+        <div className="pt-8 pb-12 w-full max-w-5xl mx-auto flex justify-center">
+          <div className="w-full">
+            {!rrcReviewLoading ? (
+              <RrcKitchenReviewCard initial={rrcReview ?? null} />
+            ) : (
+              <Skeleton className="h-[200px] w-full rounded-[10px]" />
+            )}
+          </div>
+        </div>
+      ) : (
+        <>
+          {/* Top Summary Cards */}
+          <div className="flex overflow-x-auto pb-4 xl:pb-0 xl:grid xl:grid-cols-5 gap-4 hide-scrollbar snap-x">
+        
         {/* Overall Rating */}
-        <Card className="rounded-2xl border-none shadow-sm min-w-[240px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-center">
+        <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] min-w-[240px] xl:min-w-0 snap-start shrink-0">
           <CardContent className="p-5 flex items-center gap-4">
-            <div className="h-14 w-14 rounded-full bg-green-50 flex items-center justify-center shrink-0">
-              <Star className="h-7 w-7 text-green-600" />
+            <div className="h-[52px] w-[52px] rounded-full bg-[#EAF6ED] flex items-center justify-center shrink-0">
+              <Star className="h-[24px] w-[24px] text-[#087A2B]" strokeWidth={1.8} />
             </div>
             <div className="flex flex-col">
-              <span className="text-[11px] font-bold text-gray-500 tracking-wide uppercase">Overall Rating</span>
-              <div className="flex items-end gap-2 mt-0.5">
-                <span className="text-[26px] font-bold text-gray-900 leading-none">{avgRating.toFixed(1)}</span>
-                {renderStars(avgRating)}
+              <span className="text-[12px] font-bold text-[#111827]">Overall Rating</span>
+              <div className="flex items-end gap-2 mt-1">
+                <span className="text-[24px] font-bold text-[#111827] leading-none">{avgRating ?? "New"}</span>
+                {avgRating != null && renderStars(avgRating, "h-[14px] w-[14px]")}
               </div>
-              <span className="text-[11px] text-gray-500 font-medium mt-1">Based on {totalReviews} {totalReviews === 1 ? "review" : "reviews"}</span>
+              <span className="text-[11px] text-[#6B7280] mt-1">Based on {totalReviews} reviews</span>
             </div>
           </CardContent>
         </Card>
 
         {/* Total Reviews */}
-        <Card className="rounded-2xl border-none shadow-sm min-w-[220px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-center">
+        <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] min-w-[200px] xl:min-w-0 snap-start shrink-0">
           <CardContent className="p-5 flex flex-col justify-center text-center items-center h-full">
             <div className="flex items-center gap-2 mb-2">
-              <MessageSquare className="h-5 w-5 text-blue-500" />
-              <span className="text-[11px] font-bold text-gray-500 tracking-wide uppercase">Total Reviews</span>
+              <div className="h-8 w-8 rounded-full bg-[#EAF4FF] flex items-center justify-center">
+                <MessageSquare className="h-4 w-4 text-[#2196F3]" strokeWidth={1.8} />
+              </div>
+              <span className="text-[12px] font-bold text-[#111827]">Total Reviews</span>
             </div>
-            <div className="text-[26px] font-bold text-gray-900 leading-none mb-1">{totalReviews}</div>
-            <div className="flex items-center gap-1 text-[11px] font-bold text-green-600">
-              <ArrowUpRight className="h-3 w-3" /> {reviewsThisWeek} <span className="text-gray-400 font-medium normal-case">this week</span>
+            <div className="text-[24px] font-bold text-[#111827] leading-none mb-1">{reviews.length}</div>
+            <div className="flex items-center gap-1 text-[11px] font-bold text-[#087A2B]">
+              <ArrowUpRight className="h-3 w-3" strokeWidth={2.5} /> {filteredReviews.length} <span className="text-[#6B7280] font-normal">matching filters</span>
             </div>
           </CardContent>
         </Card>
 
         {/* Total Customers */}
-        <Card className="rounded-2xl border-none shadow-sm min-w-[220px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-center">
+        <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] min-w-[200px] xl:min-w-0 snap-start shrink-0">
           <CardContent className="p-5 flex flex-col justify-center text-center items-center h-full">
             <div className="flex items-center gap-2 mb-2">
-              <div className="h-8 w-8 rounded-full bg-purple-50 flex items-center justify-center">
-                <Users className="h-4 w-4 text-purple-600" />
+              <div className="h-8 w-8 rounded-full bg-[#F3EDFF] flex items-center justify-center">
+                <UsersRound className="h-4 w-4 text-[#8B5CF6]" strokeWidth={1.8} />
               </div>
-              <span className="text-[11px] font-bold text-gray-500 tracking-wide uppercase">Total Customers</span>
+              <span className="text-[12px] font-bold text-[#111827]">Total Customers</span>
             </div>
-            <div className="text-[26px] font-bold text-gray-900 leading-none mb-1">{data.stats.customers}</div>
+            <div className="text-[24px] font-bold text-[#111827] leading-none mb-1">{totalCustomers.toLocaleString()}</div>
+            <div className="flex items-center gap-1 text-[11px] font-bold text-[#087A2B]">
+              <ArrowUpRight className="h-3 w-3" strokeWidth={2.5} /> {reviews.length} <span className="text-[#6B7280] font-normal">total reviews</span>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Reviews with Comments */}
-        <Card className="rounded-2xl border-none shadow-sm min-w-[220px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-center">
+        {/* Response Rate */}
+        <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] min-w-[200px] xl:min-w-0 snap-start shrink-0">
           <CardContent className="p-5 flex flex-col justify-center text-center items-center h-full">
             <div className="flex items-center gap-2 mb-2">
-              <div className="h-8 w-8 rounded-full bg-green-50 flex items-center justify-center">
-                <ShieldCheck className="h-4 w-4 text-green-600" />
+              <div className="h-8 w-8 rounded-full bg-[#EAF6ED] flex items-center justify-center">
+                <ShieldCheck className="h-4 w-4 text-[#087A2B]" strokeWidth={1.8} />
               </div>
-              <span className="text-[11px] font-bold text-gray-500 tracking-wide uppercase">Reviews with Comments</span>
+              <span className="text-[12px] font-bold text-[#111827]">Response Rate</span>
             </div>
-            <div className="text-[26px] font-bold text-gray-900 leading-none mb-1">{commentsCount}</div>
+            <div className="text-[24px] font-bold text-[#111827] leading-none mb-1">—</div>
+            <div className="flex items-center gap-1 text-[11px] font-bold text-[#6B7280]">
+              <span className="text-[#6B7280] font-normal">Reply to reviews to see insights</span>
+            </div>
           </CardContent>
         </Card>
 
-        {/* Menu Items */}
-        <Card className="rounded-2xl border-none shadow-sm min-w-[220px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-center">
+        {/* Repeat Customers */}
+        <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] min-w-[200px] xl:min-w-0 snap-start shrink-0">
           <CardContent className="p-5 flex flex-col justify-center text-center items-center h-full">
             <div className="flex items-center gap-2 mb-2">
-              <div className="h-8 w-8 rounded-full bg-orange-50 flex items-center justify-center">
-                <RefreshCw className="h-4 w-4 text-orange-500" />
+              <div className="h-8 w-8 rounded-full bg-[#FFF1E8] flex items-center justify-center">
+                <RefreshCw className="h-4 w-4 text-[#FF6B00]" strokeWidth={1.8} />
               </div>
-              <span className="text-[11px] font-bold text-gray-500 tracking-wide uppercase">Menu Items</span>
+              <span className="text-[12px] font-bold text-[#111827]">Repeat Customers</span>
             </div>
-            <div className="text-[26px] font-bold text-gray-900 leading-none mb-1">{data.stats.menuItems}</div>
+            <div className="text-[24px] font-bold text-[#111827] leading-none mb-1">
+              {data.stats?.repeatCustomers != null && data.stats.repeatCustomers > 0
+                ? `${Math.round((data.stats.repeatCustomers / (totalCustomers || 1)) * 100)}%`
+                : "—"}
+            </div>
+            <div className="flex items-center gap-1 text-[11px] font-bold text-[#6B7280]">
+              <span className="text-[#6B7280] font-normal">{data.stats?.repeatCustomers ?? 0} customers reordered</span>
+            </div>
           </CardContent>
         </Card>
+
       </div>
 
-      {/* Middle Section: Analytics Grid */}
-      <div className="grid gap-6 xl:grid-cols-3">
+      {/* Analytics Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         
         {/* Ratings Breakdown */}
-        <Card className="rounded-2xl border-none shadow-sm">
+        <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
           <CardHeader className="pb-4 pt-6 px-6">
-            <CardTitle className="text-[15px] font-bold text-gray-900">Ratings Breakdown</CardTitle>
+            <CardTitle className="text-[15px] font-bold text-[#111827]">Ratings Breakdown</CardTitle>
           </CardHeader>
           <CardContent className="px-6 pb-6 space-y-4">
-            {[5, 4, 3, 2, 1].map((stars) => {
-              const count = starCounts[stars as 1|2|3|4|5]
-              const percentage = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0
-              let color = "bg-green-600"
-              if (stars === 4) color = "bg-green-400"
-              if (stars === 3) color = "bg-yellow-500"
-              if (stars === 2) color = "bg-orange-500"
-              if (stars === 1) color = "bg-red-600"
-              
-              return (
-                <button
-                  key={stars}
-                  type="button"
-                  onClick={() => resetPage(() => setRatingFilter(ratingFilter === stars ? null : stars))}
-                  className={`w-full flex items-center gap-3 text-[12px] font-bold rounded-lg px-1 py-0.5 transition-colors ${
-                    ratingFilter === stars ? "bg-green-50" : "hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="w-12 text-gray-600 text-right">{stars} Stars</span>
-                  <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full ${color}`} style={{ width: `${percentage}%` }} />
-                  </div>
-                  <span className="w-12 text-gray-600 text-right">{count} ({percentage}%)</span>
-                </button>
-              )
-            })}
+            {starCounts.map((row) => (
+              <div key={row.stars} className="w-full flex items-center gap-3 text-[13px] font-bold">
+                <span className="w-14 text-[#374151]">{row.stars} Stars</span>
+                <Progress value={row.pct} className={`h-1.5 flex-1 bg-[#EEF0F2] [&>div]:${row.stars >= 4 ? "bg-[#087A2B]" : row.stars === 3 ? "bg-[#FF9800]" : "bg-[#EF4444]"}`} />
+                <span className="w-[60px] text-[#374151] text-right">{row.count} ({row.pct}%)</span>
+              </div>
+            ))}
           </CardContent>
         </Card>
 
         {/* Category Ratings */}
-        <Card className="rounded-2xl border-none shadow-sm">
+        <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
           <CardHeader className="pb-4 pt-6 px-6 flex flex-row items-center justify-between">
-            <CardTitle className="text-[15px] font-bold text-gray-900">Category Ratings</CardTitle>
+            <CardTitle className="text-[15px] font-bold text-[#111827]">Category Ratings</CardTitle>
+            <Button variant="link" className="h-auto p-0 text-[#087A2B] font-semibold text-[13px]" onClick={() => document.getElementById("latest-reviews")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+              View Details
+            </Button>
           </CardHeader>
           <CardContent className="px-6 pb-6 space-y-4">
-            <div className="flex items-center justify-between text-[13px]">
-              <div className="flex items-center gap-3">
-                <div className="h-7 w-7 rounded bg-green-50 flex items-center justify-center">
-                  <UtensilsCrossed className="h-4 w-4 text-green-600" />
+            {categoryRatings.map((cat) => (
+              <div key={cat.label} className="flex items-center justify-between text-[13px]">
+                <div className="flex items-center gap-3">
+                  <div className={`h-8 w-8 rounded-[8px] flex items-center justify-center ${cat.iconBg}`}>
+                    <cat.icon className={`h-4 w-4 ${cat.iconColor}`} strokeWidth={1.8} />
+                  </div>
+                  <span className="font-bold text-[#374151]">{cat.label}</span>
                 </div>
-                <span className="font-bold text-gray-700">Food Quality</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {renderStars(Number(avgPortion), "h-3 w-3")}
-                <span className="font-bold text-gray-900 w-6 text-right">{avgPortion}</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between text-[13px]">
-              <div className="flex items-center gap-3">
-                <div className="h-7 w-7 rounded bg-orange-50 flex items-center justify-center">
-                  <ChefHat className="h-4 w-4 text-orange-500" />
+                <div className="flex items-center gap-3">
+                  {cat.score != null ? (
+                    <>
+                      {renderStars(cat.score, "h-[14px] w-[14px]")}
+                      <span className="font-bold text-[#374151] w-6 text-right">{cat.score}</span>
+                    </>
+                  ) : (
+                    <span className="text-[12px] text-[#9CA3AF] font-medium">No ratings</span>
+                  )}
                 </div>
-                <span className="font-bold text-gray-700">Taste</span>
               </div>
-              <div className="flex items-center gap-2">
-                {renderStars(Number(avgTaste), "h-3 w-3")}
-                <span className="font-bold text-gray-900 w-6 text-right">{avgTaste}</span>
-              </div>
-            </div>
-            <div className="flex items-center justify-between text-[13px]">
-              <div className="flex items-center gap-3">
-                <div className="h-7 w-7 rounded bg-purple-50 flex items-center justify-center">
-                  <Package className="h-4 w-4 text-purple-600" />
-                </div>
-                <span className="font-bold text-gray-700">Packaging</span>
-              </div>
-              <div className="flex items-center gap-2">
-                {renderStars(Number(avgPack), "h-3 w-3")}
-                <span className="font-bold text-gray-900 w-6 text-right">{avgPack}</span>
-              </div>
-            </div>
+            ))}
           </CardContent>
         </Card>
 
         {/* Recent Highlights */}
-        <Card className="rounded-2xl border-none shadow-sm flex flex-col">
+        <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] flex flex-col lg:col-span-2 xl:col-span-1">
           <CardHeader className="pb-4 pt-6 px-6 flex flex-row items-center gap-2">
-            <div className="h-6 w-6 rounded-full bg-green-50 flex items-center justify-center">
-              <Star className="h-3 w-3 text-green-600" />
+            <div className="h-6 w-6 rounded-[6px] bg-[#EAF6ED] flex items-center justify-center">
+              <Star className="h-3.5 w-3.5 text-[#087A2B]" strokeWidth={1.8} />
             </div>
-            <CardTitle className="text-[15px] font-bold text-gray-900">Recent Highlights</CardTitle>
+            <CardTitle className="text-[15px] font-bold text-[#111827]">Recent Highlights</CardTitle>
           </CardHeader>
           <CardContent className="px-6 pb-6 flex-1 flex flex-col justify-between space-y-4">
-            <div className="space-y-4">
-              {topComments.length > 0 ? topComments.map((r) => (
-                <div key={r.id} className="flex gap-3">
-                  <div className="h-8 w-8 rounded-full bg-green-50 flex items-center justify-center shrink-0">
-                    <Star className="h-4 w-4 text-green-600" />
+            <div className="space-y-5">
+              {highlights.length > 0 ? (
+                highlights.map((highlight, idx) => (
+                  <div key={idx} className="flex gap-4">
+                    <div className={`h-10 w-10 rounded-full flex items-center justify-center shrink-0 ${highlight.bg}`}>
+                      <highlight.icon className={`h-5 w-5 ${highlight.color}`} strokeWidth={1.8} />
+                    </div>
+                    <div>
+                      <p className="text-[13px] font-bold text-[#374151] leading-relaxed">{highlight.comment}</p>
+                      <p className="text-[11px] text-[#6B7280] mt-0.5">- {highlight.user}</p>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-[12px] font-bold text-gray-800 leading-snug">&quot;{r.comment}&quot;</p>
-                    <p className="text-[10px] text-gray-500 mt-0.5">- {r.customerName || "—"}</p>
-                  </div>
-                </div>
-              )) : (
-                <p className="text-[13px] text-gray-500 text-center py-4">No review comments yet.</p>
+                ))
+              ) : (
+                <p className="text-[13px] text-[#6B7280] text-center py-4">No reviews with comments yet</p>
               )}
             </div>
+            <Button className="w-full bg-[#F3FAF5] hover:bg-[#EAF6ED] text-[#087A2B] font-semibold h-11 rounded-[8px] mt-4 shadow-none transition-colors" onClick={() => resetPage(() => setActiveTab("all"))}>
+              View All Reviews <ArrowRight className="h-4 w-4 ml-1.5" strokeWidth={2} />
+            </Button>
           </CardContent>
         </Card>
       </div>
 
       {/* Bottom Section: List & Right Sidebar */}
-      <div className="grid gap-6 lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px]">
+      <div className="grid gap-6 grid-cols-1 xl:grid-cols-[1fr_320px] 2xl:grid-cols-[1fr_360px]">
         
         {/* Latest Reviews List */}
-        <Card className="rounded-2xl border-none shadow-sm">
-          <CardHeader className="pb-4 pt-6 px-6 border-b border-gray-50 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <CardTitle className="text-[16px] font-bold text-gray-900">Latest Reviews</CardTitle>
+        <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+          <CardHeader className="pb-4 pt-6 px-6 border-b border-[#EEF0F2] flex flex-col sm:flex-row sm:items-center justify-between gap-4" id="latest-reviews">
+            <CardTitle className="text-[16px] font-bold text-[#111827]">Latest Reviews</CardTitle>
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
               <div className="relative w-full sm:w-auto">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#9CA3AF]" />
                 <Input
                   placeholder="Search reviews..."
                   value={search}
                   onChange={(e) => resetPage(() => setSearch(e.target.value))}
-                  className="pl-9 h-9 rounded-lg border-gray-200 text-[12px] w-full sm:w-[200px]"
+                  className="pl-9 h-10 rounded-[8px] border-[#E5E7EB] bg-[#FFFFFF] text-[13px] w-full sm:w-[220px] focus-visible:ring-[#087A2B]"
                 />
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="h-9 px-3 rounded-lg border-gray-200 text-gray-600 text-[12px] font-medium shrink-0 flex-1 sm:flex-none">
-                      {ratingFilter ? `${ratingFilter} Stars` : "All Ratings"} <ChevronDown className="h-3 w-3 ml-1" />
+                    <Button variant="outline" className="h-10 px-3 rounded-[8px] border-[#E5E7EB] text-[#374151] text-[13px] font-medium shrink-0 flex-1 sm:flex-none shadow-none hover:bg-[#F9FAFB]">
+                      {ratingFilter ? `${ratingFilter} Stars` : "All Ratings"} <ChevronDown className="h-4 w-4 ml-2" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align="end" className="rounded-[8px]">
                     <DropdownMenuItem onClick={() => resetPage(() => setRatingFilter(null))}>All Ratings</DropdownMenuItem>
                     {[5, 4, 3, 2, 1].map(s => (
                       <DropdownMenuItem key={s} onClick={() => resetPage(() => setRatingFilter(s))}>
@@ -664,11 +617,11 @@ export default function ReviewsPageClient() {
                 </DropdownMenu>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="outline" className="h-9 px-3 rounded-lg border-gray-200 text-gray-600 text-[12px] font-medium shrink-0 flex-1 sm:flex-none">
-                      {sortBy === "highest" ? "Highest Rated" : sortBy === "lowest" ? "Lowest Rated" : "Most Recent"} <ChevronDown className="h-3 w-3 ml-1" />
+                    <Button variant="outline" className="h-10 px-3 rounded-[8px] border-[#E5E7EB] text-[#374151] text-[13px] font-medium shrink-0 flex-1 sm:flex-none shadow-none hover:bg-[#F9FAFB]">
+                      {sortBy === "highest" ? "Highest Rated" : sortBy === "lowest" ? "Lowest Rated" : "Most Recent"} <ChevronDown className="h-4 w-4 ml-2" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
+                  <DropdownMenuContent align="end" className="rounded-[8px]">
                     <DropdownMenuItem onClick={() => resetPage(() => setSortBy("recent"))}>Most Recent</DropdownMenuItem>
                     <DropdownMenuItem onClick={() => resetPage(() => setSortBy("highest"))}>Highest Rated</DropdownMenuItem>
                     <DropdownMenuItem onClick={() => resetPage(() => setSortBy("lowest"))}>Lowest Rated</DropdownMenuItem>
@@ -678,146 +631,210 @@ export default function ReviewsPageClient() {
             </div>
           </CardHeader>
           <CardContent className="p-0">
-            {pageReviews.length === 0 ? (
-              <div className="py-16 text-center text-gray-500 text-sm font-medium">No reviews found.</div>
-            ) : (
-              <div className="divide-y divide-gray-50">
-                {pageReviews.map((review, i) => {
-                  const initial = (review.customerName || "—").charAt(0).toUpperCase()
-                  const colors = ["bg-green-100 text-green-700", "bg-purple-100 text-purple-700", "bg-orange-100 text-orange-700", "bg-blue-100 text-blue-700", "bg-yellow-100 text-yellow-700"]
-                  const avatarColor = colors[i % colors.length]
-                  
-                  return (
-                    <div key={review.id} className="p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 hover:bg-gray-50/30 transition-colors">
-                      {/* Left: Avatar & Name */}
-                      <div className="w-full sm:w-[120px] shrink-0 flex items-center sm:items-start gap-3">
-                        <div className={`h-8 w-8 rounded-full flex items-center justify-center font-bold text-[14px] shrink-0 ${avatarColor}`}>
-                          {initial}
-                        </div>
-                        <div className="flex flex-col min-w-0">
-                          <span className="text-[13px] font-bold text-gray-900 truncate max-w-[200px] sm:max-w-[80px]">{review.customerName || "—"}</span>
-                        </div>
+            <div className="divide-y divide-[#EEF0F2]">
+              {pageReviews.length > 0 ? (
+                pageReviews.map((review) => (
+                  <div key={review.id} className="p-6 flex flex-col sm:flex-row gap-4 sm:gap-6 hover:bg-[#F9FAFB] transition-colors relative">
+                    
+                    {/* Left: Avatar & Name */}
+                    <div className="w-full sm:w-[130px] shrink-0 flex items-center sm:items-start gap-3">
+                      <div className={`h-10 w-10 rounded-full flex items-center justify-center font-bold text-[14px] shrink-0 bg-[#EAF6ED] text-[#087A2B]`}>
+                        {(review.customerName || "C").charAt(0).toUpperCase()}
                       </div>
-
-                      {/* Middle: Review Content */}
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-2">
-                          {renderStars(review.rating)}
-                          <span className="text-[12px] font-bold text-gray-900">{review.rating.toFixed(1)}</span>
+                      <div className="flex flex-col min-w-0 pt-0.5">
+                        <span className="text-[13px] font-bold text-[#111827] truncate">{review.customerName || "Customer"}</span>
+                        <div className="flex items-center gap-1 mt-0.5 bg-[#EAF6ED] text-[#087A2B] px-1.5 py-0.5 rounded-full w-max">
+                          <CheckCircle2 className="h-2.5 w-2.5" />
+                          <span className="text-[9px] font-bold uppercase tracking-wide">Verified</span>
                         </div>
-                        <p className="text-[13px] font-medium text-gray-700 leading-relaxed">
-                          {review.comment || "No comment provided."}
-                        </p>
-                        <div className="flex flex-wrap items-center gap-2 pt-1">
-                          {review.tasteRating && <Badge variant="secondary" className="px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#10B981] text-[10px] font-bold border-0">Food Quality</Badge>}
-                          {review.packagingRating && <Badge variant="secondary" className="px-2 py-0.5 rounded-full bg-[#ECFDF5] text-[#10B981] text-[10px] font-bold border-0">Packaging</Badge>}
-                          {review.portionSizeRating && <Badge variant="secondary" className="px-2 py-0.5 rounded-full bg-[#FFF7ED] text-[#EA580C] text-[10px] font-bold border-0">Portion Size</Badge>}
-                        </div>
-                      </div>
-
-                      {/* Right: Item details & Date */}
-                      <div className="w-full sm:w-[160px] shrink-0 flex sm:flex-col justify-between sm:justify-start items-center sm:items-end gap-3 sm:gap-2">
-                        <div className="flex items-center gap-3">
-                          <div className="h-10 w-10 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200 flex items-center justify-center">
-                            <UtensilsCrossed className="h-4 w-4 text-gray-400" />
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-[12px] font-bold text-gray-900 line-clamp-1">{review.itemName || "—"}</span>
-                            <span className="text-[10px] text-gray-500 font-medium">Menu Item</span>
-                          </div>
-                        </div>
-                        <span className="text-[11px] text-gray-400 font-medium whitespace-nowrap">
-                          {new Date(review.createdAt).toLocaleDateString("en-GB", { day: '2-digit', month: 'short', year: 'numeric' })}
-                        </span>
                       </div>
                     </div>
-                  )
-                })}
-              </div>
-            )}
+
+                    {/* Middle: Review Content */}
+                    <div className="flex-1 space-y-2.5">
+                      <div className="flex items-center gap-2">
+                        {renderStars(review.rating)}
+                        <span className="text-[13px] font-bold text-[#111827]">{review.rating.toFixed(1)}</span>
+                      </div>
+                      <p className="text-[13px] font-medium text-[#374151] leading-relaxed">
+                        {review.comment || "No comment provided."}
+                      </p>
+                      {(review.tasteRating != null || review.packagingRating != null || review.portionSizeRating != null) && (
+                        <div className="flex flex-wrap items-center gap-2 pt-1">
+                          {review.tasteRating != null && (
+                            <Badge variant="secondary" className="px-2.5 py-0.5 rounded-[999px] bg-[#EAF6ED] text-[#087A2B] text-[11px] font-semibold border border-transparent hover:bg-[#EAF6ED] shadow-none">
+                              Taste {review.tasteRating}
+                            </Badge>
+                          )}
+                          {review.packagingRating != null && (
+                            <Badge variant="secondary" className="px-2.5 py-0.5 rounded-[999px] bg-[#F3EDFF] text-[#8B5CF6] text-[11px] font-semibold border border-transparent hover:bg-[#F3EDFF] shadow-none">
+                              Packaging {review.packagingRating}
+                            </Badge>
+                          )}
+                          {review.portionSizeRating != null && (
+                            <Badge variant="secondary" className="px-2.5 py-0.5 rounded-[999px] bg-[#EAF4FF] text-[#2196F3] text-[11px] font-semibold border border-transparent hover:bg-[#EAF4FF] shadow-none">
+                              Portion {review.portionSizeRating}
+                            </Badge>
+                          )}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Right: Item details & Date */}
+                    <div className="w-full sm:w-[180px] shrink-0 flex sm:flex-col justify-between sm:justify-start items-center sm:items-end gap-3 sm:gap-2 pr-6 sm:pr-8">
+                      <div className="flex items-center gap-3 w-full sm:justify-end">
+                        <div className="h-10 w-10 rounded-[8px] bg-[#F3F4F6] flex items-center justify-center overflow-hidden shrink-0 border border-[#E5E7EB]">
+                          <UtensilsCrossed className="h-4 w-4 text-[#9CA3AF]" />
+                        </div>
+                        <div className="flex flex-col min-w-0 text-left sm:text-right">
+                          <span className="text-[13px] font-bold text-[#111827] truncate w-[100px]">{review.itemName || "—"}</span>
+                          <span className="text-[11px] text-[#6B7280] font-medium">Order Item</span>
+                        </div>
+                      </div>
+                      <span className="text-[12px] text-[#6B7280] font-medium whitespace-nowrap mt-1">
+                        {new Date(review.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}
+                      </span>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="py-16 flex flex-col items-center justify-center text-center">
+                  <MessageSquare className="h-12 w-12 text-[#D1D5DB] mb-3" />
+                  <p className="text-[14px] font-semibold text-[#374151]">No reviews found</p>
+                  <p className="text-[12px] text-[#9CA3AF] mt-1">Try adjusting your search or filters</p>
+                </div>
+              )}
+            </div>
             
             {/* Pagination */}
             {filteredReviews.length > 0 && (
-              <div className="flex items-center justify-between p-6 border-t border-gray-50 flex-col sm:flex-row gap-4">
-                <span className="text-[12px] font-medium text-gray-500 text-center sm:text-left">
-                  Showing {(currentPage - 1) * PAGE_SIZE + 1} to {Math.min(currentPage * PAGE_SIZE, filteredReviews.length)} of {filteredReviews.length} reviews
-                </span>
-                <div className="flex items-center justify-center flex-wrap gap-1.5">
-                  <Button variant="outline" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={currentPage === 1} className="h-8 w-8 p-0 rounded-lg border-gray-200 text-gray-600 hover:bg-gray-50">
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
+            <div className="flex items-center justify-between p-6 border-t border-[#EEF0F2] flex-col sm:flex-row gap-4">
+              <span className="text-[13px] font-medium text-[#6B7280] text-center sm:text-left">
+                Showing {(currentPage - 1) * PAGE_SIZE + 1} to {Math.min(currentPage * PAGE_SIZE, filteredReviews.length)} of {filteredReviews.length} reviews
+              </span>
+              <Pagination className="justify-end w-auto mx-0">
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        if (currentPage > 1) setPage((p) => p - 1)
+                      }}
+                      className={`h-8 px-2.5 rounded-[6px] border border-[#E5E7EB] text-[#374151] hover:bg-[#F9FAFB] shadow-none ${currentPage === 1 ? "opacity-50 pointer-events-none" : ""}`}
+                    />
+                  </PaginationItem>
                   {Array.from({ length: totalPages }).map((_, i) => (
-                    <Button
-                      key={i}
-                      variant="outline"
-                      onClick={() => setPage(i + 1)}
-                      className={`h-8 w-8 p-0 rounded-lg font-bold text-[12px] ${
-                        currentPage === i + 1
-                          ? "bg-[#166534] text-white hover:bg-[#14532D] hover:text-white"
-                          : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                      }`}
-                    >
-                      {i + 1}
-                    </Button>
+                    <PaginationItem key={i}>
+                      <PaginationLink
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault()
+                          setPage(i + 1)
+                        }}
+                        isActive={currentPage === i + 1}
+                        className={`h-8 w-8 rounded-[6px] border ${
+                          currentPage === i + 1
+                            ? "bg-[#087A2B] text-white hover:bg-[#075F22] hover:text-white border-0 shadow-none"
+                            : "border-[#E5E7EB] text-[#374151] hover:bg-[#F9FAFB] shadow-none"
+                        }`}
+                      >
+                        {i + 1}
+                      </PaginationLink>
+                    </PaginationItem>
                   ))}
-                  <Button variant="outline" onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="h-8 w-8 p-0 rounded-lg border-gray-200 text-gray-600 hover:bg-gray-50">
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
+                  <PaginationItem>
+                    <PaginationNext
+                      href="#"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        if (currentPage < totalPages) setPage((p) => p + 1)
+                      }}
+                      className={`h-8 px-2.5 rounded-[6px] border border-[#E5E7EB] text-[#374151] hover:bg-[#F9FAFB] shadow-none ${currentPage === totalPages ? "opacity-50 pointer-events-none" : ""}`}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+            </div>
             )}
           </CardContent>
         </Card>
 
         {/* Right Sidebar */}
         <div className="space-y-6">
-
-          {/* Rating Insights */}
-          <Card className="rounded-2xl border-none shadow-sm">
-            <CardHeader className="pb-4 pt-6 px-6 border-b border-gray-50">
-              <CardTitle className="text-[15px] font-bold text-gray-900">Rating Insights</CardTitle>
+          
+          {/* Review Summary Chart */}
+          <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+            <CardHeader className="pb-4 pt-6 px-6">
+              <CardTitle className="text-[15px] font-bold text-[#111827]">Review Summary by Category</CardTitle>
             </CardHeader>
-            <CardContent className="p-6 space-y-4">
-              {avgRating >= 4 && (
+            <CardContent className="p-6 pt-0 flex flex-col sm:flex-row xl:flex-col items-center gap-6">
+              <div className="h-[160px] w-[160px] shrink-0">
+                <ChartContainer config={CHART_CONFIG} className="h-full w-full">
+                  <PieChart>
+                    <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+                    <Pie
+                      data={chartData}
+                      dataKey="value"
+                      nameKey="name"
+                      innerRadius={55}
+                      outerRadius={75}
+                      strokeWidth={0}
+                    />
+                  </PieChart>
+                </ChartContainer>
+              </div>
+              <div className="flex flex-col gap-3 w-full sm:w-auto xl:w-full">
+                {chartData.map((item) => (
+                  <div key={item.name} className="flex items-center justify-between w-full">
+                    <div className="flex items-center gap-2">
+                      <div className={`h-2.5 w-2.5 rounded-full shrink-0`} style={{ backgroundColor: item.fill }} />
+                      <span className="text-[13px] font-medium text-[#374151]">{item.name}</span>
+                    </div>
+                    <span className="text-[13px] font-bold text-[#111827]">{chartPct(item.value)}</span>
+                  </div>
+                ))}
+                {chartData.every((d) => d.value === 0) && (
+                  <p className="text-[12px] text-[#9CA3AF] text-center py-2">No category ratings yet</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Tips to Improve */}
+          <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+            <CardHeader className="pb-4 pt-6 px-6">
+              <CardTitle className="text-[15px] font-bold text-[#111827]">Tips to Improve</CardTitle>
+            </CardHeader>
+            <CardContent className="px-6 pb-6 space-y-5">
+              <div className="space-y-4">
                 <div className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                  <p className="text-[12px] font-medium text-gray-600 leading-snug">Customers love your food quality — keep it up!</p>
+                  <CircleCheck className="h-4 w-4 text-[#087A2B] shrink-0 mt-0.5" strokeWidth={2} />
+                  <p className="text-[13px] font-medium text-[#374151]">Most customers love your food quality</p>
                 </div>
-              )}
-              {avgRating >= 3 && avgRating < 4 && (
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="h-5 w-5 text-orange-500 shrink-0 mt-0.5" />
-                  <p className="text-[12px] font-medium text-gray-600 leading-snug">Room for improvement in overall experience</p>
+                  <TriangleAlert className="h-4 w-4 text-[#FF9800] shrink-0 mt-0.5" strokeWidth={2} />
+                  <p className="text-[13px] font-medium text-[#374151]">Focus on delivery speed improvement</p>
                 </div>
-              )}
-              {avgRating < 3 && avgRating > 0 && (
                 <div className="flex items-start gap-3">
-                  <AlertTriangle className="h-5 w-5 text-red-500 shrink-0 mt-0.5" />
-                  <p className="text-[12px] font-medium text-gray-600 leading-snug">Focus on addressing customer feedback</p>
+                  <CircleCheck className="h-4 w-4 text-[#087A2B] shrink-0 mt-0.5" strokeWidth={2} />
+                  <p className="text-[13px] font-medium text-[#374151]">Maintain packaging quality</p>
                 </div>
-              )}
-              {avgPortion !== avgRating.toFixed(1) && (
                 <div className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                  <p className="text-[12px] font-medium text-gray-600 leading-snug">Food quality rating: {avgPortion}/5</p>
+                  <CircleCheck className="h-4 w-4 text-[#087A2B] shrink-0 mt-0.5" strokeWidth={2} />
+                  <p className="text-[13px] font-medium text-[#374151]">Keep up the good hygiene standards</p>
                 </div>
-              )}
-              {avgPack !== avgRating.toFixed(1) && (
-                <div className="flex items-start gap-3">
-                  <CheckCircle2 className="h-5 w-5 text-green-600 shrink-0 mt-0.5" />
-                  <p className="text-[12px] font-medium text-gray-600 leading-snug">Packaging rating: {avgPack}/5</p>
-                </div>
-              )}
-              {totalReviews === 0 && (
-                <p className="text-[12px] text-gray-500 text-center py-2">No review data available yet.</p>
-              )}
+              </div>
+              <Button className="w-full bg-[#F3FAF5] hover:bg-[#EAF6ED] text-[#087A2B] font-semibold h-11 rounded-[8px] mt-2 shadow-none transition-colors" onClick={() => document.getElementById("latest-reviews")?.scrollIntoView({ behavior: "smooth", block: "start" })}>
+                View Detailed Analytics <ArrowRight className="h-4 w-4 ml-1.5" strokeWidth={2} />
+              </Button>
             </CardContent>
           </Card>
 
         </div>
       </div>
-
+        </>
+      )}
     </div>
   )
 }
-

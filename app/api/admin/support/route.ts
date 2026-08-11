@@ -20,6 +20,23 @@ export async function GET() {
       include: {
         messages: { orderBy: { createdAt: "asc" } },
         user: { select: { name: true, email: true, phoneNumber: true, image: true } },
+        order: {
+          select: {
+            id: true,
+            publicCode: true,
+            totalAmount: true,
+            status: true,
+            createdAt: true,
+            orderItems: {
+              select: {
+                id: true,
+                quantity: true,
+                unitPrice: true,
+                menuItem: { select: { name: true } },
+              },
+            },
+          },
+        },
       },
       orderBy: { updatedAt: "desc" },
     });

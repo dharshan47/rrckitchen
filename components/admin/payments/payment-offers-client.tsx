@@ -1,48 +1,57 @@
 "use client"
 
-import { useState, useMemo, useEffect } from "react"
+import React, { useMemo, useState } from "react"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import {
-  AdminPaymentOffer,
-  useAdminPaymentOffers,
-  useAdminPaymentOffersQuery,
-  useCreatePaymentOfferMutation,
-  useUpdatePaymentOfferMutation,
-  useDeletePaymentOfferMutation,
-} from "@/stores"
-import {
-  Search,
   Download,
-  RefreshCcw,
-  Tag,
-  CheckCircle2,
-  Clock,
   Plus,
-  XCircle,
-  Calendar,
+  Search,
+  RotateCcw,
   Pencil,
-  MoreVertical,
+  Trash2,
+  Settings,
+  Lightbulb,
+  CreditCard,
+  Wallet,
+  Landmark,
   ChevronLeft,
   ChevronRight,
-  Smartphone,
-  CreditCard,
-  Landmark,
-  Wallet,
-  Zap,
-  RotateCcw,
+  Tag,
+  TicketPercent,
+  BadgePercent,
+  Clock3,
+  ShieldCheck,
+  ChartNoAxesColumnIncreasing,
+  X,
 } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
+import { PieChart, Pie, Cell } from "recharts"
+import { toast } from "sonner"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { DataTable } from "@/components/ui/data-table"
-import { Checkbox } from "@/components/ui/checkbox"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Switch } from "@/components/ui/switch"
 import {
-  useReactTable,
-  getCoreRowModel,
-  createColumnHelper,
-  getPaginationRowModel,
-} from "@tanstack/react-table"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import {
   Select,
   SelectContent,
@@ -51,175 +60,137 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Switch } from "@/components/ui/switch"
-import { toast } from "sonner"
+  useAdminPaymentOffersQuery,
+  useAdminPaymentOffers,
+  useCreatePaymentOfferMutation,
+  useUpdatePaymentOfferMutation,
+  useDeletePaymentOfferMutation,
+  type AdminPaymentOffer,
+} from "@/stores/adminPaymentOffersStore"
 import { cn } from "@/lib/utils"
-
-type PaymentOffer = AdminPaymentOffer
 
 type OfferStatus = "ACTIVE" | "UPCOMING" | "EXPIRED" | "INACTIVE"
 
-function getOfferStatus(o: PaymentOffer): OfferStatus {
-  const now = Date.now()
-  if (!o.isActive) return "INACTIVE"
-  if (now > new Date(o.validTo).getTime()) return "EXPIRED"
-  if (now < new Date(o.validFrom).getTime()) return "UPCOMING"
-  return "ACTIVE"
+const METHOD_META: Record<string, { label: string; badge: string; avatar: string; color: string; avatarBg: string }> = {
+  UPI: {
+    label: "UPI",
+    badge: "bg-[#F0FDF4] text-[#15803D] border-[#DCFCE7]",
+    avatar: "bg-[#F0FDF4] text-[#16A34A] border-[#DCFCE7]",
+    color: "#16A34A",
+    avatarBg: "bg-[#F0FDF4]",
+  },
+  WALLET: {
+    label: "Wallet",
+    badge: "bg-[#EFF6FF] text-[#2563EB] border-[#DBEAFE]",
+    avatar: "bg-[#EFF6FF] text-[#2563EB] border-[#DBEAFE]",
+    color: "#2563EB",
+    avatarBg: "bg-[#EFF6FF]",
+  },
+  CARDS: {
+    label: "Cards",
+    badge: "bg-[#FFF7ED] text-[#D97706] border-[#FED7AA]",
+    avatar: "bg-[#FFF7ED] text-[#F97316] border-[#FED7AA]",
+    color: "#F97316",
+    avatarBg: "bg-[#FFF7ED]",
+  },
+  NETBANKING: {
+    label: "Net Banking",
+    badge: "bg-[#F5F3FF] text-[#7C3AED] border-[#DDD6FE]",
+    avatar: "bg-[#F5F3FF] text-[#7C3AED] border-[#DDD6FE]",
+    color: "#7C3AED",
+    avatarBg: "bg-[#F5F3FF]",
+  },
+  ALL: {
+    label: "All Methods",
+    badge: "bg-[#F8FAFC] text-[#475569] border-[#E2E8F0]",
+    avatar: "bg-[#F8FAFC] text-[#475569] border-[#E2E8F0]",
+    color: "#64748B",
+    avatarBg: "bg-[#F8FAFC]",
+  },
 }
 
-function formatDateRange(from: string, to: string) {
-  const f = new Date(from)
-  const t = new Date(to)
-  const formatStr = (d: Date) =>
-    d.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "2-digit" })
-  return `${formatStr(f)} - ${formatStr(t)}`
-}
-
-const getOfferTypeBadge = (type: string) => {
-  switch (type) {
-    case "UPI":
-      return (
-        <div className="flex items-center gap-1.5">
-          <div className="p-1 rounded bg-blue-50">
-            <Smartphone className="h-3 w-3 text-blue-600" />
-          </div>
-          <span className="text-[11px] font-medium text-gray-900">UPI</span>
-        </div>
-      )
-    case "CARDS":
-      return (
-        <div className="flex items-center gap-1.5">
-          <div className="p-1 rounded bg-orange-50">
-            <CreditCard className="h-3 w-3 text-orange-600" />
-          </div>
-          <span className="text-[11px] font-medium text-gray-900">Cards</span>
-        </div>
-      )
-    case "NETBANKING":
-      return (
-        <div className="flex items-center gap-1.5">
-          <div className="p-1 rounded bg-indigo-50">
-            <Landmark className="h-3 w-3 text-indigo-600" />
-          </div>
-          <span className="text-[11px] font-medium text-gray-900">Net Banking</span>
-        </div>
-      )
-    case "WALLET":
-      return (
-        <div className="flex items-center gap-1.5">
-          <div className="p-1 rounded bg-purple-50">
-            <Wallet className="h-3 w-3 text-purple-600" />
-          </div>
-          <span className="text-[11px] font-medium text-gray-900">Wallet</span>
-        </div>
-      )
-    case "ALL":
-      return (
-        <div className="flex items-center gap-1.5">
-          <div className="p-1 rounded bg-green-50">
-            <Zap className="h-3 w-3 text-green-600" />
-          </div>
-          <span className="text-[11px] font-medium text-gray-900">All Methods</span>
-        </div>
-      )
-    default:
-      return <span className="text-[11px] font-medium text-gray-900">{type}</span>
-  }
-}
-
-const statusMeta: Record<OfferStatus, { label: string; className: string }> = {
+const STATUS_META: Record<OfferStatus, { label: string; badge: string; dot: string }> = {
   ACTIVE: {
     label: "Active",
-    className: "text-green-600 border-green-200 bg-green-50/50",
+    badge: "bg-[#F0FDF4] text-[#15803D] border-[#DCFCE7]",
+    dot: "bg-[#16A34A]",
   },
   UPCOMING: {
     label: "Upcoming",
-    className: "text-orange-500 border-orange-200 bg-orange-50/50",
+    badge: "bg-[#FFFBEB] text-[#D97706] border-[#FDE68A]",
+    dot: "bg-[#F59E0B]",
   },
   EXPIRED: {
     label: "Expired",
-    className: "text-red-500 border-red-200 bg-red-50/50",
+    badge: "bg-[#FEF2F2] text-[#DC2626] border-[#FECACA]",
+    dot: "bg-[#EF4444]",
   },
   INACTIVE: {
     label: "Inactive",
-    className: "text-gray-500 border-gray-200 bg-gray-50/50",
+    badge: "bg-[#F1F5F9] text-[#64748B] border-[#E2E8F0]",
+    dot: "bg-[#94A3B8]",
   },
 }
 
-const columnHelper = createColumnHelper<PaymentOffer>()
-
-function offersToCSV(offers: PaymentOffer[]) {
-  const header = [
-    "Name",
-    "Description",
-    "Offer Type",
-    "Discount Type",
-    "Discount Value",
-    "Max Discount",
-    "Min Order",
-    "Valid From",
-    "Valid To",
-    "Status",
-  ]
-  const rows = offers.map((o) => [
-    `"${o.name.replace(/"/g, '""')}"`,
-    `"${(o.description ?? "").replace(/"/g, '""')}"`,
-    o.offerType,
-    o.discountType,
-    o.discountValue,
-    o.maxDiscount ?? "",
-    o.minOrderValue ?? "",
-    o.validFrom,
-    o.validTo,
-    getOfferStatus(o),
-  ])
-  return [header, ...rows].map((r) => r.join(",")).join("\n")
+function formatDate(iso?: string) {
+  if (!iso) return "—"
+  return new Date(iso).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
 }
 
-function downloadCSV(filename: string, content: string) {
-  const blob = new Blob([content], { type: "text/csv;charset=utf-8" })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement("a")
-  link.href = url
-  link.download = filename
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  URL.revokeObjectURL(url)
+function formatINR(value: number | null | undefined) {
+  if (value == null) return "—"
+  return "₹" + value.toLocaleString("en-IN")
 }
 
-/* ------------------------- Skeleton components ------------------------- */
+function offerStatus(o: AdminPaymentOffer): OfferStatus {
+  if (!o.isActive) return "INACTIVE"
+  const now = new Date()
+  if (new Date(o.validTo) < now) return "EXPIRED"
+  if (new Date(o.validFrom) > now) return "UPCOMING"
+  return "ACTIVE"
+}
+
+function methodIcon(type: AdminPaymentOffer["offerType"], className = "h-4 w-4") {
+  if (type === "UPI") {
+    return (
+      <svg viewBox="0 0 24 24" className={cn(className, "text-[#16A34A]")} fill="currentColor">
+        <path d="M14 6V11H18V13H14V18H12V13H8V11H12V6H14Z" />
+      </svg>
+    )
+  }
+  if (type === "WALLET") return <Wallet className={cn(className, "text-[#2563EB]")} />
+  if (type === "CARDS") return <CreditCard className={cn(className, "text-[#F97316]")} />
+  if (type === "NETBANKING") return <Landmark className={cn(className, "text-[#7C3AED]")} />
+  return <Tag className={cn(className, "text-[#475569]")} />
+}
+
+function toLocalInputValue(iso: string) {
+  const d = new Date(iso)
+  const pad = (n: number) => String(n).padStart(2, "0")
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
 
 function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 animate-pulse">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <div
-          key={i}
-          className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm flex flex-col gap-2"
-        >
-          <div className="flex justify-between items-start">
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <div className="text-right flex flex-col items-end gap-1.5">
-              <Skeleton className="h-3 w-20 rounded-md" />
-              <Skeleton className="h-6 w-14 rounded-md" />
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div key={i} className="bg-white rounded-[12px] p-4 border border-[#E2E8F0] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+          <div className="flex items-start gap-4">
+            <Skeleton className="h-[44px] w-[44px] rounded-full" />
+            <div className="space-y-2 flex-1">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-5 w-16" />
             </div>
           </div>
-          <Skeleton className="h-2.5 w-28 rounded-md mt-1" />
+          <Skeleton className="h-3 w-28 mt-4" />
         </div>
       ))}
     </div>
@@ -228,866 +199,907 @@ function StatsSkeleton() {
 
 function TableSkeleton() {
   return (
-    <div className="border-t border-border/50 animate-pulse">
-      {/* header */}
-      <div className="flex items-center gap-6 px-4 py-3 border-b border-border/50">
-        <Skeleton className="h-3.5 w-5 rounded-md" />
-        <Skeleton className="h-3.5 w-28 rounded-md" />
-        <Skeleton className="h-3.5 w-20 rounded-md" />
-        <Skeleton className="h-3.5 w-16 rounded-md" />
-        <Skeleton className="h-3.5 w-14 rounded-md" />
-        <Skeleton className="h-3.5 w-24 rounded-md" />
-        <Skeleton className="h-3.5 w-12 rounded-md" />
-        <Skeleton className="h-3.5 w-14 rounded-md" />
+    <div className="w-full space-y-4 p-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <Skeleton className="h-[38px] flex-1 min-w-[280px] rounded-[7px]" />
+        <Skeleton className="h-[38px] w-[130px] rounded-[7px]" />
+        <Skeleton className="h-[38px] w-[120px] rounded-[7px]" />
+        <Skeleton className="h-[38px] w-[130px] rounded-[7px]" />
       </div>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div
-          key={i}
-          className="flex items-center gap-6 px-4 py-3.5 border-b border-border/50"
-        >
-          <Skeleton className="h-4 w-4 rounded-sm" />
-          <div className="flex flex-col gap-1.5 min-w-[200px]">
-            <Skeleton className="h-3 w-40 rounded-md" />
-            <Skeleton className="h-2.5 w-24 rounded-md" />
+      <div className="rounded-[12px] border border-[#E2E8F0] bg-white overflow-hidden">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-4 px-5 py-4 border-b border-[#F1F5F9] last:border-b-0">
+            <Skeleton className="h-3 w-28 flex-[2]" />
+            <Skeleton className="h-5 w-16" />
+            <Skeleton className="h-3 w-14" />
+            <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-5 w-20" />
+            <Skeleton className="h-8 w-[76px]" />
           </div>
-          <Skeleton className="h-6 w-20 rounded-md" />
-          <div className="flex flex-col gap-1.5">
-            <Skeleton className="h-3 w-16 rounded-md" />
-            <Skeleton className="h-2.5 w-12 rounded-md" />
-          </div>
-          <Skeleton className="h-3.5 w-14 rounded-md" />
-          <Skeleton className="h-3.5 w-28 rounded-md" />
-          <Skeleton className="h-6 w-16 rounded-full" />
-          <div className="flex items-center gap-1.5">
-            <Skeleton className="h-6 w-6 rounded-md" />
-            <Skeleton className="h-6 w-6 rounded-md" />
-          </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   )
 }
 
-/* ------------------------------------------------------------------------ */
+interface OfferFormState {
+  name: string
+  description: string
+  offerType: AdminPaymentOffer["offerType"]
+  discountType: AdminPaymentOffer["discountType"]
+  discountValue: string
+  maxDiscount: string
+  minOrderValue: string
+  validFrom: string
+  validTo: string
+  isActive: boolean
+}
 
-export default function PaymentOffersPage() {
-  const [rowSelection, setRowSelection] = useState({})
+const EMPTY_FORM: OfferFormState = {
+  name: "",
+  description: "",
+  offerType: "ALL",
+  discountType: "FLAT",
+  discountValue: "",
+  maxDiscount: "",
+  minOrderValue: "",
+  validFrom: "",
+  validTo: "",
+  isActive: true,
+}
 
-  // Dialog State
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [editingOffer, setEditingOffer] = useState<PaymentOffer | null>(null)
-
-  // Filters State
-  const [search, setSearch] = useState("")
-  const [statusTab, setStatusTab] = useState<"ALL" | OfferStatus>("ALL")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [methodFilter, setMethodFilter] = useState("all")
-  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
-
-  // Form State
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    offerType: "ALL",
-    discountType: "PERCENTAGE",
-    discountValue: 10,
-    maxDiscount: 100,
-    minOrderValue: 200,
-    validFrom: new Date().toISOString().slice(0, 16),
-    validTo: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
-    isActive: true,
-  })
-
-  const { refetch, isFetching, isLoading } = useAdminPaymentOffersQuery()
-  const offers = useAdminPaymentOffers()
-
+function OfferFormDialog({
+  open,
+  onOpenChange,
+  editing,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  editing: AdminPaymentOffer | null
+}) {
   const createMutation = useCreatePaymentOfferMutation()
   const updateMutation = useUpdatePaymentOfferMutation()
-  const deleteMutation = useDeletePaymentOfferMutation()
+  const [form, setForm] = useState<OfferFormState>(() =>
+    editing
+      ? {
+          name: editing.name,
+          description: editing.description ?? "",
+          offerType: editing.offerType,
+          discountType: editing.discountType,
+          discountValue: String(editing.discountValue),
+          maxDiscount: editing.maxDiscount != null ? String(editing.maxDiscount) : "",
+          minOrderValue: editing.minOrderValue != null ? String(editing.minOrderValue) : "",
+          validFrom: toLocalInputValue(editing.validFrom),
+          validTo: toLocalInputValue(editing.validTo),
+          isActive: editing.isActive,
+        }
+      : EMPTY_FORM
+  )
+  const [submitting, setSubmitting] = useState(false)
 
-  const handleOpenDialog = (offer?: PaymentOffer) => {
-    if (offer) {
-      setEditingOffer(offer)
-      setFormData({
-        name: offer.name,
-        description: offer.description || "",
-        offerType: offer.offerType,
-        discountType: offer.discountType,
-        discountValue: offer.discountValue,
-        maxDiscount: offer.maxDiscount || 0,
-        minOrderValue: offer.minOrderValue || 0,
-        validFrom: new Date(offer.validFrom).toISOString().slice(0, 16),
-        validTo: new Date(offer.validTo).toISOString().slice(0, 16),
-        isActive: offer.isActive,
-      })
-    } else {
-      setEditingOffer(null)
-      setFormData({
-        name: "",
-        description: "",
-        offerType: "ALL",
-        discountType: "PERCENTAGE",
-        discountValue: 10,
-        maxDiscount: 100,
-        minOrderValue: 200,
-        validFrom: new Date().toISOString().slice(0, 16),
-        validTo: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
-        isActive: true,
-      })
-    }
-    setIsDialogOpen(true)
-  }
+  const set = <K extends keyof OfferFormState>(key: K, value: OfferFormState[K]) =>
+    setForm((f) => ({ ...f, [key]: value }))
 
-  const handleSave = () => {
-    if (!formData.name.trim()) {
+  const handleSubmit = async () => {
+    if (!form.name.trim()) {
       toast.error("Offer name is required")
       return
     }
-    if (formData.discountValue <= 0) {
-      toast.error("Discount value must be positive")
+    const discountValue = Number(form.discountValue)
+    if (!discountValue || discountValue <= 0) {
+      toast.error("Enter a valid discount value")
       return
     }
-    if (formData.maxDiscount <= 0 && formData.discountType === "PERCENTAGE") {
-      toast.error("Max discount must be positive")
+    if (!form.validFrom || !form.validTo) {
+      toast.error("Validity dates are required")
       return
     }
-    const from = new Date(formData.validFrom)
-    const to = new Date(formData.validTo)
-    if (!from.getTime() || !to.getTime()) {
-      toast.error("Enter valid offer dates")
-      return
-    }
-    if (to <= from) {
-      toast.error("Valid To must be after Valid From")
-      return
-    }
-
     const payload = {
-      name: formData.name.trim(),
-      description: formData.description.trim() || null,
-      offerType: formData.offerType as "UPI" | "WALLET" | "CARDS" | "NETBANKING" | "ALL",
-      discountType: formData.discountType as "FLAT" | "PERCENTAGE",
-      discountValue: formData.discountValue,
-      maxDiscount: formData.discountType === "FLAT" ? null : formData.maxDiscount,
-      minOrderValue: formData.minOrderValue || null,
-      validFrom: formData.validFrom,
-      validTo: formData.validTo,
-      isActive: formData.isActive,
+      name: form.name.trim(),
+      description: form.description.trim() || null,
+      offerType: form.offerType,
+      discountType: form.discountType,
+      discountValue,
+      maxDiscount: form.maxDiscount ? Number(form.maxDiscount) : null,
+      minOrderValue: form.minOrderValue ? Number(form.minOrderValue) : null,
+      validFrom: form.validFrom,
+      validTo: form.validTo,
+      isActive: form.isActive,
     }
 
-    if (editingOffer) {
-      updateMutation.mutateAsync({ id: editingOffer.id, data: payload }).then((res) => {
-        if (res.success) {
-          toast.success("Offer updated successfully")
-          setIsDialogOpen(false)
-        } else {
-          toast.error(res.error || "Failed to update offer")
-        }
-      })
-    } else {
-      createMutation.mutateAsync(payload).then((res) => {
-        if (res.success) {
-          toast.success("Offer created successfully")
-          setIsDialogOpen(false)
-        } else {
-          toast.error(res.error || "Failed to create offer")
-        }
-      })
+    setSubmitting(true)
+    try {
+      const result = editing
+        ? await updateMutation.mutateAsync({ id: editing.id, data: payload })
+        : await createMutation.mutateAsync(payload)
+      if (result?.success) {
+        toast.success(editing ? "Offer updated successfully" : "Offer created successfully")
+        onOpenChange(false)
+      } else {
+        toast.error(result?.error ?? "Something went wrong")
+      }
+    } finally {
+      setSubmitting(false)
     }
   }
 
-  const handleExport = () => {
-    if (filteredOffers.length === 0) {
-      toast.error("No offers to export")
-      return
-    }
-    downloadCSV("payment-offers.csv", offersToCSV(filteredOffers))
-    toast.success(`${filteredOffers.length} offers exported`)
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-[560px] p-0 overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0]">
+          <DialogHeader>
+            <DialogTitle className="text-[16px] font-bold text-[#0F172A]">
+              {editing ? "Edit Payment Offer" : "Create New Offer"}
+            </DialogTitle>
+            <DialogDescription className="text-[12px] text-[#64748B]">
+              {editing ? "Update the offer details below" : "Fill in the offer details to boost conversions"}
+            </DialogDescription>
+          </DialogHeader>
+          <button onClick={() => onOpenChange(false)} className="h-8 w-8 rounded-full bg-[#F1F5F9] hover:bg-[#E2E8F0] flex items-center justify-center transition-colors shrink-0">
+            <X className="h-4 w-4 text-[#475569]" />
+          </button>
+        </div>
+
+        <div className="px-6 py-4 max-h-[65vh] overflow-y-auto space-y-4">
+          <div className="space-y-1.5">
+            <Label className="text-[12px] font-semibold text-[#334155]">Offer Name</Label>
+            <Input
+              value={form.name}
+              onChange={(e) => set("name", e.target.value)}
+              placeholder="e.g. UPI Flat ₹50 Off"
+              className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <Label className="text-[12px] font-semibold text-[#334155]">Description</Label>
+            <Textarea
+              value={form.description}
+              onChange={(e) => set("description", e.target.value)}
+              placeholder="Short description shown to customers"
+              rows={2}
+              className="text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label className="text-[12px] font-semibold text-[#334155]">Offer Type</Label>
+              <Select value={form.offerType} onValueChange={(v) => set("offerType", v as AdminPaymentOffer["offerType"])}>
+                <SelectTrigger className="bg-white border-[#E2E8F0] text-[#334155] text-[13px] h-[38px] rounded-[7px] focus:ring-[#FF6B00] font-medium shadow-none">
+                  <SelectValue placeholder="Method" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="UPI">UPI</SelectItem>
+                  <SelectItem value="WALLET">Wallet</SelectItem>
+                  <SelectItem value="CARDS">Cards</SelectItem>
+                  <SelectItem value="NETBANKING">Net Banking</SelectItem>
+                  <SelectItem value="ALL">All Methods</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-[12px] font-semibold text-[#334155]">Discount Type</Label>
+              <Select value={form.discountType} onValueChange={(v) => set("discountType", v as AdminPaymentOffer["discountType"])}>
+                <SelectTrigger className="bg-white border-[#E2E8F0] text-[#334155] text-[13px] h-[38px] rounded-[7px] focus:ring-[#FF6B00] font-medium shadow-none">
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="FLAT">Flat Discount</SelectItem>
+                  <SelectItem value="PERCENTAGE">Percentage</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-[12px] font-semibold text-[#334155]">
+                {form.discountType === "FLAT" ? "Discount Amount (₹)" : "Discount (%)"}
+              </Label>
+              <Input
+                type="number"
+                value={form.discountValue}
+                onChange={(e) => set("discountValue", e.target.value)}
+                placeholder={form.discountType === "FLAT" ? "e.g. 50" : "e.g. 10"}
+                className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-[12px] font-semibold text-[#334155]">Max Discount (₹)</Label>
+              <Input
+                type="number"
+                value={form.maxDiscount}
+                onChange={(e) => set("maxDiscount", e.target.value)}
+                placeholder="Optional"
+                className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-[12px] font-semibold text-[#334155]">Min Order Value (₹)</Label>
+              <Input
+                type="number"
+                value={form.minOrderValue}
+                onChange={(e) => set("minOrderValue", e.target.value)}
+                placeholder="Optional"
+                className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-[12px] font-semibold text-[#334155]">Valid From</Label>
+              <Input
+                type="datetime-local"
+                value={form.validFrom}
+                onChange={(e) => set("validFrom", e.target.value)}
+                className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-[12px] font-semibold text-[#334155]">Valid To</Label>
+              <Input
+                type="datetime-local"
+                value={form.validTo}
+                onChange={(e) => set("validTo", e.target.value)}
+                className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+              />
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between p-3 rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC]">
+            <div>
+              <p className="text-[13px] font-semibold text-[#0F172A]">Active Offer</p>
+              <p className="text-[11px] text-[#64748B] mt-0.5">Offer is immediately live once created</p>
+            </div>
+            <Switch checked={form.isActive} onCheckedChange={(v) => set("isActive", v)} />
+          </div>
+        </div>
+
+        <DialogFooter className="px-6 py-4 border-t border-[#E2E8F0] gap-2">
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="h-[38px] px-4 rounded-[7px] text-[13px] font-medium border-[#E2E8F0] text-[#475569] hover:bg-gray-50 bg-white shadow-none">
+            Cancel
+          </Button>
+          <Button onClick={handleSubmit} disabled={submitting} className="h-[38px] px-4 rounded-[7px] text-[13px] font-medium bg-[#FF6B00] hover:bg-[#EA580C] text-white shadow-none">
+            {submitting ? "Saving..." : editing ? "Save Changes" : "Create Offer"}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  )
+}
+
+export default function PaymentOffersClient() {
+  const { isLoading, isFetching } = useAdminPaymentOffersQuery()
+  const offers = useAdminPaymentOffers()
+  const deleteMutation = useDeletePaymentOfferMutation()
+
+  const [search, setSearch] = useState("")
+  const [methodFilter, setMethodFilter] = useState("all")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [typeFilter, setTypeFilter] = useState("all")
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState("10")
+
+  const [formOpen, setFormOpen] = useState(false)
+  const [editing, setEditing] = useState<AdminPaymentOffer | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<AdminPaymentOffer | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
+  const stats = useMemo(() => {
+    const counts: Record<OfferStatus, number> = { ACTIVE: 0, UPCOMING: 0, EXPIRED: 0, INACTIVE: 0 }
+    offers.forEach((o) => counts[offerStatus(o)]++)
+    return { total: offers.length, ...counts }
+  }, [offers])
+
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase()
+    return offers.filter((o) => {
+      if (methodFilter !== "all" && o.offerType !== methodFilter) return false
+      if (statusFilter !== "all" && offerStatus(o) !== statusFilter) return false
+      if (typeFilter !== "all" && o.discountType !== typeFilter) return false
+      if (q) {
+        const haystack = `${o.name} ${o.description ?? ""} ${METHOD_META[o.offerType]?.label ?? ""}`.toLowerCase()
+        if (!haystack.includes(q)) return false
+      }
+      return true
+    })
+  }, [offers, search, methodFilter, statusFilter, typeFilter])
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / Number(pageSize)))
+  const safePage = Math.min(page, totalPages)
+  const paginated = useMemo(() => {
+    const size = Number(pageSize)
+    return filtered.slice((safePage - 1) * size, safePage * size)
+  }, [filtered, safePage, pageSize])
+
+  const methodStats = useMemo(() => {
+    const counts = new Map<AdminPaymentOffer["offerType"], number>()
+    offers.forEach((o) => counts.set(o.offerType, (counts.get(o.offerType) ?? 0) + 1))
+    return Array.from(counts.entries())
+      .map(([type, count]) => ({
+        type,
+        label: METHOD_META[type]?.label ?? type,
+        count,
+        pct: offers.length ? Math.round((count / offers.length) * 1000) / 10 : 0,
+        color: METHOD_META[type]?.color ?? "#64748B",
+      }))
+      .sort((a, b) => b.count - a.count)
+  }, [offers])
+
+  const chartData = useMemo(
+    () =>
+      methodStats.map((m) => ({
+        name: m.label,
+        value: m.count,
+        color: m.color,
+      })),
+    [methodStats]
+  )
+
+  const recentOffers = useMemo(() => offers.slice(0, 3), [offers])
+
+  const exportCSV = () => {
+    const header = ["Name", "Description", "Method", "Discount Type", "Discount Value", "Max Discount", "Min Order", "Valid From", "Valid To", "Status"]
+    const rows = filtered.map((o) => [
+      o.name,
+      o.description ?? "",
+      METHOD_META[o.offerType]?.label ?? o.offerType,
+      o.discountType,
+      o.discountValue,
+      o.maxDiscount ?? "",
+      o.minOrderValue ?? "",
+      o.validFrom,
+      o.validTo,
+      STATUS_META[offerStatus(o)].label,
+    ])
+    const csv = [header, ...rows]
+      .map((r) => r.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(","))
+      .join("\n")
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `payment-offers-${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
   const resetFilters = () => {
     setSearch("")
-    setStatusTab("ALL")
-    setStatusFilter("all")
     setMethodFilter("all")
-    setPagination((p) => ({ ...p, pageIndex: 0 }))
+    setStatusFilter("all")
+    setTypeFilter("all")
+    setPage(1)
   }
 
-  // Real derived stats
-  const totalOffers = offers.length
-  const statuses = offers.map(getOfferStatus)
-  const activeCount = statuses.filter((s) => s === "ACTIVE").length
-  const now = Date.now()
-  const expiringSoon = offers.filter((o) => {
-    const st = getOfferStatus(o)
-    if (st !== "ACTIVE") return false
-    return new Date(o.validTo).getTime() - now > 0 && new Date(o.validTo).getTime() - now <= 7 * 24 * 60 * 60 * 1000
-  }).length
-  const newThisMonth = offers.filter((o) => {
-    const created = new Date(o.createdAt ?? o.validFrom)
-    const m = new Date()
-    return created.getMonth() === m.getMonth() && created.getFullYear() === m.getFullYear()
-  }).length
+  const openCreate = () => {
+    setEditing(null)
+    setFormOpen(true)
+  }
 
-  const stats = [
-    {
-      title: "Total Offers",
-      value: totalOffers,
-      trend: `${newThisMonth} new this month`,
-      trendUp: true,
-      icon: Tag,
-      color: "text-blue-600",
-      bg: "bg-blue-50",
-    },
-    {
-      title: "Active Offers",
-      value: activeCount,
-      trend: totalOffers > 0 ? `${Math.round((activeCount / totalOffers) * 100)}% of total` : "No offers yet",
-      trendUp: null,
-      icon: CheckCircle2,
-      color: "text-green-600",
-      bg: "bg-green-50",
-    },
-    {
-      title: "Expiring Soon",
-      value: expiringSoon,
-      trend: "Within 7 days",
-      trendUp: expiringSoon > 0,
-      icon: Clock,
-      color: "text-orange-500",
-      bg: "bg-orange-50",
-    },
-    {
-      title: "Expired",
-      value: statuses.filter((s) => s === "EXPIRED").length,
-      trend: "Past validity",
-      trendUp: null,
-      icon: XCircle,
-      color: "text-red-500",
-      bg: "bg-red-50",
-    },
-  ]
+  const openEdit = (offer: AdminPaymentOffer) => {
+    setEditing(offer)
+    setFormOpen(true)
+  }
 
-  // Filtering
-  const filteredOffers = useMemo(() => {
-    return offers.filter((o) => {
-      const st = getOfferStatus(o)
-      if (statusTab !== "ALL" && statusTab !== st) return false
-      if (statusFilter !== "all" && statusFilter !== st) return false
-      if (methodFilter !== "all" && methodFilter !== o.offerType) return false
-      if (
-        search.trim() &&
-        !o.name.toLowerCase().includes(search.toLowerCase()) &&
-        !(o.description || "").toLowerCase().includes(search.toLowerCase())
-      ) {
-        return false
+  const handleDelete = async () => {
+    if (!deleteTarget) return
+    setDeleting(true)
+    try {
+      const result = await deleteMutation.mutateAsync(deleteTarget.id)
+      if (result?.success) {
+        toast.success("Offer deleted successfully")
+      } else {
+        toast.error(result?.error ?? "Failed to delete offer")
       }
-      return true
-    })
-  }, [offers, statusTab, statusFilter, methodFilter, search])
-
-  useEffect(() => {
-    const maxPage = Math.max(0, Math.ceil(filteredOffers.length / pagination.pageSize) - 1)
-    if (pagination.pageIndex > maxPage) {
-      setPagination((p) => ({ ...p, pageIndex: maxPage }))
+    } finally {
+      setDeleting(false)
+      setDeleteTarget(null)
     }
-  }, [filteredOffers.length, pagination.pageSize, pagination.pageIndex])
+  }
 
-  const columns = useMemo(
-    () => [
-      columnHelper.display({
-        id: "select",
-        header: ({ table }) => (
-          <div className="flex justify-center ml-2">
-            <Checkbox
-              checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-              onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-              aria-label="Select all"
-              className="border-gray-300 text-green-700 data-[state=checked]:bg-green-700 data-[state=checked]:border-green-700"
-            />
-          </div>
-        ),
-        cell: ({ row }) => (
-          <div className="flex justify-center ml-2">
-            <Checkbox
-              checked={row.getIsSelected()}
-              onCheckedChange={(value) => row.toggleSelected(!!value)}
-              aria-label="Select row"
-              className="border-gray-300 text-green-700 data-[state=checked]:bg-green-700 data-[state=checked]:border-green-700"
-            />
-          </div>
-        ),
-      }),
-      columnHelper.accessor("name", {
-        header: "OFFER DETAILS",
-        cell: ({ row }) => (
-          <div className="flex flex-col gap-1 min-w-[200px]">
-            <span className="font-semibold text-xs text-gray-900 tracking-tight">
-              {row.original.name}
-            </span>
-            <span className="text-[10px] text-muted-foreground truncate w-full max-w-[250px]">
-              {row.original.description || "No description"}
-            </span>
-          </div>
-        ),
-      }),
-      columnHelper.accessor("offerType", {
-        header: "PAYMENT METHOD",
-        cell: ({ getValue }) => getOfferTypeBadge(getValue()),
-      }),
-      columnHelper.display({
-        id: "discount",
-        header: "DISCOUNT",
-        cell: ({ row }) => (
-          <div className="flex flex-col gap-0.5">
-            <span className="font-semibold text-xs text-green-700">
-              {row.original.discountType === "FLAT"
-                ? `₹${row.original.discountValue} OFF`
-                : `${row.original.discountValue}% OFF`}
-            </span>
-            <span className="text-[10px] text-muted-foreground">
-              {row.original.maxDiscount ? `Up to ₹${row.original.maxDiscount}` : "No max limit"}
-            </span>
-          </div>
-        ),
-      }),
-      columnHelper.accessor("minOrderValue", {
-        header: "MIN ORDER",
-        cell: ({ row }) => (
-          <span className="font-medium text-xs text-gray-900">
-            {row.original.minOrderValue ? `₹${row.original.minOrderValue}` : "None"}
-          </span>
-        ),
-      }),
-      columnHelper.display({
-        id: "validity",
-        header: "VALIDITY",
-        cell: ({ row }) => (
-          <div className="flex items-center gap-2">
-            <Calendar className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-            <span className="text-xs text-gray-700">
-              {formatDateRange(row.original.validFrom, row.original.validTo)}
-            </span>
-          </div>
-        ),
-      }),
-      columnHelper.accessor("isActive", {
-        header: "STATUS",
-        cell: ({ row }) => {
-          const meta = statusMeta[getOfferStatus(row.original)]
-          return (
-            <Badge
-              variant="outline"
-              className={cn(
-                "shadow-none font-medium px-2 py-0 h-6 text-[10px] tracking-wide rounded",
-                meta.className
-              )}
-            >
-              {meta.label}
-            </Badge>
-          )
-        },
-      }),
-      columnHelper.display({
-        id: "actions",
-        header: "ACTIONS",
-        cell: ({ row }) => (
-          <div className="flex items-center gap-1">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-6 w-6 text-muted-foreground"
-              onClick={() => handleOpenDialog(row.original)}
-            >
-              <Pencil className="h-3.5 w-3.5" />
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground">
-                  <MoreVertical className="h-3.5 w-3.5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={() => handleOpenDialog(row.original)}>
-                  Edit Offer
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() =>
-                    updateMutation.mutateAsync({
-                      id: row.original.id,
-                      data: { isActive: !row.original.isActive },
-                    }).then((res) => {
-                      if (res.success) {
-                        toast.success("Offer updated successfully")
-                        setIsDialogOpen(false)
-                      } else {
-                        toast.error(res.error || "Failed to update offer")
-                      }
-                    })
-                  }
-                >
-                  Toggle Status
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="text-destructive"
-                  onClick={() => {
-                    if (confirm("Are you sure you want to delete this offer?"))
-                      deleteMutation.mutateAsync(row.original.id).then((res) => {
-                        if (res.success) {
-                          toast.success("Offer deleted successfully")
-                        } else {
-                          toast.error(res.error || "Failed to delete offer")
-                        }
-                      })
-                  }}
-                >
-                  Delete Offer
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        ),
-      }),
-    ],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+  const tabButton = (
+    active: boolean,
+    label: string,
+    count: number,
+    onClick: () => void
+  ) => (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-2 py-2 px-2 text-[13px] font-bold whitespace-nowrap transition-colors rounded-t-md",
+        active ? "text-[#15803D] border-b-2 border-[#16A34A] bg-[#F0FDF4]" : "text-[#475569] font-semibold hover:text-[#0F172A]"
+      )}
+    >
+      {label} <Badge variant="secondary" className={cn("px-1.5 py-0 rounded text-[11px] border-none font-bold", active ? "bg-[#16A34A]/20 text-[#15803D]" : "bg-[#F1F5F9] text-[#64748B]")}>{count}</Badge>
+    </button>
   )
 
-  const table = useReactTable({
-    data: filteredOffers,
-    columns,
-    state: {
-      rowSelection,
-      pagination,
-    },
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    onPaginationChange: setPagination,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  })
+  const pageNumbers = useMemo(() => {
+    const nums: (number | "...")[] = []
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) nums.push(i)
+      return nums
+    }
+    nums.push(1)
+    if (safePage > 3) nums.push("...")
+    for (let i = Math.max(2, safePage - 1); i <= Math.min(totalPages - 1, safePage + 1); i++) nums.push(i)
+    if (safePage < totalPages - 2) nums.push("...")
+    nums.push(totalPages)
+    return nums
+  }, [totalPages, safePage])
 
-  const totalPages = table.getPageCount()
-  const currentPage = table.getState().pagination.pageIndex
-  const pageSize = table.getState().pagination.pageSize
-  const pageStart = Math.max(0, Math.min(currentPage - 2, totalPages - 5))
-  const pageEnd = Math.min(totalPages, pageStart + 5)
+  const from = filtered.length === 0 ? 0 : (safePage - 1) * Number(pageSize) + 1
+  const to = Math.min(safePage * Number(pageSize), filtered.length)
+
+  const KPI_ICONS = [
+    { title: "Total Offers", icon: TicketPercent, bg: "bg-[#F0FDF4]", color: "text-[#16A34A]", value: stats.total, sub: "All active & inactive", subColor: "text-[#16A34A]" },
+    { title: "Active Offers", icon: ShieldCheck, bg: "bg-[#EFF6FF]", color: "text-[#2563EB]", value: stats.ACTIVE, sub: `${offers.length ? Math.round((stats.ACTIVE / offers.length) * 1000) / 10 : 0}% of total`, subColor: "text-[#2563EB]" },
+    { title: "Upcoming Offers", icon: Clock3, bg: "bg-[#FFFBEB]", color: "text-[#F59E0B]", value: stats.UPCOMING, sub: "Starts soon", subColor: "text-[#F97316]" },
+    { title: "Expired Offers", icon: BadgePercent, bg: "bg-[#FEF2F2]", color: "text-[#EF4444]", value: stats.EXPIRED, sub: "Need renewal", subColor: "text-[#EF4444]" },
+    { title: "Inactive Offers", icon: Tag, bg: "bg-[#F8FAFC]", color: "text-[#475569]", value: stats.INACTIVE, sub: "Paused or disabled", subColor: "text-[#64748B]" },
+  ]
 
   return (
-    <div className="space-y-6 pb-10 max-w-[1400px] mx-auto">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Payment Offers</h1>
-          <p className="text-sm text-muted-foreground">
-            Manage discounts and promotional payment offers
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            className="gap-2 text-sm shadow-sm"
-            onClick={handleExport}
-          >
-            <Download className="h-4 w-4" /> Export
-          </Button>
-          <Button
-            variant="outline"
-            className="gap-2 text-sm shadow-sm"
-            onClick={() => refetch()}
-            disabled={isFetching}
-          >
-            <RefreshCcw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} /> Refresh
-          </Button>
-          <Button
-            className="gap-2 text-sm shadow-sm bg-green-700 hover:bg-green-800 text-white"
-            onClick={() => handleOpenDialog()}
-          >
-            <Plus className="h-4 w-4" /> Create Offer
-          </Button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#FFFFFF] p-4 md:p-6 lg:p-8 font-sans">
+      <div className="max-w-[1600px] mx-auto space-y-5">
 
-      {/* Top Stats */}
-      {isLoading ? (
-        <StatsSkeleton />
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-          {stats.map((stat, i) => (
-            <Card key={i} className="shadow-sm border-0 ring-1 ring-border/50">
-              <CardContent className="p-4 flex flex-col gap-2">
-                <div className="flex justify-between items-start">
-                  <div className={`p-2.5 rounded-full ${stat.bg} shrink-0`}>
-                    <stat.icon className={`h-5 w-5 ${stat.color}`} />
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-[24px] font-bold text-[#0F172A] leading-tight">Payment Offers Management</h1>
+            <p className="text-[#475569] mt-1 text-[13px]">Create and manage payment method offers to boost conversions</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button variant="outline" onClick={exportCSV} className="flex items-center gap-2 px-4 h-[40px] bg-white border border-[#E2E8F0] text-[#0F172A] rounded-[7px] font-medium text-[13px] hover:bg-gray-50 transition-colors shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+              <Download className="h-[16px] w-[16px] text-[#0F172A]" />
+              Export Offers
+            </Button>
+            <Button onClick={openCreate} disabled={isFetching} className="flex items-center gap-2 px-4 h-[40px] bg-[#FF6B00] text-white rounded-[7px] font-medium text-[13px] hover:bg-[#EA580C] transition-colors shadow-[0_1px_3px_rgba(15,23,42,0.04)] border-none">
+              <Plus className="h-[16px] w-[16px]" strokeWidth={2.5} />
+              Create New Offer
+            </Button>
+          </div>
+        </div>
+
+        {/* Statistic Cards */}
+        {isLoading ? (
+          <StatsSkeleton />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            {KPI_ICONS.map((kpi) => (
+              <div key={kpi.title} className="bg-white rounded-[12px] p-4 border border-[#E2E8F0] shadow-[0_1px_3px_rgba(15,23,42,0.04)] flex items-start gap-4 h-[105px]">
+                <div className={`h-[44px] w-[44px] rounded-full ${kpi.bg} flex items-center justify-center shrink-0`}>
+                  <kpi.icon className={`h-[22px] w-[22px] ${kpi.color}`} strokeWidth={1.8} />
+                </div>
+                <div className="flex flex-col h-full justify-between w-full">
+                  <div>
+                    <p className="text-[13px] font-semibold text-[#475569]">{kpi.title}</p>
+                    <h3 className="text-[20px] font-bold text-[#0F172A] leading-tight mt-0.5">{kpi.value}</h3>
                   </div>
-                  <div className="text-right flex flex-col items-end">
-                    <p className="text-xs font-medium text-muted-foreground mb-1">{stat.title}</p>
-                    <h3 className="text-2xl font-bold leading-none">{stat.value}</h3>
+                  <div className={`text-[11px] font-medium mt-auto ${kpi.subColor}`}>
+                    {kpi.sub}
                   </div>
                 </div>
-                <p
-                  className={`text-[10px] font-medium mt-1 ${
-                    stat.trendUp === true
-                      ? "text-green-600"
-                      : stat.trendUp === false
-                      ? "text-red-500"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  {stat.trend}
-                </p>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+              </div>
+            ))}
+          </div>
+        )}
 
-      {/* Filters & Table */}
-      <Card className="shadow-sm border-0 ring-1 ring-border/50 overflow-hidden">
-        <div className="p-3 border-b border-border/50 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="relative min-w-[250px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground" />
-              <Input
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value)
-                  setPagination((p) => ({ ...p, pageIndex: 0 }))
-                }}
-                placeholder="Search offers..."
-                className="pl-8 h-8 text-xs bg-gray-50/50 rounded-md"
-              />
-            </div>
+        {/* Filter Bar */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative flex-1 min-w-[280px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-[16px] w-[16px] text-[#64748B]" />
+            <Input
+              type="text"
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+              placeholder="Search offers by name or method..."
+              className="w-full pl-9 pr-4 h-[38px] text-[13px] text-[#334155] placeholder:text-[#94A3B8] bg-white border-[#E2E8F0] rounded-[7px] focus-visible:ring-1 focus-visible:ring-[#FF6B00] transition-colors shadow-none"
+            />
+          </div>
 
-            <Select
-              value={statusFilter}
-              onValueChange={(v) => {
-                setStatusFilter(v)
-                setPagination((p) => ({ ...p, pageIndex: 0 }))
-              }}
-            >
-              <SelectTrigger className="w-[140px] h-8 text-xs bg-gray-50/50 rounded-md">
-                <SelectValue placeholder="Status: All" />
+          <div className="w-[130px]">
+            <Select value={methodFilter} onValueChange={(v) => { setMethodFilter(v); setPage(1) }}>
+              <SelectTrigger className="bg-white border-[#E2E8F0] text-[#475569] text-[13px] rounded-[7px] h-[38px] focus:ring-1 focus:ring-[#FF6B00] font-medium shadow-none">
+                <SelectValue placeholder="All Methods" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Status: All</SelectItem>
+                <SelectItem value="all">All Methods</SelectItem>
+                <SelectItem value="UPI">UPI</SelectItem>
+                <SelectItem value="CARDS">Cards</SelectItem>
+                <SelectItem value="WALLET">Wallet</SelectItem>
+                <SelectItem value="NETBANKING">Net Banking</SelectItem>
+                <SelectItem value="ALL">All Methods Only</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="w-[120px]">
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1) }}>
+              <SelectTrigger className="bg-white border-[#E2E8F0] text-[#475569] text-[13px] rounded-[7px] h-[38px] focus:ring-1 focus:ring-[#FF6B00] font-medium shadow-none">
+                <SelectValue placeholder="All Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Status</SelectItem>
                 <SelectItem value="ACTIVE">Active</SelectItem>
                 <SelectItem value="UPCOMING">Upcoming</SelectItem>
                 <SelectItem value="EXPIRED">Expired</SelectItem>
                 <SelectItem value="INACTIVE">Inactive</SelectItem>
               </SelectContent>
             </Select>
-            <Select
-              value={methodFilter}
-              onValueChange={(v) => {
-                setMethodFilter(v)
-                setPagination((p) => ({ ...p, pageIndex: 0 }))
-              }}
-            >
-              <SelectTrigger className="w-[150px] h-8 text-xs bg-gray-50/50 rounded-md">
-                <SelectValue placeholder="Method: All" />
+          </div>
+
+          <div className="w-[130px]">
+            <Select value={typeFilter} onValueChange={(v) => { setTypeFilter(v); setPage(1) }}>
+              <SelectTrigger className="bg-white border-[#E2E8F0] text-[#475569] text-[13px] rounded-[7px] h-[38px] focus:ring-1 focus:ring-[#FF6B00] font-medium shadow-none">
+                <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Method: All</SelectItem>
-                <SelectItem value="UPI">UPI</SelectItem>
-                <SelectItem value="CARDS">Cards</SelectItem>
-                <SelectItem value="NETBANKING">Net Banking</SelectItem>
-                <SelectItem value="WALLET">Wallet</SelectItem>
-                <SelectItem value="ALL">All Methods</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
+                <SelectItem value="FLAT">Flat Discount</SelectItem>
+                <SelectItem value="PERCENTAGE">Percentage</SelectItem>
               </SelectContent>
             </Select>
-            <Button
-              variant="outline"
-              className="gap-1.5 h-8 text-xs bg-white rounded-md"
-              onClick={resetFilters}
-            >
-              <RotateCcw className="h-3 w-3 text-muted-foreground" /> Reset
-            </Button>
           </div>
+
+          <Button variant="outline" onClick={resetFilters} className="flex items-center gap-2 px-3 h-[38px] bg-white border-[#E2E8F0] text-[#0F172A] rounded-[7px] font-medium text-[13px] hover:bg-gray-50 transition-colors ml-auto shadow-none">
+            <RotateCcw className="h-[16px] w-[16px] text-[#475569]" />
+            Reset
+          </Button>
         </div>
 
-        <div className="p-3 border-b border-border/50 flex flex-wrap items-center gap-3">
-          {(
-            [
-              { key: "ALL", label: "All Offers" },
-              { key: "ACTIVE", label: "Active" },
-              { key: "EXPIRED", label: "Expired" },
-              { key: "INACTIVE", label: "Inactive" },
-            ] as { key: "ALL" | OfferStatus; label: string }[]
-          ).map((tab) => {
-            const count =
-              tab.key === "ALL"
-                ? offers.length
-                : offers.filter((o) => getOfferStatus(o) === tab.key).length
-            const active = statusTab === tab.key
-            return (
-              <Button
-                key={tab.key}
-                variant="outline"
-                onClick={() => {
-                  setStatusTab(tab.key)
-                  setPagination((p) => ({ ...p, pageIndex: 0 }))
-                }}
-                className={cn(
-                  "h-8 text-xs font-medium gap-1.5 px-3",
-                  active
-                    ? "text-green-700 bg-green-50 border-green-200"
-                    : "text-gray-600 bg-white border-transparent shadow-none"
-                )}
-              >
-                {tab.label}
-                <span
-                  className={cn(
-                    "px-1 rounded text-[10px]",
-                    active ? "bg-green-100 text-green-700" : "bg-gray-200 text-gray-700"
-                  )}
-                >
-                  {count}
-                </span>
-              </Button>
-            )
-          })}
-        </div>
+        {/* Main Content Split */}
+        <div className="flex flex-col 2xl:flex-row gap-6">
 
-        {isLoading ? (
-          <TableSkeleton />
-        ) : (
-          <>
-            <div className="p-0 [&_th]:text-[10px] [&_th]:font-semibold [&_th]:text-muted-foreground [&_th]:uppercase [&_td]:py-3 border-b border-border/50">
-              <DataTable table={table} emptyMessage="No offers found" />
+          {/* Left Column - Offers Table */}
+          <div className="flex-1 min-w-0 flex flex-col space-y-4">
+
+            {/* Filter Tabs */}
+            <div className="flex items-center gap-6 overflow-x-auto pb-1 scrollbar-hide px-2">
+              {tabButton(statusFilter === "all", "All Offers", stats.total, () => { setStatusFilter("all"); setPage(1) })}
+              {tabButton(statusFilter === "ACTIVE", "Active", stats.ACTIVE, () => { setStatusFilter("ACTIVE"); setPage(1) })}
+              {tabButton(statusFilter === "UPCOMING", "Upcoming", stats.UPCOMING, () => { setStatusFilter("UPCOMING"); setPage(1) })}
+              {tabButton(statusFilter === "EXPIRED", "Expired", stats.EXPIRED, () => { setStatusFilter("EXPIRED"); setPage(1) })}
+              {tabButton(statusFilter === "INACTIVE", "Inactive", stats.INACTIVE, () => { setStatusFilter("INACTIVE"); setPage(1) })}
             </div>
 
-            <div className="p-3 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-b-xl">
-              <p className="text-xs text-muted-foreground">
-                Showing {filteredOffers.length === 0 ? 0 : currentPage * pageSize + 1} to{" "}
-                {Math.min((currentPage + 1) * pageSize, filteredOffers.length)} of{" "}
-                {filteredOffers.length} offers
-              </p>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 w-7 p-0 border-0"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  {Array.from({ length: pageEnd - pageStart }).map((_, idx) => {
-                    const page = pageStart + idx
-                    return (
-                      <Button
-                        key={page}
-                        variant="default"
-                        size="sm"
-                        onClick={() => table.setPageIndex(page)}
-                        className={cn(
-                          "h-7 w-7 p-0 font-medium",
-                          currentPage === page
-                            ? "bg-green-600 text-white hover:bg-green-700"
-                            : "bg-transparent text-gray-600 hover:bg-gray-100 shadow-none"
+            {/* Table Card */}
+            <div className="bg-white rounded-[12px] border border-[#E2E8F0] shadow-[0_1px_3px_rgba(15,23,42,0.04)] flex flex-col flex-1 overflow-hidden">
+              {isLoading ? (
+                <TableSkeleton />
+              ) : (
+                <>
+                  <ScrollArea className="w-full">
+                    <Table className="w-full text-left min-w-[950px]">
+                      <TableHeader>
+                        <TableRow className="bg-white border-b border-[#E2E8F0] hover:bg-white">
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] h-auto text-left">Offer Details</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] h-auto text-left">Method</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] h-auto text-left">Discount</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] h-auto text-left">Min. Order</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] h-auto text-left">Validity</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] h-auto text-left">Status</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] text-right h-auto pr-7">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody className="divide-y divide-[#F1F5F9]">
+                        {paginated.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={7} className="py-14 text-center">
+                              <div className="flex flex-col items-center gap-2">
+                                <Tag className="h-8 w-8 text-[#CBD5E1]" />
+                                <p className="text-sm font-medium text-[#475569]">No offers found</p>
+                                <p className="text-[12px] text-[#94A3B8]">Try adjusting your search or filters</p>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          paginated.map((o) => {
+                            const meta = METHOD_META[o.offerType] ?? METHOD_META.ALL
+                            const status = offerStatus(o)
+                            const statusMeta = STATUS_META[status]
+                            return (
+                              <TableRow key={o.id} className="hover:bg-[#F8FAFC] transition-colors bg-white group border-none">
+                                <TableCell className="py-4 px-5 align-top">
+                                  <div className="flex items-start gap-3">
+                                    <div className={`h-8 w-8 rounded-full ${meta.avatar} flex items-center justify-center shrink-0 mt-0.5 border`}>
+                                      {methodIcon(o.offerType, "h-4 w-4")}
+                                    </div>
+                                    <div>
+                                      <p className="text-[13px] font-semibold text-[#0F172A]">{o.name}</p>
+                                      {o.description && <p className="text-[12px] text-[#64748B] mt-0.5">{o.description}</p>}
+                                    </div>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top">
+                                  <Badge variant="outline" className={`${meta.badge} rounded-md text-[11px] font-semibold h-[26px] hover:${meta.badge} whitespace-nowrap`}>
+                                    {meta.label}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top">
+                                  {o.discountType === "FLAT" ? (
+                                    <div className="text-[13px] font-bold" style={{ color: meta.color }}>{formatINR(o.discountValue)} FLAT</div>
+                                  ) : (
+                                    <>
+                                      <div className="text-[13px] font-bold" style={{ color: meta.color }}>{o.discountValue}%</div>
+                                      {o.maxDiscount != null && (
+                                        <div className="text-[11px] text-[#64748B] mt-0.5">Upto {formatINR(o.maxDiscount)}</div>
+                                      )}
+                                    </>
+                                  )}
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top">
+                                  <div className="text-[13px] font-semibold text-[#0F172A]">{o.minOrderValue != null ? formatINR(o.minOrderValue) : "—"}</div>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top text-[12px] text-[#475569]">
+                                  <div>{formatDate(o.validFrom)}</div>
+                                  <div className="mt-0.5 text-[#94A3B8]">to {formatDate(o.validTo)}</div>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top">
+                                  <Badge variant="outline" className={`flex w-fit items-center gap-1.5 ${statusMeta.badge} rounded-md text-[11px] font-semibold h-[26px] whitespace-nowrap`}>
+                                    <div className={`h-1.5 w-1.5 rounded-full ${statusMeta.dot}`}></div>
+                                    {statusMeta.label}
+                                  </Badge>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top text-right">
+                                  <div className="flex items-center justify-end gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                    <Button variant="outline" size="icon" onClick={() => openEdit(o)} className="h-[36px] w-[36px] rounded-[7px] border-[#E2E8F0] text-[#475569] hover:bg-gray-50 transition-colors shadow-none">
+                                      <Pencil className="h-4 w-4" />
+                                    </Button>
+                                    <Button variant="outline" size="icon" onClick={() => setDeleteTarget(o)} className="h-[36px] w-[36px] rounded-[7px] border-[#FECACA] text-[#EF4444] hover:text-[#EF4444] hover:bg-[#FEF2F2] transition-colors shadow-none">
+                                      <Trash2 className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            )
+                          })
                         )}
-                      >
-                        {page + 1}
-                      </Button>
+                      </TableBody>
+                    </Table>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
+
+                  {/* Pagination */}
+                  <div className="p-4 border-t border-[#E2E8F0] flex flex-col sm:flex-row items-center justify-between gap-4 text-[13px] bg-white mt-auto">
+                    <span className="text-[#64748B]">Showing {from} to {to} of {filtered.length.toLocaleString()} offers</span>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" disabled={safePage === 1} onClick={() => setPage(Math.max(1, safePage - 1))} className="h-[32px] w-[32px] rounded-[7px] text-[#94A3B8] hover:bg-gray-50 transition-colors">
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        {pageNumbers.map((num, idx) =>
+                          num === "..." ? (
+                            <span key={`ellipsis-${idx}`} className="text-[#94A3B8] px-1">...</span>
+                          ) : (
+                            <Button
+                              key={num}
+                              variant={num === safePage ? "default" : "ghost"}
+                              onClick={() => setPage(num)}
+                              className={`h-[32px] w-[32px] rounded-[7px] px-0 shadow-none ${num === safePage ? "bg-[#16A34A] hover:bg-[#15803D] text-white font-medium" : "text-[#334155] hover:border-[#E2E8F0] border border-transparent transition-colors"}`}
+                            >
+                              {num}
+                            </Button>
+                          )
+                        )}
+                        <Button variant="ghost" size="icon" disabled={safePage === totalPages} onClick={() => setPage(Math.min(totalPages, safePage + 1))} className="h-[32px] w-[32px] rounded-[7px] text-[#475569] hover:bg-gray-50 transition-colors">
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <div className="relative border-l border-[#E2E8F0] pl-4 hidden sm:flex items-center gap-2">
+                        <span className="text-[#64748B]">Rows per page</span>
+                        <div className="w-[70px]">
+                          <Select value={pageSize} onValueChange={(v) => { setPageSize(v); setPage(1) }}>
+                            <SelectTrigger className="bg-white border-[#E2E8F0] text-[#334155] text-[13px] h-[32px] focus:ring-1 focus:ring-[#FF6B00] font-medium shadow-none">
+                              <SelectValue placeholder="10" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="10">10</SelectItem>
+                              <SelectItem value="20">20</SelectItem>
+                              <SelectItem value="50">50</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          </div>
+
+          {/* Right Column - Stats & Actions */}
+          <div className="w-full 2xl:w-[320px] shrink-0 flex flex-col gap-5">
+
+            {/* Offer Statistics Donut Chart */}
+            <div className="bg-white rounded-[12px] border border-[#E2E8F0] shadow-[0_1px_3px_rgba(15,23,42,0.04)] p-5">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-[15px] font-semibold text-[#0F172A]">Offers by Method</h3>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <div className="relative w-[180px] h-[180px] shrink-0 mb-6 flex items-center justify-center">
+                  <PieChart width={180} height={180}>
+                    <Pie
+                      data={chartData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={65}
+                      outerRadius={90}
+                      paddingAngle={0}
+                      dataKey="value"
+                      stroke="none"
+                      startAngle={90}
+                      endAngle={-270}
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                    <span className="text-[18px] font-bold text-[#0F172A] leading-tight mt-1">{stats.total}</span>
+                    <span className="text-[11px] text-[#64748B]">Total Offers</span>
+                  </div>
+                </div>
+
+                <div className="w-full flex flex-col gap-2.5">
+                  {methodStats.length === 0 ? (
+                    <p className="text-[12px] text-[#94A3B8] text-center">No offers yet</p>
+                  ) : (
+                    methodStats.map((m) => (
+                      <div key={m.type} className="flex items-center justify-between text-[13px]">
+                        <div className="flex items-center gap-2 text-[#0F172A]">
+                          <div className="h-[9px] w-[9px] rounded-full" style={{ backgroundColor: m.color }}></div>
+                          {m.label}
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-semibold text-[#0F172A]">{m.count}</span>
+                          <span className="text-[#64748B] text-[11px]">({m.pct}%)</span>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Recent Offers */}
+            <div className="bg-white rounded-[12px] border border-[#E2E8F0] shadow-[0_1px_3px_rgba(15,23,42,0.04)] p-5">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-[15px] font-semibold text-[#0F172A]">Recent Offers</h3>
+              </div>
+
+              <div className="space-y-4">
+                {recentOffers.length === 0 ? (
+                  <p className="text-[12px] text-[#94A3B8]">No offers yet</p>
+                ) : (
+                  recentOffers.map((o, i) => {
+                    const meta = METHOD_META[o.offerType] ?? METHOD_META.ALL
+                    const statusMeta = STATUS_META[offerStatus(o)]
+                    return (
+                      <React.Fragment key={o.id}>
+                        {i > 0 && <div className="h-[1px] w-full bg-[#F1F5F9]" />}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-3">
+                            <div className={`h-[32px] w-[32px] rounded-full ${meta.avatarBg} flex items-center justify-center text-[13px] font-semibold shrink-0`}>
+                              {methodIcon(o.offerType, "h-4 w-4")}
+                            </div>
+                            <div>
+                              <span className="text-[13px] font-semibold text-[#0F172A] block max-w-[150px] truncate">{o.name}</span>
+                              <span className="text-[10px] text-[#94A3B8]">{formatDate(o.createdAt)}</span>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-1">
+                            <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-semibold ${statusMeta.badge}`}>
+                              <div className={`h-1.5 w-1.5 rounded-full ${statusMeta.dot}`}></div>
+                              {statusMeta.label}
+                            </span>
+                            {o.discountType === "FLAT"
+                              ? <span className="text-[11px] font-bold" style={{ color: meta.color }}>{formatINR(o.discountValue)} off</span>
+                              : <span className="text-[11px] font-bold" style={{ color: meta.color }}>{o.discountValue}% off</span>}
+                          </div>
+                        </div>
+                      </React.Fragment>
                     )
-                  })}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 w-7 p-0 border-0"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
+                  })
+                )}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div>
+              <h3 className="text-[15px] font-semibold text-[#0F172A] mb-3">Quick Actions</h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 2xl:grid-cols-2 gap-3">
+                <button onClick={openCreate} className="flex items-center gap-3 p-3 rounded-[12px] bg-white border border-[#E2E8F0] hover:border-[#16A34A] hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] transition-all group text-left">
+                  <div className="h-9 w-9 rounded-full bg-[#F0FDF4] border border-[#DCFCE7] flex items-center justify-center shrink-0">
+                    <Plus className="h-[18px] w-[18px] text-[#16A34A]" />
+                  </div>
+                  <div>
+                    <span className="block text-[13px] font-semibold text-[#0F172A] leading-tight">Create New Offer</span>
+                    <span className="block text-[10px] text-[#64748B] mt-0.5">Add a new payment offer</span>
+                  </div>
+                </button>
+
+                <button className="flex items-center gap-3 p-3 rounded-[12px] bg-white border border-[#E2E8F0] hover:border-[#F97316] hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] transition-all group text-left">
+                  <div className="h-9 w-9 rounded-full bg-[#FFF7ED] border border-[#FED7AA] flex items-center justify-center shrink-0">
+                    <ChartNoAxesColumnIncreasing className="h-[18px] w-[18px] text-[#F97316]" />
+                  </div>
+                  <div>
+                    <span className="block text-[13px] font-semibold text-[#0F172A] leading-tight">Offer Analytics</span>
+                    <span className="block text-[10px] text-[#64748B] mt-0.5">View performance insights</span>
+                  </div>
+                </button>
+
+                <button onClick={exportCSV} className="flex items-center gap-3 p-3 rounded-[12px] bg-white border border-[#E2E8F0] hover:border-[#2563EB] hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] transition-all group text-left">
+                  <div className="h-9 w-9 rounded-full bg-[#EFF6FF] border border-[#DBEAFE] flex items-center justify-center shrink-0">
+                    <Download className="h-[18px] w-[18px] text-[#2563EB]" />
+                  </div>
+                  <div>
+                    <span className="block text-[13px] font-semibold text-[#0F172A] leading-tight">Export Offers</span>
+                    <span className="block text-[10px] text-[#64748B] mt-0.5">Download all offers list</span>
+                  </div>
+                </button>
+
+                <button className="flex items-center gap-3 p-3 rounded-[12px] bg-white border border-[#E2E8F0] hover:border-[#7C3AED] hover:shadow-[0_4px_12px_rgba(15,23,42,0.06)] transition-all group text-left">
+                  <div className="h-9 w-9 rounded-full bg-[#F5F3FF] border border-[#DDD6FE] flex items-center justify-center shrink-0">
+                    <Settings className="h-[18px] w-[18px] text-[#7C3AED]" />
+                  </div>
+                  <div>
+                    <span className="block text-[13px] font-semibold text-[#0F172A] leading-tight">Offer Settings</span>
+                    <span className="block text-[10px] text-[#64748B] mt-0.5">Configure offer rules</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            {/* Tips Card */}
+            <div>
+              <h3 className="text-[15px] font-semibold text-[#0F172A] mb-3">Tips</h3>
+              <div className="bg-[#F7FEF8] rounded-[12px] border border-[#DCFCE7] p-4 flex gap-3">
+                <div className="h-8 w-8 rounded-full bg-[#F0FDF4] flex items-center justify-center shrink-0 mt-0.5">
+                  <Lightbulb className="h-[20px] w-[20px] text-[#16A34A]" />
                 </div>
-                <div className="flex items-center gap-2 border-l pl-4 border-border/50">
-                  <span className="text-xs text-muted-foreground">Rows per page</span>
-                  <Select
-                    value={String(pageSize)}
-                    onValueChange={(v) =>
-                      setPagination({ pageIndex: 0, pageSize: Number(v) })
-                    }
-                  >
-                    <SelectTrigger className="w-[70px] h-7 text-xs border bg-transparent">
-                      <SelectValue placeholder="10" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                    </SelectContent>
-                  </Select>
+                <div>
+                  <p className="text-[13px] font-semibold text-[#166534]">Use targeted payment offers to boost conversions.</p>
+                  <p className="text-[12px] text-[#475569] mt-1">UPI offers get 35% more usage!</p>
                 </div>
               </div>
             </div>
-          </>
-        )}
-      </Card>
 
-      {/* Add / Edit Dialog */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>{editingOffer ? "Edit Payment Offer" : "Create New Offer"}</DialogTitle>
-            <DialogDescription>
-              {editingOffer
-                ? "Update the details of the promotional offer."
-                : "Configure a new promotional payment offer."}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label className="text-xs font-semibold">Offer Name</Label>
-              <Input
-                placeholder="e.g. SUPER10"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="h-9 text-sm"
-              />
-            </div>
-
-            <div className="grid gap-2">
-              <Label className="text-xs font-semibold">Description</Label>
-              <Textarea
-                placeholder="Offer details..."
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="text-sm min-h-[60px]"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Payment Method</Label>
-                <Select
-                  value={formData.offerType}
-                  onValueChange={(v) => setFormData({ ...formData, offerType: v })}
-                >
-                  <SelectTrigger className="h-9 text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ALL">All Methods</SelectItem>
-                    <SelectItem value="UPI">UPI</SelectItem>
-                    <SelectItem value="CARDS">Cards</SelectItem>
-                    <SelectItem value="NETBANKING">Net Banking</SelectItem>
-                    <SelectItem value="WALLET">Wallet</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Discount Type</Label>
-                <Select
-                  value={formData.discountType}
-                  onValueChange={(v) => setFormData({ ...formData, discountType: v })}
-                >
-                  <SelectTrigger className="h-9 text-sm">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PERCENTAGE">Percentage (%)</SelectItem>
-                    <SelectItem value="FLAT">Flat Amount (₹)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Discount Value</Label>
-                <Input
-                  type="number"
-                  value={formData.discountValue}
-                  onChange={(e) =>
-                    setFormData({ ...formData, discountValue: Number(e.target.value) })
-                  }
-                  className="h-9 text-sm"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Max Discount (₹)</Label>
-                <Input
-                  type="number"
-                  value={formData.maxDiscount}
-                  onChange={(e) =>
-                    setFormData({ ...formData, maxDiscount: Number(e.target.value) })
-                  }
-                  className="h-9 text-sm"
-                  disabled={formData.discountType === "FLAT"}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Valid From</Label>
-                <Input
-                  type="datetime-local"
-                  value={formData.validFrom}
-                  onChange={(e) => setFormData({ ...formData, validFrom: e.target.value })}
-                  className="h-9 text-sm"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Valid To</Label>
-                <Input
-                  type="datetime-local"
-                  value={formData.validTo}
-                  onChange={(e) => setFormData({ ...formData, validTo: e.target.value })}
-                  className="h-9 text-sm"
-                />
-              </div>
-            </div>
-
-            <div className="grid gap-2 mt-2">
-              <Label className="text-xs font-semibold">Minimum Order Value (₹)</Label>
-              <Input
-                type="number"
-                value={formData.minOrderValue}
-                onChange={(e) =>
-                  setFormData({ ...formData, minOrderValue: Number(e.target.value) })
-                }
-                className="h-9 text-sm"
-              />
-            </div>
-
-            <div className="flex items-center gap-3 mt-4 p-3 border rounded-lg bg-gray-50/50">
-              <Switch
-                checked={formData.isActive}
-                onCheckedChange={(v) => setFormData({ ...formData, isActive: v })}
-                className="data-[state=checked]:bg-green-600"
-              />
-              <div className="flex flex-col gap-0.5">
-                <Label className="text-sm font-semibold">Offer is Active</Label>
-                <span className="text-[10px] text-muted-foreground">
-                  Customers can apply this offer during checkout.
-                </span>
-              </div>
-            </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 mt-4 pt-4 border-t border-border/50">
-            <Button
-              variant="outline"
-              onClick={() => setIsDialogOpen(false)}
-              className="h-9 text-xs"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={handleSave}
-              className="h-9 text-xs bg-green-700 hover:bg-green-800 text-white"
-              disabled={createMutation.isPending || updateMutation.isPending}
-            >
-              {createMutation.isPending || updateMutation.isPending ? "Saving..." : "Save Offer"}
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+        </div>
+
+      </div>
+
+      <OfferFormDialog
+        key={editing?.id ?? "create"}
+        open={formOpen}
+        onOpenChange={setFormOpen}
+        editing={editing}
+      />
+
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Payment Offer?</AlertDialogTitle>
+            <AlertDialogDescription>
+              &ldquo;{deleteTarget?.name}&rdquo; will be permanently removed. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-white border border-[#E2E8F0] text-[#475569] rounded-[7px] shadow-none">Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-[#EF4444] hover:bg-[#DC2626] text-white rounded-[7px] shadow-none">
+              {deleting ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

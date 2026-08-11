@@ -31,6 +31,19 @@ export interface AdminSupportTicket {
     phoneNumber: string | null;
     image: string | null;
   };
+  order?: {
+    id: string;
+    publicCode: string | null;
+    totalAmount: string;
+    status: string;
+    createdAt: string;
+    orderItems: {
+      id: string;
+      quantity: number;
+      unitPrice: string;
+      menuItem: { name: string };
+    }[];
+  } | null;
 }
 
 async function fetchSupportTickets(): Promise<AdminSupportTicket[]> {

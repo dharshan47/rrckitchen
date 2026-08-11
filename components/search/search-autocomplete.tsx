@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useQuery, keepPreviousData } from "@tanstack/react-query"
-import { Search, MapPin, UtensilsCrossed, ArrowLeft, Clock, X } from "lucide-react"
+import { MapPin, UtensilsCrossed, ArrowLeft, Clock, X } from "lucide-react"
 import Image from "next/image"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { cn } from "@/lib/utils"
@@ -210,10 +210,6 @@ export function SearchAutocomplete({
   )
 
   const input = (ref: React.RefObject<HTMLInputElement | null>) => (
-    <div className="relative">
-      <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
-        <Search className="h-5 w-5 text-muted-foreground" />
-      </div>
       <input
         ref={ref}
         placeholder={placeholder}
@@ -229,7 +225,7 @@ export function SearchAutocomplete({
           inputClassName
         )}
       />
-    </div>
+    
   )
 
   const autocompleteDropdown = () => {

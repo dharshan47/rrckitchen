@@ -93,9 +93,9 @@ function LocationDialogInner({ onClose }: { onClose: () => void }) {
         }
         try {
           const displayName = await reverseGeocode.mutateAsync({ lat: latitude, lng: longitude })
-          setDeliveryAddress(displayName ?? `Location at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
+          setDeliveryAddress(displayName ?? `Location at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`, latitude, longitude)
         } catch {
-          setDeliveryAddress(`Location at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
+          setDeliveryAddress(`Location at ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`, latitude, longitude)
         } finally {
           actions.setBusy(false)
           onClose()
@@ -121,7 +121,7 @@ function LocationDialogInner({ onClose }: { onClose: () => void }) {
         return
       }
       actions.setSelectedPos({ lat: place.lat, lng: place.lng })
-      setDeliveryAddress(place.name)
+      setDeliveryAddress(place.name, place.lat, place.lng)
       onClose()
     },
     [clearError, setDeliveryAddress, onClose, actions]
@@ -145,9 +145,9 @@ function LocationDialogInner({ onClose }: { onClose: () => void }) {
     actions.setBusy(true)
     try {
       const displayName = await reverseGeocode.mutateAsync({ lat: selectedPos.lat, lng: selectedPos.lng })
-      setDeliveryAddress(displayName ?? `Location at ${selectedPos.lat.toFixed(4)}, ${selectedPos.lng.toFixed(4)}`)
+      setDeliveryAddress(displayName ?? `Location at ${selectedPos.lat.toFixed(4)}, ${selectedPos.lng.toFixed(4)}`, selectedPos.lat, selectedPos.lng)
     } catch {
-      setDeliveryAddress(`Location at ${selectedPos.lat.toFixed(4)}, ${selectedPos.lng.toFixed(4)}`)
+      setDeliveryAddress(`Location at ${selectedPos.lat.toFixed(4)}, ${selectedPos.lng.toFixed(4)}`, selectedPos.lat, selectedPos.lng)
     } finally {
       actions.setBusy(false)
       onClose()

@@ -445,6 +445,7 @@ export const ModelName = {
   WishlistItem: 'WishlistItem',
   KitchenWishlist: 'KitchenWishlist',
   SearchPageContent: 'SearchPageContent',
+  SearchPageKitchenCard: 'SearchPageKitchenCard',
   SearchPageFilter: 'SearchPageFilter',
   SearchPageBadge: 'SearchPageBadge',
   SearchPageInfoItem: 'SearchPageInfoItem',
@@ -475,7 +476,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "customer" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "rrcKitchenReview" | "menuItemFeedback" | "menuItemReview" | "deliveryAssignment" | "deliveryLocation" | "payment" | "pushSubscription" | "deliverySlot" | "notificationLog" | "supportTicket" | "ticketMessage" | "contactMessage" | "referral" | "loyaltyPoints" | "loyaltyTransaction" | "loyaltyCoupon" | "loyaltyCouponPurchase" | "coupon" | "couponRedemption" | "paymentOffer" | "upiCollectRequest" | "refund" | "kitchenPayout" | "deliveryPartnerPayout" | "kitchenAddress" | "adminProfile" | "adminInvite" | "adminApprovalRequest" | "adminAuditLog" | "twoFactor" | "wishlistItem" | "kitchenWishlist" | "searchPageContent" | "searchPageFilter" | "searchPageBadge" | "searchPageInfoItem" | "categoryPageContent" | "categoryPageFeature" | "categoryPageOffer" | "categoryPageFaq" | "kitchenSearchPageContent" | "kitchenSearchChip" | "kitchenSearchFilter" | "kitchenSearchMenuCategory" | "kitchenSearchRecommendedItem" | "cravingsRule" | "cravingsRuleItem" | "publicIdCounter"
+    modelProps: "user" | "role" | "customer" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "rrcKitchenReview" | "menuItemFeedback" | "menuItemReview" | "deliveryAssignment" | "deliveryLocation" | "payment" | "pushSubscription" | "deliverySlot" | "notificationLog" | "supportTicket" | "ticketMessage" | "contactMessage" | "referral" | "loyaltyPoints" | "loyaltyTransaction" | "loyaltyCoupon" | "loyaltyCouponPurchase" | "coupon" | "couponRedemption" | "paymentOffer" | "upiCollectRequest" | "refund" | "kitchenPayout" | "deliveryPartnerPayout" | "kitchenAddress" | "adminProfile" | "adminInvite" | "adminApprovalRequest" | "adminAuditLog" | "twoFactor" | "wishlistItem" | "kitchenWishlist" | "searchPageContent" | "searchPageKitchenCard" | "searchPageFilter" | "searchPageBadge" | "searchPageInfoItem" | "categoryPageContent" | "categoryPageFeature" | "categoryPageOffer" | "categoryPageFaq" | "kitchenSearchPageContent" | "kitchenSearchChip" | "kitchenSearchFilter" | "kitchenSearchMenuCategory" | "kitchenSearchRecommendedItem" | "cravingsRule" | "cravingsRuleItem" | "publicIdCounter"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -4993,6 +4994,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    SearchPageKitchenCard: {
+      payload: Prisma.$SearchPageKitchenCardPayload<ExtArgs>
+      fields: Prisma.SearchPageKitchenCardFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.SearchPageKitchenCardFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchPageKitchenCardPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.SearchPageKitchenCardFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchPageKitchenCardPayload>
+        }
+        findFirst: {
+          args: Prisma.SearchPageKitchenCardFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchPageKitchenCardPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.SearchPageKitchenCardFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchPageKitchenCardPayload>
+        }
+        findMany: {
+          args: Prisma.SearchPageKitchenCardFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchPageKitchenCardPayload>[]
+        }
+        create: {
+          args: Prisma.SearchPageKitchenCardCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchPageKitchenCardPayload>
+        }
+        createMany: {
+          args: Prisma.SearchPageKitchenCardCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.SearchPageKitchenCardCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchPageKitchenCardPayload>[]
+        }
+        delete: {
+          args: Prisma.SearchPageKitchenCardDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchPageKitchenCardPayload>
+        }
+        update: {
+          args: Prisma.SearchPageKitchenCardUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchPageKitchenCardPayload>
+        }
+        deleteMany: {
+          args: Prisma.SearchPageKitchenCardDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.SearchPageKitchenCardUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.SearchPageKitchenCardUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchPageKitchenCardPayload>[]
+        }
+        upsert: {
+          args: Prisma.SearchPageKitchenCardUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$SearchPageKitchenCardPayload>
+        }
+        aggregate: {
+          args: Prisma.SearchPageKitchenCardAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateSearchPageKitchenCard>
+        }
+        groupBy: {
+          args: Prisma.SearchPageKitchenCardGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SearchPageKitchenCardGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.SearchPageKitchenCardCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.SearchPageKitchenCardCountAggregateOutputType> | number
+        }
+      }
+    }
     SearchPageFilter: {
       payload: Prisma.$SearchPageFilterPayload<ExtArgs>
       fields: Prisma.SearchPageFilterFieldRefs
@@ -6292,6 +6367,8 @@ export const KitchenPartnerScalarFieldEnum = {
   operatingHours: 'operatingHours',
   createdAt: 'createdAt',
   estimatedPrepTime: 'estimatedPrepTime',
+  minOrder: 'minOrder',
+  deliveryRadiusKm: 'deliveryRadiusKm',
   updatedAt: 'updatedAt',
   deletedAt: 'deletedAt'
 } as const
@@ -6313,7 +6390,10 @@ export const KitchenPartnerKycScalarFieldEnum = {
   accountHolderName: 'accountHolderName',
   upiId: 'upiId',
   gpayNumber: 'gpayNumber',
-  phoneNumber: 'phoneNumber'
+  phoneNumber: 'phoneNumber',
+  fssaiNumber: 'fssaiNumber',
+  fssaiValidTill: 'fssaiValidTill',
+  gstNumber: 'gstNumber'
 } as const
 
 export type KitchenPartnerKycScalarFieldEnum = (typeof KitchenPartnerKycScalarFieldEnum)[keyof typeof KitchenPartnerKycScalarFieldEnum]
@@ -7051,11 +7131,37 @@ export const SearchPageContentScalarFieldEnum = {
   kitchensCount: 'kitchensCount',
   version: 'version',
   updatedBy: 'updatedBy',
+  backgroundColor: 'backgroundColor',
+  metaTitle: 'metaTitle',
+  metaDescription: 'metaDescription',
+  keywords: 'keywords',
+  showKitchens: 'showKitchens',
+  showKitchensLimit: 'showKitchensLimit',
+  showDishes: 'showDishes',
+  showDishesLimit: 'showDishesLimit',
+  showCategories: 'showCategories',
+  showCategoriesLimit: 'showCategoriesLimit',
+  autoSuggest: 'autoSuggest',
+  recentSearches: 'recentSearches',
+  showKitchenBadges: 'showKitchenBadges',
+  showDistance: 'showDistance',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 } as const
 
 export type SearchPageContentScalarFieldEnum = (typeof SearchPageContentScalarFieldEnum)[keyof typeof SearchPageContentScalarFieldEnum]
+
+
+export const SearchPageKitchenCardScalarFieldEnum = {
+  id: 'id',
+  searchPageContentId: 'searchPageContentId',
+  kitchenPartnerId: 'kitchenPartnerId',
+  imageUrl: 'imageUrl',
+  badge: 'badge',
+  sortOrder: 'sortOrder'
+} as const
+
+export type SearchPageKitchenCardScalarFieldEnum = (typeof SearchPageKitchenCardScalarFieldEnum)[keyof typeof SearchPageKitchenCardScalarFieldEnum]
 
 
 export const SearchPageFilterScalarFieldEnum = {
@@ -7074,6 +7180,7 @@ export const SearchPageBadgeScalarFieldEnum = {
   id: 'id',
   searchPageContentId: 'searchPageContentId',
   name: 'name',
+  position: 'position',
   isEnabled: 'isEnabled',
   sortOrder: 'sortOrder'
 } as const
@@ -7948,6 +8055,7 @@ export type GlobalOmitConfig = {
   wishlistItem?: Prisma.WishlistItemOmit
   kitchenWishlist?: Prisma.KitchenWishlistOmit
   searchPageContent?: Prisma.SearchPageContentOmit
+  searchPageKitchenCard?: Prisma.SearchPageKitchenCardOmit
   searchPageFilter?: Prisma.SearchPageFilterOmit
   searchPageBadge?: Prisma.SearchPageBadgeOmit
   searchPageInfoItem?: Prisma.SearchPageInfoItemOmit

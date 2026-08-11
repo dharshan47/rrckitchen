@@ -74,7 +74,7 @@ describe("SearchAutocomplete", () => {
     const input = screen.getByPlaceholderText("Search for meals..")
     fireEvent.change(input, { target: { value: "dosa" } })
     await waitFor(() => {
-      expect(screen.getByText("Dosa")).toBeInTheDocument()
+      expect(screen.getAllByText("Dosa").length).toBeGreaterThan(0)
     })
   })
 
@@ -155,7 +155,7 @@ describe("SearchAutocomplete", () => {
     const input = screen.getByPlaceholderText("Search for meals..")
     fireEvent.change(input, { target: { value: "dosa" } })
     await waitFor(() => {
-      expect(screen.getByText("Dosa")).toBeInTheDocument()
+      expect(screen.getAllByText("Dosa").length).toBeGreaterThan(0)
     })
     fireEvent.keyDown(input, { key: "Escape" })
     await waitFor(() => {
@@ -201,7 +201,7 @@ describe("SearchAutocomplete", () => {
     const input = screen.getByPlaceholderText("Search for meals..")
     fireEvent.change(input, { target: { value: "dosa" } })
     await waitFor(() => {
-      expect(screen.getByText(/Dosa/)).toBeInTheDocument()
+      expect(screen.getAllByText(/Dosa/).length).toBeGreaterThan(0)
     })
   })
 

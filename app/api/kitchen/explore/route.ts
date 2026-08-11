@@ -34,7 +34,7 @@ export async function GET(request: Request) {
       include: {
         kitchenAlias: true,
         kitchenAddress: {
-          select: { latitude: true, longitude: true },
+          select: { latitude: true, longitude: true, area: true, landmark: true, lineOne: true, pincode: true },
         },
         menus: {
           where: { isActive: true },
@@ -79,11 +79,15 @@ export async function GET(request: Request) {
         id: k.id,
         slug: k.slug || slugify(k.kitchenAlias?.displayName ?? k.id, { lower: true, strict: true }),
         displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
+        profileImage: k.kitchenAlias?.imageUrl ?? null,
         avgRating,
         totalReviews: k._count.reviews,
         imageUrl: k.kitchenAlias?.imageUrl ?? firstItemPhoto,
         customOfferText: k.kitchenAlias?.customOfferText ?? null,
         cuisineTags,
+        locality: [k.kitchenAddress?.area, k.kitchenAddress?.landmark, k.kitchenAddress?.lineOne]
+          .filter(Boolean)
+          .join(", ") || null,
         items: allItems.map((i) => ({
           id: i.id,
           name: i.name,

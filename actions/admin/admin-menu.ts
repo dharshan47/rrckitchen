@@ -18,6 +18,7 @@ export async function getAllMenuItems() {
     include: {
       menu: {
         select: {
+          id: true,
           name: true,
           kitchenPartner: {
             select: {
@@ -47,10 +48,88 @@ export async function getAllMenuItems() {
     totalReviews: item.totalReviews,
     orderCount: item._count?.orderItems ?? 0,
     photos: item.photos.map((p) => ({ id: p.id, imageUrl: p.imageUrl })),
+    menuId: item.menuId,
     menuName: item.menu.name,
+    cuisine: item.cuisine,
     kitchenName: item.menu.kitchenPartner.kitchenAlias?.displayName,
     createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
   }))
+}
+
+/**
+ * Lists active kitchens with their menus for the admin create / move flows.
+ */
+export async function getAdminKitchensWithMenus() {
+  try { await requirePermission("MANAGE_CATALOG") } catch { return [] }
+
+  const kitchens = await prisma.kitchenPartner.findMany({
+    where: { deletedAt: null },
+    select: {
+      id: true,
+      kitchenAlias: { select: { displayName: true } },
+      menus: {
+        where: { isActive: true },
+        select: { id: true, name: true },
+        orderBy: { createdAt: "asc" },
+      },
+    },
+    orderBy: { createdAt: "asc" },
+  })
+
+  return kitchens.map((k) => ({
+    id: k.id,
+    name: k.kitchenAlias?.displayName ?? "Unnamed Kitchen",
+    menus: k.menus,
+  }))
+}
+
+export async function createMenuItem(data: {
+  menuId: string
+  name: string
+  description?: string
+  price: number
+  compareAtPrice?: number | null
+  foodType?: string
+  timeSlot?: string
+  isAvailable?: boolean
+  availableFor?: "TODAY" | "TOMORROW" | "BOTH"
+  cuisine?: string
+}) {
+  let adminSession
+  try { const result = await requirePermission("MANAGE_CATALOG"); adminSession = result.session } catch {
+    return { success: false, error: "Unauthorized" }
+  }
+
+  try {
+    const menu = await prisma.menu.findUnique({ where: { id: data.menuId } })
+    if (!menu) return { success: false, error: "Selected menu not found" }
+
+    const item = await prisma.menuItem.create({
+      data: {
+        menuId: data.menuId,
+        name: data.name.trim(),
+        description: data.description?.trim() || null,
+        price: data.price,
+        compareAtPrice: data.compareAtPrice ?? null,
+        foodType: (data.foodType as "VEG" | "NONVEG") ?? "VEG",
+        timeSlot: (data.timeSlot as "MORNING" | "LUNCH" | "EVENINGSNACKS" | "DINNER") ?? "LUNCH",
+        isAvailable: data.isAvailable ?? true,
+        availableFor: data.availableFor ?? "BOTH",
+        cuisine: data.cuisine?.trim() || null,
+      },
+    })
+    await logAdminAction({
+      actorUserId: adminSession.user.id,
+      action: "CREATE_MENU_ITEM",
+      targetType: "MenuItem",
+      targetId: item.id,
+      metadata: { name: item.name, menuId: data.menuId },
+    })
+    return { success: true, item: { id: item.id } }
+  } catch {
+    return { success: false, error: "Failed to create menu item" }
+  }
 }
 
 export async function updateMenuItem(
@@ -64,6 +143,8 @@ export async function updateMenuItem(
     timeSlot?: string
     isAvailable?: boolean
     availableFor?: "TODAY" | "TOMORROW" | "BOTH"
+    menuId?: string
+    cuisine?: string | null
   }
 ) {
   let adminSession
@@ -83,6 +164,8 @@ export async function updateMenuItem(
         ...(data.timeSlot !== undefined && { timeSlot: data.timeSlot as "MORNING" | "LUNCH" | "EVENINGSNACKS" | "DINNER" }),
         ...(data.isAvailable !== undefined && { isAvailable: data.isAvailable }),
         ...(data.availableFor !== undefined && { availableFor: data.availableFor }),
+        ...(data.menuId !== undefined && { menuId: data.menuId }),
+        ...(data.cuisine !== undefined && { cuisine: data.cuisine }),
       },
     })
     await logAdminAction({

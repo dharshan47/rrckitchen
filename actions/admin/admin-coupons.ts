@@ -18,6 +18,14 @@ export async function getAllCoupons() {
     orderBy: { createdAt: "desc" },
   })
 
+  const redemptionSums = await prisma.couponRedemption.groupBy({
+    by: ["couponId"],
+    _sum: { discountAmount: true },
+  })
+  const discountGivenByCoupon = new Map(
+    redemptionSums.map((s) => [s.couponId, Number(s._sum.discountAmount ?? 0)])
+  )
+
   return coupons.map((c) => ({
     id: c.id,
     code: c.code,
@@ -35,6 +43,7 @@ export async function getAllCoupons() {
     usageLimitPerUser: c.usageLimitPerUser,
     isActive: c.isActive,
     redemptionCount: c._count.redemptions,
+    discountGiven: discountGivenByCoupon.get(c.id) ?? 0,
     createdAt: c.createdAt.toISOString(),
   }))
 }

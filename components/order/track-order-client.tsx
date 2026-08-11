@@ -4,33 +4,29 @@ import { useCallback, useEffect, useMemo, useState } from "react"
 import { useQueryClient } from "@tanstack/react-query"
 import { useAblyOrderChannel } from "@/hooks/useAblySubscribe"
 import { LiveOrderTrackingMap } from "@/components/map/live-order-tracking-map"
-import { DeliveryRatingDialog } from "@/components/delivery-partner/delivery-rating-dialog"
 import { TrackOrderSkeleton } from "@/components/order/track-order-skeleton"
 import { useSession } from "@/lib/auth-client"
 import Image from "next/image"
 import Link from "next/link"
 import {
   Package, Check, ChefHat, Bike, Loader2, XCircle,
-  MapPin, Star, User, Truck, Clock, ShieldCheck,
-  ChevronRight, Headphones, RefreshCcw, Home, CheckCircle2, Lock,
+  ShieldCheck,
+  ChevronRight, Headphones, RotateCcw, Home, Phone,
+  MapPinned, Clock3, Wallet, CreditCard, BadgeCheck
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
 import {
   useOrderTrackingQuery,
   useOrderTracking,
-  useRatingOrder,
-  useOrderTrackingActions,
 } from "@/stores/orderTrackingStore"
 
-const statusFlow: { key: string; label: string; icon: typeof Check }[] = [
-  { key: "CONFIRMED", label: "Confirmed", icon: Check },
-  { key: "PREPARING", label: "Preparing", icon: ChefHat },
-  { key: "READYFORPICKUP", label: "Ready for Pickup", icon: Bike },
-  { key: "COMPLETED", label: "Delivered", icon: Package },
+const statusFlow: { key: string; label: string; icon: typeof Check, desc: string }[] = [
+  { key: "CONFIRMED", label: "Order Confirmed", icon: Check, desc: "Your order has been confirmed." },
+  { key: "PREPARING", label: "Preparing Your Order", icon: ChefHat, desc: "Shanthi's Kitchen is preparing your delicious meal." },
+  { key: "READYFORPICKUP", label: "Out for Delivery", icon: Bike, desc: "Your order is on the way." },
+  { key: "COMPLETED", label: "Delivered", icon: Package, desc: "Enjoy your meal!" },
 ]
 
 const statusColors: Record<string, string> = {
@@ -42,26 +38,22 @@ const statusColors: Record<string, string> = {
   REFUNDED: "text-purple-600 bg-purple-100",
 }
 
-const deliveryStatusLabels: Record<string, string> = {
-  ASSIGNED: "Delivery Partner Assigned",
-  ACCEPTED: "Delivery Partner Accepted",
-  PICKEDUP: "Order Picked Up",
-  INTRANSIT: "Out for Delivery",
-  DELIVERED: "Delivered",
-  FAILED: "Delivery Failed",
-}
-
-const deliveryStatusIcons: Record<string, typeof Bike> = {
-  ASSIGNED: User,
-  ACCEPTED: Bike,
-  PICKEDUP: Package,
-  INTRANSIT: Truck,
-  DELIVERED: Check,
-  FAILED: XCircle,
-}
-
 function getStatusIndex(status: string): number {
   return statusFlow.findIndex((s) => s.key === status)
+}
+
+function getStatusLabel(status: string | undefined): string {
+  if (!status) return "Confirmed"
+  const step = statusFlow.find((s) => s.key === status)
+  if (step) return step.label
+  return status.charAt(0) + status.slice(1).toLowerCase()
+}
+
+function formatPaymentStatus(status: string | null | undefined): { label: string; color: string } {
+  if (status === "SUCCESS") return { label: "PAID", color: "bg-[#E6F4EC] text-[#168846]" }
+  if (status === "REFUNDED" || status === "PARTIAL_REFUND") return { label: status === "PARTIAL_REFUND" ? "PARTIAL REFUND" : "REFUNDED", color: "bg-[#F1EDFB] text-[#7C4DFF]" }
+  if (status === "FAILED") return { label: "FAILED", color: "bg-[#FDE8E8] text-[#DC2626]" }
+  return { label: "PENDING", color: "bg-[#FEF3E2] text-[#B45309]" }
 }
 
 function formatDateTime(iso: string) {
@@ -72,6 +64,15 @@ function formatDateTime(iso: string) {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+  })
+}
+
+function formatDateOnly(iso: string) {
+  const d = new Date(iso)
+  return d.toLocaleDateString("en-IN", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
   })
 }
 
@@ -179,8 +180,6 @@ function formatEtaText(eta: { minutes: number; seconds: number } | null) {
 export function TrackOrderClient({ orderId }: { orderId: string }) {
   const { data: session, isPending: sessionLoading } = useSession()
   const queryClient = useQueryClient()
-  const ratingOrder = useRatingOrder()
-  const { setRatingOrder } = useOrderTrackingActions()
 
   const {
     isLoading,
@@ -249,7 +248,6 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
   const currentIdx = isCancelled ? 0 : getStatusIndex(order.status)
   const isDelivered = order.status === "COMPLETED"
   const deliveryStatus = order.deliveryStatus || order.deliveryAssignmentStatus
-  const DeliveryIcon = deliveryStatus ? (deliveryStatusIcons[deliveryStatus] ?? Bike) : Bike
 
   const inTransit =
     !isCancelled &&
@@ -262,27 +260,20 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
     order.serviceDate &&
     new Date(order.serviceDate).getTime() > now
 
-  let etaTitle = ""
   let etaSubtitle: string | null = null
   if (inTransit) {
-    etaTitle = "Out for delivery"
     etaSubtitle = eta
       ? `${formatEtaText(eta)} · ETA ${String(eta.minutes).padStart(2, "0")}:${String(eta.seconds).padStart(2, "0")}`
       : "Tracking your delivery partner live"
   } else if (order.status === "READYFORPICKUP") {
-    etaTitle = "Ready for pickup"
     etaSubtitle = "Your order is packed and waiting for the delivery partner"
   } else if (order.status === "PREPARING") {
-    etaTitle = "Being prepared"
     etaSubtitle = "Your order is being cooked fresh by the kitchen"
   } else if (preBooked) {
-    etaTitle = "Pre-booked order"
     etaSubtitle = `Your order will be prepared on ${formatDateTime(order.serviceDate!)} · ${(order.timeSlot || "").toLowerCase()}`
   } else if (deliveryStatus === "ASSIGNED" || deliveryStatus === "ACCEPTED") {
-    etaTitle = "Delivery partner on the way"
     etaSubtitle = "Your delivery partner is heading to the kitchen to pick up your order"
   } else {
-    etaTitle = "Order confirmed"
     etaSubtitle = "The kitchen will start preparing your order soon"
   }
 
@@ -291,587 +282,276 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
     0
   )
 
+  const discount = order.discountAmount != null ? parseFloat(order.discountAmount) : 0
+  const feesAndTaxes = Math.max(
+    parseFloat(order.totalAmount) - itemTotal + discount,
+    0
+  )
+  const payStatus = formatPaymentStatus(order.paymentStatus)
+  const statusColor = statusColors[order.status] || "text-blue-600 bg-blue-100"
+  const cancelledHistory = order.statusHistory?.find((h) => h.status === "CANCELLED")
+
   return (
-    <div className="bg-[#FAF9F8] min-h-screen text-foreground pb-20 font-sans">
-      <div className="max-w-[1200px] mx-auto px-4 pt-6">
-        <div className="text-[13px] font-medium text-gray-500 flex items-center gap-2 mb-6">
-          <Link href="/account" className="hover:text-gray-800 transition-colors">
-            Home
-          </Link>
-          <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-          <Link href="/account/orders" className="hover:text-gray-800 transition-colors">
-            My Orders
-          </Link>
-          <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
-          <span className="text-gray-800 font-bold">Track Order</span>
+    <div className="bg-[#fcfbf9] min-h-screen text-[#374151] pb-24 font-sans">
+      <div className="max-w-[1200px] mx-auto px-6 pt-8">
+        
+        {/* Breadcrumb */}
+        <div className="text-[13px] font-medium text-[#6B7280] flex items-center gap-2 mb-8">
+          <Link href="/account/profile" className="hover:text-[#111827] transition-colors">Home</Link>
+          <ChevronRight className="w-4 h-4" />
+          <Link href="/account/orders" className="hover:text-[#111827] transition-colors">My Orders</Link>
+          <ChevronRight className="w-4 h-4" />
+          <span className="text-[#111827] font-semibold">Track Order</span>
         </div>
 
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+        {/* Header Block */}
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
           <div>
-            <h1 className="text-[28px] font-black text-gray-900 leading-tight tracking-tight">
-              Track Your Order
-            </h1>
-            <div className="flex flex-wrap items-center gap-3 mt-2">
-              <span className="text-[15px] font-bold text-gray-800">
-                Order ID: #{order.publicCode ?? orderId}
-              </span>
-              <Badge
-                className={cn(
-                  "text-xs font-semibold",
-                  statusColors[order.status] || ""
-                )}
-              >
-                {order.status === "READYFORPICKUP"
-                  ? "Ready for Pickup"
-                  : order.status.charAt(0) + order.status.slice(1).toLowerCase()}
-              </Badge>
+            <h1 className="text-[32px] font-bold text-[#111827] leading-tight tracking-tight mb-2">Track Your Order</h1>
+            <div className="flex items-center gap-3">
+              <span className="text-[16px] font-semibold text-[#111827]">Order ID: #{order.publicCode ?? orderId}</span>
+              <span className={cn("text-[12px] font-bold px-3 py-1 rounded-full", statusColor)}>{getStatusLabel(order.status)}</span>
             </div>
-            <div className="mt-2 text-[14px] text-gray-600 font-medium">
-              Ordered on:{" "}
-              <span className="font-bold text-gray-800">
-                {formatDateTime(order.createdAt)}
-              </span>
+            <div className="text-[15px] text-[#6B7280] mt-2 font-medium">
+              Estimated Delivery: <span className="text-[#FF5A00] font-semibold">{order.timeSlot ? `${formatDateOnly(order.serviceDate || new Date().toISOString())}, ${order.timeSlot}` : "ASAP"}</span>
             </div>
           </div>
 
-          <div className="bg-orange-50/70 border border-orange-100/80 rounded-[20px] p-4 flex items-center justify-between gap-6 md:min-w-[320px] shadow-sm">
-            <div className="flex items-center gap-3">
-              <Headphones className="w-6 h-6 text-gray-700" />
+          <div className="bg-[#FFFFFF] border border-[#eef1f5] rounded-[26px] p-4 flex flex-wrap sm:flex-nowrap items-center gap-6 shadow-[0_10px_28px_rgba(15,23,42,0.05)] shrink-0 w-full lg:w-auto">
+            <div className="flex items-center gap-4">
+              <Headphones className="w-7 h-7 text-[#6B7280]" strokeWidth={1.5} />
               <div>
-                <h4 className="font-black text-[14px] text-gray-900 leading-tight">
-                  Need Help?
-                </h4>
-                <p className="text-[12px] text-gray-600 font-medium mt-0.5">
-                  We&apos;re here to help you.
-                </p>
+                <h4 className="font-semibold text-[15px] text-[#111827] leading-tight mb-1">Need Help?</h4>
+                <p className="text-[13px] text-[#6B7280]">We&apos;re here to help you.</p>
               </div>
             </div>
-            <Link href="/account/support">
-              <button
-                type="button"
-                className="px-5 py-2.5 bg-white border border-orange-200 text-[#EE7005] font-bold text-[13px] rounded-xl shadow-sm hover:bg-orange-50 transition-colors"
-              >
+            <Link href="/account/support" className="w-full sm:w-auto">
+              <Button variant="outline" className="w-full sm:w-auto border-[#FFD6C0] text-[#FF5A00] hover:bg-[#FFF1E8] hover:text-[#E94E00] h-10 font-bold text-[15px] rounded-[12px] shadow-none">
                 Contact Support
-              </button>
+              </Button>
             </Link>
           </div>
         </div>
-      </div>
 
-      {!isCancelled && !isDelivered && (
-        <div className="max-w-[1200px] mx-auto px-4 mt-6">
-          <div className="rounded-3xl border border-green-100 bg-gradient-to-r from-green-50 to-[#F0FBF2] p-5 flex flex-col sm:flex-row sm:items-center gap-4 shadow-sm">
-            <div className="h-11 w-11 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0 border border-green-200 relative">
-              <span className="absolute inset-0 rounded-full bg-green-500/20 animate-ping" />
-              <Truck className="w-5 h-5 text-green-700 relative" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h4 className="font-black text-[15px] text-gray-900 tracking-tight">
-                {etaTitle}
-              </h4>
-              {etaSubtitle && (
-                <p className="text-[13px] text-gray-600 font-medium mt-0.5">
-                  {etaSubtitle}
-                </p>
-              )}
-            </div>
-            {eta && (
-              <div className="shrink-0 text-center sm:text-right">
-                <div className="text-[24px] font-black text-green-700 tabular-nums leading-none">
-                  {String(eta.minutes).padStart(2, "0")}:
-                  {String(eta.seconds).padStart(2, "0")}
-                </div>
-                <p className="text-[10px] text-green-700/80 font-bold mt-1 tracking-wide">
-                  ETA TO YOUR DOOR
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
-
-      <div className="max-w-[1200px] mx-auto px-4 mt-6">
-        <div className="flex flex-col lg:flex-row gap-6">
-          <div className="lg:order-2 flex-1">
-            {order.kitchenLat != null && order.kitchenLng != null ? (
-              <div className="rounded-3xl overflow-hidden border border-gray-200 shadow-sm">
-                <LiveOrderTrackingMap
-                  orderId={orderId}
-                  kitchenLat={order.kitchenLat}
-                  kitchenLng={order.kitchenLng}
-                  customerLat={order.customerLat ?? undefined}
-                  customerLng={order.customerLng ?? undefined}
-                  deliveryPersonLat={order.deliveryPersonLat ?? undefined}
-                  deliveryPersonLng={order.deliveryPersonLng ?? undefined}
-                />
-              </div>
-            ) : (
-              <div className="h-[300px] lg:h-[400px] rounded-3xl bg-[#F0EBE1] border border-gray-200 flex items-center justify-center">
-                <div className="text-center space-y-2">
-                  <MapPin className="h-8 w-8 text-gray-400 mx-auto" />
-                  <p className="text-sm text-gray-500 font-medium">
-                    Map not available for this order
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="lg:w-[420px] shrink-0 bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100 flex flex-col order-2">
-            <h3 className="font-black text-[18px] text-gray-900 mb-8 tracking-tight">
-              Order Progress
-            </h3>
-
-            {!isCancelled ? (
-              <div className="relative flex-1 px-2">
-                <div className="absolute top-4 bottom-12 left-6 w-0.5 bg-gray-200" />
-                {!isDelivered && (
-                  <div
-                    className="absolute top-4 left-6 w-0.5 bg-green-600 transition-all duration-700"
-                    style={{
-                      height: `${currentIdx > 0
-                        ? (currentIdx / (statusFlow.length - 1)) * 100
-                        : 0
-                        }%`,
-                    }}
-                  />
-                )}
-
-                <div className="space-y-8 relative">
-                  {statusFlow.map((step, idx) => {
-                    const done = idx <= currentIdx
-                    const current = idx === currentIdx && !isCancelled
-                    const StepIcon = step.icon
-
-                    return (
-                      <div key={step.key} className="flex gap-5 relative">
-                        <div
-                          className={cn(
-                            "w-9 h-9 rounded-full flex items-center justify-center relative z-10 shrink-0 shadow-[0_0_0_4px_white]",
-                            done
-                              ? "bg-green-600"
-                              : current
-                                ? "bg-[#EE7005]"
-                                : "bg-white border-2 border-gray-300"
-                          )}
-                        >
-                          {done && idx < currentIdx ? (
-                            <Check className="w-5 h-5 text-white stroke-[3]" />
-                          ) : current ? (
-                            <StepIcon className="w-5 h-5 text-white" />
-                          ) : (
-                            <div className="w-2 h-2 rounded-full bg-gray-300" />
-                          )}
-                        </div>
-                        <div className={cn(!done && !current && "opacity-60")}>
-                          <h4
-                            className={cn(
-                              "font-black text-[15px] leading-tight",
-                              done && !current && "text-green-700",
-                              current && "text-[#EE7005]",
-                              !done && !current && "text-gray-900"
-                            )}
-                          >
-                            {step.label}
-                          </h4>
-                          {current && (
-                            <p className="text-[12px] text-gray-500 font-bold mt-1 tracking-wide">
-                              In progress
-                            </p>
-                          )}
-                          <p className="text-[13px] text-gray-600 font-medium mt-1">
-                            {idx === 0 && "Your order has been confirmed"}
-                            {idx === 1 && "Your order is being prepared"}
-                            {idx === 2 && "Your order is on the way"}
-                            {idx === 3 && "Enjoy your meal!"}
-                          </p>
-                        </div>
-                      </div>
-                    )
-                  })}
-                </div>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center py-12 space-y-3">
-                <XCircle className="h-10 w-10 text-red-500" />
-                <p className="font-black text-[16px] text-gray-900">
-                  {order.status === "REFUNDED"
-                    ? "Refund Processed"
-                    : "Order Cancelled"}
-                </p>
-                <p className="text-[13px] text-gray-500 font-medium text-center">
-                  {order.status === "REFUNDED"
-                    ? "Your refund has been processed."
-                    : "This order has been cancelled."}
-                </p>
-                <Link href="/account/orders">
-                  <Button variant="outline" size="sm" className="mt-2">
-                    View All Orders
-                  </Button>
-                </Link>
-              </div>
-            )}
-
-            {isDelivered && (
-              <div className="mt-8 bg-green-50/80 border border-green-100 rounded-2xl p-4 flex gap-4 items-center shadow-sm">
-                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm shrink-0 border border-green-200">
-                  <ShieldCheck className="w-5 h-5 text-green-700" />
-                </div>
-                <div>
-                  <h4 className="font-black text-[13px] text-green-800 leading-tight tracking-wide">
-                    Your order is safe with us!
-                  </h4>
-                  <p className="text-[11px] text-green-700/80 font-bold mt-1">
-                    100% contactless delivery
-                  </p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {!isCancelled && !isDelivered && deliveryStatus && (
-        <div className="max-w-[1200px] mx-auto px-4 mt-6">
-          <Card className="border-primary/20">
-            <div className="p-4 flex items-center gap-3">
-              <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                <DeliveryIcon className="h-5 w-5 text-primary" />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold">
-                  {deliveryStatusLabels[deliveryStatus] || deliveryStatus}
-                </p>
-                {order.deliveryPersonName && (
-                  <p className="text-xs text-muted-foreground">
-                    Delivery partner:{" "}
-                    <span className="font-medium">{order.deliveryPersonName}</span>
-                  </p>
-                )}
-              </div>
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {isDelivered && (
-        <div className="max-w-[1200px] mx-auto px-4 mt-6">
-          <Card className="border-green-200 bg-green-50">
-            <div className="p-4 text-center space-y-1">
-              <Check className="h-6 w-6 text-green-600 mx-auto" />
-              <p className="text-sm font-semibold text-green-700">
-                Order Delivered!
-              </p>
-              <p className="text-xs text-green-600">
-                Enjoy your meal! Share your feedback below.
-              </p>
-            </div>
-          </Card>
-        </div>
-      )}
-
-      {order.deliveryPersonName && (
-        <div className="max-w-[1200px] mx-auto px-4 mt-6">
-          <Card>
-            <div className="p-4 flex items-center gap-3">
-              <Avatar className="h-12 w-12 shrink-0 border border-gray-100">
-                {order.deliveryPartner?.image && (
-                  <AvatarImage
-                    src={order.deliveryPartner.image}
-                    alt={order.deliveryPersonName || "Delivery Partner"}
-                  />
-                )}
-                <AvatarFallback className="bg-primary/10 text-primary text-sm font-bold">
-                  {getInitials(order.deliveryPartner?.name)}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium">{order.deliveryPersonName}</p>
-                <p className="text-xs text-muted-foreground">
-                  {deliveryStatus
-                    ? deliveryStatusLabels[deliveryStatus] || deliveryStatus
-                    : "Delivery Partner"}
-                </p>
-              </div>
+        {/* Middle Section (Grid) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+          {/* Left Column: Timeline */}
+          <div className="lg:col-span-3 bg-[#FFFFFF] rounded-[26px] p-6 border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] flex flex-col relative h-full">
+            <h3 className="text-[20px] font-extrabold tracking-[-0.03em] text-[#111827] mb-8">Order Progress</h3>
+            <div className="relative flex-1">
+              <div className="absolute top-5 bottom-16 left-[19px] w-[2px] bg-[#eef1f5]" />
               {!isDelivered && !isCancelled && (
-                <Badge
-                  variant="secondary"
-                  className="bg-green-100 text-green-700 text-xs"
-                >
-                  <MapPin className="h-3 w-3 mr-1" /> Live
-                </Badge>
+                <div 
+                  className="absolute top-5 left-[19px] w-[2px] bg-[#168846] transition-all duration-700" 
+                  style={{ height: `${currentIdx > 0 ? (currentIdx / (statusFlow.length - 1)) * 100 : 0}%` }} 
+                />
               )}
-            </div>
-          </Card>
-        </div>
-      )}
+              {isCancelled && (
+                <div className="absolute top-5 left-[19px] w-[2px] bg-[#DC2626] transition-all duration-700" style={{ height: "25%" }} />
+              )}
+              <div className="space-y-8 relative">
+                {statusFlow.map((step, idx) => {
+                  const done = idx < currentIdx;
+                  const current = idx === currentIdx && !isCancelled;
+                  const isFuture = !done && !current;
+                  const StepIcon = step.icon;
+                  const stepDate = order.statusHistory?.find(h => h.status === step.key)?.changedAt;
 
-      <div className="max-w-[1200px] mx-auto px-4 mt-6">
-        <div className="bg-white rounded-3xl p-6 lg:p-8 shadow-sm border border-gray-100">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-10 relative">
-            <div>
-              <h3 className="font-black text-[16px] text-gray-900 mb-5">
-                Order Details
-              </h3>
-              <div className="space-y-4">
-                {order.items.map((item, i) => (
-                  <div key={i} className="flex gap-3">
-                    {item.imageUrl ? (
-                      <Image
-                        src={item.imageUrl}
-                        width={56}
-                        height={56}
-                        alt={item.name}
-                        className="rounded-xl object-cover shrink-0 shadow-sm"
-                      />
-                    ) : (
-                      <div className="h-14 w-14 rounded-xl bg-muted flex items-center justify-center shrink-0">
-                        <Package className="h-5 w-5 text-muted-foreground" />
+                  let colorClass = "";
+                  if (isCancelled && idx === 0) colorClass = "bg-[#DC2626] text-white border-transparent shadow-[0_0_0_4px_#FDE8E8]";
+                  else if (done) colorClass = "bg-[#168846] text-white border-transparent shadow-[0_0_0_4px_#E6F4EC]";
+                  else if (current) colorClass = "bg-[#FF5A00] text-white border-transparent shadow-[0_0_0_4px_#FFF1E8]";
+                  else colorClass = "bg-white border-2 border-[#e2e8f0] text-[#9CA3AF]";
+
+                  return (
+                    <div key={step.key} className="flex gap-5 relative group">
+                      <div className={cn("w-10 h-10 rounded-full flex items-center justify-center relative z-10 shrink-0", colorClass)}>
+                        {isCancelled && idx === 0 ? <XCircle className="w-5 h-5 stroke-[2]" />
+                        : done ? <Check className="w-5 h-5 stroke-[3]" />
+                        : current ? <StepIcon className="w-5 h-5 stroke-[2]" />
+                        : <div className="w-2 h-2 rounded-full border-2 border-[#9CA3AF]" />}
                       </div>
-                    )}
-                    <div className="min-w-0">
-                      <h4 className="font-black text-[14px] text-gray-900 leading-tight">
-                        {item.name}
-                      </h4>
-                      <p className="text-[12px] text-gray-500 font-bold mt-1 leading-[1.4]">
-                        {item.kitchenName && `${item.kitchenName} \u00B7 `}
-                        Qty: {item.quantity}
-                      </p>
-                      <p className="text-[12px] font-black text-gray-900 mt-1">
-                        ₹{parseFloat(item.unitPrice).toFixed(2)}
-                      </p>
+                      <div>
+                        <p className={cn("text-[16px] font-semibold leading-tight", isCancelled && idx === 0 ? "text-[#DC2626]" : (done || current ? "text-[#111827]" : "text-[#9CA3AF]"))}>
+                          {isCancelled && idx === 1 ? "Cancelled" : step.label}
+                        </p>
+                        {isFuture && <p className="text-[13px] text-[#9CA3AF] font-medium mt-1">Pending</p>}
+                        {!isFuture && (
+                          <p className="text-[13px] text-[#6B7280] mt-1 font-medium">
+                            {stepDate ? formatDateTime(stepDate) : (idx === 0 ? formatDateTime(order.createdAt) : (cancelledHistory && idx === 1 ? formatDateTime(cancelledHistory.changedAt) : ""))} 
+                          </p>
+                        )}
+                        {isCancelled && idx === 1 && (
+                          <p className="text-[13px] text-[#DC2626] font-medium mt-1">Reason: {cancelledHistory?.note || "Order cancelled"}</p>
+                        )}
+                        <p className={cn("text-[13px] mt-1 leading-[1.5]", isFuture ? "text-[#9CA3AF]" : "text-[#6B7280]")}>{step.desc}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
 
-            <div className="hidden lg:block w-px bg-gray-100 absolute left-[25%] top-0 bottom-0" />
+            {/* Bottom Safe Shield */}
+            <div className="mt-8 bg-[#F0F8F3] rounded-[16px] p-4 flex items-center gap-3 border border-[#D9EBDD]">
+              <ShieldCheck className="w-6 h-6 text-[#168846]" strokeWidth={1.5} />
+              <div>
+                 <p className="text-[13px] font-semibold text-[#166534]">Your order is safe with us!</p>
+                 <p className="text-[13px] text-[#168846] mt-0.5">100% contactless delivery</p>
+              </div>
+            </div>
+          </div>
 
-            <div>
-              <h3 className="font-black text-[16px] text-gray-900 mb-5">
-                Delivery Partner
-              </h3>
-              {order.deliveryPartner ? (
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-16 w-16 shrink-0 border border-gray-100">
-                    {order.deliveryPartner.image && (
-                      <AvatarImage
-                        src={order.deliveryPartner.image}
-                        alt={order.deliveryPartner.name || "Delivery Partner"}
-                      />
-                    )}
-                    <AvatarFallback className="bg-primary/10 text-primary text-base font-bold">
-                      {getInitials(order.deliveryPartner.name)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div>
-                    <h4 className="font-black text-[15px] text-gray-900 leading-tight flex items-center gap-1.5">
-                      {order.deliveryPartner.name}
-                      <CheckCircle2 className="w-3.5 h-3.5 text-green-600" />
-                    </h4>
-                    <p className="text-[13px] text-gray-600 font-bold mt-1.5">
-                      Delivery Partner
-                    </p>
-                  </div>
+          {/* Center Column: Live Map */}
+          <div className="lg:col-span-9 relative rounded-[26px] overflow-hidden border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] bg-[#F8FAFC] w-full min-h-[400px]">
+            {order.kitchenLat != null && order.kitchenLng != null ? (
+              <LiveOrderTrackingMap
+                orderId={orderId}
+                kitchenLat={order.kitchenLat}
+                kitchenLng={order.kitchenLng}
+                customerLat={order.customerLat ?? undefined}
+                customerLng={order.customerLng ?? undefined}
+                deliveryPersonLat={order.deliveryPersonLat ?? undefined}
+                deliveryPersonLng={order.deliveryPersonLng ?? undefined}
+              />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="text-center space-y-3">
+                  <MapPinned className="h-10 w-10 text-[#9CA3AF] mx-auto" />
+                  <p className="text-[15px] text-[#6B7280] font-medium">Map not available for this order</p>
                 </div>
+              </div>
+            )}
+
+            {/* Map Overlay: Live Tracking */}
+            {orderInTransit && (
+              <div className="absolute top-6 left-6 bg-[#FFFFFF] rounded-[16px] p-4 shadow-[0_10px_28px_rgba(15,23,42,0.05)] border border-[#eef1f5] flex items-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-[#168846] animate-pulse" />
+                <div>
+                  <p className="text-[15px] font-semibold text-[#111827] leading-tight mb-1">Live Tracking</p>
+                  <p className="text-[13px] text-[#6B7280]">{etaSubtitle || "Fetching location..."}</p>
+                </div>
+              </div>
+            )}
+
+            {/* Map Overlay: Estimated Delivery Time */}
+            {order.timeSlot && (
+              <div className="absolute top-6 right-6 bg-[#FFFFFF] rounded-[16px] p-4 shadow-[0_10px_28px_rgba(15,23,42,0.05)] border border-[#eef1f5] text-right">
+                <p className="text-[13px] text-[#6B7280] mb-1">Estimated Delivery Time</p>
+                <p className="text-[20px] font-bold text-[#FF5A00] mb-1">{order.timeSlot}</p>
+                <p className="text-[13px] text-[#9CA3AF]">{formatDateOnly(order.serviceDate || new Date().toISOString())}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Bottom Information Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 bg-[#FFFFFF] rounded-[26px] border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] overflow-hidden mb-6">
+          {/* Order Details */}
+          <div className="p-6 border-b lg:border-b-0 md:border-r border-[#eef1f5]">
+            <h3 className="text-[20px] font-extrabold tracking-[-0.03em] text-[#111827] mb-5">Order Details</h3>
+            <div className="flex gap-4 items-start">
+              {order.items[0]?.imageUrl ? (
+                <Image src={order.items[0].imageUrl} width={64} height={64} alt="Food" className="rounded-[16px] w-16 h-16 object-cover shrink-0 border border-[#F1F5F9]" />
               ) : (
-                <div className="flex items-center gap-4">
-                  <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center shrink-0 border border-gray-100">
-                    <Truck className="h-7 w-7 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-500 font-medium">
-                      {isDelivered
-                        ? "Delivery completed"
-                        : "No delivery partner assigned yet"}
-                    </p>
-                  </div>
+                <div className="w-16 h-16 bg-[#F8FAFC] rounded-[16px] flex items-center justify-center shrink-0 border border-[#F1F5F9]">
+                  <Package className="w-6 h-6 text-[#9CA3AF]" />
                 </div>
               )}
-            </div>
-
-            <div className="hidden lg:block w-px bg-gray-100 absolute left-[50%] top-0 bottom-0" />
-
-            <div>
-              <h3 className="font-black text-[16px] text-gray-900 mb-5">
-                Delivery Address
-              </h3>
-              <div className="flex items-center gap-2 mb-3">
-                <Home className="w-4 h-4 text-gray-600" />
-                <span className="text-[13px] font-black text-green-700">{order.customerAddressLabel || "Delivery Address"}</span>
-              </div>
-              <p className="text-[13px] text-gray-600 font-bold leading-[1.6]">
-                {order.customerAddress || "Address not available"}
-              </p>
-            </div>
-
-            <div className="hidden lg:block w-px bg-gray-100 absolute left-[75%] top-0 bottom-0" />
-
-            <div>
-              <h3 className="font-black text-[16px] text-gray-900 mb-5">
-                Order Summary
-              </h3>
-              <div className="space-y-3">
-                <div className="flex justify-between text-[13px] font-bold text-gray-500">
-                  <span>Item Total</span>
-                  <span>₹{itemTotal.toFixed(2)}</span>
+              <div className="flex-1 min-w-0">
+                <h4 className="font-semibold text-[15px] text-[#111827] flex items-center gap-1.5 leading-tight mb-1">
+                  {order.items[0]?.kitchenName || "Restaurant"} <BadgeCheck className="w-4 h-4 text-[#15803D]" />
+                </h4>
+                <p className="text-[13px] text-[#6B7280] truncate mb-2">
+                  {order.items.map(i => i.name).join(", ")}
+                </p>
+                <div className="flex items-center gap-4 text-[13px] text-[#6B7280]">
+                  <span className="flex items-center gap-1.5"><Package className="w-4 h-4" /> {order.items.reduce((acc, i) => acc + i.quantity, 0)} Items</span>
+                  <span className="flex items-center gap-1.5"><Wallet className="w-4 h-4" /> ₹{parseFloat(order.totalAmount).toFixed(2)}</span>
                 </div>
-                {order.paymentProvider && (
-                  <div className="flex justify-between text-[13px] font-bold text-gray-500">
-                    <span>Payment</span>
-                    <span className="capitalize">{order.paymentProvider}</span>
-                  </div>
-                )}
-                <div className="border-t border-gray-100 pt-3 mt-2 flex justify-between items-center">
-                  <span className="font-black text-[15px] text-gray-900">
-                    Total Paid
-                  </span>
-                  <span className="font-black text-[16px] text-green-700">
-                    ₹{parseFloat(order.totalAmount).toFixed(2)}
-                  </span>
-                </div>
-                {order.serviceDate && (
-                  <div className="flex justify-between text-[13px] font-bold text-gray-500">
-                    <span>Delivery Date</span>
-                    <span>{formatDateTime(order.serviceDate)}</span>
-                  </div>
-                )}
-                {order.timeSlot && (
-                  <div className="flex justify-between text-[13px] font-bold text-gray-500">
-                    <span>Time Slot</span>
-                    <span className="capitalize">{order.timeSlot.toLowerCase()}</span>
-                  </div>
-                )}
-                {order.paymentStatus && (
-                  <div className="flex justify-end">
-                    <span
-                      className={cn(
-                        "text-[10px] font-black px-2 py-1 rounded border",
-                        order.paymentStatus === "SUCCESS"
-                          ? "text-green-700 bg-green-50 border-green-100"
-                          : order.paymentStatus === "REFUNDED" || order.paymentStatus === "PARTIAL_REFUND"
-                            ? "text-purple-700 bg-purple-50 border-purple-100"
-                            : "text-amber-700 bg-amber-50 border-amber-100"
-                      )}
-                    >
-                      {order.paymentStatus === "SUCCESS" ? "PAID" : order.paymentStatus}
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {isDelivered && (
-        <div className="max-w-[1200px] mx-auto px-4 mt-6 flex justify-end">
-          <Button
-            size="sm"
-            variant="outline"
-            className="gap-1"
-            onClick={() =>
-              setRatingOrder(
-                order.deliveryPartner
-                  ? {
-                    id: orderId,
-                    deliveryPartnerId: order.deliveryPartner.id,
-                    deliveryPartnerName: order.deliveryPartner.name ?? "Delivery Partner",
-                  }
-                  : null
-              )
-            }
-          >
-            <Star className="h-4 w-4" /> Rate Delivery
-          </Button>
-        </div>
-      )}
-
-      <DeliveryRatingDialog
-        open={!!ratingOrder && !!ratingOrder.deliveryPartnerId}
-        onOpenChange={(open) => {
-          if (!open) setRatingOrder(null)
-        }}
-        orderId={ratingOrder?.id ?? ""}
-        deliveryPartnerId={ratingOrder?.deliveryPartnerId ?? ""}
-        deliveryPartnerName={
-          ratingOrder?.deliveryPartnerName ?? "Delivery Partner"
-        }
-      />
-
-      <div className="max-w-[1200px] mx-auto px-4 mt-6">
-        <div className="bg-white border border-gray-100 rounded-3xl p-5 md:p-8 shadow-sm flex flex-wrap lg:grid lg:grid-cols-5 gap-4 md:gap-6 justify-center">
-          <div className="flex gap-4 items-center w-[45%] lg:w-auto">
-            <div className="w-12 h-12 bg-[#FAF7F2] rounded-full flex items-center justify-center shrink-0 border border-[#F2EAE1] shadow-sm">
-              <ChefHat className="w-6 h-6 text-red-500" />
-            </div>
-            <div>
-              <h4 className="font-black text-[13px] md:text-[14px] text-gray-900 tracking-tight">
-                100% Homemade
-              </h4>
-              <p className="text-[11px] md:text-[12px] text-gray-500 font-bold mt-0.5">
-                Made with love &amp; care
-              </p>
+            <div className="mt-5 flex items-center justify-between">
+              <span className="text-[13px] font-medium text-[#111827] flex items-center gap-2">
+                <CreditCard className="w-4 h-4 text-[#2563EB]" /> 
+                Paid via {order.paymentProvider ? order.paymentProvider.charAt(0).toUpperCase() + order.paymentProvider.slice(1) : "Online"}
+              </span>
+              <span className={cn("text-[12px] font-bold px-2.5 py-1 rounded-full", payStatus.color)}>{payStatus.label}</span>
             </div>
           </div>
 
-          <div className="flex gap-4 items-center w-[45%] lg:w-auto">
-            <div className="w-12 h-12 bg-[#FAF7F2] rounded-full flex items-center justify-center shrink-0 border border-[#F2EAE1] shadow-sm">
-              <ShieldCheck className="w-6 h-6 text-green-600" />
-            </div>
-            <div>
-              <h4 className="font-black text-[13px] md:text-[14px] text-gray-900 tracking-tight">
-                Hygienic &amp; Safe
-              </h4>
-              <p className="text-[11px] md:text-[12px] text-gray-500 font-bold mt-0.5">
-                Verified home kitchens
-              </p>
-            </div>
+          {/* Delivery Partner */}
+          <div className="p-6 border-b lg:border-b-0 lg:border-r border-[#eef1f5]">
+            <h3 className="text-[20px] font-extrabold tracking-[-0.03em] text-[#111827] mb-5">Delivery Partner</h3>
+            {order.deliveryPartner ? (
+              <div className="flex gap-4 items-center">
+                <Avatar className="w-14 h-14 shrink-0 rounded-[16px] border border-[#eef1f5]">
+                  {order.deliveryPartner.image && <AvatarImage src={order.deliveryPartner.image} />}
+                  <AvatarFallback className="bg-[#F8FAFC] text-[#6B7280] text-[15px] font-semibold">{getInitials(order.deliveryPartner.name)}</AvatarFallback>
+                </Avatar>
+                <div>
+                   <h4 className="font-semibold text-[15px] text-[#111827] flex items-center gap-1.5 mb-1">{order.deliveryPartner.name} <BadgeCheck className="w-4 h-4 text-[#168846]" /></h4>
+                   <p className="text-[13px] text-[#6B7280] flex items-center gap-1.5 mb-1"><Phone className="w-3.5 h-3.5" /> {order.deliveryPartner.phone || "Phone not available"}</p>
+                </div>
+              </div>
+            ) : (
+              <div className="flex items-center gap-4">
+                <div className="w-14 h-14 rounded-[16px] bg-[#F8FAFC] flex items-center justify-center border border-[#eef1f5]">
+                  <Bike className="w-6 h-6 text-[#9CA3AF]" />
+                </div>
+                <p className="text-[15px] text-[#6B7280]">Assigning partner...</p>
+              </div>
+            )}
           </div>
 
-          <div className="flex gap-4 items-center w-[45%] lg:w-auto">
-            <div className="w-12 h-12 bg-[#FAF7F2] rounded-full flex items-center justify-center shrink-0 border border-[#F2EAE1] shadow-sm">
-              <Clock className="w-6 h-6 text-[#EE7005]" />
+          {/* Delivery Address */}
+          <div className="p-6 border-b md:border-b-0 md:border-r border-[#eef1f5]">
+            <h3 className="text-[20px] font-extrabold tracking-[-0.03em] text-[#111827] mb-5">Delivery Address</h3>
+            <div className="flex items-center gap-2 mb-3">
+              <span className="font-semibold text-[15px] text-[#111827] flex items-center gap-2"><Home className="w-4 h-4 text-[#168846]" /> {order.customerAddressLabel || "Home"}</span>
             </div>
-            <div>
-              <h4 className="font-black text-[13px] md:text-[14px] text-gray-900 tracking-tight">
-                On-time Delivery
-              </h4>
-              <p className="text-[11px] md:text-[12px] text-gray-500 font-bold mt-0.5">
-                Always on time, every time
-              </p>
-            </div>
+            <p className="text-[15px] text-[#6B7280] leading-[1.6] mb-3 pr-4">{order.customerAddress || "Address not available"}</p>
+            <p className="text-[13px] text-[#6B7280] flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> {order.customerPhone || "Phone not available"}</p>
           </div>
 
-          <div className="flex gap-4 items-center w-[45%] lg:w-auto">
-            <div className="w-12 h-12 bg-[#FAF7F2] rounded-full flex items-center justify-center shrink-0 border border-[#F2EAE1] shadow-sm">
-              <RefreshCcw className="w-6 h-6 text-teal-600" />
+          {/* Order Summary */}
+          <div className="p-6">
+            <h3 className="text-[20px] font-extrabold tracking-[-0.03em] text-[#111827] mb-5">Order Summary</h3>
+            <div className="space-y-3 text-[15px] text-[#6B7280]">
+              <div className="flex justify-between"><span>Item Total</span> <span>₹{itemTotal.toFixed(2)}</span></div>
+              {discount > 0 && (
+                <div className="flex justify-between text-[#168846]"><span>Discount</span> <span>-₹{discount.toFixed(2)}</span></div>
+              )}
+              {feesAndTaxes > 0 && (
+                <div className="flex justify-between"><span>Delivery & Platform Fees</span> <span>₹{feesAndTaxes.toFixed(2)}</span></div>
+              )}
             </div>
-            <div>
-              <h4 className="font-black text-[13px] md:text-[14px] text-gray-900 tracking-tight">
-                Easy Returns
-              </h4>
-              <p className="text-[11px] md:text-[12px] text-gray-500 font-bold mt-0.5">
-                Hassle-free refunds
-              </p>
-            </div>
-          </div>
-
-          <div className="flex gap-4 items-center w-[45%] lg:w-auto mx-auto lg:mx-0">
-            <div className="w-12 h-12 bg-[#FAF7F2] rounded-full flex items-center justify-center shrink-0 border border-[#F2EAE1] shadow-sm">
-              <Lock className="w-6 h-6 text-green-700" />
-            </div>
-            <div>
-              <h4 className="font-black text-[13px] md:text-[14px] text-gray-900 tracking-tight">
-                Secure Payments
-              </h4>
-              <p className="text-[11px] md:text-[12px] text-gray-500 font-bold mt-0.5">
-                100% secure transactions
-              </p>
+            <div className="mt-5 pt-5 border-t border-[#eef1f5] flex justify-between items-center">
+              <span className="font-semibold text-[16px] text-[#111827]">Total Paid</span>
+              <span className="font-bold text-[20px] text-[#168846]">₹{parseFloat(order.totalAmount).toFixed(2)}</span>
             </div>
           </div>
         </div>
+
+        {/* Footer: Trust Badges */}
+        <div className="hidden md:flex bg-[#FFFFFF] rounded-[26px] py-8 px-6 border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] w-full">
+          {[
+            { title: "100% Homemade", desc: "Made with love & care", icon: <ChefHat className="w-8 h-8 text-[#FF5A00] shrink-0" strokeWidth={1.5} /> },
+            { title: "Hygienic & Safe", desc: "Verified home kitchens", icon: <ShieldCheck className="w-8 h-8 text-[#168846] shrink-0" strokeWidth={1.5} /> },
+            { title: "On-time Delivery", desc: "Always on time, every time", icon: <Clock3 className="w-8 h-8 text-[#FF5A00] shrink-0" strokeWidth={1.5} /> },
+            { title: "Easy Returns", desc: "Hassle-free refunds", icon: <RotateCcw className="w-8 h-8 text-[#168846] shrink-0" strokeWidth={1.5} /> },
+            { title: "Secure Payments", desc: "100% secure transactions", icon: <Wallet className="w-8 h-8 text-[#168846] shrink-0" strokeWidth={1.5} /> },
+          ].map((badge, i, arr) => (
+            <div key={i} className={`flex-1 flex items-center justify-center gap-4 px-6 ${i !== arr.length - 1 ? 'border-r border-[#eef1f5]' : ''}`}>
+              {badge.icon}
+              <div className="flex flex-col">
+                <span className="text-[15px] font-semibold text-[#111827] leading-tight mb-1">{badge.title}</span>
+                <span className="text-[13px] text-[#6B7280] leading-tight">{badge.desc}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
       </div>
     </div>
   )

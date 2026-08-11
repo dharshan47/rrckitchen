@@ -13,11 +13,22 @@ export interface AdminOrder {
   items: { id: string; name: string; price: number; quantity: number; imageUrl?: string }[];
   date: string;
   amount: number;
+  discountAmount: number;
+  serviceDate: string;
+  timeSlot: string;
   status: string;
+  deliveryStatus?: string | null;
   payment?: string | null;
   paymentProvider?: string | null;
   paymentMethod?: string | null;
   providerOrderId?: string | null;
+  deliveryAddress?: {
+    lineOne?: string | null;
+    lineTwo?: string | null;
+    pincode?: string | null;
+    label?: string | null;
+  } | null;
+  statusHistory: { id: string; status: string; changedAt: string; note?: string | null }[];
   deliveryPartner: { id: string; name?: string | null; phone?: string | null } | null;
 }
 

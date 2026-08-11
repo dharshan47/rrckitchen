@@ -6,11 +6,12 @@ import Image from "next/image"
 import Link from "next/link"
 import { toast } from "sonner"
 import { 
-  Star, UtensilsCrossed, Package, Layers, Bike, ChefHat, 
+  Star, UtensilsCrossed, Package, Bike, ChefHat, 
   ShieldCheck, MessageCircleHeart, Users, CheckCircle2, 
-  Lightbulb, ArrowRight, Lock, Tag, MessageSquare, Clock, type LucideIcon
+  Lightbulb, ArrowRight, Lock, Tag, MessageSquare, Clock, Smile, Camera, X, Loader2, type LucideIcon
 } from "lucide-react"
 import { RatingPageSkeleton } from "@/components/order/rating-page-skeleton"
+import { CloudinaryUpload } from "@/components/cloudinary/cloudinary-upload"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 import {
@@ -58,8 +59,8 @@ function StarPicker({
           <Star
             className={`h-6 w-6 ${
               star <= (hovered || rating)
-                ? "fill-[#EE7005] text-[#EE7005]"
-                : "fill-gray-200 text-gray-200"
+                ? "fill-[#FF5A1F] text-[#FF5A1F]"
+                : "fill-[#D1D5DB] text-[#D1D5DB]"
             }`}
           />
         </button>
@@ -97,18 +98,18 @@ function RatingSection({
   iconColor: string
 }) {
   return (
-    <div className="flex flex-col items-center justify-center p-4 border rounded-xl bg-white hover:border-[#EE7005]/30 transition-colors">
-      <div className={cn("w-10 h-10 rounded-full flex items-center justify-center mb-3", iconBg, iconColor)}>
-        <Icon className="h-5 w-5" />
+    <div className="flex flex-col items-center justify-center p-5 border border-[#E5E7EB] rounded-2xl bg-white hover:border-[#E5E7EB] transition-colors shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+      <div className={cn("w-12 h-12 rounded-full flex items-center justify-center mb-3", iconBg, iconColor)}>
+        <Icon className="h-6 w-6" strokeWidth={2} />
       </div>
-      <p className="text-[13px] font-bold text-gray-900 mb-2">{title}</p>
+      <p className="text-[14px] font-bold text-[#111827] mb-3">{title}</p>
       <StarPicker
         rating={rating}
         hovered={hovered}
         setRating={setRating}
         setHovered={setHovered}
       />
-      <span className="text-[11px] font-medium text-gray-500 mt-2 min-h-[16px]">
+      <span className="text-[12px] font-medium text-[#6B7280] mt-2 min-h-[16px]">
         {getRatingLabel(rating)}
       </span>
     </div>
@@ -128,6 +129,7 @@ export function RatingPageClient() {
     kitchenOverall,
     kitchenTags,
     kitchenThoughts,
+    mediaUrls,
     hoveredTaste,
     hoveredPackaging,
     hoveredPortion,
@@ -149,6 +151,7 @@ export function RatingPageClient() {
     setKitchenOverall,
     setKitchenTags,
     setKitchenThoughts,
+    setMediaUrls,
     setDeliveryRating,
     setSpeedRating,
     setDeliveryTags,
@@ -210,7 +213,7 @@ export function RatingPageClient() {
     return (
       <div className="container max-w-6xl mx-auto px-4 py-20 text-center">
         <h2 className="text-xl font-bold mb-2">Order not found</h2>
-        <Link href="/account/orders" className="text-[#EE7005] hover:underline">Go back to orders</Link>
+        <Link href="/account/orders" className="text-[#FF5A1F] hover:underline">Go back to orders</Link>
       </div>
     )
   }
@@ -225,91 +228,98 @@ export function RatingPageClient() {
       <div className="container max-w-[1200px] mx-auto px-4 py-6 md:py-10">
         
         {/* Header Section */}
-        <div className="bg-[#fff9f5] rounded-xl p-6 md:p-8 flex flex-col md:flex-row items-center justify-between mb-10 shadow-sm border border-orange-50/50">
-          <div className="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left w-full md:w-auto">
-            <div className="relative w-48 h-32 md:w-56 md:h-36 shrink-0">
+        <div className="bg-[linear-gradient(90deg,#FFF8F5_0%,#FFFFFF_50%,#F0FDF4_100%)] rounded-2xl p-6 md:p-10 flex flex-col lg:flex-row items-center justify-between mb-10 relative overflow-hidden shadow-sm">
+          <div className="flex items-center gap-6 md:gap-8 relative z-10 w-full lg:w-auto">
+            <div className="relative w-48 h-48 md:w-64 md:h-64 -ml-12 -my-16 shrink-0">
                <Image 
                   src="/rating/order.webp" 
                   alt="Order" 
                   fill 
-                  className="object-contain drop-shadow-sm"
+                  className="object-cover md:object-contain drop-shadow-xl"
                />
             </div>
-            <div className="mt-2 md:mt-6">
-              <h1 className="text-2xl md:text-[28px] font-extrabold text-gray-900 mb-2 md:mb-3 tracking-tight">
-                Thanks for choosing <span className="text-[#EE7005] italic font-serif tracking-normal">RRC Kitchen!</span>
+            <div className="mt-2 md:mt-0 flex-1 z-10">
+              <h1 className="text-2xl md:text-[34px] font-extrabold text-[#111827] mb-2 md:mb-3 tracking-tight leading-tight">
+                Thanks for choosing <span className="text-[#FF5A1F] italic font-serif text-[28px] md:text-[40px] ml-1 font-medium">RRC Kitchen!</span>
               </h1>
-              <p className="text-gray-600 text-sm md:text-[15px] max-w-md leading-relaxed font-medium">
-                Your feedback helps us serve you better and support our partner kitchens.
+              <p className="text-[#374151] text-sm md:text-[16px] max-w-md leading-relaxed font-medium">
+                Your feedback helps us serve you better<br className="hidden md:block"/> and support our partner kitchens.
               </p>
             </div>
           </div>
-          <div className="flex gap-6 md:gap-10 mt-8 md:mt-0 text-center text-[12px] font-bold text-gray-700 justify-center w-full md:w-auto">
-             <div className="flex flex-col items-center gap-3">
-               <div className="w-12 h-12 md:w-14 md:h-14 bg-green-50 text-green-600 rounded-full flex items-center justify-center">
-                 <MessageCircleHeart className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5}/>
+          
+          <div className="flex gap-6 md:gap-14 mt-8 lg:mt-0 text-center text-[13px] font-bold text-[#111827] justify-center w-full lg:w-auto relative z-10">
+             <div className="flex flex-col items-center gap-4">
+               <div className="w-14 h-14 bg-[#ECFDF3] text-[#15803D] rounded-full flex items-center justify-center">
+                 <MessageCircleHeart className="w-6 h-6" strokeWidth={2.5}/>
                </div>
-               <span>Your opinion<br/>makes a difference</span>
+               <span className="leading-tight">Your opinion<br/>makes a difference</span>
              </div>
-             <div className="flex flex-col items-center gap-3">
-               <div className="w-12 h-12 md:w-14 md:h-14 bg-orange-50 text-[#EE7005] rounded-full flex items-center justify-center">
-                 <ChefHat className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5}/>
+             
+             <div className="w-[1px] h-20 bg-gray-200 hidden sm:block self-center"></div>
+             
+             <div className="flex flex-col items-center gap-4">
+               <div className="w-14 h-14 bg-[#FFF3EC] text-[#FF5A1F] rounded-full flex items-center justify-center">
+                 <ChefHat className="w-6 h-6" strokeWidth={2.5}/>
                </div>
-               <span>Helps partners<br/>improve</span>
+               <span className="leading-tight">Helps partners<br/>improve</span>
              </div>
-             <div className="flex flex-col items-center gap-3 hidden sm:flex">
-               <div className="w-12 h-12 md:w-14 md:h-14 bg-gray-100 text-gray-600 rounded-full flex items-center justify-center">
-                 <Users className="w-5 h-5 md:w-6 md:h-6" strokeWidth={2.5}/>
+             
+             <div className="w-[1px] h-20 bg-gray-200 hidden sm:block self-center"></div>
+             
+             <div className="flex flex-col items-center gap-4 hidden sm:flex">
+               <div className="w-14 h-14 bg-[#ECFDF3] text-[#15803D] rounded-full flex items-center justify-center">
+                 <Users className="w-6 h-6" strokeWidth={2.5}/>
                </div>
-               <span>Better experience<br/>for everyone</span>
+               <span className="leading-tight">Better experience<br/>for everyone</span>
              </div>
           </div>
         </div>
 
         {/* Stepper */}
-        <div className="max-w-4xl mx-auto mb-8 md:mb-10 relative px-2 sm:px-0">
-          <div className="absolute top-[15px] left-0 right-0 z-0 block">
+        <div className="max-w-4xl mx-auto mb-10 relative px-4 sm:px-12">
+          <div className="absolute top-[16px] left-[10%] right-[10%] z-0 block">
             <Progress 
-              value={step === 'kitchen' ? 0 : (step === 'delivery' ? 33.33 : 100)} 
-              className="h-[2px] bg-gray-200 [&>div]:bg-green-600"
+              value={step === 'kitchen' ? 0 : (step === 'delivery' ? 33.33 : (step === 'done' ? 100 : 66.66))} 
+              className="h-[2px] bg-gray-200 [&>div]:bg-[#15803D]"
             />
           </div>
           
-          <div className="flex justify-between relative z-10 gap-1 sm:gap-2">
+          <div className="flex justify-between relative z-10">
             {/* Step 1 */}
-            <div className="flex flex-col items-center gap-1 sm:gap-2 flex-1 text-center">
-              <div className={cn("w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 bg-white transition-colors", 
-                "border-green-600 bg-green-600 text-white")}>
-                <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />
+            <div className="flex flex-col items-center gap-3 flex-1 text-center">
+              <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-[2px] bg-white transition-colors",
+                step === "kitchen" ? "border-[#FF5A1F] text-[#FF5A1F] bg-[#FFF3EC]" : "border-[#15803D] bg-[#15803D] text-white")}>
+                {step === "kitchen" ? "1" : <CheckCircle2 className="w-5 h-5" />}
               </div>
-              <span className="text-[10px] sm:text-xs font-bold text-green-700 leading-tight">Food & Kitchen</span>
+              <span className={cn("text-[13px] font-bold leading-tight", step === "kitchen" ? "text-[#FF5A1F]" : "text-[#15803D]")}>Food & Kitchen</span>
             </div>
             
             {/* Step 2 */}
-            <div className="flex flex-col items-center gap-1 sm:gap-2 flex-1 text-center">
-              <div className={cn("w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 bg-white transition-colors", 
-                step === "kitchen" ? "border-gray-300 text-gray-400" : "border-green-600 bg-green-600 text-white")}>
-                {step === "kitchen" ? "2" : <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" />}
+            <div className="flex flex-col items-center gap-3 flex-1 text-center">
+              <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-[2px] bg-white transition-colors", 
+                step === "kitchen" ? "border-[#E5E7EB] text-[#6B7280]" : "border-[#15803D] bg-[#15803D] text-white")}>
+                {step === "kitchen" ? "2" : <CheckCircle2 className="w-5 h-5" />}
               </div>
-              <span className={cn("text-[10px] sm:text-xs font-bold leading-tight", step === "kitchen" ? "text-gray-400" : "text-green-700")}>Delivery Partner</span>
+              <span className={cn("text-[13px] font-bold leading-tight", step === "kitchen" ? "text-[#9CA3AF]" : "text-[#15803D]")}>Delivery Partner</span>
             </div>
 
             {/* Step 3 */}
-            <div className="flex flex-col items-center gap-1 sm:gap-2 flex-1 text-center">
-              <div className={cn("w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 bg-white transition-colors", 
-                step === "done" ? "border-green-600 bg-green-600 text-white" : "border-gray-300 text-gray-400")}>
-                {step === "done" ? <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> : "3"}
+            <div className="flex flex-col items-center gap-3 flex-1 text-center">
+              <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-[2px] bg-white transition-colors", 
+                step === "done" ? "border-[#15803D] bg-[#15803D] text-white" : "border-[#E5E7EB] text-[#6B7280]")}>
+                {step === "done" ? <CheckCircle2 className="w-5 h-5" /> : "3"}
               </div>
-              <span className={cn("text-[10px] sm:text-xs font-bold leading-tight", step === "done" ? "text-green-700" : "text-gray-400")}>RRC Kitchen</span>
+              <span className={cn("text-[13px] font-bold leading-tight", step === "done" ? "text-[#15803D]" : "text-[#9CA3AF]")}>RRC Kitchen</span>
             </div>
 
             {/* Step 4 */}
-            <div className="flex flex-col items-center gap-1 sm:gap-2 flex-1 text-center">
-              <div className={cn("w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold border-2 bg-white transition-colors", 
-                step === "done" ? "border-green-600 bg-green-600 text-white" : "border-gray-300 text-gray-400")}>
-                {step === "done" ? <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5" /> : "4"}
+            <div className="flex flex-col items-center gap-3 flex-1 text-center">
+              <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-[2px] bg-white transition-colors", 
+                step === "done" ? "border-[#15803D] bg-[#15803D] text-white" : "border-[#E5E7EB] text-[#6B7280]")}>
+                {step === "done" ? <CheckCircle2 className="w-5 h-5" /> : "4"}
               </div>
-              <span className={cn("text-[10px] sm:text-xs font-bold leading-tight", step === "done" ? "text-green-700" : "text-gray-400")}>Done</span>
+              <span className={cn("text-[13px] font-bold leading-tight", step === "done" ? "text-[#15803D]" : "text-[#9CA3AF]")}>Done</span>
             </div>
           </div>
         </div>
@@ -318,37 +328,37 @@ export function RatingPageClient() {
         <div className="flex flex-col lg:flex-row gap-8">
           
           {/* Left Column - Rating Area */}
-          <div className="flex-[2] bg-white rounded-2xl shadow-sm border border-gray-100 p-6 md:p-8">
+          <div className="flex-[2] bg-white rounded-2xl shadow-sm border border-[#E5E7EB] p-6 md:p-8">
             {step === "kitchen" && (
               <>
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
                   <div className="flex gap-4 items-center">
-                    <div className="bg-orange-50 p-3 rounded-xl">
-                      <ChefHat className="text-[#EE7005] w-7 h-7" strokeWidth={2}/>
+                    <div className="bg-[#FFF3EC] p-3 rounded-2xl w-14 h-14 flex items-center justify-center">
+                      <ChefHat className="text-[#FF5A1F] w-8 h-8" strokeWidth={2}/>
                     </div>
                     <div>
-                      <h2 className="text-xl md:text-2xl font-extrabold text-gray-900 mb-1">Rate Your Food & Kitchen</h2>
-                      <p className="text-gray-500 text-[13px] font-medium">Tell us about the food and the kitchen</p>
+                      <h2 className="text-[22px] md:text-2xl font-bold text-[#111827] mb-1">Rate Your Food & Kitchen</h2>
+                      <p className="text-[#6B7280] text-[14px] font-medium">Tell us about the food and the kitchen</p>
                     </div>
                   </div>
-                  <div className="sm:text-right flex flex-row sm:flex-col items-center sm:items-end gap-2 sm:gap-1 bg-green-50 sm:bg-transparent px-3 py-2 sm:p-0 rounded-lg">
-                    <div className="flex items-center gap-1.5 text-green-700 font-bold text-[13px]">
-                      <ShieldCheck className="w-4 h-4"/> Secure & Private
+                  <div className="sm:text-right flex flex-row sm:flex-col items-center sm:items-end gap-2 sm:gap-1 bg-transparent px-0 py-2 sm:p-0">
+                    <div className="flex items-center gap-1.5 text-[#15803D] font-bold text-[14px]">
+                      <ShieldCheck className="w-5 h-5"/> Secure & Private
                     </div>
-                    <p className="text-[11px] text-green-600 sm:text-gray-400 font-medium">Your reviews are safe</p>
+                    <p className="text-[12px] text-[#9CA3AF] font-medium">Your reviews are safe</p>
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                   <RatingSection
-                    icon={UtensilsCrossed}
+                    icon={Smile}
                     title="Taste"
                     rating={tasteRating}
                     hovered={hoveredTaste}
                     setRating={setTasteRating}
                     setHovered={setHoveredTaste}
-                    iconBg="bg-green-50"
-                    iconColor="text-green-600"
+                    iconBg="bg-[#ECFDF3]"
+                    iconColor="text-[#15803D]"
                   />
                   <RatingSection
                     icon={Package}
@@ -357,18 +367,18 @@ export function RatingPageClient() {
                     hovered={hoveredPackaging}
                     setRating={setPackagingRating}
                     setHovered={setHoveredPackaging}
-                    iconBg="bg-orange-50"
-                    iconColor="text-[#EE7005]"
+                    iconBg="bg-[#FFF3EC]"
+                    iconColor="text-[#FF5A1F]"
                   />
                   <RatingSection
-                    icon={Layers}
+                    icon={UtensilsCrossed}
                     title="Portion Size"
                     rating={portionRating}
                     hovered={hoveredPortion}
                     setRating={setPortionRating}
                     setHovered={setHoveredPortion}
-                    iconBg="bg-green-50"
-                    iconColor="text-green-600"
+                    iconBg="bg-[#ECFDF3]"
+                    iconColor="text-[#15803D]"
                   />
                   <RatingSection
                     icon={ChefHat}
@@ -377,24 +387,24 @@ export function RatingPageClient() {
                     hovered={hoveredKitchen}
                     setRating={setKitchenOverall}
                     setHovered={setHoveredKitchen}
-                    iconBg="bg-orange-50"
-                    iconColor="text-[#EE7005]"
+                    iconBg="bg-[#FFF3EC]"
+                    iconColor="text-[#FF5A1F]"
                   />
                 </div>
 
-                <div className="mb-8">
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-bold text-[14px] text-gray-900">Tags (Select what you felt)</h3>
+                <div className="mb-8 mt-2">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-bold text-[15px] text-[#111827]">Tags <span className="text-[#6B7280] font-normal">(Select what you felt)</span></h3>
                     {kitchenTags.length > 0 && (
                       <button 
                         onClick={() => setKitchenTags([])}
-                        className="text-[#EE7005] text-[12px] font-bold hover:underline"
+                        className="text-[#FF5200] text-[13px] font-bold hover:underline"
                       >
                         Clear All
                       </button>
                     )}
                   </div>
-                  <div className="flex flex-wrap gap-2.5">
+                  <div className="flex flex-wrap gap-3">
                     {KITCHEN_TAGS.map((tag) => {
                       const isSelected = kitchenTags.includes(tag)
                       return (
@@ -402,13 +412,13 @@ export function RatingPageClient() {
                           key={tag}
                           onClick={() => toggleTag(tag, kitchenTags, setKitchenTags)}
                           className={cn(
-                            "px-4 py-2 rounded-full text-[13px] font-bold transition-all duration-200 border flex items-center gap-1.5",
+                            "px-5 py-2.5 rounded-full text-[14px] font-medium transition-all duration-200 border flex items-center gap-1.5",
                             isSelected
-                              ? "bg-green-50 text-green-700 border-green-200 shadow-sm"
-                              : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                              ? "bg-[#ECFDF3] text-[#15803D] border-[#BBF7D0] shadow-sm"
+                              : "bg-white text-[#374151] border-[#E5E7EB] hover:border-gray-300 hover:bg-gray-50"
                           )}
                         >
-                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5" />}
+                          {isSelected && <CheckCircle2 className="w-4 h-4 fill-[#16A34A] text-white" />}
                           {tag}
                         </button>
                       )
@@ -417,17 +427,57 @@ export function RatingPageClient() {
                 </div>
 
                 <div className="mb-8">
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-bold text-[14px] text-gray-900">Write your thoughts <span className="text-gray-400 font-medium ml-1">(Optional)</span></h3>
-                    <span className="text-[11px] text-gray-400 font-medium">{kitchenThoughts.length}/250</span>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-bold text-[15px] text-[#111827]">Write your thoughts <span className="text-[#9CA3AF] font-normal ml-1">(Optional)</span></h3>
                   </div>
-                  <textarea 
-                    value={kitchenThoughts}
-                    onChange={(e) => setKitchenThoughts(e.target.value)}
-                    maxLength={250}
-                    className="w-full border border-gray-200 rounded-xl p-4 text-[14px] h-28 resize-none focus:outline-none focus:ring-2 focus:ring-[#EE7005]/20 focus:border-[#EE7005] placeholder:text-gray-400 transition-all font-medium" 
-                    placeholder="The biryani was super tasty and fresh. Loved the packaging too. Will order again!"
-                  />
+                  <div className="relative">
+                    <textarea 
+                      value={kitchenThoughts}
+                      onChange={(e) => setKitchenThoughts(e.target.value)}
+                      maxLength={250}
+                      className="w-full border border-[#E5E7EB] rounded-2xl p-5 pb-14 text-[15px] h-32 resize-none focus:outline-none focus:ring-1 focus:ring-[#FF5A1F] focus:border-[#FF5A1F] placeholder:text-[#9CA3AF] transition-all text-[#111827]" 
+                      placeholder="The biryani was super tasty and fresh. Loved the packaging too. Will order again!"
+                    />
+                    <div className="absolute bottom-4 left-4 flex items-center gap-2">
+                      <CloudinaryUpload 
+                        onUpload={(res) => {
+                          setMediaUrls([...mediaUrls, res.secure_url]);
+                        }}
+                      >
+                        {({ uploading, startUpload }) => (
+                          <button 
+                            type="button"
+                            onClick={startUpload}
+                            disabled={uploading || mediaUrls.length >= 3}
+                            className="cursor-pointer flex items-center gap-1.5 text-[13px] font-bold text-[#FF5A1F] hover:text-[#E84C12] transition-colors disabled:opacity-50 disabled:hover:text-[#FF5A1F]"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-[#FFF3EC] flex items-center justify-center">
+                              {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Camera className="w-4 h-4" />}
+                            </div>
+                            {uploading ? "Uploading..." : "Add Photos"}
+                          </button>
+                        )}
+                      </CloudinaryUpload>
+                    </div>
+                    <div className="absolute bottom-4 right-4 text-[12px] text-[#9CA3AF] font-medium mt-2">
+                      {kitchenThoughts.length}/250
+                    </div>
+                  </div>
+                  {mediaUrls.length > 0 && (
+                    <div className="flex flex-wrap gap-3 mt-4">
+                      {mediaUrls.map((url, i) => (
+                        <div key={i} className="relative w-16 h-16 rounded-xl overflow-hidden border border-[#E5E7EB]">
+                          <Image src={url} alt={`Upload ${i}`} fill className="object-cover" />
+                          <button 
+                            onClick={() => setMediaUrls(mediaUrls.filter((_, idx) => idx !== i))}
+                            className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full shadow-sm border border-gray-200 flex items-center justify-center text-red-500 hover:text-red-600 z-10"
+                          >
+                            <X className="w-3 h-3" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
 
                 <button
@@ -440,11 +490,12 @@ export function RatingPageClient() {
                     portionSizeRating: portionRating || undefined,
                     tags: kitchenTags,
                     comment: kitchenThoughts,
+                    mediaUrls,
                   })}
                   disabled={kitchenOverall === 0 && tasteRating === 0 || kitchenMutation.isPending}
-                  className="w-full bg-[#EE7005] text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#EE7005]/90 transition-all shadow-sm shadow-orange-500/20 disabled:opacity-50 disabled:shadow-none"
+                  className="w-full bg-[#FF5A1F] text-white py-4 rounded-xl font-bold text-[16px] flex items-center justify-center gap-2 hover:bg-[#E84C12] transition-all shadow-[0_10px_30px_rgba(255,90,31,0.22)] disabled:opacity-50 disabled:shadow-none"
                 >
-                  {kitchenMutation.isPending ? "Submitting..." : "Continue"} {!kitchenMutation.isPending && <ArrowRight className="w-4 h-4"/>}
+                  {kitchenMutation.isPending ? "Submitting..." : "Continue"} {!kitchenMutation.isPending && <ArrowRight className="w-5 h-5"/>}
                 </button>
               </>
             )}
@@ -453,17 +504,17 @@ export function RatingPageClient() {
               <>
                 <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-8">
                   <div className="flex gap-4 items-center">
-                    <div className="bg-orange-50 p-3 rounded-xl">
-                      <Bike className="text-[#EE7005] w-7 h-7" strokeWidth={2}/>
+                    <div className="bg-[#FFF3EC] p-3 rounded-2xl w-14 h-14 flex items-center justify-center">
+                      <Bike className="text-[#FF5A1F] w-8 h-8" strokeWidth={2}/>
                     </div>
                     <div>
-                      <h2 className="text-xl md:text-2xl font-extrabold text-gray-900 mb-1">Rate Your Delivery</h2>
-                      <p className="text-gray-500 text-[13px] font-medium">How was your delivery partner?</p>
+                      <h2 className="text-[22px] md:text-2xl font-bold text-[#111827] mb-1">Rate Your Delivery</h2>
+                      <p className="text-[#6B7280] text-[14px] font-medium">How was your delivery partner?</p>
                     </div>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-2 gap-4 mb-8">
+                <div className="grid grid-cols-2 gap-4 mb-8">
                   <RatingSection
                     icon={Bike}
                     title="Overall Delivery"
@@ -471,8 +522,8 @@ export function RatingPageClient() {
                     hovered={hoveredDelivery}
                     setRating={setDeliveryRating}
                     setHovered={setHoveredDelivery}
-                    iconBg="bg-green-50"
-                    iconColor="text-green-600"
+                    iconBg="bg-[#ECFDF3]"
+                    iconColor="text-[#15803D]"
                   />
                   <RatingSection
                     icon={Clock}
@@ -481,24 +532,24 @@ export function RatingPageClient() {
                     hovered={hoveredSpeed}
                     setRating={setSpeedRating}
                     setHovered={setHoveredSpeed}
-                    iconBg="bg-orange-50"
-                    iconColor="text-[#EE7005]"
+                    iconBg="bg-[#FFF3EC]"
+                    iconColor="text-[#FF5A1F]"
                   />
                 </div>
 
-                <div className="mb-8">
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-bold text-[14px] text-gray-900">Tags (Select what you felt)</h3>
+                <div className="mb-8 mt-2">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-bold text-[15px] text-[#111827]">Tags <span className="text-[#6B7280] font-normal">(Select what you felt)</span></h3>
                     {deliveryTags.length > 0 && (
                       <button 
                         onClick={() => setDeliveryTags([])}
-                        className="text-[#EE7005] text-[12px] font-bold hover:underline"
+                        className="text-[#FF5200] text-[13px] font-bold hover:underline"
                       >
                         Clear All
                       </button>
                     )}
                   </div>
-                  <div className="flex flex-wrap gap-2.5">
+                  <div className="flex flex-wrap gap-3">
                     {DELIVERY_TAGS.map((tag) => {
                       const isSelected = deliveryTags.includes(tag)
                       return (
@@ -506,13 +557,13 @@ export function RatingPageClient() {
                           key={tag}
                           onClick={() => toggleTag(tag, deliveryTags, setDeliveryTags)}
                           className={cn(
-                            "px-4 py-2 rounded-full text-[13px] font-bold transition-all duration-200 border flex items-center gap-1.5",
+                            "px-5 py-2.5 rounded-full text-[14px] font-medium transition-all duration-200 border flex items-center gap-1.5",
                             isSelected
-                              ? "bg-green-50 text-green-700 border-green-200 shadow-sm"
-                              : "bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50"
+                              ? "bg-[#ECFDF3] text-[#15803D] border-[#BBF7D0] shadow-sm"
+                              : "bg-white text-[#374151] border-[#E5E7EB] hover:border-gray-300 hover:bg-gray-50"
                           )}
                         >
-                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5" />}
+                          {isSelected && <CheckCircle2 className="w-4 h-4 fill-[#16A34A] text-white" />}
                           {tag}
                         </button>
                       )
@@ -521,22 +572,27 @@ export function RatingPageClient() {
                 </div>
 
                 <div className="mb-8">
-                  <div className="flex justify-between items-center mb-3">
-                    <h3 className="font-bold text-[14px] text-gray-900">Write your thoughts <span className="text-gray-400 font-medium ml-1">(Optional)</span></h3>
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-bold text-[15px] text-[#111827]">Write your thoughts <span className="text-[#9CA3AF] font-normal ml-1">(Optional)</span></h3>
                   </div>
-                  <textarea 
-                    value={deliveryThoughts}
-                    onChange={(e) => setDeliveryThoughts(e.target.value)}
-                    maxLength={250}
-                    className="w-full border border-gray-200 rounded-xl p-4 text-[14px] h-28 resize-none focus:outline-none focus:ring-2 focus:ring-[#EE7005]/20 focus:border-[#EE7005] placeholder:text-gray-400 transition-all font-medium" 
-                    placeholder="Very polite and on time..."
-                  />
+                  <div className="relative">
+                    <textarea 
+                      value={deliveryThoughts}
+                      onChange={(e) => setDeliveryThoughts(e.target.value)}
+                      maxLength={250}
+                      className="w-full border border-[#E5E7EB] rounded-2xl p-5 text-[15px] h-32 resize-none focus:outline-none focus:ring-1 focus:ring-[#FF5200] focus:border-[#FF5200] placeholder:text-[#9CA3AF] transition-all text-[#111827]" 
+                      placeholder="Very polite and on time..."
+                    />
+                    <div className="absolute bottom-4 right-4 text-[12px] text-[#9CA3AF] font-medium">
+                      {deliveryThoughts.length}/250
+                    </div>
+                  </div>
                 </div>
 
                 <div className="flex gap-4">
                   <button
                     onClick={() => setStep("kitchen")}
-                    className="flex-1 bg-white border border-gray-200 text-gray-700 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-gray-50 transition-all"
+                    className="flex-1 bg-white border border-[#E5E7EB] text-[#374151] py-4 rounded-xl font-bold text-[16px] flex items-center justify-center gap-2 hover:bg-gray-50 transition-all"
                   >
                     Back
                   </button>
@@ -550,9 +606,9 @@ export function RatingPageClient() {
                       comment: deliveryThoughts,
                     })}
                     disabled={deliveryRating === 0 || deliveryMutation.isPending}
-                    className="flex-[2] bg-[#EE7005] text-white py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-[#EE7005]/90 transition-all shadow-sm shadow-orange-500/20 disabled:opacity-50 disabled:shadow-none"
+                    className="flex-[2] bg-[#FF5A1F] text-white py-4 rounded-xl font-bold text-[16px] flex items-center justify-center gap-2 hover:bg-[#E84C12] transition-all shadow-[0_10px_30px_rgba(255,90,31,0.22)] disabled:opacity-50 disabled:shadow-none"
                   >
-                    {deliveryMutation.isPending ? "Submitting..." : "Submit Review"} {!deliveryMutation.isPending && <CheckCircle2 className="w-4 h-4"/>}
+                    {deliveryMutation.isPending ? "Submitting..." : "Submit Review"} {!deliveryMutation.isPending && <CheckCircle2 className="w-5 h-5"/>}
                   </button>
                 </div>
               </>
@@ -560,124 +616,118 @@ export function RatingPageClient() {
 
             {step === "done" && (
               <div className="flex flex-col items-center justify-center py-20 text-center">
-                <div className="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <CheckCircle2 className="w-10 h-10 text-green-600" />
+                <div className="w-24 h-24 bg-[#ECFDF3] rounded-full flex items-center justify-center mx-auto mb-8">
+                  <CheckCircle2 className="w-12 h-12 text-[#15803D]" />
                 </div>
-                <h2 className="text-2xl font-bold mb-2 text-gray-900">Thank you for your feedback!</h2>
-                <p className="text-gray-500 mb-8 font-medium">Your reviews help us improve our service.</p>
-                <Link href="/account/orders" className="bg-[#EE7005] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#EE7005]/90 transition-colors">
+                <h2 className="text-3xl font-extrabold mb-3 text-[#111827]">Thank you for your feedback!</h2>
+                <p className="text-[#374151] mb-10 font-medium text-[16px]">Your reviews help us improve our service.</p>
+                <Link href="/account/orders" className="bg-[#FF5A1F] text-white px-10 py-4 rounded-xl font-bold hover:bg-[#E84C12] transition-colors shadow-md text-[16px]">
                   Back to Orders
                 </Link>
               </div>
             )}
-
-            <div className="mt-8 pt-6 border-t border-gray-100 flex items-center justify-center gap-2 text-[12px] font-medium text-gray-500">
-               <Lock className="w-4 h-4 text-green-600"/> Your feedback is private and will never be shared with others. 
-               <span className="mx-2 text-gray-300">|</span> 
-               Need help? <Link href="/help" className="text-[#EE7005] hover:underline font-bold">Contact Support</Link>
-            </div>
           </div>
 
           {/* Right Column - Context Cards */}
           <div className="flex-1 flex flex-col gap-6">
             
             {/* Order Summary */}
-            <div className="bg-[#f8f9fa] rounded-xl p-6 border border-gray-100 shadow-sm">
-              <div className="flex justify-between items-center mb-5">
-                <h3 className="font-extrabold text-[15px] text-gray-900">Your Order</h3>
-                <span className="text-[11px] font-bold text-gray-500 bg-gray-200 px-2 py-1 rounded">Order ID: #{order.publicCode ?? order.id.slice(-6)}</span>
+            <div className="bg-[#F8FAF8] rounded-2xl p-6 border-none shadow-sm">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="font-bold text-[16px] text-[#111827]">Your Order</h3>
+                <span className="text-[13px] font-medium text-[#6B7280]">Order ID: #{order.publicCode ?? order.id.slice(-6)}</span>
               </div>
               
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-3.5">
+              <div className="flex items-center justify-between mb-5">
+                <div className="flex items-center gap-4">
                   {firstImage ? (
-                    <div className="w-12 h-12 relative rounded-lg overflow-hidden shadow-sm">
+                    <div className="w-16 h-16 relative rounded-xl overflow-hidden shadow-sm">
                       <Image src={firstImage} alt="Food" fill className="object-cover" />
                     </div>
                   ) : (
-                    <div className="w-12 h-12 bg-white rounded-lg border border-gray-200 flex items-center justify-center shadow-sm">
-                      <ChefHat className="w-6 h-6 text-gray-300" />
+                    <div className="w-16 h-16 bg-white rounded-xl border border-[#E5E7EB] flex items-center justify-center shadow-sm">
+                      <ChefHat className="w-8 h-8 text-gray-300" />
                     </div>
                   )}
                   <div>
-                    <div className="flex items-center gap-1.5 font-extrabold text-[14px] text-gray-900 mb-0.5">
-                      {order.kitchenName} <CheckCircle2 className="w-[14px] h-[14px] text-green-600 fill-green-600 text-white shrink-0"/>
+                    <div className="flex items-center gap-1.5 font-bold text-[15px] text-[#111827] mb-1">
+                      {order.kitchenName} <CheckCircle2 className="w-[18px] h-[18px] text-[#15803D] fill-[#16A34A] text-white shrink-0"/>
                     </div>
-                    <div className="text-[12px] font-medium text-gray-500">
+                    <div className="text-[13px] font-medium text-[#6B7280]">
                       {order.items[0]?.name} {order.items.length > 1 && `• ${order.items.length} Items`}
                     </div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="font-extrabold text-[14px] text-gray-900 mb-0.5">₹ {parseFloat(order.totalAmount).toFixed(0)}</div>
-                  <div className="text-[11px] font-bold text-green-600">Delivered</div>
+                  <div className="font-bold text-[15px] text-[#111827] mb-1">₹ {parseFloat(order.totalAmount).toFixed(0)}</div>
+                  <div className="text-[13px] font-medium text-[#6B7280]">Delivered</div>
                 </div>
               </div>
               
-              <div className="border-t border-gray-200 mt-5 pt-4 flex items-center gap-2 text-[12px] font-bold text-gray-600">
-                <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0"/> 
+              <div className="border-t border-[#E5E7EB] pt-4 flex items-center gap-2 text-[13px] font-medium text-[#374151]">
+                <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0"/> 
                 Delivered on: {deliveredDate ? new Date(deliveredDate).toLocaleDateString("en-IN", {
                   day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit"
-                }) : "Recently"}
+                }) : "—"}
               </div>
             </div>
 
             {/* Why review matters */}
-            <div className="bg-[#fff9f5] rounded-xl p-6 relative overflow-hidden border border-orange-50 shadow-sm">
-              <h3 className="font-extrabold text-[15px] text-gray-900 mb-4 relative z-10">Why your review matters</h3>
-              <ul className="space-y-3.5 text-[13px] font-medium text-gray-600 relative z-10">
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0 mt-0.5"/> 
+            <div className="bg-[#FFF8F5] rounded-2xl p-6 relative overflow-hidden border-none shadow-sm min-h-[190px]">
+              <h3 className="font-bold text-[16px] text-[#111827] mb-5 relative z-10">Why your review matters</h3>
+              <ul className="space-y-3.5 text-[14px] font-medium text-[#374151] relative z-10 max-w-[65%]">
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0"/> 
                   <span>Helps kitchens serve better quality</span>
                 </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0 mt-0.5"/> 
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0"/> 
                   <span>Encourages delivery partners</span>
                 </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0 mt-0.5"/> 
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0"/> 
                   <span>Improves experience for future orders</span>
                 </li>
-                <li className="flex items-start gap-2.5">
-                  <CheckCircle2 className="w-4 h-4 text-green-600 shrink-0 mt-0.5"/> 
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#15803D] shrink-0"/> 
                   <span>Your feedback is 100% private</span>
                 </li>
               </ul>
-              <div className="absolute right-0 bottom-0 w-36 h-36 z-0 opacity-90 mix-blend-multiply">
+              <div className="absolute -right-4 -bottom-4 w-44 h-44 z-0 mix-blend-multiply opacity-95">
                  <Image src="/rating/girl.webp" alt="Illustration" fill className="object-contain" />
               </div>
             </div>
             
             {/* Tips Card */}
-            <div className="bg-green-50/50 rounded-xl p-6 border border-green-100 shadow-sm">
-              <h3 className="font-extrabold text-[14px] text-gray-900 flex items-center gap-2 mb-5">
-                <Lightbulb className="w-[18px] h-[18px] text-green-600 fill-green-600 text-white"/> 
+            <div className="bg-[#F8F9FA] rounded-2xl p-6 border-none shadow-sm">
+              <h3 className="font-bold text-[15px] text-[#111827] flex items-center gap-2 mb-6">
+                <Lightbulb className="w-[20px] h-[20px] text-[#15803D] fill-[#16A34A] text-white"/> 
                 Tips: Quick Guide
               </h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-2 xl:grid-cols-4 gap-3 text-center">
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center text-orange-400">
-                    <Star className="w-4 h-4" />
+              <div className="grid grid-cols-4 gap-2 text-center">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center text-[#FF8A00] shadow-sm">
+                    <Star className="w-6 h-6" />
                   </div>
-                  <span className="text-[10px] font-bold text-gray-600 leading-tight">Be honest<br/>& fair</span>
+                  <span className="text-[11px] font-bold text-[#374151] leading-tight">Be honest<br/>& fair</span>
                 </div>
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center text-green-600">
-                    <Tag className="w-4 h-4" />
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center text-[#15803D] shadow-sm">
+                    <Tag className="w-6 h-6" />
                   </div>
-                  <span className="text-[10px] font-bold text-gray-600 leading-tight">Select relevant<br/>tags</span>
+                  <span className="text-[11px] font-bold text-[#374151] leading-tight">Select relevant<br/>tags</span>
                 </div>
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center text-blue-500">
-                    <MessageSquare className="w-4 h-4" />
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center text-[#15803D] shadow-sm">
+                    <MessageSquare className="w-6 h-6" />
                   </div>
-                  <span className="text-[10px] font-bold text-gray-600 leading-tight">Share specific<br/>feedback</span>
+                  <span className="text-[11px] font-bold text-[#374151] leading-tight">Share specific<br/>feedback</span>
                 </div>
-                <div className="flex flex-col items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center text-[#EE7005]">
-                    <Clock className="w-4 h-4" />
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center text-[#15803D] shadow-sm">
+                    <CheckCircle2 className="w-6 h-6" />
                   </div>
-                  <span className="text-[10px] font-bold text-gray-600 leading-tight">It takes only<br/>a minute!</span>
+                  <span className="text-[11px] font-bold text-[#374151] leading-tight">It takes only<br/>a minute!</span>
                 </div>
               </div>
             </div>
@@ -685,6 +735,14 @@ export function RatingPageClient() {
           </div>
 
         </div>
+
+        {/* Footer */}
+        <div className="mt-6 mb-4 bg-[#F8F9FA] rounded-2xl py-4 flex items-center justify-center gap-2 text-[14px] font-medium text-[#374151] w-full border border-[#E5E7EB]">
+           <Lock className="w-4 h-4 text-[#15803D]"/> Your feedback is private and will never be shared with others. 
+           <span className="mx-3 text-gray-300">|</span> 
+           Need help? <Link href="/help" className="text-[#FF5200] font-bold hover:underline">Contact Support</Link>
+        </div>
+
       </div>
     </div>
   )

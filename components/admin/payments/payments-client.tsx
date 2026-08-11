@@ -1,30 +1,37 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import React, { useMemo, useState } from "react"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import {
-  AdminPaymentRow,
-  useAdminPayments,
-  useAdminPaymentsQuery,
-  useAdminSelectedPayment,
-  useAdminPaymentsActions,
-} from "@/stores"
-import {
-  Search, Download, RefreshCcw, Eye,
-  CreditCard, CheckCircle2, Clock, XCircle, Receipt,
-  Wallet, Landmark, Smartphone, Banknote, MoreVertical,
+  Search,
+  Download,
+  RefreshCw,
+  CreditCard,
+  ShieldCheck,
+  Clock3,
+  CircleX,
+  RotateCcw,
+  Eye,
+  MoreVertical,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardCheck,
+  Settings,
+  Landmark,
+  WalletCards,
+  CalendarDays,
+  X
 } from "lucide-react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { DataTable } from "@/components/ui/data-table"
-import { Checkbox } from "@/components/ui/checkbox"
-import {
-  useReactTable,
-  getCoreRowModel,
-  createColumnHelper,
-  getPaginationRowModel,
-} from "@tanstack/react-table"
 import {
   Select,
   SelectContent,
@@ -32,128 +39,167 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-} from "@/components/ui/sheet"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { Sheet, SheetContent } from "@/components/ui/sheet"
 import { Skeleton } from "@/components/ui/skeleton"
-import { toast } from "sonner"
+import { PieChart, Pie, Cell } from "recharts"
+import {
+  useAdminPaymentsQuery,
+  useAdminPayments,
+  useAdminSelectedPayment,
+  useAdminPaymentsActions,
+  type AdminPaymentRow,
+} from "@/stores/adminPaymentsStore"
 
-const STATUS_BUCKETS = ["SUCCESS", "PENDING", "FAILED", "REFUNDED"] as const
-
-const DONUT_COLORS: Record<string, { stroke: string; dot: string }> = {
-  SUCCESS: { stroke: "text-green-600", dot: "bg-green-600" },
-  PENDING: { stroke: "text-orange-500", dot: "bg-orange-500" },
-  FAILED: { stroke: "text-red-500", dot: "bg-red-500" },
-  REFUNDED: { stroke: "text-purple-600", dot: "bg-purple-600" },
-}
-
-const DONUT_LABELS: Record<string, string> = {
-  SUCCESS: "Successful",
+const STATUS_LABELS: Record<string, string> = {
+  SUCCESS: "Paid",
   PENDING: "Pending",
   FAILED: "Failed",
   REFUNDED: "Refunded",
+  PARTIAL_REFUND: "Partially Refunded",
 }
 
-function bucketOf(status: string | null): string {
-  const up = (status ?? "").toUpperCase()
-  if (up === "SUCCESS" || up === "PAID") return "SUCCESS"
-  if (up === "PENDING") return "PENDING"
-  if (up === "FAILED") return "FAILED"
-  if (up === "REFUNDED") return "REFUNDED"
-  return up || "OTHER"
+const STATUS_BADGE: Record<string, string> = {
+  SUCCESS: "bg-[#ECFDF3] text-[#15803D] border-[#BBE7C9]",
+  PENDING: "bg-[#FFF7ED] text-[#D97706] border-[#FED7AA]",
+  FAILED: "bg-[#FEF2F2] text-[#DC2626] border-[#FECACA]",
+  REFUNDED: "bg-[#F5F3FF] text-[#7C3AED] border-[#DDD6FE]",
+  PARTIAL_REFUND: "bg-[#F5F3FF] text-[#7C3AED] border-[#DDD6FE]",
 }
 
-function pctOf(count: number, total: number) {
-  return total > 0 ? (count / total) * 100 : 0
+const DEFAULT_BADGE = "bg-[#F1F5F9] text-[#475569] border-[#E2E8F0]"
+
+const METHOD_LABELS: Record<string, string> = {
+  UPI: "UPI",
+  CARD: "Card",
+  NETBANKING: "Net Banking",
+  WALLET: "Wallet",
+  EMI: "EMI",
+  PAYLATER: "Pay Later",
+  BANK_TRANSFER: "Bank Transfer",
 }
 
-function formatDateTime(dateString: string | null) {
-  if (!dateString) return { date: "N/A", time: "" }
-  const date = new Date(dateString)
-  return {
-    date: date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
-    time: date.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit", hour12: true }),
+const METHOD_COLORS: Record<string, string> = {
+  UPI: "#16A34A",
+  CARD: "#F97316",
+  NETBANKING: "#2563EB",
+  WALLET: "#7C3AED",
+  EMI: "#0EA5E9",
+  PAYLATER: "#8B5CF6",
+  BANK_TRANSFER: "#64748B",
+}
+
+const CHART_COLORS = {
+  Successful: "#16A34A",
+  Pending: "#F59E0B",
+  Failed: "#EF4444",
+  Refunded: "#7C3AED",
+}
+
+const REFUND_STATUS_LABELS: Record<string, string> = {
+  INITIATED: "Initiated",
+  PROCESSING: "Processing",
+  PROCESSED: "Processed",
+  FAILED: "Failed",
+}
+
+function formatINR(value: number) {
+  return "₹" + value.toLocaleString("en-IN")
+}
+
+function formatDate(iso?: string) {
+  if (!iso) return "—"
+  return new Date(iso).toLocaleDateString("en-IN", { day: "2-digit", month: "short", year: "numeric" })
+}
+
+function formatTime(iso?: string) {
+  if (!iso) return "—"
+  return new Date(iso).toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" })
+}
+
+function normalizeMethod(method?: string | null) {
+  return method ? METHOD_LABELS[method.toUpperCase()] ?? method : "—"
+}
+
+function methodKey(method?: string | null) {
+  return method ? method.toUpperCase() : "OTHER"
+}
+
+function methodIcon(method?: string | null, className = "h-4 w-4") {
+  const key = methodKey(method)
+  if (key === "UPI") {
+    return (
+      <svg viewBox="0 0 24 24" className={`${className} text-[#16A34A]`} fill="currentColor">
+        <path d="M14 6V11H18V13H14V18H12V13H8V11H12V6H14Z" />
+      </svg>
+    )
   }
+  if (key === "NETBANKING" || key === "BANK_TRANSFER") return <Landmark className={`${className} text-[#4F46E5]`} />
+  if (key === "WALLET" || key === "PAYLATER") return <WalletCards className={`${className} text-[#7C3AED]`} />
+  return <CreditCard className={`${className} text-[#2563EB]`} />
 }
 
-function formatCurrency(amount: number) {
-  return `₹${amount.toLocaleString("en-IN")}`
+function methodBg(key: string) {
+  if (key === "UPI") return "bg-[#ECFDF3]"
+  if (key === "NETBANKING" || key === "BANK_TRANSFER") return "bg-[#EEF2FF]"
+  if (key === "WALLET" || key === "PAYLATER") return "bg-[#F5F3FF]"
+  return "bg-[#EFF6FF]"
 }
 
-function downloadCSV(filename: string, header: string[], rows: string[][]) {
-  const csv = [header, ...rows].map((r) => r.map((v) => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\n")
-  const blob = new Blob([csv], { type: "text/csv" })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement("a")
-  a.href = url
-  a.download = filename
-  a.click()
-  URL.revokeObjectURL(url)
+function providerLabel(provider?: string | null) {
+  if (!provider) return "—"
+  if (provider === "RAZORPAY") return "Razorpay"
+  if (provider === "UPI_COLLECT") return "Smart Collect"
+  return provider
 }
 
-function exportReceipt(payment: AdminPaymentRow) {
-  const header = ["Payment ID", "Order ID", "Amount", "Method", "Provider", "Status", "Paid At"]
-  const rows = [[payment.id, payment.orderId ?? "", String(payment.amount), payment.paymentMethod ?? "", payment.provider ?? "", payment.status, payment.paidAt ? new Date(payment.paidAt).toLocaleString("en-IN") : ""]]
-  downloadCSV(`payment-receipt-${payment.id.slice(0, 8)}.csv`, header, rows)
-  toast.success("Receipt downloaded")
+function statusLabel(status?: string) {
+  return STATUS_LABELS[status ?? ""] ?? status ?? "—"
 }
 
-const getStatusBadge = (status?: string | null) => {
-  switch ((status ?? "").toUpperCase()) {
-    case "SUCCESS":
-    case "PAID": return <Badge variant="outline" className="text-green-600 border-green-200 bg-green-50/50 shadow-none font-medium px-2 py-0 h-6 text-[10px] tracking-wide rounded">Paid</Badge>
-    case "PENDING": return <Badge variant="outline" className="text-orange-500 border-orange-200 bg-orange-50/50 shadow-none font-medium px-2 py-0 h-6 text-[10px] tracking-wide rounded">Pending</Badge>
-    case "FAILED": return <Badge variant="outline" className="text-red-500 border-red-200 bg-red-50/50 shadow-none font-medium px-2 py-0 h-6 text-[10px] tracking-wide rounded">Failed</Badge>
-    case "REFUNDED": return <Badge variant="outline" className="text-purple-600 border-purple-200 bg-purple-50/50 shadow-none font-medium px-2 py-0 h-6 text-[10px] tracking-wide rounded">Refunded</Badge>
-    default: return <Badge variant="outline" className="text-gray-600 border-gray-200 bg-gray-50/50 shadow-none font-medium px-2 py-0 h-6 text-[10px] tracking-wide rounded">{(status ?? "N/A").toUpperCase()}</Badge>
+function shortId(id?: string | null) {
+  if (!id) return "—"
+  return id.length > 10 ? `...${id.slice(-8)}` : id
+}
+
+function kitchenName(payment: AdminPaymentRow) {
+  return payment.kitchen || "Unknown Kitchen"
+}
+
+function isRefundedStatus(status?: string) {
+  return status === "REFUNDED" || status === "PARTIAL_REFUND"
+}
+
+function withinPeriod(iso: string | undefined, period: string) {
+  if (!iso || period === "all") return true
+  const date = new Date(iso)
+  const now = new Date()
+  if (period === "today") {
+    return date.toDateString() === now.toDateString()
   }
+  if (period === "week") {
+    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000)
+    return date >= weekAgo
+  }
+  if (period === "month") {
+    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
+    return date >= monthAgo
+  }
+  return true
 }
-
-function getMethodInfo(method: string | null, provider: string | null) {
-  const m = (method || "").toUpperCase()
-  const p = (provider || "").toUpperCase()
-
-  if (m === "UPI" || p.includes("PAYTM") || p.includes("PHONEPE") || p.includes("GPAY")) {
-    return { icon: Smartphone, color: "text-blue-600", bg: "bg-blue-100", label: "UPI", sub: provider ?? null }
-  }
-  if (m === "CARD" || m.includes("CREDIT") || m.includes("DEBIT")) {
-    return { icon: CreditCard, color: "text-orange-600", bg: "bg-orange-100", label: "Card", sub: provider ?? null }
-  }
-  if (m.includes("NET") || m.includes("BANK")) {
-    return { icon: Landmark, color: "text-indigo-600", bg: "bg-indigo-100", label: "Net Banking", sub: provider ?? null }
-  }
-  if (m.includes("WALLET")) {
-    return { icon: Wallet, color: "text-purple-600", bg: "bg-purple-100", label: "Wallet", sub: provider ?? null }
-  }
-  return { icon: Banknote, color: "text-gray-600", bg: "bg-gray-100", label: method || "Unknown", sub: provider ?? null }
-}
-
-const columnHelper = createColumnHelper<AdminPaymentRow>()
-
-// --- Exact-shape animated skeletons ---
 
 function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="rounded-xl border border-border/50 bg-card p-4 shadow-sm">
-          <div className="flex justify-between items-start">
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-3 w-16" />
-              <Skeleton className="h-7 w-14" />
+        <div key={i} className="bg-white rounded-[10px] p-5 border border-[#E5E7EB] shadow-[0_1px_2px_rgba(15,23,42,0.03)]">
+          <div className="flex items-start gap-4">
+            <Skeleton className="h-11 w-11 rounded-full" />
+            <div className="space-y-2 flex-1">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-6 w-16" />
             </div>
-            <Skeleton className="h-8 w-8 rounded-full" />
           </div>
-          <Skeleton className="mt-2 h-3 w-24" />
+          <Skeleton className="h-3 w-32 mt-4" />
         </div>
       ))}
     </div>
@@ -162,781 +208,878 @@ function StatsSkeleton() {
 
 function TableSkeleton() {
   return (
-    <div className="p-4 space-y-3">
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-4">
-          <Skeleton className="h-4 w-4 rounded-sm" />
-          <div className="flex items-center gap-3 flex-1">
-            <Skeleton className="h-9 w-9 rounded" />
-            <div className="space-y-1.5 flex-1">
-              <Skeleton className="h-3 w-32" />
-              <Skeleton className="h-2.5 w-20" />
-            </div>
-          </div>
-          <Skeleton className="h-3 w-24 hidden md:block" />
-          <Skeleton className="h-3 w-16 hidden lg:block" />
-          <Skeleton className="h-5 w-20 rounded-full" />
-          <Skeleton className="h-5 w-20 rounded-full" />
-          <Skeleton className="h-8 w-16" />
-        </div>
-      ))}
-    </div>
-  )
-}
-
-function SidebarSkeleton() {
-  return (
-    <div className="space-y-4">
-      <div className="rounded-xl border border-border/50 bg-card p-4 shadow-sm space-y-3">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-3 w-28" />
-          <Skeleton className="h-5 w-20" />
-        </div>
-        <div className="flex items-center justify-center gap-4 py-2">
-          <Skeleton className="h-28 w-28 rounded-full" />
-          <div className="flex-1 space-y-2">
-            <Skeleton className="h-3 w-24" />
+    <div className="w-full space-y-4">
+      <div className="flex flex-wrap items-center gap-3">
+        <Skeleton className="h-10 flex-1 min-w-[280px] rounded-lg" />
+        <Skeleton className="h-10 w-[140px] rounded-lg" />
+        <Skeleton className="h-10 w-[140px] rounded-lg" />
+        <Skeleton className="h-10 w-[140px] rounded-lg" />
+      </div>
+      <div className="rounded-[10px] border border-[#E5E7EB] bg-white overflow-hidden">
+        {Array.from({ length: 7 }).map((_, i) => (
+          <div key={i} className="flex items-center gap-4 px-5 py-4 border-b border-[#F1F5F9] last:border-b-0">
             <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-3 w-24" />
+            <Skeleton className="h-3 w-24 flex-1" />
+            <Skeleton className="h-3 w-28 flex-1" />
+            <Skeleton className="h-3 w-14" />
+            <Skeleton className="h-5 w-16" />
+            <Skeleton className="h-3 w-24 flex-1" />
             <Skeleton className="h-3 w-20" />
           </div>
-        </div>
-      </div>
-      <div className="rounded-xl border border-border/50 bg-card p-4 shadow-sm space-y-3">
-        <Skeleton className="h-3 w-32" />
-        <Skeleton className="h-3 w-full" />
-        <Skeleton className="h-3 w-full" />
-        <Skeleton className="h-3 w-full" />
-        <Skeleton className="h-3 w-full" />
-      </div>
-      <div className="rounded-xl border border-border/50 bg-card p-4 shadow-sm space-y-3">
-        <Skeleton className="h-3 w-28" />
-        <Skeleton className="h-3 w-40" />
-        <Skeleton className="h-3 w-36" />
-        <Skeleton className="h-3 w-40" />
+        ))}
       </div>
     </div>
   )
 }
 
-export default function AdminPaymentsPage() {
-  const [rowSelection, setRowSelection] = useState({})
-  const [searchQuery, setSearchQuery] = useState("")
-  const [statusFilter, setStatusFilter] = useState("all")
-  const [methodFilter, setMethodFilter] = useState("all")
-  const [kitchenFilter, setKitchenFilter] = useState("all")
-  const [dateFilter, setDateFilter] = useState("all")
-  const [pageSize, setPageSize] = useState(10)
-
+export default function PaymentsClient() {
   const { isLoading, isFetching, refetch } = useAdminPaymentsQuery()
   const payments = useAdminPayments()
   const selectedPayment = useAdminSelectedPayment()
   const { setSelectedPayment } = useAdminPaymentsActions()
 
-  // --- Real stats computed from payments ---
-  const stats = useMemo(() => {
-    const buckets: Record<string, { count: number; amount: number }> = {
-      SUCCESS: { count: 0, amount: 0 },
-      PENDING: { count: 0, amount: 0 },
-      FAILED: { count: 0, amount: 0 },
-      REFUNDED: { count: 0, amount: 0 },
-    }
-    let totalAmount = 0
-    for (const p of payments) {
-      totalAmount += p.amount
-      const key = bucketOf(p.status)
-      if (key in buckets) buckets[key].count += 1
-      if (key in buckets) buckets[key].amount += p.amount
-    }
-    return {
-      total: payments.length,
-      totalAmount,
-      success: buckets.SUCCESS.count,
-      pending: buckets.PENDING.count,
-      failed: buckets.FAILED.count,
-      refunded: buckets.REFUNDED.count,
-      successAmount: buckets.SUCCESS.amount,
-      pendingAmount: buckets.PENDING.amount,
-      failedAmount: buckets.FAILED.amount,
-      refundedAmount: buckets.REFUNDED.amount,
-    }
+  const [search, setSearch] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [methodFilter, setMethodFilter] = useState("all")
+  const [kitchenFilter, setKitchenFilter] = useState("all")
+  const [periodFilter, setPeriodFilter] = useState("all")
+  const [overviewPeriod, setOverviewPeriod] = useState("week")
+  const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState("10")
+
+  const kitchens = useMemo(() => {
+    const set = new Set<string>()
+    payments.forEach((p) => set.add(kitchenName(p)))
+    return Array.from(set).sort()
   }, [payments])
 
-  // --- Donut chart data (real percentages) ---
-  const donutData = useMemo(
-    () =>
-      STATUS_BUCKETS.map((key) => ({
-        key,
-        count: key === "SUCCESS" ? stats.success : key === "PENDING" ? stats.pending : key === "FAILED" ? stats.failed : stats.refunded,
-        amount: key === "SUCCESS" ? stats.successAmount : key === "PENDING" ? stats.pendingAmount : key === "FAILED" ? stats.failedAmount : stats.refundedAmount,
-      })).filter((d) => d.count > 0),
-    [stats],
-  )
+  const methods = useMemo(() => {
+    const map = new Map<string, string>()
+    payments.forEach((p) => map.set(methodKey(p.paymentMethod), normalizeMethod(p.paymentMethod)))
+    return Array.from(map.entries())
+  }, [payments])
 
-  // --- Filters ---
-  const filteredPayments = useMemo(() => {
-    const q = searchQuery.trim().toLowerCase()
-    const now = new Date()
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime()
-    const sevenDaysAgo = now.getTime() - 7 * 24 * 60 * 60 * 1000
-    const thirtyDaysAgo = now.getTime() - 30 * 24 * 60 * 60 * 1000
-
+  const filtered = useMemo(() => {
+    const q = search.trim().toLowerCase()
     return payments.filter((p) => {
+      if (statusFilter !== "all") {
+        const matches = statusFilter === "refunded" ? isRefundedStatus(p.status) : p.status === statusFilter
+        if (!matches) return false
+      }
+      if (methodFilter !== "all" && methodKey(p.paymentMethod) !== methodFilter) return false
+      if (kitchenFilter !== "all" && kitchenName(p) !== kitchenFilter) return false
+      if (periodFilter !== "all" && !withinPeriod(p.createdAt, periodFilter)) return false
       if (q) {
         const haystack = [
-          p.id,
-          p.orderId ?? "",
-          p.customer.name ?? "",
-          p.customer.phone ?? "",
-          p.kitchen ?? "",
-          p.providerPaymentId ?? "",
-          p.providerOrderId ?? "",
+          p.orderId,
+          p.customer?.name,
+          p.customer?.phone,
+          kitchenName(p),
+          p.providerPaymentId,
+          p.providerOrderId,
         ].join(" ").toLowerCase()
         if (!haystack.includes(q)) return false
       }
-      if (statusFilter !== "all" && bucketOf(p.status) !== statusFilter) return false
-      if (methodFilter !== "all" && (p.paymentMethod ?? "OTHER").toUpperCase() !== methodFilter) return false
-      if (kitchenFilter !== "all" && (p.kitchen ?? "Unknown") !== kitchenFilter) return false
-      if (dateFilter === "today" && new Date(p.createdAt).getTime() < startOfToday) return false
-      if (dateFilter === "7d" && new Date(p.createdAt).getTime() < sevenDaysAgo) return false
-      if (dateFilter === "30d" && new Date(p.createdAt).getTime() < thirtyDaysAgo) return false
       return true
     })
-  }, [payments, searchQuery, statusFilter, methodFilter, kitchenFilter, dateFilter])
+  }, [payments, search, statusFilter, methodFilter, kitchenFilter, periodFilter])
 
-  const methods = useMemo(
-    () => Array.from(new Set(payments.map((p) => (p.paymentMethod ?? "OTHER").toUpperCase()).filter((v) => v !== "NONE"))),
-    [payments],
-  )
-  const kitchens = useMemo(
-    () => Array.from(new Set(payments.map((p) => p.kitchen ?? "Unknown").filter(Boolean))),
-    [payments],
-  )
+  const totalPages = Math.max(1, Math.ceil(filtered.length / Number(pageSize)))
+  const safePage = Math.min(page, totalPages)
+  const paginated = useMemo(() => {
+    const size = Number(pageSize)
+    return filtered.slice((safePage - 1) * size, safePage * size)
+  }, [filtered, safePage, pageSize])
 
-  // --- Popular method distribution ---
-  const methodDist = useMemo(() => {
-    const map = new Map<string, { label: string; count: number; amount: number }>()
-    for (const p of payments) {
-      const method = (p.paymentMethod ?? "OTHER").toUpperCase()
-      const label = method === "UPI" ? "UPI" : method === "CARD" ? "Card" : method === "NETBANKING" ? "Net Banking" : method === "WALLET" ? "Wallet" : method === "NONE" ? "N/A" : method
-      const entry = map.get(method) ?? { label, count: 0, amount: 0 }
-      entry.count += 1
-      entry.amount += p.amount
-      map.set(method, entry)
+  const stats = useMemo(() => {
+    const successful = payments.filter((p) => p.status === "SUCCESS")
+    const pending = payments.filter((p) => p.status === "PENDING")
+    const failed = payments.filter((p) => p.status === "FAILED")
+    const refunded = payments.filter((p) => isRefundedStatus(p.status))
+    const totalAmount = payments.reduce((sum, p) => sum + (p.amount || 0), 0)
+    const refundTotal = payments.reduce((sum, p) => sum + p.refunds.reduce((s, r) => s + (r.amount || 0), 0), 0)
+    return {
+      total: payments.length,
+      successful: successful.length,
+      pending: pending.length,
+      failed: failed.length,
+      refunded: refunded.length,
+      totalAmount,
+      refundTotal,
+      successRate: payments.length ? Math.round((successful.length / payments.length) * 1000) / 10 : 0,
+      pendingPct: payments.length ? Math.round((pending.length / payments.length) * 1000) / 10 : 0,
+      failedPct: payments.length ? Math.round((failed.length / payments.length) * 1000) / 10 : 0,
+      refundedPct: payments.length ? Math.round((refunded.length / payments.length) * 1000) / 10 : 0,
     }
-    return Array.from(map.values()).sort((a, b) => b.count - a.count)
   }, [payments])
 
-  // --- real recent refunds ---
-  const recentRefunds = useMemo(
-    () =>
-      payments
-        .flatMap((p) =>
-          (p.refunds ?? []).map((r) => ({
-            paymentId: p.id,
-            orderId: p.orderId,
-            amount: r.amount,
-            status: r.status,
-            initiatedAt: r.initiatedAt,
-          })),
-        )
-        .sort((a, b) => new Date(b.initiatedAt).getTime() - new Date(a.initiatedAt).getTime())
-        .slice(0, 4),
-    [payments],
-  )
+  const overviewData = useMemo(() => {
+    const inPeriod = payments.filter((p) => withinPeriod(p.createdAt, overviewPeriod))
+    const sumFor = (pred: (s: string | undefined) => boolean) =>
+      inPeriod.filter((p) => pred(p.status)).reduce((sum, p) => sum + (p.amount || 0), 0)
+    return {
+      total: inPeriod.reduce((sum, p) => sum + (p.amount || 0), 0),
+      successful: sumFor((s) => s === "SUCCESS"),
+      pending: sumFor((s) => s === "PENDING"),
+      failed: sumFor((s) => s === "FAILED"),
+      refunded: sumFor((s) => isRefundedStatus(s)),
+    }
+  }, [payments, overviewPeriod])
 
-  const columns = useMemo(() => [
-    columnHelper.display({
-      id: "select",
-      header: ({ table }) => (
-        <div className="flex justify-center ml-2">
-          <Checkbox
-            checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && "indeterminate")}
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-            className="border-gray-300 text-green-700 data-[state=checked]:bg-green-700 data-[state=checked]:border-green-700"
-          />
-        </div>
-      ),
-      cell: ({ row }) => (
-        <div className="flex justify-center ml-2">
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-            className="border-gray-300 text-green-700 data-[state=checked]:bg-green-700 data-[state=checked]:border-green-700"
-          />
-        </div>
-      ),
-    }),
-    columnHelper.accessor("orderId", {
-      header: "ORDER ID",
-      cell: ({ row }) => (
-        <div className="flex items-start gap-2 min-w-[100px]">
-          <div className="mt-0.5 text-gray-400 shrink-0"><Receipt className="h-3.5 w-3.5" /></div>
-          <div className="flex flex-col gap-0.5">
-            <span className="font-semibold text-xs text-gray-900 tracking-tight uppercase">ORD{(row.original.orderId ?? row.original.id).slice(-6)}</span>
-            <span className="text-[10px] text-muted-foreground">#{row.original.orderId ?? row.original.id.slice(0, 4)}</span>
-          </div>
-        </div>
-      ),
-    }),
-    columnHelper.accessor("customer", {
-      header: "CUSTOMER",
-      cell: ({ row }) => (
-        <div className="flex flex-col gap-0.5">
-          <span className="font-medium text-xs text-gray-900">{row.original.customer.name ?? "Anonymous"}</span>
-          <span className="text-[10px] text-muted-foreground">{row.original.customer.phone ?? "—"}</span>
-        </div>
-      ),
-    }),
-    columnHelper.accessor("kitchen", {
-      header: "KITCHEN",
-      cell: ({ row }) => (
-        <div className="flex items-center gap-2">
-          <div className="h-5 w-5 rounded-full bg-zinc-900 text-white flex items-center justify-center text-[8px] font-bold shrink-0">
-            {(row.original.kitchen ?? "??").substring(0, 2).toUpperCase()}
-          </div>
-          <span className="font-medium text-xs text-gray-900">{row.original.kitchen ?? "Unknown"}</span>
-        </div>
-      ),
-    }),
-    columnHelper.accessor("amount", {
-      header: "AMOUNT",
-      cell: ({ row }) => (
-        <div className="flex flex-col gap-0.5">
-          <span className="font-semibold text-xs text-gray-900">{formatCurrency(row.original.amount)}</span>
-          <span className="text-[10px] text-muted-foreground capitalize">{row.original.status.toLowerCase()}</span>
-        </div>
-      ),
-    }),
-    columnHelper.display({
-      id: "method",
-      header: "METHOD",
-      cell: ({ row }) => {
-        const methodInfo = getMethodInfo(row.original.paymentMethod, row.original.provider)
-        const Icon = methodInfo.icon
-        return (
-          <div className="flex items-center gap-2">
-            <div className={`h-6 w-6 rounded flex items-center justify-center shrink-0 ${methodInfo.bg}`}>
-              <Icon className={`h-3 w-3 ${methodInfo.color}`} />
-            </div>
-            <div className="flex flex-col gap-0.5">
-              <span className="font-medium text-xs text-gray-900">{methodInfo.label}</span>
-              <span className="text-[10px] text-muted-foreground">{methodInfo.sub ?? "—"}</span>
-            </div>
-          </div>
-        )
-      },
-    }),
-    columnHelper.accessor("status", {
-      header: "STATUS",
-      cell: ({ getValue }) => getStatusBadge(getValue()),
-    }),
-    columnHelper.accessor("paidAt", {
-      header: "PAID AT",
-      cell: ({ getValue }) => {
-        const dt = formatDateTime(getValue() ?? null)
-        return (
-          <div className="flex flex-col gap-0.5">
-            <span className="text-xs text-gray-600">{dt.date}</span>
-            <span className="text-[10px] text-muted-foreground">{dt.time}</span>
-          </div>
-        )
-      },
-    }),
-    columnHelper.accessor("providerPaymentId", {
-      header: "PAYMENT ID",
-      cell: ({ row }) => (
-        <div className="flex flex-col gap-0.5">
-          <span className="text-[10px] text-gray-600 font-mono truncate w-[110px]">{row.original.providerPaymentId ?? "—"}</span>
-          <span className="text-[9px] text-muted-foreground font-mono truncate w-[110px]">{row.original.providerOrderId ?? "—"}</span>
-        </div>
-      ),
-    }),
-    columnHelper.display({
-      id: "actions",
-      header: "ACTIONS",
-      cell: ({ row }) => (
-        <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground" onClick={() => setSelectedPayment(row.original)}>
-            <Eye className="h-3.5 w-3.5" />
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="h-6 w-6 text-muted-foreground">
-                <MoreVertical className="h-3.5 w-3.5" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => setSelectedPayment(row.original)}>View Details</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => exportReceipt(row.original)}>Download Receipt</DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      ),
-    }),
-  ], [setSelectedPayment])
+  const chartData = useMemo(() => {
+    return [
+      { name: "Successful", value: overviewData.successful, color: CHART_COLORS.Successful },
+      { name: "Pending", value: overviewData.pending, color: CHART_COLORS.Pending },
+      { name: "Failed", value: overviewData.failed, color: CHART_COLORS.Failed },
+      { name: "Refunded", value: overviewData.refunded, color: CHART_COLORS.Refunded },
+    ].filter((d) => d.value > 0)
+  }, [overviewData])
 
-  const table = useReactTable({
-    data: filteredPayments,
-    columns,
-    state: {
-      rowSelection,
-      pagination: { pageIndex: 0, pageSize },
-    },
-    enableRowSelection: true,
-    onRowSelectionChange: setRowSelection,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-  })
+  const methodStats = useMemo(() => {
+    const counts = new Map<string, { count: number; amount: number }>()
+    payments.forEach((p) => {
+      const key = methodKey(p.paymentMethod)
+      const entry = counts.get(key) ?? { count: 0, amount: 0 }
+      entry.count += 1
+      entry.amount += p.amount || 0
+      counts.set(key, entry)
+    })
+    return Array.from(counts.entries())
+      .map(([key, v]) => ({
+        key,
+        label: METHOD_LABELS[key] ?? key,
+        count: v.count,
+        amount: v.amount,
+        pct: payments.length ? Math.round((v.count / payments.length) * 1000) / 10 : 0,
+        color: METHOD_COLORS[key] ?? "#64748B",
+      }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 4)
+  }, [payments])
 
-  const selectedCount = Object.keys(rowSelection).length
-  const selectedPayments = Object.keys(rowSelection)
-    .map((idx) => filteredPayments[Number(idx)])
-    .filter(Boolean) as AdminPaymentRow[]
-
-  const totalPages = Math.max(1, Math.ceil(filteredPayments.length / pageSize))
-  const currentPage = table.getState().pagination.pageIndex
+  const recentRefunds = useMemo(() => {
+    return payments
+      .filter((p) => p.refunds.length > 0)
+      .slice(0, 3)
+  }, [payments])
 
   const exportCSV = () => {
-    const header = ["Payment ID", "Order ID", "Customer", "Phone", "Kitchen", "Amount", "Method", "Provider", "Status", "Paid At", "Provider Order ID", "Provider Payment ID"]
-    const rows = (selectedCount > 0 ? selectedPayments : filteredPayments).map((p) => [
-      p.id,
-      p.orderId ?? "",
-      p.customer.name ?? "",
-      p.customer.phone ?? "",
-      p.kitchen ?? "",
-      String(p.amount),
-      p.paymentMethod ?? "",
-      p.provider ?? "",
-      p.status,
-      p.paidAt ? new Date(p.paidAt).toLocaleString("en-IN") : "",
-      p.providerOrderId ?? "",
-      p.providerPaymentId ?? "",
+    const header = ["Order ID", "Customer", "Phone", "Kitchen", "Amount", "Method", "Status", "Paid At"]
+    const rows = filtered.map((p) => [
+      p.orderId,
+      p.customer?.name ?? "",
+      p.customer?.phone ?? "",
+      kitchenName(p),
+      p.amount,
+      normalizeMethod(p.paymentMethod),
+      statusLabel(p.status),
+      p.paidAt ?? p.createdAt,
     ])
-    downloadCSV("payments.csv", header, rows)
-    toast.success("Payments exported")
+    const csv = [header, ...rows]
+      .map((r) => r.map((c) => `"${String(c ?? "").replace(/"/g, '""')}"`).join(","))
+      .join("\n")
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement("a")
+    a.href = url
+    a.download = `payments-${new Date().toISOString().slice(0, 10)}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
   }
 
-  const filterChips = [
-    { key: "all", label: "All Transactions", className: "text-green-700 bg-green-50 border-green-200", count: stats.total, countClass: "bg-green-100 text-green-700" },
-    { key: "SUCCESS", label: "Successful", className: "text-green-600 bg-white border-transparent", count: stats.success, countClass: "bg-green-50 text-green-700" },
-    { key: "PENDING", label: "Pending", className: "text-orange-600 bg-orange-50 border-transparent", count: stats.pending, countClass: "bg-orange-200 text-orange-700" },
-    { key: "FAILED", label: "Failed", className: "text-red-600 bg-red-50 border-transparent", count: stats.failed, countClass: "bg-red-200 text-red-700" },
-    { key: "REFUNDED", label: "Refunded", className: "text-purple-600 bg-purple-50 border-transparent", count: stats.refunded, countClass: "bg-purple-200 text-purple-700" },
-  ]
+  const resetFilters = () => {
+    setSearch("")
+    setStatusFilter("all")
+    setMethodFilter("all")
+    setKitchenFilter("all")
+    setPeriodFilter("all")
+    setPage(1)
+  }
 
-  const filtersActive = searchQuery !== "" || statusFilter !== "all" || methodFilter !== "all" || kitchenFilter !== "all" || dateFilter !== "all"
+  const tabCounts = useMemo(() => {
+    const successful = payments.filter((p) => p.status === "SUCCESS").length
+    const pending = payments.filter((p) => p.status === "PENDING").length
+    const failed = payments.filter((p) => p.status === "FAILED").length
+    const refunded = payments.filter((p) => isRefundedStatus(p.status)).length
+    return { total: payments.length, successful, pending, failed, refunded }
+  }, [payments])
+
+  const tabButton = (
+    active: boolean,
+    label: string,
+    count: number,
+    hoverClasses: string,
+    onClick: () => void
+  ) => (
+    <button
+      onClick={onClick}
+      className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap transition-colors shadow-sm ${
+        active ? "bg-[#ECFDF3] border border-[#BBE7C9] text-[#15803D]" : `bg-white border border-[#E2E8F0] text-[#475569] ${hoverClasses}`
+      }`}
+    >
+      {label} <span className={`px-1.5 py-0.5 rounded text-[11px] ${active ? "bg-white/50" : "bg-[#F1F5F9]"}`}>{count.toLocaleString()}</span>
+    </button>
+  )
+
+  const pageNumbers = useMemo(() => {
+    const nums: (number | "...")[] = []
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) nums.push(i)
+      return nums
+    }
+    nums.push(1)
+    if (safePage > 3) nums.push("...")
+    for (let i = Math.max(2, safePage - 1); i <= Math.min(totalPages - 1, safePage + 1); i++) nums.push(i)
+    if (safePage < totalPages - 2) nums.push("...")
+    nums.push(totalPages)
+    return nums
+  }, [totalPages, safePage])
+
+  const from = filtered.length === 0 ? 0 : (safePage - 1) * Number(pageSize) + 1
+  const to = Math.min(safePage * Number(pageSize), filtered.length)
 
   return (
-    <div className="space-y-6 pb-10">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Payment Management</h1>
-          <p className="text-sm text-muted-foreground">Track, monitor and manage all payment transactions</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" className="gap-2 text-sm shadow-sm bg-white" onClick={exportCSV} disabled={isLoading}>
-            <Download className="h-4 w-4 text-muted-foreground" /> Export
-          </Button>
-          <Button className="gap-2 text-sm shadow-sm bg-green-700 hover:bg-green-800 text-white" onClick={() => refetch()} disabled={isFetching}>
-            <RefreshCcw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} /> Refresh
-          </Button>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[#F8FAFC] p-4 md:p-6 lg:p-8 font-sans">
+      <div className="max-w-[1600px] mx-auto space-y-6">
 
-      <div className="flex flex-col xl:flex-row gap-6">
-        {/* Main Column */}
-        <div className="flex-1 space-y-6 min-w-0">
-          {/* Top Stats */}
-          {isLoading ? (
-            <StatsSkeleton />
-          ) : (
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
-              {[
-                { title: "Total Transactions", value: stats.total.toLocaleString("en-IN"), trend: `${stats.total > 0 ? `${Math.round(pctOf(stats.success, stats.total))}% success rate` : "No data yet"}`, trendUp: null, icon: CreditCard, color: "text-green-600", bg: "bg-green-50" },
-                { title: "Successful Payments", value: stats.success.toLocaleString("en-IN"), trend: formatCurrency(stats.successAmount), trendUp: null, icon: CheckCircle2, color: "text-blue-600", bg: "bg-blue-50" },
-                { title: "Pending Payments", value: stats.pending.toLocaleString("en-IN"), trend: `${stats.total > 0 ? pctOf(stats.pending, stats.total).toFixed(1) : 0}% of total`, trendUp: null, icon: Clock, color: "text-orange-500", bg: "bg-orange-50" },
-                { title: "Failed Payments", value: stats.failed.toLocaleString("en-IN"), trend: `${stats.total > 0 ? pctOf(stats.failed, stats.total).toFixed(1) : 0}% of total`, trendUp: null, icon: XCircle, color: "text-red-500", bg: "bg-red-50" },
-                { title: "Refunds Processed", value: stats.refunded.toLocaleString("en-IN"), trend: `${formatCurrency(stats.refundedAmount)} refunded`, trendUp: null, icon: RefreshCcw, color: "text-purple-600", bg: "bg-purple-50" },
-              ].map((stat, i) => (
-                <Card key={i} className="shadow-sm border-0 ring-1 ring-border/50">
-                  <CardContent className="p-3.5 flex flex-col gap-2">
-                    <div className="flex justify-between items-start">
-                      <div className={`p-2 rounded-full ${stat.bg} shrink-0`}>
-                        <stat.icon className={`h-4 w-4 ${stat.color}`} />
-                      </div>
-                      <div className="text-right flex flex-col items-end">
-                        <p className="text-[10px] font-medium text-muted-foreground mb-0.5">{stat.title}</p>
-                        <h3 className="text-lg font-bold leading-none">{stat.value}</h3>
-                      </div>
-                    </div>
-                    <p className={`text-[9px] font-medium mt-1 truncate ${stat.trendUp === true ? "text-green-600" : stat.trendUp === false ? "text-red-500" : "text-muted-foreground"}`}>
-                      {stat.trend}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h1 className="text-[28px] font-bold text-[#0F172A] tracking-tight">Payment Management</h1>
+            <p className="text-[#475569] mt-1 text-sm">Track, monitor and manage all payment transactions</p>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button variant="outline" onClick={exportCSV} className="flex items-center gap-2 px-4 py-2 bg-white border border-[#E2E8F0] text-[#0F172A] rounded-lg font-medium text-sm hover:bg-gray-50 transition-colors shadow-sm h-10">
+              <Download className="h-4 w-4 text-[#334155]" />
+              Export
+            </Button>
+            <Button
+              onClick={() => refetch()}
+              disabled={isFetching}
+              className="flex items-center gap-2 px-4 py-2 bg-[#008A3D] text-white rounded-lg font-medium text-sm hover:bg-[#006B2F] transition-colors shadow-sm h-10 disabled:opacity-60"
+            >
+              <RefreshCw className={`h-4 w-4 ${isFetching ? "animate-spin" : ""}`} />
+              Refresh
+            </Button>
+          </div>
+        </div>
 
-          {/* Filters & Table */}
-          <Card className="shadow-sm border-0 ring-1 ring-border/50 overflow-hidden">
-            <div className="p-3 border-b border-border/50 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-              <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                <div className="relative min-w-[220px] flex-1 lg:flex-none">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search by order ID, customer, payment ID..."
-                    className="pl-9 h-9 text-sm"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
+        {/* KPI Cards */}
+        {isLoading ? (
+          <StatsSkeleton />
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="bg-white rounded-[10px] p-5 border border-[#E5E7EB] shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex items-start gap-4 h-[120px]">
+              <div className="h-11 w-11 rounded-full bg-[#ECFDF3] flex items-center justify-center shrink-0">
+                <CreditCard className="h-[22px] w-[22px] text-[#16A34A]" strokeWidth={2} />
+              </div>
+              <div className="flex flex-col h-full justify-between w-full">
+                <div>
+                  <p className="text-xs font-medium text-[#64748B]">Total Transactions</p>
+                  <h3 className="text-[22px] font-bold text-[#0F172A] leading-tight mt-1">{stats.total.toLocaleString()}</h3>
                 </div>
-
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[120px] h-9 text-xs"><SelectValue placeholder="Status: All" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Status: All</SelectItem>
-                    <SelectItem value="SUCCESS">Paid</SelectItem>
-                    <SelectItem value="PENDING">Pending</SelectItem>
-                    <SelectItem value="FAILED">Failed</SelectItem>
-                    <SelectItem value="REFUNDED">Refunded</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Select value={methodFilter} onValueChange={setMethodFilter}>
-                  <SelectTrigger className="w-[120px] h-9 text-xs"><SelectValue placeholder="Method: All" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Method: All</SelectItem>
-                    {methods.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                <Select value={kitchenFilter} onValueChange={setKitchenFilter}>
-                  <SelectTrigger className="w-[130px] h-9 text-xs"><SelectValue placeholder="Kitchen: All" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Kitchen: All</SelectItem>
-                    {kitchens.map((k) => <SelectItem key={k} value={k}>{k}</SelectItem>)}
-                  </SelectContent>
-                </Select>
-                <Select value={dateFilter} onValueChange={setDateFilter}>
-                  <SelectTrigger className="w-[120px] h-9 text-xs"><SelectValue placeholder="Date: All" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Time</SelectItem>
-                    <SelectItem value="today">Today</SelectItem>
-                    <SelectItem value="7d">Last 7 days</SelectItem>
-                    <SelectItem value="30d">Last 30 days</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button
-                  variant="ghost"
-                  className="gap-2 h-9 text-xs text-muted-foreground"
-                  onClick={() => {
-                    setSearchQuery("")
-                    setStatusFilter("all")
-                    setMethodFilter("all")
-                    setKitchenFilter("all")
-                    setDateFilter("all")
-                    setRowSelection({})
-                  }}
-                >
-                  <RefreshCcw className="h-3.5 w-3.5" /> Reset
-                </Button>
+                <div className="flex items-center gap-1 text-[11px] font-medium text-[#16A34A] mt-auto">
+                  <span className="text-[#64748B] font-normal">{formatINR(stats.totalAmount)} total value</span>
+                </div>
               </div>
             </div>
 
-            <div className="p-3 border-b border-border/50 flex flex-wrap items-center gap-3">
-              {filterChips.map((chip) => (
-                <Button
-                  key={chip.key}
-                  variant="outline"
-                  className={`h-8 text-xs font-medium gap-1.5 px-3 ${chip.className} ${statusFilter === chip.key ? "shadow-sm ring-1 ring-border" : ""}`}
-                  onClick={() => setStatusFilter(chip.key)}
-                >
-                  {chip.label} <span className={`px-1 rounded text-[10px] ${chip.countClass}`}>{chip.count.toLocaleString("en-IN")}</span>
-                </Button>
-              ))}
+            <div className="bg-white rounded-[10px] p-5 border border-[#E5E7EB] shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex items-start gap-4 h-[120px]">
+              <div className="h-11 w-11 rounded-full bg-[#ECFDF3] flex items-center justify-center shrink-0">
+                <ShieldCheck className="h-[22px] w-[22px] text-[#16A34A]" strokeWidth={2} />
+              </div>
+              <div className="flex flex-col h-full justify-between w-full">
+                <div>
+                  <p className="text-xs font-medium text-[#64748B]">Successful Payments</p>
+                  <h3 className="text-[22px] font-bold text-[#0F172A] leading-tight mt-1">{stats.successful.toLocaleString()}</h3>
+                </div>
+                <div className="text-[11px] text-[#64748B] mt-auto">
+                  {stats.successRate}% success rate
+                </div>
+              </div>
             </div>
 
-            <div className="p-0 [&_th]:text-[10px] [&_th]:font-semibold [&_th]:text-muted-foreground [&_th]:uppercase [&_td]:py-3 border-b border-border/50">
+            <div className="bg-white rounded-[10px] p-5 border border-[#E5E7EB] shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex items-start gap-4 h-[120px]">
+              <div className="h-11 w-11 rounded-full bg-[#FFF7ED] flex items-center justify-center shrink-0">
+                <Clock3 className="h-[22px] w-[22px] text-[#F59E0B]" strokeWidth={2} />
+              </div>
+              <div className="flex flex-col h-full justify-between w-full">
+                <div>
+                  <p className="text-xs font-medium text-[#64748B]">Pending Payments</p>
+                  <h3 className="text-[22px] font-bold text-[#0F172A] leading-tight mt-1">{stats.pending.toLocaleString()}</h3>
+                </div>
+                <div className="text-[11px] text-[#64748B] mt-auto">
+                  {stats.pendingPct}% of total
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-[10px] p-5 border border-[#E5E7EB] shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex items-start gap-4 h-[120px]">
+              <div className="h-11 w-11 rounded-full bg-[#FEF2F2] flex items-center justify-center shrink-0">
+                <CircleX className="h-[22px] w-[22px] text-[#EF4444]" strokeWidth={2} />
+              </div>
+              <div className="flex flex-col h-full justify-between w-full">
+                <div>
+                  <p className="text-xs font-medium text-[#64748B]">Failed Payments</p>
+                  <h3 className="text-[22px] font-bold text-[#0F172A] leading-tight mt-1">{stats.failed.toLocaleString()}</h3>
+                </div>
+                <div className="text-[11px] text-[#64748B] mt-auto">
+                  {stats.failedPct}% of total
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-white rounded-[10px] p-5 border border-[#E5E7EB] shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex items-start gap-4 h-[120px]">
+              <div className="h-11 w-11 rounded-full bg-[#F5F3FF] flex items-center justify-center shrink-0">
+                <RotateCcw className="h-[22px] w-[22px] text-[#8B5CF6]" strokeWidth={2} />
+              </div>
+              <div className="flex flex-col h-full justify-between w-full">
+                <div>
+                  <p className="text-xs font-medium text-[#64748B]">Refunds Processed</p>
+                  <h3 className="text-[22px] font-bold text-[#0F172A] leading-tight mt-1">{stats.refunded.toLocaleString()}</h3>
+                </div>
+                <div className="text-[11px] text-[#64748B] mt-auto">
+                  {formatINR(stats.refundTotal)} refunded
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Filter Bar */}
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative flex-1 min-w-[280px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-[#64748B]" />
+            <Input
+              type="text"
+              value={search}
+              onChange={(e) => { setSearch(e.target.value); setPage(1) }}
+              placeholder="Search by order ID, customer, payment ID..."
+              className="w-full pl-9 pr-4 h-[40px] text-sm text-[#334155] placeholder:text-[#94A3B8] bg-white border border-[#E2E8F0] rounded-lg focus-visible:ring-1 focus-visible:ring-[#16A34A] focus-visible:border-[#16A34A] transition-colors shadow-none"
+            />
+          </div>
+
+          <div className="relative min-w-[140px]">
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setPage(1) }}>
+              <SelectTrigger className="bg-white border-[#E2E8F0] text-[#334155] text-sm rounded-lg h-[40px] focus:ring-[#16A34A] font-medium shadow-none">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Status: All</SelectItem>
+                <SelectItem value="SUCCESS">Successful</SelectItem>
+                <SelectItem value="PENDING">Pending</SelectItem>
+                <SelectItem value="FAILED">Failed</SelectItem>
+                <SelectItem value="refunded">Refunded</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="relative min-w-[140px]">
+            <Select value={methodFilter} onValueChange={(v) => { setMethodFilter(v); setPage(1) }}>
+              <SelectTrigger className="bg-white border-[#E2E8F0] text-[#334155] text-sm rounded-lg h-[40px] focus:ring-[#16A34A] font-medium shadow-none">
+                <SelectValue placeholder="Method" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Method: All</SelectItem>
+                {methods.map(([key, label]) => (
+                  <SelectItem key={key} value={key}>{label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="relative min-w-[140px]">
+            <Select value={kitchenFilter} onValueChange={(v) => { setKitchenFilter(v); setPage(1) }}>
+              <SelectTrigger className="bg-white border-[#E2E8F0] text-[#334155] text-sm rounded-lg h-[40px] focus:ring-[#16A34A] font-medium shadow-none">
+                <SelectValue placeholder="Kitchen" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Kitchen: All</SelectItem>
+                {kitchens.map((k) => (
+                  <SelectItem key={k} value={k}>{k}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="relative min-w-[140px]">
+            <Select value={periodFilter} onValueChange={(v) => { setPeriodFilter(v); setPage(1) }}>
+              <SelectTrigger className="bg-white border-[#E2E8F0] text-[#334155] text-sm rounded-lg h-[40px] focus:ring-[#16A34A] font-medium shadow-none">
+                <SelectValue placeholder="Date Range" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Time</SelectItem>
+                <SelectItem value="today">Today</SelectItem>
+                <SelectItem value="week">Last 7 Days</SelectItem>
+                <SelectItem value="month">Last 30 Days</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Button variant="outline" onClick={resetFilters} className="flex items-center gap-2 px-4 h-[40px] bg-white border border-[#E2E8F0] text-[#475569] rounded-lg font-medium text-sm hover:bg-gray-50 transition-colors shadow-none">
+            <RotateCcw className="h-4 w-4" />
+            Reset
+          </Button>
+        </div>
+
+        {/* Main Content Split */}
+        <div className="flex flex-col 2xl:flex-row gap-6">
+
+          {/* Left Column - Transactions */}
+          <div className="flex-1 min-w-0 flex flex-col space-y-4">
+
+            {/* Filter Tabs */}
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide">
+              {tabButton(statusFilter === "all", "All Transactions", tabCounts.total, "hover:bg-[#F0FDF4] hover:text-[#15803D] hover:border-[#BBE7C9]", () => { setStatusFilter("all"); setPage(1) })}
+              {tabButton(statusFilter === "SUCCESS", "Successful", tabCounts.successful, "hover:bg-[#F0FDF4] hover:text-[#15803D] hover:border-[#BBE7C9]", () => { setStatusFilter("SUCCESS"); setPage(1) })}
+              {tabButton(statusFilter === "PENDING", "Pending", tabCounts.pending, "hover:bg-[#FFF7ED] hover:text-[#D97706] hover:border-[#FED7AA]", () => { setStatusFilter("PENDING"); setPage(1) })}
+              {tabButton(statusFilter === "FAILED", "Failed", tabCounts.failed, "hover:bg-[#FEF2F2] hover:text-[#DC2626] hover:border-[#FECACA]", () => { setStatusFilter("FAILED"); setPage(1) })}
+              {tabButton(statusFilter === "refunded", "Refunded", tabCounts.refunded, "hover:bg-[#F5F3FF] hover:text-[#7C3AED] hover:border-[#DDD6FE]", () => { setStatusFilter("refunded"); setPage(1) })}
+            </div>
+
+            {/* Table Card */}
+            <div className="bg-white rounded-[10px] border border-[#E5E7EB] shadow-[0_1px_2px_rgba(15,23,42,0.03)] flex flex-col flex-1 overflow-hidden">
               {isLoading ? (
-                <TableSkeleton />
+                <div className="p-4"><TableSkeleton /></div>
               ) : (
-                <DataTable table={table} emptyMessage={filtersActive ? "No payments match your filters" : "No payments yet"} />
+                <>
+                  <ScrollArea className="w-full">
+                    <Table className="w-full text-left min-w-[950px]">
+                      <TableHeader>
+                        <TableRow className="bg-white border-b border-[#E5E7EB] hover:bg-transparent">
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] whitespace-nowrap">Order ID</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] whitespace-nowrap">Customer</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] whitespace-nowrap">Kitchen</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] whitespace-nowrap">Amount</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] whitespace-nowrap">Method</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] whitespace-nowrap">Status</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] whitespace-nowrap">Paid At</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] whitespace-nowrap">Payment ID</TableHead>
+                          <TableHead className="py-3 px-5 text-[12px] font-semibold text-[#475569] text-right whitespace-nowrap">Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody className="divide-y divide-[#F1F5F9]">
+                        {paginated.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={9} className="py-14 text-center">
+                              <div className="flex flex-col items-center gap-2">
+                                <CircleX className="h-8 w-8 text-[#CBD5E1]" />
+                                <p className="text-sm font-medium text-[#475569]">No payments found</p>
+                                <p className="text-[12px] text-[#94A3B8]">Try adjusting your search or filters</p>
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          paginated.map((p) => {
+                            const key = methodKey(p.paymentMethod)
+                            return (
+                              <TableRow key={p.id} className="hover:bg-[#F8FAFC] transition-colors bg-white">
+                                <TableCell className="py-4 px-5 align-top">
+                                  <div className="flex items-start gap-3">
+                                    <div className="mt-0.5 p-1 bg-white border border-[#E2E8F0] rounded"><CreditCard className="h-3.5 w-3.5 text-[#64748B]" /></div>
+                                    <div>
+                                      <p className="text-[13px] font-semibold text-[#0F172A] truncate max-w-[120px]" title={p.orderId}>{shortId(p.orderId)}</p>
+                                      <p className="text-[12px] text-[#64748B] mt-0.5">{formatDate(p.createdAt)}</p>
+                                    </div>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top">
+                                  <div className="text-[13px] font-semibold text-[#0F172A]">{p.customer?.name || "—"}</div>
+                                  <div className="text-[12px] text-[#475569] mt-0.5">{p.customer?.phone || "—"}</div>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top">
+                                  <div className="flex items-center gap-2">
+                                    <div className="h-8 w-8 rounded-full bg-[#0F172A] text-white flex items-center justify-center text-xs font-bold shrink-0">
+                                      {(kitchenName(p)).substring(0, 2).toUpperCase()}
+                                    </div>
+                                    <span className="text-[13px] font-semibold text-[#0F172A]">{kitchenName(p)}</span>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top">
+                                  <div className="text-[13px] font-semibold text-[#0F172A]">{formatINR(p.amount || 0)}</div>
+                                  <div className={`text-[12px] mt-0.5 font-medium ${p.status === "SUCCESS" ? "text-[#15803D]" : p.status === "FAILED" ? "text-[#DC2626]" : p.status === "PENDING" ? "text-[#D97706]" : isRefundedStatus(p.status) ? "text-[#7C3AED]" : "text-[#475569]"}`}>
+                                    {statusLabel(p.status)}
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top">
+                                  <div className="flex items-center gap-2">
+                                    <div className={`h-8 w-8 rounded-full ${methodBg(key)} flex items-center justify-center shrink-0`}>
+                                      {methodIcon(p.paymentMethod)}
+                                    </div>
+                                    <div>
+                                      <div className="text-[13px] font-semibold text-[#0F172A]">{normalizeMethod(p.paymentMethod)}</div>
+                                      <div className="text-[12px] text-[#475569] mt-0.5">{providerLabel(p.provider)}</div>
+                                    </div>
+                                  </div>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top">
+                                  <span className={`inline-flex items-center justify-center px-2.5 py-1 border rounded-md text-[11px] font-semibold h-6 ${STATUS_BADGE[p.status ?? ""] ?? DEFAULT_BADGE}`}>
+                                    {statusLabel(p.status)}
+                                  </span>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top text-[12px] text-[#475569]">
+                                  <div>{formatDate(p.paidAt ?? p.createdAt)}</div>
+                                  <div className="mt-0.5">{formatTime(p.paidAt ?? p.createdAt)}</div>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top text-[12px] text-[#475569]">
+                                  <div className="truncate max-w-[120px]" title={p.providerPaymentId ?? ""}>{shortId(p.providerPaymentId)}</div>
+                                  <div className="mt-0.5 truncate max-w-[120px]" title={p.providerOrderId ?? ""}>{shortId(p.providerOrderId)}</div>
+                                </TableCell>
+                                <TableCell className="py-4 px-5 align-top text-right">
+                                  <div className="flex items-center justify-end gap-2">
+                                    <Button variant="outline" size="icon" onClick={() => setSelectedPayment(p)} className="h-8 w-8 rounded-md border border-[#E2E8F0] text-[#64748B] hover:bg-gray-50 flex items-center justify-center transition-colors shadow-none">
+                                      <Eye className="h-4 w-4" />
+                                    </Button>
+                                    <Button variant="outline" size="icon" className="h-8 w-8 rounded-md border border-[#E2E8F0] text-[#64748B] hover:bg-gray-50 flex items-center justify-center transition-colors shadow-none">
+                                      <MoreVertical className="h-4 w-4" />
+                                    </Button>
+                                  </div>
+                                </TableCell>
+                              </TableRow>
+                            )
+                          })
+                        )}
+                      </TableBody>
+                    </Table>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
+
+                  {/* Pagination */}
+                  <div className="p-4 border-t border-[#E5E7EB] flex flex-col sm:flex-row items-center justify-between gap-4 text-sm bg-white mt-auto">
+                    <span className="text-[#64748B]">Showing {from} to {to} of {filtered.length.toLocaleString()} transactions</span>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" disabled={safePage === 1} onClick={() => setPage(Math.max(1, safePage - 1))} className="h-8 w-8 rounded-lg text-[#94A3B8] hover:bg-gray-50 transition-colors shadow-none">
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                        {pageNumbers.map((num, idx) =>
+                          num === "..." ? (
+                            <span key={`ellipsis-${idx}`} className="text-[#94A3B8] px-1">...</span>
+                          ) : (
+                            <Button
+                              key={num}
+                              variant={num === safePage ? "default" : "ghost"}
+                              onClick={() => setPage(num)}
+                              className={`h-8 w-8 rounded-lg px-0 shadow-none ${num === safePage ? "bg-[#16A34A] hover:bg-[#15803D] text-white font-medium" : "text-[#334155] hover:border-[#E2E8F0] border border-transparent transition-colors"}`}
+                            >
+                              {num}
+                            </Button>
+                          )
+                        )}
+                        <Button variant="ghost" size="icon" disabled={safePage === totalPages} onClick={() => setPage(Math.min(totalPages, safePage + 1))} className="h-8 w-8 rounded-lg text-[#475569] hover:bg-gray-50 transition-colors shadow-none">
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <div className="relative border-l border-[#E2E8F0] pl-4 hidden sm:flex items-center gap-2">
+                        <span className="text-[#64748B]">Rows per page</span>
+                        <div className="relative w-[70px]">
+                          <Select value={pageSize} onValueChange={(v) => { setPageSize(v); setPage(1) }}>
+                            <SelectTrigger className="bg-white border-[#E2E8F0] text-[#334155] text-sm h-8 px-3 font-medium shadow-none">
+                              <SelectValue placeholder="10" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="10">10</SelectItem>
+                              <SelectItem value="20">20</SelectItem>
+                              <SelectItem value="50">50</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </>
               )}
             </div>
+          </div>
 
-            <div className="p-3 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white rounded-b-xl">
-              <p className="text-xs text-muted-foreground">
-                Showing {filteredPayments.length === 0 ? 0 : currentPage * pageSize + 1} to {Math.min((currentPage + 1) * pageSize, filteredPayments.length)} of {filteredPayments.length.toLocaleString("en-IN")} transactions
-              </p>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  <span className="text-xs text-muted-foreground">Rows per page</span>
-                  <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
-                    <SelectTrigger className="w-[60px] h-7 text-xs"><SelectValue placeholder="10" /></SelectTrigger>
+          {/* Right Column - Stats & Actions */}
+          <div className="w-full 2xl:w-[340px] shrink-0 flex flex-col gap-5">
+
+            {/* Payment Overview */}
+            <div className="bg-white rounded-[10px] border border-[#E5E7EB] shadow-[0_1px_2px_rgba(15,23,42,0.03)] p-5">
+              <div className="flex items-center justify-between mb-6">
+                <h3 className="text-base font-bold text-[#0F172A]">Payment Overview</h3>
+                <div className="relative w-[110px]">
+                  <Select value={overviewPeriod} onValueChange={setOverviewPeriod}>
+                    <SelectTrigger className="bg-white border-[#E2E8F0] text-[#475569] text-[13px] h-7 px-2 font-medium shadow-none">
+                      <SelectValue placeholder="Date" />
+                    </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
+                      <SelectItem value="week">This Week</SelectItem>
+                      <SelectItem value="month">This Month</SelectItem>
+                      <SelectItem value="all">All Time</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
-                <div className="flex items-center gap-1">
-                  <Button variant="outline" size="sm" className="h-7 w-7 p-0" disabled={!table.getCanPreviousPage()} onClick={() => table.previousPage()}>{"<"}</Button>
-                  {Array.from({ length: totalPages }).slice(0, 5).map((_, i) => (
-                    <Button
-                      key={i}
-                      variant={i === currentPage ? "default" : "ghost"}
-                      size="sm"
-                      className={`h-7 w-7 p-0 text-xs ${i === currentPage ? "bg-green-700 hover:bg-green-800 text-white" : ""}`}
-                      onClick={() => table.setPageIndex(i)}
-                    >
-                      {i + 1}
-                    </Button>
-                  ))}
-                  {totalPages > 5 && <span className="text-xs text-muted-foreground px-1">...</span>}
-                  <Button variant="outline" size="sm" className="h-7 w-7 p-0" disabled={!table.getCanNextPage()} onClick={() => table.nextPage()}>{">"}</Button>
-                </div>
               </div>
-            </div>
-          </Card>
-        </div>
 
-        {/* Right Sidebar */}
-        <div className="w-full xl:w-[320px] shrink-0 space-y-4">
-          {isLoading ? (
-            <SidebarSkeleton />
-          ) : (
-            <>
-              {/* Payment Overview */}
-              <Card className="shadow-sm border-0 ring-1 ring-border/50">
-                <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between border-b border-border/50">
-                  <CardTitle className="text-xs font-semibold">Payment Overview</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 flex items-center justify-center gap-4">
-                  <div className="relative w-[110px] h-[110px] shrink-0">
-                    <svg viewBox="0 0 36 36" className="w-full h-full -rotate-90">
-                      <path className="text-gray-100" strokeDasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke="currentColor" strokeWidth="4" fill="none" />
-                      {donutData.length === 0 ? (
-                        <path className="text-gray-300" strokeDasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke="currentColor" strokeWidth="4" fill="none" />
-                      ) : donutData.map((seg, i) => {
-                        const offset = -(donutData.slice(0, i).reduce((s, d) => s + d.count, 0) / Math.max(stats.total, 1)) * 100
-                        return <path key={seg.key} className={DONUT_COLORS[seg.key].stroke} strokeDasharray={`${pctOf(seg.count, stats.total).toFixed(1)}, 100`} strokeDashoffset={offset} d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" stroke="currentColor" strokeWidth="4" fill="none" />
-                      })}
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                      <span className="text-[11px] font-bold">{formatCurrency(stats.totalAmount)}</span>
-                      <span className="text-[8px] text-muted-foreground">Total Amount</span>
-                    </div>
+              <div className="flex items-center gap-6">
+                <div className="relative w-[130px] h-[130px] shrink-0 flex items-center justify-center">
+                  <PieChart width={130} height={130}>
+                    <Pie
+                      data={chartData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={46}
+                      outerRadius={65}
+                      paddingAngle={0}
+                      dataKey="value"
+                      stroke="none"
+                      startAngle={90}
+                      endAngle={-270}
+                    >
+                      {chartData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
+                    <span className="text-[15px] font-bold text-[#0F172A] leading-tight mt-1">{formatINR(overviewData.total)}</span>
+                    <span className="text-[10px] text-[#64748B]">Total Amount</span>
                   </div>
-                  <div className="flex flex-col gap-2.5 w-full">
-                    {donutData.map((d) => (
-                      <div key={d.key} className="flex items-center justify-between text-[9px]">
-                        <div className="flex items-center gap-1.5"><div className={`h-1.5 w-1.5 rounded-full ${DONUT_COLORS[d.key].dot}`}></div> {DONUT_LABELS[d.key]}</div>
-                        <span className="font-semibold">{formatCurrency(d.amount)} <span className="text-gray-400 font-normal">({pctOf(d.count, stats.total).toFixed(1)}%)</span></span>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Payment Method Split */}
-              <Card className="shadow-sm border-0 ring-1 ring-border/50">
-                <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between border-b border-border/50">
-                  <CardTitle className="text-xs font-semibold">Payment Method Split</CardTitle>
-                </CardHeader>
-                <CardContent className="p-4 flex flex-col gap-4">
-                  {methodDist.length === 0 && <span className="text-xs text-muted-foreground">No payments yet.</span>}
-                  {methodDist.map((m) => {
-                    const pct = pctOf(m.count, stats.total)
-                    const isUpi = m.label === "UPI"
-                    const isCard = m.label.toLowerCase().includes("card")
-                    const isNet = m.label.toLowerCase().includes("net")
-                    const isWallet = m.label.toLowerCase() === "wallet"
-                    const Icon = isUpi ? Smartphone : isCard ? CreditCard : isNet ? Landmark : isWallet ? Wallet : Banknote
-                    const iconClass = isUpi ? "text-green-600 bg-green-50" : isCard ? "text-orange-600 bg-orange-50" : isNet ? "text-blue-600 bg-blue-50" : isWallet ? "text-purple-600 bg-purple-50" : "text-gray-600 bg-gray-100"
-                    const barClass = isUpi ? "bg-green-600" : isCard ? "bg-orange-500" : isNet ? "bg-blue-600" : isWallet ? "bg-purple-600" : "bg-gray-400"
+                <div className="flex-1 flex flex-col gap-2.5">
+                  {[
+                    { label: "Successful", color: "#16A34A", value: overviewData.successful },
+                    { label: "Pending", color: "#F59E0B", value: overviewData.pending },
+                    { label: "Failed", color: "#EF4444", value: overviewData.failed },
+                    { label: "Refunded", color: "#7C3AED", value: overviewData.refunded },
+                  ].map((row) => {
+                    const pct = overviewData.total > 0 ? Math.round((row.value / overviewData.total) * 1000) / 10 : 0
                     return (
-                      <div key={m.label} className="flex flex-col gap-1.5">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2 text-[11px] font-medium"><div className={`p-1 rounded ${iconClass}`}><Icon className="h-3 w-3" /></div> {m.label}</div>
-                          <span className="text-[10px] font-semibold text-gray-900">{m.count.toLocaleString("en-IN")} <span className="text-gray-400 font-normal">({pct.toFixed(1)}%)</span></span>
+                      <div key={row.label} className="flex items-center justify-between text-[12px]">
+                        <div className="flex items-center gap-1.5 text-[#0F172A]">
+                          <div className="h-2 w-2 rounded-full" style={{ backgroundColor: row.color }}></div>
+                          {row.label}
                         </div>
-                        <div className="h-1 w-full bg-gray-100 rounded-full overflow-hidden">
-                          <div className={`h-full ${barClass}`} style={{ width: `${pct.toFixed(1)}%` }}></div>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-semibold text-[#0F172A]">{formatINR(row.value)}</span>
+                          <span className="text-[#64748B] text-[10px]">({pct}%)</span>
                         </div>
                       </div>
                     )
                   })}
-                </CardContent>
-              </Card>
+                </div>
+              </div>
+            </div>
 
-              {/* Recent Refunds */}
-              <Card className="shadow-sm border-0 ring-1 ring-border/50">
-                <CardHeader className="p-4 pb-2 flex flex-row items-center justify-between border-b border-border/50">
-                  <CardTitle className="text-xs font-semibold">Recent Refunds</CardTitle>
-                </CardHeader>
-                <CardContent className="p-0 flex flex-col">
-                  {recentRefunds.length === 0 && <div className="p-4 text-xs text-muted-foreground">No refunds yet.</div>}
-                  {recentRefunds.map((ref, idx) => (
-                    <div key={`${ref.paymentId}-${idx}`} className="p-3 px-4 border-b border-border/50 last:border-0 flex items-center justify-between">
-                      <div className="flex items-start gap-3">
-                        <div className="h-6 w-6 rounded bg-slate-100 text-slate-500 flex items-center justify-center shrink-0 mt-0.5">
-                          <Receipt className="h-3.5 w-3.5" />
-                        </div>
-                        <div className="flex flex-col gap-0.5">
-                          <span className="text-[11px] font-semibold uppercase">ORD{(ref.orderId ?? ref.paymentId).slice(-6)}</span>
-                          <span className="text-[9px] text-muted-foreground">{new Date(ref.initiatedAt).toLocaleString("en-IN", { day: "2-digit", month: "short", hour: "numeric", minute: "2-digit", hour12: true })}</span>
-                        </div>
+            {/* Popular Payment Methods */}
+            <div className="bg-white rounded-[10px] border border-[#E5E7EB] shadow-[0_1px_2px_rgba(15,23,42,0.03)] p-5">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-base font-bold text-[#0F172A]">Popular Payment Methods</h3>
+              </div>
+
+              <div className="space-y-4">
+                {methodStats.length === 0 ? (
+                  <p className="text-[12px] text-[#94A3B8]">No payment data yet</p>
+                ) : (
+                  methodStats.map((m) => (
+                    <div key={m.key} className="flex items-center gap-3">
+                      <div className={`h-8 w-8 rounded-full ${methodBg(m.key)} flex items-center justify-center shrink-0`}>
+                        {methodIcon(m.key.toLowerCase())}
                       </div>
-                      <div className="flex flex-col items-end gap-1">
-                        <span className="text-xs font-bold text-gray-900">{formatCurrency(ref.amount)}</span>
-                        <span className="text-[9px] font-medium text-purple-700 bg-purple-50 px-1.5 rounded-sm">{ref.status}</span>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-[13px] font-semibold text-[#0F172A]">{m.label}</span>
+                          <div className="flex items-center gap-1">
+                            <span className="text-[12px] font-semibold text-[#0F172A]">{m.count.toLocaleString()}</span>
+                            <span className="text-[11px] text-[#64748B]">({m.pct}%)</span>
+                          </div>
+                        </div>
+                        <div className="h-1.5 w-full bg-[#E5E7EB] rounded-full overflow-hidden">
+                          <div className="h-full rounded-full" style={{ backgroundColor: m.color, width: `${m.pct}%` }}></div>
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </CardContent>
-              </Card>
-            </>
-          )}
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Recent Refunds */}
+            <div className="bg-white rounded-[10px] border border-[#E5E7EB] shadow-[0_1px_2px_rgba(15,23,42,0.03)] p-5">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-base font-bold text-[#0F172A]">Recent Refunds</h3>
+                <button className="text-[13px] font-semibold text-[#2563EB] hover:text-[#1D4ED8]" onClick={() => { setStatusFilter("refunded"); setPage(1) }}>View All</button>
+              </div>
+
+              <div className="space-y-4">
+                {recentRefunds.length === 0 ? (
+                  <p className="text-[12px] text-[#94A3B8]">No refunds yet</p>
+                ) : (
+                  recentRefunds.map((p, i) => {
+                    const refund = p.refunds[0]
+                    return (
+                      <React.Fragment key={p.id}>
+                        {i > 0 && <div className="h-[1px] w-full bg-[#F1F5F9]" />}
+                        <div className="flex items-start justify-between">
+                          <div className="flex gap-3">
+                            <div className="mt-0.5 p-1.5 bg-white border border-[#E2E8F0] rounded-lg">
+                              <CalendarDays className="h-4 w-4 text-[#64748B]" />
+                            </div>
+                            <div>
+                              <p className="text-[13px] font-semibold text-[#0F172A]">{shortId(p.orderId)}</p>
+                              <p className="text-[11px] text-[#64748B] mt-0.5">{formatDate(refund?.processedAt ?? refund?.initiatedAt ?? p.createdAt)}</p>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-1.5">
+                            <span className="text-[13px] font-bold text-[#0F172A]">{formatINR(refund?.amount ?? p.amount ?? 0)}</span>
+                            <span className="inline-flex items-center justify-center px-2 py-0.5 bg-[#F5F3FF] text-[#7C3AED] border border-[#DDD6FE] rounded text-[10px] font-semibold">
+                              {REFUND_STATUS_LABELS[refund?.status ?? ""] ?? refund?.status ?? "Refunded"}
+                            </span>
+                          </div>
+                        </div>
+                      </React.Fragment>
+                    )
+                  })
+                )}
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div>
+              <h3 className="text-sm font-bold text-[#0F172A] mb-3">Quick Actions</h3>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  onClick={() => {
+                    const target = payments.find((p) => p.status === "SUCCESS") ?? payments[0]
+                    if (target) setSelectedPayment(target)
+                  }}
+                  className="flex items-center gap-2.5 p-3 rounded-lg bg-white border border-[#E2E8F0] hover:border-[#16A34A] hover:shadow-sm transition-all group text-left"
+                >
+                  <div className="h-7 w-7 rounded bg-[#ECFDF3] flex items-center justify-center shrink-0">
+                    <RotateCcw className="h-3.5 w-3.5 text-[#16A34A]" />
+                  </div>
+                  <span className="text-[12px] font-semibold text-[#0F172A] leading-tight">Process<br />Refund</span>
+                </button>
+
+                <button onClick={exportCSV} className="flex items-center gap-2.5 p-3 rounded-lg bg-white border border-[#E2E8F0] hover:border-[#F97316] hover:shadow-sm transition-all group text-left">
+                  <div className="h-7 w-7 rounded bg-[#FFF7ED] flex items-center justify-center shrink-0">
+                    <Download className="h-3.5 w-3.5 text-[#F97316]" />
+                  </div>
+                  <span className="text-[12px] font-semibold text-[#0F172A] leading-tight">Download<br />Report</span>
+                </button>
+
+                <button className="flex items-center gap-2.5 p-3 rounded-lg bg-white border border-[#E2E8F0] hover:border-[#2563EB] hover:shadow-sm transition-all group text-left">
+                  <div className="h-7 w-7 rounded bg-[#EFF6FF] flex items-center justify-center shrink-0">
+                    <ClipboardCheck className="h-3.5 w-3.5 text-[#2563EB]" />
+                  </div>
+                  <span className="text-[12px] font-semibold text-[#0F172A] leading-tight">Reconcile<br />Payments</span>
+                </button>
+
+                <button className="flex items-center gap-2.5 p-3 rounded-lg bg-white border border-[#E2E8F0] hover:border-[#7C3AED] hover:shadow-sm transition-all group text-left">
+                  <div className="h-7 w-7 rounded bg-[#F5F3FF] flex items-center justify-center shrink-0">
+                    <Settings className="h-3.5 w-3.5 text-[#7C3AED]" />
+                  </div>
+                  <span className="text-[12px] font-semibold text-[#0F172A] leading-tight">Payment<br />Settings</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
         </div>
+
       </div>
 
-      {/* Payment Details Side Panel */}
-      <Sheet open={!!selectedPayment} onOpenChange={(open) => !open && setSelectedPayment(null)}>
-        <SheetContent className="w-full sm:max-w-md overflow-y-auto p-0 flex flex-col bg-slate-50/50">
+      {/* Payment Details Sheet */}
+      <Sheet open={!!selectedPayment} onOpenChange={(open) => { if (!open) setSelectedPayment(null) }}>
+        <SheetContent side="right" className="w-full sm:max-w-[460px] p-0 bg-[#FFFFFF] overflow-y-auto">
           {selectedPayment && (
-            <PaymentSheet key={selectedPayment.id} payment={selectedPayment} onClose={() => setSelectedPayment(null)} />
+            <div className="p-6 space-y-6">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-[18px] font-bold text-[#0F172A]">Payment Details</h3>
+                  <p className="text-[12px] text-[#64748B] mt-0.5">{selectedPayment.id}</p>
+                </div>
+                <button onClick={() => setSelectedPayment(null)} className="h-8 w-8 rounded-full bg-[#F1F5F9] hover:bg-[#E2E8F0] flex items-center justify-center transition-colors">
+                  <X className="h-4 w-4 text-[#475569]" />
+                </button>
+              </div>
+
+              <div className="flex items-center justify-between p-4 rounded-[10px] border border-[#E5E7EB] bg-[#F8FAFC]">
+                <div>
+                  <p className="text-[11px] text-[#64748B] font-medium">Amount</p>
+                  <p className="text-[22px] font-bold text-[#0F172A] mt-0.5">{formatINR(selectedPayment.amount || 0)}</p>
+                </div>
+                <span className={`inline-flex items-center justify-center px-2.5 py-1 border rounded-md text-[11px] font-semibold h-6 ${STATUS_BADGE[selectedPayment.status ?? ""] ?? DEFAULT_BADGE}`}>
+                  {statusLabel(selectedPayment.status)}
+                </span>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-[11px] font-medium text-[#64748B]">Customer</p>
+                  <p className="text-[13px] font-semibold text-[#0F172A] mt-1">{selectedPayment.customer?.name || "—"}</p>
+                  <p className="text-[12px] text-[#475569] mt-0.5">{selectedPayment.customer?.phone || "—"}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-[#64748B]">Kitchen</p>
+                  <p className="text-[13px] font-semibold text-[#0F172A] mt-1">{kitchenName(selectedPayment)}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-[#64748B]">Method</p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <div className={`h-7 w-7 rounded-full ${methodBg(methodKey(selectedPayment.paymentMethod))} flex items-center justify-center shrink-0`}>
+                      {methodIcon(selectedPayment.paymentMethod, "h-3.5 w-3.5")}
+                    </div>
+                    <div>
+                      <p className="text-[13px] font-semibold text-[#0F172A]">{normalizeMethod(selectedPayment.paymentMethod)}</p>
+                      <p className="text-[11px] text-[#475569]">{providerLabel(selectedPayment.provider)}</p>
+                    </div>
+                  </div>
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-[#64748B]">Order Status</p>
+                  <p className="text-[13px] font-semibold text-[#0F172A] mt-1">{selectedPayment.orderStatus || "—"}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-[#64748B]">Created</p>
+                  <p className="text-[13px] font-semibold text-[#0F172A] mt-1">{formatDate(selectedPayment.createdAt)}</p>
+                  <p className="text-[12px] text-[#475569] mt-0.5">{formatTime(selectedPayment.createdAt)}</p>
+                </div>
+                <div>
+                  <p className="text-[11px] font-medium text-[#64748B]">Paid At</p>
+                  <p className="text-[13px] font-semibold text-[#0F172A] mt-1">{selectedPayment.paidAt ? formatDate(selectedPayment.paidAt) : "—"}</p>
+                  <p className="text-[12px] text-[#475569] mt-0.5">{selectedPayment.paidAt ? formatTime(selectedPayment.paidAt) : "Not paid yet"}</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-[11px] font-medium text-[#64748B]">Order ID</p>
+                  <p className="text-[13px] font-semibold text-[#0F172A] mt-1 break-all">{selectedPayment.orderId}</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-[11px] font-medium text-[#64748B]">Payment ID</p>
+                  <p className="text-[13px] font-semibold text-[#0F172A] mt-1 break-all">{selectedPayment.providerPaymentId || "—"}</p>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-[11px] font-medium text-[#64748B]">Provider Order ID</p>
+                  <p className="text-[13px] font-semibold text-[#0F172A] mt-1 break-all">{selectedPayment.providerOrderId || "—"}</p>
+                </div>
+              </div>
+
+              {selectedPayment.refunds.length > 0 && (
+                <div>
+                  <p className="text-[13px] font-bold text-[#0F172A] mb-3">Refunds</p>
+                  <div className="space-y-2">
+                    {selectedPayment.refunds.map((r) => (
+                      <div key={r.id} className="flex items-center justify-between p-3 rounded-[8px] border border-[#E5E7EB] bg-[#F8FAFC]">
+                        <div>
+                          <p className="text-[12px] font-semibold text-[#0F172A]">{formatINR(r.amount || 0)}</p>
+                          <p className="text-[11px] text-[#64748B] mt-0.5">{formatDate(r.initiatedAt)}</p>
+                        </div>
+                        <span className="inline-flex items-center justify-center px-2 py-0.5 bg-[#F5F3FF] text-[#7C3AED] border border-[#DDD6FE] rounded text-[10px] font-semibold">
+                          {REFUND_STATUS_LABELS[r.status ?? ""] ?? r.status}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
         </SheetContent>
       </Sheet>
     </div>
-  )
-}
-
-function MethodDetails({ payment }: { payment: AdminPaymentRow }) {
-  const info = getMethodInfo(payment.paymentMethod, payment.provider)
-  const Icon = info.icon
-  return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-3">
-        <div className={`h-9 w-9 rounded flex items-center justify-center ${info.bg}`}>
-          <Icon className={`h-4 w-4 ${info.color}`} />
-        </div>
-        <div className="flex flex-col gap-0.5">
-          <span className="text-sm font-semibold">{info.label}</span>
-          <span className="text-xs text-muted-foreground">{info.sub ?? "—"}</span>
-        </div>
-      </div>
-      <div className="grid grid-cols-2 gap-2 text-xs">
-        <div className="flex flex-col gap-0.5">
-          <span className="text-[10px] text-muted-foreground">Provider Order ID</span>
-          <span className="font-mono text-[11px] break-all">{payment.providerOrderId ?? "—"}</span>
-        </div>
-        <div className="flex flex-col gap-0.5">
-          <span className="text-[10px] text-muted-foreground">Provider Payment ID</span>
-          <span className="font-mono text-[11px] break-all">{payment.providerPaymentId ?? "—"}</span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function PaymentSheet({ payment, onClose }: { payment: AdminPaymentRow; onClose: () => void }) {
-  const dt = formatDateTime(payment.paidAt ?? null)
-  const created = formatDateTime(payment.createdAt)
-  return (
-    <>
-      <SheetHeader className="p-5 pb-0 border-b border-border/50 sticky top-0 bg-white z-10">
-        <div className="flex justify-between items-start mb-4">
-          <div className="flex flex-col gap-1">
-            <SheetTitle className="text-lg">Payment Details</SheetTitle>
-            <div className="flex items-center gap-2">
-              <span className="font-semibold text-xs tracking-tight uppercase">PAY{payment.id.slice(-6)}</span>
-              {getStatusBadge(payment.status)}
-            </div>
-          </div>
-        </div>
-      </SheetHeader>
-
-      <div className="p-5 space-y-4 flex-1">
-        <div className="grid grid-cols-3 gap-3">
-          <div className="bg-green-50/50 p-3 rounded-lg border border-green-100/50 flex flex-col justify-between h-[72px]">
-            <div className="flex items-center gap-1.5 text-green-600 text-[10px] font-medium">
-              <div className="p-0.5 rounded-full bg-green-100"><Banknote className="h-3 w-3" /></div> Amount
-            </div>
-            <span className="font-bold text-sm">{formatCurrency(payment.amount)}</span>
-          </div>
-          <div className="bg-white p-3 rounded-lg border border-border/50 flex flex-col justify-between h-[72px]">
-            <div className="flex items-center gap-1.5 text-muted-foreground text-[10px] font-medium">
-              <div className="p-0.5 text-red-500"><Clock className="h-3 w-3" /></div> Paid At
-            </div>
-            <span className="font-semibold text-[11px]">{dt.date}{dt.time ? `, ${dt.time}` : ""}</span>
-          </div>
-          <div className="bg-white p-3 rounded-lg border border-border/50 flex flex-col justify-between h-[72px]">
-            <div className="flex items-center gap-1.5 text-muted-foreground text-[10px] font-medium">
-              <div className="p-0.5"><Receipt className="h-3 w-3" /></div> Order
-            </div>
-            <span className="font-semibold text-[11px] uppercase">ORD{(payment.orderId ?? payment.id).slice(-6)}</span>
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-lg border border-border/50 flex flex-col gap-3">
-          <h4 className="text-[11px] font-semibold text-muted-foreground">Payment Method</h4>
-          <MethodDetails payment={payment} />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white p-4 rounded-lg border border-border/50 flex flex-col gap-2">
-            <h4 className="text-[11px] font-semibold text-muted-foreground">Customer</h4>
-            <span className="text-xs font-medium">{payment.customer.name ?? "Anonymous"}</span>
-            <span className="text-xs text-muted-foreground">{payment.customer.phone ?? "—"}</span>
-          </div>
-          <div className="bg-white p-4 rounded-lg border border-border/50 flex flex-col gap-2">
-            <h4 className="text-[11px] font-semibold text-muted-foreground">Kitchen</h4>
-            <span className="text-xs font-medium">{payment.kitchen ?? "Unknown"}</span>
-            <span className="text-xs text-muted-foreground uppercase">Order {payment.orderStatus ?? "—"}</span>
-          </div>
-        </div>
-
-        <div className="bg-white p-4 rounded-lg border border-border/50 flex flex-col gap-2">
-          <h4 className="text-xs font-semibold">Timeline</h4>
-          <div className="flex flex-col gap-2 text-xs">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Created</span>
-              <span className="font-medium">{created.date}{created.time ? `, ${created.time}` : ""}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Paid</span>
-              <span className="font-medium">{dt.date}{dt.time ? `, ${dt.time}` : "—"}</span>
-            </div>
-          </div>
-        </div>
-
-        {payment.refunds.length > 0 && (
-          <div className="bg-white p-4 rounded-lg border border-border/50 flex flex-col gap-3">
-            <h4 className="text-xs font-semibold">Refunds ({payment.refunds.length})</h4>
-            {payment.refunds.map((r) => (
-              <div key={r.id} className="flex items-center justify-between border-b border-border/50 pb-2 last:border-0 last:pb-0">
-                <div className="flex flex-col gap-0.5">
-                  <span className="text-xs font-medium">{formatCurrency(r.amount)}</span>
-                  <span className="text-[10px] text-muted-foreground">{r.reason ?? "No reason"}</span>
-                </div>
-                <Badge variant="outline" className="text-[10px] text-purple-600 border-purple-200 bg-purple-50/50 shadow-none h-5">{r.status}</Badge>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      <div className="p-4 border-t border-border/50 bg-white flex justify-end gap-3 sticky bottom-0 z-10">
-        <Button variant="outline" onClick={onClose} className="text-xs h-9">Close</Button>
-        <Button className="text-xs h-9 bg-green-700 hover:bg-green-800 text-white" onClick={() => exportReceipt(payment)}>
-          <Download className="h-3.5 w-3.5" /> Download Receipt
-        </Button>
-      </div>
-    </>
   )
 }

@@ -36,33 +36,36 @@ const slides: HeroSlide[] = [
     tag: "100% HOME COOKED",
     headline: (
       <>
-        <span className="block text-[#0A3D24] font-black text-[2.5rem] sm:text-5xl lg:text-[3.75rem] leading-[1.05] tracking-tight">
-          Home cooked food
+        <span className="block text-[#003015] font-black text-[2.5rem] sm:text-5xl lg:text-[3.75rem] leading-[1.05] tracking-tight">
+          Home cooket food
         </span>
-        <span className="block text-[#0A3D24] font-black text-[2.5rem] sm:text-5xl lg:text-[3.75rem] leading-[1.05] tracking-tight mt-1 lg:mt-1.5">
+        <span className="block text-[#003015] font-black text-[2.5rem] sm:text-5xl lg:text-[3.75rem] leading-[1.05] tracking-tight mt-1 lg:mt-1.5">
           in{" "}
-          <span className="text-[#FF4B00] font-serif italic font-semibold">
+          <span className="text-[#F04E00] font-serif italic font-semibold">
             ever silver
-          </span>{" "}
+          </span>
+        </span>
+        <span className="block text-[#003015] font-black text-[2.5rem] sm:text-5xl lg:text-[3.75rem] leading-[1.05] tracking-tight mt-1 lg:mt-1.5">
           Box carrier
         </span>
       </>
     ),
     description: (
       <span className="block">
-        Healthy, hygienic and delicious meals prepared by trusted<br className="hidden lg:block"/>
-        home chefs and delivered to your doorstep in<br className="hidden lg:block"/>
-        <span className="text-[#0A3D24] font-bold">traditional stainless steel tiffin box carrier.</span>
+        Healthy, hygienic and delicious meals prepared by trusted<br />
+        home chefs and delivered to your doorstep in<br />
+        <span className="text-[#003015] font-bold">traditional stainless steel tiffin box carrier.</span>
       </span>
     ),
     primaryCta: { label: "ORDER NOW", href: "/search" },
     secondaryCta: { label: "EXPLORE KITCHENS", href: "/categories" },
     trustBar: [
-      { icon: Heart, text: "Cooked with Love" },
-      { icon: ShieldCheck, text: "Hygienic & Safe" },
-      { icon: Clock, text: "On-time Delivery" },
-      { icon: Leaf, text: "Fresh Ingredients" },
-      { icon: Package, text: "Steel Tiffin Carrier" },
+      { icon: Heart, text: "Cooked\nwith Love" },
+      { icon: ShieldCheck, text: "Hygienic\n& Safe" },
+      { icon: Clock, text: "On-time\nDelivery" },
+      { icon: Package, text: "Packed in\nTiffin Carrier" },
+      { icon: Leaf, text: "Fresh\nIngredients" },
+      { icon: Package, text: "Steel Tiffin\nCarrier" },
     ],
     rightCard: [
       { icon: Flame, title: "Food stays hot", subtitle: "for longer" },
@@ -78,10 +81,10 @@ const slides: HeroSlide[] = [
     tag: "BECOME A HOME CHEF",
     headline: (
       <>
-        <span className="block text-[#0A3D24] font-black text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.1] tracking-tight">
+        <span className="block text-[#003015] font-black text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.1] tracking-tight">
           Turn Your Passion
         </span>
-        <span className="block text-[#0A3D24] font-black text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.1] tracking-tight mt-1">
+        <span className="block text-[#003015] font-black text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.1] tracking-tight mt-1">
           Into Your{" "}
           <span className="text-primary font-serif italic font-semibold">
             Profession
@@ -94,10 +97,10 @@ const slides: HeroSlide[] = [
     primaryCta: { label: "JOIN NOW", href: "/kitchen/signup" },
     secondaryCta: { label: "LEARN MORE", href: "/kitchen" },
     trustBar: [
-      { icon: Heart, text: "Be Your Own Boss" },
-      { icon: Clock, text: "Flexible Hours" },
-      { icon: ShieldCheck, text: "Trusted Platform" },
-      { icon: Package, text: "We Handle Delivery" },
+      { icon: Heart, text: "Be Your\nOwn Boss" },
+      { icon: Clock, text: "Flexible\nHours" },
+      { icon: ShieldCheck, text: "Trusted\nPlatform" },
+      { icon: Package, text: "We Handle\nDelivery" },
     ],
     rightCard: [
       { icon: Heart, title: "Reach more", subtitle: "happy customers" },
@@ -113,10 +116,10 @@ const slides: HeroSlide[] = [
     tag: "FRESHLY COOKED DAILY",
     headline: (
       <>
-        <span className="block text-[#0A3D24] font-black text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.1] tracking-tight">
+        <span className="block text-[#003015] font-black text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.1] tracking-tight">
           Fresh & Healthy
         </span>
-        <span className="block text-[#0A3D24] font-black text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.1] tracking-tight mt-1">
+        <span className="block text-[#003015] font-black text-4xl sm:text-5xl lg:text-[3.25rem] leading-[1.1] tracking-tight mt-1">
           <span className="text-primary font-serif italic font-semibold">
             Daily Menu
           </span>{" "}
@@ -129,10 +132,10 @@ const slides: HeroSlide[] = [
     primaryCta: { label: "VIEW TODAY'S MENU", href: "/today-specials" },
     secondaryCta: { label: "SUBSCRIBE NOW", href: "/categories" },
     trustBar: [
-      { icon: Clock, text: "Daily Rotating Menu" },
-      { icon: Leaf, text: "Farm Fresh Produce" },
-      { icon: ShieldCheck, text: "Home Chef Certified" },
-      { icon: Flame, text: "Hot Delivery" },
+      { icon: Clock, text: "Daily Rotating\nMenu" },
+      { icon: Leaf, text: "Farm Fresh\nProduce" },
+      { icon: ShieldCheck, text: "Home Chef\nCertified" },
+      { icon: Flame, text: "Hot\nDelivery" },
     ],
     rightCard: [
       { icon: Clock, title: "Order by", subtitle: "12:00 PM" },
@@ -199,20 +202,20 @@ function SlideContent({
         />
         {/* Gradient to blend left edge of image into background on desktop */}
         <div className="hidden lg:block absolute inset-y-0 left-0 w-[45%] bg-linear-to-r from-[#FDFBF7] from-15% via-[#FDFBF7]/80 to-transparent z-10" />
-        {/* Gradient for mobile to ensure text readability (fades diagonally) */}
-        <div className="lg:hidden absolute inset-0 bg-linear-to-br from-[#FDFBF7] from-35% via-[#FDFBF7]/85 to-transparent z-10" />
+        {/* Gradient for mobile to ensure text readability (fades left to right like design) */}
+        <div className="lg:hidden absolute inset-0 bg-linear-to-r from-[#FDFBF7] from-50% via-[#FDFBF7]/85 to-transparent z-10" />
       </div>
 
       <div className="relative z-10 mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 pt-8 sm:pt-14 lg:pt-16 pb-36 sm:pb-40 lg:pb-32 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-6 items-center">
           <div
             className={cn(
-              "lg:col-span-7 space-y-6 lg:space-y-7 transition-all duration-700",
+              "lg:col-span-8 xl:col-span-7 space-y-6 lg:space-y-7 transition-all duration-700",
               isActive ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"
             )}
           >
-            <div className="inline-flex items-center gap-1.5 bg-[#FFF4E5] text-[#0A3D24] px-3.5 py-1.5 rounded-full shadow-sm border border-[#FADCBF]/60">
-              <Leaf className="h-4 w-4 text-[#168846]" />
+            <div className="inline-flex items-center gap-1.5 bg-[#FFF7E8] text-[#087A35] px-3.5 py-1.5 rounded-full shadow-sm border border-[#F2DDB9]">
+              <Leaf className="h-4 w-4 text-[#087A35]" />
               <span className="text-[11px] font-bold tracking-wider uppercase">
                 {slide.tag}
               </span>
@@ -220,32 +223,32 @@ function SlideContent({
 
             <h1>{slide.headline}</h1>
 
-            <p className="text-gray-700 text-base lg:text-[1.05rem] max-w-xl font-medium leading-relaxed">
+            <p className="text-[#333333] text-base lg:text-[1.05rem] max-w-xl font-medium leading-relaxed">
               {slide.description}
             </p>
 
             <div className="flex flex-wrap items-center gap-4 pt-2">
               <Link
                 href={slide.primaryCta.href}
-                className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-[13px] font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-95 bg-[#FF4B00]"
+                className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-[13px] font-bold text-white shadow-lg transition-all hover:opacity-90 active:scale-95 bg-[#F04E00]"
               >
                 {slide.primaryCta.label}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href={slide.secondaryCta.href}
-                className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-[13px] font-bold text-gray-900 bg-white border border-gray-200 shadow-sm transition-all hover:bg-gray-50 active:scale-95"
+                className="inline-flex items-center justify-center gap-2 rounded-full px-8 py-3.5 text-[13px] font-bold text-[#003015] bg-white border border-[#DCDCDC] shadow-sm transition-all hover:bg-gray-50 active:scale-95"
               >
                 {slide.secondaryCta.label}
-                <ChevronRight className="h-4 w-4 text-gray-900" />
+                <ChevronRight className="h-4 w-4 text-[#003015]" />
               </Link>
             </div>
           </div>
 
-          <div className="hidden lg:flex lg:col-span-5 justify-end">
+          <div className="hidden xl:flex xl:col-span-5 justify-end">
             <div
               className={cn(
-                "bg-white rounded-[14px] shadow-[0_8px_30px_rgb(0,0,0,0.08)] p-6 flex flex-col w-[300px] border border-gray-100 transition-all duration-700 delay-150 relative",
+                "bg-[rgba(255,255,255,0.94)] rounded-[10px] shadow-[0_6px_20px_rgba(0,0,0,0.08)] p-6 flex flex-col w-[300px] border border-[#EEEEEE] transition-all duration-700 delay-150 relative",
                 isActive ? "opacity-100 translate-x-0" : "opacity-0 translate-x-8"
               )}
             >
@@ -281,9 +284,9 @@ function SlideContent({
               <div key={i} className="flex items-center gap-6 shrink-0">
                 <div className="flex items-center gap-2.5">
                   <div className="flex items-center justify-center shrink-0">
-                    <item.icon className={cn("h-5 w-5", i % 2 === 0 ? "text-[#FF4B00]" : "text-[#168846]")} strokeWidth={2} />
+                    <item.icon className={cn("h-5 w-5", i % 2 === 0 ? "text-[#F04E00]" : "text-[#087A35]")} strokeWidth={2} />
                   </div>
-                  <span className="text-[12px] font-bold text-gray-900 whitespace-nowrap">
+                  <span className="text-[12px] sm:text-[13px] leading-[1.25] font-bold text-gray-900 whitespace-pre-line">
                     {item.text}
                   </span>
                 </div>

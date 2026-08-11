@@ -31,18 +31,19 @@ export function KitchenTestimonials() {
   const testimonials = data && data.length > 0 ? data : fallbackTestimonials
 
   return (
-    <section className="py-20 bg-[#FAFAFA]">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center">
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-12">
-          What Our <span className="text-[#EE7005]">Home Chefs</span> Say
+    <section className="py-20 bg-[#FEFEFE]">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 text-center flex flex-col items-center">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-[#111111] mb-12 relative inline-block">
+          What Our <span className="text-[#FD4F03]">Home Chefs</span> Say
+          <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-8 h-[2px] bg-[#FD4F03]"></div>
         </h2>
 
         {isLoading ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto mt-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="bg-white rounded-3xl p-8 border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] text-left animate-in fade-in slide-in-from-bottom-3 duration-500"
+                className="bg-[#FFFFFF] rounded-[12px] p-8 border border-[#EEEEEE] shadow-[0_3px_12px_rgba(0,0,0,0.05)] text-left animate-in fade-in slide-in-from-bottom-3 duration-500"
                 style={{ animationDelay: `${i * 60}ms`, animationFillMode: "backwards" }}
               >
                 <div className="flex gap-1 mb-6">
@@ -64,27 +65,27 @@ export function KitchenTestimonials() {
             ))}
           </div>
         ) : (
-          <Carousel className="w-full max-w-5xl mx-auto" opts={{ align: "start", loop: true }}>
+          <Carousel className="w-full max-w-5xl mx-auto mt-4" opts={{ align: "start", loop: true }}>
             <CarouselContent>
               {testimonials.map((t, i) => (
                 <CarouselItem key={t.id ?? i} className="md:basis-1/2 lg:basis-1/3 p-4">
-                  <div className="bg-white rounded-3xl p-8 border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.03)] h-full flex flex-col items-start text-left">
+                  <div className="bg-[#FFFFFF] rounded-[12px] p-8 border border-[#EEEEEE] shadow-[0_3px_12px_rgba(0,0,0,0.05)] h-full flex flex-col items-start text-left">
                     <div className="flex gap-1 mb-6">
                       {[...Array(5)].map((_, j) => (
                         <Star
                           key={j}
-                          className={`h-4 w-4 ${j < t.rating ? "fill-current text-[#EE7005]" : "text-gray-300"}`}
+                          className={`h-4 w-4 ${j < t.rating ? "fill-[#FFA500] text-[#FFA500]" : "text-[#E8E8E8]"}`}
                         />
                       ))}
                     </div>
-                    <p className="text-gray-700 mb-8 italic flex-1 font-medium leading-relaxed">&quot;{t.text}&quot;</p>
+                    <p className="text-[#444444] mb-8 italic flex-1 font-medium leading-relaxed">&quot;{t.text}&quot;</p>
                     <div className="flex items-center gap-4 mt-auto">
-                      <div className="h-12 w-12 rounded-full overflow-hidden relative bg-gray-100 shrink-0 border border-gray-200">
+                      <div className="h-12 w-12 rounded-full overflow-hidden relative bg-[#F1F8F3] shrink-0 border border-[#E8E8E8]">
                         <Image src={t.image} alt={t.name} fill className="object-cover" />
                       </div>
                       <div className="text-left">
-                        <p className="font-bold text-gray-900 text-sm">{t.name}</p>
-                        <p className="text-xs text-gray-500">{t.role}</p>
+                        <p className="font-bold text-[#111111] text-sm">{t.name}</p>
+                        <p className="text-xs text-[#666666]">{t.role}</p>
                       </div>
                     </div>
                   </div>
@@ -92,8 +93,8 @@ export function KitchenTestimonials() {
               ))}
             </CarouselContent>
             <div className="flex justify-center gap-4 mt-10">
-              <CarouselPrevious className="static transform-none bg-white border-gray-200 text-gray-600 hover:text-[#EE7005] hover:border-[#EE7005] shadow-sm" />
-              <CarouselNext className="static transform-none bg-white border-gray-200 text-gray-600 hover:text-[#EE7005] hover:border-[#EE7005] shadow-sm" />
+              <CarouselPrevious className="static transform-none bg-[#FFFFFF] border-[#E8E8E8] text-[#333333] hover:text-[#FD4F03] hover:border-[#FD4F03] shadow-sm rounded-full" />
+              <CarouselNext className="static transform-none bg-[#FFFFFF] border-[#E8E8E8] text-[#333333] hover:text-[#FD4F03] hover:border-[#FD4F03] shadow-sm rounded-full" />
             </div>
           </Carousel>
         )}

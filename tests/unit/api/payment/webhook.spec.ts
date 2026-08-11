@@ -101,7 +101,12 @@ describe('POST /api/auth/razorpay/webhook', () => {
   });
 
   it('returns 500 on unexpected error', async () => {
-    const req = mockWebhookRequest({}, 'some_sig');
+    const crypto = await import('crypto');
+    // Valid signature but payload missing -> processing throws -> 500
+    const payload = { event: 'payment.captured' };
+    const expectedSignature = crypto.createHmac('sha256', 'test_secret').update(JSON.stringify(payload)).digest('hex');
+
+    const req = mockWebhookRequest(payload, expectedSignature);
     const response = await POST(req);
     const body = await response.json();
 

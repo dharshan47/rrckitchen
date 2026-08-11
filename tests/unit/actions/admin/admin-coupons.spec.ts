@@ -8,6 +8,7 @@ const mockPrisma = vi.hoisted(() => ({
     update: vi.fn(),
     delete: vi.fn(),
   },
+  couponRedemption: { groupBy: vi.fn() },
   kitchenPartner: { findMany: vi.fn() },
 }))
 
@@ -31,6 +32,7 @@ describe("admin-coupons", () => {
           kitchenPartner: null, _count: { redemptions: 5 },
         },
       ])
+      mockPrisma.couponRedemption.groupBy.mockResolvedValue([])
 
       const result = await getAllCoupons()
 
@@ -38,6 +40,7 @@ describe("admin-coupons", () => {
       expect(result[0].code).toBe("SAVE10")
       expect(result[0].kitchenName).toBeNull()
       expect(result[0].redemptionCount).toBe(5)
+      expect(result[0].discountGiven).toBe(0)
     })
 
     it("returns kitchen alias for kitchen-specific coupons", async () => {
@@ -45,20 +48,25 @@ describe("admin-coupons", () => {
         {
           id: "cp2", code: "KITCHEN20", discountType: "FLAT", discountValue: 20,
           scope: "KITCHEN_SPECIFIC", kitchenPartnerId: "k1", isActive: true,
-          kitchenPartner: { name: "Tasty Kitchen" },
+          kitchenPartner: { kitchenAlias: { displayName: "Tasty Kitchen" } },
           _count: { redemptions: 0 },
         },
+      ])
+      mockPrisma.couponRedemption.groupBy.mockResolvedValue([
+        { couponId: "cp2", _sum: { discountAmount: 250 } },
       ])
 
       const result = await getAllCoupons()
       expect(result[0].kitchenName).toBe("Tasty Kitchen")
+      expect(result[0].discountGiven).toBe(250)
     })
   })
 
   describe("getSimpleKitchenPartners", () => {
     it("returns id and name for all kitchen partners", async () => {
       mockPrisma.kitchenPartner.findMany.mockResolvedValue([
-        { id: "k1", name: "Kitchen A" }, { id: "k2", name: "Kitchen B" },
+        { id: "k1", kitchenAlias: { displayName: "Kitchen A" } },
+        { id: "k2", kitchenAlias: { displayName: "Kitchen B" } },
       ])
 
       const result = await getSimpleKitchenPartners()
@@ -89,7 +97,7 @@ describe("admin-coupons", () => {
         scope: "PLATFORM", isActive: true,
       })
 
-      expect(result).toEqual({ success: false, error: "Coupon code already exists" })
+      expect(result).toEqual({ success: false, error: "A coupon with this code already exists" })
     })
   })
 

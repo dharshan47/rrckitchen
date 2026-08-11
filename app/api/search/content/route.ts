@@ -15,7 +15,7 @@ export interface PublicSearchPageContent {
   showRatings: boolean
   kitchensCount: number
   filters: { id: string; name: string; options: string[] }[]
-  badges: { id: string; name: string }[]
+  badges: { id: string; name: string; position: string }[]
   infoItems: { id: string; icon: string; title: string; subtitle: string; color: string }[]
 }
 
@@ -41,7 +41,7 @@ async function loadContent(keyword: string): Promise<PublicSearchPageContent | n
       showRatings: match.showRatings,
       kitchensCount: match.kitchensCount,
       filters: match.filters.map((f) => ({ id: f.id, name: f.name, options: f.options })),
-      badges: match.badges.map((b) => ({ id: b.id, name: b.name })),
+      badges: match.badges.map((b) => ({ id: b.id, name: b.name, position: b.position ?? "left" })),
       infoItems: match.infoItems.map((i) => ({
         id: i.id,
         icon: i.icon,
@@ -73,7 +73,7 @@ async function loadContent(keyword: string): Promise<PublicSearchPageContent | n
       showRatings: fallback.showRatings,
       kitchensCount: fallback.kitchensCount,
       filters: fallback.filters.map((f) => ({ id: f.id, name: f.name, options: f.options })),
-      badges: fallback.badges.map((b) => ({ id: b.id, name: b.name })),
+      badges: fallback.badges.map((b) => ({ id: b.id, name: b.name, position: b.position ?? "left" })),
       infoItems: fallback.infoItems.map((i) => ({
         id: i.id,
         icon: i.icon,

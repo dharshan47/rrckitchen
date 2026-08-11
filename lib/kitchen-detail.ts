@@ -30,6 +30,8 @@ export async function queryKitchenDetail(kitchenSlug: string): Promise<KitchenDe
               timeSlot: true,
               avgRating: true,
               totalReviews: true,
+              deliveryFee: true,
+              freeDelivery: true,
               photos: { orderBy: { sortOrder: "asc" } },
               _count: { select: { orderItems: true } },
             },
@@ -38,6 +40,7 @@ export async function queryKitchenDetail(kitchenSlug: string): Promise<KitchenDe
         },
       },
       kitchenCategories: { include: { category: true } },
+      kitchenKyc: true,
       _count: { select: { reviews: true } },
       reviews: { select: { rating: true } },
       kitchenAddress: true,
@@ -88,6 +91,12 @@ export async function queryKitchenDetail(kitchenSlug: string): Promise<KitchenDe
     timeOnPlatform,
     address: kitchen.kitchenAddress,
     description: kitchen.kitchenAlias?.description,
+    fssaiNumber: kitchen.kitchenKyc?.fssaiNumber ?? null,
+    fssaiValidTill: kitchen.kitchenKyc?.fssaiValidTill?.toISOString() ?? null,
+    gstNumber: kitchen.kitchenKyc?.gstNumber ?? null,
+    kitchenId: kitchen.publicCode ? `KK-${kitchen.publicCode}` : null,
+    minOrder: kitchen.minOrder ?? null,
+    deliveryRadiusKm: kitchen.deliveryRadiusKm ?? null,
     items: allItems.map((i) => ({
       id: i.id,
       slug: i.slug ?? i.id,
@@ -106,6 +115,8 @@ export async function queryKitchenDetail(kitchenSlug: string): Promise<KitchenDe
       isBestseller: isBestseller(i._count.orderItems),
       avgRating: i.avgRating ? Number(i.avgRating) : null,
       totalReviews: i.totalReviews,
+      deliveryFee: i.deliveryFee ? Number(i.deliveryFee) : null,
+      freeDelivery: i.freeDelivery,
     })),
   };
 }

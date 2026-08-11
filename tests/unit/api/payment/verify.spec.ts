@@ -38,7 +38,7 @@ describe('POST /api/payment/verify', () => {
     expect(response.status).toBe(200);
     expect(body.orderId).toBe('local_1');
     expect(verifyPaymentSignature).toHaveBeenCalledWith('order_123', 'pay_456', 'valid_sig');
-    expect(confirmPayment).toHaveBeenCalledWith('order_123', 'pay_456');
+    expect(confirmPayment).toHaveBeenCalledWith('order_123', 'pay_456', undefined, undefined);
   });
 
   it('returns 400 when signature is invalid', async () => {

@@ -11,6 +11,7 @@ import { signOut } from "@/lib/auth-client"
 import { getDeliveryDashboardData } from "@/actions/admin/dashboard"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Switch } from "@/components/ui/switch"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   SidebarProvider,
   Sidebar,
@@ -23,17 +24,17 @@ import {
 } from "@/components/ui/sidebar"
 import { SwUpdateBanner } from "@/components/patterns/sw-update-banner"
 import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init"
-import { LayoutDashboard, User, Wallet, LogOut, Truck, Ticket, Bell, ChevronDown, Star } from "lucide-react"
+import { Home, User, Wallet, LogOut, Truck, Ticket, Bell, Star } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
 const navItems = [
-  { href: "/delivery-partner/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/delivery-partner/dashboard", label: "Dashboard", icon: Home },
   { href: "/delivery-partner/dashboard/deliveries", label: "Deliveries", icon: Truck },
-  { href: "/delivery-partner/dashboard/payments", label: "Payments", icon: Wallet },
-  { href: "/delivery-partner/dashboard/reviews", label: "Reviews", icon: Star },
   { href: "/delivery-partner/dashboard/support", label: "Support", icon: Ticket },
   { href: "/delivery-partner/dashboard/profile", label: "Profile", icon: User },
+  { href: "/delivery-partner/dashboard/payments", label: "Payments", icon: Wallet },
+  { href: "/delivery-partner/dashboard/reviews", label: "Reviews", icon: Star },
 ]
 
 function SidebarNav() {
@@ -47,14 +48,14 @@ function SidebarNav() {
         return (
           <SidebarMenuItem key={item.href}>
             <SidebarMenuButton asChild isActive={isActive} className={cn(
-              "h-12 rounded-xl transition-all duration-200 px-4",
+              "h-[48px] rounded-[10px] transition-all duration-200 px-4",
               isActive
-                ? "bg-emerald-50 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-700 font-semibold"
-                : "text-slate-500 hover:bg-slate-50 hover:text-slate-900 font-medium"
+                ? "bg-[#F2F7F2] text-[#087B24] hover:bg-[#F2F7F2] hover:text-[#087B24] font-bold"
+                : "text-[#111827] hover:bg-[#FBFBFB] hover:text-[#111827] font-semibold"
             )}>
               <Link href={item.href} onClick={() => isMobile && setOpenMobile(false)} className="flex items-center gap-3">
-                <item.icon className={cn("h-5 w-5", isActive ? "text-emerald-600" : "text-slate-400")} />
-                <span className="text-[15px]">{item.label}</span>
+                <item.icon className={cn("h-[22px] w-[22px]", isActive ? "text-[#087B24]" : "text-[#111827]")} />
+                <span className="text-[16px] tracking-tight">{item.label}</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -77,8 +78,11 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
   })
 
   useEffect(() => {
-    if (data) setData(data)
-  }, [data, setData])
+    if (data) {
+      setData(data)
+      setOnline(data.profile.isOnline)
+    }
+  }, [data, setData, setOnline])
 
   const onlineMutation = useMutation({
     mutationFn: async (online: boolean) => {
@@ -116,7 +120,7 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#f9fafb] flex" role="status" aria-label="Loading delivery partner dashboard">
+      <div className="min-h-screen bg-[#FBFBFB] flex" role="status" aria-label="Loading delivery partner dashboard">
         {/* Sidebar Skeleton */}
         <aside className="hidden lg:flex w-72 flex-col border-r border-border bg-white">
           {/* Logo */}
@@ -162,36 +166,17 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
         <div className="flex-1 flex flex-col min-w-0">
           {/* Top header */}
           <header className="sticky top-0 z-30 bg-[#f9fafb] px-4 md:px-8 h-20 flex items-center justify-between">
-            <Skeleton className="h-10 w-10 rounded-xl" />
-            <div className="flex items-center gap-3 md:gap-5">
-              <Skeleton className="hidden sm:block h-9 w-24 rounded-full" />
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-[44px] w-[44px] rounded-xl" />
+            <div className="flex items-center gap-4 md:gap-6">
+              <Skeleton className="hidden sm:block h-[38px] w-28 rounded-xl" />
+              <Skeleton className="h-[44px] w-[44px] rounded-full" />
+              <Skeleton className="h-[44px] w-[44px] rounded-full" />
             </div>
           </header>
 
-          {/* Main content */}
+          {/* Main content (child page renders its own matching skeleton) */}
           <main className="flex-1 overflow-y-auto px-4 pb-12 md:px-8">
-            <div className="max-w-[1400px] mx-auto space-y-8">
-              <div className="space-y-3">
-                <Skeleton className="h-9 w-72 max-w-full" />
-                <Skeleton className="h-4 w-56" />
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                {Array.from({ length: 6 }).map((_, i) => (
-                  <Skeleton key={i} className="h-32 rounded-2xl" />
-                ))}
-              </div>
-              <div className="grid lg:grid-cols-5 gap-6">
-                <Skeleton className="lg:col-span-3 h-80 rounded-3xl" />
-                <Skeleton className="lg:col-span-2 h-80 rounded-3xl" />
-              </div>
-              <div className="grid lg:grid-cols-3 gap-6">
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <Skeleton key={i} className="h-64 rounded-3xl" />
-                ))}
-              </div>
-            </div>
+            {children}
           </main>
         </div>
       </div>
@@ -204,20 +189,23 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
 
   const profile = data.profile
   const profileImage = profile.imageUrl ?? "/delivery/profile.webp"
+  const rating = profile.avgRating
+  const reviewCount = profile.totalReviews
+  const openTicketCount = data.supportTickets.filter((t) => t.status === "OPEN" || t.status === "INPROGRESS" || t.status === "URGENT").length
 
   return (
     <>
       <SidebarProvider defaultOpen={true}>
-        <div className="min-h-screen bg-[#f9fafb] flex w-full font-sans text-slate-900">
-          <Sidebar collapsible="offcanvas" side="left" className="border-r-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] bg-white w-72">
+        <div className="min-h-screen bg-[#FBFBFB] flex w-full font-sans text-[#111827]">
+          <Sidebar collapsible="offcanvas" side="left" className="border-r-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] bg-[#FFFFFF] w-72">
             <div className="flex flex-col h-full bg-white">
               {/* Sidebar Header Logo */}
               <div className="px-6 pt-8 pb-6">
                 <div className="flex items-center gap-3">
                   <Image src="/delivery/sidebar-delivery-header.webp" alt="Delivery Partner" width={48} height={48} className="object-contain" />
                   <div className="flex flex-col">
-                    <span className="text-xl font-bold text-emerald-600 tracking-tight">Delivery Partner</span>
-                    <span className="text-[11px] font-medium text-slate-500">Your Earnings, Our Priority</span>
+                    <span className="text-[20px] font-bold text-[#008F2D] tracking-tight leading-tight">Delivery Partner</span>
+                    <span className="text-[12px] font-medium text-[#374151] leading-tight mt-0.5">Your Earnings, Our Priority</span>
                   </div>
                 </div>
               </div>
@@ -229,15 +217,15 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
               {/* Sidebar Footer Elements */}
               <div className="px-4 pb-6 mt-auto space-y-4">
                 {/* Online Status Toggle Widget */}
-                <div className="bg-emerald-50 rounded-2xl p-4 flex items-center justify-between border border-emerald-100/50">
-                  <div className="flex flex-col gap-1">
+                <div className="bg-[#F2F7F2] rounded-2xl p-5 flex items-center justify-between">
+                  <div className="flex flex-col gap-1.5 pr-3">
                     <div className="flex items-center gap-2">
-                      <div className={cn("h-2 w-2 rounded-full", isOnline ? "bg-emerald-500" : "bg-slate-400")} />
-                      <span className={cn("text-sm font-semibold", isOnline ? "text-emerald-700" : "text-slate-600")}>
+                      <div className={cn("h-2.5 w-2.5 rounded-full", isOnline ? "bg-[#008F3A]" : "bg-[#374151]")} />
+                      <span className={cn("text-[15px] font-bold", isOnline ? "text-[#087B24]" : "text-[#374151]")}>
                         {isOnline ? "You are Online" : "You are Offline"}
                       </span>
                     </div>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-[13px] font-medium text-[#374151] leading-tight">
                       {isOnline ? "You are receiving delivery requests" : "Go online to start earning"}
                     </span>
                   </div>
@@ -245,34 +233,39 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
                     checked={isOnline}
                     onCheckedChange={handleOnlineToggle}
                     disabled={onlineMutation.isPending}
-                    className="data-[state=checked]:bg-emerald-500"
+                    className="data-[state=checked]:bg-[#087B24] scale-110 flex-shrink-0"
                     aria-label="Toggle online status"
                   />
                 </div>
 
                 {/* User Profile Widget */}
-                <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="h-10 w-10 rounded-full overflow-hidden bg-emerald-100 flex-shrink-0">
-<Image src={profileImage} alt={profile.name ?? "Delivery Partner"} width={40} height={40} className="object-cover h-full w-full" />
+                <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8EAED] overflow-hidden">
+                  <div className="p-5 pb-4">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Avatar className="h-12 w-12 flex-shrink-0 border border-[#E8EAED]">
+                        <AvatarImage src={profileImage} alt={profile.name ?? "Delivery Partner"} className="object-cover" />
+                        <AvatarFallback className="bg-slate-100 text-[#111827] font-semibold">{profile.name?.[0] ?? "D"}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex flex-col overflow-hidden">
+                        <span className="text-[16px] font-bold text-[#111827] truncate">{profile.name}</span>
+                        <span className="text-[13px] font-medium text-[#374151] truncate">Delivery Partner</span>
+                      </div>
                     </div>
-                    <div className="flex flex-col overflow-hidden">
-                      <span className="text-sm font-bold text-slate-900 truncate">{profile.name}</span>
-                      <span className="text-[11px] font-medium text-slate-500 truncate">Delivery Partner</span>
+                    <div className="flex items-center gap-1.5 text-[13px] font-medium text-[#374151]">
+                      <Star className="h-4 w-4 fill-[#FF9800] text-[#FF9800]" />
+                      <span className="text-[#111827] font-bold text-[14px]">{rating > 0 ? rating.toFixed(1) : "New"}</span>
+                      <span>({reviewCount > 0 ? `${reviewCount} reviews` : "No reviews yet"})</span>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs font-medium text-slate-600 mb-4">
-                    <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-                    <span className="text-slate-900 font-bold">{data.stats.rating > 0 ? data.stats.rating : "4.8"}</span>
-                    <span className="text-slate-500 font-normal">({data.reviews.length > 0 ? data.reviews.length : "128"} reviews)</span>
+                  <div className="px-5 pb-5 pt-4 border-t border-[#F1F2F3]">
+                    <button
+                      onClick={handleLogout}
+                      className="w-full flex items-center justify-center gap-2 py-[10px] rounded-[10px] border border-[#E8EAED] text-[15px] font-bold text-[#111827] hover:bg-[#FBFBFB] transition-all bg-[#FFFFFF]"
+                    >
+                      <LogOut className="h-5 w-5 text-[#EF1717]" strokeWidth={2.5} />
+                      Logout
+                    </button>
                   </div>
-                  <button
-                    onClick={handleLogout}
-                    className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold text-slate-700 hover:bg-white hover:text-red-600 hover:border-red-200 transition-all bg-white shadow-sm"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    Logout
-                  </button>
                 </div>
               </div>
 
@@ -281,37 +274,38 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
 
           <div className="flex-1 flex flex-col min-w-0">
             {/* Top Header */}
-            <header className="sticky top-0 z-30 bg-[#f9fafb] px-4 md:px-8 h-20 flex items-center justify-between">
+            <header className="sticky top-0 z-30 bg-[#FBFBFB] px-4 md:px-8 h-20 flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <SidebarTrigger className="flex h-10 w-10 bg-white border border-slate-200 rounded-xl shadow-sm hover:bg-slate-50 text-slate-600 [&>svg]:w-5 [&>svg]:h-5" />
+                <SidebarTrigger className="flex h-[44px] w-[44px] bg-[#FFFFFF] border border-[#E8EAED] rounded-xl shadow-sm hover:bg-[#FBFBFB] text-[#111827] [&>svg]:w-5 [&>svg]:h-5" />
               </div>
               
-              <div className="flex items-center gap-3 md:gap-5">
-                {/* Status Dropdown Indicator */}
-                <div className={cn("hidden sm:flex items-center gap-2 border rounded-full px-3 py-1.5 cursor-pointer", isOnline ? "bg-emerald-50 text-emerald-700 border-emerald-200/50" : "bg-gray-50 text-slate-500 border-gray-200")}>
-                  <div className={cn("h-2 w-2 rounded-full", isOnline ? "bg-emerald-500" : "bg-slate-400")} />
-                  <span className="text-sm font-semibold pr-1">{isOnline ? "Online" : "Offline"}</span>
-                  <ChevronDown className={isOnline ? "h-4 w-4 text-emerald-600" : "h-4 w-4 text-slate-400"} />
+              <div className="flex items-center gap-4 md:gap-6">
+                {/* Status Indicator */}
+                <div className={cn("hidden sm:flex items-center gap-2 rounded-xl px-4 py-2 border border-[#E8EAED]", isOnline ? "bg-[#F2F7F2] text-[#087B24]" : "bg-[#FBFBFB] text-[#374151]")}>
+                  <div className={cn("h-2.5 w-2.5 rounded-full", isOnline ? "bg-[#008F3A]" : "bg-[#374151]")} />
+                  <span className="text-[14px] font-bold pr-1">{isOnline ? "Online" : "Offline"}</span>
                 </div>
                 
                 {/* Notifications */}
-                <button className="relative h-10 w-10 flex items-center justify-center bg-white border border-slate-200 rounded-full shadow-sm hover:bg-slate-50 transition-colors">
-                  <Bell className="h-5 w-5 text-slate-600" />
-                  <span className="absolute top-0 right-0 h-4 w-4 bg-red-500 border-2 border-white rounded-full text-[9px] font-bold text-white flex items-center justify-center">
-                    3
-                  </span>
+                <button onClick={() => router.push("/delivery-partner/dashboard/support")} className="relative h-[44px] w-[44px] flex items-center justify-center hover:bg-[#FBFBFB] rounded-full transition-colors border border-[#E8EAED] bg-[#FFFFFF]" aria-label="Open support tickets">
+                  <Bell className="h-[22px] w-[22px] text-[#111827]" />
+                  {openTicketCount > 0 && (
+                    <span className="absolute -top-1 -right-1 h-[20px] w-[20px] bg-[#EF1B18] border-[2px] border-white rounded-full text-[10px] font-bold text-white flex items-center justify-center">
+                      {openTicketCount}
+                    </span>
+                  )}
                 </button>
 
-                {/* Profile Dropdown Indicator */}
-                <div className="flex items-center gap-3 cursor-pointer pl-2">
-                  <div className="hidden md:flex flex-col text-right">
-                    <span className="text-sm font-bold text-slate-900">{profile.name}</span>
-                    <span className="text-xs text-slate-500 font-medium">Delivery Partner</span>
+                {/* Profile Indicator */}
+                <div className="flex items-center gap-3 pl-2">
+                  <Avatar className="h-[44px] w-[44px] flex-shrink-0 border border-[#E8EAED]">
+                    <AvatarImage src={profileImage} alt={profile.name ?? "Delivery Partner"} className="object-cover" />
+                    <AvatarFallback className="bg-slate-100 text-[#111827] font-semibold">{profile.name?.[0] ?? "D"}</AvatarFallback>
+                  </Avatar>
+                  <div className="hidden md:flex flex-col text-left">
+                    <span className="text-[15px] font-bold text-[#111827] leading-tight">{profile.name}</span>
+                    <span className="text-[12px] font-medium text-[#374151] leading-tight mt-0.5">Delivery Partner</span>
                   </div>
-                  <div className="h-10 w-10 rounded-full overflow-hidden border-2 border-white shadow-sm flex-shrink-0">
-                     <Image src={profileImage} alt={profile.name ?? "Delivery Partner"} width={40} height={40} className="object-cover h-full w-full" />
-                  </div>
-                  <ChevronDown className="hidden sm:block h-4 w-4 text-slate-400" />
                 </div>
               </div>
             </header>

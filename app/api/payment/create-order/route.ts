@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    let body: { items?: { id: string; qty: number; price: number }[]; couponCode?: string; serviceDateType?: "TODAY" | "TOMORROW" };
+    let body: { items?: { id: string; qty: number; price: number }[]; couponCode?: string; serviceDateType?: "TODAY" | "TOMORROW" | "FUTURE"; serviceDate?: string; timeSlot?: string; addressId?: string };
     try {
       body = await req.json();
     } catch {
@@ -29,6 +29,9 @@ export async function POST(req: NextRequest) {
       items,
       couponCode: body.couponCode,
       serviceDateType: body.serviceDateType,
+      serviceDate: body.serviceDate,
+      timeSlot: body.timeSlot,
+      addressId: body.addressId,
     });
     return NextResponse.json(result);
   } catch (error) {

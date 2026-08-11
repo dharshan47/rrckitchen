@@ -123,12 +123,22 @@ async function cacheFirst(request, cacheName, maxAgeSeconds = null) {
   }
 }
 
+async function safeCachePut(cache, request, response) {
+  if (!response || !response.ok) return;
+  try {
+    await cache.put(request, response.clone());
+  } catch {
+    // Ignore - some responses (e.g. 206 partial content, network errors)
+    // are not cacheable
+  }
+}
+
 async function networkFirst(request, cacheName) {
   try {
     const response = await fetch(request);
     if (response.ok) {
       const cache = await caches.open(cacheName);
-      cache.put(request, response.clone());
+      await safeCachePut(cache, request, response);
     }
     return response;
   } catch {
@@ -144,9 +154,7 @@ async function staleWhileRevalidate(request, cacheName) {
   if (cached) {
     fetch(request)
       .then((response) => {
-        if (response.ok) {
-          cache.put(request, response.clone());
-        }
+        return safeCachePut(cache, request, response);
       })
       .catch(() => {});
     return cached;
@@ -162,7 +170,7 @@ async function fetchAndCache(request, cacheName) {
   const response = await fetch(request);
   if (response.ok) {
     const cache = await caches.open(cacheName);
-    cache.put(request, response.clone());
+    await safeCachePut(cache, request, response);
   }
   return response;
 }

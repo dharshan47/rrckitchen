@@ -14,7 +14,7 @@ export function SiteFooter() {
   const isKitchenPartner = role === "kitchenpartner";
 
   return (
-    <footer className="bg-[#052514] w-full flex flex-col mt-auto relative z-10 text-white font-sans">
+    <footer className="bg-[#003015] w-full flex flex-col mt-auto relative z-10 text-white font-sans">
       <div className="max-w-[1500px] mx-auto w-full px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex flex-col lg:flex-row justify-between gap-10 lg:gap-4 xl:gap-8">
           
@@ -23,7 +23,7 @@ export function SiteFooter() {
             <Link href="/" className="flex flex-col items-start leading-none group w-fit">
               <Image src="/logo.webp" alt="RRC Kitchen" width={180} height={60} className="h-14 w-auto brightness-0 invert group-hover:opacity-90 transition-opacity" />
             </Link>
-            <p className="font-serif italic text-base text-gray-200">Every Homemaker is a Chef</p>
+            <p className="font-serif italic text-base text-white/80">Every Homemaker is a Chef</p>
             <div className="flex items-center gap-3 mt-1">
               <a
                 href="#"
@@ -65,7 +65,6 @@ export function SiteFooter() {
               <FooterLink href="/">Home</FooterLink>
               <FooterLink href="/categories">Categories</FooterLink>
               <FooterLink href="/search">Kitchens</FooterLink>
-              <FooterLink href="/today-specials">Today&apos;s Specials</FooterLink>
               <FooterLink href="/about-us">About Us</FooterLink>
               <FooterLink href="/contact">Contact Us</FooterLink>
             </div>
@@ -104,7 +103,7 @@ export function SiteFooter() {
             <div className="flex flex-col gap-2.5">
               <FooterLink href="/privacy-policy">Privacy Policy</FooterLink>
               <FooterLink href="/terms-of-use">Terms & Conditions</FooterLink>
-              <FooterLink href="/refund-policy">Refund Policy</FooterLink>
+              <FooterLink href="/privacy-policy">Refund Policy</FooterLink>
             </div>
           </div>
 
@@ -115,7 +114,7 @@ export function SiteFooter() {
             </h3>
             <div className="flex flex-col gap-2.5">
               <FooterLink href="/help">FAQs</FooterLink>
-              <FooterLink href="/shipping-policy">Shipping Policy</FooterLink>
+              <FooterLink href="/terms-of-use">Shipping Policy</FooterLink>
               <FooterLink href="/support">Support</FooterLink>
             </div>
           </div>
@@ -125,7 +124,7 @@ export function SiteFooter() {
             <h3 className="text-sm font-bold uppercase text-white mb-4">
               Newsletter
             </h3>
-            <p className="text-sm text-gray-200 mb-4 leading-snug">
+            <p className="text-sm text-white/80 mb-4 leading-snug">
               Subscribe to get updates<br />and exclusive offers.
             </p>
             <form
@@ -135,9 +134,9 @@ export function SiteFooter() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 h-10 px-3 min-w-0 rounded bg-white text-black placeholder:text-gray-400 focus:outline-none"
+                className="flex-1 h-10 px-3 min-w-0 rounded bg-[#FFFFFF] text-[#111111] placeholder:text-[#9CA3AF] focus:outline-none"
               />
-              <button className="h-10 px-6 bg-[#FF4B00] text-white font-bold rounded hover:bg-[#e64400] transition-colors uppercase text-sm shrink-0">
+              <button className="h-10 px-6 bg-[#F04E00] text-[#FFFFFF] font-bold rounded hover:bg-[#FF5A00] transition-colors uppercase text-sm shrink-0">
                 Subscribe
               </button>
             </form>
@@ -147,7 +146,7 @@ export function SiteFooter() {
 
       {/* Copyright */}
       <div className="py-4 text-center">
-        <p className="text-xs text-gray-300">
+        <p className="text-xs text-white/60">
           &copy; {new Date().getFullYear()} RRC Kitchen Marketplace Pvt. Ltd. All Rights Reserved.
         </p>
       </div>
@@ -165,7 +164,7 @@ function FooterLink({
   return (
     <Link
       href={href}
-      className="text-sm text-gray-200 hover:text-white transition-colors"
+      className="text-sm text-white/80 hover:text-white transition-colors"
     >
       {children}
     </Link>

@@ -18,6 +18,7 @@ interface KitchensGridState {
   vegFilter: VegFilterValue;
   selectedCuisines: string[];
   minRating: number | null;
+  minPrepTime: number | null;
   maxPrepTime: number | null;
   mealType: string | null;
   topRatedOnly: boolean;
@@ -32,6 +33,7 @@ interface KitchensGridState {
   setSelectedCuisines: (cuisines: string[]) => void;
   toggleCuisine: (cuisineId: string) => void;
   setMinRating: (rating: number | null) => void;
+  setMinPrepTime: (minutes: number | null) => void;
   setMaxPrepTime: (minutes: number | null) => void;
   setMealType: (mealType: string | null) => void;
   toggleTopRated: () => void;
@@ -55,6 +57,7 @@ export const kitchensGridStore = create<KitchensGridState>()((set) => ({
   vegFilter: null,
   selectedCuisines: [],
   minRating: null,
+  minPrepTime: null,
   maxPrepTime: null,
   mealType: null,
   topRatedOnly: false,
@@ -74,6 +77,7 @@ export const kitchensGridStore = create<KitchensGridState>()((set) => ({
         : [...state.selectedCuisines, cuisineId],
     })),
   setMinRating: (minRating) => set({ minRating }),
+  setMinPrepTime: (minPrepTime) => set({ minPrepTime }),
   setMaxPrepTime: (maxPrepTime) => set({ maxPrepTime }),
   setMealType: (mealType) => set({ mealType }),
   toggleTopRated: () => set((state) => ({ topRatedOnly: !state.topRatedOnly })),
@@ -86,15 +90,13 @@ export const kitchensGridStore = create<KitchensGridState>()((set) => ({
       vegFilter: null,
       selectedCuisines: [],
       minRating: null,
+      minPrepTime: null,
       maxPrepTime: null,
       mealType: null,
       topRatedOnly: false,
       newOnly: false,
     }),
-  setKitchens: (category, kitchens) =>
-    set((state) => ({
-      kitchens: state.selectedCategory === category ? kitchens : state.kitchens,
-    })),
+  setKitchens: (category, kitchens) => set({ kitchens }),
   setCategories: (categories) => set({ categories }),
   setPagination: (pagination) => set(pagination),
 }));
@@ -112,6 +114,7 @@ const selectFilters = (s: KitchensGridState) => ({
   vegFilter: s.vegFilter,
   selectedCuisines: s.selectedCuisines,
   minRating: s.minRating,
+  minPrepTime: s.minPrepTime,
   maxPrepTime: s.maxPrepTime,
   mealType: s.mealType,
   topRatedOnly: s.topRatedOnly,
@@ -125,6 +128,7 @@ const selectActions = (s: KitchensGridState) => ({
   setSelectedCuisines: s.setSelectedCuisines,
   toggleCuisine: s.toggleCuisine,
   setMinRating: s.setMinRating,
+  setMinPrepTime: s.setMinPrepTime,
   setMaxPrepTime: s.setMaxPrepTime,
   setMealType: s.setMealType,
   toggleTopRated: s.toggleTopRated,
@@ -169,6 +173,20 @@ export function useKitchensGridQuery(category?: string | null) {
     });
   }, [query.hasNextPage, query.isFetchingNextPage, query.isLoading]);
 
+  // Fetch every page from the backend so the grid (and client-side
+  // pagination) always works over the complete, real-time kitchen list.
+  useEffect(() => {
+    if (
+      !query.isLoading &&
+      !query.isPending &&
+      !query.isError &&
+      query.hasNextPage &&
+      !query.isFetchingNextPage
+    ) {
+      query.fetchNextPage();
+    }
+  }, [query, query.hasNextPage, query.isFetchingNextPage, query.isLoading, query.isPending, query.isError, query.fetchNextPage]);
+
   useEffect(() => {
     const pages = query.data?.pages ?? [];
     if (query.isLoading || query.isPending) {
@@ -182,7 +200,7 @@ export function useKitchensGridQuery(category?: string | null) {
       return true;
     });
     kitchensGridStore.getState().setKitchens(category ?? null, list);
-  }, [query.data, query.isLoading, query.isPending, category]);
+  }, [query, query.data, query.isLoading, query.isPending, category]);
 
   return query;
 }

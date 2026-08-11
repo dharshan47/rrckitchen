@@ -6,11 +6,13 @@ export interface KitchenData {
   id: string;
   slug: string;
   displayName: string;
+  profileImage?: string | null;
   avgRating: number | null;
   totalReviews: number;
   imageUrl: string | null;
   customOfferText: string | null;
   cuisineTags: string[];
+  locality?: string | null;
   items: { id: string; name: string; price: number; compareAtPrice?: number | null; timeSlot: string; foodType: string }[];
   timeSlots: string[];
   lat: number | null;

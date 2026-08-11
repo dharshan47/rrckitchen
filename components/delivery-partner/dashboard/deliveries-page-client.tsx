@@ -1,14 +1,20 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
+import Link from "next/link"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useDeliveryData } from "@/stores/deliveryDashboardStore"
+import type { getDeliveryDashboardData } from "@/actions/admin/dashboard"
 import { LiveOrderTrackingMap } from "@/components/map/live-order-tracking-map"
 import { haversineDistance } from "@/lib/geo/haversine"
-import { Bike, Truck, CheckCircle2, Clock, XCircle, RefreshCw, Filter, MapPin, Phone, User, Check, Store, Navigation, AlertTriangle, ChevronRight, Package } from "lucide-react"
+import { 
+  Bike, Truck, CircleCheck, CircleX, Clock3, RefreshCw, 
+  MapPin, UserRound, Phone, Map, ClipboardList, Landmark, 
+  ShieldAlert, Check, X, ArrowRight, PackageCheck, Navigation 
+} from "lucide-react"
 import { cn } from "@/lib/utils"
-import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
@@ -16,7 +22,17 @@ import { toast } from "sonner"
 
 const KITCHEN_FALLBACK_IMAGE = "/kitchen/profile.webp"
 
-function orderJourneyKm(o: Record<string, unknown>): number | null {
+type DeliveryOrderData = Omit<
+  NonNullable<Awaited<ReturnType<typeof getDeliveryDashboardData>>>["deliveryOrders"][number],
+  "orderStatus"
+> & { orderStatus: string }
+
+interface MergedDeliveryOrder extends DeliveryOrderData {
+  itemList: string[]
+  totalQuantity: number
+}
+
+function orderJourneyKm(o: DeliveryOrderData): number | null {
   const kLat = Number(o.kitchenLat)
   const kLng = Number(o.kitchenLng)
   const cLat = Number(o.customerLat)
@@ -25,6 +41,13 @@ function orderJourneyKm(o: Record<string, unknown>): number | null {
   if (kLat === 0 && kLng === 0) return null
   if (cLat === 0 && cLng === 0) return null
   return haversineDistance(kLat, kLng, cLat, cLng)
+}
+
+function getPaymentDisplay(status: unknown): string {
+  if (status === "PENDING") return "Payment Pending"
+  if (status === "FAILED") return "Payment Failed"
+  if (status === "REFUNDED") return "Payment Refunded"
+  return "Online Payment"
 }
 
 export default function DeliveriesPageClient() {
@@ -54,33 +77,155 @@ export default function DeliveriesPageClient() {
     },
   })
 
+  const mergedOrders = useMemo<MergedDeliveryOrder[]>(() => {
+    if (!data) return []
+    const byId = new globalThis.Map<string, MergedDeliveryOrder>()
+    for (const o of data.deliveryOrders) {
+      const id = o.id as string
+      if (!id) continue
+      const itemLabel = `${(o.itemName as string) || "Item"}${(o.quantity as number) > 1 ? ` ×${o.quantity}` : ""}`
+      const existing = byId.get(id)
+      if (existing) {
+        if (!existing.itemList.includes(itemLabel)) existing.itemList.push(itemLabel)
+        existing.totalQuantity += Number(o.quantity) || 0
+        existing.amount = (Number(existing.amount) || 0) + (Number(o.amount) || 0)
+      } else {
+        byId.set(id, {
+          ...o,
+          itemList: [itemLabel],
+          totalQuantity: Number(o.quantity) || 0,
+        })
+      }
+    }
+    return Array.from(byId.values())
+  }, [data])
+
   if (!data) {
     return (
-      <div className="max-w-[1400px] mx-auto space-y-6">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="max-w-[1400px] mx-auto space-y-6 pb-12 px-2 sm:px-0 bg-[#FBFCFB] min-h-screen" role="status" aria-label="Loading deliveries">
+        {/* Header */}
+        <div className="pt-2 sm:pt-0 space-y-3">
+          <Skeleton className="h-[30px] w-48" />
+          <Skeleton className="h-4 w-80 max-w-full" />
+        </div>
+
+        {/* Top Stats Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="rounded-2xl border border-slate-100 bg-card p-6 space-y-3">
-              <Skeleton className="h-12 w-12 rounded-full" />
-              <Skeleton className="h-7 w-16" />
-              <Skeleton className="h-3 w-24" />
-            </div>
+            <Card key={i} className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] p-5 flex items-center gap-4 shadow-none">
+              <Skeleton className="h-[50px] w-[50px] rounded-full shrink-0" />
+              <div className="flex flex-col">
+                <Skeleton className="h-[23px] w-14 mb-2" />
+                <Skeleton className="h-3 w-24" />
+              </div>
+            </Card>
           ))}
+        </div>
+
+        {/* Tabs & Actions */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E9ECEF]">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-10 w-36 rounded-t-[7px]" />
+            <Skeleton className="h-10 w-40 rounded-t-[7px]" />
+          </div>
+          <div className="flex items-center gap-3 pb-3 sm:pb-0">
+            <Skeleton className="h-9 w-28 rounded-[6px]" />
+            <Skeleton className="h-9 w-24 rounded-[6px]" />
+          </div>
+        </div>
+
+        {/* Main Grid */}
+        <div className="grid xl:grid-cols-[1fr_400px] 2xl:grid-cols-[1fr_420px] gap-6 items-start">
+          {/* Orders List */}
+          <div className="space-y-4">
+            {Array.from({ length: 2 }).map((_, i) => (
+              <Card key={i} className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] overflow-hidden shadow-none">
+                <div className="px-5 py-4 flex items-center justify-between border-b border-[#E9ECEF]">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-7 w-7 rounded-[6px]" />
+                    <Skeleton className="h-6 w-24 rounded-[6px]" />
+                  </div>
+                  <div className="flex items-center gap-6">
+                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-4 w-20" />
+                  </div>
+                </div>
+                <div className="p-5 grid md:grid-cols-[1.5fr_1fr_auto] gap-6 items-center">
+                  <div className="flex gap-4 items-center">
+                    <Skeleton className="h-[52px] w-[52px] rounded-full" />
+                    <div className="flex flex-col gap-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-3 w-44" />
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <Skeleton className="h-3 w-16" />
+                    <Skeleton className="h-4 w-28" />
+                  </div>
+                  <div className="flex flex-col items-start md:items-end gap-2">
+                    <Skeleton className="h-[18px] w-20" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                </div>
+                <div className="px-5 py-4 border-t border-[#E9ECEF] flex items-center justify-between gap-5">
+                  <Skeleton className="flex-1 h-[16px] max-w-[320px]" />
+                  <Skeleton className="h-9 w-24 rounded-[6px]" />
+                </div>
+              </Card>
+            ))}
+
+            {/* Bottom Banner */}
+            <Skeleton className="h-[68px] w-full rounded-[8px]" />
+          </div>
+
+          {/* Sticky Details Sidebar */}
+          <div className="xl:sticky xl:top-6 space-y-6">
+            <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-none overflow-hidden">
+              <div className="bg-[#F0F8F1] py-4 px-5">
+                <Skeleton className="h-4 w-36" />
+              </div>
+              <div className="p-5 border-b border-[#E9ECEF] space-y-3">
+                <Skeleton className="h-3 w-24 mb-4" />
+                {Array.from({ length: 5 }).map((_, j) => (
+                  <div key={j} className="flex justify-between">
+                    <Skeleton className="h-3 w-20" />
+                    <Skeleton className="h-3 w-28" />
+                  </div>
+                ))}
+              </div>
+              <div className="p-5 space-y-3">
+                <Skeleton className="h-3 w-24 mb-4" />
+                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-3 w-48" />
+                <div className="grid grid-cols-2 gap-3 pt-2">
+                  <Skeleton className="h-9 rounded-[6px]" />
+                  <Skeleton className="h-9 rounded-[6px]" />
+                </div>
+              </div>
+            </Card>
+            <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-none overflow-hidden">
+              <div className="py-4 px-5 flex items-center gap-3 border-b border-[#E9ECEF]">
+                <Skeleton className="h-8 w-8 rounded-[6px]" />
+                <Skeleton className="h-4 w-40" />
+              </div>
+              <Skeleton className="h-[220px] w-full" />
+            </Card>
+          </div>
         </div>
       </div>
     )
   }
 
-  const activeOrders = data.deliveryOrders.filter(
-    (o: Record<string, unknown>) => o.orderStatus !== "COMPLETED" && o.orderStatus !== "CANCELLED" && o.orderStatus !== "FAILED" && o.orderStatus !== "DELIVERED"
+  const activeOrders = mergedOrders.filter(
+    (o) => o.orderStatus !== "COMPLETED" && o.orderStatus !== "CANCELLED" && o.orderStatus !== "FAILED" && o.orderStatus !== "DELIVERED"
   )
 
-  const completedOrders = data.deliveryOrders.filter(
-    (o: Record<string, unknown>) => o.orderStatus === "COMPLETED" || o.orderStatus === "CANCELLED" || o.orderStatus === "FAILED" || o.orderStatus === "DELIVERED"
+  const completedOrders = mergedOrders.filter(
+    (o) => o.orderStatus === "COMPLETED" || o.orderStatus === "CANCELLED" || o.orderStatus === "FAILED" || o.orderStatus === "DELIVERED"
   )
 
   const displayOrders = activeTab === "active" ? activeOrders : completedOrders
-
-  const selectedOrder = displayOrders.find((o: Record<string, unknown>) => o.id === selectedOrderId) || displayOrders[0]
+  const selectedOrder = displayOrders.find((o) => o.id === selectedOrderId) || displayOrders[0]
 
   const stats = data.stats
   const activeCount = activeOrders.length
@@ -107,104 +252,102 @@ export default function DeliveriesPageClient() {
 
   const getStatusDisplay = (status: string) => {
     switch(status) {
-      case "PREPARING": return { label: "Preparing", color: "bg-amber-100 text-amber-700", dot: "bg-amber-500" }
-      case "READYFORPICKUP": return { label: "Ready for Pickup", color: "bg-green-100 text-green-700", dot: "bg-green-500" }
-      case "PICKEDUP": return { label: "Picked Up", color: "bg-orange-100 text-orange-700", dot: "bg-orange-500" }
-      case "INTRANSIT": return { label: "In Transit", color: "bg-blue-100 text-blue-700", dot: "bg-blue-500" }
-      case "DELIVERED": case "COMPLETED": return { label: "Delivered", color: "bg-emerald-100 text-emerald-700", dot: "bg-emerald-500" }
-      case "CANCELLED": case "FAILED": return { label: "Cancelled", color: "bg-red-100 text-red-700", dot: "bg-red-500" }
-      default: return { label: "Confirmed", color: "bg-slate-100 text-slate-700", dot: "bg-slate-500" }
+      case "PREPARING": return { label: "Preparing", badge: "bg-[#FFF1DF] text-[#FF8500]", num: "bg-[#FFF1DF] text-[#FF8500]" }
+      case "READYFORPICKUP": return { label: "Ready for Pickup", badge: "bg-[#EAF6EC] text-[#087B2B]", num: "bg-[#EAF6EC] text-[#087B2B]" }
+      case "PICKEDUP": return { label: "Picked Up", badge: "bg-[#FFF1DF] text-[#FF8500]", num: "bg-[#FFF1DF] text-[#FF8500]" }
+      case "INTRANSIT": return { label: "In Transit", badge: "bg-[#EAF3FF] text-[#1677E8]", num: "bg-[#EAF3FF] text-[#1677E8]" }
+      case "DELIVERED": case "COMPLETED": return { label: "Delivered", badge: "bg-[#EAF6EC] text-[#087B2B]", num: "bg-[#EAF6EC] text-[#087B2B]" }
+      case "CANCELLED": case "FAILED": return { label: "Cancelled", badge: "bg-[#FFE8E8] text-[#EF2020]", num: "bg-[#FFE8E8] text-[#EF2020]" }
+      default: return { label: "Confirmed", badge: "bg-[#F3F4F6] text-[#374151]", num: "bg-[#F3F4F6] text-[#374151]" }
     }
   }
 
-  const TimelineNode = ({ label, state }: { label: string, state: "done" | "active-orange" | "active-blue" | "pending" }) => {
+  const TimelineNode = ({ label, state, type }: { label: string, state: "done" | "active" | "pending", type: "green" | "orange" | "blue" }) => {
     return (
       <div className="flex items-center gap-1.5 shrink-0">
-        {state === "done" && <div className="h-4 w-4 rounded-full bg-green-600 flex items-center justify-center"><Check className="h-2.5 w-2.5 text-white" /></div>}
-        {state === "active-orange" && <div className="h-4 w-4 rounded-full bg-orange-100 border-[4px] border-orange-500" />}
-        {state === "active-blue" && <div className="h-4 w-4 rounded-full bg-blue-600 flex items-center justify-center"><Check className="h-2.5 w-2.5 text-white" /></div>}
-        {state === "pending" && <div className="h-4 w-4 rounded-full border border-slate-300 bg-white" />}
-        <span className={cn("text-[10px] font-bold uppercase", 
-          state === "done" ? "text-slate-700" :
-          state === "active-orange" ? "text-orange-600" :
-          state === "active-blue" ? "text-blue-600" :
-          "text-slate-400"
+        {state === "done" && <div className="h-[16px] w-[16px] rounded-full bg-[#087B2B] flex items-center justify-center"><Check className="h-[10px] w-[10px] text-white" strokeWidth={3} /></div>}
+        {state === "active" && type === "green" && <div className="h-[16px] w-[16px] rounded-full bg-[#087B2B] flex items-center justify-center"><div className="h-1.5 w-1.5 bg-white rounded-full" /></div>}
+        {state === "active" && type === "orange" && <div className="h-[16px] w-[16px] rounded-full bg-[#FF8500] flex items-center justify-center"><div className="h-1.5 w-1.5 bg-white rounded-full" /></div>}
+        {state === "active" && type === "blue" && <div className="h-[16px] w-[16px] rounded-full bg-[#1677E8] flex items-center justify-center"><div className="h-1.5 w-1.5 bg-white rounded-full" /></div>}
+        {state === "pending" && <div className="h-[16px] w-[16px] rounded-full border border-[#9CA3AF] bg-white" />}
+        <span className={cn("text-[11px] font-bold", 
+          state === "done" ? "text-[#111827]" :
+          state === "active" && type === "green" ? "text-[#087B2B]" :
+          state === "active" && type === "orange" ? "text-[#FF8500]" :
+          state === "active" && type === "blue" ? "text-[#1677E8]" :
+          "text-[#6B7280]"
         )}>{label}</span>
       </div>
     )
   }
 
-  const TimelineDash = ({ state }: { state: "done" | "active" | "pending" }) => (
-    <div className={cn("flex-1 h-[1.5px] mx-1", 
-      state === "done" ? "bg-green-600" : 
-      state === "active" ? "border-t-[1.5px] border-dashed border-orange-400" : 
-      "bg-slate-200"
-    )} />
+  const TimelineDash = ({ state }: { state: "done" | "pending" }) => (
+    <div className={cn("flex-1 h-[2px] mx-1.5 sm:mx-2", state === "done" ? "bg-[#087B2B]" : "bg-[#DDE3E0]")} />
   )
 
   const OrderTimeline = ({ status }: { status: string }) => {
-    const steps = ["CONFIRMED", "PREPARING", "READYFORPICKUP", "PICKEDUP", "INTRANSIT", "DELIVERED", "COMPLETED"]
-    const currentIndex = Math.max(0, steps.indexOf(status))
+    let step = 0;
+    if (status === "PREPARING") step = 0;
+    if (status === "READYFORPICKUP") step = 1;
+    if (status === "PICKEDUP") step = 2;
+    if (status === "INTRANSIT") step = 3;
+    if (status === "DELIVERED" || status === "COMPLETED") step = 4;
 
     return (
-      <div className="flex items-center justify-between w-full flex-1 max-w-md">
-        <TimelineNode label="Confirmed" state="done" />
-        <TimelineDash state="done" />
-        <TimelineNode label="Ready" state={currentIndex === 2 ? "active-orange" : (currentIndex > 2 ? "done" : "pending")} />
-        <TimelineDash state={currentIndex === 2 ? "pending" : (currentIndex > 2 ? "done" : "pending")} />
-        <TimelineNode label="Pickup" state={currentIndex === 3 ? "active-orange" : (currentIndex > 3 ? "done" : "pending")} />
-        <TimelineDash state={currentIndex === 3 ? "active" : (currentIndex > 3 ? "done" : "pending")} />
-        <TimelineNode label="In Transit" state={currentIndex === 4 ? "active-blue" : (currentIndex > 4 ? "done" : "pending")} />
-        <TimelineDash state={currentIndex === 4 ? "pending" : (currentIndex > 4 ? "done" : "pending")} />
-        <TimelineNode label="Delivered" state={currentIndex >= 5 ? "done" : "pending"} />
+      <div className="flex items-center justify-between w-full flex-1 min-w-[320px] max-w-[500px]">
+        <TimelineNode label="Confirmed" state={step >= 0 ? "done" : "pending"} type="green" />
+        <TimelineDash state={step >= 1 ? "done" : "pending"} />
+        <TimelineNode label="Ready" state={step >= 1 ? "done" : "pending"} type="green" />
+        <TimelineDash state={step >= 2 ? "done" : "pending"} />
+        <TimelineNode label="Pickup" state={step > 2 ? "done" : step === 2 ? "active" : "pending"} type="orange" />
+        <TimelineDash state={step >= 3 ? "done" : "pending"} />
+        <TimelineNode label="In Transit" state={step > 3 ? "done" : step === 3 ? "active" : "pending"} type="blue" />
+        <TimelineDash state={step >= 4 ? "done" : "pending"} />
+        <TimelineNode label="Delivered" state={step >= 4 ? "done" : "pending"} type="green" />
       </div>
     )
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in duration-500 pb-12">
+    <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in duration-500 pb-12 px-2 sm:px-0 bg-[#FBFCFB] min-h-screen">
       
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-extrabold text-slate-900">Deliveries</h1>
-        <p className="text-slate-500 mt-1 font-medium text-sm">Manage your deliveries and track progress</p>
+      <div className="pt-2 sm:pt-0">
+        <h1 className="text-[25px] font-bold text-[#111827]">Deliveries</h1>
+        <p className="text-[#374151] mt-1 font-medium text-[14px]">Manage your deliveries and track progress</p>
       </div>
 
       {/* Top Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
         {[
-          { label: "Active Deliveries", value: activeCount, icon: Bike, color: "text-green-600", bg: "bg-green-50", border: "border-green-100" },
-          { label: "Total Deliveries", value: totalCount, icon: Truck, color: "text-blue-600", bg: "bg-blue-50", border: "border-blue-100" },
-          { label: "Completed Deliveries", value: completedCount, icon: CheckCircle2, color: "text-green-600", bg: "bg-green-50", border: "border-green-100" },
-          { label: "In Progress Deliveries", value: inProgressCount, icon: Clock, color: "text-orange-500", bg: "bg-orange-50", border: "border-orange-100" },
-          { label: "Cancelled Deliveries", value: cancelledCount, icon: XCircle, color: "text-red-500", bg: "bg-red-50", border: "border-red-100" },
+          { label: "Active Deliveries", value: activeCount, icon: Bike, iconColor: "text-[#087B2B]", iconBg: "bg-[#E8F5EA]" },
+          { label: "Total Deliveries", value: totalCount, icon: Truck, iconColor: "text-[#1677E8]", iconBg: "bg-[#EAF3FF]" },
+          { label: "Completed Deliveries", value: completedCount, icon: CircleCheck, iconColor: "text-[#087B2B]", iconBg: "bg-[#E4F4E7]" },
+          { label: "In Progress Deliveries", value: inProgressCount, icon: Clock3, iconColor: "text-[#FF8500]", iconBg: "bg-[#FFF1DF]" },
+          { label: "Cancelled Deliveries", value: cancelledCount, icon: CircleX, iconColor: "text-[#EF2020]", iconBg: "bg-[#FFE8E8]" },
         ].map((stat, i) => (
-          <Card key={i} className="shadow-none border-slate-100 rounded-2xl flex flex-col items-center justify-center py-6">
-             <div className="flex flex-col items-center gap-3">
-                <div className="flex items-center gap-4">
-                  <div className={cn("h-12 w-12 rounded-full flex items-center justify-center shadow-sm", stat.bg)}>
-                    <stat.icon className={cn("h-6 w-6", stat.color)} />
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-2xl font-extrabold text-slate-900 leading-none">{stat.value}</span>
-                    <span className="text-xs font-semibold text-slate-500 mt-1 leading-tight w-16">{stat.label}</span>
-                  </div>
-                </div>
-             </div>
+          <Card key={i} className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] p-5 flex items-center gap-4 shadow-[0_1px_3px_rgba(17,24,39,0.025)]">
+            <div className={cn("h-[50px] w-[50px] rounded-full flex items-center justify-center shrink-0", stat.iconBg)}>
+              <stat.icon className={cn("h-[22px] w-[22px]", stat.iconColor)} strokeWidth={1.8} />
+            </div>
+            <div className="flex flex-col">
+              <span className="text-[23px] font-bold text-[#111827] leading-none mb-1">{stat.value}</span>
+              <span className="text-[12px] font-medium text-[#374151] leading-tight pr-2">{stat.label}</span>
+            </div>
           </Card>
         ))}
       </div>
 
       {/* Tabs & Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-px">
-        <div className="flex items-center">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E9ECEF]">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => setActiveTab("active")}
             className={cn(
-              "px-6 py-3 text-sm font-bold border-b-2 transition-colors",
+              "px-5 py-3 text-[14px] font-bold transition-colors border-b-2",
               activeTab === "active"
-                ? "border-green-600 text-green-700"
-                : "border-transparent text-slate-500 hover:text-slate-800"
+                ? "text-[#087B2B] bg-[#EEF8F0] rounded-t-[7px] border-[#087B2B]"
+                : "text-[#374151] border-transparent hover:text-[#111827]"
             )}
           >
             Active Deliveries
@@ -212,35 +355,33 @@ export default function DeliveriesPageClient() {
           <button
             onClick={() => setActiveTab("completed")}
             className={cn(
-              "px-6 py-3 text-sm font-bold border-b-2 transition-colors",
+              "px-5 py-3 text-[14px] font-bold transition-colors border-b-2",
               activeTab === "completed"
-                ? "border-green-600 text-green-700"
-                : "border-transparent text-slate-500 hover:text-slate-800"
+                ? "text-[#087B2B] bg-[#EEF8F0] rounded-t-[7px] border-[#087B2B]"
+                : "text-[#374151] border-transparent hover:text-[#111827]"
             )}
           >
             Completed Deliveries
           </button>
         </div>
-        <div className="flex items-center gap-3 px-2 sm:px-0">
-          <Button variant="outline" onClick={handleRefresh} className="h-9 rounded-xl border-slate-200 text-slate-700 font-semibold text-xs shadow-sm">
-            <RefreshCw className="h-3.5 w-3.5 mr-2" /> Refresh
-          </Button>
-          <Button variant="outline" className="h-9 rounded-xl border-slate-200 text-slate-700 font-semibold text-xs shadow-sm">
-            <Filter className="h-3.5 w-3.5 mr-2" /> Filter
+        <div className="flex items-center gap-3 pb-3 sm:pb-0">
+          <Button onClick={handleRefresh} variant="outline" className="bg-[#FFFFFF] border-[#E6EAEC] text-[#111827] hover:bg-[#F7FAF8] h-9 rounded-[6px] px-4 shadow-none text-[13px] font-medium">
+            <RefreshCw className="h-[16px] w-[16px] mr-2" strokeWidth={1.8} /> Refresh
           </Button>
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6 items-start">
+
+      <div className="grid xl:grid-cols-[1fr_400px] 2xl:grid-cols-[1fr_420px] gap-6 items-start">
         {/* Orders List */}
-        <div className="lg:col-span-2 space-y-4">
+        <div className="space-y-4">
           {displayOrders.length === 0 ? (
-            <div className="bg-white rounded-3xl p-12 text-center border border-slate-100 shadow-[0_2px_12px_rgba(0,0,0,0.02)]">
-              <Package className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-              <p className="text-slate-500 font-medium">No deliveries found.</p>
-            </div>
+            <Card className="bg-[#FFFFFF] rounded-[10px] p-12 text-center border border-[#E6EAEC] shadow-[0_1px_3px_rgba(17,24,39,0.025)]">
+              <PackageCheck className="h-12 w-12 text-[#6B7280] mx-auto mb-4" strokeWidth={1.5} />
+              <p className="text-[#374151] font-medium text-[14px]">No deliveries found.</p>
+            </Card>
           ) : (
-            displayOrders.map((d: Record<string, unknown>, idx: number) => {
+            displayOrders.map((d, idx) => {
               const statusDisplay = getStatusDisplay(d.orderStatus as string)
               const orderIdStr = (d.publicCode as string) ?? (d.id as string).substring(0, 8).toUpperCase()
               const isSelected = selectedOrderId === d.id || (!selectedOrderId && idx === 0)
@@ -249,300 +390,258 @@ export default function DeliveriesPageClient() {
                 <Card 
                   key={d.id as string} 
                   className={cn(
-                    "shadow-sm border-slate-200 rounded-3xl overflow-hidden transition-all cursor-pointer hover:border-slate-300 hover:shadow-md",
-                    isSelected && "border-green-300 shadow-[0_4px_20px_rgba(34,197,94,0.1)] ring-1 ring-green-100"
+                    "bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] overflow-hidden transition-all cursor-pointer shadow-[0_1px_2px_rgba(17,24,39,0.02)]",
+                    isSelected && "border-[#B9DDBF] ring-1 ring-[#EEF8F0] shadow-[0_4px_12px_rgba(17,24,39,0.05)]"
                   )}
                   onClick={() => setSelectedOrderId(d.id as string)}
                 >
-                  <CardContent className="p-0">
-                    {/* Order Header */}
-                    <div className="px-6 py-4 flex items-center justify-between bg-slate-50/50 border-b border-slate-100">
-                      <div className="flex items-center gap-3">
-                        <div className="h-6 w-6 rounded bg-green-100 text-green-700 font-bold text-xs flex items-center justify-center">
-                          {idx + 1}
-                        </div>
-                        <Badge variant="secondary" className={cn("rounded-md border-none font-bold text-[10px] px-2 py-0.5", statusDisplay.color)}>
-                          <div className={cn("h-1.5 w-1.5 rounded-full mr-1.5", statusDisplay.dot)} />
-                          {statusDisplay.label}
-                        </Badge>
+                  {/* Order Header */}
+                  <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E9ECEF] gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className={cn("h-7 w-7 rounded-[6px] font-bold text-[13px] flex items-center justify-center", statusDisplay.num)}>
+                        {idx + 1}
                       </div>
-                      <div className="text-xs font-bold text-slate-500">#{orderIdStr}</div>
-                      <div className="text-xs font-bold text-slate-500 flex items-center gap-1.5">
-                        <Clock className="h-3.5 w-3.5 text-slate-400" />
-                        {d.timeSlot as string}
+                      <Badge variant="outline" className={cn("px-3 py-1 rounded-[6px] text-[12px] font-bold flex items-center gap-1.5 border-none shadow-none", statusDisplay.badge)}>
+                        <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                        {statusDisplay.label}
+                      </Badge>
+                    </div>
+                    <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-auto w-full px-1 sm:px-0">
+                      <div className="text-[13px] font-bold text-[#111827]">#{orderIdStr}</div>
+                      <div className="text-[13px] font-medium text-[#374151] flex items-center gap-1.5">
+                        <Clock3 className="h-[14px] w-[14px] text-[#374151]" strokeWidth={1.8} />
+                        {d.timeSlot as string || "—"}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Order Body */}
+                  <div className="p-5 grid md:grid-cols-[1.5fr_1fr_auto] gap-6 items-center">
+                    
+                    {/* Kitchen Info */}
+                    <div className="flex gap-4 items-center">
+                      <Avatar className="h-[52px] w-[52px] rounded-full border border-[#E6EAEC] shadow-sm shrink-0">
+                        <AvatarImage src={(d.kitchenImageUrl as string) || KITCHEN_FALLBACK_IMAGE} alt={d.kitchenName as string} />
+                        <AvatarFallback className="bg-[#EEF8F0] text-[#087B2B] font-bold text-lg">{(d.kitchenName as string).charAt(0).toUpperCase() || "K"}</AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <div className="font-bold text-[#111827] text-[15px] mb-1 truncate">{d.kitchenName as string}</div>
+                        <div className="flex items-start gap-1.5 text-[12px] text-[#374151] mb-1.5">
+                          <MapPin className="h-[15px] w-[15px] shrink-0 mt-0.5" strokeWidth={1.8} />
+                          <span className="truncate block">{d.kitchenAddress as string}</span>
+                        </div>
+                        {orderJourneyKm(d) !== null && (
+                          <div className="text-[11px] font-medium text-[#6B7280] ml-[21px]">
+                            {orderJourneyKm(d)!.toFixed(1)} km from you
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    {/* Order Body */}
-                    <div className="p-6 grid md:grid-cols-[1fr_1fr_auto] gap-6 items-center">
-                      
-                      {/* Kitchen Info */}
-                      <div className="flex gap-4">
-                        <Avatar className="h-12 w-12 border-2 border-green-700/30 shadow-sm">
-                          <AvatarImage
-                            src={(d.kitchenImageUrl as string) || KITCHEN_FALLBACK_IMAGE}
-                            alt={d.kitchenName as string}
-                          />
-                          <AvatarFallback className="bg-green-900 text-white font-extrabold text-sm">
-                            {(d.kitchenName as string).charAt(0).toUpperCase() || "K"}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-extrabold text-slate-900 text-sm mb-1">{d.kitchenName as string}</div>
-                          <div className="flex items-start gap-1.5 text-xs text-slate-500 font-medium mb-1">
-                            <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0 text-slate-400" />
-                            <span>{d.kitchenAddress as string}</span>
-                          </div>
-                          {orderJourneyKm(d) !== null && (
-                            <div className="text-[10px] font-bold text-slate-400 flex items-center gap-1">
-                              <Navigation className="h-3 w-3" /> {orderJourneyKm(d)!.toFixed(1)} km journey
-                            </div>
-                          )}
+                    {/* Customer Info */}
+                    <div className="flex gap-4 items-center">
+                      <div className="flex flex-col">
+                        <div className="text-[12px] font-medium text-[#374151] mb-1 flex items-center gap-1.5 uppercase tracking-wide">
+                          <UserRound className="h-[14px] w-[14px]" strokeWidth={1.8} /> Customer
                         </div>
+                        <div className="font-bold text-[#111827] text-[14px] mb-1 truncate">{d.customerName as string}</div>
+                        <div className="text-[12px] text-[#374151]">{d.customerPhone as string}</div>
                       </div>
-
-                      {/* Customer Info */}
-                      <div className="flex gap-4 md:border-l border-slate-100 md:pl-6">
-                        <Avatar className="h-12 w-12 border border-slate-200">
-                          <AvatarFallback className="bg-slate-100 text-slate-400">
-                            <User className="h-5 w-5" />
-                          </AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1 flex items-center gap-1">
-                            <User className="h-3 w-3" /> Customer
-                          </div>
-                          <div className="font-bold text-slate-900 text-sm mb-1">{d.customerName as string}</div>
-                          <div className="text-xs text-slate-500 font-bold">{d.customerPhone as string}</div>
-                        </div>
-                      </div>
-
-                      {/* Price Info */}
-                      <div className="md:text-right">
-                        <div className="font-extrabold text-2xl text-slate-900 mb-1">₹{(d.amount as number).toLocaleString('en-IN')}</div>
-                        <div className="text-[10px] font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded-md inline-block">
-                          {d.paymentStatus === "SUCCESS" ? "Online Payment" : "Payment Pending"}
-                        </div>
-                      </div>
-
                     </div>
 
-                    {/* Order Footer & Actions */}
-                    <div className="px-6 py-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-                      
-                      {/* Timeline */}
+                    {/* Price Info */}
+                    <div className="md:text-right flex flex-col justify-center items-start md:items-end mt-2 md:mt-0">
+                      <div className="font-bold text-[18px] text-[#111827] mb-1">₹{(d.amount as number).toLocaleString('en-IN')}</div>
+                      <div className="text-[12px] text-[#374151]">
+                        {getPaymentDisplay(d.paymentStatus)}
+                      </div>
+                    </div>
+
+                  </div>
+
+                  {/* Order Footer & Actions */}
+                  <div className="px-5 py-4 border-t border-[#E9ECEF] flex flex-col xl:flex-row xl:items-center justify-between gap-5 bg-[#FFFFFF]">
+                    <div className="flex-1 overflow-x-auto pb-3 xl:pb-0 scrollbar-hide flex items-center w-full">
                       <OrderTimeline status={d.orderStatus as string} />
-
-                      {/* Action Buttons */}
-                      <div className="flex items-center gap-3 w-full sm:w-auto shrink-0 justify-end">
-                        {d.orderStatus === "READYFORPICKUP" && (
-                          <Button 
-                            className="bg-orange-100 hover:bg-orange-200 text-orange-700 font-bold text-xs h-9 rounded-xl border-none shadow-none px-4"
-                            onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "PICKEDUP" })}}
-                            disabled={statusMutation.isPending}
-                          >
-                            <Truck className="h-3.5 w-3.5 mr-1.5" /> Picked Up
-                          </Button>
-                        )}
-                        {d.orderStatus === "PICKEDUP" && (
-                          <>
-                            <Button 
-                              variant="outline"
-                              className="border-green-200 text-green-700 font-bold text-xs h-9 rounded-xl px-4 hover:bg-green-50"
-                              onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "INTRANSIT" })}}
-                              disabled={statusMutation.isPending}
-                            >
-                              <Truck className="h-3.5 w-3.5 mr-1.5" /> In Transit
-                            </Button>
-                            <Button 
-                              variant="outline"
-                              className="border-red-200 text-red-600 font-bold text-xs h-9 rounded-xl px-4 hover:bg-red-50"
-                              onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "FAILED" })}}
-                              disabled={statusMutation.isPending}
-                            >
-                              <XCircle className="h-3.5 w-3.5 mr-1.5" /> Failed
-                            </Button>
-                          </>
-                        )}
-                        {d.orderStatus === "INTRANSIT" && (
-                          <>
-                            <Button 
-                              className="bg-green-100 hover:bg-green-200 text-green-700 font-bold text-xs h-9 rounded-xl border-none shadow-none px-4"
-                              onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "DELIVERED" })}}
-                              disabled={statusMutation.isPending}
-                            >
-                              <CheckCircle2 className="h-3.5 w-3.5 mr-1.5" /> Delivered
-                            </Button>
-                            <Button 
-                              variant="outline"
-                              className="border-red-200 text-red-600 font-bold text-xs h-9 rounded-xl px-4 hover:bg-red-50"
-                              onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "FAILED" })}}
-                              disabled={statusMutation.isPending}
-                            >
-                              <XCircle className="h-3.5 w-3.5 mr-1.5" /> Failed
-                            </Button>
-                          </>
-                        )}
-                      </div>
-
                     </div>
-                  </CardContent>
+                    
+                    <div className="flex items-center gap-3 shrink-0 self-end xl:self-auto">
+                       {/* Buttons */}
+                       {d.orderStatus === "READYFORPICKUP" && (
+                         <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "PICKEDUP" })}} className="bg-[#FFFDFC] border border-[#FFD39E] text-[#FF8500] hover:bg-[#FFF1DF] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
+                           Picked Up
+                         </Button>
+                       )}
+                       {d.orderStatus === "PICKEDUP" && (
+                         <>
+                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "INTRANSIT" })}} className="bg-[#F5FBF6] border border-[#B9DDBF] text-[#087B2B] hover:bg-[#EEF8F0] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
+                             <Truck className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> In Transit
+                           </Button>
+                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "FAILED" })}} className="bg-[#FFF5F5] border border-[#FFCACA] text-[#EF2020] hover:bg-[#FFE8E8] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
+                             <X className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Failed
+                           </Button>
+                         </>
+                       )}
+                       {d.orderStatus === "INTRANSIT" && (
+                         <>
+                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "DELIVERED" })}} className="bg-[#F5FBF6] border border-[#B9DDBF] text-[#087B2B] hover:bg-[#EEF8F0] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
+                             <CircleCheck className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Delivered
+                           </Button>
+                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "FAILED" })}} className="bg-[#FFF5F5] border border-[#FFCACA] text-[#EF2020] hover:bg-[#FFE8E8] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
+                             <X className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Failed
+                           </Button>
+                         </>
+                       )}
+                    </div>
+                  </div>
                 </Card>
               )
             })
           )}
 
           {/* Bottom Banner */}
-          <div className="bg-emerald-50 rounded-2xl p-4 flex items-center justify-between border border-emerald-100/50 mt-6 cursor-pointer hover:bg-emerald-100/50 transition-colors">
+          <Link href="/delivery-partner/dashboard/support" className="bg-[#F0F8F1] rounded-[8px] p-4 flex flex-col sm:flex-row sm:items-center justify-between border-none mt-6 gap-3 hover:bg-[#E4F4E7] transition-colors">
             <div className="flex items-center gap-3">
-              <div className="h-6 w-6 rounded bg-emerald-100 flex items-center justify-center border border-emerald-200">
-                <AlertTriangle className="h-3.5 w-3.5 text-emerald-600" />
-              </div>
-              <span className="text-[13px] font-semibold text-slate-700">Keep customers happy by following safety guidelines and delivering on time.</span>
+              <ShieldAlert className="h-[20px] w-[20px] text-[#087B2B] shrink-0" strokeWidth={1.8} />
+              <span className="text-[13px] font-medium text-[#374151]">Keep customers happy by following safety guidelines and delivering on time.</span>
             </div>
-            <div className="flex items-center text-[13px] font-bold text-emerald-700">
-              View Guidelines <ChevronRight className="h-4 w-4 ml-1" />
+            <div className="flex items-center text-[13px] font-bold text-[#087B2B] whitespace-nowrap ml-[32px] sm:ml-0">
+              View Guidelines <ArrowRight className="h-4 w-4 ml-1" />
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Sticky Details Sidebar */}
         {selectedOrder && (
-          <div className="lg:sticky lg:top-24 space-y-6">
-            <Card className="shadow-none border-slate-100 rounded-3xl overflow-hidden bg-slate-50/50">
-              <CardHeader className="bg-emerald-50/50 border-b border-emerald-100/50 py-4 px-6 flex flex-row items-center gap-3">
-                <div className="h-8 w-8 rounded bg-white flex items-center justify-center border border-emerald-100 shadow-sm">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
+          <div className="xl:sticky xl:top-6 space-y-6">
+            <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.025)] overflow-hidden">
+              
+              <div className="bg-[#F0F8F1] py-4 px-5 flex items-center gap-3">
+                <ClipboardList className="h-[20px] w-[20px] text-[#087B2B]" strokeWidth={1.8} />
+                <h3 className="font-bold text-[#111827] text-[15px]">Assignment Details</h3>
+              </div>
+              
+              {/* Order Details */}
+              <div className="p-5 border-b border-[#E9ECEF]">
+                <div className="flex items-center gap-2 mb-4">
+                  <ClipboardList className="h-[16px] w-[16px] text-[#111827]" strokeWidth={1.8} />
+                  <h4 className="text-[13px] font-medium text-[#374151]">Order Details</h4>
                 </div>
-                <h3 className="font-extrabold text-slate-900">Assignment Details</h3>
-              </CardHeader>
-              <CardContent className="p-0">
-                
-                {/* Order Details */}
-                <div className="p-6 border-b border-slate-200/60 bg-white">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Store className="h-4 w-4 text-slate-400" />
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Order Details</h4>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center text-[13px]">
+                    <span className="text-[#374151]">Order ID</span>
+                    <span className="font-bold text-[#111827]">#{(selectedOrder.publicCode as string) ?? (selectedOrder.id as string).substring(0,8).toUpperCase()}</span>
                   </div>
-                  <div className="space-y-3">
-                    <div className="flex justify-between text-[13px]">
-                      <span className="text-slate-500 font-medium">Order ID</span>
-                      <span className="font-bold text-slate-900">#{(selectedOrder.publicCode as string) ?? (selectedOrder.id as string).substring(0,8).toUpperCase()}</span>
-                    </div>
-                    <div className="flex justify-between text-[13px]">
-                      <span className="text-slate-500 font-medium">Item</span>
-                      <span className="font-bold text-slate-900 max-w-[150px] text-right truncate">{selectedOrder.itemName as string}</span>
-                    </div>
-                    <div className="flex justify-between text-[13px]">
-                      <span className="text-slate-500 font-medium">Quantity</span>
-                      <span className="font-bold text-slate-900">{selectedOrder.quantity as number}</span>
-                    </div>
-                    <div className="flex justify-between text-[13px]">
-                      <span className="text-slate-500 font-medium">Payment Method</span>
-                      <span className="font-bold text-slate-900">{selectedOrder.paymentStatus === "SUCCESS" ? "Online Payment" : "Payment Pending"}</span>
-                    </div>
-                    <div className="flex justify-between text-[13px]">
-                      <span className="text-slate-500 font-medium">Order Time</span>
-                      <span className="font-bold text-slate-900">{selectedOrder.timeSlot || "08:45 AM"}</span>
-                    </div>
+                  <div className="flex justify-between items-center text-[13px]">
+                    <span className="text-[#374151]">Item</span>
+                    <span className="font-bold text-[#111827] max-w-[150px] text-right truncate">{(selectedOrder.itemList as string[]).join(", ") || (selectedOrder.itemName as string) || "—"}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[13px]">
+                    <span className="text-[#374151]">Quantity</span>
+                    <span className="font-bold text-[#111827]">{selectedOrder.totalQuantity || (selectedOrder.quantity as number) || 0}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[13px]">
+                    <span className="text-[#374151]">Payment Method</span>
+                    <span className="font-bold text-[#111827]">{getPaymentDisplay(selectedOrder.paymentStatus)}</span>
+                  </div>
+                  <div className="flex justify-between items-center text-[13px]">
+                    <span className="text-[#374151]">Order Time</span>
+                    <span className="font-bold text-[#111827]">{selectedOrder.timeSlot || "—"}</span>
                   </div>
                 </div>
+              </div>
 
-                {/* Kitchen Details */}
-                <div className="p-6 border-b border-slate-200/60 bg-white">
-                  <div className="flex items-center gap-2 mb-4">
-                    <Store className="h-4 w-4 text-slate-400" />
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Kitchen Details</h4>
+              {/* Kitchen Details */}
+              <div className="p-5 border-b border-[#E9ECEF]">
+                <div className="flex items-center gap-2 mb-4">
+                  <Landmark className="h-[16px] w-[16px] text-[#111827]" strokeWidth={1.8} />
+                  <h4 className="text-[13px] font-medium text-[#374151]">Kitchen Details</h4>
+                </div>
+                <div className="mb-5">
+                  <div className="font-bold text-[#111827] text-[14px] mb-1.5">{selectedOrder.kitchenName as string}</div>
+                  <div className="flex items-center gap-1.5 text-[13px] font-bold text-[#087B2B] mb-2">
+                    <Phone className="h-[15px] w-[15px]" strokeWidth={2} /> {selectedOrder.kitchenPhone as string}
                   </div>
-                  <div className="flex items-center gap-3 mb-3">
-                    <Avatar className="h-14 w-14 rounded-2xl border-2 border-green-100 shadow-sm">
-                      <AvatarImage
-                        src={(selectedOrder.kitchenImageUrl as string) || KITCHEN_FALLBACK_IMAGE}
-                        alt={selectedOrder.kitchenName as string}
-                      />
-                      <AvatarFallback className="bg-green-50 text-green-700 font-extrabold text-base rounded-2xl">
-                        {(selectedOrder.kitchenName as string).charAt(0).toUpperCase() || "K"}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-extrabold text-slate-900 text-[15px] mb-1">{selectedOrder.kitchenName as string}</div>
-                      <div className="flex items-center gap-1.5 text-xs font-bold text-green-600">
-                        <Phone className="h-3 w-3" /> {selectedOrder.kitchenPhone as string}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-1.5 text-xs text-slate-500 font-medium">
-                    <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0 text-slate-400" />
+                  <div className="flex items-start gap-1.5 text-[13px] text-[#374151]">
+                    <MapPin className="h-[15px] w-[15px] shrink-0 mt-0.5" strokeWidth={1.8} />
                     <span>{selectedOrder.kitchenAddress as string}</span>
                   </div>
-                  <div className="grid grid-cols-2 gap-3 mt-4">
-                    <a href={`tel:${selectedOrder.kitchenPhone}`}>
-                      <Button variant="outline" className="w-full bg-green-50 hover:bg-green-100 text-green-700 border-green-200 rounded-xl font-bold h-9 text-xs">
-                        <Check className="h-3.5 w-3.5 mr-1.5" /> Call Kitchen
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <a href={`tel:${selectedOrder.kitchenPhone}`}>
+                    <Button className="w-full bg-[#EEF8F0] hover:bg-[#E4F4E7] text-[#087B2B] rounded-[6px] font-bold h-9 text-[13px] shadow-none border-none">
+                      <Check className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Call Kitchen
+                    </Button>
+                  </a>
+                  {hasKitchenCoords ? (
+                    <a href={`https://maps.google.com/?q=${selectedKitchenLat},${selectedKitchenLng}`} target="_blank" rel="noopener noreferrer">
+                      <Button className="w-full bg-[#EEF8F0] hover:bg-[#E4F4E7] text-[#087B2B] rounded-[6px] font-bold h-9 text-[13px] shadow-none border-none">
+                        <Map className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Open in Map
                       </Button>
                     </a>
-                    {hasKitchenCoords ? (
-                      <a href={`https://maps.google.com/?q=${selectedKitchenLat},${selectedKitchenLng}`} target="_blank" rel="noopener noreferrer">
-                        <Button variant="outline" className="w-full bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200 rounded-xl font-bold h-9 text-xs">
-                          <MapPin className="h-3.5 w-3.5 mr-1.5 text-green-600" /> Open in Map
-                        </Button>
-                      </a>
-                    ) : (
-                      <Button variant="outline" disabled className="w-full bg-slate-50 text-slate-400 border-slate-200 rounded-xl font-bold h-9 text-xs">
-                        <MapPin className="h-3.5 w-3.5 mr-1.5" /> Open in Map
-                      </Button>
-                    )}
-                  </div>
+                  ) : (
+                    <Button disabled className="w-full bg-[#F3F4F6] text-[#9CA3AF] rounded-[6px] font-bold h-9 text-[13px] shadow-none border-none">
+                      <Map className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Open in Map
+                    </Button>
+                  )}
                 </div>
+              </div>
 
-                {/* Customer Details */}
-                <div className="p-6 bg-white">
-                  <div className="flex items-center gap-2 mb-4">
-                    <User className="h-4 w-4 text-slate-400" />
-                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">Customer Details</h4>
+              {/* Customer Details */}
+              <div className="p-5">
+                <div className="flex items-center gap-2 mb-4">
+                  <UserRound className="h-[16px] w-[16px] text-[#111827]" strokeWidth={1.8} />
+                  <h4 className="text-[13px] font-medium text-[#374151]">Customer Details</h4>
+                </div>
+                <div className="mb-5">
+                  <div className="font-bold text-[#111827] text-[14px] mb-1.5">{selectedOrder.customerName as string}</div>
+                  <div className="flex items-center gap-1.5 text-[13px] font-bold text-[#087B2B] mb-2">
+                    <Phone className="h-[15px] w-[15px]" strokeWidth={2} /> {selectedOrder.customerPhone as string}
                   </div>
-                  <div className="mb-4">
-                    <div className="font-extrabold text-slate-900 text-[15px] mb-1">{selectedOrder.customerName as string}</div>
-                    <div className="flex items-center gap-1.5 text-xs font-bold text-green-600 mb-2">
-                      <Phone className="h-3 w-3" /> {selectedOrder.customerPhone as string}
-                    </div>
-                    <div className="flex items-start gap-1.5 text-xs text-slate-500 font-medium">
-                      <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0 text-slate-400" />
-                      <span>{selectedOrder.customerAddress as string}</span>
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-3">
-                    <a href={`tel:${selectedOrder.customerPhone}`}>
-                      <Button variant="outline" className="w-full bg-green-50 hover:bg-green-100 text-green-700 border-green-200 rounded-xl font-bold h-9 text-xs">
-                        <Check className="h-3.5 w-3.5 mr-1.5" /> Call Customer
-                      </Button>
-                    </a>
-                    {hasCustomerCoords ? (
-                      <a href={`https://maps.google.com/?q=${selectedCustomerLat},${selectedCustomerLng}`} target="_blank" rel="noopener noreferrer">
-                        <Button variant="outline" className="w-full bg-slate-50 hover:bg-slate-100 text-slate-700 border-slate-200 rounded-xl font-bold h-9 text-xs">
-                          <MapPin className="h-3.5 w-3.5 mr-1.5 text-green-600" /> Open in Map
-                        </Button>
-                      </a>
-                    ) : (
-                      <Button variant="outline" disabled className="w-full bg-slate-50 text-slate-400 border-slate-200 rounded-xl font-bold h-9 text-xs">
-                        <MapPin className="h-3.5 w-3.5 mr-1.5" /> Open in Map
-                      </Button>
-                    )}
+                  <div className="flex items-start gap-1.5 text-[13px] text-[#374151]">
+                    <MapPin className="h-[15px] w-[15px] shrink-0 mt-0.5" strokeWidth={1.8} />
+                    <span>{selectedOrder.customerAddress as string}</span>
                   </div>
                 </div>
-              </CardContent>
+                <div className="grid grid-cols-2 gap-3 mb-6">
+                  <a href={`tel:${selectedOrder.customerPhone}`}>
+                    <Button className="w-full bg-[#EEF8F0] hover:bg-[#E4F4E7] text-[#087B2B] rounded-[6px] font-bold h-9 text-[13px] shadow-none border-none">
+                      <Check className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Call Customer
+                    </Button>
+                  </a>
+                  {hasCustomerCoords ? (
+                    <a href={`https://maps.google.com/?q=${selectedCustomerLat},${selectedCustomerLng}`} target="_blank" rel="noopener noreferrer">
+                      <Button className="w-full bg-[#EEF8F0] hover:bg-[#E4F4E7] text-[#087B2B] rounded-[6px] font-bold h-9 text-[13px] shadow-none border-none">
+                        <Map className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Open in Map
+                      </Button>
+                    </a>
+                  ) : (
+                    <Button disabled className="w-full bg-[#F3F4F6] text-[#9CA3AF] rounded-[6px] font-bold h-9 text-[13px] shadow-none border-none">
+                      <Map className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Open in Map
+                    </Button>
+                  )}
+                </div>
+                
+                {/* Warning Box */}
+                <div className="bg-[#FFF6E8] border border-[#FFD9A8] rounded-[8px] p-4 flex gap-3">
+                  <ShieldAlert className="h-[20px] w-[20px] text-[#FF8500] shrink-0" strokeWidth={1.8} />
+                  <p className="text-[#8A4B00] text-[13px] font-medium leading-snug">
+                    Please handle orders carefully and maintain good customer service.
+                  </p>
+                </div>
+              </div>
             </Card>
 
             {/* Live Order Tracking */}
             {hasKitchenCoords && (
-              <Card className="shadow-none border-slate-100 rounded-3xl overflow-hidden bg-white">
-                <CardHeader className="py-4 px-6 flex flex-row items-center gap-3 border-b border-slate-100">
-                  <div className="h-8 w-8 rounded bg-blue-50 flex items-center justify-center border border-blue-100 shadow-sm">
-                    <Navigation className="h-4 w-4 text-blue-600" />
+              <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.025)] overflow-hidden">
+                <div className="py-4 px-5 flex items-center gap-3 border-b border-[#E9ECEF]">
+                  <div className="h-8 w-8 rounded-[6px] bg-[#EAF3FF] flex items-center justify-center border border-[#C9DEFA]">
+                    <Navigation className="h-4 w-4 text-[#1677E8]" />
                   </div>
-                  <h3 className="font-extrabold text-slate-900">Live Order Tracking</h3>
-                </CardHeader>
-                <CardContent className="p-4">
+                  <h3 className="font-bold text-[#111827] text-[15px]">Live Order Tracking</h3>
+                </div>
+                <div className="p-4">
                   <LiveOrderTrackingMap
                     orderId={selectedOrder.id as string}
                     kitchenLat={selectedKitchenLat}
@@ -552,19 +651,9 @@ export default function DeliveriesPageClient() {
                     deliveryPersonId={data.profile.id}
                     broadcastLocation
                   />
-                </CardContent>
+                </div>
               </Card>
             )}
-            
-            {/* Warning Banner */}
-            <div className="bg-orange-50 rounded-2xl p-5 border border-orange-100 flex items-start gap-3 shadow-sm">
-              <div className="h-8 w-8 rounded-full bg-white flex items-center justify-center border border-orange-200 flex-shrink-0">
-                <AlertTriangle className="h-4 w-4 text-orange-500" />
-              </div>
-              <p className="text-[13px] font-bold text-orange-800 leading-snug">
-                Please handle orders carefully and maintain good customer service.
-              </p>
-            </div>
           </div>
         )}
       </div>

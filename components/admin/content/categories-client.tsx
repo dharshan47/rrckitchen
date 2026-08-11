@@ -14,23 +14,31 @@ import {
   Download,
   Plus,
   Search,
-  Edit2,
-  Info,
+  Pencil,
+  MoreVertical,
   LayoutGrid,
-  CheckCircle2,
+  CircleCheck,
   ChefHat,
   Eye,
-  ArrowUp,
   TrendingUp,
-  HelpCircle,
+  Star,
+  Lightbulb,
+  Headset,
   ArrowRight,
-  Loader2,
   RotateCcw,
+  Store,
+  ChevronDown,
   X,
+  ChartNoAxesCombined,
+  ChevronLeft,
+  ChevronRight,
+  ArrowUp,
+  Loader2
 } from "lucide-react";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
@@ -55,8 +63,29 @@ import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+} from "@/components/ui/pagination";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
-const DONUT_COLORS = ["#10b981", "#f97316", "#3b82f6", "#a855f7", "#ef4444", "#94a3b8"];
+const DONUT_COLORS = ["#1D9333", "#F97316", "#FB923C", "#7C3AED", "#EF4444", "#2563EB"];
 
 function categoriesToCSV(categories: AdminCategory[]) {
   const header = ["Name", "Description", "Kitchens", "Status", "Created At"];
@@ -90,16 +119,11 @@ function daysAgo(dateStr: string) {
   return `${days} days ago`;
 }
 
-/* ------------------------- Skeleton components ------------------------- */
-
 function StatsRowSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       {Array.from({ length: 4 }).map((_, i) => (
-        <div
-          key={i}
-          className="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex items-center gap-4"
-        >
+        <div key={i} className="bg-[#FFFFFF] rounded-[10px] p-5 border border-[#E7EBE8] flex items-center gap-4">
           <Skeleton className="h-12 w-12 rounded-full" />
           <div className="space-y-2">
             <Skeleton className="h-3 w-24 rounded-md" />
@@ -115,7 +139,7 @@ function StatsRowSkeleton() {
 function SidebarSkeleton() {
   return (
     <div className="flex flex-col gap-6">
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
+      <div className="bg-white rounded-[10px] border border-[#E7EBE8] p-5">
         <div className="flex items-center justify-between mb-6">
           <Skeleton className="h-4 w-36 rounded-md" />
           <Skeleton className="h-8 w-24 rounded-lg" />
@@ -135,25 +159,9 @@ function SidebarSkeleton() {
           ))}
         </div>
       </div>
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-        <Skeleton className="h-4 w-28 rounded-md mb-5" />
-        <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-100">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-3 w-24 rounded-md" />
-                <Skeleton className="h-3 w-32 rounded-md" />
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
-
-/* ------------------------- Main page ------------------------- */
 
 export default function CategoriesPage() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -171,35 +179,25 @@ export default function CategoriesPage() {
 
   const { isLoading, isError, refetch } = useAdminCategoriesQuery();
   const categories = useAdminCategories();
-
   const toggleMutation = useToggleCategoryMutation();
   const addMutation = useAddCategoryMutation();
   const updateMutation = useUpdateCategoryMutation();
 
   const handleToggle = (id: string, isActive: boolean) => {
     setPendingToggleId(id);
-    toggleMutation
-      .mutateAsync({ id, isActive })
-      .then(() => {
-        toast.success("Category status updated");
-      })
-      .catch(() => {
-        toast.error("Failed to update status");
-      })
-      .finally(() => {
-        setPendingToggleId(null);
-      });
+    toggleMutation.mutateAsync({ id, isActive }).then(() => {
+      toast.success("Category status updated");
+    }).catch(() => {
+      toast.error("Failed to update status");
+    }).finally(() => {
+      setPendingToggleId(null);
+    });
   };
 
   const filteredCategories = useMemo(() => {
     return categories.filter((cat) => {
-      const matchesSearch =
-        cat.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        (cat.description && cat.description.toLowerCase().includes(searchTerm.toLowerCase()));
-      const matchesStatus =
-        statusFilter === "All" ||
-        (statusFilter === "Active" && cat.isActive) ||
-        (statusFilter === "Disabled" && !cat.isActive);
+      const matchesSearch = cat.name.toLowerCase().includes(searchTerm.toLowerCase()) || (cat.description && cat.description.toLowerCase().includes(searchTerm.toLowerCase()));
+      const matchesStatus = statusFilter === "All" || (statusFilter === "Active" && cat.isActive) || (statusFilter === "Disabled" && !cat.isActive);
       return matchesSearch && matchesStatus;
     });
   }, [categories, searchTerm, statusFilter]);
@@ -220,11 +218,8 @@ export default function CategoriesPage() {
 
   const activeCategoriesCount = categories.filter((c) => c.isActive).length;
   const totalKitchensUsing = categories.reduce((acc, cat) => acc + cat.kitchenCount, 0);
-  const popularCount = categories.filter((c) => c.kitchenCount > 5).length;
   const totalCategories = categories.length;
-  const activePercentage =
-    totalCategories > 0 ? Math.round((activeCategoriesCount / totalCategories) * 100) : 0;
-  const popularPercentage = totalCategories > 0 ? Math.round((popularCount / totalCategories) * 100) : 0;
+  const activePercentage = totalCategories > 0 ? Math.round((activeCategoriesCount / totalCategories) * 100) : 0;
 
   const weekStart = startOfDay(subDays(new Date(), 6)).getTime();
   const lastWeekStart = startOfDay(subDays(new Date(), 13)).getTime();
@@ -233,39 +228,20 @@ export default function CategoriesPage() {
     const ts = new Date(c.createdAt).getTime();
     return ts >= lastWeekStart && ts < weekStart;
   }).length;
-  const weeklyGrowth =
-    addedLastWeek > 0 ? ((addedThisWeek - addedLastWeek) / addedLastWeek) * 100 : null;
+  const weeklyGrowth = addedLastWeek > 0 ? ((addedThisWeek - addedLastWeek) / addedLastWeek) * 100 : null;
 
   const kitchenDistribution = useMemo(() => {
     const sorted = [...categories].sort((a, b) => b.kitchenCount - a.kitchenCount);
-    const top = sorted.slice(0, 5);
-    const rest = sorted.slice(5).reduce((acc, c) => acc + c.kitchenCount, 0);
+    const top = sorted.slice(0, 4);
+    const rest = sorted.slice(4).reduce((acc, c) => acc + c.kitchenCount, 0);
     const list = top.map((c) => ({ name: c.name, kitchenCount: c.kitchenCount }));
     if (rest > 0) list.push({ name: "Others", kitchenCount: rest });
     return list;
   }, [categories]);
 
-  const donutGradient =
-    totalKitchensUsing > 0
-      ? kitchenDistribution
-          .reduce<{ stops: string[]; acc: number }>(
-            (state, d) => {
-              const start = state.acc;
-              state.acc += (d.kitchenCount / totalKitchensUsing) * 100;
-              state.stops.push(
-                `${DONUT_COLORS[state.stops.length % DONUT_COLORS.length]} ${start}% ${state.acc}%`
-              );
-              return state;
-            },
-            { stops: [], acc: 0 }
-          )
-          .stops.join(", ")
-      : undefined;
-
   const mostPopular = useMemo(() => {
     return [...categories].sort((a, b) => b.kitchenCount - a.kitchenCount)[0];
   }, [categories]);
-
   const newestCategory = useMemo(() => {
     return [...categories].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
   }, [categories]);
@@ -277,182 +253,230 @@ export default function CategoriesPage() {
   };
 
   const submitAdd = () => {
-    if (!addName.trim()) {
-      toast.error("Category name is required");
-      return;
-    }
-    addMutation
-      .mutateAsync({ name: addName.trim(), description: addDescription.trim() || undefined })
-      .then((res) => {
-        if (!res.success) {
-          toast.error(res.error || "Failed to add category");
-          return;
-        }
-        toast.success("Category added");
-        setAddDialogOpen(false);
-        setAddName("");
-        setAddDescription("");
-      })
-      .catch(() => {
-        toast.error("Failed to add category");
-      });
+    if (!addName.trim()) { toast.error("Category name is required"); return; }
+    addMutation.mutateAsync({ name: addName.trim(), description: addDescription.trim() || undefined }).then((res) => {
+      if (!res.success) { toast.error(res.error || "Failed to add category"); return; }
+      toast.success("Category added");
+      setAddDialogOpen(false); setAddName(""); setAddDescription("");
+    }).catch(() => { toast.error("Failed to add category"); });
   };
 
   const submitEdit = () => {
     if (!editTarget) return;
-    if (!editName.trim()) {
-      toast.error("Category name is required");
-      return;
-    }
-    updateMutation
-      .mutateAsync({
-        id: editTarget.id,
-        data: { name: editName.trim(), description: editDescription.trim() || null },
-      })
-      .then(() => {
-        toast.success("Category updated");
-        setEditTarget(null);
-      })
-      .catch(() => {
-        toast.error("Failed to update category");
-      });
+    if (!editName.trim()) { toast.error("Category name is required"); return; }
+    updateMutation.mutateAsync({ id: editTarget.id, data: { name: editName.trim(), description: editDescription.trim() || null } }).then(() => {
+      toast.success("Category updated");
+      setEditTarget(null);
+    }).catch(() => { toast.error("Failed to update category"); });
   };
 
   const statCards = [
+    { label: "Total Categories", value: totalCategories, sub: "100% of total", icon: LayoutGrid, iconBg: "bg-[#EEF8F0]", iconColor: "text-[#1D9333]" },
+    { label: "Active Categories", value: activeCategoriesCount, sub: `${activePercentage}% of total`, icon: CircleCheck, iconBg: "bg-[#EFF6FF]", iconColor: "text-[#2563EB]" },
+    { label: "Kitchens Using", value: totalKitchensUsing, sub: "Total across all categories", icon: ChefHat, iconBg: "bg-[#FFF7ED]", iconColor: "text-[#F97316]" },
+    { label: "Added This Week", value: addedThisWeek, sub: (
+      weeklyGrowth !== null ? (
+        <span className="flex items-center text-[#1D9333]">
+          <ArrowUp className="h-3 w-3 mr-1" /> {weeklyGrowth.toFixed(1)}% <span className="text-[#475467] ml-1">vs last week</span>
+        </span>
+      ) : (
+        <span className="text-[#475467]">In the last 7 days</span>
+      )
+    ), icon: Eye, iconBg: "bg-[#F5F0FF]", iconColor: "text-[#7C3AED]" },
+  ];
+
+  const columns: ColumnDef<AdminCategory>[] = [
     {
-      label: "Total Categories",
-      value: totalCategories,
-      sub: "100% of total",
-      icon: LayoutGrid,
-      iconBg: "bg-[#f0fdf4]",
-      iconColor: "text-[#10b981]",
-      watermark: true,
+      accessorKey: "name",
+      header: "Category",
+      cell: ({ row }) => {
+        const cat = row.original;
+        const isPopular = cat.kitchenCount > 5;
+        const isNew = new Date(cat.createdAt).getTime() > Date.now() - 7 * 86400000;
+        const isTrending = cat.kitchenCount > 2 && !isPopular;
+        return (
+          <div className="flex items-center gap-3 w-max py-2">
+            <Avatar className="h-[50px] w-[50px] border-none shadow-none">
+              <AvatarImage asChild src={cat.imageUrl} alt={cat.name}>
+                <Image src={cat.imageUrl} alt={cat.name} fill sizes="50px" className="object-cover" />
+              </AvatarImage>
+              <AvatarFallback className="bg-slate-100 text-slate-500 font-medium">
+                {cat.name.substring(0, 2).toUpperCase()}
+              </AvatarFallback>
+            </Avatar>
+            <div className="flex flex-col items-start gap-1">
+              <span className="font-semibold text-[13px] text-[#101828]">{cat.name}</span>
+              <div className="flex gap-1">
+                {isPopular && <Badge variant="outline" className="bg-[#EEF8F0] text-[#147A2B] border-[#D7EEDD] h-[20px] px-1.5 text-[10px] rounded-[5px] font-semibold">Popular</Badge>}
+                {isNew && <Badge variant="outline" className="bg-[#EFF6FF] text-[#2563EB] border-[#CFE0FF] h-[20px] px-1.5 text-[10px] rounded-[5px] font-semibold">New</Badge>}
+                {isTrending && <Badge variant="outline" className="bg-[#FFF7ED] text-[#EA580C] border-[#FED7AA] h-[20px] px-1.5 text-[10px] rounded-[5px] font-semibold">Trending</Badge>}
+              </div>
+            </div>
+          </div>
+        );
+      },
     },
     {
-      label: "Active Categories",
-      value: activeCategoriesCount,
-      sub: `${activePercentage}% of total`,
-      icon: CheckCircle2,
-      iconBg: "bg-blue-50",
-      iconColor: "text-blue-500",
+      accessorKey: "description",
+      header: "Description",
+      cell: ({ row }) => (
+        <span className="text-[12px] text-[#475467] leading-[18px] max-w-[220px] inline-block">
+          {row.original.description || "No description provided"}
+        </span>
+      ),
     },
     {
-      label: "Kitchens Using",
-      value: totalKitchensUsing,
-      sub: "Total across all categories",
-      icon: ChefHat,
-      iconBg: "bg-orange-50",
-      iconColor: "text-orange-500",
+      accessorKey: "kitchenCount",
+      header: "Kitchens",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2 text-[#475467] text-[13px]">
+          <Store className="h-[15px] w-[15px] text-[#475467]" />
+          {row.original.kitchenCount} {row.original.kitchenCount === 1 ? "Kitchen" : "Kitchens"}
+        </div>
+      ),
     },
     {
-      label: "Popular Categories",
-      value: popularCount,
-      sub: `5+ kitchens · ${popularPercentage}% of total`,
-      icon: Eye,
-      iconBg: "bg-purple-50",
-      iconColor: "text-purple-500",
+      accessorKey: "isActive",
+      header: "Status",
+      cell: ({ row }) => {
+        const cat = row.original;
+        return (
+          <div className="flex items-center gap-3">
+            <Switch
+              checked={cat.isActive}
+              disabled={pendingToggleId === cat.id}
+              onCheckedChange={(checked) => handleToggle(cat.id, checked)}
+              className={cn(
+                "h-[20px] w-[36px] transition-colors",
+                cat.isActive ? "data-[state=checked]:bg-[#1D9333]" : "data-[state=unchecked]:bg-[#D0D5DD]"
+              )}
+            />
+            {cat.isActive ? (
+               <Badge variant="outline" className="bg-[#EEF8F0] text-[#147A2B] border-[#D7EEDD] h-[22px] px-2 text-[11px] rounded-[5px] font-semibold uppercase tracking-wide">
+                 Active
+               </Badge>
+            ) : (
+               <Badge variant="outline" className="bg-[#F8FAFC] text-[#667085] border-[#E2E8F0] h-[22px] px-2 text-[11px] rounded-[5px] font-semibold uppercase tracking-wide">
+                 Disabled
+               </Badge>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "createdAt",
+      header: "Created At",
+      cell: ({ row }) => (
+        <div className="flex flex-col">
+          <span className="text-[#101828] text-[13px] font-medium">
+            {format(new Date(row.original.createdAt), "MMM dd, yyyy")}
+          </span>
+          <span className="text-[#667085] text-[12px] mt-0.5">
+            {format(new Date(row.original.createdAt), "hh:mm a")}
+          </span>
+        </div>
+      ),
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => (
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            className="h-[32px] w-[32px] bg-[#F8FCF9] border-[#D7EBDD] text-[#1D9333] hover:bg-[#EEF8F0] hover:border-[#CDE8D2] rounded-[7px]"
+            onClick={() => openEdit(row.original)}
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+             variant="outline"
+             size="icon"
+             className="h-[32px] w-[32px] bg-[#FFFFFF] border-[#E2E8E4] text-[#344054] rounded-[7px] hover:bg-[#F8FAF9]"
+          >
+             <MoreVertical className="h-4 w-4" />
+          </Button>
+        </div>
+      ),
     },
   ];
 
+  const table = useReactTable({
+    data: pageItems,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  });
+
   return (
-    <div className="flex flex-col xl:flex-row gap-6 w-full max-w-[1600px] mx-auto">
-      {/* Main Content Area */}
+    <div className="flex flex-col 2xl:flex-row gap-6 w-full max-w-[1600px] mx-auto min-h-screen bg-[#FCFCFD] pb-10">
       <div className="flex-1 flex flex-col min-w-0">
-        {/* Header */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Category Management</h1>
-              <Badge variant="outline" className="bg-[#eefcf3] text-[#10b981] border-[#dcfce7] font-semibold text-xs">
+              <h1 className="text-[24px] font-bold text-[#101828] tracking-tight">Category Management</h1>
+              <Badge variant="outline" className="bg-[#EEF8F0] text-[#147A2B] border-none rounded-[9999px] font-semibold text-[11px] h-[22px] px-2">
                 {totalCategories} Categories
               </Badge>
             </div>
-            <p className="text-sm text-slate-500 mt-1">
+            <p className="text-[13px] text-[#475467] mt-1">
               Manage food categories to help customers discover the right kitchens and cuisines
             </p>
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <Button
               variant="outline"
-              className="gap-2 h-10 w-full sm:w-auto shadow-sm"
+              className="h-[38px] w-full sm:w-auto bg-[#FFFFFF] text-[#344054] border-[#E2E8E4] rounded-[7px] hover:bg-[#F8FAF9] hover:border-[#D0D7D2] gap-2"
               onClick={() => {
-                if (sortedCategories.length === 0) {
-                  toast.error("No categories to export");
-                  return;
-                }
+                if (sortedCategories.length === 0) { toast.error("No categories to export"); return; }
                 downloadCSV("categories.csv", categoriesToCSV(sortedCategories));
                 toast.success(`${sortedCategories.length} categories exported`);
               }}
             >
-              <Download className="h-4 w-4" />
-              Export
+              <Download className="h-[15px] w-[15px]" /> Export
             </Button>
             <Button
               onClick={() => setAddDialogOpen(true)}
-              className="bg-[#10b981] hover:bg-[#059669] text-white gap-2 h-10 w-full sm:w-auto shadow-sm shadow-[#10b981]/20"
+              className="bg-[#1D9333] hover:bg-[#147A2B] text-[#FFFFFF] border-[#1D9333] h-[38px] w-full sm:w-auto rounded-[7px] gap-2 shadow-[0_2px_5px_rgba(29,147,51,0.15)]"
             >
-              <Plus className="h-4 w-4" />
-              Add New Category
+              <Plus className="h-[16px] w-[16px]" /> Add New Category
             </Button>
           </div>
         </div>
 
-        {/* Top Stat Cards */}
         {isLoading ? (
           <StatsRowSkeleton />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-            {statCards.map((card) => (
-              <div
-                key={card.label}
-                className="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex items-center gap-4 relative overflow-hidden"
-              >
-                {card.watermark && (
-                  <div className="absolute top-0 right-0 p-4 opacity-5">
-                    <LayoutGrid className="h-16 w-16" />
-                  </div>
-                )}
-                <div
-                  className={cn(
-                    "h-12 w-12 rounded-full flex items-center justify-center shrink-0",
-                    card.iconBg
-                  )}
-                >
-                  <card.icon className={cn("h-6 w-6", card.iconColor)} />
+            {statCards.map((card, i) => (
+              <div key={i} className="bg-[#FFFFFF] border border-[#E7EBE8] rounded-[10px] p-5 flex items-center gap-4 shadow-none">
+                <div className={cn("h-[48px] w-[48px] rounded-full flex items-center justify-center shrink-0", card.iconBg)}>
+                  <card.icon className={cn("h-[24px] w-[24px]", card.iconColor)} />
                 </div>
-                <div>
-                  <p className="text-xs font-semibold text-slate-500 mb-1">{card.label}</p>
-                  <h3 className="text-2xl font-bold text-slate-900">{card.value}</h3>
-                  <p className="text-xs font-medium text-slate-500 mt-1">{card.sub}</p>
+                <div className="flex flex-col">
+                  <p className="text-[12px] font-medium text-[#344054] mb-1">{card.label}</p>
+                  <h3 className="text-[24px] font-bold text-[#101828] leading-none mb-1">{card.value}</h3>
+                  <div className="text-[12px] text-[#475467]">{card.sub}</div>
                 </div>
               </div>
             ))}
           </div>
         )}
 
-        {/* Table Filters */}
-        <div className="flex flex-col sm:flex-row items-center gap-4 mb-6">
-          <div className="relative flex-1 w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+        <div className="flex flex-col sm:flex-row items-center gap-4 mb-4">
+          <div className="relative flex-1 w-full lg:max-w-md">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-[17px] w-[17px] text-[#475467]" />
             <Input
               placeholder="Search by name or description..."
-              className="pl-9 h-10 w-full lg:max-w-md bg-white border-slate-200"
+              className="pl-9 h-[40px] w-full bg-[#FFFFFF] border-[#E2E8E4] rounded-[7px] text-[#344054] placeholder:text-[#98A2B3] focus-visible:ring-0 focus-visible:border-[#1D9333] focus-visible:ring-offset-0 focus-visible:shadow-[0_0_0_3px_rgba(29,147,51,0.08)]"
               value={searchTerm}
-              onChange={(e) => {
-                setSearchTerm(e.target.value);
-                setCurrentPage(1);
-              }}
+              onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             />
           </div>
           <div className="flex items-center gap-3 w-full sm:w-auto">
-            <Select
-              value={statusFilter}
-              onValueChange={(v) => {
-                setStatusFilter(v);
-                setCurrentPage(1);
-              }}
-            >
-              <SelectTrigger className="w-[140px] h-10 bg-white">
+            <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
+              <SelectTrigger className="w-[140px] h-[40px] bg-[#FFFFFF] border-[#E2E8E4] rounded-[7px] text-[#344054] focus:ring-0">
                 <SelectValue placeholder="Status: All" />
               </SelectTrigger>
               <SelectContent>
@@ -461,14 +485,8 @@ export default function CategoriesPage() {
                 <SelectItem value="Disabled">Disabled</SelectItem>
               </SelectContent>
             </Select>
-            <Select
-              value={sortBy}
-              onValueChange={(v) => {
-                setSortBy(v);
-                setCurrentPage(1);
-              }}
-            >
-              <SelectTrigger className="w-[150px] h-10 bg-white">
+            <Select value={sortBy} onValueChange={(v) => { setSortBy(v); setCurrentPage(1); }}>
+              <SelectTrigger className="w-[150px] h-[40px] bg-[#FFFFFF] border-[#E2E8E4] rounded-[7px] text-[#344054] focus:ring-0">
                 <SelectValue placeholder="Sort by: Name" />
               </SelectTrigger>
               <SelectContent>
@@ -478,403 +496,278 @@ export default function CategoriesPage() {
               </SelectContent>
             </Select>
             <Button
-              variant="ghost"
-              className="h-10 text-slate-500 hover:text-slate-900"
-              onClick={() => {
-                setSearchTerm("");
-                setStatusFilter("All");
-                setSortBy("name");
-                setCurrentPage(1);
-              }}
+              variant="outline"
+              className="h-[40px] bg-[#FFFFFF] border-[#E2E8E4] text-[#344054] rounded-[7px] hover:bg-[#F8FAF9] px-4 gap-2"
+              onClick={() => { setSearchTerm(""); setStatusFilter("All"); setSortBy("name"); setCurrentPage(1); }}
             >
-              Reset
+              <RotateCcw className="h-4 w-4" /> Reset
             </Button>
           </div>
         </div>
 
-        {/* Table Area */}
         {isError ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+          <div className="flex flex-col items-center justify-center py-20 gap-4 bg-[#FFFFFF] rounded-[10px] border border-[#E7EBE8] shadow-none">
             <X className="h-12 w-12 text-red-400" />
             <p className="text-red-500 font-semibold">Failed to load categories</p>
-            <Button variant="outline" onClick={() => refetch()}>
-              <RotateCcw className="h-4 w-4 mr-2" /> Retry
-            </Button>
+            <Button variant="outline" onClick={() => refetch()}><RotateCcw className="h-4 w-4 mr-2" /> Retry</Button>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden flex-1 flex flex-col">
-            <div className="overflow-x-auto flex-1">
-              <table className="w-full text-sm text-left">
-                <thead className="text-xs text-slate-500 bg-slate-50 uppercase font-semibold border-b border-slate-200">
-                  <tr>
-                    <th className="px-6 py-4 rounded-tl-xl">Category</th>
-                    <th className="px-6 py-4">Description</th>
-                    <th className="px-6 py-4">Kitchens</th>
-                    <th className="px-6 py-4">Status</th>
-                    <th className="px-6 py-4">Created At</th>
-                    <th className="px-6 py-4 rounded-tr-xl text-center">Actions</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100">
+          <div className="bg-[#FFFFFF] border border-[#E7EBE8] rounded-[10px] overflow-hidden flex-1 flex flex-col shadow-none">
+            <ScrollArea className="flex-1 w-full">
+              <Table>
+                <TableHeader className="bg-[#F5FAF6]">
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-[#E7EBE8]">
+                      {headerGroup.headers.map((header) => (
+                        <TableHead key={header.id} className="text-[#344054] text-[11px] font-semibold uppercase h-auto py-4 px-6">
+                          {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                        </TableHead>
+                      ))}
+                    </TableRow>
+                  ))}
+                </TableHeader>
+                <TableBody>
                   {isLoading ? (
                     Array.from({ length: 5 }).map((_, i) => (
-                      <tr key={i}>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3">
-                            <Skeleton className="h-10 w-10 rounded-full" />
-                            <Skeleton className="h-4 w-24" />
-                          </div>
-                        </td>
-                        <td className="px-6 py-4"><Skeleton className="h-4 w-48" /></td>
-                        <td className="px-6 py-4"><Skeleton className="h-4 w-16" /></td>
-                        <td className="px-6 py-4"><Skeleton className="h-6 w-20 rounded-full" /></td>
-                        <td className="px-6 py-4"><Skeleton className="h-4 w-24" /></td>
-                        <td className="px-6 py-4"><Skeleton className="h-8 w-16 mx-auto" /></td>
-                      </tr>
+                      <TableRow key={i} className="border-b border-[#EEF1EF]">
+                        <TableCell className="px-6 py-4"><Skeleton className="h-10 w-32" /></TableCell>
+                        <TableCell className="px-6 py-4"><Skeleton className="h-4 w-48" /></TableCell>
+                        <TableCell className="px-6 py-4"><Skeleton className="h-4 w-16" /></TableCell>
+                        <TableCell className="px-6 py-4"><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
+                        <TableCell className="px-6 py-4"><Skeleton className="h-8 w-24" /></TableCell>
+                        <TableCell className="px-6 py-4"><Skeleton className="h-8 w-16" /></TableCell>
+                      </TableRow>
                     ))
-                  ) : pageItems.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
-                        No categories found.
-                      </td>
-                    </tr>
+                  ) : table.getRowModel().rows?.length ? (
+                    table.getRowModel().rows.map((row) => (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && "selected"}
+                        className="border-b border-[#EEF1EF] hover:bg-[#FAFCFA] transition-colors"
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id} className="px-6 py-2">
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    ))
                   ) : (
-                    pageItems.map((cat) => (
-                      <tr key={cat.id} className="hover:bg-slate-50/50 transition-colors">
-                        <td className="px-6 py-4">
-                          <div className="flex items-center gap-3 w-max">
-                            <Avatar className="h-10 w-10 border border-slate-100 shadow-sm">
-                              <AvatarImage asChild src={cat.imageUrl} alt={cat.name}>
-                                <Image
-                                  src={cat.imageUrl}
-                                  alt={cat.name}
-                                  fill
-                                  sizes="40px"
-                                  className="object-cover"
-                                />
-                              </AvatarImage>
-                              <AvatarFallback className="bg-slate-100 text-slate-500 font-medium">
-                                {cat.name.substring(0, 2).toUpperCase()}
-                              </AvatarFallback>
-                            </Avatar>
-                            <div className="flex flex-col">
-                              <span className="font-bold text-slate-900">{cat.name}</span>
-                              {cat.kitchenCount > 5 && (
-                                <Badge
-                                  variant="secondary"
-                                  className="w-fit mt-1 text-[10px] bg-blue-50 text-blue-600 hover:bg-blue-50 border-none h-4 px-1.5 rounded"
-                                >
-                                  Popular
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 text-slate-500 max-w-[280px] truncate">
-                          {cat.description || "No description provided"}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2 text-slate-600 font-medium">
-                            <ChefHat className="h-4 w-4 text-slate-400" />
-                            {cat.kitchenCount} Kitchens
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center gap-2">
-                            <Switch
-                              checked={cat.isActive}
-                              disabled={pendingToggleId === cat.id}
-                              onCheckedChange={(checked) => handleToggle(cat.id, checked)}
-                              className={cat.isActive ? "data-[state=checked]:bg-[#10b981]" : ""}
-                            />
-                            <Badge
-                              variant="outline"
-                              className={cn(
-                                "ml-2 text-[10px] uppercase font-bold border-none px-2 py-0.5 rounded-full",
-                                cat.isActive ? "bg-[#f0fdf4] text-[#10b981]" : "bg-slate-100 text-slate-500"
-                              )}
-                            >
-                              {cat.isActive ? "Active" : "Disabled"}
-                            </Badge>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex flex-col">
-                            <span className="text-slate-700 text-sm font-medium">
-                              {format(new Date(cat.createdAt), "MMM dd, yyyy")}
-                            </span>
-                            <span className="text-slate-400 text-xs mt-0.5">
-                              {format(new Date(cat.createdAt), "hh:mm a")}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div className="flex items-center justify-center gap-2">
-                            <Button
-                              variant="outline"
-                              size="icon"
-                              className="h-8 w-8 text-[#10b981] border-slate-200 hover:bg-[#10b981]/10 hover:text-[#10b981] hover:border-[#10b981]/30"
-                              onClick={() => openEdit(cat)}
-                            >
-                              <Edit2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ))
+                    <TableRow>
+                      <TableCell colSpan={columns.length} className="h-24 text-center">
+                        No categories found.
+                      </TableCell>
+                    </TableRow>
                   )}
-                </tbody>
-              </table>
-            </div>
-
-            <div className="p-4 border-t border-slate-200 flex items-center justify-between text-sm text-slate-500 bg-slate-50/50">
-              <div>
-                Showing <span className="font-semibold text-slate-900">{showingFrom}</span> to{" "}
-                <span className="font-semibold text-slate-900">{showingTo}</span> of{" "}
-                <span className="font-semibold text-slate-900">{sortedCategories.length}</span> categories
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2">
-                  Rows per page
-                  <Select
-                    value={String(rowsPerPage)}
-                    onValueChange={(v) => {
-                      setRowsPerPage(Number(v));
-                      setCurrentPage(1);
-                    }}
-                  >
-                    <SelectTrigger className="h-8 w-16 bg-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="10">10</SelectItem>
-                      <SelectItem value="20">20</SelectItem>
-                      <SelectItem value="50">50</SelectItem>
-                    </SelectContent>
-                  </Select>
+                </TableBody>
+              </Table>
+              <ScrollBar orientation="horizontal" />
+            </ScrollArea>
+            {!isLoading && (
+              <div className="p-4 border-t border-[#E7EBE8] flex items-center justify-between text-[13px] text-[#475467] bg-[#FFFFFF]">
+                <div>
+                  Showing {showingFrom} to {showingTo} of {sortedCategories.length} categories
                 </div>
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 bg-white"
-                    disabled={safePage <= 1}
-                    onClick={() => setCurrentPage(safePage - 1)}
-                  >
-                    <span className="sr-only">Previous page</span>
-                    &lt;
-                  </Button>
-                  {Array.from({ length: totalPages }).map((_, i) => (
-                    <Button
-                      key={i}
-                      variant="outline"
-                      size="icon"
-                      className={cn(
-                        "h-8 w-8",
-                        safePage === i + 1
-                          ? "bg-[#10b981] text-white hover:bg-[#059669] hover:text-white border-none"
-                          : "bg-white"
-                      )}
-                      onClick={() => setCurrentPage(i + 1)}
-                    >
-                      {i + 1}
-                    </Button>
-                  ))}
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="h-8 w-8 bg-white"
-                    disabled={safePage >= totalPages}
-                    onClick={() => setCurrentPage(safePage + 1)}
-                  >
-                    <span className="sr-only">Next page</span>
-                    &gt;
-                  </Button>
+                <div className="flex items-center gap-6">
+                  <Pagination className="mx-0 w-auto">
+                    <PaginationContent>
+                      <PaginationItem>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className={cn("h-[32px] w-[32px] bg-[#FFFFFF] border-[#E2E8E4] text-[#344054] rounded-[6px] mr-1", safePage <= 1 && "pointer-events-none opacity-50")}
+                          onClick={(e) => { e.preventDefault(); if(safePage > 1) setCurrentPage(safePage - 1); }}
+                        >
+                          <ChevronLeft className="h-4 w-4" />
+                        </Button>
+                      </PaginationItem>
+                      {Array.from({ length: totalPages }).map((_, i) => (
+                        <PaginationItem key={i}>
+                          <PaginationLink
+                            href="#"
+                            onClick={(e) => { e.preventDefault(); setCurrentPage(i + 1); }}
+                            isActive={safePage === i + 1}
+                            className={cn("h-[32px] w-[32px] rounded-[6px] text-[13px] font-medium", safePage === i + 1 ? "bg-[#1D9333] text-white border-none hover:bg-[#147A2B] hover:text-white" : "bg-white text-[#344054] border border-[#E2E8E4] hover:bg-[#EEF8F0] hover:text-[#147A2B] hover:border-[#CDE8D2]")}
+                          >
+                            {i + 1}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      <PaginationItem>
+                        <Button
+                          variant="outline"
+                          size="icon"
+                          className={cn("h-[32px] w-[32px] bg-[#FFFFFF] border-[#E2E8E4] text-[#344054] rounded-[6px] ml-1", safePage >= totalPages && "pointer-events-none opacity-50")}
+                          onClick={(e) => { e.preventDefault(); if(safePage < totalPages) setCurrentPage(safePage + 1); }}
+                        >
+                          <ChevronRight className="h-4 w-4" />
+                        </Button>
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                  <div className="flex items-center gap-2">
+                    Rows per page
+                    <Select value={String(rowsPerPage)} onValueChange={(v) => { setRowsPerPage(Number(v)); setCurrentPage(1); }}>
+                      <SelectTrigger className="h-[32px] w-[70px] bg-[#FFFFFF] border-[#E2E8E4] rounded-[7px] text-[#344054] focus:ring-0">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="10">10</SelectItem>
+                        <SelectItem value="20">20</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         )}
       </div>
 
-      {/* Right Sidebar */}
       {isLoading ? (
         <SidebarSkeleton />
       ) : (
-        <div className="w-full xl:w-[320px] 2xl:w-[360px] flex flex-col gap-6">
-          {/* Category Overview Card */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-slate-900">Category Overview</h3>
-              <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">
-                Kitchens per category
-              </span>
-            </div>
-
-            <div className="flex items-center justify-center py-4 relative">
-              <div
-                className="relative w-40 h-40 rounded-full bg-slate-100 flex items-center justify-center shadow-inner"
-                style={
-                  donutGradient
-                    ? { background: `conic-gradient(${donutGradient})` }
-                    : undefined
-                }
-              >
-                <div className="absolute inset-0 m-5 rounded-full bg-white shadow-sm flex flex-col items-center justify-center z-10">
-                  <span className="text-3xl font-bold text-slate-900">{totalKitchensUsing}</span>
-                  <span className="text-[10px] text-slate-500 font-semibold uppercase tracking-wider text-center px-2 mt-0.5">
-                    Total Kitchens
-                  </span>
-                </div>
+        <div className="w-full 2xl:w-[320px] flex flex-col gap-6">
+          <div className="bg-[#FFFFFF] rounded-[10px] border border-[#E7EBE8] p-5 shadow-none">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-bold text-[16px] text-[#101828]">Category Overview</h3>
+              <div className="flex items-center gap-1 px-3 py-1 border border-[#E2E8E4] rounded-[7px] text-[#344054] text-[12px] cursor-pointer hover:bg-[#F8FAF9]">
+                 This Week <ChevronDown className="h-3 w-3 ml-1 text-[#667085]" />
               </div>
             </div>
-
-            <div className="mt-6 space-y-3.5">
-              {kitchenDistribution.map((d, i) => (
-                <div key={d.name} className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2.5">
-                    <div
-                      className="w-2.5 h-2.5 rounded-full"
-                      style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }}
-                    />
-                    <span className="text-slate-600 font-medium">{d.name}</span>
+            
+            <div className="flex items-center justify-center flex-col">
+               <div className="relative w-[180px] h-[180px] shrink-0 mb-4">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={kitchenDistribution}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={65}
+                        outerRadius={90}
+                        paddingAngle={2}
+                        dataKey="kitchenCount"
+                        stroke="none"
+                      >
+                        {kitchenDistribution.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={DONUT_COLORS[index % DONUT_COLORS.length]} />
+                        ))}
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    <span className="text-[22px] font-bold text-[#101828]">{totalKitchensUsing}</span>
+                    <span className="text-[11px] text-[#667085]">Total Kitchens</span>
                   </div>
-                  <span className="font-bold text-slate-900">{d.kitchenCount}</span>
-                </div>
-              ))}
+               </div>
+               
+               <div className="w-full flex flex-col gap-3 px-2">
+                  {kitchenDistribution.map((d, i) => (
+                     <div key={d.name} className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                           <div className="w-[10px] h-[10px] rounded-full" style={{ backgroundColor: DONUT_COLORS[i % DONUT_COLORS.length] }} />
+                           <span className="text-[13px] text-[#344054]">{d.name}</span>
+                        </div>
+                        <span className="text-[13px] text-[#344054] font-medium">{d.kitchenCount}</span>
+                     </div>
+                  ))}
+               </div>
             </div>
           </div>
 
-          {/* Quick Insights Card */}
-          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-5">
-            <h3 className="font-bold text-slate-900 mb-5">Quick Insights</h3>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-100 bg-slate-50/50">
-                <div className="h-10 w-10 rounded-full bg-[#f0fdf4] flex items-center justify-center shrink-0">
-                  <TrendingUp className="h-5 w-5 text-[#10b981]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold text-slate-900">Most Popular</p>
-                  <p className="text-xs text-slate-500 truncate mt-0.5">
-                    {mostPopular?.name ?? "—"}
-                  </p>
-                </div>
-                <div className="text-xs font-semibold text-slate-700 text-right">
-                  {mostPopular?.kitchenCount ?? 0} Kitchens
-                </div>
+          <div className="bg-[#FFFFFF] rounded-[10px] border border-[#E7EBE8] p-5 shadow-none">
+            <h3 className="font-bold text-[16px] text-[#101828] mb-4">Quick Insights</h3>
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-3 p-3 rounded-[10px] border border-[#DDEDE0] bg-[#FFFFFF]">
+                 <div className="h-[40px] w-[40px] rounded-[10px] bg-[#EEF8F0] flex items-center justify-center shrink-0">
+                    <ChartNoAxesCombined className="h-[20px] w-[20px] text-[#1D9333]" />
+                 </div>
+                 <div className="flex-1">
+                    <p className="text-[13px] font-semibold text-[#101828]">Most Popular</p>
+<p className="text-[12px] text-[#475467]">{mostPopular?.name ?? "—"}</p>
+                  </div>
+                  <div className="text-[12px] text-[#475467]">
+                     {mostPopular?.kitchenCount ?? 0} Kitchens
+                 </div>
               </div>
-
-              <div className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-100 bg-slate-50/50">
-                <div className="h-10 w-10 rounded-full bg-orange-50 flex items-center justify-center shrink-0">
-                  <Plus className="h-5 w-5 text-orange-500" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold text-slate-900">New Addition</p>
-                  <p className="text-xs text-slate-500 truncate mt-0.5">
-                    {newestCategory?.name ?? "—"}
-                  </p>
-                </div>
-                <div className="text-xs font-semibold text-slate-700 text-right whitespace-nowrap">
-                  {newestCategory ? daysAgo(newestCategory.createdAt) : "—"}
-                </div>
+              <div className="flex items-center gap-3 p-3 rounded-[10px] border border-[#FDE3CC] bg-[#FFFFFF]">
+                 <div className="h-[40px] w-[40px] rounded-[10px] bg-[#FFF7ED] flex items-center justify-center shrink-0">
+                    <Star className="h-[20px] w-[20px] text-[#F97316]" />
+                 </div>
+                 <div className="flex-1">
+                    <p className="text-[13px] font-semibold text-[#101828]">New Addition</p>
+<p className="text-[12px] text-[#475467]">{newestCategory?.name ?? "—"}</p>
+                  </div>
+                  <div className="text-[12px] text-[#475467]">
+                     {newestCategory ? daysAgo(newestCategory.createdAt) : "—"}
+                  </div>
               </div>
-
-              <div className="flex items-center gap-3 p-3.5 rounded-xl border border-slate-100 bg-slate-50/50">
-                <div className="h-10 w-10 rounded-full bg-blue-50 flex items-center justify-center shrink-0">
-                  <ArrowUp className="h-5 w-5 text-blue-500" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-xs font-bold text-slate-900">Growth This Week</p>
-                  <p
-                    className={cn(
-                      "text-xs font-semibold flex items-center mt-0.5",
-                      weeklyGrowth === null || weeklyGrowth >= 0 ? "text-[#10b981]" : "text-rose-500"
-                    )}
-                  >
-                    <ArrowUp
-                      className={cn("h-3 w-3 mr-0.5", weeklyGrowth !== null && weeklyGrowth < 0 && "rotate-180")}
-                    />
-                    {weeklyGrowth === null ? "New this week" : `${weeklyGrowth >= 0 ? "+" : ""}${weeklyGrowth.toFixed(1)}%`}
-                  </p>
-                </div>
-                <div className="text-xs font-semibold text-slate-700 text-right whitespace-nowrap">
-                  Categories added
-                </div>
+              <div className="flex items-center gap-3 p-3 rounded-[10px] border border-[#D9E7FF] bg-[#FFFFFF]">
+                 <div className="h-[40px] w-[40px] rounded-[10px] bg-[#EFF6FF] flex items-center justify-center shrink-0">
+                    <TrendingUp className="h-[20px] w-[20px] text-[#2563EB]" />
+                 </div>
+                 <div className="flex-1">
+                    <p className="text-[13px] font-semibold text-[#101828]">Growth This Week</p>
+                    <p className="text-[13px] font-semibold text-[#1D9333] flex items-center mt-0.5">
+                       <ArrowUp className="h-3 w-3 mr-1" />
+                       {weeklyGrowth !== null ? `${weeklyGrowth.toFixed(1)}%` : "0%"}
+                    </p>
+                 </div>
+                 <div className="text-[12px] text-[#475467]">
+                    More kitchen usage
+                 </div>
               </div>
             </div>
           </div>
 
-          {/* Tips Card */}
-          <div className="bg-[#f0fdf4] rounded-xl border border-[#dcfce7] p-5">
-            <h3 className="font-bold text-slate-900 mb-3">Tips</h3>
-            <div className="flex gap-3">
-              <Info className="h-5 w-5 text-[#10b981] shrink-0 mt-0.5" />
-              <p className="text-sm text-slate-700 font-medium leading-relaxed">
-                Well organized categories help customers find kitchens faster and improve conversions.
+          <div>
+            <h3 className="font-bold text-[16px] text-[#101828] mb-3">Tips</h3>
+            <div className="bg-[#FFFFFF] rounded-[10px] border border-[#E7EBE8] p-4 shadow-none">
+               <div className="bg-[#EEF8F0] border border-[#D8EBDD] rounded-[8px] p-3 flex items-start gap-3">
+                  <Lightbulb className="h-[20px] w-[20px] text-[#1D9333] shrink-0 mt-0.5" />
+                  <p className="text-[12px] text-[#147A2B] leading-[18px]">
+                     Well organized categories help customers find kitchens faster and improve conversions.
+                  </p>
+               </div>
+            </div>
+          </div>
+
+          <div className="bg-[#FFFFFF] rounded-[10px] border border-[#E7EBE8] p-5 shadow-none flex items-start gap-4">
+            <Headset className="h-[28px] w-[28px] text-[#1D9333] shrink-0 mt-1" />
+            <div className="flex flex-col">
+              <h3 className="font-bold text-[14px] text-[#101828] mb-1">Need Help?</h3>
+              <p className="text-[12px] text-[#475467] leading-relaxed mb-3">
+                 Learn how to manage categories effectively.
               </p>
+              <a href="#" className="flex items-center text-[#1D9333] text-[13px] font-semibold hover:underline">
+                 View Documentation <ArrowRight className="h-4 w-4 ml-1" />
+              </a>
             </div>
-          </div>
-
-          {/* Need Help Card */}
-          <div className="bg-slate-50 rounded-xl border border-slate-100 p-5 mt-auto">
-            <div className="flex items-center gap-3 mb-2">
-              <div className="h-8 w-8 rounded-full bg-white shadow-sm flex items-center justify-center shrink-0 text-[#10b981]">
-                <HelpCircle className="h-5 w-5" />
-              </div>
-              <h3 className="font-bold text-slate-900">Need Help?</h3>
-            </div>
-            <p className="text-sm text-slate-600 mb-4 ml-11">
-              Learn how to manage categories effectively.
-            </p>
-            <Button
-              variant="link"
-              className="text-[#10b981] font-semibold h-auto p-0 ml-11 flex items-center gap-1 hover:text-[#059669]"
-            >
-              View Documentation <ArrowRight className="h-4 w-4" />
-            </Button>
           </div>
         </div>
       )}
 
-      {/* Add Category Dialog */}
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Add New Category</DialogTitle>
-            <DialogDescription>
-              Create a new food category to help customers discover kitchens.
-            </DialogDescription>
+            <DialogDescription>Create a new food category to help customers discover kitchens.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
               <Label htmlFor="cat-name">Name</Label>
-              <Input
-                id="cat-name"
-                placeholder="e.g. Biryani"
-                value={addName}
-                onChange={(e) => setAddName(e.target.value)}
-              />
+              <Input id="cat-name" placeholder="e.g. Biryani" value={addName} onChange={(e) => setAddName(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="cat-desc">Description</Label>
-              <Textarea
-                id="cat-desc"
-                placeholder="Short description (optional)"
-                value={addDescription}
-                onChange={(e) => setAddDescription(e.target.value)}
-                rows={3}
-              />
+              <Textarea id="cat-desc" placeholder="Short description (optional)" value={addDescription} onChange={(e) => setAddDescription(e.target.value)} rows={3} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAddDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={submitAdd}
-              disabled={addMutation.isPending}
-              className="bg-[#10b981] hover:bg-[#059669] text-white gap-2"
-            >
+            <Button variant="outline" onClick={() => setAddDialogOpen(false)}>Cancel</Button>
+            <Button onClick={submitAdd} disabled={addMutation.isPending} className="bg-[#1D9333] hover:bg-[#147A2B] text-white gap-2">
               {addMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
               Add Category
             </Button>
@@ -882,43 +775,25 @@ export default function CategoriesPage() {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Category Dialog */}
       <Dialog open={editTarget !== null} onOpenChange={(open) => !open && setEditTarget(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Edit Category</DialogTitle>
-            <DialogDescription>
-              Update the name and description of this category.
-            </DialogDescription>
+            <DialogDescription>Update the name and description of this category.</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
               <Label htmlFor="edit-cat-name">Name</Label>
-              <Input
-                id="edit-cat-name"
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-              />
+              <Input id="edit-cat-name" value={editName} onChange={(e) => setEditName(e.target.value)} />
             </div>
             <div className="space-y-2">
               <Label htmlFor="edit-cat-desc">Description</Label>
-              <Textarea
-                id="edit-cat-desc"
-                value={editDescription}
-                onChange={(e) => setEditDescription(e.target.value)}
-                rows={3}
-              />
+              <Textarea id="edit-cat-desc" value={editDescription} onChange={(e) => setEditDescription(e.target.value)} rows={3} />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setEditTarget(null)}>
-              Cancel
-            </Button>
-            <Button
-              onClick={submitEdit}
-              disabled={updateMutation.isPending}
-              className="bg-[#10b981] hover:bg-[#059669] text-white gap-2"
-            >
+            <Button variant="outline" onClick={() => setEditTarget(null)}>Cancel</Button>
+            <Button onClick={submitEdit} disabled={updateMutation.isPending} className="bg-[#1D9333] hover:bg-[#147A2B] text-white gap-2">
               {updateMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
               Save Changes
             </Button>
