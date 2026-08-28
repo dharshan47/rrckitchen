@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 
 const mockPrisma = vi.hoisted(() => ({
   order: { findUnique: vi.fn(), update: vi.fn() },
-  deliveryPartner: { findUnique: vi.fn(), update: vi.fn() },
+  deliveryPartner: { findUnique: vi.fn(), update: vi.fn(), findMany: vi.fn() },
   deliveryAssignment: { create: vi.fn(), findFirst: vi.fn(), updateMany: vi.fn() },
 }))
 
@@ -50,7 +50,7 @@ describe("dispatch-actions", () => {
       expect(result.id).toBe("assign-1")
       expect(mockPrisma.order.update).toHaveBeenCalledWith({
         where: { id: "order-1" },
-        data: { deliveryPartnerId: "dp-1" },
+        data: { deliveryPartnerId: "dp-1", deliveryStatus: "ASSIGNED" },
       })
       expect(mockPublish).toHaveBeenCalledTimes(2)
     })
@@ -85,6 +85,7 @@ describe("dispatch-actions", () => {
         .mockResolvedValueOnce({ id: "dp-1", isOnline: true })
         .mockResolvedValueOnce({ id: "dp-2", isOnline: true })
       mockPrisma.deliveryAssignment.findFirst
+        .mockResolvedValueOnce(null)
         .mockResolvedValueOnce({ id: "existing" })
         .mockResolvedValueOnce(null)
       mockPrisma.deliveryAssignment.create.mockResolvedValue({ id: "assign-1" })
@@ -100,10 +101,33 @@ describe("dispatch-actions", () => {
 
     it("throws when no delivery persons available", async () => {
       mockRedis.geosearch.mockResolvedValue([])
+      mockPrisma.deliveryPartner.findMany.mockResolvedValue([])
 
       await expect(assignNearestDeliveryPerson("order-1", 13.0, 80.2)).rejects.toThrow(
         "No delivery persons available nearby",
       )
+    })
+
+    it("falls back to any online partner when none are nearby", async () => {
+      mockRedis.geosearch.mockResolvedValue([])
+      mockPrisma.deliveryPartner.findMany.mockResolvedValue([{ id: "dp-9" }])
+      mockPrisma.deliveryPartner.findUnique.mockResolvedValue({
+        id: "dp-9", isOnline: true,
+      })
+      mockPrisma.deliveryAssignment.findFirst.mockResolvedValue(null)
+      mockPrisma.deliveryAssignment.create.mockResolvedValue({ id: "assign-9" })
+
+      const result = await assignNearestDeliveryPerson("order-1", 13.0, 80.2)
+
+      expect(result.id).toBe("assign-9")
+      expect(mockPrisma.deliveryPartner.findMany).toHaveBeenCalledWith({
+        where: { isOnline: true, status: { in: ["APPROVED", "ACTIVE"] } },
+        select: { id: true },
+      })
+      expect(mockPrisma.order.update).toHaveBeenCalledWith({
+        where: { id: "order-1" },
+        data: { deliveryPartnerId: "dp-9", deliveryStatus: "ASSIGNED" },
+      })
     })
   })
 
@@ -195,7 +219,7 @@ describe("dispatch-actions", () => {
   })
 
   describe("setDeliveryPersonOnline", () => {
-    it("sets delivery person online and adds to Redis", async () => {
+    it("sets delivery person online without adding placeholder geo coords", async () => {
       mockPrisma.deliveryPartner.findUnique.mockResolvedValue({ id: "dp-1" })
       mockPrisma.deliveryPartner.update.mockResolvedValue({})
       mockRedis.geoadd.mockResolvedValue(1)
@@ -207,11 +231,7 @@ describe("dispatch-actions", () => {
         where: { id: "dp-1" },
         data: { isOnline: true },
       })
-      expect(mockRedis.geoadd).toHaveBeenCalledWith("deliveryPersons:live", {
-        longitude: 0,
-        latitude: 0,
-        member: "dp-1",
-      })
+      expect(mockRedis.geoadd).not.toHaveBeenCalled()
     })
 
     it("sets delivery person offline and removes from Redis", async () => {

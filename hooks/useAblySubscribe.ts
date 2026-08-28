@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { getAblyClient } from "@/lib/ably/client"
+import { subscribeAbly, unsubscribeAbly } from "@/lib/ably/client"
 
 type AblyMessage = { name: string; data: unknown }
 
@@ -19,18 +19,13 @@ export function useAblySubscribe(
   useEffect(() => {
     if (!enabled || !channelName) return
 
-    const client = getAblyClient()
-    const channel = client.channels.get(channelName)
-
     const handler = (msg: AblyMessage) => {
       callbackRef.current(msg)
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    channel.subscribe(handler as any)
+    subscribeAbly(channelName, handler)
     return () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      channel.unsubscribe(handler as any)
+      unsubscribeAbly(channelName, handler)
     }
   }, [channelName, enabled])
 }
@@ -62,18 +57,13 @@ export function useAblyOrderListChannels(
   useEffect(() => {
     if (!enabled || orderIds.length === 0) return
 
-    const client = getAblyClient()
-    const channels = orderIds.map((id) => client.channels.get(`order:${id}`))
-
     const handler = (msg: AblyMessage) => {
       callbackRef.current(msg)
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    channels.forEach((channel) => channel.subscribe(handler as any))
+    orderIds.forEach((id) => subscribeAbly(`order:${id}`, handler))
     return () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      channels.forEach((channel) => channel.unsubscribe(handler as any))
+      orderIds.forEach((id) => unsubscribeAbly(`order:${id}`, handler))
     }
   }, [orderIds, enabled])
 }

@@ -322,9 +322,10 @@ function Editor({ contentId, onCancel }: EditorProps) {
   });
 
   const { data: previewKitchens = [] } = useQuery<AdminSearchKitchen[]>({
-    queryKey: ["admin-search-page-kitchens"],
-    queryFn: () => getSearchPageKitchens(12),
+    queryKey: ["admin-search-page-kitchens", draft?.keyword],
+    queryFn: () => getSearchPageKitchens(12, draft?.keyword),
     staleTime: 60_000,
+    enabled: !!draft?.keyword,
   });
 
   if (isFetching && !detail) {
@@ -385,6 +386,15 @@ function Editor({ contentId, onCancel }: EditorProps) {
             )}
             {dirty ? "Save Changes" : "Save Changes"}
           </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-10 w-10 rounded-[8px] text-[#64748B] hover:text-[#0F172A] hover:bg-[#F1F5F9]"
+            onClick={onCancel}
+            title="Cancel and close"
+          >
+            <X className="h-5 w-5" />
+          </Button>
         </div>
       </div>
 
@@ -396,14 +406,14 @@ function Editor({ contentId, onCancel }: EditorProps) {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start relative">
-        <div className="lg:col-span-7 flex flex-col">
+      <div className="flex flex-col gap-8 w-full relative">
+        <div className="w-full flex flex-col">
           <Tabs defaultValue="search_content" className="w-full">
             <TabsList className="bg-transparent border-b border-[#E5E7EB] rounded-none w-full justify-start h-auto p-0 mb-6 space-x-6 md:space-x-8 overflow-x-auto custom-scrollbar flex-nowrap">
-              <TabsTrigger value="search_content" className="data-[state=active]:border-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-b-2 border-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap">Search Content</TabsTrigger>
-              <TabsTrigger value="images" className="data-[state=active]:border-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-b-2 border-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap">Images</TabsTrigger>
-              <TabsTrigger value="filters" className="data-[state=active]:border-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-b-2 border-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap">Filters</TabsTrigger>
-              <TabsTrigger value="settings" className="data-[state=active]:border-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-b-2 border-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap">Settings</TabsTrigger>
+              <TabsTrigger value="search_content" className="data-[state=active]:border-b-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-0 border-b-[2px] border-b-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">Search Content</TabsTrigger>
+              <TabsTrigger value="images" className="data-[state=active]:border-b-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-0 border-b-[2px] border-b-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">Images</TabsTrigger>
+              <TabsTrigger value="filters" className="data-[state=active]:border-b-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-0 border-b-[2px] border-b-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">Filters</TabsTrigger>
+              <TabsTrigger value="settings" className="data-[state=active]:border-b-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-0 border-b-[2px] border-b-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">Settings</TabsTrigger>
             </TabsList>
 
             <TabsContent value="search_content" className="mt-0">
@@ -555,133 +565,12 @@ function Editor({ contentId, onCancel }: EditorProps) {
                     </div>
                   </div>
 
-                  {/* Results Settings Block */}
-                  <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
-                    <div className="p-4 pb-2">
-                      <h3 className="font-semibold text-[#111827] text-[15px]">
-                        Results Settings
-                      </h3>
-                      <p className="text-[13px] text-[#64748B] mt-1">
-                        Configure how results are displayed.
-                      </p>
-                    </div>
-                    <div className="px-4 pb-5 space-y-4 mt-2">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <label className="text-xs font-semibold text-[#111827] block mb-1.5">
-                            Kitchens Per Page
-                          </label>
-                          <Select
-                            value={String(draft.cardsPerPage)}
-                            onValueChange={(v) =>
-                              updateDraft({ cardsPerPage: Number(v) })
-                            }
-                          >
-                            <SelectTrigger className="h-9 w-full bg-[#FFFFFF] border-[#DDE3E0] rounded-[7px] text-sm text-[#111827] focus:ring-0 focus:border-[#FF4D00]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="12">12</SelectItem>
-                              <SelectItem value="24">24</SelectItem>
-                              <SelectItem value="48">48</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <div>
-                          <label className="text-xs font-semibold text-[#111827] block mb-1.5">
-                            Default Sort By
-                          </label>
-                          <Select
-                            value={draft.defaultSort}
-                            onValueChange={(v) => updateDraft({ defaultSort: v })}
-                          >
-                            <SelectTrigger className="h-9 w-full bg-[#FFFFFF] border-[#DDE3E0] rounded-[7px] text-sm text-[#111827] focus:ring-0 focus:border-[#FF4D00]">
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {["Relevance", "Rating", "Distance", "Newest", "Recommended"].map(
-                                (s) => (
-                                  <SelectItem key={s} value={s}>
-                                    {s}
-                                  </SelectItem>
-                                )
-                              )}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-between pt-1">
-                        <label className="text-xs font-semibold text-[#111827]">
-                          Show Ratings
-                        </label>
-                        <Switch
-                          checked={draft.showRatings}
-                          onCheckedChange={(checked) =>
-                            updateDraft({ showRatings: checked })
-                          }
-                          className="data-[state=checked]:bg-[#087A3E] data-[state=unchecked]:bg-[#D1D5DB] scale-90"
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  {/* Results Settings moved to Settings Tab */}
                 </div>
 
                 {/* Right Sub-Column */}
                 <div className="flex flex-col gap-6">
-                  {/* Filters Configuration */}
-                  <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
-                    <div className="p-4 pb-2">
-                      <h3 className="font-semibold text-[#111827] text-[15px]">
-                        Filters Configuration
-                      </h3>
-                      <p className="text-[13px] text-[#64748B] mt-1">
-                        Choose and order filters to show on the search page.
-                      </p>
-                    </div>
-                    <div className="px-4 pb-5 space-y-4 mt-2">
-                      <div className="space-y-2">
-                        {draft.filters.map((filter, i) => (
-                          <div
-                            key={filter.id ?? i}
-                            className="bg-[#FFFFFF] border border-[#E8ECEA] p-3 rounded-[8px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] flex items-center justify-between hover:border-[#FFB89A] transition-colors"
-                          >
-                            <div className="flex items-center gap-3 w-full">
-                              <GripVertical className="h-4 w-4 text-[#94A3B8] cursor-grab shrink-0" />
-                              <Checkbox
-                                checked={filter.isEnabled}
-                                onCheckedChange={(checked) =>
-                                  updateFilter(i, { isEnabled: !!checked })
-                                }
-                                className="h-4 w-4 rounded-sm border-[#CBD5E1] data-[state=checked]:bg-[#FF4D00] data-[state=checked]:border-[#FF4D00]"
-                              />
-                              <div className="flex-1 min-w-0 flex flex-col">
-                                <input
-                                  className="text-xs font-semibold text-[#111827] bg-transparent outline-none border border-transparent hover:border-[#E8ECEA] rounded px-1 -mx-1 w-full truncate"
-                                  value={filter.name}
-                                  onChange={(e) =>
-                                    updateFilter(i, { name: e.target.value })
-                                  }
-                                />
-                                <span className="text-[10px] text-[#64748B] ml-0.5">
-                                  {filter.options.length} options
-                                </span>
-                              </div>
-                              <ChevronDown className="h-4 w-4 text-[#475569]" />
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-
-                      <Button
-                        variant="outline"
-                        className="w-full text-[#FF4D00] border-[#FFB89A] hover:bg-[#FFF1EB] hover:text-[#FF4D00] h-10 rounded-[8px] mt-2 bg-[#FFFFFF]"
-                        onClick={addFilter}
-                      >
-                        <Plus className="mr-2 h-4 w-4" />
-                        Add Filter
-                      </Button>
-                    </div>
-                  </div>
+                  {/* Filters Configuration moved to Filters Tab */}
 
                   {/* Featured Badges */}
                   <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
@@ -771,11 +660,256 @@ function Editor({ contentId, onCancel }: EditorProps) {
 
               </div>
             </TabsContent>
+
+            <TabsContent value="images" className="mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <div className="flex flex-col gap-6">
+                  {/* Banner Setting */}
+                  <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+                    <div className="p-4 border-b border-[#E8ECEA] flex justify-between items-center bg-[#FAFAFA]">
+                      <h3 className="font-semibold text-[#111827] text-[15px]">Page Banner</h3>
+                    </div>
+                    <div className="p-4 flex flex-col gap-4">
+                      {banner ? (
+                        <div className="relative rounded-lg overflow-hidden border border-[#E8ECEA] group">
+                          <img src={banner} alt="Banner" className="w-full aspect-[21/9] object-cover" />
+                          <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <CloudinaryUpload
+                              onUpload={(result) => {
+                                updateDraft({ bannerImageUrl: result.secure_url });
+                                toast.success("Banner updated");
+                              }}
+                            >
+                              {({ uploading, startUpload }) => (
+                                <Button onClick={startUpload} disabled={uploading} variant="secondary" className="mb-2">
+                                  {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
+                                  Change Banner
+                                </Button>
+                              )}
+                            </CloudinaryUpload>
+                            <Button variant="destructive" size="sm" onClick={() => updateDraft({ bannerImageUrl: "" })}>
+                              Remove
+                            </Button>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="aspect-[21/9] rounded-lg border-2 border-dashed border-[#E5E7EB] flex flex-col items-center justify-center bg-[#F8FAFC]">
+                          <CloudinaryUpload
+                            onUpload={(result) => {
+                              updateDraft({ bannerImageUrl: result.secure_url });
+                              toast.success("Banner uploaded");
+                            }}
+                          >
+                            {({ uploading, startUpload }) => (
+                              <Button onClick={startUpload} disabled={uploading} variant="outline" className="border-[#FF4D00] text-[#FF4D00] hover:bg-[#FFF1EB] hover:text-[#FF4D00]">
+                                {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
+                                Upload Banner
+                              </Button>
+                            )}
+                          </CloudinaryUpload>
+                          <p className="text-xs text-[#64748B] mt-2">Recommended size: 1200x400px</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-6">
+                  {/* Kitchen Cards Overrides */}
+                  <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+                    <div className="p-4 border-b border-[#E8ECEA] flex flex-col gap-1">
+                      <h3 className="font-semibold text-[#111827] text-[15px]">Kitchen Cards</h3>
+                      <p className="text-[13px] text-[#64748B]">
+                        Customize images for kitchens serving "{draft.keyword}".
+                      </p>
+                    </div>
+                    <div className="p-4 grid grid-cols-1 gap-4 max-h-[500px] overflow-y-auto custom-scrollbar">
+                      {previewKitchens.map(kitchen => {
+                        const override = draft.kitchenCards.find(c => c.kitchenPartnerId === kitchen.id);
+                        const displayUrl = override?.imageUrl ?? kitchen.imageUrl;
+                        return (
+                          <div key={kitchen.id} className="flex items-center gap-4 p-3 border border-[#E8ECEA] rounded-[8px] bg-[#FAFAFA]">
+                            <div className="w-16 h-16 rounded-[8px] overflow-hidden bg-slate-100 shrink-0 relative border border-slate-200">
+                              {displayUrl ? <img src={displayUrl} className="w-full h-full object-cover" alt={kitchen.displayName} /> : <div className="w-full h-full flex items-center justify-center text-slate-300"><Layers className="w-6 h-6" /></div>}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-semibold text-sm text-[#111827] truncate">{kitchen.displayName}</h4>
+                              <p className="text-xs text-[#64748B] truncate">{kitchen.cuisineTags.join(", ")}</p>
+                            </div>
+                            <div className="shrink-0 flex items-center gap-2">
+                              {override?.imageUrl && (
+                                <Button size="icon" variant="ghost" className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => updateKitchenCard(kitchen.id, { imageUrl: null })} title="Reset to default">
+                                  <RotateCcw className="h-4 w-4" />
+                                </Button>
+                              )}
+                              <CloudinaryUpload
+                                onUpload={(result) => {
+                                  updateKitchenCard(kitchen.id, { imageUrl: result.secure_url });
+                                  toast.success(`Image updated for ${kitchen.displayName}`);
+                                }}
+                              >
+                                {({ uploading, startUpload }) => (
+                                  <Button size="sm" variant="outline" onClick={startUpload} disabled={uploading} className="h-8 text-xs">
+                                    {uploading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Upload className="h-3 w-3 mr-1" />}
+                                    Change
+                                  </Button>
+                                )}
+                              </CloudinaryUpload>
+                            </div>
+                          </div>
+                        )
+                      })}
+                      {previewKitchens.length === 0 && (
+                        <div className="text-center py-8 text-sm text-[#64748B]">
+                          No active kitchens found serving "{draft.keyword}".
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+            <TabsContent value="filters" className="mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <div className="flex flex-col gap-6" id="filters-container">
+                  {/* Filters Configuration */}
+                  <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+                    <div className="p-4 pb-2">
+                      <h3 className="font-semibold text-[#111827] text-[15px]">
+                        Filters Configuration
+                      </h3>
+                      <p className="text-[13px] text-[#64748B] mt-1">
+                        Choose and order filters to show on the search page.
+                      </p>
+                    </div>
+                    <div className="px-4 pb-5 space-y-4 mt-2">
+                      <div className="space-y-2">
+                        {draft.filters.map((filter, i) => (
+                          <div
+                            key={filter.id ?? i}
+                            className="bg-[#FFFFFF] border border-[#E8ECEA] p-3 rounded-[8px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] flex items-center justify-between hover:border-[#FFB89A] transition-colors"
+                          >
+                            <div className="flex items-center gap-3 w-full">
+                              <GripVertical className="h-4 w-4 text-[#94A3B8] cursor-grab shrink-0" />
+                              <Checkbox
+                                checked={filter.isEnabled}
+                                onCheckedChange={(checked) =>
+                                  updateFilter(i, { isEnabled: !!checked })
+                                }
+                                className="h-4 w-4 rounded-sm border-[#CBD5E1] data-[state=checked]:bg-[#FF4D00] data-[state=checked]:border-[#FF4D00]"
+                              />
+                              <div className="flex-1 min-w-0 flex flex-col">
+                                <input
+                                  className="text-xs font-semibold text-[#111827] bg-transparent outline-none border border-transparent hover:border-[#E8ECEA] rounded px-1 -mx-1 w-full truncate"
+                                  value={filter.name}
+                                  onChange={(e) =>
+                                    updateFilter(i, { name: e.target.value })
+                                  }
+                                />
+                                <span className="text-[10px] text-[#64748B] ml-0.5">
+                                  {filter.options.length} options
+                                </span>
+                              </div>
+                              <ChevronDown className="h-4 w-4 text-[#475569]" />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <Button
+                        variant="outline"
+                        className="w-full text-[#FF4D00] border-[#FFB89A] hover:bg-[#FFF1EB] hover:text-[#FF4D00] h-10 rounded-[8px] mt-2 bg-[#FFFFFF]"
+                        onClick={addFilter}
+                      >
+                        <Plus className="mr-2 h-4 w-4" />
+                        Add Filter
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="settings" className="mt-0">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                <div className="flex flex-col gap-6" id="settings-container">
+                  {/* Results Settings Block */}
+                  <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+                    <div className="p-4 pb-2">
+                      <h3 className="font-semibold text-[#111827] text-[15px]">
+                        Results Settings
+                      </h3>
+                      <p className="text-[13px] text-[#64748B] mt-1">
+                        Configure how results are displayed.
+                      </p>
+                    </div>
+                    <div className="px-4 pb-5 space-y-4 mt-2">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <label className="text-xs font-semibold text-[#111827] block mb-1.5">
+                            Kitchens Per Page
+                          </label>
+                          <Select
+                            value={String(draft.cardsPerPage)}
+                            onValueChange={(v) =>
+                              updateDraft({ cardsPerPage: Number(v) })
+                            }
+                          >
+                            <SelectTrigger className="h-9 w-full bg-[#FFFFFF] border-[#DDE3E0] rounded-[7px] text-sm text-[#111827] focus:ring-0 focus:border-[#FF4D00]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="12">12</SelectItem>
+                              <SelectItem value="24">24</SelectItem>
+                              <SelectItem value="48">48</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div>
+                          <label className="text-xs font-semibold text-[#111827] block mb-1.5">
+                            Default Sort By
+                          </label>
+                          <Select
+                            value={draft.defaultSort}
+                            onValueChange={(v) => updateDraft({ defaultSort: v })}
+                          >
+                            <SelectTrigger className="h-9 w-full bg-[#FFFFFF] border-[#DDE3E0] rounded-[7px] text-sm text-[#111827] focus:ring-0 focus:border-[#FF4D00]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {["Relevance", "Rating", "Distance", "Newest", "Recommended"].map(
+                                (s) => (
+                                  <SelectItem key={s} value={s}>
+                                    {s}
+                                  </SelectItem>
+                                )
+                              )}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between pt-1">
+                        <label className="text-xs font-semibold text-[#111827]">
+                          Show Ratings
+                        </label>
+                        <Switch
+                          checked={draft.showRatings}
+                          onCheckedChange={(checked) =>
+                            updateDraft({ showRatings: checked })
+                          }
+                          className="data-[state=checked]:bg-[#087A3E] data-[state=unchecked]:bg-[#D1D5DB] scale-90"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </TabsContent>
           </Tabs>
         </div>
 
-        {/* Right Column: Live Preview */}
-        <div className="lg:col-span-5 bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] shadow-[0_2px_8px_rgba(15,23,42,0.04)] overflow-hidden flex flex-col h-[700px] lg:h-[calc(100vh-120px)] lg:sticky lg:top-6 mt-6 lg:mt-0">
+        {/* Live Preview (Below Tabs) */}
+        <div className="w-full bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] shadow-[0_2px_8px_rgba(15,23,42,0.04)] overflow-hidden flex flex-col h-[700px] mt-2">
           <div className="bg-[#FFFFFF] border-b border-[#EEF1EF] p-4 flex flex-col gap-1 z-20 shadow-sm relative">
             <div className="flex items-center justify-between">
                <div className="flex items-center gap-2">

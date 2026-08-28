@@ -49,7 +49,7 @@ async function publishCategoryUpdate(categoryId: string, event: string, data: Re
   }
 }
 
-export async function addCategory(data: { name: string; description?: string }) {
+export async function addCategory(data: { name: string; description?: string | null }) {
   await requirePermission("MANAGE_CMS")
 
   const existing = await prisma.category.findUnique({

@@ -7,7 +7,7 @@ const cuisineCategories = [
   "North Indian",
   "South Indian",
   "Chinese",
-  "Chettinad",
+  "Chettinadu",
   "Home Food",
   "Bakery",
   "Asian",
@@ -20,6 +20,19 @@ const cuisineCategories = [
   "Idli",
   "Vada",
   "Momos",
+];
+
+const serviceZones = [
+  {
+    name: "Thanjavur",
+    pincodes: [
+      "613001", "613002", "613003", "613004", "613005",
+      "613006", "613007", "613008", "613009", "613010",
+      "613102", "613303", "613401", "613402", "613403",
+      "613501", "613601", "613602", "614019", "614206",
+      "614904",
+    ],
+  },
 ];
 
 async function main() {
@@ -40,6 +53,15 @@ async function main() {
     });
   }
   console.log("Cuisine categories seeded successfully");
+
+  for (const zone of serviceZones) {
+    await prisma.serviceZone.upsert({
+      where: { name: zone.name },
+      create: { name: zone.name, pincodes: zone.pincodes },
+      update: { pincodes: zone.pincodes },
+    });
+  }
+  console.log("Service zones seeded successfully");
 }
 
 main()

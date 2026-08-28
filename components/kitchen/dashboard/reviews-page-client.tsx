@@ -67,8 +67,8 @@ function RrcKitchenReviewCard({ initial }: { initial: RrcReview | null }) {
   return (
     <Card className="rounded-[10px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden w-full">
       <div className="bg-gradient-to-br from-[#FFF7ED] via-white to-[#F0FDF4] p-6 sm:p-8">
-        <div className="flex flex-col xl:flex-row xl:items-start gap-6 xl:gap-10">
-          <div className="flex items-center gap-4 shrink-0 xl:w-[240px]">
+        <div className="flex flex-col gap-6">
+          <div className="flex items-center gap-4 shrink-0">
             <div className="h-14 w-14 rounded-2xl bg-gradient-to-br from-[#FF9800] to-[#FF8A3D] flex items-center justify-center shrink-0 shadow-sm">
               <Star className="h-7 w-7 text-white" fill="white" />
             </div>
@@ -80,7 +80,7 @@ function RrcKitchenReviewCard({ initial }: { initial: RrcReview | null }) {
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col xl:flex-row xl:items-center gap-5 xl:gap-8 w-full">
+          <div className="flex-1 flex flex-col gap-5 w-full">
             <div className="flex items-center gap-4 shrink-0">
               <div className="flex items-center gap-1" onMouseLeave={() => setHoverRating(0)}>
                 {[1, 2, 3, 4, 5].map((i) => (
@@ -108,17 +108,17 @@ function RrcKitchenReviewCard({ initial }: { initial: RrcReview | null }) {
                 placeholder={initial ? "Update your feedback about RRC Kitchen..." : "Tell us about your experience with RRC Kitchen (optional)..."}
                 value={comment}
                 onChange={(e) => setComment(e.target.value)}
-                rows={2}
-                className="bg-[#FFFFFF] border-[#E5E7EB] rounded-[8px] text-[13px] font-medium placeholder:text-[#9CA3AF] focus-visible:ring-1 focus-visible:ring-[#087A2B] resize-none"
+                rows={3}
+                className="bg-[#FFFFFF] border-[#E5E7EB] rounded-[8px] text-[13px] font-medium placeholder:text-[#9CA3AF] focus-visible:ring-1 focus-visible:ring-[#087A2B] resize-none w-full"
               />
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row xl:flex-col items-stretch gap-3 shrink-0 w-full xl:w-[180px]">
+          <div className="flex flex-col sm:flex-row items-stretch gap-3 shrink-0 w-full pt-2">
             <Button
               onClick={() => rrcMutation.mutate({ rating, recommendation: recommend, comment: comment || null })}
               disabled={!rating || rrcMutation.isPending}
-              className="h-11 px-6 rounded-[8px] bg-[#087A2B] hover:bg-[#075F22] text-[#FFFFFF] font-bold shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full"
+              className="h-11 px-6 rounded-[8px] bg-[#087A2B] hover:bg-[#075F22] text-[#FFFFFF] font-bold shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto min-w-[160px]"
             >
               {rrcMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
               {initial ? "Update Review" : "Submit Review"}
@@ -381,10 +381,10 @@ export default function ReviewsPageClient() {
               <TabsTrigger
                 key={tab.id}
                 value={tab.id}
-                className={`flex items-center gap-2 pb-3.5 pt-0 px-0 rounded-none border-b-[2px] whitespace-nowrap text-[14px] font-semibold transition-colors shadow-none bg-transparent ${
+                className={`flex items-center gap-2 pb-3.5 pt-0 px-0 rounded-none border-0 border-b-[2px] whitespace-nowrap text-[14px] font-semibold transition-colors shadow-none bg-transparent outline-none focus-visible:ring-0 focus:outline-none data-[state=active]:shadow-none ${
                   activeTab === tab.id 
-                    ? "border-[#087A2B] text-[#087A2B]" 
-                    : "border-transparent text-[#374151] hover:text-[#087A2B]"
+                    ? "border-b-[#087A2B] text-[#087A2B]" 
+                    : "border-b-transparent text-[#374151] hover:text-[#087A2B]"
                 }`}
               >
                 <tab.icon className={`h-[18px] w-[18px] ${activeTab === tab.id ? 'text-[#087A2B]' : 'text-[#374151]'}`} strokeWidth={1.8} />

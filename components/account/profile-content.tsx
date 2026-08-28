@@ -9,9 +9,9 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { 
   User, Mail, Phone, MapPin, LogOut, Package, 
-  Pencil, Loader2, Heart, 
+  Pencil, Loader2, Heart, Trash2,
   Settings, CreditCard, Bell, HelpCircle, Star, CheckCircle2, Menu,
-  ChefHat, ShieldCheck, Clock, Leaf, Users, Camera
+  ChefHat, ShieldCheck, Clock, Leaf, Users
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -130,6 +130,8 @@ export function ProfileContent() {
     }
   }
 
+  const rateableOrder = orders.find((o) => !o.kitchenReview)
+
   const contentLoading = isPending || profileLoading || addressesLoading || ordersLoading
 
   if (contentLoading) {
@@ -157,16 +159,16 @@ export function ProfileContent() {
     .slice(0, 3)
 
   const SIDEBAR_ITEMS = [
-    { icon: User, label: "My Profile", active: true, href: "#" },
+    { icon: User, label: "My Profile", active: true, href: "/account/profile" },
     { icon: Package, label: "My Orders", href: "/account/orders" },
     { icon: Heart, label: "Favorites", href: "/account/favourites" },
     { icon: Star, label: "Loyalty Points", href: "/account/loyalty" },
-    { icon: Users, label: "Referrals", href: "#" },
-    { icon: MapPin, label: "Saved Addresses", href: "#" },
-    { icon: CreditCard, label: "Payment Methods", href: "#" },
-    { icon: Bell, label: "Notifications", href: "#" },
+    { icon: Users, label: "Referrals", href: "/account/referrals" },
+    { icon: MapPin, label: "Saved Addresses", href: "/account/addresses" },
+    { icon: CreditCard, label: "Payment Methods", href: "/account/payments" },
+    { icon: Bell, label: "Notifications", href: "/account/notifications" },
     { icon: HelpCircle, label: "Help & Support", href: "/account/support" },
-    { icon: Settings, label: "Settings", href: "#" },
+    { icon: Settings, label: "Settings", href: "/account/settings" },
   ]
 
   return (
@@ -253,7 +255,7 @@ export function ProfileContent() {
           <Card className="p-6 md:p-8 rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.03)] border-[#E7E7E7] bg-white">
             <div className="flex flex-col md:flex-row items-center md:items-start md:justify-between gap-6">
               <div className="flex flex-col md:flex-row items-center md:items-start gap-6 w-full">
-                <div className="relative group cursor-pointer shrink-0">
+                <div className="relative shrink-0">
                   <div className="h-[90px] w-[90px] rounded-full overflow-hidden bg-[#E8E8E8] relative flex items-center justify-center text-gray-400 border border-[#E7E7E7]">
                     <Image 
                       src="/icons/profile.webp" 
@@ -261,9 +263,6 @@ export function ProfileContent() {
                       fill
                       className="object-cover"
                     />
-                  </div>
-                  <div className="absolute bottom-0 right-0 bg-[#FF4B00] text-white h-7 w-7 rounded-full shadow-sm flex items-center justify-center border-2 border-white">
-                    <Camera className="h-3 w-3" />
                   </div>
                 </div>
                 <div className="text-center md:text-left pt-1 flex-1">
@@ -372,7 +371,7 @@ export function ProfileContent() {
               
               <div className="absolute right-[-10px] top-1/2 -translate-y-1/2 opacity-40 pointer-events-none md:opacity-100 md:right-4">
                 <div className="h-[90px] w-[90px] relative">
-                  <Image src="/account/star-coin.webp" alt="Loyalty Star" fill className="object-contain" />
+                  <Image src="/account/star-coin.webp" alt="Loyalty Star" fill sizes="90px" className="object-contain" />
                 </div>
               </div>
 
@@ -431,7 +430,7 @@ export function ProfileContent() {
 
               <div className="absolute right-[-10px] top-1/2 -translate-y-1/2 pointer-events-none opacity-40 md:opacity-100 md:pr-4">
                  <div className="h-[90px] w-[90px] relative">
-                    <Image src="/account/gift-box.webp" alt="Referral Gift" fill className="object-contain" />
+                    <Image src="/account/gift-box.webp" alt="Referral Gift" fill sizes="90px" className="object-contain" />
                  </div>
               </div>
 
@@ -465,7 +464,7 @@ export function ProfileContent() {
                     <div key={order.id} className="flex gap-3 pb-4 border-b border-[#EEEEEE] last:border-0 last:pb-0">
                       <div className="h-[60px] w-[60px] rounded-[8px] overflow-hidden bg-muted shrink-0 relative">
                         {order.items[0]?.imageUrl ? (
-                           <Image src={order.items[0].imageUrl} alt="Food" fill className="object-cover" />
+                           <Image src={order.items[0].imageUrl} alt="Food" fill sizes="60px" className="object-cover" />
                         ) : (
                            <div className="w-full h-full bg-[#FFF4EE] flex items-center justify-center text-[#FF4B00]">
                              <Package className="h-6 w-6" />
@@ -510,7 +509,7 @@ export function ProfileContent() {
                   <MapPin className="h-5 w-5 text-[#006B3C]" />
                   <h3 className="font-bold text-[#111111] text-[16px]">Saved Addresses</h3>
                 </div>
-                <Link href="#" className="text-[13px] font-bold text-[#FF4B00] hover:underline">
+                <Link href="/account/addresses" className="text-[13px] font-bold text-[#FF4B00] hover:underline">
                   View All Addresses
                 </Link>
               </div>
@@ -524,6 +523,9 @@ export function ProfileContent() {
                     <Input placeholder="Address line 2" {...register("lineTwo")} className="h-9 text-[13px] bg-white border-[#E6E6E6] rounded-[6px]" />
                     <Input placeholder="Pincode *" maxLength={6} {...register("pincode")} className="h-9 text-[13px] bg-white border-[#E6E6E6] rounded-[6px]" />
                     {errors.pincode && <p className="text-[10px] text-[#E53935]">{errors.pincode.message}</p>}
+                    {addMutation.isError && (
+                      <p className="text-[10px] text-[#E53935]">{addMutation.error?.message ?? "Could not save address"}</p>
+                    )}
                     <div className="flex gap-2 justify-end pt-2">
                       <Button type="button" variant="ghost" size="sm" onClick={() => { setShowAddForm(false); addMutation.reset() }} className="h-8 text-[12px] font-semibold text-[#777777]">Cancel</Button>
                       <Button type="submit" size="sm" disabled={addMutation.isPending} className="h-8 text-[12px] font-semibold bg-[#FF4B00] text-white hover:bg-[#E84300] rounded-[6px]">Save</Button>
@@ -550,8 +552,8 @@ export function ProfileContent() {
                             <p className="text-[11px] text-[#4B4B4B] mt-1 font-medium">{user.phoneNumber && `+91 ${user.phoneNumber.replace('+91', '').trim()}`}</p>
                           </div>
                         </div>
-                        <button onClick={() => deleteMutation.mutate(addr.id)} className="absolute right-4 top-4 shrink-0 text-[#333333] hover:text-[#000000] transition-colors">
-                          <Pencil className="h-[14px] w-[14px]" />
+                        <button onClick={() => deleteMutation.mutate(addr.id)} className="absolute right-4 top-4 shrink-0 w-7 h-7 rounded-md border border-[#FEE2E2] bg-[#FEF2F2] text-[#DC2626] flex items-center justify-center hover:bg-[#FEE2E2] transition-colors" aria-label={`Delete address ${addr.label || ""}`}>
+                          <Trash2 className="h-[13px] w-[13px]" />
                         </button>
                       </div>
                     ))
@@ -575,7 +577,7 @@ export function ProfileContent() {
                   <Star className="h-5 w-5 text-[#006B3C]" />
                   <h3 className="font-bold text-[#111111] text-[16px]">Recent Reviews</h3>
                 </div>
-                <Link href="#" className="text-[13px] font-bold text-[#FF4B00] hover:underline">
+                <Link href="/account/reviews" className="text-[13px] font-bold text-[#FF4B00] hover:underline">
                   View All Reviews
                 </Link>
               </div>
@@ -587,7 +589,7 @@ export function ProfileContent() {
                     <div key={review.id} className="flex gap-3 pb-4 border-b border-[#EEEEEE] last:border-0 last:pb-0">
                       <div className="h-[60px] w-[60px] rounded-[8px] overflow-hidden bg-muted shrink-0 relative">
                         {review.imageUrl ? (
-                           <Image src={review.imageUrl} alt="Food" fill className="object-cover" />
+                           <Image src={review.imageUrl} alt="Food" fill sizes="60px" className="object-cover" />
                         ) : (
                            <div className="w-full h-full bg-[#FFF4EE] flex items-center justify-center text-[#FF4B00]">
                              <Star className="h-6 w-6" />
@@ -613,9 +615,17 @@ export function ProfileContent() {
                 )}
               </div>
               <div className="mt-5 pt-1">
-                 <Button variant="outline" className="w-full rounded-[6px] border-[#FF4B00] text-[#FF4B00] hover:bg-[#FFF4EE] text-[13px] font-semibold h-[40px]">
-                   Write a Review
-                 </Button>
+                {rateableOrder ? (
+                  <Link href={`/account/rating?orderId=${rateableOrder.id}`} className="block">
+                    <Button variant="outline" className="w-full rounded-[6px] border-[#FF4B00] text-[#FF4B00] hover:bg-[#FFF4EE] text-[13px] font-semibold h-[40px]">
+                      Write a Review
+                    </Button>
+                  </Link>
+                ) : (
+                  <Button variant="outline" disabled className="w-full rounded-[6px] border-[#FF4B00] text-[#FF4B00] text-[13px] font-semibold h-[40px] opacity-60">
+                    All Orders Reviewed
+                  </Button>
+                )}
               </div>
             </Card>
 

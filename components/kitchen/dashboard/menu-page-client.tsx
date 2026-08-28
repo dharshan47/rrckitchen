@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Table,
@@ -195,7 +196,7 @@ function MenuForm() {
             {/* Veg / Non-Veg */}
             <div className="grid gap-2">
               <Label className="text-[13px] font-[500] text-[#252D36]">Veg / Non-Veg <span className="text-[#E53935]">*</span></Label>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2 sm:gap-3">
                 <Button
                   type="button"
                   variant="outline"
@@ -290,7 +291,7 @@ function MenuForm() {
               {/* Image Previews */}
               {images.map((img) => (
                 <div key={img.public_id} className="relative h-24 w-24 shrink-0 rounded-[8px] overflow-hidden group">
-                  <Image src={img.secure_url} alt="" fill className="object-cover" />
+                  <Image src={img.secure_url} alt="" fill sizes="96px" className="object-cover" />
                   <button
                     type="button"
                     onClick={() => removeImage(img.public_id)}
@@ -909,7 +910,8 @@ export default function MenuPageClient() {
             </div>
           </CardHeader>
           
-          <CardContent className="p-0 bg-[#FFFFFF] overflow-x-auto">
+          <CardContent className="p-0 bg-[#FFFFFF]">
+            <ScrollArea className="w-full">
             {filteredItems.length === 0 ? (
               <div className="py-16 flex flex-col items-center justify-center text-[#8A939D]">
                 <Utensils className="h-12 w-12 mb-3 opacity-20" />
@@ -968,6 +970,8 @@ export default function MenuPageClient() {
                 </TableBody>
               </Table>
             )}
+            <ScrollBar orientation="horizontal" />
+            </ScrollArea>
             
             {/* Pagination */}
             {filteredItems.length > 0 && (

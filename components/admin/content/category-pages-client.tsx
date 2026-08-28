@@ -124,6 +124,8 @@ import {
   type AdminCategoryPreviewKitchen,
 } from "@/actions/admin/category-pages";
 
+import { updateKitchenImage } from "@/actions/admin/admin-partners";
+
 import {
   useCategoryPageEditorDraft,
   useCategoryPageEditorDirty,
@@ -376,7 +378,7 @@ function ImageUploadField({
       <div className="border border-[#E9E7E2] rounded-lg overflow-hidden">
         <div className={`${aspectClass} bg-[#F5F5F4] relative group`}>
           {value ? (
-            <Image src={value} alt={label} fill className="object-cover" unoptimized />
+            <Image src={value} alt={label} fill sizes="200px" className="object-cover" unoptimized />
           ) : (
             <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-[#A1A1A1]">
               <Upload className="h-6 w-6" />
@@ -453,6 +455,10 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
     updateFaq,
     addFaq,
     removeFaq,
+    updateFilterConfig,
+    moveFilterConfig,
+    updateSortOptionsConfig,
+    moveSortOptionsConfig,
     markSaved,
   } = useCategoryPageEditorActions();
 
@@ -511,6 +517,18 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
     queryFn: () => getCategoryPreviewKitchens(previewCategoryName),
     enabled: !!previewCategoryName,
     staleTime: 60_000,
+  });
+
+  const updateKitchenImageMutation = useMutation({
+    mutationFn: async ({ kitchenId, imageUrl }: { kitchenId: string; imageUrl: string }) => {
+      const res = await updateKitchenImage(kitchenId, imageUrl);
+      if (!res.success) throw new Error(res.error);
+      return res;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-category-page-kitchens", previewCategoryName.toLowerCase()] });
+    },
+    onError: () => toast.error("Failed to update kitchen image"),
   });
 
   if (isFetching && !detail) {
@@ -602,55 +620,64 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
             )}
             Save Changes
           </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onCancel}
+            className="h-[40px] w-[40px] rounded-[7px] text-[#575757] hover:text-[#111111] hover:bg-[#F5F5F4] border border-transparent"
+            aria-label="Close Editor"
+          >
+            <X className="h-5 w-5" />
+          </Button>
         </div>
       </div>
 
       {/* Tabs */}
       <Tabs defaultValue="page-content" className="w-full">
         <div className="mb-6 border-b border-[#E9E7E2]">
-          <TabsList className="bg-transparent h-auto p-0 w-full justify-start gap-8 rounded-none">
+          <TabsList className="bg-transparent h-auto p-0 w-full justify-start gap-8 rounded-none flex-nowrap overflow-x-auto overflow-y-hidden scrollbar-hide [&::-webkit-scrollbar]:hidden">
             <TabsTrigger 
               value="page-content" 
-              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1"
+              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none shadow-none outline-none border-0 border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1 focus:outline-none focus-visible:ring-0 focus:ring-0 shrink-0"
             >
               <FileText className="h-[18px] w-[18px]" /> Page Content
             </TabsTrigger>
             <TabsTrigger 
               value="filters" 
-              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1"
+              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none shadow-none outline-none border-0 border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1 focus:outline-none focus-visible:ring-0 focus:ring-0 shrink-0"
             >
               <Filter className="h-[18px] w-[18px]" /> Filters
             </TabsTrigger>
             <TabsTrigger 
               value="sort" 
-              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1"
+              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none shadow-none outline-none border-0 border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1 focus:outline-none focus-visible:ring-0 focus:ring-0 shrink-0"
             >
               <ArrowDown className="h-[18px] w-[18px]" /> Sort Options
             </TabsTrigger>
             <TabsTrigger 
               value="kitchen-card" 
-              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1"
+              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none shadow-none outline-none border-0 border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1 focus:outline-none focus-visible:ring-0 focus:ring-0 shrink-0"
             >
               <ChefHat className="h-[18px] w-[18px]" /> Kitchen Card
             </TabsTrigger>
             <TabsTrigger 
               value="layout" 
-              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1"
+              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none shadow-none outline-none border-0 border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1 focus:outline-none focus-visible:ring-0 focus:ring-0 shrink-0"
             >
               <LayoutGrid className="h-[18px] w-[18px]" /> Layout & Display
             </TabsTrigger>
             <TabsTrigger 
               value="seo" 
-              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1"
+              className="gap-2 text-[14px] font-semibold text-[#575757] data-[state=active]:text-[#075C30] data-[state=active]:bg-transparent data-[state=active]:shadow-none shadow-none outline-none border-0 border-b-2 border-transparent data-[state=active]:border-[#075C30] rounded-none py-3 px-1 focus:outline-none focus-visible:ring-0 focus:ring-0 shrink-0"
             >
               <Settings2 className="h-[18px] w-[18px]" /> SEO & Settings
             </TabsTrigger>
           </TabsList>
         </div>
 
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
-          {/* LEFT SIDE - SETTINGS */}
-        <div className="flex-1 min-w-0 space-y-6">
+        <div className="flex flex-col gap-8 items-start">
+          {/* TOP SIDE - SETTINGS */}
+        <div className="w-full space-y-6">
           <TabsContent value="page-content" className="mt-0 space-y-6">
             {/* Hero Section Card */}
             <Card className="border-[#E9E7E2] rounded-[12px] shadow-sm bg-[#FFFFFF]">
@@ -746,7 +773,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                     <div className="relative mb-3 mt-2">
                       <div className="h-20 w-20 rounded-full bg-[#075C30] flex items-center justify-center text-white border-4 border-white shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden">
                         {draft.iconUrl ? (
-                          <Image src={draft.iconUrl} alt="Category icon" fill className="object-cover" unoptimized />
+                          <Image src={draft.iconUrl} alt="Category icon" fill sizes="80px" className="object-cover" unoptimized />
                         ) : (
                           <ChefHat className="h-9 w-9 text-white" />
                         )}
@@ -987,7 +1014,194 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
             </Card>
           </TabsContent>
 
+          <TabsContent value="filters" className="mt-0 space-y-6">
+            <Card className="border-[#E9E7E2] rounded-[12px] shadow-sm bg-[#FFFFFF]">
+              <div className="p-5 border-b border-[#E9E7E2]">
+                <h2 className="text-[19px] font-semibold text-[#1F1F1F]">Filters Settings</h2>
+                <p className="text-[14px] text-[#787878] mt-1">Configure available filters for this category.</p>
+              </div>
+              <ScrollArea className="w-full">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-b-slate-100 bg-[#FAFAF9]/50">
+                      <TableHead className="w-16 font-semibold text-[#787878] text-xs uppercase tracking-wider">Order</TableHead>
+                      <TableHead className="px-4 font-semibold text-[#787878] text-xs uppercase tracking-wider">Filter</TableHead>
+                      <TableHead className="text-center w-20 font-semibold text-[#787878] text-xs uppercase tracking-wider">Status</TableHead>
+                      <TableHead className="text-center w-24 font-semibold text-[#787878] text-xs uppercase tracking-wider">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {draft.filterConfig.map((filter, index) => (
+                      <TableRow key={filter.id} className="border-b-slate-100">
+                        <TableCell className="py-3">
+                          <div className="flex items-center gap-1 text-[#A1A1A1]">
+                            <GripVertical className="h-4 w-4" />
+                            <span className="text-xs font-semibold">{index + 1}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-3 px-4 font-medium text-[#1F1F1F]">
+                          {filter.label}
+                        </TableCell>
+                        <TableCell className="py-3 text-center">
+                          <Switch
+                            checked={filter.isEnabled}
+                            onCheckedChange={(checked) => updateFilterConfig(index, { isEnabled: checked })}
+                            className="data-[state=checked]:bg-[#10b981]"
+                          />
+                        </TableCell>
+                        <TableCell className="py-3 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => moveFilterConfig(index, -1)}
+                              disabled={index === 0}
+                              className="h-8 w-8 p-0"
+                            >
+                              <ArrowUp className="h-4 w-4 text-[#A1A1A1]" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => moveFilterConfig(index, 1)}
+                              disabled={index === draft.filterConfig.length - 1}
+                              className="h-8 w-8 p-0"
+                            >
+                              <ArrowDown className="h-4 w-4 text-[#A1A1A1]" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="sort" className="mt-0 space-y-6">
+            <Card className="border-[#E9E7E2] rounded-[12px] shadow-sm bg-[#FFFFFF]">
+              <div className="p-5 border-b border-[#E9E7E2]">
+                <h2 className="text-[19px] font-semibold text-[#1F1F1F]">Sort Options</h2>
+                <p className="text-[14px] text-[#787878] mt-1">Configure available sorting methods.</p>
+              </div>
+              <ScrollArea className="w-full">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="border-b-slate-100 bg-[#FAFAF9]/50">
+                      <TableHead className="w-16 font-semibold text-[#787878] text-xs uppercase tracking-wider">Order</TableHead>
+                      <TableHead className="px-4 font-semibold text-[#787878] text-xs uppercase tracking-wider">Sort Option</TableHead>
+                      <TableHead className="text-center w-20 font-semibold text-[#787878] text-xs uppercase tracking-wider">Status</TableHead>
+                      <TableHead className="text-center w-24 font-semibold text-[#787878] text-xs uppercase tracking-wider">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {draft.sortOptionsConfig.map((sortOpt, index) => (
+                      <TableRow key={sortOpt.id} className="border-b-slate-100">
+                        <TableCell className="py-3">
+                          <div className="flex items-center gap-1 text-[#A1A1A1]">
+                            <GripVertical className="h-4 w-4" />
+                            <span className="text-xs font-semibold">{index + 1}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell className="py-3 px-4 font-medium text-[#1F1F1F]">
+                          {sortOpt.label} {draft.defaultSort === sortOpt.id && <span className="ml-2 text-[10px] bg-[#E6F4EA] text-[#075C30] px-2 py-0.5 rounded-full font-bold">DEFAULT</span>}
+                        </TableCell>
+                        <TableCell className="py-3 text-center">
+                          <Switch
+                            checked={sortOpt.isEnabled}
+                            onCheckedChange={(checked) => updateSortOptionsConfig(index, { isEnabled: checked })}
+                            className="data-[state=checked]:bg-[#10b981]"
+                          />
+                        </TableCell>
+                        <TableCell className="py-3 text-center">
+                          <div className="flex items-center justify-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => moveSortOptionsConfig(index, -1)}
+                              disabled={index === 0}
+                              className="h-8 w-8 p-0"
+                            >
+                              <ArrowUp className="h-4 w-4 text-[#A1A1A1]" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => moveSortOptionsConfig(index, 1)}
+                              disabled={index === draft.sortOptionsConfig.length - 1}
+                              className="h-8 w-8 p-0"
+                            >
+                              <ArrowDown className="h-4 w-4 text-[#A1A1A1]" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
+            </Card>
+          </TabsContent>
+
           <TabsContent value="kitchen-card" className="mt-0 space-y-6">
+            <Card className="border-[#E9E7E2] rounded-[12px] shadow-sm bg-[#FFFFFF]">
+              <div className="p-5 border-b border-[#E9E7E2]">
+                <h2 className="text-[19px] font-semibold text-[#1F1F1F]">Kitchen Card Configuration</h2>
+                <p className="text-[14px] text-[#787878] mt-1">Configure default images and display options for kitchens.</p>
+              </div>
+              <div className="p-5">
+                <p className="text-[14px] font-medium text-[#444444] mb-3">Fallback Kitchen Image</p>
+                <p className="text-[12px] text-[#787878] mb-4">Used when a kitchen has no profile image or menu item images.</p>
+                <div className="max-w-[400px]">
+                  <ImageUploadField
+                    label="Fallback Image"
+                    value={draft.fallbackKitchenImageUrl}
+                    onChange={(url) => updateDraft({ fallbackKitchenImageUrl: url })}
+                    hint="Recommended: 800x600px"
+                  />
+                </div>
+              </div>
+            </Card>
+
+            <Card className="border-[#E9E7E2] rounded-[12px] shadow-sm bg-[#FFFFFF]">
+              <div className="p-5 border-b border-[#E9E7E2] flex items-center justify-between">
+                <div>
+                  <h2 className="text-[19px] font-semibold text-[#1F1F1F]">Kitchens in {draft.categoryName}</h2>
+                  <p className="text-[14px] text-[#787878] mt-1">Update profile images for kitchens in this category.</p>
+                </div>
+                <Badge variant="secondary" className="bg-[#E6F4EA] text-[#075C30] font-bold">
+                  {previewKitchens.length} Kitchens
+                </Badge>
+              </div>
+              <div className="p-5">
+                {previewKitchens.length === 0 ? (
+                  <p className="text-[14px] text-[#A1A1A1] text-center py-6">No kitchens match this category yet.</p>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {previewKitchens.map((kitchen) => (
+                      <div key={kitchen.id} className="border border-[#E9E7E2] rounded-lg p-4 flex flex-col justify-between">
+                        <div>
+                          <p className="text-[14px] font-bold text-[#1F1F1F] mb-1">{kitchen.displayName}</p>
+                          <p className="text-[12px] text-[#787878] line-clamp-1 mb-4">{kitchen.cuisineTags.join(", ")}</p>
+                        </div>
+                        <ImageUploadField
+                          label={kitchen.displayName}
+                          value={kitchen.profileImage || ""}
+                          onChange={(url) => {
+                            updateKitchenImageMutation.mutate({ kitchenId: kitchen.id, imageUrl: url })
+                          }}
+                          hint="Recommended: 800x600px"
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </Card>
+
             <Card className="border-[#E9E7E2] shadow-sm bg-white">
               <div className="p-5 border-b border-[#E9E7E2] flex items-center justify-between gap-4">
                 <div>
@@ -1273,9 +1487,9 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
           </TabsContent>
         </div>
 
-        {/* RIGHT SIDE - LIVE PREVIEW */}
-        <div className="w-full lg:w-[480px] 2xl:w-[600px] shrink-0">
-          <div className="bg-[#FFFCF9] rounded-[12px] border border-[#EEEAE4] shadow-sm overflow-hidden flex flex-col h-full sticky top-6">
+        {/* BELOW TABS - LIVE PREVIEW */}
+        <div className="w-full shrink-0">
+          <div className="bg-[#FFFCF9] rounded-[12px] border border-[#EEEAE4] shadow-sm overflow-hidden flex flex-col mt-6 mb-6">
             <div className="p-5 border-b border-[#EEEAE4]">
               <h2 className="text-[19px] font-semibold text-[#1F1F1F]">Live Preview</h2>
               <p className="text-[14px] text-[#787878] mt-1">This is how the category page looks to your users</p>
@@ -1328,7 +1542,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                   <div className="flex items-center gap-3 mb-3">
                     <div className="h-12 w-12 rounded-full bg-[#075C30] flex items-center justify-center text-white shrink-0 shadow-[0_1px_3px_rgba(0,0,0,0.04)] overflow-hidden relative border-2 border-white">
                       {draft.iconUrl ? (
-                        <Image src={draft.iconUrl} alt="Icon" fill className="object-cover" unoptimized />
+                        <Image src={draft.iconUrl} alt="Icon" fill sizes="48px" className="object-cover" unoptimized />
                       ) : (
                         <ChefHat className="h-6 w-6 text-white" />
                       )}
@@ -1649,9 +1863,9 @@ function CategoryPageTable({
       header: "Category",
       cell: ({ row }) => (
         <div className="flex items-center gap-2">
-          {row.original.isActive && <div className="w-2 h-2 rounded-full bg-emerald-600" />}
+          {row.original.isActive && <div className="w-2 h-2 rounded-full bg-[#075C30]" />}
           <div className="flex flex-col">
-            <span className="font-semibold text-emerald-800 capitalize">{row.original.categoryName}</span>
+            <span className="font-semibold text-[#064A27] capitalize">{row.original.categoryName}</span>
             <span className="text-xs text-[#A1A1A1]">/categories/{row.original.slug}</span>
           </div>
         </div>
@@ -1672,8 +1886,8 @@ function CategoryPageTable({
               unoptimized
             />
           ) : (
-            <div className="absolute inset-0 bg-emerald-50 flex items-center justify-center">
-              <span className="text-emerald-500 font-bold italic text-sm">{row.original.categoryName}</span>
+            <div className="absolute inset-0 bg-[#F3FAF6] flex items-center justify-center">
+              <span className="text-[#075C30] font-bold italic text-sm">{row.original.categoryName}</span>
             </div>
           )}
         </div>
@@ -1686,7 +1900,7 @@ function CategoryPageTable({
         <div className="flex flex-wrap gap-1.5">
           <Badge
             variant="outline"
-            className="text-[10px] font-semibold text-[#10b981] border-emerald-200 bg-emerald-50/50"
+            className="text-[10px] font-semibold text-[#075C30] border-[#B9D8C7] bg-[#F3FAF6]"
           >
             <Layers className="h-3 w-3 mr-1" /> {row.original.featuresCount}
           </Badge>
@@ -1715,9 +1929,9 @@ function CategoryPageTable({
             checked={row.original.isActive}
             disabled={pendingToggleId === row.original.id}
             onCheckedChange={(checked) => onToggle(row.original, checked)}
-            className="data-[state=checked]:bg-[#10b981]"
+            className="data-[state=checked]:bg-[#075C30]"
           />
-          <span className={`text-xs font-semibold ${row.original.isActive ? "text-emerald-600" : "text-[#A1A1A1]"}`}>
+          <span className={`text-xs font-semibold ${row.original.isActive ? "text-[#075C30]" : "text-[#A1A1A1]"}`}>
             {row.original.isActive ? "Live" : "Draft"}
           </span>
         </div>
@@ -1760,7 +1974,7 @@ function CategoryPageTable({
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8 text-[#787878] border-[#E9E7E2] hover:border-[#10b981]/30 hover:text-[#10b981]"
+            className="h-8 w-8 text-[#787878] border-[#E9E7E2] hover:border-[#075C30]/30 hover:text-[#075C30]"
             onClick={(e) => {
               e.stopPropagation();
               onView(row.original);
@@ -1773,7 +1987,7 @@ function CategoryPageTable({
           <Button
             variant="outline"
             size="icon"
-            className="h-8 w-8 text-[#10b981] border-[#E9E7E2] hover:bg-[#10b981]/5"
+            className="h-8 w-8 text-[#075C30] border-[#E9E7E2] hover:bg-[#F3FAF6]"
             onClick={(e) => {
               e.stopPropagation();
               onEdit(row.original.id);
@@ -1837,9 +2051,9 @@ function CategoryPageTable({
                       {flexRender(header.column.columnDef.header, header.getContext())}
                       {header.column.getCanSort() &&
                         (header.column.getIsSorted() === "asc" ? (
-                          <ArrowUp className="h-3 w-3 text-[#10b981]" />
+                          <ArrowUp className="h-3 w-3 text-[#075C30]" />
                         ) : header.column.getIsSorted() === "desc" ? (
-                          <ArrowDown className="h-3 w-3 text-[#10b981]" />
+                          <ArrowDown className="h-3 w-3 text-[#075C30]" />
                         ) : (
                           <ChevronsUpDown className="h-3 w-3 text-[#D6D3D1]" />
                         ))}
@@ -1919,7 +2133,7 @@ function CategoryPageTable({
                   size="icon"
                   className={`h-8 w-8 ${
                     page === safePage
-                      ? "bg-[#10b981] hover:bg-[#059669]"
+                      ? "bg-[#075C30] hover:bg-[#064A27] text-white"
                       : "text-[#575757] border-[#E9E7E2]"
                   }`}
                   onClick={() => table.setPageIndex(page - 1)}
@@ -2104,8 +2318,8 @@ export default function CategoryPagesManagement() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="bg-emerald-100 p-2.5 rounded-lg flex items-center justify-center">
-            <Layout className="h-6 w-6 text-[#10b981]" />
+          <div className="bg-[#E6F4EA] p-2.5 rounded-lg flex items-center justify-center">
+            <Layout className="h-6 w-6 text-[#075C30]" />
           </div>
           <div>
             <h1 className="text-2xl font-bold tracking-tight text-[#1F1F1F]">
@@ -2119,14 +2333,14 @@ export default function CategoryPagesManagement() {
         <div className="flex flex-wrap items-center gap-3">
           <Button
             variant="outline"
-            className="border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 font-medium h-10 bg-white shadow-sm"
+            className="border-[#B9D8C7] text-[#075C30] hover:bg-[#F3FAF6] hover:text-[#064A27] font-medium h-10 bg-white shadow-none"
             onClick={() => window.open("/categories", "_blank")}
           >
             <Eye className="mr-2 h-4 w-4" />
             Preview Live Page
           </Button>
           <Button
-            className="bg-[#10b981] hover:bg-[#059669] text-white font-medium h-10 shadow-sm shadow-emerald-200"
+            className="bg-[#075C30] hover:bg-[#064A27] text-white font-medium h-10 shadow-none"
             onClick={() => setAddDialogOpen(true)}
           >
             <Plus className="mr-2 h-4 w-4" />
@@ -2137,30 +2351,30 @@ export default function CategoryPagesManagement() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
-        <Card className="border-emerald-100 shadow-sm bg-white">
+        <Card className="border-[#B9D8C7] shadow-sm bg-white">
           <CardContent className="p-5">
             <div className="flex items-start gap-4">
-              <div className="bg-emerald-50 p-3 rounded-lg mt-0.5">
-                <Layout className="h-6 w-6 text-[#10b981]" />
+              <div className="bg-[#F3FAF6] p-3 rounded-lg mt-0.5">
+                <Layout className="h-6 w-6 text-[#075C30]" />
               </div>
               <div>
                 <p className="text-sm font-medium text-[#787878]">Total Category Pages</p>
-                <h3 className="text-3xl font-bold text-[#10b981] mt-1">{stats.total}</h3>
+                <h3 className="text-3xl font-bold text-[#075C30] mt-1">{stats.total}</h3>
                 <p className="text-xs text-[#A1A1A1] mt-1">Managed category pages</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="border-emerald-100 shadow-sm bg-white">
+        <Card className="border-[#B9D8C7] shadow-sm bg-white">
           <CardContent className="p-5">
             <div className="flex items-start gap-4">
-              <div className="bg-emerald-50 p-3 rounded-full mt-0.5 border border-emerald-100">
-                <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+              <div className="bg-[#F3FAF6] p-3 rounded-full mt-0.5 border border-[#B9D8C7]">
+                <CheckCircle2 className="h-6 w-6 text-[#075C30]" />
               </div>
               <div>
                 <p className="text-sm font-medium text-[#787878]">Live on Website</p>
-                <h3 className="text-3xl font-bold text-emerald-600 mt-1">{stats.live}</h3>
+                <h3 className="text-3xl font-bold text-[#075C30] mt-1">{stats.live}</h3>
                 <p className="text-xs text-[#A1A1A1] mt-1">Currently visible to users</p>
               </div>
             </div>
@@ -2208,9 +2422,9 @@ export default function CategoryPagesManagement() {
             <div>
               <div className="flex items-center gap-2.5">
                 <h2 className="text-lg font-bold text-[#1F1F1F]">Category Pages</h2>
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-2 py-0.5">
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold text-[#075C30] bg-[#F3FAF6] border border-[#B9D8C7] rounded-full px-2 py-0.5">
                   <span
-                    className={`h-1.5 w-1.5 rounded-full bg-emerald-500 ${
+                    className={`h-1.5 w-1.5 rounded-full bg-[#075C30] ${
                       isFetching ? "animate-pulse" : ""
                     }`}
                   />

@@ -56,9 +56,9 @@ export default function DashboardPageClient() {
 
   if (!data) {
     return (
-      <div className="max-w-[1400px] mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-300" role="status" aria-label="Loading delivery dashboard">
+      <div className="max-w-[1400px] mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-300 px-4 sm:px-6 lg:px-8" role="status" aria-label="Loading delivery dashboard">
         {/* Welcome Section */}
-        <div className="px-1 sm:px-0 space-y-3">
+        <div className="space-y-3">
           <Skeleton className="h-[25px] sm:h-[28px] w-72 max-w-full" />
           <Skeleton className="h-4 w-56" />
         </div>
@@ -173,10 +173,10 @@ export default function DashboardPageClient() {
   const greeting = hour < 12 ? "Good Morning" : hour < 17 ? "Good Afternoon" : "Good Evening"
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-500">
+    <div className="max-w-[1400px] mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-500 px-4 sm:px-6 lg:px-8">
       
       {/* Welcome Section */}
-      <div className="px-1 sm:px-0">
+      <div>
         <h1 className="text-[22px] sm:text-[25px] font-bold text-[#111827] flex items-center gap-2">
           {greeting}, {profile.name?.split(' ')[0] || "Partner"}! <span className="text-2xl sm:text-3xl animate-wave origin-[70%_70%] inline-block">👋</span>
         </h1>
@@ -184,7 +184,7 @@ export default function DashboardPageClient() {
       </div>
 
       {/* Top Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-3 sm:gap-4">
         {/* Total Deliveries */}
         <Card className="bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)]">
           <CardContent className="p-3 sm:p-4 flex items-center gap-3 sm:gap-4 h-full">

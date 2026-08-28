@@ -109,11 +109,6 @@ export function KitchensClient() {
 
   return (
     <div className="w-full max-w-[1440px] mx-auto bg-[#FFFFFF] min-h-screen pb-12">
-      <div className="mb-8">
-        <h1 className="text-[28px] font-bold text-[#111827] tracking-tight mb-1">Kitchen Partners</h1>
-        <p className="text-[13px] text-[#475569]">Manage, review and update all kitchen partners</p>
-      </div>
-
       <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 mb-8">
         {isLoading ? (
           <StatsSkeleton />

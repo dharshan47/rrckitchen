@@ -3,6 +3,18 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { createPaymentOrder } from "@/actions/payments/payment";
 
+// Messages createPaymentOrder throws for expected, user-facing failures.
+// These are returned as 400s so the client can show the real reason instead
+// of a generic "failed to create order".
+const BUSINESS_ERROR_PREFIXES = [
+  "Cart is empty",
+  "Some menu items not found",
+  "Invalid delivery date",
+  "Same day delivery is not available",
+  "Orders for this time slot closed",
+  "Delivery is not available for this address",
+];
+
 
 export async function POST(req: NextRequest) {
   try {
@@ -35,6 +47,9 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json(result);
   } catch (error) {
+    if (error instanceof Error && BUSINESS_ERROR_PREFIXES.some((prefix) => error.message.startsWith(prefix))) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
     console.error("[Payment] Create order failed:", error);
     return NextResponse.json({ error: "Failed to create payment order" }, { status: 500 });
   }

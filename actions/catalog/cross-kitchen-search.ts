@@ -41,8 +41,9 @@ export async function searchAcrossKitchens(input: CrossKitchenSearchInput): Prom
     const redisRaw = redis as any
     const geoResults = await redisRaw.geosearch(
       "kitchens:geo",
-      { longitude, latitude },
-      { radius: maxDistanceKm, unit: "km" },
+      { type: "FROMLONLAT", coordinate: { lon: longitude, lat: latitude } },
+      { type: "BYRADIUS", radius: maxDistanceKm, radiusType: "KM" },
+      "ASC",
     )
     nearbyKitchenIds = Array.isArray(geoResults) ? geoResults.map((r: any) => String(r.member)) : []
   } catch {
@@ -100,43 +101,54 @@ export async function searchAcrossKitchens(input: CrossKitchenSearchInput): Prom
     prisma.menuItem.count({ where: where as any }),
   ])
 
+  const kitchenIds = [...new Set(menuItems.map((item) => item.menu.kitchenPartnerId))]
+
+  const [addresses, ratingRows] = await Promise.all([
+    prisma.kitchenAddress.findMany({
+      where: { kitchenPartnerId: { in: kitchenIds } },
+    }),
+    prisma.review.groupBy({
+      by: ["kitchenPartnerId"],
+      where: { kitchenPartnerId: { in: kitchenIds } },
+      _avg: { rating: true },
+    }),
+  ])
+
+  const addressByKitchen = new Map(addresses.map((a) => [a.kitchenPartnerId, a]))
+  const ratingByKitchen = new Map(ratingRows.map((r) => [r.kitchenPartnerId, r._avg.rating]))
+
   const kitchenDistances = new Map<string, number | null>()
   for (const item of menuItems) {
     if (!kitchenDistances.has(item.menu.kitchenPartnerId)) {
-      const address = await prisma.kitchenAddress.findFirst({
-        where: { kitchenPartnerId: item.menu.kitchenPartnerId },
-      })
+      const address = addressByKitchen.get(item.menu.kitchenPartnerId)
       if (address) {
-        const dist = haversineDistance(latitude, longitude, address.latitude, address.longitude)
-        kitchenDistances.set(item.menu.kitchenPartnerId, Math.round(dist * 10) / 10)
+        kitchenDistances.set(
+          item.menu.kitchenPartnerId,
+          Math.round(haversineDistance(latitude, longitude, address.latitude, address.longitude) * 10) / 10,
+        )
       } else {
         kitchenDistances.set(item.menu.kitchenPartnerId, null)
       }
     }
   }
 
-  const items = await Promise.all(
-    menuItems.map(async (item) => {
-      const avgRating = await prisma.review.aggregate({
-        where: { kitchenPartnerId: item.menu.kitchenPartnerId },
-        _avg: { rating: true },
-      })
+  const items = menuItems.map((item) => {
+    const avgRating = ratingByKitchen.get(item.menu.kitchenPartnerId)
 
-      return {
-        id: item.id,
-        name: item.name,
-        description: item.description,
-        price: Number(item.price),
-        foodType: item.foodType,
-        timeSlot: item.timeSlot,
-        kitchenName: item.menu.kitchenPartner.kitchenAlias?.displayName ?? "",
-        kitchenId: item.menu.kitchenPartnerId,
-        distanceKm: kitchenDistances.get(item.menu.kitchenPartnerId) ?? null,
-        avgRating: avgRating._avg.rating ? Math.round(avgRating._avg.rating * 10) / 10 : null,
-        imageUrl: item.photos[0]?.imageUrl ?? null,
-      }
-    }),
-  )
+    return {
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      price: Number(item.price),
+      foodType: item.foodType,
+      timeSlot: item.timeSlot,
+      kitchenName: item.menu.kitchenPartner.kitchenAlias?.displayName ?? "",
+      kitchenId: item.menu.kitchenPartnerId,
+      distanceKm: kitchenDistances.get(item.menu.kitchenPartnerId) ?? null,
+      avgRating: avgRating ? Math.round(avgRating * 10) / 10 : null,
+      imageUrl: item.photos[0]?.imageUrl ?? null,
+    }
+  })
 
   return { items, total }
 }

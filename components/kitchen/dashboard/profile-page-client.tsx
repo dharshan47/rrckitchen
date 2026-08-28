@@ -41,7 +41,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import {
   Dialog,
@@ -53,7 +53,7 @@ import {
 } from "@/components/ui/dialog"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { updateKitchenPhoto, updateKitchenAddress } from "@/actions/admin/dashboard"
+import { updateKitchenPhoto, updateKitchenAddress, updateKitchenCoverPhoto } from "@/actions/admin/dashboard"
 import {
   getAvailableCuisines,
   updateKitchenCuisines,
@@ -200,6 +200,19 @@ export default function ProfilePageClient() {
         invalidate()
       } else {
         toast.error(result.error ?? "Failed to update photo")
+      }
+    },
+    onError: () => toast.error("Something went wrong"),
+  })
+
+  const saveCoverPhotoMutation = useMutation({
+    mutationFn: (imageUrl: string | null) => updateKitchenCoverPhoto(imageUrl),
+    onSuccess: (result, imageUrl) => {
+      if (result.success) {
+        toast.success(imageUrl ? "Cover photo updated" : "Cover photo removed")
+        invalidate()
+      } else {
+        toast.error(result.error ?? "Failed to update cover photo")
       }
     },
     onError: () => toast.error("Something went wrong"),
@@ -354,6 +367,7 @@ export default function ProfilePageClient() {
   const kitchen = data.kitchen
   const publicUrl = `/kitchens/${kitchen.slug}`
   const profileImage = kitchen.imageUrl || "/kitchen/profile.webp"
+  const coverImage = kitchen.coverImageUrl || "/kitchen/smartphone.webp"
 
   const displayName = kitchen.displayName || "Your Kitchen"
   const description = kitchen.description
@@ -378,9 +392,6 @@ export default function ProfilePageClient() {
   ].filter(Boolean).length
   const completionPct = Math.round((filledCount / 8) * 100)
 
-  const scrollToSection = (target: string) => {
-    document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" })
-  }
 
   const submitEdit = () => {
     if (editing === "name") {
@@ -605,14 +616,30 @@ export default function ProfilePageClient() {
 
               {/* Right Side: Public Preview Card */}
               <div className="w-full lg:w-[350px] xl:w-[400px] shrink-0 bg-[#F5FAF6] border border-[#E4ECE6] rounded-[12px] p-4 flex flex-col justify-between">
-                <div className="flex items-center gap-2 mb-4 text-[14px] font-semibold text-[#111827]">
-                  <Eye className="h-4 w-4 text-[#087A3E]" />
-                  Public Preview
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-2 text-[14px] font-semibold text-[#111827]">
+                    <Eye className="h-4 w-4 text-[#087A3E]" />
+                    Public Preview
+                  </div>
+                  <CloudinaryUpload onUpload={(result) => saveCoverPhotoMutation.mutate(result.secure_url)}>
+                    {({ uploading, startUpload }) => (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={startUpload}
+                        disabled={uploading}
+                        className="h-7 px-2 text-[11px] font-medium border-[#9FC8AD] text-[#087A3E] bg-[#FFFFFF] hover:bg-[#F5FAF6]"
+                      >
+                        {uploading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Camera className="h-3 w-3 mr-1" />}
+                        Edit Cover
+                      </Button>
+                    )}
+                  </CloudinaryUpload>
                 </div>
 
                 <div className="bg-[#FFFFFF] rounded-[10px] overflow-hidden border border-[#E5E7EB] shadow-sm relative">
                   <div className="h-[80px] w-full relative">
-                    <Image src="/kitchen/smartphone.webp" alt="Cover" fill className="object-cover opacity-60 bg-[#087A3E]" />
+                    <Image src={coverImage} alt="Cover" fill className="object-cover opacity-60 bg-[#087A3E]" />
                     <div className="absolute inset-0 bg-gradient-to-r from-[#00000090] to-transparent" />
                   </div>
 
@@ -655,48 +682,32 @@ export default function ProfilePageClient() {
             </div>
           </Card>
 
-          {/* Sticky Tab Navigation */}
-          <div className="sticky top-0 z-30 -mx-6 sm:-mx-8 lg:-mx-10 px-6 sm:px-8 lg:px-10 py-3 bg-[#FEFEFE]/95 backdrop-blur border-b border-[#E5E7EB]">
-            <ScrollArea className="w-full">
-              <div className="flex items-center gap-2 w-max">
-                {TABS.map((tab) => (
-                  <button
-                    key={tab.label}
-                    onClick={() => {
-                      setActiveTab(tab.label)
-                      scrollToSection(tab.target)
-                    }}
-                    className={`flex items-center gap-2 h-[38px] px-4 rounded-[8px] text-[13px] font-semibold transition-all whitespace-nowrap ${
-                      activeTab === tab.label
-                        ? "bg-[#087A3E] text-[#FFFFFF] shadow-[0_2px_6px_rgba(8,122,62,0.2)]"
-                        : "bg-[#FFFFFF] border border-[#E5E7EB] text-[#374151] hover:border-[#9FC8AD] hover:text-[#087A3E]"
-                    }`}
-                  >
-                    <tab.icon className="h-4 w-4" strokeWidth={1.8} />
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-              <ScrollBar orientation="horizontal" className="hidden" />
-            </ScrollArea>
-          </div>
-
           {/* Tabs Section */}
           <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v)} className="w-full">
-            <TabsList className="hidden">
-              {TABS.map((tab) => (
-                <TabsTrigger key={tab.label} value={tab.label}>
-                  {tab.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+            {/* Sticky Tab Navigation */}
+            <div className="sticky top-0 z-30 -mx-6 sm:-mx-8 lg:-mx-10 px-6 sm:px-8 lg:px-10 py-3 bg-[#FEFEFE]/95 backdrop-blur border-b border-[#E5E7EB]">
+              <ScrollArea className="w-full">
+                <TabsList className="flex items-center gap-2 w-max bg-transparent h-auto p-0 border-none justify-start">
+                  {TABS.map((tab) => (
+                    <TabsTrigger
+                      key={tab.label}
+                      value={tab.label}
+                      className="data-[state=active]:bg-[#087A3E] data-[state=active]:text-[#FFFFFF] data-[state=active]:shadow-[0_2px_6px_rgba(8,122,62,0.2)] bg-[#FFFFFF] border border-[#E5E7EB] text-[#374151] hover:border-[#9FC8AD] hover:text-[#087A3E] flex items-center gap-2 h-[38px] px-4 rounded-[8px] text-[13px] font-semibold transition-all whitespace-nowrap"
+                    >
+                      <tab.icon className="h-4 w-4" strokeWidth={1.8} />
+                      {tab.label}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+                <ScrollBar orientation="horizontal" className="hidden" />
+              </ScrollArea>
+            </div>
 
-          {/* Sections Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-2">
+            <div className="mt-6 w-full max-w-3xl mx-auto lg:max-w-none lg:w-2/3">
 
             {/* ===== Profile Info ===== */}
-            <Card id="profile-info" className="lg:col-span-2 rounded-[12px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+            <TabsContent value="Profile" className="mt-0">
+              <Card id="profile-info" className="rounded-[12px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
@@ -777,8 +788,10 @@ export default function ProfilePageClient() {
                 </div>
               </CardContent>
             </Card>
+            </TabsContent>
 
             {/* ===== Operating Hours ===== */}
+            <TabsContent value="Operating Hours" className="mt-0">
             <Card id="hours-card" className="rounded-[12px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -822,8 +835,10 @@ export default function ProfilePageClient() {
                 </div>
               </CardContent>
             </Card>
+            </TabsContent>
 
             {/* ===== Address ===== */}
+            <TabsContent value="Address" className="mt-0">
             <Card id="address-card" className="rounded-[12px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -861,8 +876,10 @@ export default function ProfilePageClient() {
                 )}
               </CardContent>
             </Card>
+            </TabsContent>
 
             {/* ===== Kitchen Details ===== */}
+            <TabsContent value="Kitchen Details" className="mt-0">
             <Card id="details-card" className="rounded-[12px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -902,8 +919,10 @@ export default function ProfilePageClient() {
                 </div>
               </CardContent>
             </Card>
+            </TabsContent>
 
             {/* ===== Bank & Payments ===== */}
+            <TabsContent value="Bank & Payments" className="mt-0">
             <Card id="bank-card" className="rounded-[12px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -961,8 +980,10 @@ export default function ProfilePageClient() {
                 )}
               </CardContent>
             </Card>
+            </TabsContent>
 
             {/* ===== Preferences ===== */}
+            <TabsContent value="Preferences" className="mt-0">
             <Card id="preferences-card" className="rounded-[12px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -1011,7 +1032,10 @@ export default function ProfilePageClient() {
                 </div>
               </CardContent>
             </Card>
-          </div>
+            </TabsContent>
+
+            </div>
+          </Tabs>
 
           {/* ===== Edit Dialogs ===== */}
           {editing === "name" && (

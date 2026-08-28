@@ -46,7 +46,8 @@ function formatPaymentStatus(status?: string): string | undefined {
 export async function getAdminDashboardData() {
   try {
     await requireAdmin()
-  } catch {
+  } catch (error) {
+    console.error("requireAdmin failed in getAdminDashboardData:", error);
     return null
   }
 
@@ -85,7 +86,7 @@ export async function getAdminDashboardData() {
     prisma.order.count({ where: { status: "COMPLETED" } }),
     prisma.order.count({ where: { status: "CONFIRMED" } }),
     prisma.order.count({ where: { status: "CANCELLED" } }),
-    prisma.user.count({ where: { role: "customer" } }),
+    prisma.user.count({ where: { role: { in: ["customer", "CUSTOMER"] } } }),
     prisma.kitchenPartner.count({ where: { status: { in: ["APPROVED", "ACTIVE"] } } }),
     prisma.deliveryPartner.count({ where: { status: { in: ["APPROVED", "ACTIVE"] } } }),
     prisma.menuItem.count({ where: { deletedAt: null } }),
@@ -98,7 +99,7 @@ export async function getAdminDashboardData() {
       select: { totalAmount: true, createdAt: true },
     }),
     prisma.user.findMany({
-      where: { role: "customer", createdAt: { gte: sixMonthsAgo } },
+      where: { role: { in: ["customer", "CUSTOMER"] }, createdAt: { gte: sixMonthsAgo } },
       select: { createdAt: true },
     }),
     prisma.kitchenPartner.findMany({
@@ -713,6 +714,7 @@ export async function getKitchenDashboardData() {
       slug: kitchenPartner.slug,
       displayName: kitchenPartner.kitchenAlias?.displayName,
       imageUrl: kitchenPartner.kitchenAlias?.imageUrl,
+      coverImageUrl: kitchenPartner.kitchenAlias?.coverImageUrl,
       description: kitchenPartner.kitchenAlias?.description,
       status: kitchenPartner.status,
       avgRating: "avgRating" in kitchenPartner && typeof (kitchenPartner as Record<string, unknown>).avgRating === "number"
@@ -858,6 +860,26 @@ export async function updateKitchenPhoto(imageUrl: string | null) {
     await prisma.kitchenAlias.update({
       where: { id: kitchenPartner.kitchenAlias.id },
       data: { imageUrl },
+    })
+  }
+
+  return { success: true }
+}
+
+export async function updateKitchenCoverPhoto(coverImageUrl: string | null) {
+  const session = await getSession()
+  if (!session?.user) return { success: false, error: "Unauthorized" }
+
+  const kitchenPartner = await prisma.kitchenPartner.findUnique({
+    where: { userId: session.user.id },
+    include: { kitchenAlias: { select: { id: true } } },
+  })
+  if (!kitchenPartner) return { success: false, error: "Kitchen partner not found" }
+
+  if (kitchenPartner.kitchenAlias) {
+    await prisma.kitchenAlias.update({
+      where: { id: kitchenPartner.kitchenAlias.id },
+      data: { coverImageUrl },
     })
   }
 

@@ -520,10 +520,10 @@ export default function AdminInvitesClient() {
                   <h3 className="text-2xl font-bold text-gray-900 leading-tight">{stats.activeAdminCount}</h3>
                 </div>
               </div>
-              <div className="mt-2 text-[11px] font-medium text-green-600">{stats.newThisMonth > 0 ? `↑ ${stats.newThisMonth} new this month` : "No new admins this month"}</div>
-              <div className="absolute bottom-0 left-0 right-0 h-8 opacity-50 pointer-events-none">
-                <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="h-full w-full stroke-violet-500 fill-none" strokeWidth="1.5">
-                  <path d="M0 10 Q 10 20, 20 10 T 40 10 T 60 10 T 80 10 T 100 10" />
+              <div className="mt-2 text-[11px] font-medium text-green-600 relative z-10">{stats.newThisMonth > 0 ? `↑ ${stats.newThisMonth} new this month` : "No new admins this month"}</div>
+              <div className="absolute bottom-0 left-0 right-0 h-8 opacity-100 pointer-events-none z-0">
+                <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="h-full w-full stroke-violet-500 fill-none overflow-visible" strokeWidth="2">
+                  <path d="M0 10 Q 10 20, 20 10 T 40 10 T 60 10 T 80 10 T 100 10" vectorEffect="non-scaling-stroke" />
                 </svg>
               </div>
             </div>
@@ -538,10 +538,10 @@ export default function AdminInvitesClient() {
                   <h3 className="text-2xl font-bold text-gray-900 leading-tight">{stats.pendingCount}</h3>
                 </div>
               </div>
-              <div className="mt-2 text-[11px] font-medium text-orange-500">{stats.expiringSoon > 0 ? `${stats.expiringSoon} expiring soon` : "No invites expiring"}</div>
-              <div className="absolute bottom-0 left-0 right-0 h-8 opacity-50 pointer-events-none">
-                <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="h-full w-full stroke-blue-400 fill-none" strokeWidth="1.5">
-                  <path d="M0 15 Q 15 5, 30 15 T 60 15 T 90 15 T 100 15" />
+              <div className="mt-2 text-[11px] font-medium text-orange-500 relative z-10">{stats.expiringSoon > 0 ? `${stats.expiringSoon} expiring soon` : "No invites expiring"}</div>
+              <div className="absolute bottom-0 left-0 right-0 h-8 opacity-100 pointer-events-none z-0">
+                <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="h-full w-full stroke-blue-500 fill-none overflow-visible" strokeWidth="2">
+                  <path d="M0 15 Q 15 5, 30 15 T 60 15 T 90 15 T 100 15" vectorEffect="non-scaling-stroke" />
                 </svg>
               </div>
             </div>
@@ -574,10 +574,10 @@ export default function AdminInvitesClient() {
                   <h3 className="text-2xl font-bold text-gray-900 leading-tight">{invites.length}</h3>
                 </div>
               </div>
-              <div className="mt-2 text-[11px] font-medium text-gray-500">All time</div>
-              <div className="absolute bottom-0 left-0 right-0 h-8 opacity-50 pointer-events-none">
-                <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="h-full w-full stroke-orange-400 fill-none" strokeWidth="1.5">
-                  <path d="M0 12 Q 10 22, 20 12 T 40 12 T 60 12 T 80 12 T 100 12" />
+              <div className="mt-2 text-[11px] font-medium text-gray-500 relative z-10">All time</div>
+              <div className="absolute bottom-0 left-0 right-0 h-8 opacity-100 pointer-events-none z-0">
+                <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="h-full w-full stroke-orange-500 fill-none overflow-visible" strokeWidth="2">
+                  <path d="M0 12 Q 10 22, 20 12 T 40 12 T 60 12 T 80 12 T 100 12" vectorEffect="non-scaling-stroke" />
                 </svg>
               </div>
             </div>
@@ -594,10 +594,10 @@ export default function AdminInvitesClient() {
                   </h3>
                 </div>
               </div>
-              <div className="mt-2 text-[11px] font-medium text-gray-500">From invite to join</div>
-              <div className="absolute bottom-0 left-0 right-0 h-8 opacity-50 pointer-events-none">
-                <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="h-full w-full stroke-pink-400 fill-none" strokeWidth="1.5">
-                  <path d="M0 18 Q 15 8, 30 18 T 60 18 T 90 18 T 100 18" />
+              <div className="mt-2 text-[11px] font-medium text-gray-500 relative z-10">From invite to join</div>
+              <div className="absolute bottom-0 left-0 right-0 h-8 opacity-100 pointer-events-none z-0">
+                <svg viewBox="0 0 100 20" preserveAspectRatio="none" className="h-full w-full stroke-pink-500 fill-none overflow-visible" strokeWidth="2">
+                  <path d="M0 18 Q 15 8, 30 18 T 60 18 T 90 18 T 100 18" vectorEffect="non-scaling-stroke" />
                 </svg>
               </div>
             </div>

@@ -15,7 +15,9 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   SidebarProvider,
   Sidebar,
+  SidebarHeader,
   SidebarContent,
+  SidebarFooter,
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuButton,
@@ -24,6 +26,7 @@ import {
 } from "@/components/ui/sidebar"
 import { SwUpdateBanner } from "@/components/patterns/sw-update-banner"
 import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { Home, User, Wallet, LogOut, Truck, Ticket, Bell, Star } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
@@ -122,7 +125,7 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
     return (
       <div className="min-h-screen bg-[#FBFBFB] flex" role="status" aria-label="Loading delivery partner dashboard">
         {/* Sidebar Skeleton */}
-        <aside className="hidden lg:flex w-72 flex-col border-r border-border bg-white">
+        <aside className="hidden lg:flex w-[18rem] flex-col border-r border-border bg-white">
           {/* Logo */}
           <div className="px-6 pt-8 pb-6">
             <div className="flex items-center gap-3">
@@ -195,38 +198,37 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
 
   return (
     <>
-      <SidebarProvider defaultOpen={true}>
+      <SidebarProvider defaultOpen={true} style={{ "--sidebar-width": "18rem" } as React.CSSProperties}>
         <div className="min-h-screen bg-[#FBFBFB] flex w-full font-sans text-[#111827]">
-          <Sidebar collapsible="offcanvas" side="left" className="border-r-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] bg-[#FFFFFF] w-72">
-            <div className="flex flex-col h-full bg-white">
-              {/* Sidebar Header Logo */}
-              <div className="px-6 pt-8 pb-6">
-                <div className="flex items-center gap-3">
-                  <Image src="/delivery/sidebar-delivery-header.webp" alt="Delivery Partner" width={48} height={48} className="object-contain" />
-                  <div className="flex flex-col">
-                    <span className="text-[20px] font-bold text-[#008F2D] tracking-tight leading-tight">Delivery Partner</span>
-                    <span className="text-[12px] font-medium text-[#374151] leading-tight mt-0.5">Your Earnings, Our Priority</span>
-                  </div>
+          <Sidebar collapsible="offcanvas" side="left" className="border-r-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] bg-[#FFFFFF]">
+            <SidebarHeader className="px-6 pt-8 pb-6">
+              <div className="flex items-center gap-3">
+                <Image src="/delivery/sidebar-delivery-header.webp" alt="Delivery Partner" width={48} height={48} className="object-contain" />
+                <div className="flex flex-col">
+                  <span className="text-[20px] font-bold text-[#008F2D] tracking-tight leading-tight">Delivery Partner</span>
+                  <span className="text-[12px] font-medium text-[#374151] leading-tight mt-0.5">Your Earnings, Our Priority</span>
                 </div>
               </div>
+            </SidebarHeader>
 
-              <SidebarContent className="px-4 flex-1">
+            <SidebarContent className="px-4 flex-1 overflow-hidden">
+              <ScrollArea className="h-full w-full pr-3">
                 <SidebarNav />
-              </SidebarContent>
+              </ScrollArea>
+            </SidebarContent>
 
-              {/* Sidebar Footer Elements */}
-              <div className="px-4 pb-6 mt-auto space-y-4">
-                {/* Online Status Toggle Widget */}
-                <div className="bg-[#F2F7F2] rounded-2xl p-5 flex items-center justify-between">
-                  <div className="flex flex-col gap-1.5 pr-3">
+            <SidebarFooter className="px-4 pb-4 mt-auto space-y-3">
+              {/* Online Status Toggle Widget */}
+                <div className="bg-[#F2F7F2] rounded-xl p-4 flex items-center justify-between">
+                  <div className="flex flex-col gap-1 pr-3">
                     <div className="flex items-center gap-2">
                       <div className={cn("h-2.5 w-2.5 rounded-full", isOnline ? "bg-[#008F3A]" : "bg-[#374151]")} />
-                      <span className={cn("text-[15px] font-bold", isOnline ? "text-[#087B24]" : "text-[#374151]")}>
+                      <span className={cn("text-[14px] font-bold", isOnline ? "text-[#087B24]" : "text-[#374151]")}>
                         {isOnline ? "You are Online" : "You are Offline"}
                       </span>
                     </div>
-                    <span className="text-[13px] font-medium text-[#374151] leading-tight">
-                      {isOnline ? "You are receiving delivery requests" : "Go online to start earning"}
+                    <span className="text-[12px] font-medium text-[#374151] leading-tight">
+                      {isOnline ? "Receiving requests" : "Go online to earn"}
                     </span>
                   </div>
                   <Switch
@@ -239,37 +241,35 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
                 </div>
 
                 {/* User Profile Widget */}
-                <div className="bg-[#FFFFFF] rounded-2xl border border-[#E8EAED] overflow-hidden">
-                  <div className="p-5 pb-4">
-                    <div className="flex items-center gap-3 mb-4">
-                      <Avatar className="h-12 w-12 flex-shrink-0 border border-[#E8EAED]">
+                <div className="bg-[#FFFFFF] rounded-xl border border-[#E8EAED] overflow-hidden">
+                  <div className="p-4 pb-3">
+                    <div className="flex items-center gap-3 mb-3">
+                      <Avatar className="h-10 w-10 flex-shrink-0 border border-[#E8EAED]">
                         <AvatarImage src={profileImage} alt={profile.name ?? "Delivery Partner"} className="object-cover" />
                         <AvatarFallback className="bg-slate-100 text-[#111827] font-semibold">{profile.name?.[0] ?? "D"}</AvatarFallback>
                       </Avatar>
                       <div className="flex flex-col overflow-hidden">
-                        <span className="text-[16px] font-bold text-[#111827] truncate">{profile.name}</span>
-                        <span className="text-[13px] font-medium text-[#374151] truncate">Delivery Partner</span>
+                        <span className="text-[15px] font-bold text-[#111827] truncate">{profile.name}</span>
+                        <span className="text-[12px] font-medium text-[#374151] truncate">Delivery Partner</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5 text-[13px] font-medium text-[#374151]">
+                    <div className="flex items-center gap-1.5 text-[12px] font-medium text-[#374151]">
                       <Star className="h-4 w-4 fill-[#FF9800] text-[#FF9800]" />
                       <span className="text-[#111827] font-bold text-[14px]">{rating > 0 ? rating.toFixed(1) : "New"}</span>
                       <span>({reviewCount > 0 ? `${reviewCount} reviews` : "No reviews yet"})</span>
                     </div>
                   </div>
-                  <div className="px-5 pb-5 pt-4 border-t border-[#F1F2F3]">
+                  <div className="px-4 pb-4 pt-3 border-t border-[#F1F2F3]">
                     <button
                       onClick={handleLogout}
-                      className="w-full flex items-center justify-center gap-2 py-[10px] rounded-[10px] border border-[#E8EAED] text-[15px] font-bold text-[#111827] hover:bg-[#FBFBFB] transition-all bg-[#FFFFFF]"
+                      className="w-full flex items-center justify-center gap-2 py-[8px] rounded-[8px] border border-[#E8EAED] text-[14px] font-bold text-[#111827] hover:bg-[#FBFBFB] transition-all bg-[#FFFFFF]"
                     >
                       <LogOut className="h-5 w-5 text-[#EF1717]" strokeWidth={2.5} />
                       Logout
                     </button>
                   </div>
                 </div>
-              </div>
-
-            </div>
+              </SidebarFooter>
           </Sidebar>
 
           <div className="flex-1 flex flex-col min-w-0">

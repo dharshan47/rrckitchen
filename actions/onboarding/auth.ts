@@ -56,7 +56,10 @@ export async function checkPhoneRegistered(rawPhone: string) {
   const digits = rawPhone.replace(/\D/g, "")
   const variants = [rawPhone]
   if (digits.length === 10) variants.push(`+91${digits}`)
-  else if (digits.length === 12 && digits.startsWith("91")) variants.push(`+${digits}`)
+  else if (digits.length === 12 && digits.startsWith("91")) {
+    variants.push(digits.slice(2))
+    variants.push(`+${digits}`)
+  }
 
   const user = await prisma.user.findFirst({
     where: { phoneNumber: { in: variants } },

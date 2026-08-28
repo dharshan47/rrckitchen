@@ -38,11 +38,12 @@ export async function getNearbyKitchens(
   let nearbyKitchenIds: string[] = []
 
   try {
-    const redisRaw = redis as unknown as { geosearch: (key: string, center: { longitude: number; latitude: number }, radius: { radius: number; unit: string }) => Promise<unknown[]> }
+    const redisRaw = redis as unknown as { geosearch: (key: string, center: { type: "FROMLONLAT"; coordinate: { lon: number; lat: number } }, shape: { type: "BYRADIUS"; radius: number; radiusType: string }, order: string) => Promise<unknown[]> }
     const geoResults = await redisRaw.geosearch(
       "kitchens:geo",
-      { longitude, latitude },
-      { radius: maxDistanceKm, unit: "km" },
+      { type: "FROMLONLAT", coordinate: { lon: longitude, lat: latitude } },
+      { type: "BYRADIUS", radius: maxDistanceKm, radiusType: "KM" },
+      "ASC",
     )
     nearbyKitchenIds = Array.isArray(geoResults)
       ? geoResults.map((r: unknown) => String((r as { member: string }).member))
@@ -70,6 +71,7 @@ export async function getNearbyKitchens(
     include: {
       kitchenAlias: true,
       kitchenCategories: { include: { category: true } },
+      kitchenAddress: true,
       menus: {
         where: { isActive: true },
         include: {
@@ -88,9 +90,7 @@ export async function getNearbyKitchens(
 
   const kitchenDistances = new Map<string, number | null>()
   for (const kitchen of kitchens) {
-    const address = await prisma.kitchenAddress.findFirst({
-      where: { kitchenPartnerId: kitchen.id },
-    })
+    const address = kitchen.kitchenAddress
     if (address) {
       const dist = haversineDistance(latitude, longitude, address.latitude, address.longitude)
       kitchenDistances.set(kitchen.id, Math.round(dist * 10) / 10)

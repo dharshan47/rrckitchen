@@ -30,6 +30,18 @@ export interface CategoryPageEditorFaq {
   answer: string;
 }
 
+export interface CategoryPageEditorFilter {
+  id: string;
+  label: string;
+  isEnabled: boolean;
+}
+
+export interface CategoryPageEditorSortOption {
+  id: string;
+  label: string;
+  isEnabled: boolean;
+}
+
 export interface CategoryPageEditorDraft {
   id: string;
   categoryId: string;
@@ -54,6 +66,9 @@ export interface CategoryPageEditorDraft {
   features: CategoryPageEditorFeature[];
   offers: CategoryPageEditorOffer[];
   faqs: CategoryPageEditorFaq[];
+  fallbackKitchenImageUrl: string;
+  filterConfig: CategoryPageEditorFilter[];
+  sortOptionsConfig: CategoryPageEditorSortOption[];
 }
 
 export function toCategoryPageEditorDraft(item: AdminCategoryPageDetail): CategoryPageEditorDraft {
@@ -102,6 +117,23 @@ export function toCategoryPageEditorDraft(item: AdminCategoryPageDetail): Catego
     features: item.features.map(mapFeature),
     offers: item.offers.map(mapOffer),
     faqs: item.faqs.map(mapFaq),
+    fallbackKitchenImageUrl: item.fallbackKitchenImageUrl ?? "",
+    filterConfig: Array.isArray(item.filterConfig) && item.filterConfig.length > 0 ? (item.filterConfig as CategoryPageEditorFilter[]) : [
+      { id: "mealType", label: "Meal Type", isEnabled: true },
+      { id: "cuisine", label: "Cuisine", isEnabled: true },
+      { id: "ratings", label: "Ratings", isEnabled: true },
+      { id: "deliveryTime", label: "Delivery Time", isEnabled: true },
+      { id: "pureVeg", label: "Pure Veg", isEnabled: true },
+      { id: "offers", label: "Offers", isEnabled: true }
+    ],
+    sortOptionsConfig: Array.isArray(item.sortOptionsConfig) && item.sortOptionsConfig.length > 0 ? (item.sortOptionsConfig as CategoryPageEditorSortOption[]) : [
+      { id: "Popularity", label: "Popularity", isEnabled: true },
+      { id: "Rating", label: "Rating", isEnabled: true },
+      { id: "Newest", label: "Newest", isEnabled: true },
+      { id: "Price Low", label: "Price Low to High", isEnabled: true },
+      { id: "Price High", label: "Price High to Low", isEnabled: true },
+      { id: "Recommended", label: "Recommended", isEnabled: true }
+    ],
   };
 }
 
@@ -142,6 +174,9 @@ export function toCategoryPageSaveInput(draft: CategoryPageEditorDraft) {
       isEnabled,
     })),
     faqs: draft.faqs.map(({ question, answer }) => ({ question, answer })),
+    fallbackKitchenImageUrl: draft.fallbackKitchenImageUrl,
+    filterConfig: draft.filterConfig,
+    sortOptionsConfig: draft.sortOptionsConfig,
   };
 }
 
@@ -161,6 +196,10 @@ interface CategoryPageEditorState {
   updateFaq: (index: number, patch: Partial<CategoryPageEditorFaq>) => void;
   addFaq: () => void;
   removeFaq: (index: number) => void;
+  updateFilterConfig: (index: number, patch: Partial<CategoryPageEditorFilter>) => void;
+  moveFilterConfig: (index: number, dir: -1 | 1) => void;
+  updateSortOptionsConfig: (index: number, patch: Partial<CategoryPageEditorSortOption>) => void;
+  moveSortOptionsConfig: (index: number, dir: -1 | 1) => void;
   markSaved: () => void;
 }
 
@@ -255,6 +294,36 @@ export const categoryPageEditorStore = create<CategoryPageEditorState>()((set, g
       faqs: draft.faqs.filter((_, i) => i !== index),
     }))(set, get),
 
+  updateFilterConfig: (index, patch) =>
+    withDraft((draft) => ({
+      ...draft,
+      filterConfig: draft.filterConfig.map((f, i) => (i === index ? { ...f, ...patch } : f)),
+    }))(set, get),
+
+  moveFilterConfig: (index, dir) =>
+    withDraft((draft) => {
+      const next = [...draft.filterConfig];
+      const target = index + dir;
+      if (target < 0 || target >= next.length) return draft;
+      [next[index], next[target]] = [next[target], next[index]];
+      return { ...draft, filterConfig: next };
+    })(set, get),
+
+  updateSortOptionsConfig: (index, patch) =>
+    withDraft((draft) => ({
+      ...draft,
+      sortOptionsConfig: draft.sortOptionsConfig.map((s, i) => (i === index ? { ...s, ...patch } : s)),
+    }))(set, get),
+
+  moveSortOptionsConfig: (index, dir) =>
+    withDraft((draft) => {
+      const next = [...draft.sortOptionsConfig];
+      const target = index + dir;
+      if (target < 0 || target >= next.length) return draft;
+      [next[index], next[target]] = [next[target], next[index]];
+      return { ...draft, sortOptionsConfig: next };
+    })(set, get),
+
   markSaved: () => set({ dirty: false }),
 }));
 
@@ -283,6 +352,10 @@ export function useCategoryPageEditorActions() {
       updateFaq: s.updateFaq,
       addFaq: s.addFaq,
       removeFaq: s.removeFaq,
+      updateFilterConfig: s.updateFilterConfig,
+      moveFilterConfig: s.moveFilterConfig,
+      updateSortOptionsConfig: s.updateSortOptionsConfig,
+      moveSortOptionsConfig: s.moveSortOptionsConfig,
       markSaved: s.markSaved,
     }))
   );

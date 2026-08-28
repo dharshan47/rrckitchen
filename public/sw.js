@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v1';
+const CACHE_VERSION = 'v2';
 const STATIC_CACHE = `rrc-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `rrc-dynamic-${CACHE_VERSION}`;
 const IMAGE_CACHE = `rrc-images-${CACHE_VERSION}`;
@@ -33,7 +33,8 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Cache-first for static assets
+// JS/CSS chunks are served network-first so a stale cached chunk can never
+// break the app after a rebuild.
 function isStaticAsset(url) {
   const staticPatterns = [/\.(js|css|woff2?)$/, /\/_next\/static\//];
   return staticPatterns.some((p) => p.test(url));
@@ -76,8 +77,15 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Ably tokens are per-user and time-limited - never cache or serve a
+  // stale token to another user.
+  if (url.includes('/api/ably-token')) {
+    event.respondWith(fetch(request));
+    return;
+  }
+
   if (isStaticAsset(url)) {
-    event.respondWith(cacheFirst(request, STATIC_CACHE));
+    event.respondWith(networkFirst(request, STATIC_CACHE, { fallbackOnHttpError: true }));
     return;
   }
 
@@ -91,12 +99,26 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // RSC payload URLs stay identical across deploys while their content
+  // changes, so caching them serves stale page shells that reference chunks
+  // from an old build. Never intercept them.
+  if (request.headers.get('rsc') === '1' || request.headers.get('next-router-state-tree') !== null) {
+    return;
+  }
+
   // Navigation requests - network first with offline fallback
   if (request.mode === 'navigate') {
     event.respondWith(
-      networkFirst(request, DYNAMIC_CACHE).catch(() => {
-        return caches.match('/');
-      })
+      networkFirst(request, DYNAMIC_CACHE)
+        .then((response) => {
+          if (response && response.status === 503) {
+            return caches.match('/').then((fallback) => fallback || response);
+          }
+          return response;
+        })
+        .catch(() => {
+          return caches.match('/');
+        })
     );
     return;
   }
@@ -133,12 +155,17 @@ async function safeCachePut(cache, request, response) {
   }
 }
 
-async function networkFirst(request, cacheName) {
+async function networkFirst(request, cacheName, { fallbackOnHttpError = false } = {}) {
   try {
     const response = await fetch(request);
     if (response.ok) {
       const cache = await caches.open(cacheName);
       await safeCachePut(cache, request, response);
+      return response;
+    }
+    if (fallbackOnHttpError) {
+      const cached = await caches.match(request);
+      if (cached) return cached;
     }
     return response;
   } catch {

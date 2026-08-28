@@ -42,6 +42,12 @@ export function usePWA() {
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
+    if (process.env.NODE_ENV === "development") {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((registration) => registration.unregister());
+      });
+      return;
+    }
 
     navigator.serviceWorker.register("/sw.js", {
       scope: "/",
@@ -60,6 +66,21 @@ export function usePWA() {
         });
       });
     }).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!("serviceWorker" in navigator)) return;
+
+    const handleControllerChange = () => {
+      if (sessionStorage.getItem("rrc-sw-reloaded")) return;
+      sessionStorage.setItem("rrc-sw-reloaded", "1");
+      window.location.reload();
+    };
+
+    navigator.serviceWorker.addEventListener("controllerchange", handleControllerChange);
+    return () => {
+      navigator.serviceWorker.removeEventListener("controllerchange", handleControllerChange);
+    };
   }, []);
 
   // VAPID public key — fetched once and cached for the session

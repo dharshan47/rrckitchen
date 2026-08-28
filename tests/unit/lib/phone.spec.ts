@@ -1,18 +1,22 @@
 import { describe, expect, it } from 'vitest';
-import { normalizePhone } from '@/lib/phone';
+import { normalizePhone, toE164 } from '@/lib/phone';
 
 describe('normalizePhone', () => {
-  it('prepends +91 to a 10-digit number', () => {
-    expect(normalizePhone('9876543210')).toBe('+919876543210');
+  it('returns plain 10-digit number', () => {
+    expect(normalizePhone('9876543210')).toBe('9876543210');
   });
 
-  it('prepends +91 when digits have spaces or dashes', () => {
-    expect(normalizePhone('987-654-3210')).toBe('+919876543210');
-    expect(normalizePhone('987 654 3210')).toBe('+919876543210');
+  it('strips spaces or dashes', () => {
+    expect(normalizePhone('987-654-3210')).toBe('9876543210');
+    expect(normalizePhone('987 654 3210')).toBe('9876543210');
   });
 
-  it('returns + prefixed value for 12-digit number starting with 91', () => {
-    expect(normalizePhone('919876543210')).toBe('+919876543210');
+  it('strips +91 prefix from 12-digit number starting with 91', () => {
+    expect(normalizePhone('919876543210')).toBe('9876543210');
+  });
+
+  it('strips +91 prefix when provided with country code', () => {
+    expect(normalizePhone('+91-987-654-3210')).toBe('9876543210');
   });
 
   it('returns empty string for less than 10 digits', () => {
@@ -31,11 +35,22 @@ describe('normalizePhone', () => {
     expect(normalizePhone('109876543210')).toBe('');
   });
 
-  it('strips all non-digit characters', () => {
-    expect(normalizePhone('+91-987-654-3210')).toBe('+91919876543210');
-  });
-
   it('handles empty string input', () => {
     expect(normalizePhone('')).toBe('');
+  });
+});
+
+describe('toE164', () => {
+  it('prepends +91 to a 10-digit number', () => {
+    expect(toE164('9876543210')).toBe('+919876543210');
+  });
+
+  it('returns + prefixed value for 12-digit number starting with 91', () => {
+    expect(toE164('919876543210')).toBe('+919876543210');
+  });
+
+  it('returns empty string for invalid input', () => {
+    expect(toE164('12345')).toBe('');
+    expect(toE164('')).toBe('');
   });
 });

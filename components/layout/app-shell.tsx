@@ -18,7 +18,7 @@ const HIDE_HEADER_FOOTER_PATHS = [
 const HIDE_FOOTER_ON_LARGE_SCREEN_PATHS = ["/contact"];
 
 function shouldHideShell(pathname: string) {
-  return HIDE_HEADER_FOOTER_PATHS.some((p) => pathname.startsWith(p));
+  return HIDE_HEADER_FOOTER_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
 }
 
 function shouldHideFooterOnLargeScreen(pathname: string) {

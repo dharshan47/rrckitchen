@@ -23,6 +23,7 @@ import { Separator } from "@/components/ui/separator"
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { toast } from "sonner"
 import { CloudinaryUpload } from "@/components/patterns/cloudinary-upload"
 import {
@@ -511,30 +512,33 @@ export function EditMenuDashboard({ onClose }: EditMenuDashboardProps) {
         </div>
 
         {/* Right Content - Edit Form */}
-        <div className={`flex-1 overflow-y-auto bg-[#FAFBFC] p-4 sm:p-6 lg:p-8 ${selectedItemId ? "block" : "hidden lg:block"}`}>
-          <div className="max-w-[1200px] mx-auto space-y-8">
-
-            {!selectedItemId || !draft ? (
-              <div className="bg-[#FFFFFF] rounded-[10px] border border-[#E5EAF0] p-10 text-center space-y-3">
-                {isLoading ? (
-                  <>
-                    <Skeleton className="h-8 w-64 mx-auto" />
-                    <Skeleton className="h-4 w-80 mx-auto" />
-                  </>
-                ) : (
-                  <>
-                    <h2 className="text-[20px] font-bold text-[#111827]">Select a menu item to edit</h2>
-                    <p className="text-[14px] text-[#64748B]">Choose an item from the list on the left, or create a new one.</p>
-                    <Button className="mt-2 h-10 bg-green-800 hover:bg-green-700 font-semibold" onClick={() => setAddDialogOpen(true)}>
-                      <Plus className="h-4 w-4 mr-2" /> Add New Item
-                    </Button>
-                  </>
-                )}
+        <div className={`flex-1 overflow-hidden flex flex-col bg-[#FAFBFC] ${selectedItemId ? "block" : "hidden lg:block"}`}>
+          {!selectedItemId || !draft ? (
+            <div className="p-4 sm:p-6 lg:p-8 flex-1 overflow-y-auto">
+              <div className="max-w-[1200px] mx-auto space-y-8">
+                <div className="bg-[#FFFFFF] rounded-[10px] border border-[#E5EAF0] p-10 text-center space-y-3">
+                  {isLoading ? (
+                    <>
+                      <Skeleton className="h-8 w-64 mx-auto" />
+                      <Skeleton className="h-4 w-80 mx-auto" />
+                    </>
+                  ) : (
+                    <>
+                      <h2 className="text-[20px] font-bold text-[#111827]">Select a menu item to edit</h2>
+                      <p className="text-[14px] text-[#64748B]">Choose an item from the list on the left, or create a new one.</p>
+                      <Button className="mt-2 h-10 bg-green-800 hover:bg-green-700 font-semibold" onClick={() => setAddDialogOpen(true)}>
+                        <Plus className="h-4 w-4 mr-2" /> Add New Item
+                      </Button>
+                    </>
+                  )}
+                </div>
               </div>
-            ) : (
-              <>
-                {/* Form Header */}
-                <div className="flex flex-col gap-5">
+            </div>
+          ) : (
+            <div className="flex flex-col h-full">
+              {/* Form Header */}
+              <div className="p-4 sm:p-6 lg:p-8 pb-0 shrink-0 bg-[#FAFBFC] z-10 border-b border-[#EDF0F3]">
+                <div className="max-w-[1200px] mx-auto flex flex-col gap-5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <button className="lg:hidden text-[#172033] mr-1" onClick={() => selectItem(null)}>
@@ -561,12 +565,12 @@ export function EditMenuDashboard({ onClose }: EditMenuDashboardProps) {
                   </div>
 
                   {/* Anchor Tabs */}
-                  <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide border-b border-[#EDF0F3]">
+                  <div className="flex items-center gap-2 overflow-x-auto scrollbar-hide">
                     {tabs.map((tab) => (
                       <button
                         key={tab}
                         onClick={() => setActiveTab(tab)}
-                        className={`px-4 py-3 text-[14px] font-medium whitespace-nowrap border-b-[2px] transition-colors flex items-center ${activeTab === tab ? "border-[#087A35] text-[#087A35]" : "border-transparent text-[#475569] hover:text-[#087A35]"}`}
+                        className={`px-4 py-3 text-[14px] font-medium whitespace-nowrap border-0 border-b-[2px] outline-none focus:outline-none focus-visible:ring-0 transition-colors flex items-center ${activeTab === tab ? "border-b-[#087A35] text-[#087A35]" : "border-b-transparent text-[#475569] hover:text-[#087A35]"}`}
                       >
                         {tab === "Basic Information" && <ShieldCheck className="h-4 w-4 inline mr-2" strokeWidth={1.8} />}
                         {tab === "Images" && <ImageIcon className="h-4 w-4 inline mr-2" strokeWidth={1.8} />}
@@ -579,12 +583,15 @@ export function EditMenuDashboard({ onClose }: EditMenuDashboardProps) {
                     ))}
                   </div>
                 </div>
+              </div>
 
-                {/* Form Sections */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+              {/* Form Sections inside ScrollArea */}
+              <ScrollArea className="flex-1 w-full bg-[#FAFBFC]">
+                <div className="p-4 sm:p-6 lg:p-8">
+                  <div className="max-w-[1200px] mx-auto space-y-8">
 
-                  {/* Left Column (Main Form fields) */}
-                  <div className="lg:col-span-2 space-y-8">
+                  {activeTab === "Images" && (
+                    <div className="space-y-8">
 
                     {/* Images Section */}
                     <Card className="shadow-none border-[#E5EAF0] bg-[#FFFFFF] rounded-[9px]">
@@ -668,8 +675,11 @@ export function EditMenuDashboard({ onClose }: EditMenuDashboardProps) {
                         )}
                       </CardContent>
                     </Card>
+                    </div>
+                  )}
 
-                    {/* Basic Information */}
+                  {activeTab === "Basic Information" && (
+                    <div className="space-y-8">
                     <Card className="shadow-none border-[#E5EAF0] bg-[#FFFFFF] rounded-[9px]">
                       <CardHeader className="p-5 border-b border-[#EDF0F3]">
                         <CardTitle className="text-[16px] font-bold text-[#111827]">Basic Information</CardTitle>
@@ -808,57 +818,6 @@ export function EditMenuDashboard({ onClose }: EditMenuDashboardProps) {
                         )}
                       </div>
 
-                    {/* Pricing & Availability */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
-                      {/* Pricing */}
-                      <Card className="shadow-none border-[#E5EAF0] bg-[#FFFFFF] rounded-[9px]">
-                        <CardHeader className="p-5 border-b border-[#EDF0F3]"><CardTitle className="text-[16px] font-bold text-[#111827]">Pricing</CardTitle></CardHeader>
-                        <CardContent className="p-5 space-y-5">
-                          <div className="grid grid-cols-2 gap-5">
-                            <div className="grid gap-2">
-                              <label className="text-[13px] font-bold text-[#172033]">Selling Price (₹) <span className="text-[#DC2626]">*</span></label>
-                              <Input
-                                type="number"
-                                min={0}
-                                value={draft.price || ""}
-                                onChange={(e) => updateDraft(selectedItemId, { price: numOrNull(e.target.value) ?? 0 })}
-                                className="font-bold text-[14px] text-[#111827] h-[40px] border-[#DCE3EA] rounded-[7px] shadow-none focus-visible:ring-0 focus-visible:border-[#087A35]"
-                              />
-                            </div>
-                            <div className="grid gap-2">
-                              <label className="text-[13px] font-bold text-[#172033]">MRP Price (₹)</label>
-                              <Input
-                                type="number"
-                                min={0}
-                                value={draft.compareAtPrice ?? ""}
-                                onChange={(e) => updateDraft(selectedItemId, { compareAtPrice: numOrNull(e.target.value) })}
-                                className="font-medium text-[14px] text-[#64748B] h-[40px] border-[#DCE3EA] rounded-[7px] shadow-none focus-visible:ring-0 focus-visible:border-[#087A35]"
-                              />
-                            </div>
-                          </div>
-                          {draft.compareAtPrice && draft.compareAtPrice > draft.price && (
-                            <div className="text-right">
-                              <span className="text-[12px] font-bold text-[#087A35] bg-[#EFF8F2] px-2.5 py-1.5 rounded-[6px]">
-                                You Save: ₹{draft.compareAtPrice - draft.price} ({Math.round(((draft.compareAtPrice - draft.price) / draft.compareAtPrice) * 100)}% OFF)
-                              </span>
-                            </div>
-                          )}
-                          <div className="flex items-center justify-between p-4 border border-[#E5EAF0] rounded-[7px] bg-[#FFFFFF]">
-                            <span className="text-[14px] font-bold text-[#172033]">Availability Status</span>
-                            <div className="flex items-center gap-3">
-                              <Switch
-                                checked={draft.isAvailable}
-                                onCheckedChange={(v) => updateDraft(selectedItemId, { isAvailable: v })}
-                                className="data-[state=checked]:bg-[#087A35] data-[state=unchecked]:bg-[#CBD5E1]"
-                              />
-                              <span className={`text-[13px] font-bold ${draft.isAvailable ? "text-[#087A35]" : "text-[#DC2626]"}`}>
-                                {draft.isAvailable ? "Available" : "Unavailable"}
-                              </span>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-
                       {/* Dish Info quick */}
                       <Card className="shadow-none border-[#E5EAF0] bg-[#FFFFFF] rounded-[9px]">
                         <CardHeader className="p-5 border-b border-[#EDF0F3]"><CardTitle className="text-[16px] font-bold text-[#111827]">Dish Info</CardTitle></CardHeader>
@@ -915,40 +874,97 @@ export function EditMenuDashboard({ onClose }: EditMenuDashboardProps) {
                           </div>
                         </CardContent>
                       </Card>
+
+                      {/* About This Dish */}
+                      <Card className="shadow-none border-[#E5EAF0] bg-[#FFFFFF] rounded-[9px]">
+                        <CardHeader className="p-5 border-b border-[#EDF0F3]"><CardTitle className="text-[16px] font-bold text-[#111827]">About This Dish</CardTitle></CardHeader>
+                        <CardContent className="p-5 space-y-5">
+                          <div className="grid gap-2">
+                            <label className="text-[13px] font-bold text-[#172033]">Title</label>
+                            <div className="relative">
+                              <Input
+                                value={draft.aboutTitle}
+                                onChange={(e) => updateDraft(selectedItemId, { aboutTitle: e.target.value.slice(0, 100) })}
+                                placeholder="e.g. About this dish"
+                                className="font-medium text-[14px] text-[#111827] h-[40px] border-[#DCE3EA] rounded-[7px] shadow-none focus-visible:ring-0 focus-visible:border-[#087A35]"
+                              />
+                              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-[#64748B] font-medium">{draft.aboutTitle.length}/100</span>
+                            </div>
+                          </div>
+                          <div className="grid gap-2">
+                            <label className="text-[13px] font-bold text-[#172033]">Description</label>
+                            <div className="relative">
+                              <Textarea
+                                value={draft.aboutDescription}
+                                onChange={(e) => updateDraft(selectedItemId, { aboutDescription: e.target.value.slice(0, 500) })}
+                                placeholder="Describe the story, ingredients and taste of this dish..."
+                                className="min-h-[120px] text-[14px] text-[#111827] border-[#DCE3EA] rounded-[7px] shadow-none resize-none pb-8 focus-visible:ring-0 focus-visible:border-[#087A35]"
+                              />
+                              <span className="absolute bottom-3 right-3 text-[11px] text-[#64748B] font-medium">{draft.aboutDescription.length}/500</span>
+                            </div>
+                          </div>
+                        </CardContent>
+                      </Card>
                     </div>
+                  )}
 
-                    {/* About This Dish */}
-                    <Card className="shadow-none border-[#E5EAF0] bg-[#FFFFFF] rounded-[9px]">
-                      <CardHeader className="p-5 border-b border-[#EDF0F3]"><CardTitle className="text-[16px] font-bold text-[#111827]">About This Dish</CardTitle></CardHeader>
-                      <CardContent className="p-5 space-y-5">
-                        <div className="grid gap-2">
-                          <label className="text-[13px] font-bold text-[#172033]">Title</label>
-                          <div className="relative">
-                            <Input
-                              value={draft.aboutTitle}
-                              onChange={(e) => updateDraft(selectedItemId, { aboutTitle: e.target.value.slice(0, 100) })}
-                              placeholder="e.g. About this dish"
-                              className="font-medium text-[14px] text-[#111827] h-[40px] border-[#DCE3EA] rounded-[7px] shadow-none focus-visible:ring-0 focus-visible:border-[#087A35]"
-                            />
-                            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-[#64748B] font-medium">{draft.aboutTitle.length}/100</span>
+                  {activeTab === "Pricing & Availability" && (
+                    <div className="space-y-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4">
+                      {/* Pricing */}
+                      <Card className="shadow-none border-[#E5EAF0] bg-[#FFFFFF] rounded-[9px]">
+                        <CardHeader className="p-5 border-b border-[#EDF0F3]"><CardTitle className="text-[16px] font-bold text-[#111827]">Pricing</CardTitle></CardHeader>
+                        <CardContent className="p-5 space-y-5">
+                          <div className="grid grid-cols-2 gap-5">
+                            <div className="grid gap-2">
+                              <label className="text-[13px] font-bold text-[#172033]">Selling Price (₹) <span className="text-[#DC2626]">*</span></label>
+                              <Input
+                                type="number"
+                                min={0}
+                                value={draft.price || ""}
+                                onChange={(e) => updateDraft(selectedItemId, { price: numOrNull(e.target.value) ?? 0 })}
+                                className="font-bold text-[14px] text-[#111827] h-[40px] border-[#DCE3EA] rounded-[7px] shadow-none focus-visible:ring-0 focus-visible:border-[#087A35]"
+                              />
+                            </div>
+                            <div className="grid gap-2">
+                              <label className="text-[13px] font-bold text-[#172033]">MRP Price (₹)</label>
+                              <Input
+                                type="number"
+                                min={0}
+                                value={draft.compareAtPrice ?? ""}
+                                onChange={(e) => updateDraft(selectedItemId, { compareAtPrice: numOrNull(e.target.value) })}
+                                className="font-medium text-[14px] text-[#64748B] h-[40px] border-[#DCE3EA] rounded-[7px] shadow-none focus-visible:ring-0 focus-visible:border-[#087A35]"
+                              />
+                            </div>
                           </div>
-                        </div>
-                        <div className="grid gap-2">
-                          <label className="text-[13px] font-bold text-[#172033]">Description</label>
-                          <div className="relative">
-                            <Textarea
-                              value={draft.aboutDescription}
-                              onChange={(e) => updateDraft(selectedItemId, { aboutDescription: e.target.value.slice(0, 500) })}
-                              placeholder="Describe the story, ingredients and taste of this dish..."
-                              className="min-h-[120px] text-[14px] text-[#111827] border-[#DCE3EA] rounded-[7px] shadow-none resize-none pb-8 focus-visible:ring-0 focus-visible:border-[#087A35]"
-                            />
-                            <span className="absolute bottom-3 right-3 text-[11px] text-[#64748B] font-medium">{draft.aboutDescription.length}/500</span>
+                          {draft.compareAtPrice && draft.compareAtPrice > draft.price && (
+                            <div className="text-right">
+                              <span className="text-[12px] font-bold text-[#087A35] bg-[#EFF8F2] px-2.5 py-1.5 rounded-[6px]">
+                                You Save: ₹{draft.compareAtPrice - draft.price} ({Math.round(((draft.compareAtPrice - draft.price) / draft.compareAtPrice) * 100)}% OFF)
+                              </span>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between p-4 border border-[#E5EAF0] rounded-[7px] bg-[#FFFFFF]">
+                            <span className="text-[14px] font-bold text-[#172033]">Availability Status</span>
+                            <div className="flex items-center gap-3">
+                              <Switch
+                                checked={draft.isAvailable}
+                                onCheckedChange={(v) => updateDraft(selectedItemId, { isAvailable: v })}
+                                className="data-[state=checked]:bg-[#087A35] data-[state=unchecked]:bg-[#CBD5E1]"
+                              />
+                              <span className={`text-[13px] font-bold ${draft.isAvailable ? "text-[#087A35]" : "text-[#DC2626]"}`}>
+                                {draft.isAvailable ? "Available" : "Unavailable"}
+                              </span>
+                            </div>
                           </div>
-                        </div>
-                      </CardContent>
-                    </Card>
+                          </CardContent>
+                      </Card>
+                    </div>
+                    </div>
+                  )}
 
-                    {/* Delivery & Service */}
+                  {activeTab === "Delivery & Service" && (
+                    <div className="space-y-8">
                     <Card className="shadow-none border-[#E5EAF0] bg-[#FFFFFF] rounded-[9px]">
                       <CardHeader className="p-5 border-b border-[#EDF0F3]"><CardTitle className="text-[16px] font-bold text-[#111827]">Delivery & Service</CardTitle></CardHeader>
                       <CardContent className="p-5 space-y-5">
@@ -1003,12 +1019,13 @@ export function EditMenuDashboard({ onClose }: EditMenuDashboardProps) {
                             className="h-10 text-sm font-semibold border-slate-200 shadow-sm"
                           />
                         </div>
-                      </CardContent>
-                    </Card>
-                  </div>
+                        </CardContent>
+                      </Card>
+                    </div>
+                  )}
 
-                  {/* Right Column (Sidebar widgets) */}
-                  <div className="space-y-6">
+                  {activeTab === "Highlights" && (
+                    <div className="space-y-8">
 
                     {/* Ratings & Social Proof */}
                     <Card className="shadow-none border-[#E5EAF0] bg-[#FFFFFF] rounded-[9px]">
@@ -1124,7 +1141,42 @@ export function EditMenuDashboard({ onClose }: EditMenuDashboardProps) {
                       </CardContent>
                     </Card>
 
-                    {/* SEO & Visibility */}
+                    {/* Ratings & Social Proof */}
+                    <Card className="shadow-none border-[#E5EAF0] bg-[#FFFFFF] rounded-[9px]">
+                      <CardHeader className="p-5 border-b border-[#EDF0F3]"><CardTitle className="text-[16px] font-bold text-[#111827]">Ratings & Social Proof</CardTitle></CardHeader>
+                      <CardContent className="p-5 space-y-5">
+                        <div className="grid grid-cols-2 gap-5">
+                          <div className="grid gap-2">
+                            <label className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">Average Rating</label>
+                            <div className="flex items-center gap-2 border border-[#DCE3EA] rounded-[7px] px-3 h-[40px] bg-[#F8FAFC]">
+                              <Star className="h-4 w-4 fill-[#F59E0B] text-[#F59E0B]" strokeWidth={1.8} />
+                              <span className="font-bold text-[14px] text-[#111827]">{selectedRow?.avgRating ? Number(selectedRow.avgRating).toFixed(1) : "—"}</span>
+                            </div>
+                          </div>
+                          <div className="grid gap-2">
+                            <label className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">Total Reviews</label>
+                            <div className="flex items-center border border-[#DCE3EA] rounded-[7px] px-3 h-[40px] bg-[#F8FAFC]">
+                              <span className="font-bold text-[14px] text-[#111827]">{selectedRow?.totalReviews ?? 0}</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="grid gap-2">
+                          <label className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">Total Orders</label>
+                          <div className="flex items-center border border-[#DCE3EA] rounded-[7px] px-3 h-[40px] bg-[#F8FAFC]">
+                            <span className="font-bold text-[14px] text-[#111827]">{selectedRow?.orderCount ?? 0}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 bg-[#EFF8F2] text-[#087A35] p-3 rounded-[7px] border border-[#9CCDAE]">
+                          <CheckCircle2 className="h-4 w-4 shrink-0" strokeWidth={1.8} />
+                          <span className="text-[12px] font-bold">Ratings & orders update automatically</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                    </div>
+                  )}
+
+                  {activeTab === "SEO & Visibility" && (
+                    <div className="space-y-8">
                     <Card className="shadow-none border-[#E5EAF0] bg-[#FFFFFF] rounded-[9px]">
                       <CardHeader className="p-5 border-b border-[#EDF0F3]"><CardTitle className="text-[16px] font-bold text-[#111827]">SEO & Visibility</CardTitle></CardHeader>
                       <CardContent className="p-5 space-y-5">
@@ -1154,13 +1206,13 @@ export function EditMenuDashboard({ onClose }: EditMenuDashboardProps) {
                         </div>
                       </CardContent>
                     </Card>
-
+                    </div>
+                  )}
                   </div>
                 </div>
-              </>
-            )}
-
-          </div>
+              </ScrollArea>
+            </div>
+          )}
         </div>
 
       </div>

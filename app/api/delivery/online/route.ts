@@ -26,8 +26,8 @@ export async function POST(req: Request) {
     });
 
     if (online) {
-      // Placeholder until first real GPS ping arrives; location self-corrects on next updateDeliveryLocation call
-      await redis.geoadd("deliveryPersons:live", { longitude: 0, latitude: 0, member: partner.id });
+      // Real position is added to the geo index on the first location ping;
+      // adding a (0,0) placeholder here would break nearby-partner searches.
     } else {
       await redis.zrem("deliveryPersons:live", partner.id);
     }

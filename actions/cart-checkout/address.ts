@@ -9,7 +9,13 @@ const addressSchema = z.object({
   lineOne: z.string().min(3),
   lineTwo: z.string().optional(),
   pincode: z.string().regex(/^\d{6}$/),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
 })
+
+export type AddAddressResult =
+  | { success: true; address: { id: string; label: string | null; pincode: string } }
+  | { success: false; error: string }
 
 export async function getUserAddresses() {
   const session = await getSession()
@@ -22,29 +28,44 @@ export async function getUserAddresses() {
   })
 }
 
-export async function addAddress(data: z.infer<typeof addressSchema>) {
+export async function addAddress(data: z.infer<typeof addressSchema>): Promise<AddAddressResult> {
   const session = await getSession()
-  if (!session?.user?.id) throw new Error("Not authenticated")
+  if (!session?.user?.id) return { success: false, error: "Not authenticated" }
 
-  const parsed = addressSchema.parse(data)
+  const parsed = addressSchema.safeParse(data)
+  if (!parsed.success) {
+    return { success: false, error: "Please fill in your address details correctly" }
+  }
 
-  const zone = await prisma.serviceZone.findFirst({ where: { pincodes: { has: parsed.pincode } } })
-  if (!zone) throw new Error("Delivery not available in this pincode")
+  const zone = await prisma.serviceZone.findFirst({
+    where: { pincodes: { has: parsed.data.pincode }, isActive: true },
+  })
+  if (!zone) {
+    return {
+      success: false,
+      error: `Delivery is not available in this pincode (${parsed.data.pincode}). Please pick a location within our service area.`,
+    }
+  }
 
   const existingCount = await prisma.address.count({ where: { userId: session.user.id } })
   const isDefault = existingCount === 0
 
-  return prisma.address.create({
+  const address = await prisma.address.create({
     data: {
       userId: session.user.id,
-      label: parsed.label,
-      lineOne: parsed.lineOne,
-      lineTwo: parsed.lineTwo,
-      pincode: parsed.pincode,
+      label: parsed.data.label,
+      lineOne: parsed.data.lineOne,
+      lineTwo: parsed.data.lineTwo,
+      pincode: parsed.data.pincode,
       serviceZoneId: zone.id,
       isDefault,
+      latitude: parsed.data.latitude,
+      longitude: parsed.data.longitude,
     },
+    select: { id: true, label: true, pincode: true },
   })
+
+  return { success: true, address }
 }
 
 export async function deleteAddress(id: string) {

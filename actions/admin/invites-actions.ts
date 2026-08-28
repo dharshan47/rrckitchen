@@ -77,6 +77,10 @@ export async function acceptAdminInvite(token: string) {
       create: { userId: session.user.id, roleId: adminRole.id },
       update: {},
     });
+    await tx.user.update({
+      where: { id: session.user.id },
+      data: { role: "admin" },
+    });
   });
 
   await logAdminAction({

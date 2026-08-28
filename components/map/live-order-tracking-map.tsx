@@ -3,8 +3,10 @@
 import { useEffect, useCallback, useMemo, useRef } from "react"
 import { useAblyOrderChannel } from "@/hooks/useAblySubscribe"
 import { DeliveryPersonLocationBroadcaster } from "@/components/delivery-partner/location-broadcaster"
+import { THANJAVUR_CENTER } from "@/lib/geo/thanjavur-bounds"
 import dynamic from "next/dynamic"
 import { Loader2, Bike } from "lucide-react"
+import { cn } from "@/lib/utils"
 import {
   useOrderTrackingLivePosition,
   useOrderTrackingRouteCoords,
@@ -21,14 +23,16 @@ const ThanjavurMap = dynamic(
 
 interface LiveOrderTrackingMapProps {
   orderId: string
-  kitchenLat: number
-  kitchenLng: number
+  kitchenLat?: number
+  kitchenLng?: number
   customerLat?: number
   customerLng?: number
   deliveryPersonLat?: number
   deliveryPersonLng?: number
   deliveryPersonId?: string
   broadcastLocation?: boolean
+  height?: string
+  showFooter?: boolean
 }
 
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -51,6 +55,8 @@ export function LiveOrderTrackingMap({
   deliveryPersonLng,
   deliveryPersonId,
   broadcastLocation,
+  height = "250px",
+  showFooter = true,
 }: LiveOrderTrackingMapProps) {
   const livePosition = useOrderTrackingLivePosition()
   const routeCoords = useOrderTrackingRouteCoords()
@@ -67,8 +73,11 @@ export function LiveOrderTrackingMap({
     return () => actions.resetTracking()
   }, [orderId, actions])
 
-  const destLat = customerLat ?? kitchenLat
-  const destLng = customerLng ?? kitchenLng
+  const destLat = customerLat ?? kitchenLat ?? THANJAVUR_CENTER[0]
+  const destLng = customerLng ?? kitchenLng ?? THANJAVUR_CENTER[1]
+
+  const kitchenPosition =
+    kitchenLat != null && kitchenLng != null ? ([kitchenLat, kitchenLng] as [number, number]) : undefined
 
   const { data: lastKnownLocation } = useRiderLastLocationQuery(
     orderId,
@@ -108,7 +117,7 @@ export function LiveOrderTrackingMap({
   const showDistance = roadDistance ?? distance
 
   return (
-    <div className="relative">
+    <div className="relative w-full h-full">
       {deliveryPersonId && broadcastLocation && (
         <DeliveryPersonLocationBroadcaster
           deliveryPersonId={deliveryPersonId}
@@ -116,70 +125,75 @@ export function LiveOrderTrackingMap({
           enabled={true}
         />
       )}
-      <div className="rounded-xl overflow-hidden border border-border">
+      <div className={cn("overflow-hidden", showFooter ? "rounded-xl border border-border" : "w-full h-full")}>
         <ThanjavurMap
           markerPosition={deliveryPos ? [deliveryPos.lat, deliveryPos.lng] : undefined}
-          kitchenPosition={[kitchenLat, kitchenLng]}
+          kitchenPosition={kitchenPosition}
+          destinationPosition={[destLat, destLng]}
           routeCoords={routeCoords.length > 0 ? routeCoords : undefined}
-          height="250px"
+          height={height}
         />
       </div>
-      <div className="mt-3 flex items-center justify-between gap-3 px-1">
-        <div className="flex items-center gap-1.5 text-xs">
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#ff5722]" />
-          <span className="text-muted-foreground">Kitchen</span>
-          <span className="mx-1.5 text-muted-foreground/40">|</span>
-          <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#1a6a32]" />
-          <span className="text-muted-foreground">Delivery</span>
-        </div>
-        <div className="flex items-center gap-3 shrink-0">
-          {deliveryPos && (
-            <span className="flex items-center gap-1.5 text-xs font-bold text-green-600">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-600" />
-              </span>
-              Live
-            </span>
-          )}
-          {etaLoading && eta == null && (
-            <span className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Loader2 className="h-3 w-3 animate-spin" />
-              Calculating ETA...
-            </span>
-          )}
-          {eta != null && (
-            <span className="text-sm font-semibold text-foreground">
-              Arriving in ~{Math.round(eta)} min
-            </span>
-          )}
-          {showDistance != null && (
-            <span className="text-xs font-medium text-muted-foreground">
-              {showDistance < 1
-                ? `${Math.round(showDistance * 1000)} m`
-                : `${showDistance.toFixed(1)} km`}
-            </span>
-          )}
-        </div>
-      </div>
-      <div className="mt-2 px-1">
-        {!deliveryPos ? (
-          <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
-            <Loader2 className="h-3 w-3 animate-spin" />
-            Waiting for delivery partner location...
+      {showFooter && (
+        <>
+          <div className="mt-3 flex items-center justify-between gap-3 px-1">
+            <div className="flex items-center gap-1.5 text-xs">
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#ff5722]" />
+              <span className="text-muted-foreground">Kitchen</span>
+              <span className="mx-1.5 text-muted-foreground/40">|</span>
+              <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#1a6a32]" />
+              <span className="text-muted-foreground">Delivery</span>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              {deliveryPos && (
+                <span className="flex items-center gap-1.5 text-xs font-bold text-green-600">
+                  <span className="relative flex h-2 w-2">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-500 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-600" />
+                  </span>
+                  Live
+                </span>
+              )}
+              {etaLoading && eta == null && (
+                <span className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                  Calculating ETA...
+                </span>
+              )}
+              {eta != null && (
+                <span className="text-sm font-semibold text-foreground">
+                  Arriving in ~{Math.round(eta)} min
+                </span>
+              )}
+              {showDistance != null && (
+                <span className="text-xs font-medium text-muted-foreground">
+                  {showDistance < 1
+                    ? `${Math.round(showDistance * 1000)} m`
+                    : `${showDistance.toFixed(1)} km`}
+                </span>
+              )}
+            </div>
           </div>
-        ) : showDistance != null && showDistance < 1.5 ? (
-          <div className="flex items-center gap-2 text-xs font-bold text-green-700">
-            <Bike className="h-3.5 w-3.5" />
-            Your delivery partner is nearby
+          <div className="mt-2 px-1">
+            {!deliveryPos ? (
+              <div className="flex items-center gap-2 text-xs font-medium text-muted-foreground">
+                <Loader2 className="h-3 w-3 animate-spin" />
+                Waiting for delivery partner location...
+              </div>
+            ) : showDistance != null && showDistance < 1.5 ? (
+              <div className="flex items-center gap-2 text-xs font-bold text-green-700">
+                <Bike className="h-3.5 w-3.5" />
+                Your delivery partner is nearby
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
+                <Bike className="h-3.5 w-3.5 text-green-600" />
+                Your delivery partner is on the way
+              </div>
+            )}
           </div>
-        ) : (
-          <div className="flex items-center gap-2 text-xs font-semibold text-slate-600">
-            <Bike className="h-3.5 w-3.5 text-green-600" />
-            Your delivery partner is on the way
-          </div>
-        )}
-      </div>
+        </>
+      )}
     </div>
   )
 }

@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Skeleton } from "@/components/ui/skeleton"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { toast } from "sonner"
 import { DataTable } from "./data-table"
 import { columns, type KitchenMenuDetail } from "./columns"
@@ -310,17 +311,6 @@ export function MenuPageClient() {
               <Download className="h-4 w-4 mr-2" strokeWidth={1.8} />
               Export
             </Button>
-            <div className="w-px h-8 bg-[#E5E9ED] mx-1 hidden sm:block" />
-            <div className="flex items-center gap-2 bg-[#F8FAFC] p-1 rounded-[10px] border border-[#DDE3E8]">
-              <Button variant="ghost" className="h-[36px] bg-[#FFFFFF] border border-[#8BC7A0] text-[#087A36] font-medium shadow-[0_1px_2px_rgba(15,23,42,0.04)] px-3 rounded-[8px] hover:bg-[#F1FAF4] hover:text-[#087A36]">
-                <List className="h-4 w-4 mr-2" strokeWidth={1.8} />
-                Table View
-              </Button>
-              <Button variant="ghost" className="h-[36px] bg-transparent text-[#334155] font-medium hover:bg-[#FFFFFF] hover:text-[#111827] px-3 rounded-[8px]">
-                <Grid2X2 className="h-4 w-4 mr-2" strokeWidth={1.8} />
-                Grid View
-              </Button>
-            </div>
           </div>
         </div>
 
@@ -370,14 +360,17 @@ export function MenuPageClient() {
         ) : isLoading ? (
           <TableSkeleton />
         ) : (
-          <DataTable
-            columns={columns}
-            data={filteredRows}
-            onEditMenu={(id) => {
-              const kitchen = rows.find((r) => r.id === id)
-              openEditor(id, kitchen?.kitchenName ?? "")
-            }}
-          />
+          <ScrollArea className="h-[calc(100vh-320px)] w-full">
+            <DataTable
+              columns={columns}
+              data={filteredRows}
+              onEditMenu={(id) => {
+                const kitchen = rows.find((r) => r.id === id)
+                openEditor(id, kitchen?.kitchenName ?? "")
+              }}
+            />
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         )}
       </div>
 

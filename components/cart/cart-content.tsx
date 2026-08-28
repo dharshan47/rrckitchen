@@ -41,9 +41,9 @@ import { AddToCartPopup, type AddPopupItem } from "@/components/menu/add-to-cart
 import { CartSkeleton } from "@/components/cart/cart-skeleton";
 
 const addressIconMap: Record<string, { icon: typeof Home; color: string }> = {
-  Home: { icon: Home, color: "text-[#168846] bg-[#168846]/10" },
-  Work: { icon: Briefcase, color: "text-gray-500 bg-gray-100" },
-  Other: { icon: MapPin, color: "text-gray-500 bg-gray-100" },
+  Home: { icon: Home, color: "" },
+  Work: { icon: Briefcase, color: "" },
+  Other: { icon: MapPin, color: "" },
 };
 
 function startOfDay(d: Date) {
@@ -60,10 +60,6 @@ function isTomorrow(d: Date) {
   const t = new Date();
   t.setDate(t.getDate() + 1);
   return isSameDay(startOfDay(d), startOfDay(t));
-}
-
-function formatDeliveryDate(d: Date) {
-  return d.toLocaleDateString("en-IN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 }
 
 function toIsoDate(d: Date) {
@@ -83,79 +79,90 @@ const CartItemCard = memo(function CartItemCard({
 }) {
   const isVeg = item.foodType.toUpperCase() === "VEG";
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 overflow-hidden">
-      <div className="p-4 sm:p-5 flex gap-4 sm:gap-5">
-        <div className="relative h-[90px] w-[90px] sm:h-[100px] sm:w-[100px] shrink-0 rounded-xl bg-gray-50 overflow-hidden border border-gray-100">
-          {item.imageUrl ? (
-            <Image
-              src={item.imageUrl}
-              alt={item.name}
-              fill
-              loading="lazy"
-              className="object-cover"
-              sizes="100px"
-            />
-          ) : (
-            <div className="flex h-full w-full items-center justify-center">
-              <ShoppingBag className="h-6 w-6 text-gray-300" />
+    <div className="flex gap-3 sm:gap-5 py-5">
+      {/* Food Image */}
+      <div className="relative h-[80px] w-[80px] sm:h-[90px] sm:w-[90px] shrink-0 rounded-[7px] bg-gray-100 overflow-hidden">
+        {item.imageUrl ? (
+          <Image
+            src={item.imageUrl}
+            alt={item.name}
+            fill
+            loading="lazy"
+            className="object-cover"
+            sizes="(max-width: 640px) 80px, 90px"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <ShoppingBag className="h-6 w-6 text-gray-300" />
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="flex-1 flex flex-col sm:flex-row sm:items-start min-w-0 gap-2 sm:gap-4">
+        <div className="flex-1 min-w-0">
+          {/* Name + Veg Badge */}
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="font-bold text-[15px] text-[#171717] leading-snug">{item.name}</h3>
+            {isVeg && (
+              <div className="flex items-center gap-1 shrink-0">
+                <div className="h-2.5 w-2.5 rounded-full bg-[#16803A]" />
+                <span className="text-[11px] font-semibold text-[#16803A]">Pure Veg</span>
+              </div>
+            )}
+          </div>
+          {/* Kitchen/description */}
+          <p className="text-[13px] text-[#555555] mb-3 leading-snug">{item.kitchenName || "Home-cooked meal"}</p>
+          {/* Date + Meal Time */}
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-1 text-[12px] text-[#555555]">
+            <div className="flex items-center gap-1.5">
+              <CalendarIcon className="h-3.5 w-3.5 text-[#999999] shrink-0" />
+              <span>
+                Delivery Date:{" "}
+                {deliveryDate.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+                {isTomorrow(deliveryDate) && (
+                  <span className="text-[#171717] ml-1">(Tomorrow)</span>
+                )}
+              </span>
             </div>
-          )}
-          <div className="absolute bottom-0 left-0 bg-[#168846] text-white text-[9px] font-bold px-1.5 py-0.5 rounded-tr-lg">
-             TAKEAWAY
+            <div className="flex items-center gap-1.5">
+              <Clock className="h-3.5 w-3.5 text-[#999999] shrink-0" />
+              <span>Meal Time: {getTimeSlotLabel(item.timeSlot as TimeSlotFilter) || formatTimeSlot(item.timeSlot)}</span>
+            </div>
           </div>
         </div>
 
-        <div className="flex-1 flex flex-col sm:flex-row sm:justify-between min-w-0">
-
-          <div className="flex-1 min-w-0 flex flex-col justify-start">
-            <div className="flex items-center gap-2 mb-1">
-              <h3 className="font-extrabold text-[16px] text-gray-900 leading-tight">{item.name}</h3>
-              {isVeg && (
-                <div className="flex items-center gap-1">
-                  <div className="h-3.5 w-3.5 rounded-sm border-[1.5px] border-[#168846] flex items-center justify-center p-px">
-                      <div className="h-1.5 w-1.5 rounded-full bg-[#168846]" />
-                  </div>
-                  <span className="text-[11px] font-bold text-[#168846]">Pure Veg</span>
-                </div>
-              )}
+        {/* Price + Qty + Delete — right side */}
+        <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 lg:gap-8 shrink-0 mt-3 sm:mt-0 w-full sm:w-auto">
+          <span className="font-bold text-[16px] text-[#171717]">₹{item.price}</span>
+          <div className="flex items-center gap-3 sm:gap-4">
+            {/* Qty Stepper */}
+            <div className="flex items-center border border-[#DEDEDE] rounded-[6px] bg-white h-8">
+              <button
+                onClick={() => onUpdateQuantity(item.id, item.qty - 1)}
+                className="w-8 h-full flex items-center justify-center text-[#FE4D02] hover:bg-gray-50 transition-colors rounded-l-[6px]"
+              >
+                <Minus className="h-3 w-3" />
+              </button>
+              <div className="w-8 h-full flex items-center justify-center border-x border-[#E5E5E5] text-[13px] font-bold text-[#222222]">
+                {item.qty}
+              </div>
+              <button
+                onClick={() => onUpdateQuantity(item.id, item.qty + 1)}
+                className="w-8 h-full flex items-center justify-center text-[#FE4D02] hover:bg-gray-50 transition-colors rounded-r-[6px]"
+              >
+                <Plus className="h-3 w-3" />
+              </button>
             </div>
-            <p className="text-[13px] text-gray-500 mb-3">{item.kitchenName || "Description of item"}</p>
-
-            <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-6 text-[12px] font-semibold text-gray-500 mt-auto">
-               <div className="flex items-center gap-1.5">
-                  <CalendarIcon className="h-4 w-4 text-gray-400" />
-                  Delivery Date: {formatDeliveryDate(deliveryDate)}
-                  {isTomorrow(deliveryDate) && <span className="text-[#168846] font-bold">(Tomorrow)</span>}
-               </div>
-               <div className="flex items-center gap-1.5">
-                  <Clock className="h-4 w-4 text-gray-400" />
-                  Meal Time: {getTimeSlotLabel(item.timeSlot as TimeSlotFilter) || formatTimeSlot(item.timeSlot)}
-               </div>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:items-end justify-between shrink-0 sm:pl-4 mt-3 sm:mt-0">
-             <span className="font-extrabold text-[18px] text-gray-900">₹{item.price}</span>
-
-             <div className="flex items-center gap-4 mt-3 sm:mt-0">
-               <div className="flex items-center border border-gray-200 rounded-lg bg-white h-9">
-                 <button onClick={() => onUpdateQuantity(item.id, item.qty - 1)} className="w-9 h-full flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors">
-                   <Minus className="h-3.5 w-3.5" />
-                 </button>
-                 <div className="w-9 h-full flex items-center justify-center border-x border-gray-200 text-[14px] font-bold text-gray-900">
-                   {item.qty}
-                 </div>
-                 <button onClick={() => onUpdateQuantity(item.id, item.qty + 1)} className="w-9 h-full flex items-center justify-center text-[#EE7005] hover:bg-gray-50 transition-colors">
-                   <Plus className="h-3.5 w-3.5" />
-                 </button>
-               </div>
-               <button onClick={() => onRemove(item.id)} className="text-[#EE7005] hover:text-red-500 transition-colors">
-                 <Trash2 className="h-5 w-5" />
-               </button>
-             </div>
+            {/* Delete */}
+            <button
+              onClick={() => onRemove(item.id)}
+              className="text-[#FE4D02] hover:opacity-80 transition-opacity"
+            >
+              <Trash2 style={{ width: 18, height: 18 }} />
+            </button>
           </div>
         </div>
-
       </div>
     </div>
   );
@@ -178,36 +185,37 @@ const PriceBreakdown = memo(function PriceBreakdown({
 }) {
   return (
     <div>
-      <h2 className="text-[18px] font-extrabold text-gray-900 mb-5">Order Summary</h2>
-      <div className="space-y-4 text-[14px]">
-        <div className="flex justify-between">
-          <span className="text-gray-600 font-medium">Item Total ({itemCounts} Items)</span>
-          <span className="font-semibold text-gray-900">₹{total.toFixed(0)}</span>
-        </div>
-        <div className="flex justify-between">
-          <span className="text-gray-600 font-medium">Packaging Charges</span>
-          <span className="font-semibold text-gray-900">₹{packagingCharge.toFixed(0)}</span>
+      <h2 className="text-[18px] font-bold text-[#171717] mb-5">Order Summary</h2>
+      <div className="space-y-3.5 text-[14px]">
+        <div className="flex justify-between items-center">
+          <span className="text-[#444444]">Item Total ({itemCounts} Items)</span>
+          <span className="font-medium text-[#222222]">₹{total.toFixed(0)}</span>
         </div>
         <div className="flex justify-between items-center">
-          <span className="text-gray-600 font-medium flex items-center gap-1">Delivery Charges <Info className="h-3.5 w-3.5 text-gray-400" /></span>
-          <span className="font-semibold text-gray-900">₹{deliveryCharge.toFixed(0)}</span>
+          <span className="text-[#444444]">Packaging Charges</span>
+          <span className="font-medium text-[#222222]">₹{packagingCharge.toFixed(0)}</span>
         </div>
-        
+        <div className="flex justify-between items-center">
+          <span className="text-[#444444] flex items-center gap-1">Delivery Charges <Info className="h-3.5 w-3.5 text-[#999999]" /></span>
+          <span className="font-medium text-[#222222]">₹{deliveryCharge.toFixed(0)}</span>
+        </div>
         {couponSavings > 0 && (
-          <div className="flex justify-between text-[#168846]">
-            <span className="font-medium">Coupon Savings</span>
-            <span className="font-bold">-₹{couponSavings.toFixed(0)}</span>
+          <div className="flex justify-between items-center text-[#16803A]">
+            <span>Coupon Savings</span>
+            <span className="font-semibold">-₹{couponSavings.toFixed(0)}</span>
           </div>
         )}
-        <div className="border-t border-gray-100 pt-5 mt-2 flex justify-between items-center">
-          <span className="text-[16px] font-extrabold text-gray-900">Total Amount</span>
-          <span className="text-[22px] font-extrabold text-[#168846]">₹{finalTotal.toFixed(0)}</span>
-        </div>
       </div>
+      {/* Divider + Total */}
+      <div className="border-t border-[#EEEEEE] mt-4 pt-4 flex justify-between items-center">
+        <span className="text-[16px] font-bold text-[#171717]">Total Amount</span>
+        <span className="text-[24px] font-bold text-[#166B32]">₹{finalTotal.toFixed(0)}</span>
+      </div>
+      {/* Savings banner — always shown when coupon applied */}
       {couponSavings > 0 && (
-        <div className="mt-5 flex items-center gap-2 bg-[#F0F8F4] rounded-lg px-4 py-3">
-          <Tag className="h-5 w-5 text-[#168846]" />
-          <span className="text-[13px] font-bold text-[#168846]">You Save ₹{couponSavings.toFixed(0)} on this order</span>
+        <div className="mt-4 flex items-center gap-2 bg-[#F1F8F1] border border-[#E1EFE1] rounded-[7px] px-4 py-3">
+          <Tag className="h-[18px] w-[18px] text-[#16803A] shrink-0" />
+          <span className="text-[13px] font-semibold text-[#166B32]">You Save ₹{couponSavings.toFixed(0)} on this order</span>
         </div>
       )}
     </div>
@@ -221,7 +229,6 @@ export function CartContent() {
   const deliveryAddress = useMenuDeliveryAddress();
   const appliedCoupon = useCartCoupon();
   const { applyCoupon, removeCoupon } = useCartActions();
-  const razorpayConfigured = !!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 
   const [addressSheetOpen, setAddressSheetOpen] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
@@ -255,8 +262,6 @@ export function CartContent() {
     if (selectedAddressId) return addresses.find(a => a.id === selectedAddressId) ?? null;
     return addresses.find(a => a.isDefault) ?? addresses[0] ?? null;
   }, [addresses, selectedAddressId]);
-
-  const deliveryDateLabel = formatDeliveryDate(deliveryDate);
 
   const minDeliveryDate = useMemo(() => {
     const d = new Date();
@@ -317,10 +322,6 @@ export function CartContent() {
   const handleCheckout = useEventCallback(async () => {
     if (!deliveryAddress) {
       toast.error("Please select a delivery location before placing your order");
-      return;
-    }
-    if (!razorpayConfigured) {
-      toast.error("Online payment is not available.");
       return;
     }
     if (!selectedSlot) {
@@ -436,132 +437,154 @@ export function CartContent() {
   const effectiveTotal = finalTotal + packagingCharge + effectiveDeliveryCharge;
 
   return (
-    <main className="min-h-screen bg-[#FDFBF9]">
+    <main className="min-h-screen bg-[#F8F8F8]">
       {/* Top Banner */}
-      <div className="max-w-[1200px] mx-auto px-4 md:px-8 pt-6 mb-2">
-        <div className="bg-[#FFF6F0] rounded-2xl p-4 flex items-center gap-4 border border-[#EE7005]/10">
-          <div className="h-10 w-10 rounded-xl bg-white shadow-sm flex items-center justify-center shrink-0 border border-[#EE7005]/20">
-            <CalendarIcon className="h-5 w-5 text-[#EE7005]" />
+      <div className="max-w-7xl mx-auto px-4 md:px-8 pt-6 mb-2">
+        <div className="bg-[#FFF8F0] rounded-[8px] p-4 flex items-start sm:items-center gap-3 sm:gap-4 border border-[#FFE6D5]">
+          <div className="flex items-center justify-center shrink-0">
+            <CalendarIcon className="h-5 w-5 text-[#FE4D02]" />
           </div>
-          <div>
-            <h3 className="text-[15px] font-extrabold text-gray-900">Pre-Book Orders Only</h3>
-            <p className="text-[13px] text-gray-600 font-medium mt-0.5">All orders must be placed in advance. Same day delivery is not available.</p>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-[15px] font-bold text-[#F4511E]">Pre-Book Orders Only</h3>
+            <p className="text-[13px] text-[#444444] font-medium mt-0.5">All orders must be placed in advance. Same day delivery is not available.</p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-[1200px] mx-auto px-4 md:px-8 py-4 pb-44 md:pb-10">
-        <div className="flex flex-col lg:flex-row gap-8">
+      <div className="max-w-7xl mx-auto px-4 md:px-8 py-4 pb-44 md:pb-10">
+        <div className="flex flex-col md:flex-row gap-6 lg:gap-8">
 
           <div className="flex-1 min-w-0 space-y-8">
             <div>
-              <div className="flex items-center justify-between mb-5">
-                <h1 className="text-[20px] font-extrabold text-gray-900">
+              <div className="flex items-center justify-between mb-4">
+                <h1 className="text-[20px] font-bold text-[#171717]">
                   Your Cart ({itemCounts} Items)
                 </h1>
-                <button onClick={clearCart} className="md:hidden flex items-center gap-1.5 text-[#EE7005] text-[13px] font-bold">
+                <button onClick={clearCart} className="md:hidden flex items-center gap-1.5 text-[#FE4D02] text-[13px] font-bold">
                   Edit Cart <Edit3 className="h-3.5 w-3.5" />
                 </button>
               </div>
-              <div className="space-y-4">
-                {cart.map((item) => (
-                  <CartItemCard
-                    key={item.id}
-                    item={item}
-                    deliveryDate={deliveryDate}
-                    onUpdateQuantity={updateQuantity}
-                    onRemove={removeFromCart}
-                  />
-                ))}
-              </div>
-            </div>
 
-            <div className="bg-[#FFF6F0] border border-[#EE7005]/20 rounded-xl p-5 flex items-start gap-4">
-              <CalendarIcon className="h-5 w-5 text-[#EE7005] shrink-0 mt-0.5" />
-              <div>
-                <h4 className="text-[14px] font-bold text-[#EE7005]">Pre-Book Notice</h4>
-                <p className="text-[13px] text-gray-700 font-medium mt-1">
-                  You can only place orders in advance. Please select your preferred delivery date and time.
-                </p>
+              {/* Cart items — single white card with dividers */}
+              <div className="bg-[#FFFFFF] rounded-[8px] border border-[#E7E7E7] overflow-hidden" style={{ boxShadow: "0 2px 10px rgba(0,0,0,0.04)" }}>
+                <div className="divide-y divide-[#E7E7E7]">
+                  {cart.map((item) => (
+                    <div key={item.id} className="px-4 sm:px-5">
+                      <CartItemCard
+                        item={item}
+                        deliveryDate={deliveryDate}
+                        onUpdateQuantity={updateQuantity}
+                        onRemove={removeFromCart}
+                      />
+                    </div>
+                  ))}
+                </div>
+
+                {/* Pre-Book Notice — inside the cart card at the bottom */}
+                <div className="border-t border-[#E7E7E7] bg-[#FFF7EF] px-4 sm:px-5 py-4 flex items-start gap-3">
+                  <div className="h-9 w-9 rounded-lg flex items-center justify-center shrink-0">
+                    <CalendarIcon className="text-[#FE4D02]" style={{ width: 18, height: 18 }} />
+                  </div>
+                  <div>
+                    <p className="text-[13px] font-bold text-[#F4511E] leading-snug">Pre-Book Notice</p>
+                    <p className="text-[12px] text-[#444444] font-medium mt-0.5 leading-relaxed">
+                      You can only place orders in advance. Please select your preferred delivery date and time.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
             <div>
-              <h2 className="text-[16px] font-extrabold text-gray-900 mb-4">1. Select Delivery Address</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+              <h2 className="text-[16px] font-bold text-[#171717] mb-4">1. Select Delivery Address</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4">
                 {addresses.length === 0 ? (
-                  <div className="col-span-full text-center py-6 text-gray-500 text-sm font-medium border border-dashed border-gray-300 rounded-xl">
-                    No saved addresses. Please add one below.
-                  </div>
+                  <>
+                    {/* No addresses — show empty state + add card */}
+                    <div className="col-span-3 text-center py-6 text-gray-500 text-sm font-medium border border-dashed border-gray-300 rounded-xl">
+                      No saved addresses. Please add one below.
+                    </div>
+                  </>
                 ) : (
                   addresses.map((addr) => {
                     const label = addr.label || "Other";
                     const iconInfo = addressIconMap[label] ?? addressIconMap.Other;
                     const Icon = iconInfo.icon;
                     const isSelected = defaultAddress?.id === addr.id;
+                    // Abbreviate name: first name + last initial
+                    const fullName = session.user?.name || "User";
+                    const nameParts = fullName.trim().split(" ");
+                    const displayName = nameParts.length > 1
+                      ? `${nameParts[0]} ${nameParts[nameParts.length - 1][0]}.`
+                      : fullName;
                     return (
                       <div
                         key={addr.id}
                         onClick={() => setSelectedAddressId(addr.id)}
-                        className={`relative rounded-xl p-4 cursor-pointer transition-colors ${
+                        className={`relative rounded-[8px] p-4 cursor-pointer transition-all flex flex-col min-w-0 ${
                           isSelected
-                            ? "border-2 border-[#168846] bg-[#F7FDF9] shadow-sm"
-                            : "border border-gray-200 bg-white hover:border-gray-300"
+                            ? "border-[1.5px] border-[#5BA86B] bg-[#F5FBF6]"
+                            : "border border-[#E2E2E2] bg-[#FFFFFF] hover:border-[#A9D3B3] hover:bg-[#FAFDFA]"
                         }`}
                       >
-                        <div className="flex items-start justify-between mb-3">
-                          <div className="flex items-center gap-3">
-                            <div className={`h-10 w-10 rounded-full ${iconInfo.color} flex items-center justify-center`}>
-                              <Icon className="h-5 w-5" />
-                            </div>
-                            <div>
-                              <p className="text-[15px] font-extrabold text-gray-900">{label}</p>
-                              <p className="text-[12px] font-medium text-gray-500">{session.user?.name || "User"}</p>
-                            </div>
+                        {/* Selected checkmark badge */}
+                        {isSelected && (
+                          <div className="absolute -top-3 -right-3 h-6 w-6 bg-[#16803A] rounded-full flex items-center justify-center shrink-0 ring-[4px] ring-[#F8F8F8] z-10">
+                            <Check className="h-3.5 w-3.5 text-white" strokeWidth={3.5} />
                           </div>
-                          {isSelected && (
-                            <div className="h-5 w-5 bg-[#168846] rounded-full flex items-center justify-center shrink-0 -mt-1 -mr-1">
-                              <Check className="h-3.5 w-3.5 text-white" />
-                            </div>
-                          )}
+                        )}
+                        {/* Icon + label row */}
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className={`h-10 w-10 rounded-full flex items-center justify-center shrink-0 ${
+                            isSelected ? "bg-[#EEF8EF] text-[#16803A]" : "bg-[#F5F5F5] text-[#333333]"
+                          }`}>
+                            <Icon className="h-5 w-5" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <p className="text-[15px] font-bold text-[#171717] leading-tight truncate">{label}</p>
+                            <p className="text-[12px] font-medium text-[#444444] truncate">{displayName}</p>
+                          </div>
                         </div>
-                        <p className="text-[12px] text-gray-600 font-medium leading-relaxed">
-                          {addr.lineOne}{addr.lineTwo ? `, ${addr.lineTwo}` : ""},<br/>
-                          {addr.pincode}<br/>
+                        {/* Address lines */}
+                        <p className="text-[12px] text-[#444444] font-medium leading-relaxed break-words">
+                          {addr.lineOne}{addr.lineTwo ? `, ${addr.lineTwo}` : ""},<br />
+                          {addr.pincode}<br />
                           {session.user?.phoneNumber || ""}
                         </p>
                       </div>
                     );
                   })
                 )}
+                {/* Add New Address — always shown as last card */}
+                <div
+                  onClick={() => setAddressSheetOpen(true)}
+                  className="flex items-center justify-center rounded-[8px] border border-dashed border-[#FFB894] bg-[#FFFCFA] cursor-pointer hover:bg-[#FFF7F0] transition-colors min-h-[120px] p-4 min-w-0"
+                >
+                  <span className="text-[14px] font-bold text-[#FE4D02] text-center break-words">+ Add New Address</span>
+                </div>
               </div>
-              <button
-                onClick={() => setAddressSheetOpen(true)}
-                className="w-full mt-3 flex items-center justify-center gap-2 border border-dashed border-[#EE7005]/40 rounded-xl py-3 text-[13px] font-bold text-[#EE7005] hover:bg-[#FFF6F0] transition-colors"
-              >
-                + Add New Address
-              </button>
             </div>
 
             <div>
-              <h2 className="text-[16px] font-extrabold text-gray-900 mb-4">2. Select Delivery Date & Time (Pre-Book Only)</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <h2 className="text-[16px] font-bold text-[#171717] mb-4">2. Select Delivery Date &amp; Time (Pre-Book Only)</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-1 lg:grid-cols-2 gap-4">
+                {/* Date picker */}
                 <Popover open={datePickerOpen} onOpenChange={setDatePickerOpen}>
                   <PopoverTrigger asChild>
-                    <button type="button" className="flex items-center gap-3 border border-gray-200 rounded-xl p-4 bg-white shadow-sm w-full text-left hover:border-[#EE7005] transition-colors">
-                      <CalendarIcon className="h-5 w-5 text-[#EE7005] shrink-0" />
-                      <span className="flex-1 text-[14px] font-semibold text-gray-900 truncate">
-                        {deliveryDateLabel}
+                    <button
+                      type="button"
+                      className="flex items-center gap-3 border border-[#DFDFDF] rounded-[7px] px-4 py-3.5 bg-[#FFFFFF] w-full text-left hover:border-[#FE4D02] transition-colors focus:border-[#FE4D02] focus:ring-4 focus:ring-[#FE4D02]/10"
+                    >
+                      <CalendarIcon className="h-[18px] w-[18px] text-[#222222] shrink-0" />
+                      <span className="flex-1 text-[14px] font-medium text-[#222222]">
+                        {deliveryDate.toLocaleDateString("en-IN", { day: "numeric", month: "long", year: "numeric" })}
+                        {isTomorrow(deliveryDate) && (
+                          <span className="text-[#222222]"> (Tomorrow)</span>
+                        )}
                       </span>
-                      {isTomorrow(deliveryDate) && (
-                        <span className="text-[11px] font-bold text-[#168846] bg-[#E8F5EE] rounded-full px-2 py-0.5 shrink-0">
-                          Tomorrow
-                        </span>
-                      )}
-                      <ChevronDown className="h-5 w-5 text-gray-400 shrink-0" />
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent align="start" className="w-auto p-0 rounded-xl border-gray-200">
+                  <PopoverContent align="start" className="w-auto p-0 rounded-xl border-[#DFDFDF]">
                     <Calendar
                       mode="single"
                       selected={deliveryDate}
@@ -578,20 +601,24 @@ export function CartContent() {
                   </PopoverContent>
                 </Popover>
 
+                {/* Time slot picker */}
                 <Popover open={slotPickerOpen} onOpenChange={setSlotPickerOpen}>
                   <PopoverTrigger asChild>
-                    <button type="button" className="flex items-center justify-between border border-gray-200 rounded-xl p-4 bg-white shadow-sm w-full text-left hover:border-[#EE7005] transition-colors">
-                      <div className="flex items-center gap-3 min-w-0">
-                        <Clock className="h-5 w-5 text-[#EE7005] shrink-0" />
-                        <span className="text-[14px] font-semibold text-gray-900 truncate">{deliveryTimeSlotLabel}</span>
-                      </div>
-                      <ChevronDown className="h-5 w-5 text-gray-400 shrink-0" />
+                    <button
+                      type="button"
+                      className="flex items-center gap-3 border border-[#DFDFDF] rounded-[7px] px-4 py-3.5 bg-[#FFFFFF] w-full text-left hover:border-[#FE4D02] transition-colors focus:border-[#FE4D02] focus:ring-4 focus:ring-[#FE4D02]/10"
+                    >
+                      <Clock className="h-[18px] w-[18px] text-[#222222] shrink-0" />
+                      <span className="flex-1 text-[14px] font-medium text-[#222222] truncate">
+                        {deliveryTimeSlotLabel}
+                      </span>
+                      <ChevronDown className="h-5 w-5 text-[#222222] shrink-0" />
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent align="start" className="w-64 p-2 rounded-xl border-gray-200">
-                    <p className="text-[12px] font-bold text-gray-500 px-3 pt-2 pb-1">Delivery Time</p>
+                  <PopoverContent align="start" className="w-64 p-2 rounded-[7px] border-[#DFDFDF]">
+                    <p className="text-[12px] font-bold text-[#777777] px-3 pt-2 pb-1">Delivery Time</p>
                     {timeSlotOptions.length === 0 ? (
-                      <p className="text-[13px] text-gray-400 font-medium px-3 py-3">No time slots available</p>
+                      <p className="text-[13px] text-[#999999] font-medium px-3 py-3">No time slots available</p>
                     ) : (
                       timeSlotOptions.map((slot) => {
                         const isActive = selectedSlot === slot;
@@ -604,7 +631,7 @@ export function CartContent() {
                               setSlotPickerOpen(false);
                             }}
                             className={`flex items-center justify-between w-full px-3 py-2.5 rounded-lg text-[13px] font-semibold transition-colors ${
-                              isActive ? "bg-[#E8F5EE] text-[#168846]" : "text-gray-700 hover:bg-gray-50"
+                              isActive ? "bg-[#F0F9F1] text-[#16803A]" : "text-[#171717] hover:bg-gray-50"
                             }`}
                           >
                             {getTimeSlotLabel(slot as TimeSlotFilter) || formatTimeSlot(slot)}
@@ -616,17 +643,19 @@ export function CartContent() {
                   </PopoverContent>
                 </Popover>
               </div>
-              <div className="mt-4 flex items-center gap-2 bg-[#E8F5EE] rounded-lg px-4 py-3">
-                <Info className="h-5 w-5 text-[#168846]" />
-                <span className="text-[13px] font-medium text-[#168846]">Orders for the same day are not accepted. Please choose a future date.</span>
+              {/* Info notice */}
+              <div className="mt-3 flex items-center gap-2 bg-[#F0F8F0] border border-[#E1F0E2] rounded-[6px] px-4 py-3">
+                <Info className="h-[18px] w-[18px] text-[#16803A] shrink-0" />
+                <span className="text-[13px] font-medium text-[#347345]">Orders for the same day are not accepted. Please choose a future date.</span>
               </div>
             </div>
           </div>
 
-          <div className="w-full lg:w-[420px] shrink-0">
-            <div className="lg:sticky lg:top-24 space-y-6">
+          <div className="w-full md:w-[320px] lg:w-[380px] shrink-0">
+            <div className="md:sticky md:top-24 space-y-5">
 
-              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
+              {/* Order Summary card */}
+              <div className="bg-white border border-gray-100 rounded-2xl p-5 shadow-sm">
                 <PriceBreakdown
                   itemCounts={itemCounts}
                   total={total}
@@ -637,8 +666,9 @@ export function CartContent() {
                 />
               </div>
 
-              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
-                <h2 className="text-[16px] font-extrabold text-gray-900 mb-4">Apply Coupon</h2>
+              {/* Apply Coupon card */}
+              <div className="bg-[#FFFFFF] border border-[#E7E7E7] rounded-[8px] p-5 shadow-[0_2px_10px_rgba(0,0,0,0.04)]">
+                <h2 className="text-[16px] font-bold text-[#171717] mb-4">Apply Coupon</h2>
                 <form
                   className="flex gap-2"
                   onSubmit={(e) => {
@@ -652,68 +682,69 @@ export function CartContent() {
                     onChange={(e) => setCouponInput(e.target.value)}
                     placeholder="Enter coupon code"
                     disabled={applyCouponMutation.isPending || !!appliedCoupon}
-                    className="flex-1 border border-gray-200 rounded-lg px-4 py-3 text-[14px] font-medium text-gray-900 placeholder-gray-400 focus:outline-none focus:border-[#EE7005] focus:ring-1 focus:ring-[#EE7005] disabled:opacity-60"
+                    className="flex-1 min-w-0 border border-[#DEDEDE] rounded-[7px] px-4 py-3 text-[14px] text-[#222222] placeholder-[#777777] focus:outline-none focus:border-[#FE4D02] disabled:opacity-60"
                   />
                   <button
                     type="submit"
                     disabled={applyCouponMutation.isPending || !couponInput.trim() || !!appliedCoupon}
                     onClick={handleApplyCoupon}
-                    className="bg-[#EE7005] text-white px-5 py-3 rounded-lg text-[13px] font-extrabold uppercase tracking-wider hover:bg-[#d66504] transition-colors shadow-sm disabled:opacity-60"
+                    className="bg-[#FE4D02] shrink-0 text-white px-5 py-3 rounded-[7px] text-[13px] font-bold tracking-wide hover:bg-[#F04400] transition-colors disabled:opacity-60"
                   >
-                    {applyCouponMutation.isPending ? "..." : "Apply"}
+                    {applyCouponMutation.isPending ? "..." : "APPLY"}
                   </button>
                 </form>
+                {/* Applied coupon row */}
                 {appliedCoupon && (
-                  <div className="mt-3 flex items-center justify-between bg-[#F0F8F4] rounded-lg px-3 py-2.5">
-                    <div className="flex items-center gap-6">
-                      <span className="text-[14px] font-extrabold text-gray-900">{appliedCoupon.code}</span>
-                      <span className="text-[13px] font-bold text-[#168846]">You saved ₹{appliedCoupon.discount}</span>
-                    </div>
-                    <button onClick={removeCoupon} className="text-red-500 hover:text-red-600">
+                  <div className="mt-3 flex items-center justify-between border border-[#E0EFE0] rounded-[7px] px-4 py-3 bg-[#F1F8F1]">
+                    <span className="text-[14px] font-semibold text-[#222222]">{appliedCoupon.code}</span>
+                    <span className="text-[13px] font-semibold text-[#16803A]">You saved ₹{appliedCoupon.discount}</span>
+                    <button onClick={removeCoupon} className="text-[#FE4D02] hover:opacity-80 ml-2">
                       <X className="h-4 w-4" />
                     </button>
                   </div>
                 )}
               </div>
 
-              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
-                <h2 className="text-[16px] font-extrabold text-gray-900 mb-4">Available Offers</h2>
+              {/* Available Offers card */}
+              <div className="bg-[#FFFFFF] border border-[#E7E7E7] rounded-[8px] p-5 shadow-[0_2px_10px_rgba(0,0,0,0.04)]">
+                <h2 className="text-[16px] font-bold text-[#171717] mb-4">Available Offers</h2>
                 <div className="space-y-4">
                   {availableCoupons.length === 0 ? (
-                    <p className="text-[13px] text-gray-500 font-medium text-center py-4">No offers available right now</p>
+                    <p className="text-[13px] text-[#777777] text-center py-4">No offers available right now</p>
                   ) : (
                     availableCoupons.map((offer) => (
-                      <div key={offer.code} className="flex items-start gap-4">
-                        <div className="h-9 w-9 rounded-full border border-dashed border-[#168846] flex items-center justify-center shrink-0 bg-[#F0F8F4] mt-0.5">
-                          <Percent className="h-4 w-4 text-[#168846]" />
+                      <div key={offer.code} className="flex items-start gap-3">
+                        <div className="h-9 w-9 rounded-full border border-[#CFE7D2] flex items-center justify-center shrink-0 bg-[#F0F8F0]">
+                          <Percent className="h-4 w-4 text-[#16803A]" />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-[13px] font-bold text-gray-900">{offer.description}</p>
-                          <p className="text-[12px] font-bold text-gray-500 mt-1">{offer.code}</p>
+                          <p className="text-[13px] font-bold text-[#222222] leading-snug">{offer.description}</p>
+                          <p className="text-[12px] font-bold text-[#222222] mt-0.5">{offer.code}</p>
                         </div>
-                        <span className="text-[11px] font-bold text-gray-500 mt-1 shrink-0">T&C</span>
+                        <span className="text-[12px] font-bold text-[#777777] shrink-0 mt-0.5">T&amp;C</span>
                       </div>
                     ))
                   )}
                 </div>
                 {availableCoupons.length > 0 && (
-                  <button className="mt-5 text-[#EE7005] text-[13px] font-bold flex items-center justify-between w-full">
-                    View More Offers <ChevronRight className="h-4 w-4" />
+                  <button className="mt-5 text-[#FE4D02] text-[13px] font-bold flex items-center gap-1 w-full">
+                    View More Offers <ChevronRight className="h-4 w-4 text-[#FE4D02]" />
                   </button>
                 )}
               </div>
 
-              <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm">
-                <h2 className="text-[16px] font-extrabold text-gray-900 mb-4">Payment Method</h2>
-                <div className="flex items-start gap-3 bg-[#F0F8F4] rounded-xl p-4">
-                  <div className="h-9 w-9 rounded-full bg-[#168846] flex items-center justify-center shrink-0 mt-0.5">
-                    <Banknote className="h-4 w-4 text-white" />
+              {/* Payment Method card */}
+              <div className="bg-[#FFFFFF] border border-[#E7E7E7] rounded-[8px] p-5 shadow-[0_2px_10px_rgba(0,0,0,0.04)]">
+                <h2 className="text-[16px] font-bold text-[#171717] mb-4">Payment Method</h2>
+                <div className="flex items-center gap-3 bg-[#F1F8F1] border border-[#E0EFE0] rounded-[8px] p-4">
+                  <div className="h-10 w-10 flex items-center justify-center shrink-0">
+                    <Banknote className="h-6 w-6 text-[#16803A]" />
                   </div>
                   <div className="flex-1">
-                    <p className="text-[13px] font-extrabold text-gray-900">Online Payment Only</p>
-                    <p className="text-[12px] text-gray-600 font-medium mt-1">RRC Kitchen accepts only online payments.<br/>We do not accept Cash on Delivery.</p>
+                    <p className="text-[13px] font-bold text-[#166B32]">Online Payment Only</p>
+                    <p className="text-[12px] text-[#444444] font-medium mt-0.5">RRC Kitchen accepts only online payments.<br />We do not accept Cash on Delivery.</p>
                   </div>
-                  <ShieldCheck className="h-6 w-6 text-[#168846] shrink-0" />
+                  <ShieldCheck className="h-7 w-7 text-[#16803A] shrink-0" />
                 </div>
               </div>
 
@@ -721,24 +752,26 @@ export function CartContent() {
                 <button
                   onClick={handleCheckout}
                   disabled={isProcessing}
-                  className="w-full bg-[#EE7005] hover:bg-[#d66504] disabled:opacity-60 text-white rounded-xl py-4 flex items-center justify-center gap-3 shadow-lg shadow-[#EE7005]/20 transition-colors"
+                  className="w-full bg-[#FE4D02] hover:bg-[#F04400] disabled:opacity-60 text-white rounded-[7px] py-3.5 flex items-center justify-center gap-3 shadow-[0_3px_8px_rgba(254,77,2,0.16)] transition-colors"
                 >
                   {isProcessing ? (
                     <>
                       <Loader2 className="h-5 w-5 animate-spin" />
-                      <span className="text-[15px] font-extrabold uppercase tracking-wider">Processing…</span>
+                      <span className="text-[15px] font-bold uppercase tracking-widest">Processing…</span>
                     </>
                   ) : (
                     <>
-                      <Lock className="h-5 w-5" />
-                      <span className="text-[15px] font-extrabold uppercase tracking-wider">Proceed to Pay</span>
-                      <span className="text-[17px] font-extrabold">₹{effectiveTotal.toFixed(0)}</span>
+                      <Lock className="h-4 w-4" />
+                      <span className="text-[15px] font-bold uppercase tracking-widest">Proceed to Pay</span>
+                      <span className="text-[17px] font-bold">₹{effectiveTotal.toFixed(0)}</span>
                     </>
                   )}
                 </button>
-                <div className="mt-3 bg-[#FFF6F0] rounded-xl py-2 flex items-center justify-center gap-2 text-[#EE7005]">
-                  <ShieldCheck className="h-4 w-4" />
-                  <span className="text-[12px] font-bold">100% Secure Payments</span>
+                {/* Secure badge */}
+                <div className="mt-3 flex items-center justify-center gap-1.5">
+                  <ShieldCheck className="h-[15px] w-[15px] text-[#16803A]" />
+                  <span className="text-[12px] font-semibold text-[#F4511E]">100% Secure Payments</span>
+                  <ShieldCheck className="h-[15px] w-[15px] text-[#16803A]" />
                 </div>
               </div>
 
@@ -753,38 +786,39 @@ export function CartContent() {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-gray-200 p-4 md:hidden safe-area-bottom">
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#FFFFFF] border-t border-[#E7E7E7] p-4 md:hidden safe-area-bottom">
         {!deliveryAddress ? (
           <button
             onClick={() => setAddressSheetOpen(true)}
-            className="w-full bg-[#EE7005] hover:bg-[#d66504] text-white rounded-xl py-4 px-6 flex items-center justify-center gap-3 shadow-lg shadow-[#EE7005]/20 transition-colors"
+            className="w-full bg-[#FE4D02] hover:bg-[#F04400] text-white rounded-[7px] py-3.5 flex items-center justify-center gap-3 shadow-[0_3px_8px_rgba(254,77,2,0.16)] transition-colors"
           >
-            <MapPin className="h-5 w-5" />
-            <span className="text-[15px] font-extrabold tracking-wide">Add Address to Proceed</span>
+            <MapPin className="h-4 w-4" />
+            <span className="text-[15px] font-bold tracking-wide uppercase">Add Address to Proceed</span>
           </button>
         ) : (
           <>
             <button
               onClick={handleCheckout}
               disabled={isProcessing}
-              className="w-full bg-[#EE7005] hover:bg-[#d66504] disabled:opacity-60 text-white rounded-xl py-4 px-6 flex items-center justify-center gap-3 shadow-lg shadow-[#EE7005]/20 transition-colors"
+              className="w-full bg-[#FE4D02] hover:bg-[#F04400] disabled:opacity-60 text-white rounded-[7px] py-3.5 flex items-center justify-center gap-3 shadow-[0_3px_8px_rgba(254,77,2,0.16)] transition-colors"
             >
               {isProcessing ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
-                  <span className="text-[15px] font-extrabold tracking-wide">Processing...</span>
+                  <span className="text-[15px] font-bold tracking-wide uppercase">Processing...</span>
                 </>
               ) : (
                 <>
-                  <Lock className="h-5 w-5" />
-                  <span className="text-[15px] font-extrabold tracking-wide">Proceed to Pay</span>
-                  <span className="text-[18px] font-extrabold">₹{effectiveTotal.toFixed(0)}</span>
+                  <Lock className="h-4 w-4" />
+                  <span className="text-[15px] font-bold tracking-wide uppercase">Proceed to Pay</span>
+                  <span className="text-[18px] font-bold">₹{effectiveTotal.toFixed(0)}</span>
                 </>
               )}
             </button>
-            <div className="mt-3 bg-[#FFF6F0] rounded-xl py-2 flex items-center justify-center gap-2 text-[#EE7005]">
-              <ShieldCheck className="h-3.5 w-3.5" />
-              <span className="text-[11px] font-bold">100% Secure Payments</span>
+            <div className="mt-3 bg-transparent py-2 flex items-center justify-center gap-1.5">
+              <ShieldCheck className="h-[15px] w-[15px] text-[#16803A]" />
+              <span className="text-[12px] font-semibold text-[#F4511E]">100% Secure Payments</span>
+              <ShieldCheck className="h-[15px] w-[15px] text-[#16803A]" />
             </div>
           </>
         )}

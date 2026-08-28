@@ -81,6 +81,9 @@ export interface AdminCategoryPageDetail {
   updatedBy: string | null
   updatedAt: string
   createdAt: string
+  fallbackKitchenImageUrl: string
+  filterConfig: any
+  sortOptionsConfig: any
   features: AdminCategoryPageFeature[]
   offers: AdminCategoryPageOffer[]
   faqs: AdminCategoryPageFaq[]
@@ -105,6 +108,9 @@ export interface AdminCategoryPageSaveInput {
   canonicalUrl: string
   featuredKitchenIds: string[]
   featuredMenuIds: string[]
+  fallbackKitchenImageUrl: string
+  filterConfig: any
+  sortOptionsConfig: any
   features: { icon: string; title: string; subtitle: string; color: string; isEnabled: boolean }[]
   offers: { title: string; subtitle: string; badge: string; isEnabled: boolean }[]
   faqs: { question: string; answer: string }[]
@@ -235,6 +241,9 @@ export async function getCategoryPageContent(id: string): Promise<AdminCategoryP
     updatedBy: content.updatedBy,
     updatedAt: content.updatedAt.toISOString(),
     createdAt: content.createdAt.toISOString(),
+    fallbackKitchenImageUrl: content.fallbackKitchenImageUrl,
+    filterConfig: content.filterConfig ?? [],
+    sortOptionsConfig: content.sortOptionsConfig ?? [],
     features: content.features.map((f) => ({
       id: f.id,
       icon: f.icon,
@@ -290,6 +299,9 @@ export async function createCategoryPageContent(input: {
       cardsPerPage: 12,
       version: 1,
       updatedBy: session.user.name ?? "Admin",
+      fallbackKitchenImageUrl: "",
+      filterConfig: [],
+      sortOptionsConfig: [],
       features: {
         create: DEFAULT_FEATURES.map((f, i) => ({ ...f, isEnabled: true, sortOrder: i })),
       },
@@ -333,6 +345,9 @@ export async function saveCategoryPageContent(
         canonicalUrl: input.canonicalUrl,
         featuredKitchenIds: input.featuredKitchenIds,
         featuredMenuIds: input.featuredMenuIds,
+        fallbackKitchenImageUrl: input.fallbackKitchenImageUrl,
+        filterConfig: input.filterConfig,
+        sortOptionsConfig: input.sortOptionsConfig,
         version: { increment: 1 },
         updatedBy: session.user.name ?? "Admin",
       },

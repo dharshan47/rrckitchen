@@ -261,7 +261,7 @@ export function LoyaltyContent() {
           {/* Your Points */}
           <div className="flex items-center gap-5 md:pr-6">
             <div className="relative w-[70px] h-[70px] shrink-0">
-              <Image src="/loyalty/gold-badge.webp" alt="Gold Badge" fill className="object-contain" />
+              <Image src="/loyalty/gold-badge.webp" alt="Gold Badge" fill sizes="70px" className="object-contain" />
             </div>
             <div className="flex flex-col">
               <span className="text-[12px] font-bold text-gray-900 mb-1">Your Points</span>
@@ -647,7 +647,7 @@ export function LoyaltyContent() {
           </p>
 
           <div className="absolute right-[-20px] bottom-[-20px] w-[180px] h-[180px] z-0">
-            <Image src="/loyalty/giftbox.webp" alt="Giftbox" fill className="object-contain" />
+            <Image src="/loyalty/giftbox.webp" alt="Giftbox" fill sizes="180px" className="object-contain" />
           </div>
         </div>
 

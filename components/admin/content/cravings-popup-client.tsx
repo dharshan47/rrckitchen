@@ -751,7 +751,7 @@ function PopupPreviewDialog({ open, onOpenChange, title, message, recommendation
                 >
                   <div className="relative h-[96px] w-[130px] shrink-0 overflow-hidden rounded-[8px] bg-[#FFF2EB]">
                     {item.imageUrl ? (
-                      <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
+                      <Image src={item.imageUrl} alt={item.name} fill sizes="130px" className="object-cover" />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center">
                         <ShoppingBag className="h-8 w-8 text-[#FF4B04]/40" />
@@ -1879,7 +1879,7 @@ function PopupPreviewCard({
             <div key={item.id} className="flex gap-3 rounded-[12px] border border-[#EEF1F3] bg-white p-2 shadow-[0_1px_3px_rgba(15,23,42,0.025)]">
               <div className="relative h-[96px] w-[130px] shrink-0 overflow-hidden rounded-[8px] bg-[#FFF2EB]">
                 {item.imageUrl ? (
-                  <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
+                  <Image src={item.imageUrl} alt={item.name} fill sizes="130px" className="object-cover" />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <ShoppingBag className="h-8 w-8 text-[#FF4B04]/40" />

@@ -39,7 +39,7 @@ import {
   ListFilter, Smartphone, CreditCard, WalletCards, Landmark,
   ChartNoAxesColumnIncreasing, Settings2
 } from "lucide-react"
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
+import { PieChart, Pie, Cell } from "recharts"
 import {
   flexRender,
   getCoreRowModel,
@@ -101,6 +101,8 @@ const chartColors: Record<string, string> = {
   NETBANKING: "#6D3DE8",
   Others: "#EF3340",
 }
+
+const EMPTY_PIE_DATA = [{ label: 'None', points: 1, color: '#F3F4F6' }]
 
 function couponsToCSV(coupons: LoyaltyCoupon[]) {
   const header = ["Name", "Description", "Discount Type", "Discount Value", "Max Discount", "Min Order", "Points Cost", "Active", "Redemptions"]
@@ -432,41 +434,45 @@ export default function AdminLoyaltyPointsPage() {
   const totalCoupons = coupons.length
   const activeCoupons = coupons.filter((c) => c.isActive).length
 
-  const totalRedemptions = coupons.reduce((sum, c) => sum + c.purchaseCount, 0)
+  const totalRedemptions = coupons.reduce((sum, c) => sum + (c.purchaseCount || 0), 0)
   const totalPointsRedeemed = coupons.reduce(
-    (sum, c) => sum + c.pointsCost * c.purchaseCount,
+    (sum, c) => sum + (c.pointsCost || 0) * (c.purchaseCount || 0),
     0
   )
   const activePercent = totalCoupons > 0 ? ((activeCoupons / totalCoupons) * 100).toFixed(1) : "0.0"
 
-  const typeGroups = coupons.reduce((acc, c) => {
-    const type = getCouponTypeLabel(c)
-    acc[type] = (acc[type] || 0) + c.pointsCost * c.purchaseCount
-    return acc
-  }, {} as Record<string, number>)
-  
-  const typeTotal = Object.values(typeGroups).reduce((s, v) => s + v, 0)
-  
-  const orderedLabels = ["UPI", "CARDS", "WALLET", "NETBANKING", "ALL"]
-  
-  const redemptionBreakdown = Object.entries(typeGroups)
-    .map(([label, value]) => ({
-      label: label === "ALL" ? "Others" : label === "CARDS" ? "Cards" : label === "WALLET" ? "Wallet" : label === "NETBANKING" ? "Net Banking" : "UPI",
-      points: value,
-      percent: typeTotal > 0 ? (value / typeTotal) * 100 : 0,
-      color: chartColors[label] || chartColors.Others,
-    }))
-    .sort((a, b) => {
-      const aOriginal = a.label === "Others" ? "ALL" : a.label === "Cards" ? "CARDS" : a.label === "Wallet" ? "WALLET" : a.label === "Net Banking" ? "NETBANKING" : "UPI"
-      const bOriginal = b.label === "Others" ? "ALL" : b.label === "Cards" ? "CARDS" : b.label === "Wallet" ? "WALLET" : b.label === "Net Banking" ? "NETBANKING" : "UPI"
-      return orderedLabels.indexOf(aOriginal) - orderedLabels.indexOf(bOriginal)
-    })
+  const redemptionBreakdown = useMemo(() => {
+    const groups = coupons.reduce((acc, c) => {
+      const type = getCouponTypeLabel(c)
+      acc[type] = (acc[type] || 0) + (c.pointsCost || 0) * (c.purchaseCount || 0)
+      return acc
+    }, {} as Record<string, number>)
+    
+    const total = Object.values(groups).reduce((s, v) => s + v, 0)
+    
+    const orderedLabels = ["UPI", "CARDS", "WALLET", "NETBANKING", "ALL"]
+    
+    const breakdown = Object.entries(groups)
+      .map(([label, value]) => ({
+        label: label === "ALL" ? "Others" : label === "CARDS" ? "Cards" : label === "WALLET" ? "Wallet" : label === "NETBANKING" ? "Net Banking" : "UPI",
+        points: value,
+        percent: total > 0 ? (value / total) * 100 : 0,
+        color: chartColors[label] || chartColors.Others,
+      }))
+      .sort((a, b) => {
+        const aOriginal = a.label === "Others" ? "ALL" : a.label === "Cards" ? "CARDS" : a.label === "Wallet" ? "WALLET" : a.label === "Net Banking" ? "NETBANKING" : "UPI"
+        const bOriginal = b.label === "Others" ? "ALL" : b.label === "Cards" ? "CARDS" : b.label === "Wallet" ? "WALLET" : b.label === "Net Banking" ? "NETBANKING" : "UPI"
+        return orderedLabels.indexOf(aOriginal) - orderedLabels.indexOf(bOriginal)
+      })
+
+    return breakdown
+  }, [coupons])
 
   const topCoupons = [...coupons]
-    .sort((a, b) => b.purchaseCount - a.purchaseCount)
+    .sort((a, b) => (b.purchaseCount || 0) - (a.purchaseCount || 0))
     .slice(0, 3)
 
-  const filtered = coupons
+  const filtered = useMemo(() => coupons
     .filter((c) => (activeTab === "ALL" ? true : c.isActive))
     .filter((c) =>
       typeFilter === "ALL_TYPES" ? true : c.discountType === typeFilter
@@ -476,13 +482,13 @@ export default function AdminLoyaltyPointsPage() {
         !search ||
         c.name.toLowerCase().includes(search.toLowerCase()) ||
         (c.description || "").toLowerCase().includes(search.toLowerCase())
-    )
+    ), [coupons, activeTab, typeFilter, search])
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize))
-  const paginated = filtered.slice(
+  const paginated = useMemo(() => filtered.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
-  )
+  ), [filtered, currentPage, pageSize])
 
   const table = useReactTable({
     data: paginated,
@@ -863,10 +869,9 @@ export default function AdminLoyaltyPointsPage() {
               <div className="flex flex-col lg:flex-row gap-6">
                 <div className="flex flex-col sm:flex-row items-center gap-6 w-full">
                   <div className="relative flex-shrink-0 w-[150px] h-[150px] mx-auto sm:mx-0">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
+                    <PieChart width={150} height={150}>
                         <Pie
-                          data={redemptionBreakdown.length > 0 ? redemptionBreakdown : [{ label: 'None', points: 1, color: '#F3F4F6' }]}
+                          data={redemptionBreakdown.length > 0 ? redemptionBreakdown : EMPTY_PIE_DATA}
                           cx="50%"
                           cy="50%"
                           innerRadius={55}
@@ -876,12 +881,11 @@ export default function AdminLoyaltyPointsPage() {
                           stroke="#FFFFFF"
                           strokeWidth={2}
                         >
-                          {(redemptionBreakdown.length > 0 ? redemptionBreakdown : [{ label: 'None', points: 1, color: '#F3F4F6' }]).map((entry, index) => (
+                          {(redemptionBreakdown.length > 0 ? redemptionBreakdown : EMPTY_PIE_DATA).map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={entry.color} />
                           ))}
                         </Pie>
                       </PieChart>
-                    </ResponsiveContainer>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <p className="text-[20px] font-bold text-[#111827]">
                         {totalPointsRedeemed.toLocaleString()}

@@ -82,6 +82,9 @@ type RazorpayInstance = new (options: RazorpayCheckoutOptions) => { open: () => 
 
 // ── SDK loader ────────────────────────────────────────────────────────────────
 
+const RAZORPAY_CHECKOUT_URL = "https://checkout.razorpay.com/v1/checkout.js";
+const RAZORPAY_SCRIPT_TIMEOUT_MS = 20_000;
+
 function getRazorpaySdk(): RazorpayInstance | null {
   if (typeof window === "undefined") return null;
   return (window as unknown as Record<string, RazorpayInstance>).Razorpay ?? null;
@@ -90,17 +93,35 @@ function getRazorpaySdk(): RazorpayInstance | null {
 function loadRazorpayScript(): Promise<boolean> {
   return new Promise((resolve) => {
     const existing = document.querySelector<HTMLScriptElement>("script[src*='checkout.razorpay.com']");
+
+    // A script that already failed is dead in the water — remove it so the
+    // next attempt injects a fresh element instead of hanging on dead listeners.
     if (existing) {
-      if (existing.dataset.loaded === "true") { resolve(true); return; }
-      existing.addEventListener("load", () => resolve(true));
-      existing.addEventListener("error", () => resolve(false));
-      return;
+      if (existing.dataset.failed === "true") existing.remove();
+      else if (existing.dataset.loaded === "true") { resolve(true); return; }
+      else {
+        const timeoutId = setTimeout(() => resolve(false), RAZORPAY_SCRIPT_TIMEOUT_MS);
+        existing.addEventListener("load", () => { clearTimeout(timeoutId); resolve(true); });
+        existing.addEventListener("error", () => { clearTimeout(timeoutId); resolve(false); });
+        return;
+      }
     }
+
     const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.src = RAZORPAY_CHECKOUT_URL;
     script.async = true;
-    script.onload = () => { script.dataset.loaded = "true"; resolve(true); };
-    script.onerror = () => resolve(false);
+    let settled = false;
+    const settle = (ok: boolean) => {
+      if (settled) return;
+      settled = true;
+      clearTimeout(timeoutId);
+      if (ok) script.dataset.loaded = "true";
+      else script.dataset.failed = "true";
+      resolve(ok);
+    };
+    const timeoutId = setTimeout(() => settle(false), RAZORPAY_SCRIPT_TIMEOUT_MS);
+    script.onload = () => settle(true);
+    script.onerror = () => settle(false);
     document.body.appendChild(script);
   });
 }
@@ -117,11 +138,38 @@ function waitForRazorpaySdk(timeoutMs = 10_000): Promise<boolean> {
   });
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+/**
+ * Resolves the publishable Razorpay key id.
+ *
+ * Prefers the build-time-inlined NEXT_PUBLIC_RAZORPAY_KEY_ID, falling back to
+ * a runtime probe of /api/payment/config. The fallback ensures payments keep
+ * working even when the client bundle was built without the public env var
+ * (e.g. builds where .env is not available), as long as the server has the
+ * credentials configured.
+ */
+async function resolveRazorpayKeyId(): Promise<string | null> {
+  if (process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) return process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
+  try {
+    const res = await fetch("/api/payment/config");
+    if (!res.ok) return null;
+    const config = await res.json().catch(() => null) as { keyId?: string } | null;
+    return config?.keyId ?? null;
+  } catch {
+    return null;
+  }
+}
+
 // ── Fetchers ──────────────────────────────────────────────────────────────────
 
 async function fetchCreateOrder(input: CreateOrderInput): Promise<CreateOrderResponse> {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 15_000);
+  // create-order does several DB round-trips plus a Razorpay API call, and may
+  // hit a cold start (or a dev-mode route compile) — give it a generous window.
+  const timeoutId = setTimeout(() => controller.abort(), 60_000);
   try {
     const res = await fetch("/api/payment/create-order", {
       method: "POST",
@@ -180,7 +228,7 @@ const PAYMENT_BLOCKS_CONFIG: RazorpayCheckoutOptions["config"] = {
     blocks: {
       upi: {
         name: "UPI  ·  Google Pay · PhonePe · Paytm · Any UPI App",
-        instruments: [{ method: "upi", flows: ["collect", "intent", "qr"] }],
+        instruments: [{ method: "upi" }],
       },
       netbanking: {
         name: "Net Banking",
@@ -269,11 +317,12 @@ export function useRazorpay() {
     addressId?: string,
     prefill?: { name?: string; email?: string },
   ) => {
-    if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
+    const razorpayKeyId = await resolveRazorpayKeyId();
+    if (!razorpayKeyId) {
       verifyPaymentMutation.reset();
       createOrderMutation.reset();
       setCheckoutError("Online payment is temporarily unavailable.");
-      console.error("[Razorpay] NEXT_PUBLIC_RAZORPAY_KEY_ID is not set.");
+      console.error("[Razorpay] Razorpay key id is not configured.");
       return;
     }
 
@@ -283,14 +332,21 @@ export function useRazorpay() {
     setCheckoutError(null);
 
     try {
-      // Ensure Razorpay SDK is loaded before creating the order
-      const sdkReady = getRazorpaySdk() || await waitForRazorpaySdk(3_000);
+      // Ensure Razorpay SDK is loaded before creating the order.
+      // Transient network failures (e.g. ERR_INSUFFICIENT_RESOURCES while the
+      // SDK pulls its chunks) are retried once with a short backoff.
+      let sdkReady = getRazorpaySdk() || await waitForRazorpaySdk(3_000);
       if (!sdkReady) {
-        const loaded = await loadRazorpayScript();
-        if (!loaded) throw new Error("Payment service could not be loaded. Please check your connection and try again.");
-        const sdkLoaded = await waitForRazorpaySdk(10_000);
-        if (!sdkLoaded) throw new Error("Payment service is not responding. Please refresh and try again.");
+        for (let attempt = 0; attempt < 2; attempt++) {
+          const loaded = await loadRazorpayScript();
+          if (loaded) {
+            const sdkLoaded = await waitForRazorpaySdk(10_000);
+            if (sdkLoaded) { sdkReady = true; break; }
+          }
+          if (attempt === 0) await sleep(1_000);
+        }
       }
+      if (!sdkReady) throw new Error("Payment service could not be loaded. Please check your connection and try again.");
 
       // Create the Razorpay order via mutation
       const order = await createOrderMutation.mutateAsync({
@@ -306,7 +362,7 @@ export function useRazorpay() {
       if (!RazorpayCtor) throw new Error("Payment service not available. Please refresh and try again.");
 
       const razorpay = new RazorpayCtor({
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
+        key: razorpayKeyId,
         amount: order.amount,
         currency: order.currency,
         name: "RRC Kitchen",

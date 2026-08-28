@@ -89,7 +89,7 @@ export function CategoriesClient() {
 
           {/* Right Support Card */}
           <div 
-            className="w-full xl:w-[460px] shrink-0 relative bg-[#FFFFFF] flex items-center justify-between overflow-hidden"
+            className="w-full xl:w-[460px] shrink-0 relative bg-[#FFFFFF] flex items-center justify-between overflow-visible"
             style={{
               borderRadius: "10px",
               border: "1px solid #F6E5DD",
@@ -97,13 +97,13 @@ export function CategoriesClient() {
               height: "120px"
             }}
           >
-            <div className="pl-[28px] z-10 py-[24px] max-w-[65%]">
-              <h3 className="text-[20px] font-[700] mb-[6px] whitespace-nowrap tracking-tight">
+            <div className="pl-[24px] sm:pl-[28px] relative z-30 py-[24px] max-w-[200px] sm:max-w-[240px]">
+              <h3 className="text-[18px] sm:text-[20px] font-[700] mb-[6px] whitespace-nowrap tracking-tight">
                 <span className="text-[#01441F]">Support </span>
                 <span className="text-[#FE4A00]">Home Chefs</span>
               </h3>
-              <p className="text-[#252525] text-[13px] leading-[1.55]">
-                Every order you place supports<br />a homemaker and her family.
+              <p className="text-[#252525] text-[12px] sm:text-[13px] leading-[1.4] sm:leading-[1.55]">
+                Every order you place supports a homemaker and her family.
               </p>
             </div>
             
@@ -115,7 +115,7 @@ export function CategoriesClient() {
             </div>
 
             {/* Chef Image */}
-            <div className="absolute right-[-10px] bottom-0 h-[130%] w-[170px] z-0 pointer-events-none">
+            <div className="absolute right-0 bottom-0 h-[130%] w-[170px] z-20 pointer-events-none">
                <Image
                   src="/categories/home-chef.webp"
                   alt="Support Home Chefs"

@@ -27,6 +27,29 @@ const CATEGORIES = [
   { id: "general", icon: HelpCircle, title: "General Help", subtitle: "Policies, terms and other information", color: "text-emerald-600" }
 ];
 
+const FAQ_DATA = {
+  placing: [
+    { q: "How to place an order?", a: "Browse kitchens and menus, add items to your cart, choose delivery address, select payment method and place your order. You will receive a confirmation once the kitchen accepts." },
+    { q: "Order not going through?", a: "Please check your internet connection or try a different payment method. If the issue persists, contact our support team." },
+  ],
+  tracking: [
+    { q: "How do I track my order?", a: "You can track your order in real-time on the 'My Orders' page once it has been accepted by the kitchen." },
+    { q: "Where is my delivery partner?", a: "Once your order is picked up, you will see the delivery partner's location on the live map." },
+  ],
+  cancel: [
+    { q: "Cancel or modify an order", a: "You can cancel or modify your order within 1 minute of placing it from the order details page." },
+    { q: "Why was my order cancelled?", a: "Orders may be cancelled if the kitchen is unable to fulfill them or if there are payment issues." },
+  ],
+  returns: [
+    { q: "How do I get a refund?", a: "Refunds for cancelled orders are processed automatically and will reflect in your account within 5-7 business days." },
+    { q: "Food quality issue", a: "If you have issues with the food quality, please take a photo and contact support within 24 hours." },
+  ],
+  others: [
+    { q: "Can I change my delivery address after placing an order?", a: "Delivery addresses cannot be changed once the order is placed to ensure timely delivery." },
+    { q: "How to reorder from the same kitchen?", a: "Go to your 'My Orders' history and click the 'Reorder' button next to your past order." },
+  ]
+};
+
 const SIDEBAR_TOPICS = [
   { id: "orders", icon: ShoppingBag, label: "Help with Orders" },
   { id: "delivery", icon: Bike, label: "Delivery Support" },
@@ -179,45 +202,28 @@ export default function HelpPage() {
                    })}
                 </div>
 
-                {/* Accordions */}
-                <Accordion type="single" defaultValue="item-1" className="w-full space-y-3">
-                   <AccordionItem value="item-1" className="border border-gray-100 rounded-lg bg-gray-50/30 overflow-hidden px-1 data-[state=open]:bg-white data-[state=open]:border-emerald-100 data-[state=open]:shadow-sm transition-all">
-                      <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-gray-50/50 transition-colors">
-                         <div className="flex items-center gap-3 text-left">
-                            <HelpCircle className="h-5 w-5 text-emerald-600 shrink-0 stroke-[2]" />
-                            <span className="font-bold text-gray-900 text-[15px]">How to place an order?</span>
-                         </div>
-                      </AccordionTrigger>
-                      <AccordionContent className="px-4 pb-5 pt-0">
-                         <div className="pl-8 text-gray-600 leading-relaxed text-[14px]">
-                            Browse kitchens and menus, add items to your cart, choose delivery address, select payment method and place your order. You will receive a confirmation once the kitchen accepts.
-                         </div>
-                      </AccordionContent>
-                   </AccordionItem>
-
-                   {[
-                     "Order not going through?",
-                     "Can I change my delivery address after placing an order?",
-                     "Cancel or modify an order",
-                     "Why was my order cancelled?",
-                     "How to reorder from the same kitchen?"
-                   ].map((q, i) => (
-                      <AccordionItem key={i} value={`item-${i+2}`} className="border border-gray-100 rounded-lg bg-gray-50/30 overflow-hidden px-1 hover:border-gray-200 transition-all data-[state=open]:bg-white data-[state=open]:border-emerald-100 data-[state=open]:shadow-sm">
-                         <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-gray-50/50 transition-colors">
-                            <div className="flex items-center gap-3 text-left">
-                               <HelpCircle className="h-5 w-5 text-emerald-600 shrink-0 stroke-[2]" />
-                               <span className="font-bold text-gray-900 text-[15px]">{q}</span>
-                            </div>
-                         </AccordionTrigger>
-                         <AccordionContent className="px-4 pb-5 pt-0">
-                            <div className="pl-8 text-gray-600 leading-relaxed text-[14px]">
-                               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                            </div>
-                         </AccordionContent>
-                      </AccordionItem>
-                   ))}
-                </Accordion>
-             </div>
+                 {/* Accordions */}
+                 <Accordion type="single" collapsible className="w-full space-y-3">
+                    {(() => {
+                       const faqs = FAQ_DATA[activeTab as keyof typeof FAQ_DATA] || FAQ_DATA.placing;
+                       return faqs.map((faq, i) => (
+                          <AccordionItem key={i} value={`item-${i}`} className="border border-gray-100 rounded-lg bg-gray-50/30 overflow-hidden px-1 hover:border-gray-200 transition-all data-[state=open]:bg-white data-[state=open]:border-emerald-100 data-[state=open]:shadow-sm">
+                             <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-gray-50/50 transition-colors text-left">
+                                <div className="flex items-center gap-3">
+                                   <HelpCircle className="h-5 w-5 text-emerald-600 shrink-0 stroke-[2]" />
+                                   <span className="font-bold text-gray-900 text-[15px]">{faq.q}</span>
+                                </div>
+                             </AccordionTrigger>
+                             <AccordionContent className="px-4 pb-5 pt-0 text-left">
+                                <div className="pl-8 text-gray-600 leading-relaxed text-[14px]">
+                                   {faq.a}
+                                </div>
+                             </AccordionContent>
+                          </AccordionItem>
+                       ));
+                    })()}
+                 </Accordion>
+              </div>
 
              {/* Bottom Contact Banner */}
              <div className="bg-gray-50/80 border border-emerald-100/50 p-6 flex flex-col md:flex-row items-center justify-between gap-6 m-6 mt-0 rounded-xl">

@@ -63,7 +63,7 @@ const categories = [
     name: "Snacks",
     slug: "snacks",
     image:
-      "https://images.pexels.com/photos/410911/pexels-photo-410911.jpeg?auto=compress&cs=tinysrgb&w=200",
+      "https://images.pexels.com/photos/1624487/pexels-photo-1624487.jpeg?auto=compress&cs=tinysrgb&w=200",
   },
   {
     name: "Desserts",
@@ -100,7 +100,7 @@ export function WhatsOnYourMind() {
         {categories.map((cat) => (
           <Link
             key={cat.slug}
-            href={`/search?q=${cat.slug}`}
+            href={`/categories/${cat.slug}`}
             className="flex flex-col items-center gap-3 group/cat w-[85px] sm:w-[110px] md:w-[130px] snap-start"
           >
             <div className="relative w-full aspect-square rounded-full overflow-hidden transition-transform duration-300 group-hover/cat:scale-105 shadow-[0_4px_20px_rgba(0,0,0,0.08)] bg-white">

@@ -6,10 +6,16 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   Check, CheckCircle2, Copy, Calendar, ShoppingBag,
-  ChefHat, XCircle, MapPin, Phone, Clock
+  ChefHat, XCircle, MapPin, Phone, Clock, Bike
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
+import { RazorpayIcon } from "@/components/icons/razorpay"
+import { PhonePeIcon } from "@/components/icons/phonepe"
+import { UpiIcon } from "@/components/icons/upi"
+import { GooglePayIcon } from "@/components/icons/googlepay"
+import { PaytmIcon } from "@/components/icons/paytm"
+import { RupayCardIcon } from "@/components/icons/rupaycard"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -80,9 +86,9 @@ function formatPhone(phone: string | null): string {
 }
 
 function formatPaymentStatus(status: string | null | undefined): { label: string; color: string } {
-  if (status === "SUCCESS") return { label: "PAID", color: "bg-[#e8f5ed] text-[#168846]" }
-  if (status === "REFUNDED" || status === "PARTIAL_REFUND") return { label: status === "PARTIAL_REFUND" ? "PARTIAL REFUND" : "REFUNDED", color: "bg-purple-50 text-purple-700" }
-  return { label: status || "PENDING", color: "bg-amber-50 text-amber-700" }
+  if (status === "SUCCESS") return { label: "PAID", color: "bg-[#ECFDF3] text-[#15803D]" }
+  if (status === "REFUNDED" || status === "PARTIAL_REFUND") return { label: status === "PARTIAL_REFUND" ? "PARTIAL REFUND" : "REFUNDED", color: "bg-[#ECFDF3] text-[#166534]" }
+  return { label: status || "PENDING", color: "bg-[#FEF3C7] text-[#B45309]" }
 }
 
 function formatProvider(provider: string | null): string {
@@ -105,127 +111,72 @@ function getTotalItems(order: UserOrder): number {
   return order.items.reduce((sum, i) => sum + i.quantity, 0)
 }
 
-function TimelineIcon({ type, state }: { type: 'check' | 'chef' | 'bike' | 'cancel', state: 'active' | 'inactive' | 'error' | 'success' }) {
-  const isError = state === 'error'
-  const isSuccess = state === 'success'
-  const isActive = state === 'active'
-
-  const colorClass = isError ? 'text-red-500 border-red-500' : (isSuccess || isActive ? 'text-[#168846] border-[#168846]' : 'text-gray-400 border-gray-300')
-  const iconColor = isError ? 'text-red-500' : (isSuccess || isActive ? 'text-[#168846]' : 'text-gray-400')
-
-  return (
-    <div className={cn("w-8 h-8 rounded-full border-[1.5px] flex items-center justify-center bg-white z-10", colorClass)}>
-      {type === 'check' && <Check className={cn("w-4 h-4", iconColor)} strokeWidth={2.5} />}
-      {type === 'chef' && <ChefHat className={cn("w-4 h-4", iconColor)} strokeWidth={1.5} />}
-      {type === 'bike' && (
-        <svg className={cn("w-4 h-4", iconColor)} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M19 17a2 2 0 11-4 0 2 2 0 014 0zm-10 0a2 2 0 11-4 0 2 2 0 014 0zm4.5-9h4l2 4h-2M8 12h8m-8 0V8a2 2 0 00-2-2H5a2 2 0 00-2 2v4m4 0H5" />
-        </svg>
-      )}
-      {type === 'cancel' && <XCircle className={cn("w-4 h-4", iconColor)} strokeWidth={1.5} />}
-    </div>
-  )
-}
-
 function HorizontalTimeline({ currentStep, category, history }: { currentStep: number; category: string; history?: { status: string, changedAt: string, note?: string | null }[] }) {
   const isCancelled = category === "cancelled"
 
+  const steps = [
+    { label: "Order Confirmed", key: "CONFIRMED", icon: Check },
+    { label: "Preparing Your Order", key: "PREPARING", icon: ChefHat },
+    { label: "Out for Delivery", key: "READYFORPICKUP", icon: Bike },
+    { label: "Delivery Completed", key: "COMPLETED", icon: Check },
+  ]
+
   return (
-    <div className="relative flex items-start justify-between w-full px-4">
-      {/* Progress Bar Background */}
-      <div className="absolute left-[12%] right-[12%] top-[15px] h-[1.5px] bg-gray-200 z-0" />
-      
-      {/* Active Progress */}
-      {!isCancelled && (
-        <div
-          className="absolute left-[12%] top-[15px] h-[1.5px] bg-[#168846] z-0 transition-all duration-500"
-          style={{ width: `${Math.min((currentStep / 3) * 76, 76)}%` }}
-        />
-      )}
-      {isCancelled && (
-        <div className="absolute left-[12%] top-[15px] h-[1.5px] bg-red-500 z-0 transition-all duration-500" style={{ width: '25%' }} />
-      )}
+    <div className="w-full relative px-2 lg:px-8 py-6">
+      <div className="flex justify-between relative">
+        {/* Progress Bar Background */}
+        <div className="absolute top-[16px] left-[10%] right-[10%] h-[2px] bg-[#D1D5DB] z-0" />
+        
+        {/* Active Progress */}
+        {!isCancelled && (
+          <div
+            className="absolute top-[16px] left-[10%] h-[2px] bg-[#15803D] z-0 transition-all duration-500"
+            style={{ width: `${Math.min((currentStep / 3) * 80, 80)}%` }}
+          />
+        )}
+        {isCancelled && (
+          <div
+            className="absolute top-[16px] left-[10%] h-[2px] bg-[#EF4444] z-0 transition-all duration-500"
+            style={{ width: `10%` }}
+          />
+        )}
 
-      {/* Step 1: Order Confirmed */}
-      <div className="relative z-10 flex flex-col items-center gap-2 w-1/4">
-        <TimelineIcon type="check" state={isCancelled ? "error" : "success"} />
-        <div className="text-center">
-          <p className={cn("text-[11px] font-bold leading-tight", isCancelled ? "text-red-500" : "text-[#168846]")}>
-            Order Confirmed
-          </p>
-          <p className="text-[10px] text-gray-500 mt-0.5 font-medium">
-            {history?.find(h => h.status === "CONFIRMED")?.changedAt 
-              ? formatTimelineDate(history.find(h => h.status === "CONFIRMED")!.changedAt)
-              : ""}
-          </p>
-        </div>
-      </div>
+        {steps.map((step, idx) => {
+          const isActive = !isCancelled && currentStep >= idx
+          const isError = isCancelled && idx === 1 // Display cancelled at step 2
+          const Icon = isError ? XCircle : step.icon
 
-      {/* Step 2: Preparing / Cancelled */}
-      <div className="relative z-10 flex flex-col items-center gap-2 w-1/4">
-        {isCancelled ? (
-          <>
-            <TimelineIcon type="cancel" state="error" />
-            <div className="text-center">
-              <p className="text-[11px] font-bold leading-tight text-red-500">Cancelled</p>
-              <p className="text-[10px] text-gray-500 mt-0.5 font-medium">
-                {history?.find(h => h.status === "CANCELLED")?.changedAt 
-                  ? formatTimelineDate(history.find(h => h.status === "CANCELLED")!.changedAt)
-                  : ""}
+          // Determine date to show
+          const hist = history?.find(h => h.status === (isError ? "CANCELLED" : step.key))
+          const dateStr = hist?.changedAt ? formatTimelineDate(hist.changedAt) : ""
+
+          return (
+            <div key={idx} className="relative z-10 flex flex-col items-center flex-1">
+              <div className={cn(
+                "w-[34px] h-[34px] rounded-full bg-white flex items-center justify-center border-2 mb-2 transition-colors duration-500",
+                isError ? "border-[#EF4444] text-[#EF4444]" : (isActive ? "border-[#15803D] text-[#15803D]" : "border-[#D1D5DB] text-[#D1D5DB]")
+              )}>
+                <Icon className="w-4 h-4" strokeWidth={2.5} />
+              </div>
+              <p className={cn(
+                "text-[12px] lg:text-[13px] font-[600] text-center mb-1 leading-tight",
+                isError ? "text-[#EF4444]" : (isActive ? "text-[#15803D]" : "text-[#6B7280]")
+              )}>
+                {isError ? "Cancelled" : step.label}
               </p>
-            </div>
-          </>
-        ) : (
-          <>
-            <TimelineIcon type={currentStep > 1 ? "check" : "chef"} state={currentStep >= 1 ? "success" : "inactive"} />
-            <div className="text-center">
-              <p className={cn("text-[11px] font-bold leading-tight", currentStep >= 1 ? "text-[#168846]" : "text-gray-500")}>
-                Preparing Your Order
-              </p>
-              {currentStep >= 1 && (
-                <p className="text-[10px] text-gray-500 mt-0.5 font-medium">
-                  {history?.find(h => h.status === "PREPARING")?.changedAt 
-                    ? formatTimelineDate(history.find(h => h.status === "PREPARING")!.changedAt)
-                    : ""}
+              {isActive && !isError && dateStr && (
+                <p className="text-[11px] lg:text-[12px] font-[400] text-[#6B7280] text-center">
+                  {dateStr}
+                </p>
+              )}
+              {isError && dateStr && (
+                <p className="text-[11px] lg:text-[12px] font-[400] text-[#6B7280] text-center">
+                  {dateStr}
                 </p>
               )}
             </div>
-          </>
-        )}
-      </div>
-
-      {/* Step 3: Out for Delivery */}
-      <div className="relative z-10 flex flex-col items-center gap-2 w-1/4">
-        <TimelineIcon type={currentStep > 2 && !isCancelled ? "check" : "bike"} state={isCancelled ? "inactive" : (currentStep >= 2 ? "success" : "inactive")} />
-        <div className="text-center">
-          <p className={cn("text-[11px] font-bold leading-tight", currentStep >= 2 && !isCancelled ? "text-[#168846]" : "text-gray-500")}>
-            Out for Delivery
-          </p>
-          {currentStep >= 2 && !isCancelled && (
-            <p className="text-[10px] text-gray-500 mt-0.5 font-medium">
-              {history?.find(h => h.status === "READYFORPICKUP")?.changedAt 
-                ? formatTimelineDate(history.find(h => h.status === "READYFORPICKUP")!.changedAt)
-                : ""}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Step 4: Delivery Completed */}
-      <div className="relative z-10 flex flex-col items-center gap-2 w-1/4">
-        <TimelineIcon type="check" state={isCancelled ? "inactive" : (currentStep >= 3 ? "success" : "inactive")} />
-        <div className="text-center">
-          <p className={cn("text-[11px] font-bold leading-tight", currentStep >= 3 && !isCancelled ? "text-[#168846]" : "text-gray-500")}>
-            Delivery Completed
-          </p>
-          {currentStep >= 3 && !isCancelled && (
-            <p className="text-[10px] text-gray-500 mt-0.5 font-medium">
-              {history?.find(h => h.status === "COMPLETED")?.changedAt 
-                ? formatTimelineDate(history.find(h => h.status === "COMPLETED")!.changedAt)
-                : ""}
-            </p>
-          )}
-        </div>
+          )
+        })}
       </div>
     </div>
   )
@@ -286,33 +237,32 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
   }
 
   return (
-    <div className="bg-white rounded-[16px] shadow-sm border border-gray-100 p-6 flex flex-col mb-4">
+    <div className="bg-[#FFFFFF] rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.06)] border border-[#E5E7EB] flex flex-col mb-6 overflow-hidden w-full max-w-4xl mx-auto">
       
-      {/* Top Section: Details & Buttons */}
-      <div className="flex flex-col md:flex-row justify-between w-full gap-6">
-        
-        {/* Left: Image & Details */}
-        <div className="flex gap-5 flex-1 min-w-0">
-          <div className="relative w-[110px] h-[110px] md:w-[120px] md:h-[120px] shrink-0 bg-gray-50 rounded-[12px] overflow-hidden">
-            {imageUrl ? (
-              <Image
-                src={imageUrl}
-                alt={order.kitchenName || "Order"}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 110px, 120px"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full text-gray-300">
-                <ChefHat className="h-10 w-10" />
-              </div>
-            )}
-          </div>
+      {/* Row 1: Image, Details, and Buttons */}
+      <div className="flex flex-col md:flex-row p-5 lg:p-6 gap-6 relative">
+        {/* Column 1: Image */}
+        <div className="relative w-full md:w-[130px] h-[200px] md:h-[130px] shrink-0 bg-[#FAFAFA] rounded-[20px] overflow-hidden">
+          {imageUrl ? (
+            <Image
+              src={imageUrl}
+              alt={order.kitchenName || "Order"}
+              fill
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 130px"
+            />
+          ) : (
+            <div className="flex items-center justify-center h-full text-[#9CA3AF]">
+              <ChefHat className="h-10 w-10" />
+            </div>
+          )}
+        </div>
 
-          <div className="flex flex-col justify-center flex-1 min-w-0">
-            {/* Row 1: Order ID & Status Badge */}
-            <div className="flex items-center gap-3 mb-1.5 flex-wrap">
-              <span className="text-[13px] font-bold text-gray-900">
+        {/* Column 2: Order Details */}
+        <div className="flex flex-col justify-center flex-1 min-w-0">
+          <div className="flex items-start md:items-center justify-between gap-3 mb-2 flex-col md:flex-row">
+            <div className="flex items-center gap-3">
+              <span className="text-[15px] font-[600] text-[#111827]">
                 Order ID: #{order.id.slice(-6).toUpperCase()}
               </span>
               <button
@@ -323,70 +273,83 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
                     .then(() => toast.success("Order ID copied"))
                     .catch(() => toast.error("Failed to copy"))
                 }}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-[#9CA3AF] hover:text-[#6B7280] transition-colors"
               >
-                <Copy className="h-3.5 w-3.5" />
+                <Copy className="h-[16px] w-[16px]" />
               </button>
+            </div>
+            
+            <div className="flex items-center">
               <span className={cn(
-                "text-[11px] font-bold px-2.5 py-0.5 rounded",
-                isOngoing && "bg-red-50 text-red-500",
-                isCompleted && "bg-[#e8f5ed] text-[#168846]",
-                isCancelled && "bg-red-50 text-red-500",
-                category === "refunds" && "bg-purple-50 text-purple-700"
+                "text-[13px] font-[600] px-3 py-1 rounded-full",
+                isOngoing && "bg-[#FFF1E8] text-[#F97316]",
+                isCompleted && "bg-[#ECFDF3] text-[#15803D]",
+                isCancelled && "bg-[#FEE2E2] text-[#B91C1C]",
+                category === "refunds" && "bg-[#ECFDF3] text-[#15803D]"
               )}>
                 {getStatusLabel(order.status)}
               </span>
             </div>
+          </div>
 
-            {/* Row 2: Kitchen Name */}
-            <div className="flex items-center gap-1.5 mb-2">
-              <h3 className="text-[18px] font-bold text-gray-900 truncate">
-                {order.kitchenName || order.items[0]?.kitchenName || "Kitchen"}
-              </h3>
-              <CheckCircle2 className="h-[18px] w-[18px] text-white fill-green-600 shrink-0" />
+          <div className="flex items-center gap-1.5 mb-2">
+            <h3 className="text-[22px] font-[800] text-[#111827] leading-tight truncate">
+              {order.kitchenName || order.items[0]?.kitchenName || "Kitchen"}
+            </h3>
+            <CheckCircle2 className="h-[18px] w-[18px] text-white fill-[#15803D] shrink-0" />
+          </div>
+
+          <p className="text-[15px] font-[500] text-[#6B7280] mb-3 line-clamp-1">{itemsStr}</p>
+
+          <div className="flex items-center gap-4 text-[14px] font-[500] text-[#6B7280] mb-3">
+            <div className="flex items-center gap-1.5 bg-[#F9FAFB] px-2 py-1 rounded">
+              <ShoppingBag className="w-[14px] h-[14px] text-[#9CA3AF]" /> {totalItems} {totalItems === 1 ? "Item" : "Items"}
             </div>
+            <div className="flex items-center gap-1.5 bg-[#F9FAFB] px-2 py-1 rounded">
+              <div className="border border-[#9CA3AF] text-[#6B7280] rounded-full w-[14px] h-[14px] flex items-center justify-center text-[9px] leading-none">₹</div>
+              {parseFloat(order.totalAmount).toFixed(2)}
+            </div>
+          </div>
 
-            {/* Row 3: Items string */}
-            <p className="text-[13px] text-gray-500 mb-3 line-clamp-1">{itemsStr}</p>
+          <div className="flex items-center gap-2 text-[14px] font-[500] text-[#6B7280] mb-3">
+            <Calendar className="w-[16px] h-[16px] text-[#9CA3AF]" /> {formatDateTime(order.createdAt)}
+          </div>
 
-            {/* Row 4: Icons for Items and Price */}
-            <div className="flex items-center gap-5 text-[13px] font-bold text-gray-600 mb-3">
-              <div className="flex items-center gap-2">
-                <ShoppingBag className="w-[15px] h-[15px] text-gray-400" /> {totalItems} {totalItems === 1 ? "Item" : "Items"}
+          <div className="flex items-center gap-3">
+            {order.paymentProvider && (
+              <div className="flex items-center gap-1.5 bg-[#F8FAFC] border border-[#F1F5F9] px-3 py-1.5 rounded-full text-[13px] font-[600] text-[#334155]">
+                {order.paymentProvider.toLowerCase() === 'razorpay' ? (
+                  <RazorpayIcon className="h-[12px] w-auto" />
+                ) : order.paymentProvider.toLowerCase() === 'phonepe' ? (
+                  <PhonePeIcon className="h-[14px] w-auto" />
+                ) : order.paymentProvider.toLowerCase() === 'upi' ? (
+                  <UpiIcon className="h-[12px] w-auto" />
+                ) : order.paymentProvider.toLowerCase() === 'googlepay' ? (
+                  <GooglePayIcon className="h-[12px] w-auto" />
+                ) : order.paymentProvider.toLowerCase() === 'paytm' ? (
+                  <PaytmIcon className="h-[12px] w-auto" />
+                ) : order.paymentProvider.toLowerCase() === 'rupay' ? (
+                  <RupayCardIcon className="h-[12px] w-auto" />
+                ) : (
+                  <span className="italic font-serif text-[#111827] font-black">P</span>
+                )}
+                Paid via {formatProvider(order.paymentProvider)}
               </div>
-              <div className="flex items-center gap-2">
-                <div className="border border-gray-400 text-gray-500 rounded-full w-[15px] h-[15px] flex items-center justify-center text-[10px] leading-none">₹</div>
-                {parseFloat(order.totalAmount).toFixed(2)}
-              </div>
-            </div>
-
-            {/* Row 5: Date */}
-            <div className="flex items-center gap-2 text-[13px] font-medium text-gray-500 mb-3.5">
-              <Calendar className="w-4 h-4 text-gray-400" /> {formatDateTime(order.createdAt)}
-            </div>
-
-            {/* Row 6: Payment */}
-            <div className="flex items-center gap-3">
-              {order.paymentProvider && (
-                <div className="flex items-center gap-1.5 bg-gray-50 border border-gray-200 px-2.5 py-1 rounded text-[12px] font-bold text-gray-700">
-                  <span className="italic font-serif text-gray-800 font-black">P</span>
-                  Paid via {formatProvider(order.paymentProvider)}
-                </div>
-              )}
-              <span className={cn("text-[10px] font-bold px-2.5 py-1 rounded", payStatus.color)}>
-                {payStatus.label}
-              </span>
-            </div>
+            )}
+            <span className={cn("text-[12px] font-[700] px-3 py-1.5 rounded-full tracking-wide", payStatus.color)}>
+              {payStatus.label}
+            </span>
           </div>
         </div>
 
-        {/* Right: Action Buttons */}
-        <div className="flex flex-col gap-3 shrink-0 w-full md:w-[150px]">
+        {/* Column 3: Buttons */}
+        <div className="flex flex-col md:w-[160px] lg:w-[180px] shrink-0 gap-3 mt-4 md:mt-0">
+
           {isOngoing && (
             <>
-              <Button asChild className="w-full bg-[#FF5A00] hover:bg-[#FF5A00]/90 text-white rounded-md h-[40px] text-[13px] font-bold gap-2">
+              <Button asChild className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white rounded-[12px] h-[48px] text-[15px] font-[600] gap-2 transition-colors shadow-[0_4px_12px_rgba(249,115,22,0.2)]">
                 <Link href={`/account/orders/${order.id}/track`}>
-                  <MapPin className="w-4 h-4" /> Track Order
+                  <MapPin className="w-[18px] h-[18px]" /> Track Order
                 </Link>
               </Button>
               <AlertDialog open={cancelOpen} onOpenChange={setCancelOpen}>
@@ -395,7 +358,7 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
                     type="button"
                     variant="outline"
                     disabled={cancelMutation.isPending}
-                    className="w-full border-[#FF5A00] text-[#FF5A00] bg-white hover:bg-orange-50 rounded-md h-[40px] text-[13px] font-bold"
+                    className="w-full border-[#F97316] text-[#F97316] bg-white hover:bg-[#FFF7ED] rounded-[12px] h-[48px] text-[15px] font-[600] transition-colors"
                   >
                     Cancel Order
                   </Button>
@@ -412,7 +375,7 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
                     <AlertDialogAction
                       onClick={() => cancelMutation.mutate()}
                       disabled={cancelMutation.isPending}
-                      className="bg-red-600 hover:bg-red-700 text-white"
+                      className="bg-[#EF4444] hover:bg-red-700 text-white"
                     >
                       {cancelMutation.isPending ? "Cancelling..." : "Yes, Cancel Order"}
                     </AlertDialogAction>
@@ -427,7 +390,7 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
               type="button"
               variant="outline"
               onClick={orderAgain}
-              className="w-full border-[#FF5A00] text-[#FF5A00] bg-white hover:bg-orange-50 rounded-md h-[40px] text-[13px] font-bold"
+              className="w-full border-[#F97316] text-[#F97316] bg-white hover:bg-[#FFF7ED] rounded-[12px] h-[48px] text-[15px] font-[600] transition-colors"
             >
               Order Again
             </Button>
@@ -435,106 +398,99 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
         </div>
       </div>
 
-      {/* Middle Section: Timeline */}
-      <div className="mt-6 border border-gray-100 rounded-[12px] p-6 w-full hidden md:block">
+      {/* Row 2: Horizontal Timeline */}
+      <div className="w-full border-y border-[#F3F4F6] bg-[#FAFAFA] flex items-center justify-center">
         <HorizontalTimeline currentStep={currentStep} category={category} history={order.statusHistory} />
       </div>
 
-      {/* Mobile Timeline */}
-      <div className="mt-5 md:hidden">
-         <HorizontalTimeline currentStep={currentStep} category={category} history={order.statusHistory} />
-      </div>
-
-      {/* Bottom Section: Address & Info */}
-      <div className="mt-6 md:mt-8 flex flex-col md:flex-row items-start justify-between gap-6 md:gap-0">
-        
-        {/* Delivery Address */}
-        <div className="flex flex-col flex-1">
-          <div className="flex items-center gap-2 mb-2.5">
-            <span className="text-[13px] font-bold text-gray-900">Delivery Address</span>
-            <span className="bg-[#e8f5ed] text-[#168846] text-[10px] font-bold px-2 py-0.5 rounded">
-              {order.addressLabel || "Home"} {order.addressIsDefault ? "• Primary" : ""}
-            </span>
+      {/* Row 3: Address & Expected Delivery */}
+      <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-[#F3F4F6]">
+        <div className="flex-1 p-5 lg:p-6">
+          <div className="flex items-center gap-3 mb-2">
+            <span className="text-[14px] font-[600] text-[#111827]">Delivery Address</span>
+            {order.addressIsDefault && (
+              <span className="bg-[#ECFDF3] text-[#15803D] text-[11px] font-[600] px-2 py-0.5 rounded-full">
+                Home • Primary
+              </span>
+            )}
           </div>
-          <p className="text-[13px] text-gray-500 leading-relaxed md:max-w-[70%]">
+          <p className="text-[13px] font-[500] text-[#6B7280] leading-relaxed max-w-[90%] mb-2">
             {order.address || "Address not available"}
           </p>
-          <div className="flex items-center gap-1.5 text-[13px] font-medium text-gray-500 mt-2.5">
-            <Phone className="w-4 h-4 text-gray-400" /> {formatPhone(phoneNumber)}
+          <div className="flex items-center gap-1.5 text-[13px] font-[500] text-[#6B7280]">
+            <Phone className="w-[14px] h-[14px] text-[#9CA3AF]" /> {formatPhone(phoneNumber)}
           </div>
         </div>
 
-        {/* Expected Delivery or Cancelled Reason */}
-        <div className="flex flex-col items-start w-full md:w-[300px] shrink-0 border-t md:border-t-0 md:border-l border-gray-100 pt-5 md:pt-0 md:pl-8">
+        <div className="flex-1 p-5 lg:p-6 flex flex-col justify-center">
           {isCancelled ? (
             <>
-              <div className="flex items-center gap-2 text-[13px] font-bold text-gray-900 mb-1.5">
-                <Clock className="w-4 h-4 text-gray-900" /> Cancelled on
+              <div className="flex items-center gap-2 text-[14px] font-[600] text-[#111827] mb-2">
+                <Clock className="w-[16px] h-[16px] text-[#111827]" /> Cancelled on
               </div>
-              <p className="text-[13px] text-gray-600 pl-6 mb-1.5">
+              <p className="text-[13px] font-[500] text-[#6B7280] pl-[26px] mb-2">
                 {order.statusHistory?.find(h => h.status === "CANCELLED")?.changedAt 
                   ? formatDateTime(order.statusHistory.find(h => h.status === "CANCELLED")!.changedAt) 
                   : "Date unknown"}
               </p>
-              <p className="text-[13px] text-red-500 font-bold pl-6">
-                Reason: {order.statusHistory?.find(h => h.status === "CANCELLED")?.note || "Order cancelled"}
+              <p className="text-[13px] text-[#EF4444] font-[600] pl-[26px]">
+                Reason: {order.statusHistory?.find(h => h.status === "CANCELLED")?.note || "Order cancelled by you"}
               </p>
             </>
           ) : (
             <>
-              <div className="flex items-center gap-2 text-[13px] font-bold text-gray-900 mb-1.5">
-                <Clock className="w-4 h-4 text-gray-900" /> Expected Delivery
+              <div className="flex items-center gap-2 text-[14px] font-[600] text-[#111827] mb-2">
+                <Clock className="w-[16px] h-[16px] text-[#111827]" /> {isCompleted ? "Delivered on" : "Expected Delivery"}
               </div>
-              <p className="text-[13px] text-gray-600 pl-6">
-                {formatDateOnly(serviceDate)}
-                <br />
-                {formatTimeSlot(timeSlot)}
+              <p className="text-[13px] font-[500] text-[#6B7280] pl-[26px]">
+                {isCompleted && order.statusHistory?.find(h => h.status === "COMPLETED")?.changedAt ? (
+                  formatDateTime(order.statusHistory.find(h => h.status === "COMPLETED")!.changedAt)
+                ) : (
+                  <>
+                    {formatDateOnly(serviceDate)}, {formatTimeSlot(timeSlot)}
+                  </>
+                )}
               </p>
             </>
           )}
         </div>
-
       </div>
-
     </div>
   )
 }
 
 export function OrderCardSkeleton() {
   return (
-    <div className="bg-white rounded-[16px] shadow-sm border border-gray-100 p-6 flex flex-col mb-4">
-      <div className="flex flex-col md:flex-row justify-between w-full gap-6">
-        <div className="flex gap-5 flex-1 min-w-0">
-          <Skeleton className="w-[110px] h-[110px] md:w-[120px] md:h-[120px] rounded-[12px] shrink-0" />
-          <div className="flex flex-col justify-center flex-1 min-w-0 gap-3">
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-5 w-48" />
-            <Skeleton className="h-4 w-64" />
-            <div className="flex gap-4">
-              <Skeleton className="h-4 w-20" />
-              <Skeleton className="h-4 w-16" />
-            </div>
-            <Skeleton className="h-4 w-32" />
-            <Skeleton className="h-6 w-24 rounded" />
-          </div>
-        </div>
-        <div className="flex flex-col gap-3 shrink-0 w-full md:w-[150px]">
-          <Skeleton className="h-[40px] w-full rounded-md" />
-          <Skeleton className="h-[40px] w-full rounded-md" />
-        </div>
-      </div>
-      <div className="mt-6 border border-gray-100 rounded-[12px] p-6 w-full">
-        <Skeleton className="h-12 w-full" />
-      </div>
-      <div className="mt-6 md:mt-8 flex flex-col md:flex-row items-start justify-between gap-6 md:gap-0">
-        <div className="flex flex-col flex-1 gap-2.5">
+    <div className="bg-[#FFFFFF] rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.06)] border border-[#E5E7EB] flex flex-col mb-6 overflow-hidden w-full max-w-4xl mx-auto">
+      <div className="flex flex-col md:flex-row p-5 lg:p-6 gap-6">
+        <Skeleton className="w-full md:w-[130px] h-[200px] md:h-[130px] rounded-[20px] shrink-0" />
+        <div className="flex flex-col justify-center flex-1 min-w-0 gap-3">
           <Skeleton className="h-4 w-32" />
+          <Skeleton className="h-6 w-48" />
           <Skeleton className="h-4 w-64" />
+          <div className="flex gap-4">
+            <Skeleton className="h-6 w-20 rounded" />
+            <Skeleton className="h-6 w-16 rounded" />
+          </div>
           <Skeleton className="h-4 w-40" />
         </div>
-        <div className="flex flex-col items-start w-full md:w-[300px] shrink-0 md:border-l border-gray-100 md:pl-8 gap-2">
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-4 w-40" />
+        <div className="flex flex-col md:w-[160px] lg:w-[180px] shrink-0 gap-3">
+          <Skeleton className="h-[48px] w-full rounded-[12px]" />
+          <Skeleton className="h-[48px] w-full rounded-[12px]" />
+        </div>
+      </div>
+      
+      <div className="w-full h-[120px] bg-[#FAFAFA] border-y border-[#F3F4F6]" />
+      
+      <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-[#F3F4F6]">
+        <div className="flex-1 p-5 lg:p-6 flex flex-col gap-3">
+           <Skeleton className="h-4 w-32" />
+           <Skeleton className="h-3 w-full" />
+           <Skeleton className="h-3 w-40" />
+        </div>
+        <div className="flex-1 p-5 lg:p-6 flex flex-col gap-3">
+           <Skeleton className="h-4 w-32" />
+           <Skeleton className="h-3 w-40" />
         </div>
       </div>
     </div>

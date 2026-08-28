@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { cartStore, type CartItem } from "@/stores/cartStore";
 import { executeCommand, AddToCartCommand, UpdateCartQuantityCommand, ClearCartCommand } from "@/lib/patterns";
@@ -30,6 +30,11 @@ export function useOptimisticCart() {
       queryClient.setQueryData<CartItem[]>(cartQueryKey, current);
     }
   }, [queryClient]);
+
+  // Sync zustand store updates (like hydration from localStorage) into the query cache
+  useEffect(() => {
+    queryClient.setQueryData<CartItem[]>(cartQueryKey, storeCart);
+  }, [storeCart, queryClient]);
 
   const addToCartMutation = useMutation({
     mutationFn: (item: CartItem) => executeCommand(new AddToCartCommand(item)),

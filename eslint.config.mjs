@@ -12,6 +12,14 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local debugging / probe scratch files:
+    "*.tmp.js",
+    "fix.js",
+    "fix_*.js",
+    "crawl.mjs",
+    "probe-*.ts",
+    "probe-*.js",
+    "probe-*.json",
   ]),
   {
     files: ["tests/**"],

@@ -51,12 +51,15 @@ export async function POST(req: Request) {
     });
 
     if (assignment) {
-      const assignmentData: Record<string, unknown> = { status };
+      const assignmentData: Record<string, unknown> = {};
       if (status === "PICKEDUP") assignmentData.pickedUpAt = new Date();
       if (status === "DELIVERED" || status === "FAILED") assignmentData.deliveredAt = new Date();
+      // DeliveryAssignment.status is an AssignmentStatus enum (PENDING/DELIVERED/CANCELLED);
+      // only persist values it can hold.
+      if (status === "DELIVERED") assignmentData.status = "DELIVERED";
       await prisma.deliveryAssignment.update({
         where: { id: assignment.id },
-        data: assignmentData as never,
+        data: assignmentData,
       });
     }
 

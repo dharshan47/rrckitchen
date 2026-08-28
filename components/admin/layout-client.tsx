@@ -96,6 +96,7 @@ const navItems: NavItem[] = [
     icon: CreditCard,
     permission: "VIEW_FINANCIALS",
     subItems: [
+      { href: "/admin/payments", label: "Payments", icon: CreditCard, permission: "VIEW_FINANCIALS" },
       { href: "/admin/payments/coupons", label: "Coupon Codes", icon: TicketPercent, permission: "MANAGE_COUPONS" },
       { href: "/admin/payments/loyalty-coupons", label: "Loyalty Coupons", icon: Gift, permission: "MANAGE_COUPONS" },
       { href: "/admin/payments/payment-offers", label: "Payment Offers", icon: Wallet, permission: "MANAGE_COUPONS" },
@@ -314,8 +315,8 @@ export default function LayoutClient({
               <span className="text-[13px] text-[#6B7280] font-medium mt-1">Admin Panel</span>
             </div>
           </SidebarHeader>
-          <ScrollArea className="flex-1">
-            <SidebarContent className="px-4 py-4">
+          <SidebarContent className="px-3 py-3 flex-1 overflow-hidden">
+            <ScrollArea className="h-full w-full pr-2">
               <SidebarMenu className="gap-1.5">
                 {visibleNavItems.map((item) => {
                   const isActive = item.href === "/admin"
@@ -396,76 +397,76 @@ export default function LayoutClient({
                   );
                 })}
               </SidebarMenu>
-            </SidebarContent>
-          </ScrollArea>
+            </ScrollArea>
+          </SidebarContent>
           
-          <SidebarFooter className="p-4 pt-2 border-t-0 border-transparent">
+          <SidebarFooter className="px-3 pb-3 pt-1 border-t-0 border-transparent">
             {/* Today's Earnings Card */}
-            <div className="bg-[#F0FDF4] border-none rounded-[14px] p-4 mb-4">
-              <p className="text-[13px] font-medium text-[#6B7280] mb-1">Today&apos;s Earnings</p>
-              <h4 className="text-[22px] font-bold text-slate-900 leading-tight">₹{earnings.toLocaleString('en-IN')}</h4>
+            <div className="bg-[#F0FDF4] border-none rounded-[12px] p-3 mb-2">
+              <p className="text-[12px] font-medium text-[#6B7280] mb-0.5">Today&apos;s Earnings</p>
+              <h4 className="text-[18px] font-bold text-slate-900 leading-tight">₹{earnings.toLocaleString('en-IN')}</h4>
               {earningsTrend !== null ? (
-                <p className="text-[13px] font-bold text-[#15803D] flex items-center mt-1.5">
-                  <TrendingUp className="h-3.5 w-3.5 mr-1" strokeWidth={3} />
+                <p className="text-[11px] font-bold text-[#15803D] flex items-center mt-1">
+                  <TrendingUp className="h-3 w-3 mr-1" strokeWidth={3} />
                   {earningsTrend >= 0 ? "+" : ""}{earningsTrend.toFixed(1)}%
-                  <span className="text-[#6B7280] font-medium ml-1.5">vs yesterday</span>
+                  <span className="text-[#6B7280] font-medium ml-1">vs yesterday</span>
                 </p>
               ) : (
-                <p className="text-[13px] font-medium text-[#6B7280] mt-1.5">No yesterday data yet</p>
+                <p className="text-[11px] font-medium text-[#6B7280] mt-1">No yesterday data yet</p>
               )}
-              <div className="h-10 mt-3 w-full bg-gradient-to-t from-[#15803D]/20 to-transparent relative rounded-b flex items-end">
+              <div className="h-8 mt-2 w-full bg-gradient-to-t from-[#15803D]/20 to-transparent relative rounded-b flex items-end">
                 {weeklySeries.length >= 2 ? (
                   <Sparkline data={weeklySeries} color="#15803D" />
                 ) : (
-                  <Skeleton className="h-10 w-full rounded" />
+                  <Skeleton className="h-8 w-full rounded" />
                 )}
               </div>
             </div>
 
             {/* Profile Card */}
-            <div className="border border-[#E5E7EB] rounded-[14px] p-4 bg-white shadow-sm">
-              <div className="flex items-center gap-3">
+            <div className="border border-[#E5E7EB] rounded-[12px] p-3 bg-white shadow-sm">
+              <div className="flex items-center gap-2">
                 <div className="relative">
-                  <Avatar className="h-10 w-10 bg-[#15803D] text-white">
+                  <Avatar className="h-8 w-8 bg-[#15803D] text-white">
                     {session.user.image ? (
                       <AvatarImage asChild src={session.user.image} alt={displayName}>
                         <Image
                           src={session.user.image}
                           alt={displayName}
                           fill
-                          sizes="40px"
+                          sizes="32px"
                           className="object-cover"
                         />
                       </AvatarImage>
                     ) : (
-                      <AvatarFallback className="bg-[#15803D] text-white font-bold">{initials}</AvatarFallback>
+                      <AvatarFallback className="bg-[#15803D] text-white font-bold text-xs">{initials}</AvatarFallback>
                     )}
                   </Avatar>
-                  <div className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 bg-[#15803D] border-[2px] border-white rounded-full" />
+                  <div className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 bg-[#15803D] border-[2px] border-white rounded-full" />
                 </div>
                 <div className="flex flex-col flex-1 overflow-hidden">
-                  <span className="text-[14px] font-bold text-slate-900 truncate">{displayName}</span>
-                  <span className="text-[12px] text-[#6B7280] font-medium truncate">
+                  <span className="text-[13px] font-bold text-slate-900 truncate">{displayName}</span>
+                  <span className="text-[11px] text-[#6B7280] font-medium truncate">
                     {isSuperAdmin ? "Super Admin" : "Admin"}
                   </span>
                 </div>
               </div>
-              <div className="h-px bg-[#E5E7EB] my-4" />
-              <div className="flex items-center justify-around">
+              <div className="h-px bg-[#E5E7EB] my-3" />
+              <div className="flex items-center justify-around h-6">
                 <Button
                   variant="ghost"
-                  className="flex-1 rounded-none hover:bg-slate-50 h-8 text-[#4B5563]"
+                  className="flex-1 rounded-none hover:bg-slate-50 h-full text-[#4B5563] p-0"
                   onClick={() => router.push("/admin/invite")}
                 >
-                  <Settings className="h-5 w-5" />
+                  <Settings className="h-4 w-4" />
                 </Button>
-                <div className="w-px h-5 bg-[#E5E7EB]" />
+                <div className="w-px h-4 bg-[#E5E7EB]" />
                 <Button
                   variant="ghost"
                   onClick={async () => { resetAdminState(); await signOut(); router.push("/"); }}
-                  className="flex-1 rounded-none hover:bg-slate-50 h-8 text-[#4B5563] hover:text-red-600"
+                  className="flex-1 rounded-none hover:bg-slate-50 h-full text-[#4B5563] hover:text-red-600 p-0"
                 >
-                  <LogOut className="h-5 w-5" />
+                  <LogOut className="h-4 w-4" />
                 </Button>
               </div>
             </div>

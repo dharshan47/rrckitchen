@@ -11,7 +11,7 @@ vi.mock("@/lib/redis", () => ({ redis: mockRedis }))
 const mockPrisma = vi.hoisted(() => ({
   kitchenAddress: { findMany: vi.fn(), findUnique: vi.fn(), findFirst: vi.fn() },
   menuItem: { findMany: vi.fn(), count: vi.fn() },
-  review: { aggregate: vi.fn() },
+  review: { aggregate: vi.fn(), groupBy: vi.fn() },
 }))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
@@ -24,7 +24,11 @@ import {
 } from "@/actions/catalog/cross-kitchen-search"
 
 describe("cross-kitchen-search", () => {
-  beforeEach(() => { vi.clearAllMocks() })
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockPrisma.review.groupBy.mockResolvedValue([])
+    mockPrisma.kitchenAddress.findMany.mockResolvedValue([])
+  })
 
   describe("searchAcrossKitchens", () => {
     const baseInput = { query: "dosa", latitude: 13.0, longitude: 80.2 }
@@ -39,8 +43,9 @@ describe("cross-kitchen-search", () => {
       expect(result).toEqual({ items: [], total: 0 })
       expect(mockRedis.geosearch).toHaveBeenCalledWith(
         "kitchens:geo",
-        { longitude: 80.2, latitude: 13.0 },
-        { radius: 10, unit: "km" },
+        { type: "FROMLONLAT", coordinate: { lon: 80.2, lat: 13.0 } },
+        { type: "BYRADIUS", radius: 10, radiusType: "KM" },
+        "ASC",
       )
     })
 
@@ -133,11 +138,12 @@ describe("cross-kitchen-search", () => {
         },
       ])
       mockPrisma.menuItem.count.mockResolvedValue(1)
-      mockPrisma.kitchenAddress.findFirst.mockResolvedValue({
-        latitude: 13.1,
-        longitude: 80.3,
-      })
-      mockPrisma.review.aggregate.mockResolvedValue({ _avg: { rating: 4.5 } })
+      mockPrisma.kitchenAddress.findMany.mockResolvedValue([
+        { kitchenPartnerId: "kp-1", latitude: 13.1, longitude: 80.3 },
+      ])
+      mockPrisma.review.groupBy.mockResolvedValue([
+        { kitchenPartnerId: "kp-1", _avg: { rating: 4.5 } },
+      ])
 
       const result = await searchAcrossKitchens(baseInput)
 
@@ -168,8 +174,10 @@ describe("cross-kitchen-search", () => {
         },
       ])
       mockPrisma.menuItem.count.mockResolvedValue(1)
-      mockPrisma.kitchenAddress.findFirst.mockResolvedValue(null)
-      mockPrisma.review.aggregate.mockResolvedValue({ _avg: { rating: null } })
+      mockPrisma.kitchenAddress.findMany.mockResolvedValue([])
+      mockPrisma.review.groupBy.mockResolvedValue([
+        { kitchenPartnerId: "kp-1", _avg: { rating: null } },
+      ])
 
       const result = await searchAcrossKitchens(baseInput)
 
@@ -200,8 +208,9 @@ describe("cross-kitchen-search", () => {
 
       expect(mockRedis.geosearch).toHaveBeenCalledWith(
         "kitchens:geo",
-        { longitude: 80.2, latitude: 13.0 },
-        { radius: 25, unit: "km" },
+        { type: "FROMLONLAT", coordinate: { lon: 80.2, lat: 13.0 } },
+        { type: "BYRADIUS", radius: 25, radiusType: "KM" },
+        "ASC",
       )
     })
   })

@@ -52,6 +52,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { CloudinaryUpload } from "@/components/patterns/cloudinary-upload"
+import Image from 'next/image';
 import {
   type AdminMenuItemRow,
   useAdminMenuItemsQuery,
@@ -474,8 +475,8 @@ export default function AdminMenuPage() {
 
       {/* Filters & Table */}
       <div className="mt-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-[#E5E7EB] rounded-[20px] bg-white overflow-hidden">
-        <div className="p-4 flex flex-wrap items-center justify-between gap-4 border-b border-[#F3F4F6]">
-          <ScrollArea className="w-full lg:w-auto pb-2 lg:pb-0">
+        <div className="p-4 flex flex-col xl:flex-row xl:items-center justify-between gap-4 border-b border-[#F3F4F6]">
+          <ScrollArea className="w-full xl:flex-1 min-w-0 max-w-full pb-2 xl:pb-0">
             <div className="flex flex-nowrap items-center gap-3 w-max pr-4">
               <div className="relative min-w-[220px] shrink-0">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-[#9CA3AF]" />
@@ -646,7 +647,7 @@ export default function AdminMenuPage() {
 
       {/* Edit Menu Item Side Panel */}
       <Sheet open={editOpen && !!selectedItem} onOpenChange={(open) => { if (!open) { setEditOpen(false); setSelectedItem(null) } }}>
-        <SheetContent className="w-full sm:max-w-[550px] overflow-y-auto p-0 flex flex-col bg-white border-l-0 shadow-2xl z-[100]">
+        <SheetContent className="w-full sm:max-w-[850px] p-0 flex flex-col bg-white border-l-0 shadow-2xl z-[100]">
           {selectedItem && <MenuEditMode item={selectedItem} onClose={() => { setEditOpen(false); setSelectedItem(null) }} />}
         </SheetContent>
       </Sheet>
@@ -1031,68 +1032,67 @@ function MenuEditMode({ item, onClose }: { item: AdminMenuItemRow; onClose: () =
           <Button variant="ghost" size="icon" className="h-8 w-8 text-[#6B7280] hover:bg-gray-100" onClick={onClose}><X className="h-5 w-5" /></Button>
         </div>
         
-        <div className="flex gap-7 text-[13px] font-bold pt-1">
-          {(["basic", "pricing", "availability", "images", "more"] as const).map((tab) => (
-            <button
-              key={tab}
-              type="button"
-              onClick={() => setActiveTab(tab)}
-              className={`pb-4 capitalize transition-colors ${activeTab === tab ? "border-b-[3px] border-[#15803D] text-[#15803D]" : "text-[#6B7280] hover:text-[#111827] border-b-[3px] border-transparent"}`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
+        <ScrollArea className="w-full mt-1">
+          <div className="flex gap-7 text-[13px] font-bold w-max pr-4">
+            {(["basic", "pricing", "availability", "images", "more"] as const).map((tab) => (
+              <button
+                key={tab}
+                type="button"
+                onClick={() => setActiveTab(tab)}
+                className={`pb-4 capitalize transition-colors ${activeTab === tab ? "border-b-[3px] border-[#15803D] text-[#15803D]" : "text-[#6B7280] hover:text-[#111827] border-b-[3px] border-transparent"}`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </SheetHeader>
 
-      <div className="p-8 space-y-7 flex-1 bg-white">
+      <ScrollArea className="flex-1 bg-white w-full">
+        <div className="p-6 sm:p-8 space-y-7 min-w-[280px]">
         {activeTab === "images" && (
         <>
-        {/* Images Row */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <div className="relative">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.imageUrl || ""} alt="" className="w-full aspect-square rounded-[16px] object-cover bg-gray-100" />
-            <span className="absolute top-4 right-4 bg-[#16A34A] text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow-sm tracking-wide">Cover</span>
-          </div>
-          <div className="flex flex-col gap-4">
-            <CloudinaryUpload onUpload={(result) => handleAddPhoto(result.secure_url)}>
-              {({ uploading, startUpload }) => (
-                <div 
-                  onClick={startUpload}
-                  className={`flex-1 rounded-[12px] border border-dashed border-[#D1D5DB] flex flex-col items-center justify-center bg-white hover:bg-gray-50 transition-colors cursor-pointer min-h-[140px] ${uploading ? "opacity-50 pointer-events-none" : ""}`}
-                >
-                  {uploading ? (
-                    <Loader2 className="h-8 w-8 text-[#9CA3AF] mb-3 animate-spin" />
-                  ) : (
-                    <UploadCloud className="h-8 w-8 text-[#9CA3AF] mb-3" />
-                  )}
-                  <span className="text-[14px] font-extrabold text-[#111827] mb-1">Upload Images</span>
-                  <span className="text-[12px] font-medium text-[#6B7280]">Drag & drop or click</span>
-                </div>
+          {item.photos.map((p, idx) => (
+            <div key={p.id} className="relative group">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <Image src={p.imageUrl} alt="" className={`w-full aspect-square rounded-[16px] object-cover bg-gray-100 ${idx === 0 ? "border-2 border-[#15803D]" : "border border-[#E5E7EB]"}`} />
+              {idx === 0 && (
+                <span className="absolute top-4 left-4 bg-[#16A34A] text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow-sm tracking-wide">Cover</span>
               )}
-            </CloudinaryUpload>
-            <div className="flex gap-2.5 overflow-x-auto pb-1">
-              {item.photos.slice(0, 3).map((p, idx) => (
-                <div key={p.id} className="relative group shrink-0">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={p.imageUrl} alt="" className={`w-[52px] h-[52px] rounded-[10px] object-cover ${idx === 0 ? "border-2 border-[#15803D]" : "border border-[#E5E7EB]"}`} />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (confirm("Remove this photo?")) {
-                        handleDeletePhoto(p.id)
-                      }
-                    }}
-                    className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-              <div className="w-[52px] h-[52px] shrink-0 rounded-[10px] border border-[#E5E7EB] flex items-center justify-center bg-white cursor-pointer hover:bg-gray-50"><Plus className="h-5 w-5 text-[#9CA3AF]" /></div>
+              <button
+                type="button"
+                onClick={() => {
+                  toast("Remove this photo?", {
+                    action: {
+                      label: "Remove",
+                      onClick: () => handleDeletePhoto(p.id)
+                    },
+                  })
+                }}
+                className="absolute top-4 right-4 h-8 w-8 rounded-full bg-white/90 hover:bg-red-50 text-red-600 flex items-center justify-center opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity shadow-sm"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
             </div>
-          </div>
+          ))}
+          <CloudinaryUpload onUpload={(result) => handleAddPhoto(result.secure_url)}>
+            {({ uploading, startUpload }) => (
+              <div 
+                onClick={startUpload}
+                className={`w-full aspect-square rounded-[16px] border-2 border-dashed border-[#D1D5DB] flex flex-col items-center justify-center bg-[#F9FAFB] hover:bg-gray-50 transition-colors cursor-pointer ${uploading ? "opacity-50 pointer-events-none" : ""}`}
+              >
+                {uploading ? (
+                  <Loader2 className="h-8 w-8 text-[#9CA3AF] mb-3 animate-spin" />
+                ) : (
+                  <UploadCloud className="h-8 w-8 text-[#9CA3AF] mb-3" />
+                )}
+                <span className="text-[14px] font-extrabold text-[#111827] mb-1">Upload Image</span>
+                <span className="text-[12px] font-medium text-[#6B7280]">Drag & drop or click</span>
+              </div>
+            )}
+          </CloudinaryUpload>
         </div>
         </>
         )}
@@ -1218,11 +1218,13 @@ function MenuEditMode({ item, onClose }: { item: AdminMenuItemRow; onClose: () =
         </div>
         </>
         )}
-      </div>
+        </div>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
 
-      <div className="p-6 border-t border-[#E5E7EB] bg-white flex justify-end gap-3 sticky bottom-0 z-20">
-        <Button variant="outline" onClick={onClose} className="h-11 px-8 text-[14px] font-bold text-[#374151] border-[#D1D5DB] rounded-[12px] bg-white shadow-none">Cancel</Button>
-        <Button className="h-11 px-8 text-[14px] font-bold bg-[#15803D] hover:bg-[#166534] text-white rounded-[12px] shadow-none gap-2" disabled={saveMutation.isPending} onClick={handleSave}>
+      <div className="p-6 border-t border-[#E5E7EB] bg-white flex flex-wrap-reverse sm:flex-nowrap justify-end gap-3 sticky bottom-0 z-20">
+        <Button variant="outline" onClick={onClose} className="w-full sm:w-auto h-11 px-8 text-[14px] font-bold text-[#374151] border-[#D1D5DB] rounded-[12px] bg-white shadow-none mt-2 sm:mt-0">Cancel</Button>
+        <Button className="w-full sm:w-auto h-11 px-8 text-[14px] font-bold bg-[#15803D] hover:bg-[#166534] text-white rounded-[12px] shadow-none gap-2" disabled={saveMutation.isPending} onClick={handleSave}>
           {saveMutation.isPending && <Loader2 className="h-4 w-4 animate-spin mr-1" />}
           Save Changes
         </Button>

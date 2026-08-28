@@ -2,18 +2,14 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import { useAblyOrderChannel, useAblyOrderListChannels, useAblyKitchenChannel, useAblyDeliveryPersonChannel } from '@/hooks/useAblySubscribe';
 
-const mockSubscribe = vi.fn();
-const mockUnsubscribe = vi.fn();
+const { mockSubscribe, mockUnsubscribe } = vi.hoisted(() => ({
+  mockSubscribe: vi.fn(),
+  mockUnsubscribe: vi.fn(),
+}));
 
 vi.mock('@/lib/ably/client', () => ({
-  getAblyClient: vi.fn(() => ({
-    channels: {
-      get: vi.fn(() => ({
-        subscribe: mockSubscribe,
-        unsubscribe: mockUnsubscribe,
-      })),
-    },
-  })),
+  subscribeAbly: mockSubscribe,
+  unsubscribeAbly: mockUnsubscribe,
 }));
 
 describe('useAblyOrderChannel', () => {

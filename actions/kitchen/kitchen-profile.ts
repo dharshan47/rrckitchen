@@ -49,6 +49,21 @@ export async function getKitchenProfileData() {
   }
 }
 
+export async function updateKitchenProfilePicture(image: string | null) {
+  const session = await getSession()
+  if (!session?.user) return { success: false, error: "Unauthorized" }
+
+  try {
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: { image },
+    })
+    return { success: true }
+  } catch {
+    return { success: false, error: "Failed to update profile picture" }
+  }
+}
+
 export async function updateKitchenImage(imageUrl: string | null) {
   const session = await getSession()
   if (!session?.user) return { success: false, error: "Unauthorized" }

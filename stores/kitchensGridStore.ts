@@ -27,6 +27,7 @@ interface KitchensGridState {
   hasNextPage: boolean;
   isFetchingNextPage: boolean;
   isLoading: boolean;
+  isError: boolean;
   setSelectedCategory: (category: string | null) => void;
   setSortOption: (option: SortOption | null) => void;
   setVegFilter: (filter: VegFilterValue) => void;
@@ -46,6 +47,7 @@ interface KitchensGridState {
     hasNextPage: boolean;
     isFetchingNextPage: boolean;
     isLoading: boolean;
+    isError: boolean;
   }) => void;
 }
 
@@ -66,6 +68,7 @@ export const kitchensGridStore = create<KitchensGridState>()((set) => ({
   hasNextPage: false,
   isFetchingNextPage: false,
   isLoading: false,
+  isError: false,
   setSelectedCategory: (selectedCategory) => set({ selectedCategory }),
   setSortOption: (sortOption) => set({ sortOption }),
   setVegFilter: (vegFilter) => set({ vegFilter }),
@@ -107,6 +110,7 @@ const selectPagination = (s: KitchensGridState) => ({
   hasNextPage: s.hasNextPage,
   isFetchingNextPage: s.isFetchingNextPage,
   isLoading: s.isLoading,
+  isError: s.isError,
 });
 const selectFilters = (s: KitchensGridState) => ({
   selectedCategory: s.selectedCategory,
@@ -170,8 +174,9 @@ export function useKitchensGridQuery(category?: string | null) {
       hasNextPage: !!query.hasNextPage,
       isFetchingNextPage: query.isFetchingNextPage,
       isLoading: query.isLoading,
+      isError: !!query.isError,
     });
-  }, [query.hasNextPage, query.isFetchingNextPage, query.isLoading]);
+  }, [query.hasNextPage, query.isFetchingNextPage, query.isLoading, query.isError]);
 
   // Fetch every page from the backend so the grid (and client-side
   // pagination) always works over the complete, real-time kitchen list.
@@ -185,7 +190,7 @@ export function useKitchensGridQuery(category?: string | null) {
     ) {
       query.fetchNextPage();
     }
-  }, [query, query.hasNextPage, query.isFetchingNextPage, query.isLoading, query.isPending, query.isError, query.fetchNextPage]);
+  }, [query.hasNextPage, query.isFetchingNextPage, query.isLoading, query.isPending, query.isError, query.fetchNextPage, query]);
 
   useEffect(() => {
     const pages = query.data?.pages ?? [];
@@ -200,7 +205,7 @@ export function useKitchensGridQuery(category?: string | null) {
       return true;
     });
     kitchensGridStore.getState().setKitchens(category ?? null, list);
-  }, [query, query.data, query.isLoading, query.isPending, category]);
+  }, [query.data, query.isLoading, query.isPending, category]);
 
   return query;
 }

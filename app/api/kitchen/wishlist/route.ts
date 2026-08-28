@@ -28,6 +28,8 @@ export async function GET(req: NextRequest) {
             id: true,
             slug: true,
             status: true,
+            avgRating: true,
+            totalReviews: true,
             operatingHours: true,
             estimatedPrepTime: true,
             kitchenAlias: { select: { displayName: true, imageUrl: true } },
@@ -51,8 +53,7 @@ export async function GET(req: NextRequest) {
               },
               take: 1,
             },
-            reviews: { select: { rating: true } },
-            _count: { select: { reviews: true } },
+            reviews: false,
             user: { select: { name: true } },
           },
         },
@@ -63,10 +64,7 @@ export async function GET(req: NextRequest) {
     const hasMore = items.length > limit;
     const result = (hasMore ? items.slice(0, limit) : items).map((w) => {
       const k = w.kitchenPartner;
-      const avgRating =
-        k.reviews.length > 0
-          ? Math.round((k.reviews.reduce((s, r) => s + r.rating, 0) / k.reviews.length) * 10) / 10
-          : null;
+      const avgRating = k.avgRating ? Number(k.avgRating) : null;
       return {
         ...w,
         kitchenPartner: {
@@ -80,7 +78,7 @@ export async function GET(req: NextRequest) {
           kitchenKyc: k.kitchenKyc,
           cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
           avgRating,
-          totalReviews: k._count.reviews,
+          totalReviews: k.totalReviews,
           imageUrl:
             k.kitchenAlias?.imageUrl ?? k.menus[0]?.menuItems[0]?.photos[0]?.imageUrl ?? null,
           lat: k.kitchenAddress?.latitude ?? null,

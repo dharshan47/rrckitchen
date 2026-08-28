@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useMemo, useCallback } from "react"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+
 import {
   AdminCoupon,
   useAdminCoupons,
@@ -15,9 +15,9 @@ import {
 import {
   Search, Download, Plus, Pencil, Trash2, Globe2, Store,
   TicketPercent, TicketCheck, ShoppingCart, IndianRupee,
-  Loader2, CircleCheck, ListFilter,
+  Loader2, CircleCheck,
   Pizza, CakeSlice, Crown, Upload, Files, BarChart3, Lightbulb,
-  ChevronLeft, ChevronRight, Clock
+  ChevronLeft, ChevronRight, Clock, RefreshCcw
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -633,7 +633,7 @@ export default function AdminCouponsPage() {
               <div className="absolute bottom-0 left-0 w-full h-[40px] pointer-events-none opacity-80 z-0">
                 <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 40">
                   <path d="M0,40 Q10,25 20,30 T40,20 T60,25 T80,10 T100,5 L100,40 Z" fill={stat.svgArea} />
-                  <path d="M0,40 Q10,25 20,30 T40,20 T60,25 T80,10 T100,5" fill="none" stroke={stat.svgLine} strokeWidth="1.5" />
+                  <path d="M0,40 Q10,25 20,30 T40,20 T60,25 T80,10 T100,5" fill="none" stroke={stat.svgLine} strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
                 </svg>
               </div>
             </Card>
@@ -711,7 +711,7 @@ export default function AdminCouponsPage() {
                     setRowSelection({})
                   }}
                 >
-                  <ListFilter className="h-4 w-4 text-[#344054]" strokeWidth={2} /> Filter
+                  <RefreshCcw className="h-4 w-4 text-[#344054]" strokeWidth={2} /> Reset
                 </Button>
               </div>
             </div>
@@ -719,7 +719,7 @@ export default function AdminCouponsPage() {
 
           {/* Main Table Card */}
           <div className="bg-[#FFFFFF] rounded-[10px] border border-[#E7EAEE] shadow-none overflow-hidden flex flex-col">
-            <ScrollArea className="w-full">
+            <div className="w-full overflow-x-auto">
               {isLoading ? (
                 <TableSkeleton />
               ) : (
@@ -763,8 +763,7 @@ export default function AdminCouponsPage() {
                   </TableBody>
                 </Table>
               )}
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
+            </div>
 
             {/* Pagination Footer */}
             <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[#EAECF0] bg-[#FFFFFF]">

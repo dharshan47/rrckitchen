@@ -240,9 +240,9 @@ function BottomRowSkeleton() {
 
 export default function AdminOverview() {
   const dashboardData = useAdminDashboardData()
-  const { isLoading } = useAdminDashboardDataQuery()
+  const { isLoading, data: queryData } = useAdminDashboardDataQuery()
 
-  const data = dashboardData ?? undefined
+  const data = dashboardData ?? queryData ?? undefined
 
   if (isLoading && !data) {
     return (
@@ -697,11 +697,13 @@ export default function AdminOverview() {
 
           {/* Grow Your Platform */}
           <div className="bg-[#DCFCE7] rounded-[16px] border border-[#BBF7D0] shadow-[0_2px_8px_rgba(15,23,42,.05)] p-6 flex flex-col relative overflow-hidden">
-            <h3 className="text-[22px] font-bold text-[#15803D]">Grow Your Platform</h3>
-            <p className="text-[15px] font-medium text-[#166534] mt-1">More users, more orders, more growth!</p>
+            <div className="pr-24 sm:pr-28 relative z-10">
+              <h3 className="text-[22px] font-bold text-[#15803D] leading-tight">Grow Your Platform</h3>
+              <p className="text-[15px] font-medium text-[#166534] mt-1">More users, more orders, more growth!</p>
+            </div>
 
             <div className="absolute right-[-10px] top-4 h-32 w-32 opacity-95">
-              <Image src="/admin/rocket.webp" alt="Rocket" fill className="object-contain" />
+              <Image src="/admin/rocket.webp" alt="Rocket" fill sizes="128px" className="object-contain" />
             </div>
 
             <div className="mt-auto flex flex-col sm:flex-row lg:flex-col gap-4 relative z-10 pt-16">

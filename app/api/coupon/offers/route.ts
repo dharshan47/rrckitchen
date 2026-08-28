@@ -1,21 +1,31 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { Coupon } from "@/lib/generated/prisma/client";
 import prisma from "@/lib/prisma";
+import { redis } from "@/lib/redis";
 
 export async function POST(req: NextRequest) {
   try {
     const { cartTotal } = await req.json();
 
     const now = new Date();
-    const coupons = await prisma.coupon.findMany({
-      where: {
-        isActive: true,
-        validFrom: { lte: now },
-        validTo: { gte: now },
-        scope: "PLATFORM",
-      },
-      orderBy: { discountValue: "desc" },
-      take: 10,
-    });
+    const cacheKey = "coupon:offers:platform";
+    const cached = await redis.get(cacheKey);
+    const coupons: Coupon[] = cached
+      ? (cached as unknown as Coupon[])
+      : await prisma.coupon.findMany({
+          where: {
+            isActive: true,
+            validFrom: { lte: now },
+            validTo: { gte: now },
+            scope: "PLATFORM",
+          },
+          orderBy: { discountValue: "desc" },
+          take: 10,
+        });
+
+    if (!cached) {
+      await redis.set(cacheKey, coupons, { ex: 30 });
+    }
 
     const available = coupons
       .filter((c) => !c.minOrderValue || cartTotal >= Number(c.minOrderValue))

@@ -37,6 +37,14 @@ export interface LoyaltyPoints {
 export interface ReferralStats {
   totalReferrals: number;
   totalPointsEarned: number;
+  referrals?: Array<{
+    id: string;
+    name: string;
+    phone: string | null;
+    status: string;
+    rewardAmount: number;
+    createdAt: string;
+  }>;
 }
 
 /** State shape for the user profile store. */
@@ -219,7 +227,7 @@ export function useUserLoyaltyPointsQuery(enabled: boolean) {
  */
 export function useUserWishlistQuery(enabled: boolean) {
   const { data, ...rest } = useQuery({
-    queryKey: ["wishlist"],
+    queryKey: ["user-wishlist-preview"],
     queryFn: async () => {
       const res = await fetch("/api/wishlist");
       if (!res.ok) return [];
@@ -306,7 +314,11 @@ export function useUserOrdersQuery(enabled: boolean) {
 export function useAddAddressMutation(onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: addAddress,
+    mutationFn: async (data: Parameters<typeof addAddress>[0]) => {
+      const result = await addAddress(data);
+      if (!result.success) throw new Error(result.error);
+      return result.address;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["addresses"] });
       onSuccess?.();

@@ -727,7 +727,7 @@ export default function DashboardPageClient() {
       <div className="rounded-[12px] p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 border" style={{ backgroundColor: COLORS.surfaceSoft, borderColor: '#DCE6E0' }}>
         <div className="flex items-center gap-4">
           <div className="relative h-[36px] w-[36px]">
-             <Image src="/kitchen/trophy.webp" alt="Trophy" fill className="object-contain" />
+             <Image src="/kitchen/trophy.webp" alt="Trophy" fill sizes="36px" className="object-contain" />
           </div>
           <div>
             <h3 className="text-[13px] font-semibold" style={{ color: COLORS.text }}>Great Job! 🎉</h3>

@@ -74,6 +74,23 @@ const overviewConfig = {
   },
 }
 
+const THANJAVUR_LOCATIONS = [
+  "Achampatti", "Aiyanapuram", "Alakkudi", "Annappanpettai", "Arisikara Street", "Avarampatti", "Budalur",
+  "Chennampatti", "Chitrakudi", "Co operative Buildings", "Ganapathi Nagar", "Gudalur", "Inayathukkanpatti",
+  "Indalur", "Irudayapuram", "Kalimedu", "Kallaperambur", "Kalvirayanpettai", "Kangeyampatti", "Karuntattankudi",
+  "Kattur", "Kilavastachavadi", "Kulichapattu", "Kurungulam Melpathi", "Kurungulam", "MGM Sanatorium",
+  "Manambuchavadi", "Manangorai", "Manayeripatti", "Manojipatti", "Mariammancoil", "Marudakudi", "Marungulam",
+  "Melakalakudi", "Melavasthachavadi", "Mukasa Nanjikottai", "Palayapatti South", "Pillaiyarpatti",
+  "Pookkara Street", "Pudukudi", "Raja Serfoji Govt College", "Rajappa Nagar", "Ramanathapuram", "Ravusapatti",
+  "Rayamundanpatti", "Royandur", "Sakkarasamandam", "Sengipatti", "Sholagampatti", "Srinivasapuram",
+  "State Bank Colony", "Sydambalpuram", "TJ Busstand", "TJ Co operative Housing Colony", "Tamil University",
+  "Tandankorai", "Tennangudi", "Thanjavur Bazaar", "Thanjavur City", "Thanjavur Collectorate", "Thanjavur East Gate",
+  "Thanjavur East", "Thanjavur Housing Unit", "Thanjavur Medical College", "Thanjavur North Gate",
+  "Thanjavur P&t Colony", "Thanjavur South", "Thanjavur West", "Thanjavur", "Thethuvasalpatti", "Tirukanurpatti",
+  "Tirumalaisamudram East", "Tirumalaisamudram", "Valamarkottai", "Vallam East", "Vallam Pudur", "Vallam TJ",
+  "Vannarapettai", "Vendayampatti", "Vennamangalam", "Vennar Bank", "Vilar", "Voc Nagar"
+].sort()
+
 const demographicsConfig = {
   Male: { label: "Male", color: "#ff9800" },
   Female: { label: "Female", color: "#4caf50" },
@@ -202,7 +219,7 @@ export default function AdminCustomersPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
   const [verifiedFilter, setVerifiedFilter] = useState("all")
-  const [cityFilter, setCityFilter] = useState("all")
+  const [locationFilter, setLocationFilter] = useState("all")
   const [joinedFilter, setJoinedFilter] = useState("all")
   const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
   const selectedUser = useAdminSelectedUser()
@@ -228,7 +245,7 @@ export default function AdminCustomersPage() {
       }
       if (statusFilter !== "all" && c.status !== (statusFilter === "active" ? "Active" : "Banned")) return false
       if (verifiedFilter !== "all" && c.verified !== (verifiedFilter === "yes")) return false
-      if (cityFilter !== "all" && c.city !== cityFilter) return false
+      if (locationFilter !== "all" && c.city !== locationFilter) return false
       if (joinedFilter !== "all") {
         const days = joinedFilter === "7d" ? 7 : joinedFilter === "30d" ? 30 : joinedFilter === "90d" ? 90 : 0
         const cutoff = Date.now() - days * 86400000
@@ -236,7 +253,7 @@ export default function AdminCustomersPage() {
       }
       return true
     })
-  }, [allCustomers, searchQuery, statusFilter, verifiedFilter, cityFilter, joinedFilter])
+  }, [allCustomers, searchQuery, statusFilter, verifiedFilter, locationFilter, joinedFilter])
 
   const banMutation = useBanCustomerMutation()
   const unbanMutation = useUnbanCustomerMutation()
@@ -434,7 +451,7 @@ export default function AdminCustomersPage() {
   const currentPage = table.getState().pagination.pageIndex
 
   const exportCSV = () => {
-    const header = ["ID", "Name", "Email", "Phone", "Joined", "Orders", "Spent", "Status", "Verified", "City"]
+    const header = ["ID", "Name", "Email", "Phone", "Joined", "Orders", "Spent", "Status", "Verified", "Location"]
     const rows = (selectedCount > 0 ? selectedRows : filteredCustomers).map((c) => [
       c.id, c.name, c.email, c.phone, c.joined, String(c.orders), String(c.spent), c.status, c.verified ? "Yes" : "No", c.city ?? "",
     ])
@@ -559,11 +576,11 @@ export default function AdminCustomersPage() {
 
           <Card className="shadow-sm border border-gray-100 rounded-2xl bg-white">
             <CardHeader className="p-6 pb-2">
-              <CardTitle className="text-[17px] font-bold text-gray-900">Top Cities</CardTitle>
+              <CardTitle className="text-[17px] font-bold text-gray-900">Top Locations</CardTitle>
             </CardHeader>
             <CardContent className="p-6 pt-3">
               {topLocations.length === 0 ? (
-                <p className="text-sm font-medium text-gray-500 py-8 text-center">No city data yet</p>
+                <p className="text-sm font-medium text-gray-500 py-8 text-center">No location data yet</p>
               ) : (
                 <div className="space-y-5">
                   {topLocations.map((city, i) => {
@@ -591,7 +608,7 @@ export default function AdminCustomersPage() {
       {/* Filters & Table */}
       <div className="mt-6 shadow-sm border border-gray-100 rounded-2xl bg-white overflow-hidden">
         <div className="p-4 flex flex-wrap items-center justify-between gap-4 border-b border-gray-100">
-          <ScrollArea className="w-full lg:w-auto pb-2 lg:pb-0">
+          <div className="w-full lg:w-auto pb-2 lg:pb-0 overflow-x-auto">
             <div className="flex items-center gap-3 w-max pr-4">
               <div className="relative min-w-[260px] shrink-0">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-gray-400" />
@@ -622,14 +639,14 @@ export default function AdminCustomersPage() {
                 <SelectItem value="no">No</SelectItem>
               </SelectContent>
             </Select>
-            <Select value={cityFilter} onValueChange={setCityFilter}>
-              <SelectTrigger className="w-[130px] shrink-0 h-11 rounded-lg text-sm font-bold border-gray-200 bg-white text-gray-700">
-                <SelectValue placeholder="City: All" />
+            <Select value={locationFilter} onValueChange={setLocationFilter}>
+              <SelectTrigger className="w-[150px] shrink-0 h-11 rounded-lg text-sm font-bold border-gray-200 bg-white text-gray-700">
+                <SelectValue placeholder="Location: All" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">City: All</SelectItem>
-                {topLocations.map((c) => (
-                  <SelectItem key={c.name} value={c.name}>{c.name}</SelectItem>
+                <SelectItem value="all">Location: All</SelectItem>
+                {THANJAVUR_LOCATIONS.map((loc) => (
+                  <SelectItem key={loc} value={loc}>{loc}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -651,7 +668,7 @@ export default function AdminCustomersPage() {
                 setSearchQuery("")
                 setStatusFilter("all")
                 setVerifiedFilter("all")
-                setCityFilter("all")
+                setLocationFilter("all")
                 setJoinedFilter("all")
                 setRowSelection({})
               }}
@@ -659,11 +676,10 @@ export default function AdminCustomersPage() {
               <RefreshCcw className="h-4 w-4" /> Reset
             </Button>
             </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
+          </div>
         </div>
 
-        <ScrollArea className="w-full bg-white border-b border-gray-100">
+        <div className="w-full bg-white border-b border-gray-100 overflow-x-auto">
           <div className="flex items-center gap-3 p-3 px-6 w-max">
             <div className="flex items-center gap-4 mr-3 shrink-0">
             <Checkbox
@@ -690,15 +706,13 @@ export default function AdminCustomersPage() {
             <Upload className="h-4 w-4" /> Export
           </Button>
           </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        </div>
 
-        <ScrollArea className="w-full">
+        <div className="w-full overflow-x-auto">
           <div className="min-w-[1000px] [&_th]:text-[13px] [&_th]:font-semibold [&_th]:text-gray-500 [&_th]:bg-white [&_th]:py-4 [&_th]:border-b [&_th]:border-gray-100 [&_td]:py-4 [&_td]:border-b [&_td]:border-gray-50">
             {isLoading ? <TableSkeleton /> : <DataTable table={table} emptyMessage={searchQuery || statusFilter !== "all" ? "No customers match your filters" : "No customers yet"} />}
           </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
+        </div>
 
         <div className="p-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white">
           <p className="text-[13px] font-bold text-gray-500">

@@ -45,6 +45,7 @@ describe("nearby-kitchens", () => {
         id: "kp-1",
         slug: "tasty-kitchen",
         kitchenAlias: { displayName: "tasty-kitchen" },
+        kitchenAddress: { latitude: 13.1, longitude: 80.3 },
         kitchenCategories: [{ category: { name: "south-indian" } }],
         menus: [{
           menuItems: [{
@@ -55,10 +56,6 @@ describe("nearby-kitchens", () => {
         reviews: [{ rating: 4 }, { rating: 5 }],
       },
     ])
-    mockPrisma.kitchenAddress.findFirst.mockResolvedValue({
-      latitude: 13.1,
-      longitude: 80.3,
-    })
 
     const result = await getNearbyKitchens(13.0, 80.2)
 
@@ -121,16 +118,15 @@ describe("nearby-kitchens", () => {
     mockPrisma.kitchenPartner.findMany.mockResolvedValue([
       {
         id: "kp-1", slug: "k1", kitchenAlias: { displayName: "k1" },
+        kitchenAddress: { latitude: 13.5, longitude: 80.5 }, // farther
         kitchenCategories: [], menus: [], _count: { reviews: 0 }, reviews: [],
       },
       {
         id: "kp-2", slug: "k2", kitchenAlias: { displayName: "k2" },
+        kitchenAddress: { latitude: 13.01, longitude: 80.21 }, // closer
         kitchenCategories: [], menus: [], _count: { reviews: 0 }, reviews: [],
       },
     ])
-    mockPrisma.kitchenAddress.findFirst
-      .mockResolvedValueOnce({ latitude: 13.5, longitude: 80.5 }) // farther
-      .mockResolvedValueOnce({ latitude: 13.01, longitude: 80.21 }) // closer
 
     const result = await getNearbyKitchens(13.0, 80.2)
 
@@ -175,8 +171,9 @@ describe("nearby-kitchens", () => {
 
     expect(mockRedis.geosearch).toHaveBeenCalledWith(
       "kitchens:geo",
-      { longitude: 80.2, latitude: 13.0 },
-      { radius: 15, unit: "km" },
+      { type: "FROMLONLAT", coordinate: { lon: 80.2, lat: 13.0 } },
+      { type: "BYRADIUS", radius: 15, radiusType: "KM" },
+      "ASC",
     )
   })
 })

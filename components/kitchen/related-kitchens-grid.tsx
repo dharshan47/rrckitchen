@@ -23,12 +23,12 @@ export function RelatedKitchensGrid({ kitchenName, kitchens, title }: Props) {
         <h2 className="text-xl font-bold text-foreground">
           {displayTitle}
         </h2>
-        <Link href="/search" className="text-sm font-semibold text-[#ff4500] hover:underline">
+        <Link href="/kitchens" className="text-sm font-semibold text-[#ff4500] hover:underline">
           View All
         </Link>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 px-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 px-1">
         {displayKitchens.map((kitchen) => {
           // Map to KitchenData
           const kitchenData: KitchenData = {

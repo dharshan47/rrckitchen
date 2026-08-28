@@ -596,7 +596,7 @@ export default function AdminOrdersPage() {
 
       {/* Order Details Side Panel */}
       <Sheet open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
-        <SheetContent className="w-full sm:max-w-[500px] overflow-y-auto p-0 flex flex-col bg-[#F9FAFB] border-l-0 shadow-2xl z-[100]">
+        <SheetContent className="w-full sm:max-w-[650px] overflow-y-auto overflow-x-hidden p-0 flex flex-col bg-[#F9FAFB] border-l-0 shadow-2xl z-[100]">
           {selectedOrder && (
             <OrderSheet key={selectedOrder.id} order={selectedOrder} onClose={() => setSelectedOrder(null)} onStatusChange={updateOrder} />
           )}
@@ -649,23 +649,26 @@ function OrderSheet({
           <SheetTitle className="text-[22px] font-extrabold text-[#111827] tracking-tight">Order Details</SheetTitle>
         </div>
         
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-6">
           <h2 className="text-xl font-extrabold text-[#111827]">ORD{order.id.slice(-6)}</h2>
           {getPaymentBadge(order.payment)}
         </div>
 
-        <div className="flex gap-7 text-[13px] font-bold pt-1">
-          {tabs.map((t) => (
-            <button
-              key={t.id}
-              type="button"
-              onClick={() => setTab(t.id)}
-              className={`pb-3 capitalize transition-colors ${tab === t.id ? "border-b-[3px] border-[#F97316] text-[#F97316]" : "text-[#6B7280] hover:text-[#111827] border-b-[3px] border-transparent"}`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
+        <ScrollArea className="w-full">
+          <div className="flex gap-7 text-[13px] font-bold pt-1 w-max">
+            {tabs.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                onClick={() => setTab(t.id)}
+                className={`pb-3 capitalize transition-colors ${tab === t.id ? "border-b-[3px] border-[#F97316] text-[#F97316]" : "text-[#6B7280] hover:text-[#111827] border-b-[3px] border-transparent"}`}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </SheetHeader>
 
       <div className="p-6 space-y-6 flex-1 bg-[#F9FAFB]">
@@ -719,7 +722,7 @@ function OrderSheet({
         </div>
 
         {/* Delivery Partner */}
-        <div className="bg-white p-5 rounded-[18px] border border-[#E5E7EB] flex items-center justify-between gap-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+        <div className="bg-white p-5 rounded-[18px] border border-[#E5E7EB] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
           <div className="flex flex-col gap-2.5">
             <h4 className="text-[11px] font-bold text-[#6B7280]">Delivery Partner</h4>
             {order.deliveryPartner ? (
@@ -732,38 +735,38 @@ function OrderSheet({
             )}
           </div>
           {order.deliveryPartner && (
-            <>
-              <div className="flex flex-col items-center gap-2 text-center">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto mt-2 sm:mt-0">
+              <div className="flex flex-col items-start sm:items-center gap-2 text-left sm:text-center">
                 <h4 className="text-[11px] font-bold text-[#6B7280]">Delivery Status</h4>
                 <div className="flex items-center gap-2 text-[#15803D] font-extrabold text-[15px] capitalize">
                   <Bike className="h-5 w-5" /> {(order.deliveryStatus ?? "ASSIGNED").replace("_", " ").toLowerCase()}
                 </div>
               </div>
-              <Button variant="outline" className="h-10 text-[13px] font-extrabold text-[#15803D] border-[#BBF7D0] bg-[#DCFCE7] hover:bg-green-100 gap-2 rounded-xl shadow-none" onClick={() => setTab("delivery")}>
+              <Button variant="outline" className="h-10 text-[13px] font-extrabold text-[#15803D] border-[#BBF7D0] bg-[#DCFCE7] hover:bg-green-100 gap-2 rounded-xl shadow-none w-full sm:w-auto" onClick={() => setTab("delivery")}>
                 <Navigation className="h-4 w-4" /> View Delivery
               </Button>
-            </>
+            </div>
           )}
         </div>
 
         {/* Order Status */}
         <div className="bg-white p-5 rounded-[18px] border border-[#E5E7EB] flex flex-col gap-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
           <h4 className="text-[14px] font-extrabold text-[#111827]">Order Status</h4>
-          <div className="flex items-center justify-between border-b border-[#F3F4F6] pb-5">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-[#F3F4F6] pb-5 gap-4">
             <div className="flex flex-col gap-2.5">
               <span className="text-[11px] font-bold text-[#6B7280]">Current Status</span>
               <div>{getStatusBadge(order.status)}</div>
             </div>
             {!isTerminal && (
-              <div className="flex flex-col gap-2.5 items-end">
+              <div className="flex flex-col gap-2.5 items-start sm:items-end w-full sm:w-auto">
                 <span className="text-[11px] font-bold text-[#6B7280]">Quick Actions</span>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-wrap items-center gap-3">
                   {next && (
-                    <Button variant="outline" className="h-9 text-[12px] text-[#EA580C] border-[#FED7AA] bg-[#FFF7ED] hover:bg-orange-100 px-4 font-bold rounded-[10px] shadow-none" disabled={pending} onClick={() => applyStatus(next)}>
+                    <Button variant="outline" className="h-9 text-[12px] text-[#EA580C] border-[#FED7AA] bg-[#FFF7ED] hover:bg-orange-100 px-4 font-bold rounded-[10px] shadow-none w-full sm:w-auto" disabled={pending} onClick={() => applyStatus(next)}>
                       {pending ? <Loader2 className="h-3 w-3 animate-spin mr-1.5" /> : null} Next: {STATUS_LABELS[next]}
                     </Button>
                   )}
-                  <Button variant="outline" className="h-9 text-[12px] text-[#DC2626] border-[#FECACA] bg-[#FEE2E2] hover:bg-red-100 px-4 font-bold rounded-[10px] shadow-none" disabled={pending} onClick={() => applyStatus("CANCELLED")}>
+                  <Button variant="outline" className="h-9 text-[12px] text-[#DC2626] border-[#FECACA] bg-[#FEE2E2] hover:bg-red-100 px-4 font-bold rounded-[10px] shadow-none w-full sm:w-auto" disabled={pending} onClick={() => applyStatus("CANCELLED")}>
                     Cancel Order
                   </Button>
                 </div>
@@ -772,9 +775,9 @@ function OrderSheet({
           </div>
           <div className="flex flex-col gap-2.5">
             <span className="text-[11px] font-bold text-[#6B7280]">Change Status</span>
-            <div className="flex gap-3">
+            <div className="flex flex-col sm:flex-row gap-3">
               <Select value={status} onValueChange={setStatus}>
-                <SelectTrigger className="h-11 text-[13px] font-medium flex-1 rounded-xl border-[#D1D5DB]"><SelectValue /></SelectTrigger>
+                <SelectTrigger className="h-11 text-[13px] font-medium flex-1 rounded-xl border-[#D1D5DB] w-full"><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="CONFIRMED">CONFIRMED</SelectItem>
                   <SelectItem value="PREPARING">PREPARING</SelectItem>
@@ -784,7 +787,7 @@ function OrderSheet({
                   <SelectItem value="REFUNDED">REFUNDED</SelectItem>
                 </SelectContent>
               </Select>
-              <Button className="h-11 text-[13px] font-bold bg-[#15803D] hover:bg-green-800 text-white px-6 rounded-xl shadow-none" disabled={pending || isUnchanged} onClick={() => applyStatus(status)}>
+              <Button className="h-11 text-[13px] font-bold bg-[#15803D] hover:bg-green-800 text-white px-6 rounded-xl shadow-none w-full sm:w-auto" disabled={pending || isUnchanged} onClick={() => applyStatus(status)}>
                 {pending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
                 Update Status
               </Button>
@@ -988,9 +991,9 @@ function OrderSheet({
         )}
       </div>
 
-      <div className="p-5 border-t border-[#E5E7EB] bg-white flex justify-end gap-3 sticky bottom-0 z-10 rounded-b-xl">
-        <Button variant="outline" onClick={onClose} className="h-11 px-6 text-[13px] font-bold text-[#374151] border-[#D1D5DB] rounded-xl shadow-none">Close</Button>
-        <Button className="h-11 px-6 text-[13px] font-bold bg-[#F97316] hover:bg-[#EA580C] text-white rounded-xl shadow-none gap-2" disabled={pending || isTerminal} onClick={() => { if (!isTerminal && next) applyStatus(next) }}>
+      <div className="p-5 border-t border-[#E5E7EB] bg-white flex flex-wrap-reverse sm:flex-nowrap justify-end gap-3 sticky bottom-0 z-10 rounded-b-xl">
+        <Button variant="outline" onClick={onClose} className="h-11 px-6 text-[13px] font-bold text-[#374151] border-[#D1D5DB] rounded-xl shadow-none w-full sm:w-auto mt-2 sm:mt-0">Close</Button>
+        <Button className="h-11 px-6 text-[13px] font-bold bg-[#F97316] hover:bg-[#EA580C] text-white rounded-xl shadow-none gap-2 w-full sm:w-auto" disabled={pending || isTerminal} onClick={() => { if (!isTerminal && next) applyStatus(next) }}>
           {pending ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <CheckCircle2 className="h-4 w-4" />} {!isTerminal && next ? `Mark ${STATUS_LABELS[next]}` : "Order Complete"}
         </Button>
       </div>

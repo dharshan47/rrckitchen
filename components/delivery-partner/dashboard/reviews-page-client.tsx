@@ -32,6 +32,7 @@ import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { toast } from "sonner"
@@ -102,7 +103,7 @@ export default function ReviewsPageClient() {
 
   if (isLoading || !resolvedData) {
     return (
-      <div className="max-w-[1440px] mx-auto space-y-[32px] pb-12 bg-[#FEFEFE]" role="status" aria-label="Loading reviews">
+      <div className="max-w-[1440px] mx-auto space-y-[32px] pb-12 px-4 sm:px-6 lg:px-8 bg-[#FEFEFE]" role="status" aria-label="Loading reviews">
         {/* Header */}
         <div className="space-y-3">
           <Skeleton className="h-[29px] w-72 max-w-full" />
@@ -292,7 +293,7 @@ export default function ReviewsPageClient() {
   }
 
   return (
-    <div className="max-w-[1440px] mx-auto space-y-[32px] animate-in fade-in duration-500 pb-12 bg-[#FEFEFE] text-[#05060C] font-sans">
+    <div className="max-w-[1440px] mx-auto space-y-[32px] animate-in fade-in duration-500 pb-12 px-4 sm:px-6 lg:px-8 bg-[#FEFEFE] text-[#05060C] font-sans">
       
       {/* Header */}
       <div>
@@ -403,9 +404,10 @@ export default function ReviewsPageClient() {
           {/* Main Column: Reviews List */}
           <div className="flex flex-col gap-6 w-full overflow-hidden">
               
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
-                 <Tabs value={activeFilter} onValueChange={(v) => { setActiveFilter(v); setVisibleCount(5) }} className="w-full md:w-auto overflow-hidden">
-                    <TabsList className="bg-transparent space-x-6 h-auto p-0 border-b border-[#F3F5F8] w-full justify-start rounded-none overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] flex-nowrap">
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full border-b border-[#F3F5F8]">
+                 <Tabs value={activeFilter} onValueChange={(v) => { setActiveFilter(v); setVisibleCount(5) }} className="flex-1 min-w-0">
+                   <ScrollArea className="w-full">
+                    <TabsList className="bg-transparent gap-4 lg:gap-6 h-[52px] p-0 flex justify-start w-max rounded-none border-none">
                         {[
                           { val: "all", label: `All Reviews (${stats.totalReviews})` },
                           { val: "5", label: `5 Star (${ratingBreakdown[0].count})` },
@@ -416,15 +418,17 @@ export default function ReviewsPageClient() {
                           <TabsTrigger 
                             key={t.val} 
                             value={t.val} 
-                            className="data-[state=active]:text-[#0D7828] data-[state=active]:border-[#0D7828] data-[state=active]:bg-transparent text-[#464A57] rounded-none border-b-[2px] border-transparent px-0 py-2 text-[14px] font-[600] hover:text-[#0D7828] shadow-none whitespace-nowrap"
+                            className="focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent shadow-none border-0 border-b-[2px] border-b-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[#0D7828] data-[state=active]:text-[#0D7828] text-[#464A57] rounded-none px-0 py-4 h-full text-[14px] font-[600] hover:text-[#0D7828] whitespace-nowrap transition-none outline-none"
                           >
                             {t.label}
                           </TabsTrigger>
                         ))}
                     </TabsList>
+                    <ScrollBar orientation="horizontal" className="hidden sm:flex" />
+                   </ScrollArea>
                  </Tabs>
 
-                 <div className="flex items-center gap-3">
+                 <div className="flex shrink-0 items-center gap-3 pb-3 md:pb-0">
                      <Popover open={filterOpen} onOpenChange={setFilterOpen}>
                        <PopoverTrigger asChild>
                          <Button variant="outline" size="sm" className="h-9 text-[14px] font-[600] text-[#161B26] bg-[#FFFFFF] border-[#E9EDF2] rounded-[8px] px-4 hover:bg-slate-50 shadow-sm flex items-center gap-2">

@@ -68,6 +68,7 @@ export interface KitchenDetail {
   avgRating: number | null;
   totalReviews: number;
   imageUrl: string | null;
+  kpProfileImageUrl?: string | null;
   cuisineTags: string[];
   items: KitchenItem[];
   operatingHours: OperatingHours | null;
@@ -430,6 +431,111 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
     };
   }, [searchQuery, kitchen.items, kitchen.cuisineTags]);
 
+  const renderSidebarCards = () => (
+    <div className="flex flex-col gap-4">
+      {kitchenOffers.length > 0 && (
+        <div className="bg-[#FFFBF7] rounded-[20px] p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-[#F5EFEA]">
+          <div className="flex items-center gap-3 mb-4">
+            <BadgePercent className="w-[18px] h-[18px] md:w-5 md:h-5 text-[#FF4D00]" strokeWidth={2} />
+            <h3 className="font-bold text-[15px] md:text-[16px] text-[#111111]">Kitchen Offers</h3>
+          </div>
+          <div className="space-y-4">
+            {kitchenOffers.map((offer) => (
+              <div key={offer.code} className="flex items-start gap-2.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-[#FF4D00] mt-2 shrink-0" />
+                <div>
+                  <div className="text-[13px] font-bold text-[#111111]">
+                    {offer.discountType === "PERCENTAGE" ? `${offer.discountValue}% OFF` : `Flat ₹${offer.discountValue} OFF`}
+                    {offer.minOrderValue ? <span className="text-[#888888] font-semibold"> | Above ₹{offer.minOrderValue}</span> : null}
+                  </div>
+                  <div className="text-[11px] text-[#555555] font-medium mt-0.5">Use code {offer.code}</div>
+                  {offer.description && (
+                    <div className="text-[11px] text-[#888888] font-medium mt-0.5">{offer.description}</div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="bg-[#FFFBF7] rounded-[20px] p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-[#F5EFEA]">
+        <div className="flex items-center gap-3 mb-4">
+          <Clock className="w-[18px] h-[18px] md:w-5 md:h-5 text-[#111111]" strokeWidth={2} />
+          <h3 className="font-bold text-[15px] md:text-[16px] text-[#111111]">Kitchen Timings</h3>
+        </div>
+        <div className="ml-[30px] md:ml-[32px] space-y-1.5 md:space-y-2">
+          <div className={cn("text-[13px] md:text-[14px] font-bold", status.isOpen ? "text-[#087A36]" : "text-[#E02020]")}>
+            {status.isOpen ? "Open Today" : "Closed"}
+          </div>
+          <div className="text-[13px] md:text-[14px] font-bold text-[#111111]">{timingInfo.timeRange}</div>
+          <div className="text-[12px] md:text-[13px] text-[#555555] font-medium">{timingInfo.dayRange}</div>
+        </div>
+      </div>
+
+      <div className="bg-[#FFFBF7] rounded-[20px] p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-[#F5EFEA]">
+        <div className="flex items-center gap-3 mb-4 md:mb-5">
+          <Truck className="w-[18px] h-[18px] md:w-5 md:h-5 text-[#087A36]" strokeWidth={2.5} />
+          <h3 className="font-bold text-[15px] md:text-[16px] text-[#111111]">Delivery Information</h3>
+        </div>
+        <div className="space-y-3.5 md:space-y-4 mb-4 md:mb-5">
+          <div className="flex justify-between items-center text-[12px] md:text-[13px]">
+            <span className="text-[#555555] font-semibold">Delivery Time</span>
+            <span className="font-bold text-[#111111]">{deliveryTimeRange}</span>
+          </div>
+          <div className="flex justify-between items-center text-[12px] md:text-[13px]">
+            <span className="text-[#555555] font-semibold">Delivery Charge</span>
+            <span className="font-bold text-[#111111]">
+              {cartConfig ? `₹${cartConfig.deliveryCharge}` : "—"}
+              {cartConfig && cartConfig.freeDeliveryMin > 0 ? <span className="text-[#888888] font-medium ml-1">(Free above ₹{cartConfig.freeDeliveryMin})</span> : null}
+            </span>
+          </div>
+          <div className="flex justify-between items-center text-[12px] md:text-[13px]">
+            <span className="text-[#555555] font-semibold">Minimum Order</span>
+            <span className="font-bold text-[#111111]">₹{kitchen.minOrder || 99}</span>
+          </div>
+          <div className="flex justify-between items-center text-[12px] md:text-[13px]">
+            <span className="text-[#555555] font-semibold">Packaging Charge</span>
+            <span className="font-bold text-[#111111]">{cartConfig ? `₹${cartConfig.packagingCharge}` : "—"}</span>
+          </div>
+        </div>
+        <div className="bg-[#FFF1E5] rounded-[10px] p-3.5 text-[11px] md:text-[12px] font-medium text-[#555555] leading-relaxed">
+          Track your order in real-time<br className="hidden lg:block" /> once it&apos;s confirmed.
+        </div>
+      </div>
+
+      <div className="bg-[#FFFBF7] rounded-[20px] p-5 md:p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)] border border-[#F5EFEA] flex justify-between gap-2">
+        <div className="flex-1">
+          <h3 className="font-extrabold text-[14px] md:text-[15px] text-[#111111] leading-snug mb-4">
+            We follow highest<br />
+            <span className="text-[#087A36]">hygiene</span> standards
+          </h3>
+          <div className="space-y-2.5 md:space-y-3">
+            <div className="flex items-center gap-2.5">
+              <Check className="w-3.5 h-3.5 text-[#087A36] shrink-0 stroke-[3]" />
+              <span className="text-[12px] md:text-[13px] text-[#555555] font-medium">Regular kitchen sanitization</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <Check className="w-3.5 h-3.5 text-[#087A36] shrink-0 stroke-[3]" />
+              <span className="text-[12px] md:text-[13px] text-[#555555] font-medium">Fresh ingredients daily</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <Check className="w-3.5 h-3.5 text-[#087A36] shrink-0 stroke-[3]" />
+              <span className="text-[12px] md:text-[13px] text-[#555555] font-medium">Safe & hygienic packaging</span>
+            </div>
+            <div className="flex items-center gap-2.5">
+              <Check className="w-3.5 h-3.5 text-[#087A36] shrink-0 stroke-[3]" />
+              <span className="text-[12px] md:text-[13px] text-[#555555] font-medium">Trained & verified home chefs</span>
+            </div>
+          </div>
+        </div>
+        <div className="shrink-0 self-end mr-2 md:mr-3 mb-1">
+          <Image src="/kitchen/shield-tick.webp" alt="Hygiene Shield" width={72} height={72} className="object-contain w-[64px] h-[64px] md:w-[72px] md:h-[72px]" />
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <main className="min-h-screen bg-[#fcfbf9] text-foreground pb-20 lg:pb-20" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
 
@@ -447,75 +553,85 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
         </div>
 
         <div className="max-w-[1200px] mx-auto px-4 md:px-6 pb-4 md:pb-6">
-          <div className="bg-[#FFFFFF] border border-[#eef1f5] rounded-[26px] shadow-[0_10px_28px_rgba(15,23,42,0.05)] p-4 md:p-5">
-            <div className="flex flex-col lg:flex-row gap-4 md:gap-6">
+          <div className="bg-[#FFFFFF] border border-[#f0f0f0] rounded-[20px] shadow-[0_4px_16px_rgba(0,0,0,0.04)] p-3 md:p-4">
+            <div className="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8">
               
-              <div className="relative w-full lg:w-[400px] h-[180px] md:h-[220px] shrink-0 rounded-[18px] overflow-visible bg-[#FEF9F5]">
+              <div className="relative w-full lg:w-[420px] h-[200px] md:h-[240px] lg:h-[280px] shrink-0 rounded-[12px] bg-[#FEF9F5]">
                 {kitchen.imageUrl ? (
-                  <Image src={kitchen.imageUrl} alt={kitchen.displayName} fill className="object-cover rounded-[18px]" priority />
+                  <>
+                    <Image src={kitchen.imageUrl} alt={kitchen.displayName} fill sizes="(min-width: 1024px) 420px, 100vw" className="object-cover rounded-[12px]" priority />
+                    <div className="absolute inset-0 rounded-[12px] pointer-events-none bg-[linear-gradient(to_top,rgba(0,0,0,0.5)_0%,rgba(0,0,0,0)_30%,rgba(0,0,0,0)_70%,rgba(0,0,0,0.2)_100%)]" />
+                  </>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center">
+                  <div className="w-full h-full flex items-center justify-center rounded-[12px] bg-gray-100">
                     <UtensilsCrossed className="w-10 md:w-12 h-10 md:h-12 text-[#FF4D00] opacity-20" />
                   </div>
                 )}
 
                 {hasBestseller && (
-                  <div className="absolute top-3 md:top-4 left-3 md:left-4 bg-[#FF4D00] text-[#FFFFFF] text-[10px] md:text-[11px] font-bold px-3 md:px-3 py-1 md:py-1 rounded-[6px] shadow-sm tracking-wide z-10">
+                  <div className="absolute top-4 left-4 bg-[#FF4D00] text-[#FFFFFF] text-[11px] md:text-[12px] font-bold px-3 py-1.5 rounded-[6px] shadow-sm z-10">
                     Bestseller
                   </div>
                 )}
 
-                <div className="absolute -bottom-8 md:-bottom-10 left-[30%] md:left-[30%] -translate-x-1/2 w-[70px] md:w-[80px] h-[70px] md:h-[80px] rounded-full border-[4px] border-[#FFFFFF] bg-white overflow-hidden shadow-sm z-20">
-                  {kitchen.imageUrl ? (
-                    <Image src={kitchen.imageUrl} alt="Chef" fill className="object-cover" />
-                  ) : null}
-                </div>
-
-                {isPureVeg && (
-                  <div className="absolute bottom-3 md:bottom-3 left-3 md:left-3 bg-[#F0F8F3] border border-[#D9EBDD] text-[#087A36] text-[9px] md:text-[10px] font-bold px-2 py-1 rounded-[6px] shadow-sm flex gap-1.5 items-center z-10">
-                    <VegIcon className="w-2.5 h-2.5" /> PURE VEG
+                <div className="absolute -bottom-[35px] md:-bottom-[40px] left-4 flex items-end gap-3 z-20">
+                  {isPureVeg && (
+                    <div className="mb-[51px] md:mb-[56px] bg-[#FFFFFF] text-[#087A36] text-[10px] md:text-[11px] font-bold px-2 py-1.5 rounded-[5px] shadow-sm flex gap-1.5 items-center">
+                      <VegIcon className="w-3.5 h-3.5" /> PURE VEG
+                    </div>
+                  )}
+                  <div className="relative w-[80px] md:w-[90px] h-[80px] md:h-[90px] rounded-full border-[2.5px] border-[#FFFFFF] bg-white overflow-hidden shadow-sm shrink-0">
+                    <Image src={kitchen.kpProfileImageUrl || "/kitchen/profile.webp"} alt="Chef" fill sizes="90px" className="object-cover" />
                   </div>
-                )}
+                </div>
               </div>
 
-              <div className="flex-1 flex flex-col justify-center min-w-0 pt-8 lg:pt-0 pl-2 lg:pl-2">
+              <div className="flex-1 flex flex-col justify-start pt-10 md:pt-14 lg:pt-2 pl-2 lg:pl-0">
                 <div className="flex items-center gap-2">
-                  <h1 className="text-[20px] md:text-[24px] font-bold text-[#101010] leading-tight truncate max-w-[90%]">{kitchen.displayName}</h1>
-                  <Image src="/kitchen/shield-tick.webp" alt="Verified" width={20} height={20} className="w-4 md:w-5 h-4 md:h-5 object-contain shrink-0" />
+                  <h1 className="text-[22px] md:text-[26px] font-bold text-[#111111] leading-tight truncate">{kitchen.displayName}</h1>
+                  <svg viewBox="0 0 24 24" className="w-[22px] h-[22px] shrink-0 text-[#087A36] fill-[#087A36]">
+                    <path d="M10.52 1.34L11.4 1.95a2 2 0 0 0 2.2 0l.88-.61a2 2 0 0 1 3.03 1.14l.32 1.03a2 2 0 0 0 1.63 1.36l1.05.15a2 2 0 0 1 1.67 2.6l-.42.99a2 2 0 0 0 .19 2.1l.73.82a2 2 0 0 1-.22 2.94l-.86.7a2 2 0 0 0-.67 1.98l.26 1.04a2 2 0 0 1-2.2 2.5l-1.06-.21a2 2 0 0 0-2.01.62l-.7.83a2 2 0 0 1-3.07.13l-.78-.76a2 2 0 0 0-2.14-.32l-1.01.37a2 2 0 0 1-2.73-1.63l-.15-1.07a2 2 0 0 0-1.25-1.68l-1-.44a2 2 0 0 1-1.02-2.92l.62-.89a2 2 0 0 0 0-2.1l-.62-.89a2 2 0 0 1 1.02-2.92l1-.44a2 2 0 0 0 1.25-1.68l.15-1.07a2 2 0 0 1 2.73-1.63l1.01.37a2 2 0 0 0 2.14-.32l.78-.76a2 2 0 0 1 1.39-.18Z" />
+                    <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+                  </svg>
                 </div>
 
-                <div className="flex items-center flex-wrap gap-3 md:gap-5 mt-2 md:mt-3 text-[12px] md:text-[13px] text-[#555555] font-medium">
-                  <div className="flex items-center gap-1">
+                <div className="flex items-center flex-wrap gap-2 md:gap-4 mt-2 md:mt-3 text-[12px] md:text-[13px] text-[#555555] font-medium">
+                  <div className="flex items-center gap-1 text-[#FF8A00] font-bold">
                     {displayRating && displayRating > 0 ? (
                       <>
-                        <span className="font-bold text-[#FF8A00]">{displayRating.toFixed(1)}</span>
-                        <Star className="w-3.5 md:w-4 h-3.5 md:h-4 fill-[#FF8A00] text-[#FF8A00]" />
-                        <span className="text-[#555555] ml-0.5">({formatCount(kitchen.totalReviews)} Reviews)</span>
+                        <span>{displayRating.toFixed(1)}</span>
+                        <Star className="w-4 h-4 fill-[#FF8A00] text-[#FF8A00]" />
+                        <span className="text-[#555555] ml-1 font-medium">({kitchen.totalReviews} Reviews)</span>
                       </>
                     ) : (
-                      <span className="font-bold text-[#777777]">New</span>
+                      <span className="text-[#777777] font-medium">New</span>
                     )}
                   </div>
-                  <div className="flex items-center gap-1.5 text-[#555555]">
-                    <Clock className="w-3.5 h-3.5" />
+                  <div className="w-px h-3.5 bg-[#E0E0E0] hidden md:block"></div>
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-4 h-4 text-[#888888]" />
                     <span>{deliveryTimeRange}</span>
                   </div>
-                  <div className="flex items-center gap-1.5 text-[#555555]">
-                    <MapPin className="w-3.5 h-3.5 text-[#F44A01]" />
-                    <span>{distanceLabel} away</span>
+                  <div className="w-px h-3.5 bg-[#E0E0E0] hidden md:block"></div>
+                  <div className="flex items-center gap-1.5">
+                    <MapPin className="w-4 h-4 text-[#888888]" />
+                    <span>{distanceLabel}</span>
                   </div>
                   {isPureVeg && (
-                    <div className="flex items-center gap-1.5 text-[#087A36]">
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#087A36]" />
-                      <span>Pure Veg</span>
-                    </div>
+                    <>
+                      <div className="w-px h-3.5 bg-[#E0E0E0] hidden md:block"></div>
+                      <div className="flex items-center gap-1.5 text-[#087A36]">
+                        <div className="w-2 h-2 rounded-full bg-[#087A36]" />
+                        <span>Pure Veg</span>
+                      </div>
+                    </>
                   )}
                 </div>
 
                 {kitchen.cuisineTags.length > 0 && (
-                  <div className="text-[12px] md:text-[13px] text-[#555555] mt-3 font-medium flex items-center flex-wrap gap-2">
+                  <div className="text-[12px] md:text-[13px] text-[#555555] mt-3 md:mt-4 font-normal flex items-center flex-wrap gap-1.5">
                     {kitchen.cuisineTags.map((tag, i) => (
-                      <span key={i} className="flex items-center gap-2">
+                      <span key={i} className="flex items-center gap-1.5">
                         {tag}
                         {i < kitchen.cuisineTags.length - 1 && <span className="text-[#999999]">·</span>}
                       </span>
@@ -523,91 +639,87 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
                   </div>
                 )}
 
-                <p className="text-[12px] md:text-[13px] text-[#555555] mt-3 leading-relaxed max-w-2xl font-normal line-clamp-3 md:line-clamp-none">
+                <p className="text-[12px] md:text-[13px] text-[#555555] mt-3 md:mt-4 leading-[1.6] max-w-2xl font-normal line-clamp-2 md:line-clamp-none pr-4">
                   {kitchen.description || "Serving delicious, homemade meals with love and care. Every dish is prepared fresh daily using quality ingredients and traditional cooking methods."}
                 </p>
 
-                <div className="flex flex-wrap gap-2.5 mt-4 md:mt-5">
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] border border-[#E6E6E6] text-[#333333] text-[11px] font-semibold bg-[#FFFFFF]">
-                    <ShieldCheck className="w-3.5 h-3.5 text-[#087A36]" /> Hygienic Kitchen
+                <div className="flex flex-wrap gap-3 mt-5 md:mt-6">
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] border border-[#F0F0F0] text-[#333333] text-[11px] font-medium bg-[#FFFFFF] shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                    <ShieldCheck className="w-4 h-4 text-[#087A36]" strokeWidth={2.5} /> Hygienic Kitchen
                   </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] border border-[#E6E6E6] text-[#333333] text-[11px] font-semibold bg-[#FFFFFF]">
-                    <Clock className="w-3.5 h-3.5 text-[#FF4D00]" /> On-time Delivery
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] border border-[#F0F0F0] text-[#333333] text-[11px] font-medium bg-[#FFFFFF] shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                    <Clock className="w-4 h-4 text-[#FF4D00]" strokeWidth={2.5} /> On-time Delivery
                   </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] border border-[#E6E6E6] text-[#333333] text-[11px] font-semibold bg-[#FFFFFF]">
-                    <Leaf className="w-3.5 h-3.5 text-[#087A36]" /> Fresh Ingredients
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] border border-[#F0F0F0] text-[#333333] text-[11px] font-medium bg-[#FFFFFF] shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                    <Leaf className="w-4 h-4 text-[#087A36]" strokeWidth={2.5} /> Fresh Ingredients
                   </div>
-                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] border border-[#E6E6E6] text-[#333333] text-[11px] font-semibold bg-[#FFFFFF]">
-                    <Package className="w-3.5 h-3.5 text-[#FF4D00]" /> Safe & Secure Packaging
+                  <div className="flex items-center gap-2 px-3 py-1.5 rounded-[8px] border border-[#F0F0F0] text-[#333333] text-[11px] font-medium bg-[#FFFFFF] shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                    <Package className="w-4 h-4 text-[#FF4D00]" strokeWidth={2.5} /> Safe & Secure Packaging
                   </div>
                 </div>
 
-                <div className="mt-4 md:mt-5 text-[12px] md:text-[12px] text-[#555555] font-medium">
+                <div className="mt-6 md:mt-auto pt-4 text-[11px] md:text-[12px] text-[#888888] font-normal">
                   Open Today: {timingInfo.timeRange}
                 </div>
               </div>
 
-              <div className="hidden lg:flex flex-col w-[280px] shrink-0 pl-6 border-l border-[#EEEEEE] ml-2">
+              <div className="hidden lg:flex flex-col w-[260px] shrink-0 pl-6 border-l border-[#F0F0F0]">
                 <button
                   onClick={handleToggleFollow}
                   disabled={followBusy}
                   className={cn(
-                    "flex items-center justify-center gap-2 rounded-[7px] w-[90%] py-2.5 font-bold text-[13px] transition-colors mb-5 shadow-sm border",
+                    "flex items-center justify-center gap-2 rounded-[8px] w-full py-2.5 font-semibold text-[13px] transition-colors mb-6 border shadow-[0_2px_8px_rgba(0,0,0,0.02)]",
                     isFollowing
                       ? "bg-[#FFF1F1] text-[#E02020] border-[#FFD0D0] hover:bg-[#FFE4E4]"
-                      : "text-[#101010] border-[#E8E8E8] hover:bg-[#F9F9F9]"
+                      : "bg-[#FFFFFF] text-[#111111] border-[#E8E8E8] hover:bg-[#F9F9F9]"
                   )}
                 >
                   {followBusy ? (
                     <Loader2 className="w-4 h-4 animate-spin text-[#FF4D00]" />
                   ) : (
-                    <Heart className={cn("w-4 h-4", isFollowing ? "fill-[#E02020] text-[#E02020]" : "text-[#FF4D00]")} />
+                    <Heart className={cn("w-4 h-4", isFollowing ? "fill-[#E02020] text-[#E02020]" : "text-[#FF4D00]")} strokeWidth={2} />
                   )}
                   {isFollowing ? "Following" : "Follow Kitchen"}
                 </button>
 
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#F0F8F3] text-[#087A36] flex items-center justify-center shrink-0">
-                      <Users className="w-4 h-4" />
+                <div className="flex flex-col">
+                  <div className="flex items-center gap-4 py-3 border-b border-[#F5F5F5]">
+                    <Users className="w-[18px] h-[18px] text-[#087A36]" strokeWidth={2} />
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-[14px] text-[#111111] w-[45px]">{totalOrders > 0 ? formatCount(totalOrders) : "0"}</span>
+                      <span className="text-[12px] text-[#666666] font-normal">Happy Customers</span>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="font-bold text-[14px] text-[#171717]">{totalOrders > 0 ? formatCount(totalOrders) : "0"}</span>
-                    </div>
-                    <span className="text-[12px] text-[#555555] ml-auto font-medium">Happy Customers</span>
                   </div>
-                  <div className="w-[90%] h-px bg-[#EEEEEE]" />
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#FFF7F0] text-[#FF4D00] flex items-center justify-center shrink-0">
-                      <Star className="w-4 h-4" />
+                  
+                  <div className="flex items-center gap-4 py-3 border-b border-[#F5F5F5]">
+                    <Star className="w-[18px] h-[18px] text-[#087A36]" strokeWidth={2} />
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-[14px] text-[#111111] w-[45px] flex items-center gap-1">
+                        {displayRating && displayRating > 0 ? displayRating.toFixed(1) : "—"}
+                        {displayRating && displayRating > 0 && <Star className="w-3 h-3 fill-[#FF8A00] text-[#FF8A00]" />}
+                      </span>
+                      <span className="text-[12px] text-[#666666] font-normal">Average Rating</span>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="font-bold text-[14px] text-[#171717] flex items-center gap-1">{displayRating && displayRating > 0 ? displayRating.toFixed(1) : "—"} {displayRating && displayRating > 0 && <Star className="w-3 h-3 fill-[#FF8A00] text-[#FF8A00]" />}</span>
-                    </div>
-                    <span className="text-[12px] text-[#555555] ml-auto font-medium">Average Rating</span>
                   </div>
-                  <div className="w-[90%] h-px bg-[#EEEEEE]" />
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#F0F8F3] text-[#087A36] flex items-center justify-center shrink-0">
-                      <ShoppingBag className="w-4 h-4" />
+                  
+                  <div className="flex items-center gap-4 py-3 border-b border-[#F5F5F5]">
+                    <ShoppingBag className="w-[18px] h-[18px] text-[#087A36]" strokeWidth={2} />
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-[14px] text-[#111111] w-[45px]">{totalOrders > 0 ? formatCount(totalOrders) : "0"}</span>
+                      <span className="text-[12px] text-[#666666] font-normal">Orders Delivered</span>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="font-bold text-[14px] text-[#171717]">{totalOrders > 0 ? formatCount(totalOrders) : "0"}</span>
-                    </div>
-                    <span className="text-[12px] text-[#555555] ml-auto font-medium">Orders Delivered</span>
                   </div>
-                  <div className="w-[90%] h-px bg-[#EEEEEE]" />
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#F0F8F3] text-[#087A36] flex items-center justify-center shrink-0">
-                      <Calendar className="w-4 h-4" />
+                  
+                  <div className="flex items-center gap-4 py-3">
+                    <Calendar className="w-[18px] h-[18px] text-[#087A36]" strokeWidth={2} />
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-[14px] text-[#111111] w-[45px]">{platformTime !== "—" ? platformTime : "New"}</span>
+                      <span className="text-[12px] text-[#666666] font-normal">On RRC Kitchen</span>
                     </div>
-                    <div className="flex flex-col">
-                      <span className="font-bold text-[14px] text-[#171717]">{platformTime !== "—" ? platformTime : "New"}</span>
-                    </div>
-                    <span className="text-[12px] text-[#555555] ml-auto font-medium">On RRC Kitchen</span>
                   </div>
                 </div>
               </div>
+
             </div>
           </div>
         </div>
@@ -666,7 +778,7 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
 
       <div className="bg-[#FFFFFF] border-b border-[#eef1f5] sticky top-0 z-30 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
         <div className="max-w-[1200px] mx-auto px-4 md:px-6">
-          <div className="flex items-center justify-center gap-8 md:gap-16 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+          <div className="flex items-center justify-start md:justify-center gap-8 md:gap-16 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
             <button
               onClick={() => setActiveTab("menu")}
               className={cn("py-4 md:py-5 font-semibold text-[14px] md:text-[15px] whitespace-nowrap border-b-[2px] transition-colors flex items-center gap-2",
@@ -707,25 +819,29 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
         <div className="flex flex-col lg:flex-row gap-4 md:gap-6">
 
           {activeTab === "menu" && !searchQuery && (
-            <div className="w-full lg:w-[240px] shrink-0">
-              <div className="bg-[#FFFFFF] lg:sticky lg:top-[100px] rounded-[26px] border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] overflow-hidden p-2">
-                <h3 className="font-extrabold text-[15px] md:text-[16px] text-[#171717] px-3 md:px-4 py-3 md:py-4 border-b border-[#F5F5F5] mb-2">Menu Categories</h3>
-                <div className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-1.5 px-1 md:px-2" style={{ scrollbarWidth: 'none' }}>
-                  {menuCategories.map((cat: MenuCategory) => (
-                    <button
-                      key={cat.id}
-                      onClick={() => setActiveCategory(cat.id)}
-                      className={cn(
-                        "flex items-center gap-3 md:gap-4 px-3 md:px-4 py-2.5 md:py-3 rounded-[12px] transition-all text-left text-[13px] md:text-[14px] whitespace-nowrap shrink-0 group",
-                        activeCategory === cat.id
-                          ? "bg-[#FFF1E8] text-[#FF4D00] font-bold"
-                          : "text-[#555555] font-semibold hover:bg-[#F9F9F9] hover:text-[#171717]"
-                      )}
-                    >
-                      <cat.icon className={cn("w-4 md:w-5 h-4 md:h-5 shrink-0 transition-colors", activeCategory === cat.id ? "text-[#FF4D00]" : "text-[#888888] group-hover:text-[#555555]")} />
-                      <span>{cat.label}</span>
-                    </button>
-                  ))}
+            <div className="w-full lg:w-[260px] shrink-0">
+              <div className="bg-[#FFFBF7] lg:sticky lg:top-[100px] rounded-[24px] border border-[#F5EFEA] shadow-sm p-4 md:p-5">
+                <h3 className="font-extrabold text-[16px] md:text-[18px] text-[#111111] mb-3 md:mb-4 px-1">Menu Categories</h3>
+                <div className="flex flex-row lg:flex-col overflow-x-auto lg:overflow-x-visible gap-2 lg:gap-0" style={{ scrollbarWidth: 'none' }}>
+                  {menuCategories.map((cat: MenuCategory, index: number) => {
+                    const isActive = activeCategory === cat.id;
+                    return (
+                      <div key={cat.id} className={cn("relative", !isActive && index !== menuCategories.length - 1 && "lg:after:content-[''] lg:after:absolute lg:after:bottom-0 lg:after:left-4 lg:after:right-4 lg:after:h-px lg:after:bg-[#F0E6DD] lg:after:opacity-60")}>
+                        <button
+                          onClick={() => setActiveCategory(cat.id)}
+                          className={cn(
+                            "flex items-center gap-3.5 px-4 py-3.5 transition-all text-left text-[14px] whitespace-nowrap shrink-0 group w-full",
+                            isActive
+                              ? "bg-[#FFFFFF] text-[#FF6B00] font-bold rounded-[12px] shadow-[0_2px_12px_rgba(0,0,0,0.04)] lg:my-1 border border-[#F5F5F5] lg:border-none"
+                              : "text-[#087A36] font-semibold hover:bg-[#FFFFFF]/40 rounded-[12px]"
+                          )}
+                        >
+                          <cat.icon className={cn("w-5 h-5 shrink-0 transition-colors", isActive ? "text-[#FF6B00]" : "text-[#087A36]")} strokeWidth={isActive ? 2.5 : 2} />
+                          <span>{cat.label}</span>
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -839,19 +955,19 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
             >
             {activeTab === "menu" ? (
               <>
+                <div className="relative mb-4 md:mb-5">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888888]" />
+                  <input
+                    type="text"
+                    placeholder="Search for dishes"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    className="w-full pl-11 pr-4 py-3 rounded-[12px] border border-[#EEEEEE] bg-[#FFFFFF] text-[13px] md:text-[14px] text-[#171717] font-medium outline-none focus:border-[#FF4D00] focus:ring-1 focus:ring-[#FF4D00]/20 transition-all shadow-[0_2px_8px_rgba(0,0,0,0.03)]"
+                  />
+                </div>
+
                 {!searchQuery ? (
                   <>
-                    <div className="relative mb-4 md:mb-5">
-                      <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888888]" />
-                      <input
-                        type="text"
-                        placeholder="Search for dishes"
-                        value={searchQuery}
-                        onChange={e => setSearchQuery(e.target.value)}
-                        className="w-full pl-11 pr-4 py-3 rounded-[12px] border border-[#EEEEEE] bg-[#FFFFFF] text-[13px] md:text-[14px] text-[#171717] font-medium outline-none focus:border-[#FF4D00] focus:ring-1 focus:ring-[#FF4D00]/20 transition-all shadow-[0_2px_8px_rgba(0,0,0,0.03)]"
-                      />
-                    </div>
-
                     <div className="flex items-center gap-2 mb-4 md:mb-6 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                       <button
                         onClick={() => { setFoodFilter("ALL"); setBestsellerOnly(false); }}
@@ -984,7 +1100,7 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
                     <p className="text-[#555555] mt-1.5 md:mt-2 text-[13px] md:text-[14px] font-medium">Try selecting a different category or adjusting filters.</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 xl:grid-cols-2 gap-3 md:gap-4">
+                  <div className="grid grid-cols-1 2xl:grid-cols-2 gap-3 md:gap-4">
                     {filteredItems.map((item) => (
                       <CompoundMenuCard.Root
                         key={item.id}
@@ -1026,200 +1142,15 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
           </div>
 
           {activeTab === "menu" && (
-            <div className="hidden lg:flex w-[280px] shrink-0 flex-col gap-4">
-              {kitchenOffers.length > 0 && (
-                <div className="bg-[#FFFFFF] rounded-[26px] border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] overflow-hidden p-5">
-                  <div className="flex items-center gap-2 mb-4">
-                    <BadgePercent className="w-4 h-4 text-[#FF4D00]" />
-                    <h3 className="font-extrabold text-[14px] text-[#171717]">Kitchen Offers</h3>
-                  </div>
-                  <div className="space-y-4">
-                    {kitchenOffers.map((offer) => (
-                      <div key={offer.code} className="flex items-start gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#FF4D00] mt-1.5 shrink-0" />
-                        <div>
-                          <div className="text-[13px] font-bold text-[#171717]">
-                            {offer.discountType === "PERCENTAGE" ? `${offer.discountValue}% OFF` : `Flat ₹${offer.discountValue} OFF`}
-                            {offer.minOrderValue ? <span className="text-[#999999] font-semibold"> | Above ₹{offer.minOrderValue}</span> : null}
-                          </div>
-                          <div className="text-[11px] text-[#555555] font-medium mt-0.5">Use code {offer.code}</div>
-                          {offer.description && (
-                            <div className="text-[11px] text-[#888888] font-medium mt-0.5">{offer.description}</div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              <div className="bg-[#FFFFFF] rounded-[26px] border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] overflow-hidden p-5">
-                <div className="flex items-center gap-2 mb-4">
-                  <Truck className="w-4 h-4 text-[#087A36]" />
-                  <h3 className="font-extrabold text-[14px] text-[#171717]">Delivery Information</h3>
-                </div>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center text-[12px]">
-                    <span className="text-[#555555] font-medium">Delivery Time</span>
-                    <span className="font-bold text-[#171717]">{deliveryTimeRange}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-[12px]">
-                    <span className="text-[#555555] font-medium">Delivery Charge</span>
-                    <span className="font-bold text-[#171717]">
-                      {cartConfig ? `₹${cartConfig.deliveryCharge}` : "—"}
-                      {cartConfig ? <span className="text-[#999999] font-medium"> (Free above ₹{cartConfig.freeDeliveryMin})</span> : null}
-                    </span>
-                  </div>
-                  <div className="flex justify-between items-center text-[12px]">
-                    <span className="text-[#555555] font-medium">Packaging Charge</span>
-                    <span className="font-bold text-[#171717]">{cartConfig ? `₹${cartConfig.packagingCharge}` : "—"}</span>
-                  </div>
-                </div>
-                <div className="mt-5 bg-[#FFF1E8] rounded-[10px] p-3 text-[11px] font-bold text-[#FF4D00] text-center border border-[#FFD0B5] leading-relaxed">
-                  Track your order in real-time once it&apos;s confirmed.
-                </div>
-              </div>
-
-              <div className="bg-[#FFFFFF] rounded-[26px] border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] overflow-hidden p-5">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h3 className="font-extrabold text-[14px] text-[#171717] leading-tight">
-                      We follow highest<br />
-                      <span className="text-[#087A36]">hygiene</span> standards
-                    </h3>
-                  </div>
-                  <div className="relative shrink-0 ml-3">
-                    <div className="w-12 h-12 rounded-full bg-[#FFFFFF] flex items-center justify-center border border-[#D9EBDD]">
-                      <ShieldCheck className="w-6 h-6 text-[#087A36]" />
-                    </div>
-                    <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-[#087A36] rounded-full border-2 border-[#FFFFFF] flex items-center justify-center">
-                      <Check className="w-2.5 h-2.5 text-[#FFFFFF] stroke-[3]" />
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-5 space-y-2.5">
-                  <div className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#087A36] shrink-0" />
-                    <span className="text-[12px] text-[#555555] font-medium">Regular kitchen sanitization</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#087A36] shrink-0" />
-                    <span className="text-[12px] text-[#555555] font-medium">Fresh ingredients daily</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#087A36] shrink-0" />
-                    <span className="text-[12px] text-[#555555] font-medium">Safe & hygienic packaging</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Check className="w-3.5 h-3.5 text-[#087A36] shrink-0" />
-                    <span className="text-[12px] text-[#555555] font-medium">Trained & verified home chefs</span>
-                  </div>
-                </div>
-              </div>
+            <div className="hidden xl:flex w-[280px] shrink-0 flex-col gap-4">
+              {renderSidebarCards()}
             </div>
           )}
         </div>
       </div>
 
-      <div className="lg:hidden px-4 md:px-6 pb-4 space-y-3">
-        <div className="flex gap-3">
-          <div className="flex-1 bg-[#FFFFFF] rounded-[26px] border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] overflow-hidden">
-            <div className="flex items-center gap-1.5 px-3 py-2.5 border-b border-[#F5F5F5]">
-              <Clock className="w-3.5 h-3.5 text-[#555555]" />
-              <h3 className="font-bold text-[12px] text-[#171717]">Kitchen Timings</h3>
-            </div>
-            <div className="px-3 py-3 space-y-1.5">
-              <div className="flex items-center gap-1.5">
-                <div className={cn("w-1.5 h-1.5 rounded-full", status.isOpen ? "bg-[#087A36]" : "bg-[#E02020]")} />
-                <span className={cn("text-[11px] font-bold", status.isOpen ? "text-[#087A36]" : "text-[#E02020]")}>
-                  {status.isOpen ? "Open Today" : "Closed"}
-                </span>
-              </div>
-              <div className="text-[12px] font-bold text-[#171717]">{timingInfo.timeRange}</div>
-              <div className="text-[10px] text-[#555555]">{timingInfo.dayRange}</div>
-            </div>
-          </div>
-
-          <div className="flex-1 bg-[#FFFFFF] rounded-[26px] border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] overflow-hidden">
-            <div className="flex items-center gap-1.5 px-3 py-2.5 border-b border-[#F5F5F5]">
-              <Truck className="w-3.5 h-3.5 text-[#555555]" />
-              <h3 className="font-bold text-[12px] text-[#171717]">Delivery Information</h3>
-            </div>
-            <div className="px-3 py-3 space-y-1.5">
-              <div className="flex justify-between items-center text-[10px]">
-                <span className="text-[#555555]">Delivery Time</span>
-                <span className="font-semibold text-[#171717]">{deliveryTimeRange}</span>
-              </div>
-              <div className="flex justify-between items-center text-[10px]">
-                <span className="text-[#555555]">Delivery Charge</span>
-                <span className="font-semibold text-[#171717]">
-                  {cartConfig ? `₹${cartConfig.deliveryCharge} (Free above ₹${cartConfig.freeDeliveryMin})` : "—"}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {kitchenOffers.length > 0 && (
-          <div className="bg-[#FFFFFF] rounded-[26px] border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] overflow-hidden">
-            <div className="flex items-center gap-1.5 px-3 py-2.5 border-b border-[#F5F5F5]">
-              <BadgePercent className="w-3.5 h-3.5 text-[#FF4D00]" />
-              <h3 className="font-bold text-[12px] text-[#171717]">Kitchen Offers</h3>
-            </div>
-            <div className="px-3 py-3 space-y-2">
-              {kitchenOffers.map((offer) => (
-                <div key={offer.code} className="flex items-start gap-2">
-                  <div className="w-1.5 h-1.5 rounded-full bg-[#FF4D00] mt-1 shrink-0" />
-                  <div>
-                    <div className="text-[11px] font-bold text-[#171717]">
-                      {offer.discountType === "PERCENTAGE" ? `${offer.discountValue}% OFF` : `Flat ₹${offer.discountValue} OFF`}
-                      {offer.minOrderValue ? <span className="text-[#999999] font-semibold"> | Above ₹{offer.minOrderValue}</span> : null}
-                    </div>
-                    <div className="text-[10px] text-[#555555] font-medium">Use code {offer.code}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        <div className="bg-[#FFF1E8] rounded-[10px] p-2.5 text-[10px] font-bold text-[#FF4D00] text-center border border-[#FFD0B5]">
-          Track your order in real-time once it&apos;s confirmed.
-        </div>
-
-        <div className="bg-[#F0F8F3] rounded-[26px] p-4 border border-[#D9EBDD]">
-          <div className="flex items-center gap-3 mb-3">
-            <div className="relative shrink-0">
-              <div className="w-10 h-10 rounded-full bg-[#FFFFFF] flex items-center justify-center border border-[#D9EBDD]">
-                <ShieldCheck className="w-5 h-5 text-[#087A36]" />
-              </div>
-              <div className="absolute -bottom-0.5 -right-0.5 w-4 h-4 bg-[#087A36] rounded-full border-2 border-[#FFFFFF] flex items-center justify-center">
-                <Check className="w-2 h-2 text-[#FFFFFF] stroke-[3]" />
-              </div>
-            </div>
-            <h3 className="font-bold text-[13px] text-[#171717]">
-              We follow highest <span className="text-[#087A36]">hygiene</span> standards
-            </h3>
-          </div>
-          <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
-            <div className="flex items-center gap-1.5">
-              <Check className="w-3 h-3 text-[#087A36] shrink-0" />
-              <span className="text-[10px] text-[#555555]">Regular kitchen sanitization</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Check className="w-3 h-3 text-[#087A36] shrink-0" />
-              <span className="text-[10px] text-[#555555]">Safe & hygienic packaging</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Check className="w-3 h-3 text-[#087A36] shrink-0" />
-              <span className="text-[10px] text-[#555555]">Fresh ingredients daily</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Check className="w-3 h-3 text-[#087A36] shrink-0" />
-              <span className="text-[10px] text-[#555555]">Trained & verified home chefs</span>
-            </div>
-          </div>
-        </div>
+      <div className="lg:hidden px-4 md:px-6 pb-4">
+        {renderSidebarCards()}
       </div>
 
       <AddToCartPopup

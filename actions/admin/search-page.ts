@@ -155,11 +155,21 @@ export interface AdminSearchKitchen {
   items: { id: string; name: string; price: number; imageUrl: string | null }[]
 }
 
-export async function getSearchPageKitchens(limit = 12): Promise<AdminSearchKitchen[]> {
+export async function getSearchPageKitchens(limit = 12, keyword?: string): Promise<AdminSearchKitchen[]> {
   await requirePermission("MANAGE_CMS")
 
+  const whereClause: any = { status: { in: ["APPROVED", "ACTIVE"] } }
+  
+  if (keyword) {
+    whereClause.OR = [
+      { kitchenAlias: { displayName: { contains: keyword, mode: "insensitive" } } },
+      { kitchenCategories: { some: { category: { name: { contains: keyword, mode: "insensitive" } } } } },
+      { menus: { some: { menuItems: { some: { name: { contains: keyword, mode: "insensitive" } } } } } }
+    ]
+  }
+
   const kitchens = await prisma.kitchenPartner.findMany({
-    where: { status: { in: ["APPROVED", "ACTIVE"] } },
+    where: whereClause,
     take: limit,
     orderBy: { avgRating: "desc" },
     select: {

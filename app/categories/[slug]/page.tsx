@@ -1,21 +1,32 @@
 import { notFound } from "next/navigation";
 import { CategoryCuisineClient } from "@/components/categories/category-cuisine-client";
 import prisma from "@/lib/prisma";
+import { cached } from "@/lib/server-cache";
 import type { Metadata } from "next";
+
+function getCategory(slug: string) {
+  return cached(`category:${slug}`, 60_000, () =>
+    prisma.category.findFirst({
+      where: { name: { equals: slug.replace(/-/g, " "), mode: "insensitive" }, isActive: true },
+    }),
+  );
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
   const name = slug.replace(/-/g, " ");
   const display = name.charAt(0).toUpperCase() + name.slice(1);
 
-  const category = await prisma.category.findFirst({
-    where: { name: { equals: name, mode: "insensitive" }, isActive: true },
-    include: {
-      categoryPageContent: {
-        select: { metaTitle: true, metaDescription: true, keywords: true, canonicalUrl: true },
+  const category = await cached(`category-content:${slug}`, 60_000, () =>
+    prisma.category.findFirst({
+      where: { name: { equals: name, mode: "insensitive" }, isActive: true },
+      include: {
+        categoryPageContent: {
+          select: { metaTitle: true, metaDescription: true, keywords: true, canonicalUrl: true },
+        },
       },
-    },
-  });
+    }),
+  );
 
   if (category?.categoryPageContent?.metaTitle) {
     return {
@@ -38,9 +49,7 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
   const { slug } = await params;
   const categoryName = slug.replace(/-/g, " ");
 
-  const category = await prisma.category.findFirst({
-    where: { name: { equals: categoryName, mode: "insensitive" }, isActive: true },
-  });
+  const category = await getCategory(slug);
   if (!category) notFound();
 
   return <CategoryCuisineClient categoryName={categoryName} />;

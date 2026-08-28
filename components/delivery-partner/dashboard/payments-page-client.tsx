@@ -38,7 +38,7 @@ import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
-import { format, startOfWeek, startOfMonth, subDays, addDays } from "date-fns"
+import { format, startOfWeek, startOfMonth, subDays, addDays, startOfDay } from "date-fns"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
 import { Badge } from "@/components/ui/badge"
@@ -86,7 +86,7 @@ export default function PaymentsPageClient() {
 
   if (isLoading || !resolvedData) {
     return (
-      <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in duration-300 pb-12 bg-[#FCFCFC]" role="status" aria-label="Loading payments">
+      <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in duration-300 pb-12 px-4 sm:px-6 lg:px-8 bg-[#FCFCFC]" role="status" aria-label="Loading payments">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-3">
@@ -275,7 +275,7 @@ export default function PaymentsPageClient() {
     summaryTotal > 0 ? Math.round(((payoutSummary[i]?.value ?? 0) / summaryTotal) * 100) : 0
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in duration-500 pb-12 bg-[#FCFCFC] min-h-screen">
+    <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in duration-500 pb-12 px-4 sm:px-6 lg:px-8 bg-[#FCFCFC] min-h-screen">
       
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -452,9 +452,31 @@ export default function PaymentsPageClient() {
               <ChartNoAxesCombined className="h-[20px] w-[20px] text-[#087B2B]" strokeWidth={1.8} />
               <h2 className="text-[16px] font-bold text-[#111827]">Earnings Overview</h2>
             </div>
-            <Button variant="outline" className="h-[32px] text-[13px] font-medium text-[#111827] border-[#E6EAEC] bg-[#FFFFFF] rounded-[6px] px-3 hover:bg-[#F7FAF8] shadow-none">
-              {isCustomRange ? "Selected Range" : "This Week"} <ChevronDown className="h-[14px] w-[14px] ml-1 text-[#111827]" strokeWidth={1.8} />
-            </Button>
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="h-[32px] text-[13px] font-medium text-[#111827] border-[#E6EAEC] bg-[#FFFFFF] rounded-[6px] px-3 hover:bg-[#F7FAF8] shadow-none">
+                  {isCustomRange && activeRange.from.getTime() === startOfDay(now).getTime() ? "Today" : 
+                   isCustomRange && activeRange.from.getTime() === startOfMonth(now).getTime() ? "This Month" : 
+                   isCustomRange && activeRange.from.getTime() === weekStart.getTime() ? "This Week" : 
+                   isCustomRange ? "Selected Range" : "This Week"} <ChevronDown className="h-[14px] w-[14px] ml-1 text-[#111827]" strokeWidth={1.8} />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-36 p-1.5 rounded-[10px] shadow-[0_12px_30px_rgba(17,24,39,0.10)] border-[#E6EAEC] bg-[#FFFFFF]">
+                {[
+                  { label: "Today", range: { from: startOfDay(now), to: now } },
+                  { label: "This Week", range: { from: weekStart, to: now } },
+                  { label: "This Month", range: { from: startOfMonth(now), to: now } }
+                ].map((preset) => (
+                  <button
+                    key={preset.label}
+                    onClick={() => setCustomRange(preset.range)}
+                    className="w-full text-left px-3 py-2 rounded-[6px] text-[13px] font-medium transition-colors hover:bg-[#F0F8F1] hover:text-[#087B2B] text-[#374151]"
+                  >
+                    {preset.label}
+                  </button>
+                ))}
+              </PopoverContent>
+            </Popover>
           </CardHeader>
           <CardContent className="flex-1 flex flex-col md:flex-row gap-8 pt-4 px-6 pb-6">
             <div className="flex flex-col min-w-[140px]">

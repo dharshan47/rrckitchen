@@ -175,7 +175,7 @@ export async function getReferralStats() {
   const session = await getSession()
   if (!session?.user?.id) return null
 
-  const [referrals, totalEarned] = await Promise.all([
+  const [referrals, totalEarned, recent] = await Promise.all([
     prisma.referral.count({ where: { referrerId: session.user.id, referredId: { not: null } } }),
     prisma.loyaltyTransaction.aggregate({
       where: {
@@ -184,10 +184,30 @@ export async function getReferralStats() {
       },
       _sum: { points: true },
     }),
+    prisma.referral.findMany({
+      where: { referrerId: session.user.id, referredId: { not: null } },
+      select: {
+        id: true,
+        status: true,
+        rewardAmount: true,
+        createdAt: true,
+        referred: { select: { name: true, phoneNumber: true } },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 20,
+    }),
   ])
 
   return {
     totalReferrals: referrals,
     totalPointsEarned: totalEarned._sum.points ?? 0,
+    referrals: recent.map((r) => ({
+      id: r.id,
+      name: r.referred?.name ?? "New user",
+      phone: r.referred?.phoneNumber ?? null,
+      status: r.status,
+      rewardAmount: Number(r.rewardAmount),
+      createdAt: r.createdAt.toISOString(),
+    })),
   }
 }

@@ -32,11 +32,11 @@ export const selectAdminTwoFactorSetupActions = (s: AdminTwoFactorSetupState) =>
  * the TanStack Query mutation hooks below.
  */
 export const adminTwoFactorSetupStore = create<AdminTwoFactorSetupState>()((set) => ({
-  step: "verify",
+  step: "password",
   backupCodes: null,
   setStep: (step: AdminTwoFactorSetupStep) => set({ step }),
   setBackupCodes: (backupCodes: string[] | null) => set({ backupCodes }),
-  resetAdminTwoFactorSetupState: () => set({ step: "verify", backupCodes: null }),
+  resetAdminTwoFactorSetupState: () => set({ step: "password", backupCodes: null }),
 }));
 
 /** Hook returning the current setup step. */

@@ -254,7 +254,7 @@ export default function CategoriesPage() {
 
   const submitAdd = () => {
     if (!addName.trim()) { toast.error("Category name is required"); return; }
-    addMutation.mutateAsync({ name: addName.trim(), description: addDescription.trim() || undefined }).then((res) => {
+    addMutation.mutateAsync({ name: addName.trim(), description: addDescription.trim() || null }).then((res) => {
       if (!res.success) { toast.error(res.error || "Failed to add category"); return; }
       toast.success("Category added");
       setAddDialogOpen(false); setAddName(""); setAddDescription("");

@@ -124,56 +124,59 @@ export function OrdersClient() {
   return (
     <div className="container max-w-6xl mx-auto px-4 py-6 md:py-10">
       <div className="mb-8">
-        <h1 className="text-2xl md:text-[28px] font-bold text-gray-900">My Orders</h1>
-        <p className="text-[14px] text-gray-600 mt-1.5 font-medium">
+        <h1 className="text-2xl md:text-[28px] font-bold text-[#111827]">My Orders</h1>
+        <p className="text-[14px] text-[#6B7280] mt-1.5 font-medium">
           Track and manage all your orders in one place.
         </p>
       </div>
 
-      <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8">
-        <Tabs value={activeTab} className="w-full sm:w-auto" onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
-          <TabsList className="bg-transparent border-b border-gray-200 w-full justify-start rounded-none p-0 h-auto gap-0 overflow-x-auto [&::-webkit-scrollbar]:hidden">
+      <div className="flex flex-col md:flex-row justify-between md:items-end gap-4 md:gap-0 mb-6 relative">
+        {/* Continuous bottom border for desktop */}
+        <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gray-200 hidden md:block" />
+        
+        <Tabs value={activeTab} className="w-full md:w-auto z-10 border-b border-gray-200 md:border-none" onValueChange={(v) => setActiveTab(v as typeof activeTab)}>
+          <TabsList className="flex bg-transparent border-none w-full justify-start rounded-none p-0 h-auto gap-0 overflow-x-auto flex-nowrap [&::-webkit-scrollbar]:hidden">
             <TabsTrigger
               value="all"
-              className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#FF5A00] data-[state=active]:text-[#FF5A00] data-[state=active]:shadow-none rounded-none border-b-2 border-transparent px-4 py-3 text-[14px] font-bold text-gray-500 hover:text-gray-900 transition-colors"
+              className="!bg-transparent !shadow-none rounded-none border-0 border-b-[3px] border-transparent px-4 py-3 text-[14px] font-bold text-[#374151] data-[state=active]:!border-b-[#F97316] data-[state=active]:!text-[#F97316] hover:text-[#EA580C] transition-colors whitespace-nowrap shrink-0 -mb-[1px] focus-visible:outline-none focus-visible:ring-0 outline-none ring-0 after:hidden"
             >
               All Orders
             </TabsTrigger>
-            <div className="w-[1px] h-4 bg-gray-300 self-center" />
+            <div className="w-[1px] h-4 bg-gray-200 self-center shrink-0" />
             <TabsTrigger
               value="ongoing"
-              className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#FF5A00] data-[state=active]:text-[#FF5A00] data-[state=active]:shadow-none rounded-none border-b-2 border-transparent px-4 py-3 text-[14px] font-bold text-gray-500 hover:text-gray-900 transition-colors"
+              className="!bg-transparent !shadow-none rounded-none border-0 border-b-[3px] border-transparent px-4 py-3 text-[14px] font-bold text-[#374151] data-[state=active]:!border-b-[#F97316] data-[state=active]:!text-[#F97316] hover:text-[#EA580C] transition-colors whitespace-nowrap shrink-0 -mb-[1px] focus-visible:outline-none focus-visible:ring-0 outline-none ring-0 after:hidden"
             >
               Ongoing
             </TabsTrigger>
-            <div className="w-[1px] h-4 bg-gray-300 self-center" />
+            <div className="w-[1px] h-4 bg-gray-200 self-center shrink-0" />
             <TabsTrigger
               value="completed"
-              className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#FF5A00] data-[state=active]:text-[#FF5A00] data-[state=active]:shadow-none rounded-none border-b-2 border-transparent px-4 py-3 text-[14px] font-bold text-gray-500 hover:text-gray-900 transition-colors"
+              className="!bg-transparent !shadow-none rounded-none border-0 border-b-[3px] border-transparent px-4 py-3 text-[14px] font-bold text-[#374151] data-[state=active]:!border-b-[#F97316] data-[state=active]:!text-[#F97316] hover:text-[#EA580C] transition-colors whitespace-nowrap shrink-0 -mb-[1px] focus-visible:outline-none focus-visible:ring-0 outline-none ring-0 after:hidden"
             >
               Completed
             </TabsTrigger>
-            <div className="w-[1px] h-4 bg-gray-300 self-center" />
+            <div className="w-[1px] h-4 bg-gray-200 self-center shrink-0" />
             <TabsTrigger
               value="cancelled"
-              className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#FF5A00] data-[state=active]:text-[#FF5A00] data-[state=active]:shadow-none rounded-none border-b-2 border-transparent px-4 py-3 text-[14px] font-bold text-gray-500 hover:text-gray-900 transition-colors"
+              className="!bg-transparent !shadow-none rounded-none border-0 border-b-[3px] border-transparent px-4 py-3 text-[14px] font-bold text-[#374151] data-[state=active]:!border-b-[#F97316] data-[state=active]:!text-[#F97316] hover:text-[#EA580C] transition-colors whitespace-nowrap shrink-0 -mb-[1px] focus-visible:outline-none focus-visible:ring-0 outline-none ring-0 after:hidden"
             >
               Cancelled
             </TabsTrigger>
-            <div className="w-[1px] h-4 bg-gray-300 self-center" />
+            <div className="w-[1px] h-4 bg-gray-200 self-center shrink-0" />
             <TabsTrigger
               value="refunds"
-              className="data-[state=active]:bg-transparent data-[state=active]:border-b-2 data-[state=active]:border-[#FF5A00] data-[state=active]:text-[#FF5A00] data-[state=active]:shadow-none rounded-none border-b-2 border-transparent px-4 py-3 text-[14px] font-bold text-gray-500 hover:text-gray-900 transition-colors"
+              className="!bg-transparent !shadow-none rounded-none border-0 border-b-[3px] border-transparent px-4 py-3 text-[14px] font-bold text-[#374151] data-[state=active]:!border-b-[#F97316] data-[state=active]:!text-[#F97316] hover:text-[#EA580C] transition-colors whitespace-nowrap shrink-0 -mb-[1px] focus-visible:outline-none focus-visible:ring-0 outline-none ring-0 after:hidden"
             >
               Refunds
             </TabsTrigger>
           </TabsList>
         </Tabs>
 
-        <div className="flex items-center gap-2 shrink-0">
-          <span className="text-[13px] font-bold text-gray-600">Sort by:</span>
+        <div className="flex items-center gap-3 z-10 md:pb-[9px]">
+          <span className="text-[14px] font-bold text-[#111827]">Sort by:</span>
           <Select value={sortOrder} onValueChange={(v) => setSortOrder(v as typeof sortOrder)}>
-            <SelectTrigger className="w-[140px] h-9 text-[13px] font-bold border-gray-200">
+            <SelectTrigger className="w-[140px] h-9 text-[13px] font-bold border-[#E5E7EB] focus:ring-[#F97316]">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
@@ -184,7 +187,7 @@ export function OrdersClient() {
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 mb-16">
+      <div className="flex flex-col gap-6 mb-16">
         {filteredOrders.length > 0 ? (
           filteredOrders.map((order) => (
             <OrderCard key={order.id} order={order} />

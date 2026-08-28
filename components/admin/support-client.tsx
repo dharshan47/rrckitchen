@@ -75,7 +75,7 @@ import {
   useAdminReplyToTicketMutation,
   type AdminSupportTicket,
 } from "@/stores";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+
 
 const replySchema = z.object({
   message: z
@@ -320,13 +320,13 @@ export default function AdminSupportPage() {
     setDetailTab("conversation");
   }, [selectedTicket?.id]);
 
-  const tabCounts = {
+  const tabCounts = useMemo(() => ({
     ALL: tickets.length,
     OPEN: tickets.filter((t) => t.status === "OPEN").length,
     INPROGRESS: tickets.filter((t) => t.status === "INPROGRESS").length,
     RESOLVED: tickets.filter((t) => t.status === "RESOLVED").length,
     CLOSED: tickets.filter((t) => t.status === "CLOSED").length,
-  };
+  }), [tickets]);
 
   const totalTickets = tickets.length;
   const openCount = tabCounts.OPEN;
@@ -336,41 +336,45 @@ export default function AdminSupportPage() {
 
   const weekStart = startOfDay(subDays(new Date(), 6)).getTime();
   const lastWeekStart = startOfDay(subDays(new Date(), 13)).getTime();
-  const thisWeek = tickets.filter((t) => new Date(t.createdAt).getTime() >= weekStart).length;
-  const lastWeek = tickets.filter((t) => {
+  const thisWeek = useMemo(() => tickets.filter((t) => new Date(t.createdAt).getTime() >= weekStart).length, [tickets, weekStart]);
+  const lastWeek = useMemo(() => tickets.filter((t) => {
     const ts = new Date(t.createdAt).getTime();
     return ts >= lastWeekStart && ts < weekStart;
-  }).length;
+  }).length, [tickets, lastWeekStart, weekStart]);
   const weeklyChange = lastWeek > 0 ? ((thisWeek - lastWeek) / lastWeek) * 100 : null;
 
-  let avgMs: number | null = null;
-  const withAdminReply = tickets
-    .filter((t) => t.messages.some((m) => m.senderId !== t.userId))
-    .map((t) => {
-      const firstAdmin = t.messages.find((m) => m.senderId !== t.userId)!;
-      return new Date(firstAdmin.createdAt).getTime() - new Date(t.createdAt).getTime();
-    })
-    .filter((d) => d > 0);
-  
-  if (withAdminReply.length > 0) {
-    avgMs = withAdminReply.reduce((s, d) => s + d, 0) / withAdminReply.length;
-  }
-  const avgResponse = avgMs === null ? "—" : avgMs < 3600000 ? `${Math.max(1, Math.round(avgMs / 60000))}m` : `${(avgMs / 3600000).toFixed(1)}h`;
+  const avgResponse = useMemo(() => {
+    let avgMs: number | null = null;
+    const withAdminReply = tickets
+      .filter((t) => Array.isArray(t.messages) && t.messages.some((m) => m.senderId !== t.userId))
+      .map((t) => {
+        const firstAdmin = t.messages.find((m) => m.senderId !== t.userId)!;
+        return new Date(firstAdmin.createdAt).getTime() - new Date(t.createdAt).getTime();
+      })
+      .filter((d) => !Number.isNaN(d) && d > 0);
+    
+    if (withAdminReply.length > 0) {
+      avgMs = withAdminReply.reduce((s, d) => s + d, 0) / withAdminReply.length;
+    }
+    return avgMs === null ? "—" : avgMs < 3600000 ? `${Math.max(1, Math.round(avgMs / 60000))}m` : `${(avgMs / 3600000).toFixed(1)}h`;
+  }, [tickets]);
 
-  const filtered = tickets
-    .filter((t) => activeTab === "ALL" || t.status === activeTab)
-    .filter((t) => statusFilter === "ALL" || t.status === statusFilter)
-    .filter((t) => priorityFilter === "ALL" || t.priority === priorityFilter)
-    .filter((t) => categoryFilter === "ALL" || t.category === categoryFilter)
-    .filter((t) =>
-      !search ||
-      t.subject.toLowerCase().includes(search.toLowerCase()) ||
-      t.id.toLowerCase().includes(search.toLowerCase()) ||
-      (t.user?.name || "").toLowerCase().includes(search.toLowerCase())
-    );
+  const filtered = useMemo(() => {
+    return tickets
+      .filter((t) => activeTab === "ALL" || t.status === activeTab)
+      .filter((t) => statusFilter === "ALL" || t.status === statusFilter)
+      .filter((t) => priorityFilter === "ALL" || t.priority === priorityFilter)
+      .filter((t) => categoryFilter === "ALL" || t.category === categoryFilter)
+      .filter((t) =>
+        !search ||
+        (t.subject && t.subject.toLowerCase().includes(search.toLowerCase())) ||
+        (t.id && t.id.toLowerCase().includes(search.toLowerCase())) ||
+        (t.user?.name || "").toLowerCase().includes(search.toLowerCase())
+      );
+  }, [tickets, activeTab, statusFilter, priorityFilter, categoryFilter, search]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const paginated = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+  const paginated = useMemo(() => filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize), [filtered, currentPage, pageSize]);
 
   const handleExport = () => {
     if (filtered.length === 0) {
@@ -519,10 +523,10 @@ export default function AdminSupportPage() {
   });
 
   return (
-    <div className="flex h-screen md:h-[calc(100vh-80px)] gap-0 overflow-hidden -m-4 md:-m-6 lg:-m-8 bg-[#FEFEFE]">
+    <div className="flex gap-0 min-h-[calc(100dvh-4rem)] -m-4 md:-m-6 lg:-m-8 bg-[#FEFEFE] items-start">
       {/* Left Panel */}
-      <div className={cn("flex flex-col flex-1 min-w-0 overflow-hidden", selectedTicket ? "hidden lg:flex" : "flex")}>
-        <div className="flex-1 overflow-y-auto px-4 md:px-6 lg:px-8 py-6 space-y-6">
+      <div className={cn("flex flex-col flex-1 min-w-0", selectedTicket ? "hidden lg:flex" : "flex")}>
+        <div className="px-4 md:px-6 lg:px-8 py-6 space-y-6">
           
           {/* Header */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -659,7 +663,7 @@ export default function AdminSupportPage() {
             </div>
 
             {/* Tabs */}
-            <ScrollArea className="w-full pb-1">
+            <div className="w-full pb-1 overflow-x-auto custom-scrollbar">
               <div className="flex items-center gap-2 w-max">
               {[
                 { key: "ALL", label: "All Tickets", count: tabCounts.ALL, colors: activeTab === "ALL" ? "bg-[#F2FAF3] text-[#15803D] border-[#A7DDAE]" : "bg-transparent text-[#64748B] border-transparent", countBg: activeTab === "ALL" ? "bg-[#DCF2DF] text-[#15803D]" : "bg-[#F1F5F9] text-[#64748B]" },
@@ -680,8 +684,7 @@ export default function AdminSupportPage() {
                 </button>
               ))}
               </div>
-              <ScrollBar orientation="horizontal" />
-            </ScrollArea>
+            </div>
           </div>
           )}
 
@@ -696,15 +699,15 @@ export default function AdminSupportPage() {
             <TableSkeleton />
           ) : (
             <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] shadow-none w-full">
-              <ScrollArea className="w-full">
-                <Table className="w-full text-sm">
+              <div className="w-full overflow-x-auto custom-scrollbar">
+                <Table className="w-full text-sm min-w-[800px]">
                   <TableHeader>
                     {table.getHeaderGroups().map((headerGroup) => (
                       <TableRow key={headerGroup.id} className="border-b border-[#EEF0F2] hover:bg-[#FFFFFF]">
                         {headerGroup.headers.map((header) => (
                           <TableHead
                             key={header.id}
-                            className="text-left py-4 px-4 text-[11px] font-semibold text-[#475569] h-auto"
+                            className="text-left py-4 px-4 text-[11px] font-semibold text-[#475569] h-auto whitespace-nowrap"
                           >
                             {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                           </TableHead>
@@ -736,8 +739,7 @@ export default function AdminSupportPage() {
                     )}
                   </TableBody>
                 </Table>
-                <ScrollBar orientation="horizontal" />
-              </ScrollArea>
+              </div>
 
               {/* Pagination */}
               <div className="flex flex-col sm:flex-row items-center justify-between px-5 py-4 border-t border-[#EEF0F2] bg-[#FFFFFF] gap-4">
@@ -809,7 +811,7 @@ export default function AdminSupportPage() {
 
       {/* Right Panel: Ticket Details */}
       {selectedTicket && (
-        <div className="w-full lg:w-[420px] flex-shrink-0 border-l border-[#E5E7EB] bg-[#FFFFFF] flex flex-col overflow-hidden shadow-[-4px_0_24px_rgba(15,23,42,0.02)]">
+        <div className="w-full lg:w-[420px] flex-shrink-0 border-l border-[#E5E7EB] bg-[#FFFFFF] flex flex-col shadow-[-4px_0_24px_rgba(15,23,42,0.02)] lg:sticky lg:top-0 lg:h-[calc(100vh-4rem)] lg:overflow-hidden">
           {/* Header */}
           <div className="flex items-center justify-between px-6 py-5 flex-shrink-0">
             <div className="flex items-center gap-3">
@@ -1058,7 +1060,7 @@ export default function AdminSupportPage() {
                 </Avatar>
                 <div>
                   <p className="font-bold text-[#111827] text-[15px]">{selectedTicket.user?.name || "Unknown Customer"}</p>
-                  <p className="text-[12px] font-medium text-[#64748B] mt-0.5">Customer ID: {selectedTicket.userId.slice(-8).toUpperCase()}</p>
+                  <p className="text-[12px] font-medium text-[#64748B] mt-0.5">Customer ID: {selectedTicket.userId ? selectedTicket.userId.slice(-8).toUpperCase() : "Unknown"}</p>
                 </div>
               </div>
               <div className="rounded-[10px] border border-[#E5E7EB] p-4 flex flex-col gap-3">
@@ -1118,10 +1120,16 @@ export default function AdminSupportPage() {
                   <span className="text-[11px] font-medium text-[#94A3B8]">Replies are sent as Admin</span>
                 </div>
                 <Button
-                  onClick={handleSubmit((data) =>
-                    replyMutation.mutateAsync({ ticketId: selectedTicket.id, message: data.message })
-                      .then(() => { reset(); toast.success("Reply sent"); })
-                      .catch(() => toast.error("Failed to send reply"))
+                  onClick={handleSubmit(
+                    (data) =>
+                      replyMutation.mutateAsync({ ticketId: selectedTicket.id, message: data.message })
+                        .then(() => { reset(); toast.success("Reply sent"); })
+                        .catch(() => toast.error("Failed to send reply")),
+                    (errors) => {
+                      if (errors.message?.message) {
+                        toast.error(errors.message.message as string);
+                      }
+                    }
                   )}
                   disabled={replyMutation.isPending}
                   size="sm"
@@ -1135,12 +1143,12 @@ export default function AdminSupportPage() {
           )}
 
           {/* Action Buttons */}
-          <div className="border-t border-[#EEF0F2] px-6 py-4 flex items-center justify-between gap-3 flex-shrink-0 bg-[#FFFFFF]">
+          <div className="border-t border-[#EEF0F2] px-6 py-4 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 flex-shrink-0 bg-[#FFFFFF]">
             <Button
               size="sm" variant="outline"
               onClick={() => handleStatusChange("INPROGRESS")}
               disabled={selectedTicket.status === "INPROGRESS" || updateMutation.isPending}
-              className="flex-1 h-10 rounded-[7px] text-[12px] font-bold border border-[#D4EAD6] bg-[#F2FAF3] text-[#15803D] hover:bg-[#E8F5EA] gap-1.5 shadow-none"
+              className="flex-1 min-w-[120px] h-10 rounded-[7px] text-[12px] font-bold border border-[#D4EAD6] bg-[#F2FAF3] text-[#15803D] hover:bg-[#E8F5EA] gap-1.5 shadow-none"
             >
               <Clock3 className="h-[14px] w-[14px] text-[#16A34A]" strokeWidth={2.5} /> Mark In Progress
             </Button>
@@ -1148,7 +1156,7 @@ export default function AdminSupportPage() {
               size="sm" variant="outline"
               onClick={() => handleStatusChange("RESOLVED")}
               disabled={selectedTicket.status === "RESOLVED" || updateMutation.isPending}
-              className="flex-1 h-10 rounded-[7px] text-[12px] font-bold border border-[#D4EAD6] bg-[#F2FAF3] text-[#15803D] hover:bg-[#E8F5EA] gap-1.5 shadow-none"
+              className="flex-1 min-w-[120px] h-10 rounded-[7px] text-[12px] font-bold border border-[#D4EAD6] bg-[#F2FAF3] text-[#15803D] hover:bg-[#E8F5EA] gap-1.5 shadow-none"
             >
               <Check className="h-[14px] w-[14px] text-[#16A34A]" strokeWidth={2.5} /> Mark Resolved
             </Button>
@@ -1156,7 +1164,7 @@ export default function AdminSupportPage() {
               size="sm" variant="outline"
               onClick={() => handleStatusChange("CLOSED")}
               disabled={selectedTicket.status === "CLOSED" || updateMutation.isPending}
-              className="flex-1 h-10 rounded-[7px] text-[12px] font-bold border border-[#E2E8F0] bg-[#F8FAFC] text-[#334155] hover:bg-[#F1F5F9] gap-1.5 shadow-none"
+              className="flex-1 min-w-[120px] h-10 rounded-[7px] text-[12px] font-bold border border-[#E2E8F0] bg-[#F8FAFC] text-[#334155] hover:bg-[#F1F5F9] gap-1.5 shadow-none"
             >
               <Lock className="h-[14px] w-[14px] text-[#475569]" strokeWidth={2} /> Close Ticket
             </Button>

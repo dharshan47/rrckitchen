@@ -4,6 +4,7 @@ const mockPrisma = vi.hoisted(() => ({
   referral: {
     findFirst: vi.fn(),
     findUnique: vi.fn(),
+    findMany: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
     count: vi.fn(),
@@ -266,11 +267,23 @@ describe("referral", () => {
       mockPrisma.loyaltyTransaction.aggregate.mockResolvedValue({
         _sum: { points: 500 },
       })
+      mockPrisma.referral.findMany.mockResolvedValue([
+        {
+          id: "r-1",
+          status: "COMPLETED",
+          rewardAmount: 100,
+          createdAt: new Date("2026-01-01"),
+          referred: { name: "Alice", phoneNumber: "9999999999" },
+        },
+      ])
 
       const stats = await getReferralStats()
 
       expect(stats?.totalReferrals).toBe(5)
       expect(stats?.totalPointsEarned).toBe(500)
+      expect(stats?.referrals).toHaveLength(1)
+      expect(stats?.referrals?.[0].name).toBe("Alice")
+      expect(stats?.referrals?.[0].rewardAmount).toBe(100)
     })
 
     it("returns zero points when no transactions", async () => {
@@ -278,11 +291,13 @@ describe("referral", () => {
       mockPrisma.loyaltyTransaction.aggregate.mockResolvedValue({
         _sum: { points: null },
       })
+      mockPrisma.referral.findMany.mockResolvedValue([])
 
       const stats = await getReferralStats()
 
       expect(stats?.totalReferrals).toBe(0)
       expect(stats?.totalPointsEarned).toBe(0)
+      expect(stats?.referrals).toHaveLength(0)
     })
   })
 })

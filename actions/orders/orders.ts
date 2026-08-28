@@ -277,8 +277,10 @@ export async function updateOrderStatus(orderId: string, status: string) {
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const geoMembers = await (redis as any).geosearch(
               "deliveryPersons:live",
-              { longitude: kitchenLng, latitude: kitchenLat },
-              { radius: 5, unit: "km", SORT: "ASC", COUNT: 20 },
+              { type: "FROMLONLAT", coordinate: { lon: kitchenLng, lat: kitchenLat } },
+              { type: "BYRADIUS", radius: 5, radiusType: "KM" },
+              "ASC",
+              { count: { limit: 20 } },
             )
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const nearbyMembers = Array.isArray(geoMembers) ? geoMembers.map((r: any) => String(r.member ?? r)) : []

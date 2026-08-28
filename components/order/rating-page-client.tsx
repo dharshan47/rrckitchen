@@ -467,7 +467,7 @@ export function RatingPageClient() {
                     <div className="flex flex-wrap gap-3 mt-4">
                       {mediaUrls.map((url, i) => (
                         <div key={i} className="relative w-16 h-16 rounded-xl overflow-hidden border border-[#E5E7EB]">
-                          <Image src={url} alt={`Upload ${i}`} fill className="object-cover" />
+                          <Image src={url} alt={`Upload ${i}`} fill sizes="64px" className="object-cover" />
                           <button 
                             onClick={() => setMediaUrls(mediaUrls.filter((_, idx) => idx !== i))}
                             className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full shadow-sm border border-gray-200 flex items-center justify-center text-red-500 hover:text-red-600 z-10"
@@ -642,7 +642,7 @@ export function RatingPageClient() {
                 <div className="flex items-center gap-4">
                   {firstImage ? (
                     <div className="w-16 h-16 relative rounded-xl overflow-hidden shadow-sm">
-                      <Image src={firstImage} alt="Food" fill className="object-cover" />
+                      <Image src={firstImage} alt="Food" fill sizes="64px" className="object-cover" />
                     </div>
                   ) : (
                     <div className="w-16 h-16 bg-white rounded-xl border border-[#E5E7EB] flex items-center justify-center shadow-sm">
@@ -694,7 +694,7 @@ export function RatingPageClient() {
                 </li>
               </ul>
               <div className="absolute -right-4 -bottom-4 w-44 h-44 z-0 mix-blend-multiply opacity-95">
-                 <Image src="/rating/girl.webp" alt="Illustration" fill className="object-contain" />
+                 <Image src="/rating/girl.webp" alt="Illustration" fill sizes="176px" className="object-contain" />
               </div>
             </div>
             

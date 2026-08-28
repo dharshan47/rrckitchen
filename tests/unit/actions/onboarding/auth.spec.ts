@@ -115,7 +115,7 @@ describe("onboarding/auth", () => {
       mockPrisma.user.findFirst.mockResolvedValue(null)
       await checkPhoneRegistered("919876543210")
       expect(mockPrisma.user.findFirst).toHaveBeenCalledWith({
-        where: { phoneNumber: { in: ["919876543210", "+919876543210"] } },
+        where: { phoneNumber: { in: ["919876543210", "9876543210", "+919876543210"] } },
         select: { id: true },
       })
     })
@@ -124,7 +124,7 @@ describe("onboarding/auth", () => {
       mockPrisma.user.findFirst.mockResolvedValue(null)
       await checkPhoneRegistered("+91-9876543210")
       expect(mockPrisma.user.findFirst).toHaveBeenCalledWith({
-        where: { phoneNumber: { in: ["+91-9876543210"] } },
+        where: { phoneNumber: { in: ["+91-9876543210", "9876543210", "+919876543210"] } },
         select: { id: true },
       })
     })

@@ -230,7 +230,7 @@ export function AddToCartPopup({ item, qty = 1, open, onOpenChange, orderId }: A
           <div className="relative mb-6 flex items-center gap-3 rounded-[16px] border border-gray-100 bg-white p-3 shadow-sm md:gap-4">
             <div className="relative flex h-18 w-18 shrink-0 items-center justify-center overflow-hidden rounded-[12px] bg-orange-50">
               {item.imageUrl ? (
-                <Image src={item.imageUrl} alt={item.name} fill className="object-cover" />
+                <Image src={item.imageUrl} alt={item.name} fill sizes="72px" className="object-cover" />
               ) : (
                 <ShoppingBag className="h-8 w-8 text-orange-200" />
               )}
@@ -401,7 +401,7 @@ export function AddToCartPopup({ item, qty = 1, open, onOpenChange, orderId }: A
                       {/* Left: Image & Badge */}
                       <div className="relative h-[96px] w-[130px] shrink-0 overflow-hidden rounded-[8px] bg-orange-50">
                         {rec.imageUrl ? (
-                          <Image src={rec.imageUrl} alt={rec.name} fill className="object-cover" />
+                          <Image src={rec.imageUrl} alt={rec.name} fill sizes="130px" className="object-cover" />
                         ) : (
                           <div className="flex h-full w-full items-center justify-center">
                             <ShoppingBag className="h-8 w-8 text-orange-200" />

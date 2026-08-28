@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { redis } from "@/lib/redis";
 import slugify from "slugify";
 import { toTitleCase } from "@/lib/utils";
 
-
 const PAGE_SIZE = 15;
+const CACHE_TTL = 30;
 
 export async function GET(request: Request) {
   try {
@@ -15,6 +16,20 @@ export async function GET(request: Request) {
       parseInt(url.searchParams.get("limit") ?? String(PAGE_SIZE), 10),
       50,
     );
+
+    const cacheKey = `kitchen:explore:${category ?? "all"}:${cursor ?? "start"}:${limit}`;
+    const cached = await redis.get<{
+      data: unknown[];
+      nextCursor: string | null;
+    }>(cacheKey);
+    if (cached) {
+      return NextResponse.json(cached, {
+        headers: {
+          "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+          "X-Cache": "HIT",
+        },
+      });
+    }
 
     const kitchens = await prisma.kitchenPartner.findMany({
       where: {
@@ -31,63 +46,104 @@ export async function GET(request: Request) {
       },
       take: limit + 1,
       ...(cursor ? { skip: 1, cursor: { id: cursor } } : {}),
-      include: {
-        kitchenAlias: true,
+      select: {
+        id: true,
+        slug: true,
+        avgRating: true,
+        totalReviews: true,
+        estimatedPrepTime: true,
+        operatingHours: true,
+        kitchenAlias: {
+          select: {
+            displayName: true,
+            imageUrl: true,
+            coverImageUrl: true,
+            customOfferText: true,
+          },
+        },
         kitchenAddress: {
-          select: { latitude: true, longitude: true, area: true, landmark: true, lineOne: true, pincode: true },
+          select: {
+            latitude: true,
+            longitude: true,
+            area: true,
+            landmark: true,
+            lineOne: true,
+            pincode: true,
+          },
         },
         menus: {
           where: { isActive: true },
-          include: {
+          select: {
+            id: true,
+            name: true,
             menuItems: {
               where: { isAvailable: true },
-              include: {
-                photos: { orderBy: { sortOrder: "asc" }, take: 1 },
+              select: {
+                id: true,
+                name: true,
+                price: true,
+                compareAtPrice: true,
+                foodType: true,
+                timeSlot: true,
+                photos: {
+                  orderBy: { sortOrder: "asc" },
+                  take: 1,
+                  select: { imageUrl: true },
+                },
               },
               orderBy: { name: "asc" },
             },
           },
         },
-        kitchenCategories: { include: { category: true } },
-        _count: { select: { reviews: true } },
-        reviews: { select: { rating: true } },
+        kitchenCategories: {
+          select: { category: { select: { name: true } } },
+        },
       },
       orderBy: { createdAt: "desc" },
     });
 
     const hasMore = kitchens.length > limit;
     const items = hasMore ? kitchens.slice(0, limit) : kitchens;
-    const nextCursor = hasMore && items.length > 0 ? items[items.length - 1].id : null;
+    const nextCursor =
+      hasMore && items.length > 0 ? items[items.length - 1].id : null;
 
     const serialized = items.map((k) => {
-      const avgRating =
-        k.reviews.length > 0
-          ? Math.round(
-              (k.reviews.reduce((s, r) => s + r.rating, 0) /
-                k.reviews.length) *
-                10,
-            ) / 10
-          : null;
+      const avgRating = k.avgRating ? Number(k.avgRating) : null;
 
       const allItems = k.menus.flatMap((m) => m.menuItems);
       const firstItemPhoto =
         allItems.find((i) => i.photos.length > 0)?.photos[0]?.imageUrl ?? null;
       const timeSlots = [...new Set(allItems.map((i) => i.timeSlot))];
-      const cuisineTags = k.kitchenCategories.map((kc) => toTitleCase(kc.category.name));
+      const cuisineTags = k.kitchenCategories.map((kc) =>
+        toTitleCase(kc.category.name),
+      );
 
       return {
         id: k.id,
-        slug: k.slug || slugify(k.kitchenAlias?.displayName ?? k.id, { lower: true, strict: true }),
+        slug:
+          k.slug ||
+          slugify(k.kitchenAlias?.displayName ?? k.id, {
+            lower: true,
+            strict: true,
+          }),
         displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
         profileImage: k.kitchenAlias?.imageUrl ?? null,
         avgRating,
-        totalReviews: k._count.reviews,
-        imageUrl: k.kitchenAlias?.imageUrl ?? firstItemPhoto,
+        totalReviews: k.totalReviews,
+        imageUrl:
+          k.kitchenAlias?.coverImageUrl ??
+          k.kitchenAlias?.imageUrl ??
+          firstItemPhoto,
         customOfferText: k.kitchenAlias?.customOfferText ?? null,
         cuisineTags,
-        locality: [k.kitchenAddress?.area, k.kitchenAddress?.landmark, k.kitchenAddress?.lineOne]
-          .filter(Boolean)
-          .join(", ") || null,
+        locality:
+          [
+            k.kitchenAddress?.area,
+            k.kitchenAddress?.landmark,
+            k.kitchenAddress?.lineOne,
+          ]
+            .filter(Boolean)
+            .join(", ") || null,
         items: allItems.map((i) => ({
           id: i.id,
           name: i.name,
@@ -101,13 +157,20 @@ export async function GET(request: Request) {
         lat: k.kitchenAddress?.latitude ?? null,
         lng: k.kitchenAddress?.longitude ?? null,
         estimatedPrepTime: k.estimatedPrepTime,
-        operatingHours: k.operatingHours as Record<string, { open: string; close: string }> | null,
+        operatingHours: k.operatingHours as Record<
+          string,
+          { open: string; close: string }
+        > | null,
       };
     });
 
-    return NextResponse.json({ data: serialized, nextCursor }, {
+    const payload = { data: serialized, nextCursor };
+    await redis.set(cacheKey, payload, { ex: CACHE_TTL });
+
+    return NextResponse.json(payload, {
       headers: {
         "Cache-Control": "public, s-maxage=30, stale-while-revalidate=60",
+        "X-Cache": "MISS",
       },
     });
   } catch (error) {

@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { SlidersHorizontal, ChevronRight, Star as StarIcon, UsersRound, Leaf, CircleCheck, Sparkles, ChevronDown, CircleSlash } from "lucide-react";
+import { SlidersHorizontal, ChevronRight, Star as StarIcon, UsersRound, Leaf, CircleCheck, Sparkles, ChevronDown, CircleSlash, X } from "lucide-react";
 import { KitchensPageSkeleton } from "@/components/kitchen/kitchens-page-skeleton";
 import type { SortOption } from "@/components/kitchen/sort-by-dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 import { KitchenCard } from "@/components/kitchen/kitchen-card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -46,7 +47,7 @@ const MEAL_TYPE_LABELS: Record<string, string> = {
 export function InfiniteKitchenGrid() {
   const kitchens = useKitchensGridData();
   const categories = useKitchensGridCategories();
-  const { isLoading } = useKitchensGridPagination();
+  const { isLoading, isError } = useKitchensGridPagination();
   const {
     selectedCategory,
     sortOption,
@@ -63,7 +64,7 @@ export function InfiniteKitchenGrid() {
   const actions = useKitchensGridActions();
 
   // Trigger queries
-  useKitchensGridQuery(selectedCategory);
+  const kitchensQuery = useKitchensGridQuery(selectedCategory);
   useKitchensGridCategoriesQuery();
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -166,141 +167,146 @@ export function InfiniteKitchenGrid() {
   };
 
   const renderFilterContent = () => (
-    <div className="space-y-5">
+    <Accordion type="multiple" defaultValue={["mealType", "cuisine", "ratings", "deliveryTime"]} className="w-full">
       {/* Meal Type */}
-      <div>
-        <h3 className="text-[14px] font-bold text-[#222222] mb-3 flex justify-between items-center cursor-pointer">
-          Meal Type <ChevronDown className="h-4 w-4 text-[#333333] stroke-[1.8px]" />
-        </h3>
-        <div className="flex flex-col gap-2.5">
-          {mealTypeOptions.map((option) => (
-            <div key={option.key} className="flex items-center gap-3 group">
-              <Checkbox
-                id={`meal-${option.key}`}
-                checked={mealType === option.key}
-                onCheckedChange={() => actions.setMealType(mealType === option.key ? null : option.key)}
-                className="data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] border-[#FF8A69] rounded-sm h-[15px] w-[15px] shadow-none"
-              />
-              <Label htmlFor={`meal-${option.key}`} className="text-[11px] font-normal text-[#333333] cursor-pointer group-hover:text-[#111111]">{option.label}</Label>
-            </div>
-          ))}
-        </div>
-      </div>
+      <AccordionItem value="mealType" className="border-b-0">
+        <AccordionTrigger className="text-[14px] font-bold text-[#222222] py-3 hover:no-underline select-none">
+          Meal Type
+        </AccordionTrigger>
+        <AccordionContent className="pb-4">
+          <div className="flex flex-col gap-2.5">
+            {mealTypeOptions.map((option) => (
+              <div key={option.key} className="flex items-center gap-3 group">
+                <Checkbox
+                  id={`meal-${option.key}`}
+                  checked={mealType === option.key}
+                  onCheckedChange={() => actions.setMealType(mealType === option.key ? null : option.key)}
+                  className="data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] border-[#FF8A69] rounded-sm h-[15px] w-[15px] shadow-none"
+                />
+                <Label htmlFor={`meal-${option.key}`} className="text-[11px] font-normal text-[#333333] cursor-pointer group-hover:text-[#111111]">{option.label}</Label>
+              </div>
+            ))}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
 
       <div className="h-px bg-[#EEEEEE] w-full" />
 
       {/* Cuisine */}
-      <div>
-        <h3 className="text-[14px] font-bold text-[#222222] mb-3 flex justify-between items-center cursor-pointer">
-          Cuisine <ChevronDown className="h-4 w-4 text-[#333333] stroke-[1.8px]" />
-        </h3>
-        <div className="flex flex-col gap-2.5">
-          {(showAllCuisines ? categories : categories.slice(0, 5)).map((category) => (
-            <div key={category.id} className="flex items-center gap-3 group">
-              <Checkbox
-                id={`cuisine-${category.id}`}
-                checked={selectedCuisines.includes(category.id)}
-                onCheckedChange={() => actions.toggleCuisine(category.id)}
-                className="data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] border-[#FF8A69] rounded-sm h-[15px] w-[15px] shadow-none"
-              />
-              <Label htmlFor={`cuisine-${category.id}`} className="text-[11px] font-normal text-[#333333] cursor-pointer group-hover:text-[#111111]">{category.name}</Label>
-            </div>
-          ))}
-          {categories.length > 5 && (
-            <button
-              onClick={() => setShowAllCuisines((v) => !v)}
-              className="text-[11px] font-bold text-[#F44A01] text-left mt-0.5"
-            >
-              {showAllCuisines ? "View Less" : `View All (${categories.length})`}
-            </button>
-          )}
-        </div>
-      </div>
+      <AccordionItem value="cuisine" className="border-b-0">
+        <AccordionTrigger className="text-[14px] font-bold text-[#222222] py-3 hover:no-underline select-none">
+          Cuisine
+        </AccordionTrigger>
+        <AccordionContent className="pb-4">
+          <div className="flex flex-col gap-2.5">
+            {(showAllCuisines ? categories : categories.slice(0, 5)).map((category) => (
+              <div key={category.id} className="flex items-center gap-3 group">
+                <Checkbox
+                  id={`cuisine-${category.id}`}
+                  checked={selectedCuisines.includes(category.id)}
+                  onCheckedChange={() => actions.toggleCuisine(category.id)}
+                  className="data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] border-[#FF8A69] rounded-sm h-[15px] w-[15px] shadow-none"
+                />
+                <Label htmlFor={`cuisine-${category.id}`} className="text-[11px] font-normal text-[#333333] cursor-pointer group-hover:text-[#111111]">{category.name}</Label>
+              </div>
+            ))}
+            {categories.length > 5 && (
+              <button
+                onClick={() => setShowAllCuisines((v) => !v)}
+                className="text-[11px] font-bold text-[#F44A01] text-left mt-0.5"
+              >
+                {showAllCuisines ? "View Less" : `View All (${categories.length})`}
+              </button>
+            )}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
 
       <div className="h-px bg-[#EEEEEE] w-full" />
 
       {/* Ratings */}
-      <div>
-        <h3 className="text-[14px] font-bold text-[#222222] mb-3 flex justify-between items-center cursor-pointer">
-          Ratings <ChevronDown className="h-4 w-4 text-[#333333] stroke-[1.8px]" />
-        </h3>
-        <div className="flex flex-col gap-2.5">
-          {[
-            { label: "4.5 & above", value: 4.5 },
-            { label: "4.0 & above", value: 4.0 },
-            { label: "3.5 & above", value: 3.5 },
-            { label: "3.0 & above", value: 3.0 },
-          ].map((item) => (
-            <div key={item.value} className="flex items-center gap-3 group">
-              <Checkbox
-                id={`rating-${item.value}`}
-                checked={minRating === item.value}
-                onCheckedChange={() => actions.setMinRating(minRating === item.value ? null : item.value)}
-                className="data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] border-[#FF8A69] rounded-sm h-[15px] w-[15px] shadow-none"
-              />
-              <Label htmlFor={`rating-${item.value}`} className="flex items-center gap-2 cursor-pointer">
-                <div className="flex items-center gap-0.5">
-                  {Array.from({ length: 5 }).map((_, j) => {
-                    const fill = Math.max(0, Math.min(1, item.value - j));
-                    return (
-                      <div key={j} className="relative h-[11px] w-[11px]">
-                        <StarIcon className="absolute inset-0 h-[11px] w-[11px] fill-[#E8E8E8] text-[#E8E8E8]" />
-                        <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
-                          <StarIcon className="h-[11px] w-[11px] fill-[#F44A01] text-[#F44A01]" />
+      <AccordionItem value="ratings" className="border-b-0">
+        <AccordionTrigger className="text-[14px] font-bold text-[#222222] py-3 hover:no-underline select-none">
+          Ratings
+        </AccordionTrigger>
+        <AccordionContent className="pb-4">
+          <div className="flex flex-col gap-2.5">
+            {[
+              { label: "4.5 & above", value: 4.5 },
+              { label: "4.0 & above", value: 4.0 },
+              { label: "3.5 & above", value: 3.5 },
+              { label: "3.0 & above", value: 3.0 },
+            ].map((item) => (
+              <div key={item.value} className="flex items-center gap-3 group">
+                <Checkbox
+                  id={`rating-${item.value}`}
+                  checked={minRating === item.value}
+                  onCheckedChange={() => actions.setMinRating(minRating === item.value ? null : item.value)}
+                  className="data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] border-[#FF8A69] rounded-sm h-[15px] w-[15px] shadow-none"
+                />
+                <Label htmlFor={`rating-${item.value}`} className="flex items-center gap-2 cursor-pointer">
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, j) => {
+                      const fill = Math.max(0, Math.min(1, item.value - j));
+                      return (
+                        <div key={j} className="relative h-[11px] w-[11px]">
+                          <StarIcon className="absolute inset-0 h-[11px] w-[11px] fill-[#E8E8E8] text-[#E8E8E8]" />
+                          <div className="absolute inset-y-0 left-0 overflow-hidden" style={{ width: `${fill * 100}%` }}>
+                            <StarIcon className="h-[11px] w-[11px] fill-[#F44A01] text-[#F44A01]" />
+                          </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-                <span className="text-[11px] font-normal text-[#333333] group-hover:text-[#111111]">{item.label}</span>
-              </Label>
-            </div>
-          ))}
-        </div>
-      </div>
+                      );
+                    })}
+                  </div>
+                  <span className="text-[11px] font-normal text-[#333333] group-hover:text-[#111111]">{item.label}</span>
+                </Label>
+              </div>
+            ))}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
 
       <div className="h-px bg-[#EEEEEE] w-full" />
 
       {/* Delivery Time */}
-      <div>
-        <h3 className="text-[14px] font-bold text-[#222222] mb-3 flex justify-between items-center cursor-pointer">
-          Delivery Time <ChevronDown className="h-4 w-4 text-[#333333] stroke-[1.8px]" />
-        </h3>
-        <div className="flex flex-col gap-2.5">
-          {[
-            { label: "25 mins or less", min: null, max: 25 },
-            { label: "25 - 40 mins", min: 25, max: 40 },
-            { label: "40 - 60 mins", min: 40, max: 60 },
-            { label: "More than 60 mins", min: 60, max: null },
-          ].map((option) => {
-            const isSelected = minPrepTime === option.min && maxPrepTime === option.max;
-            return (
-              <div key={option.label} className="flex items-center gap-3 group">
-                <Checkbox
-                  id={`time-${option.min ?? 0}-${option.max ?? "max"}`}
-                  checked={isSelected}
-                  onCheckedChange={() => {
-                    if (isSelected) {
-                      actions.setMinPrepTime(null);
-                      actions.setMaxPrepTime(null);
-                    } else {
-                      actions.setMinPrepTime(option.min);
-                      actions.setMaxPrepTime(option.max);
-                    }
-                  }}
-                  className="data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] border-[#FF8A69] rounded-sm h-[15px] w-[15px] shadow-none"
-                />
-                <Label htmlFor={`time-${option.min ?? 0}-${option.max ?? "max"}`} className="text-[11px] font-normal text-[#333333] cursor-pointer group-hover:text-[#111111]">{option.label}</Label>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+      <AccordionItem value="deliveryTime" className="border-b-0">
+        <AccordionTrigger className="text-[14px] font-bold text-[#222222] py-3 hover:no-underline select-none">
+          Delivery Time
+        </AccordionTrigger>
+        <AccordionContent className="pb-4">
+          <div className="flex flex-col gap-2.5">
+            {[
+              { label: "25 mins or less", min: null, max: 25 },
+              { label: "25 - 40 mins", min: 25, max: 40 },
+              { label: "40 - 60 mins", min: 40, max: 60 },
+              { label: "More than 60 mins", min: 60, max: null },
+            ].map((option) => {
+              const isSelected = minPrepTime === option.min && maxPrepTime === option.max;
+              return (
+                <div key={option.label} className="flex items-center gap-3 group">
+                  <Checkbox
+                    id={`time-${option.min ?? 0}-${option.max ?? "max"}`}
+                    checked={isSelected}
+                    onCheckedChange={() => {
+                      if (isSelected) {
+                        actions.setMinPrepTime(null);
+                        actions.setMaxPrepTime(null);
+                      } else {
+                        actions.setMinPrepTime(option.min);
+                        actions.setMaxPrepTime(option.max);
+                      }
+                    }}
+                    className="data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] border-[#FF8A69] rounded-sm h-[15px] w-[15px] shadow-none"
+                  />
+                  <Label htmlFor={`time-${option.min ?? 0}-${option.max ?? "max"}`} className="text-[11px] font-normal text-[#333333] cursor-pointer group-hover:text-[#111111]">{option.label}</Label>
+                </div>
+              );
+            })}
+          </div>
+        </AccordionContent>
+      </AccordionItem>
 
-      <button onClick={() => { actions.setShowMobileFilters(false); }} className="w-full h-[42px] bg-[#F44A01] text-white text-[13px] font-bold rounded-[5px] shadow-[0_1px_3px_rgba(244,74,1,0.12)] hover:bg-[#E94300] transition-colors mt-6 uppercase tracking-wider">
-        APPLY FILTERS
-      </button>
-    </div>
+    </Accordion>
   );
 
   return (
@@ -332,16 +338,45 @@ export function InfiniteKitchenGrid() {
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0">
+          <main className="flex-1 min-w-0 w-full lg:w-auto">
             
-            {/* Top Quick Filters Row */}
-            <div className="hidden lg:flex items-center justify-between mb-6">
-              <div className="flex items-center gap-3">
+            {/* Top Quick Filters & Mobile Sort Row */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4 w-full min-w-0">
+              
+              {/* Mobile Filter Toggle & Sort */}
+              <div className="flex lg:hidden items-center justify-between w-full">
+                <button
+                  onClick={() => actions.setShowMobileFilters(!showMobileFilters)}
+                  className="flex items-center gap-2 text-[12px] font-bold text-[#111111] bg-white border border-[#E8E8E8] px-4 py-2 rounded-[6px] shadow-sm"
+                >
+                  <SlidersHorizontal className="h-4 w-4 text-[#F44A01]" /> Filters
+                </button>
+
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-2 px-3 py-2 rounded-[6px] border border-[#E8E8E8] bg-[#FFFFFF] text-[12px] font-medium text-[#222222] shadow-sm">
+                      {sortOption === "rating" ? "Rating" : sortOption === "cost-low" ? "Cost: Low to High" : sortOption === "cost-high" ? "Cost: High to Low" : "Sort by"}
+                      <ChevronDown className="h-4 w-4 text-[#444444]" strokeWidth={1.8} />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-48 bg-[#FFFFFF] border-[#E5E5E5]">
+                    <DropdownMenuRadioGroup value={sortOption ?? ""} onValueChange={(v) => actions.setSortOption(v === "" ? null : (v as SortOption))}>
+                      <DropdownMenuRadioItem value="">Popularity</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="rating">Rating</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="cost-low">Cost: Low to High</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="cost-high">Cost: High to Low</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+
+              {/* Quick Filters */}
+              <div className="flex items-center gap-3 overflow-x-auto w-full pb-2 lg:pb-0 scrollbar-hide [&>button]:shrink-0" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}>
                 <button
                   onClick={() => actions.setVegFilter(null)}
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] border text-[12px] font-medium transition-colors whitespace-nowrap shadow-[0_1px_4px_rgba(0,0,0,0.025)]",
-                    vegFilter === null ? "bg-[#FFFFFF] border-[#FF8A69] text-[#F44A01]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#222222] hover:border-[#FF8A69]"
+                    vegFilter === null ? "bg-[#FFF5F0] border-[#FF8A69] text-[#F44A01]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#222222] hover:bg-[#FAFAFA]"
                   )}
                 >
                   <UsersRound className={cn("h-3.5 w-3.5", vegFilter === null ? "text-[#F44A01]" : "text-[#777777]")} strokeWidth={1.8} /> All Kitchens
@@ -350,7 +385,7 @@ export function InfiniteKitchenGrid() {
                   onClick={() => actions.setVegFilter("pure-veg")}
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] border text-[12px] font-medium transition-colors whitespace-nowrap shadow-[0_1px_4px_rgba(0,0,0,0.025)]",
-                    vegFilter === "pure-veg" ? "bg-[#FFFFFF] border-[#E3E8E3] text-[#222222]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#222222] hover:border-[#E3E8E3]"
+                    vegFilter === "pure-veg" ? "bg-[#F0FDF4] border-[#22C55E] text-[#15803D]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#222222] hover:bg-[#FAFAFA]"
                   )}
                 >
                   <CircleCheck className="w-3.5 h-3.5 text-[#08733F]" strokeWidth={1.8} />
@@ -360,7 +395,7 @@ export function InfiniteKitchenGrid() {
                   onClick={() => actions.setVegFilter("veg")}
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] border text-[12px] font-medium transition-colors whitespace-nowrap shadow-[0_1px_4px_rgba(0,0,0,0.025)]",
-                    vegFilter === "veg" ? "bg-[#FFFFFF] border-[#E3E8E3] text-[#222222]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#222222] hover:border-[#E3E8E3]"
+                    vegFilter === "veg" ? "bg-[#F0FDF4] border-[#22C55E] text-[#15803D]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#222222] hover:bg-[#FAFAFA]"
                   )}
                 >
                   <Leaf className="w-3.5 h-3.5 text-[#08733F]" strokeWidth={1.8} />
@@ -370,7 +405,7 @@ export function InfiniteKitchenGrid() {
                   onClick={() => actions.setVegFilter("non-veg")}
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] border text-[12px] font-medium transition-colors whitespace-nowrap shadow-[0_1px_4px_rgba(0,0,0,0.025)]",
-                    vegFilter === "non-veg" ? "bg-[#FFFFFF] border-[#E7D4D1] text-[#333333]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#333333] hover:border-[#E7D4D1]"
+                    vegFilter === "non-veg" ? "bg-[#FEF2F2] border-[#EF4444] text-[#B91C1C]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#333333] hover:bg-[#FAFAFA]"
                   )}
                 >
                   <CircleSlash className="w-3.5 h-3.5 text-[#D92D20]" strokeWidth={1.8} />
@@ -380,23 +415,24 @@ export function InfiniteKitchenGrid() {
                   onClick={actions.toggleTopRated}
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] border text-[12px] font-medium transition-colors whitespace-nowrap shadow-[0_1px_4px_rgba(0,0,0,0.025)]",
-                    topRatedOnly ? "bg-[#FFFFFF] border-[#E8E8E8] text-[#333333]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#333333]"
+                    topRatedOnly ? "bg-[#FFF5F0] border-[#FF8A69] text-[#F44A01]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#333333] hover:bg-[#FAFAFA]"
                   )}
                 >
-                  <StarIcon className="h-3.5 w-3.5 text-[#F44A01] strokeWidth={1.8}" /> Bestseller
+                  <StarIcon className={cn("h-3.5 w-3.5 strokeWidth={1.8}", topRatedOnly ? "text-[#F44A01]" : "text-[#F44A01]")} /> Bestseller
                 </button>
                 <button
                   onClick={actions.toggleNewOnly}
                   className={cn(
                     "flex items-center gap-1.5 px-3 py-1.5 rounded-[6px] border text-[12px] font-medium transition-colors whitespace-nowrap shadow-[0_1px_4px_rgba(0,0,0,0.025)]",
-                    newOnly ? "bg-[#FFFFFF] border-[#E4D9F7] text-[#333333]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#333333]"
+                    newOnly ? "bg-[#FAF5FF] border-[#A855F7] text-[#6D28D9]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#333333] hover:bg-[#FAFAFA]"
                   )}
                 >
                   <Sparkles className="h-3.5 w-3.5 text-[#6D28D9]" strokeWidth={1.8} /> New
                 </button>
               </div>
 
-              <div className="flex items-center gap-2 text-[12px] font-medium text-[#222222]">
+              {/* Desktop Sort */}
+              <div className="hidden lg:flex items-center gap-2 text-[12px] font-medium text-[#222222]">
                 Sort by:
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -417,16 +453,6 @@ export function InfiniteKitchenGrid() {
               </div>
             </div>
 
-            {/* Mobile Filter Toggle */}
-            <div className="lg:hidden flex items-center justify-between mb-4">
-               <button
-                  onClick={() => actions.setShowMobileFilters(!showMobileFilters)}
-                  className="flex items-center gap-2 text-[12px] font-bold text-[#111111] bg-white border border-[#E8E8E8] px-4 py-2 rounded-[6px] shadow-sm"
-               >
-                  <SlidersHorizontal className="h-4 w-4 text-[#F44A01]" /> Filters
-               </button>
-            </div>
-
             {/* Showing Results Info */}
             <div className="mb-4">
               <p className="text-[13px] font-bold text-[#111111]">
@@ -436,10 +462,23 @@ export function InfiniteKitchenGrid() {
 
             {/* Grid */}
             {isLoading ? (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5">
                 {Array.from({ length: 12 }).map((_, i) => (
                   <KitchensPageSkeleton key={i} />
                 ))}
+              </div>
+            ) : isError && kitchens.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-20 text-center">
+                <h3 className="text-xl font-bold text-[#111111] mb-2">Couldn&apos;t Load Kitchens</h3>
+                <p className="text-[#555555] max-w-md text-[13px]">
+                  Something went wrong while fetching kitchens. Check your connection and try again.
+                </p>
+                <button
+                  onClick={() => kitchensQuery.refetch()}
+                  className="mt-6 px-6 py-2 bg-[#F44A01] text-white font-bold rounded-[5px]"
+                >
+                  Retry
+                </button>
               </div>
             ) : filteredKitchens.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-20 text-center">
@@ -451,7 +490,7 @@ export function InfiniteKitchenGrid() {
               </div>
             ) : (
               <>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-x-5 gap-y-7">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-7">
                   {currentKitchens.map((kitchen) => (
                     <KitchenCard key={kitchen.id} kitchen={kitchen} />
                   ))}
@@ -530,13 +569,23 @@ export function InfiniteKitchenGrid() {
 
       {/* Mobile Filters Sheet */}
       <Sheet open={showMobileFilters} onOpenChange={actions.setShowMobileFilters}>
-        <SheetContent side="bottom" className="h-[85vh] rounded-t-3xl p-0 flex flex-col gap-0 overflow-hidden bg-white" showCloseButton={false}>
-          <SheetHeader className="px-5 py-4 border-b border-gray-100 bg-white z-10 flex flex-row items-center justify-between shadow-sm">
+        <SheetContent side="bottom" className="max-h-[85vh] rounded-t-3xl p-0 flex flex-col gap-0 overflow-hidden bg-white" showCloseButton={false}>
+          <SheetHeader className="px-5 py-4 border-b border-gray-100 bg-white z-10 flex flex-row items-center justify-between shadow-sm shrink-0">
             <SheetTitle className="text-[18px] font-bold text-[#171717]">Filters</SheetTitle>
-            <button onClick={actions.resetFilters} className="text-[13px] font-semibold text-[#F44A01] hover:underline">Clear All</button>
+            <div className="flex items-center gap-4">
+              <button onClick={actions.resetFilters} className="text-[13px] font-semibold text-[#F44A01] hover:underline">Clear All</button>
+              <button onClick={() => actions.setShowMobileFilters(false)} className="text-[#333333] hover:text-[#111111]">
+                <X className="h-5 w-5" />
+              </button>
+            </div>
           </SheetHeader>
           <div className="flex-1 overflow-y-auto px-5 py-6 bg-[#FFFFFF]">
             {renderFilterContent()}
+          </div>
+          <div className="px-5 py-4 border-t border-gray-100 bg-white shrink-0">
+            <button onClick={() => { actions.setShowMobileFilters(false); }} className="w-full h-[48px] bg-[#F44A01] text-white text-[14px] font-bold rounded-[8px] shadow-[0_2px_8px_rgba(244,74,1,0.2)] hover:bg-[#E94300] transition-colors uppercase tracking-wider">
+              Show Results
+            </button>
           </div>
         </SheetContent>
       </Sheet>

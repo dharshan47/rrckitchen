@@ -226,7 +226,7 @@ model KitchenPartner {
   kitchenWishlists           KitchenWishlist[]
   cravingsTriggerRules       CravingsRule[]      @relation("cravingsTriggerKitchen")
 
-  @@index([status])
+  @@index([status, createdAt])
   @@index([serviceZoneId])
   @@index([avgRating])
 }
@@ -267,6 +267,7 @@ model KitchenAlias {
   displayName      String   @unique
   sequenceNumber   Int      @unique
   imageUrl         String?
+  coverImageUrl    String?
   description      String?
   customOfferText  String?
   createdAt        DateTime @default(now())
@@ -309,7 +310,7 @@ model Menu {
   kitchenPartner KitchenPartner @relation(fields: [kitchenPartnerId], references: [id])
   menuItems      MenuItem[]
 
-  @@index([kitchenPartnerId])
+  @@index([kitchenPartnerId, isActive])
   @@index([isActive])
 }
 
@@ -488,6 +489,8 @@ model Category {
   kitchenCategories  KitchenCategory[]
   menuItems          MenuItem[]
   categoryPageContent CategoryPageContent?
+
+  @@index([isActive])
 }
 
 model ServiceZone {
@@ -592,6 +595,7 @@ model OrderItem {
 
   @@index([orderId])
   @@index([kitchenPartnerId])
+  @@index([menuItemId])
 }
 
 enum OrderItemStatus {
@@ -629,7 +633,9 @@ model Review {
   user           User           @relation(fields: [userId], references: [id])
   kitchenPartner KitchenPartner @relation(fields: [kitchenPartnerId], references: [id])
 
-  @@index([kitchenPartnerId])
+  @@index([kitchenPartnerId, createdAt])
+  @@index([createdAt])
+  @@index([userId])
 }
 
 model DeliveryReview {
@@ -1428,30 +1434,33 @@ model SearchPageInfoItem {
 // ============ CATEGORY PAGE CONTENT (CMS) ============
 
 model CategoryPageContent {
-  id                 String   @id @default(cuid())
-  categoryId         String   @unique
-  isActive           Boolean  @default(true)
-  heroLayout         String   @default("LEFT_TEXT")
-  desktopBannerUrl   String   @default("")
-  mobileBannerUrl    String   @default("")
-  iconUrl            String   @default("")
-  title              String   @default("")
-  badgeText          String   @default("")
-  description        String   @default("")
-  showHero           Boolean  @default(true)
-  defaultSort        String   @default("Popularity")
-  showRatings        Boolean  @default(true)
-  cardsPerPage       Int      @default(12)
-  metaTitle          String   @default("")
-  metaDescription    String   @default("")
-  keywords           String[] @default([])
-  canonicalUrl       String   @default("")
-  featuredKitchenIds String[] @default([])
-  featuredMenuIds    String[] @default([])
-  version            Int      @default(1)
-  updatedBy          String?
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id                      String   @id @default(cuid())
+  categoryId              String   @unique
+  isActive                Boolean  @default(true)
+  heroLayout              String   @default("LEFT_TEXT")
+  desktopBannerUrl        String   @default("")
+  mobileBannerUrl         String   @default("")
+  iconUrl                 String   @default("")
+  title                   String   @default("")
+  badgeText               String   @default("")
+  description             String   @default("")
+  showHero                Boolean  @default(true)
+  defaultSort             String   @default("Popularity")
+  showRatings             Boolean  @default(true)
+  cardsPerPage            Int      @default(12)
+  metaTitle               String   @default("")
+  metaDescription         String   @default("")
+  keywords                String[] @default([])
+  canonicalUrl            String   @default("")
+  featuredKitchenIds      String[] @default([])
+  featuredMenuIds         String[] @default([])
+  fallbackKitchenImageUrl String   @default("")
+  filterConfig            Json     @default("[]")
+  sortOptionsConfig       Json     @default("[]")
+  version                 Int      @default(1)
+  updatedBy               String?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 
   category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 

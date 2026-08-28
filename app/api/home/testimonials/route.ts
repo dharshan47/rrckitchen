@@ -1,8 +1,23 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { redis } from "@/lib/redis";
 
 export async function GET() {
   try {
+    const cacheKey = "home:testimonials";
+    const cached = await redis.get(cacheKey);
+    if (cached) {
+      return NextResponse.json(
+        { data: cached },
+        {
+          headers: {
+            "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+            "X-Cache": "HIT",
+          },
+        }
+      );
+    }
+
     const reviews = await prisma.review.findMany({
       where: { comment: { not: null } },
       take: 8,
@@ -26,11 +41,14 @@ export async function GET() {
       kitchenName: r.kitchenPartner?.kitchenAlias?.displayName ?? null,
     }));
 
+    await redis.set(cacheKey, serialized, { ex: 60 });
+
     return NextResponse.json(
       { data: serialized },
       {
         headers: {
           "Cache-Control": "public, s-maxage=60, stale-while-revalidate=120",
+          "X-Cache": "MISS",
         },
       }
     );

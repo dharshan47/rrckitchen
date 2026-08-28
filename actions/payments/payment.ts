@@ -139,9 +139,12 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
   if (resolvedAddressId) {
     const address = await prisma.address.findFirst({
       where: { id: resolvedAddressId, userId },
+      include: { serviceZone: { select: { isActive: true } } },
     });
     if (!address) {
       resolvedAddressId = null;
+    } else if (!address.serviceZone.isActive) {
+      throw new Error("Delivery is not available for this address");
     }
   }
 

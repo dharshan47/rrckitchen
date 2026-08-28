@@ -102,7 +102,7 @@ export default function DeliveriesPageClient() {
 
   if (!data) {
     return (
-      <div className="max-w-[1400px] mx-auto space-y-6 pb-12 px-2 sm:px-0 bg-[#FBFCFB] min-h-screen" role="status" aria-label="Loading deliveries">
+      <div className="max-w-[1400px] mx-auto space-y-6 pb-12 px-4 sm:px-6 lg:px-8 bg-[#FBFCFB] min-h-screen" role="status" aria-label="Loading deliveries">
         {/* Header */}
         <div className="pt-2 sm:pt-0 space-y-3">
           <Skeleton className="h-[30px] w-48" />
@@ -309,7 +309,7 @@ export default function DeliveriesPageClient() {
   }
 
   return (
-    <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in duration-500 pb-12 px-2 sm:px-0 bg-[#FBFCFB] min-h-screen">
+    <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in duration-500 pb-12 px-4 sm:px-6 lg:px-8 bg-[#FBFCFB] min-h-screen">
       
       {/* Header */}
       <div className="pt-2 sm:pt-0">
@@ -372,7 +372,7 @@ export default function DeliveriesPageClient() {
       </div>
 
 
-      <div className="grid xl:grid-cols-[1fr_400px] 2xl:grid-cols-[1fr_420px] gap-6 items-start">
+      <div className={cn("grid gap-6 items-start", selectedOrder ? "xl:grid-cols-[1fr_400px] 2xl:grid-cols-[1fr_420px]" : "grid-cols-1")}>
         {/* Orders List */}
         <div className="space-y-4">
           {displayOrders.length === 0 ? (

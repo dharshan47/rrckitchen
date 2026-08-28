@@ -218,15 +218,15 @@ function EditorSkeleton() {
           <Skeleton className="h-10 w-32" />
           <Skeleton className="h-10 w-40" />
         </div>
-      </div>
-      <div className="grid grid-cols-1 2xl:grid-cols-12 gap-8 mt-6">
-        <div className="2xl:col-span-7 space-y-4">
-          <Skeleton className="h-10 w-full" />
-          <Skeleton className="h-64 w-full rounded-xl" />
-          <Skeleton className="h-40 w-full rounded-xl" />
-        </div>
-        <div className="2xl:col-span-5">
-          <Skeleton className="h-[600px] w-full rounded-2xl" />
+        <div className="flex flex-col gap-6 mt-6">
+          <div className="w-full space-y-4">
+            <Skeleton className="h-10 w-full" />
+            <Skeleton className="h-64 w-full rounded-xl" />
+            <Skeleton className="h-40 w-full rounded-xl" />
+          </div>
+          <div className="w-full mt-6">
+            <Skeleton className="h-[600px] w-full rounded-2xl" />
+          </div>
         </div>
       </div>
     </div>
@@ -239,9 +239,10 @@ function EditorSkeleton() {
 
 interface EditorProps {
   contentId: string;
+  onCancel: () => void;
 }
 
-function Editor({ contentId }: EditorProps) {
+function Editor({ contentId, onCancel }: EditorProps) {
   const queryClient = useQueryClient();
   const [device, setDevice] = useState<"desktop" | "tablet" | "mobile">("desktop");
   const [selectedFilterIndex, setSelectedFilterIndex] = useState(0);
@@ -417,6 +418,15 @@ function Editor({ contentId }: EditorProps) {
             )}
             Save All Changes
           </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onCancel}
+            className="h-[36px] w-[36px] rounded-lg text-[#64748B] hover:text-[#111827] hover:bg-slate-100"
+            aria-label="Close Editor"
+          >
+            <X className="h-4 w-4" />
+          </Button>
         </div>
       </div>
       <div className="flex justify-end mb-4">
@@ -434,18 +444,6 @@ function Editor({ contentId }: EditorProps) {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-4 border-b border-[#EEF0F2]">
         <div className="flex flex-wrap items-center gap-6">
           <div className="flex items-center gap-3">
-            <span className="text-[12px] font-bold text-[#64748B]">Apply To</span>
-            <Select defaultValue="all">
-              <SelectTrigger className="h-[36px] w-[180px] bg-white border-[#E5E7EB] text-[#111827] font-semibold shadow-sm text-[13px] rounded-lg">
-                <SelectValue placeholder="All Kitchens" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Kitchens</SelectItem>
-                <SelectItem value="specific">Specific Kitchens</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex items-center gap-3">
             <span className="text-[12px] font-bold text-[#64748B]">Status</span>
             {draft.isActive ? (
               <Badge variant="outline" className="border-[#A7F3D0] bg-[#ECFDF5] text-[#047857] gap-1.5 px-2.5 py-1 font-bold shadow-sm">
@@ -459,53 +457,27 @@ function Editor({ contentId }: EditorProps) {
           </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="text-[12px] font-bold text-[#64748B] hidden sm:block">Preview As</span>
-          <div className="flex items-center p-1 bg-white border border-[#E5E7EB] shadow-sm rounded-[8px]">
-            {(
-              [
-                { id: "desktop", icon: Monitor, label: "Desktop" },
-                { id: "tablet", icon: Tablet, label: "Tablet" },
-                { id: "mobile", icon: Smartphone, label: "Mobile" },
-              ] as const
-            ).map((d) => (
-              <Button
-                key={d.id}
-                variant="ghost"
-                size="sm"
-                className={`h-7 px-3 rounded-md font-semibold text-[12px] ${
-                  device === d.id
-                    ? "bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]"
-                    : "text-[#64748B] hover:text-[#111827]"
-                }`}
-                onClick={() => setDevice(d.id)}
-              >
-                <d.icon className="h-3.5 w-3.5 sm:mr-1.5" strokeWidth={device===d.id?2:1.8} /> <span className="hidden sm:inline">{d.label}</span>
-              </Button>
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="grid grid-cols-1 2xl:grid-cols-12 gap-6 2xl:gap-8 mt-6">
-        {/* Left Panel */}
-        <div className="2xl:col-span-7 space-y-6">
+      <div className="flex flex-col gap-6 mt-6">
+        {/* Top Panel - Settings */}
+        <div className="w-full space-y-6">
           <Tabs defaultValue="page-settings" className="w-full">
             <TabsList className="bg-transparent border-b border-[#EEF0F2] rounded-none w-full justify-start h-auto p-0 space-x-6 sm:space-x-8 overflow-x-auto hide-scrollbar">
-              <TabsTrigger value="page-settings" className="data-[state=active]:border-b-[3px] data-[state=active]:border-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
+              <TabsTrigger value="page-settings" className="data-[state=active]:border-b-[3px] data-[state=active]:border-b-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
                 Page Settings
               </TabsTrigger>
-              <TabsTrigger value="filters-chips" className="data-[state=active]:border-b-[3px] data-[state=active]:border-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
+              <TabsTrigger value="filters-chips" className="data-[state=active]:border-b-[3px] data-[state=active]:border-b-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
                 Filters & Chips
               </TabsTrigger>
-              <TabsTrigger value="menu-display" className="data-[state=active]:border-b-[3px] data-[state=active]:border-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
+              <TabsTrigger value="menu-display" className="data-[state=active]:border-b-[3px] data-[state=active]:border-b-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
                 Menu Display
               </TabsTrigger>
-              <TabsTrigger value="kitchen-info" className="data-[state=active]:border-b-[3px] data-[state=active]:border-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
+              <TabsTrigger value="kitchen-info" className="data-[state=active]:border-b-[3px] data-[state=active]:border-b-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
                 Kitchen Info
               </TabsTrigger>
-              <TabsTrigger value="layout-design" className="data-[state=active]:border-b-[3px] data-[state=active]:border-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
+              <TabsTrigger value="layout-design" className="data-[state=active]:border-b-[3px] data-[state=active]:border-b-[#FF4B0B] data-[state=active]:text-[#FF4B0B] data-[state=active]:shadow-none rounded-none px-1 py-3 bg-transparent font-bold text-[#64748B] text-[14px] data-[state=active]:bg-transparent">
                 Layout & Design
               </TabsTrigger>
             </TabsList>
@@ -532,7 +504,7 @@ function Editor({ contentId }: EditorProps) {
                       <div key={h.key} className="space-y-3">
                         <div className="relative h-28 bg-slate-100 rounded-[10px] overflow-hidden group border border-[#E5E7EB]">
                           {value ? (
-                            <Image src={value} alt={`${h.key} hero`} fill className="object-cover" />
+                            <Image src={value} alt={`${h.key} hero`} fill sizes="300px" className="object-cover" />
                           ) : (
                             <div className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 text-slate-400">
                               <ImageIcon className="h-6 w-6" strokeWidth={1.5} />
@@ -583,7 +555,7 @@ function Editor({ contentId }: EditorProps) {
                 </div>
 
                 <div className="flex flex-wrap gap-3">
-                  {draft.chips.map((chip, idx) => (
+                  {draft.chips.map((chip: { label: string; isEnabled: boolean }, idx: number) => (
                     <div key={idx} className="flex items-center gap-2.5 bg-white border border-[#E5E7EB] rounded-full shadow-sm px-3 h-[36px]">
                       <GripVertical className="h-4 w-4 text-[#CBD5E1] cursor-grab hidden md:block" />
                       <Switch
@@ -1012,14 +984,41 @@ function Editor({ contentId }: EditorProps) {
         </div>
 
         {/* Right Preview Panel */}
-        <div className="2xl:col-span-5">
-          <div className="bg-white rounded-[24px] shadow-sm border border-[#E5E7EB] overflow-hidden 2xl:sticky top-6">
-            <div className="px-5 py-[18px] border-b border-[#F1F5F9] flex items-center justify-between bg-white">
+        <div className="w-full mt-6">
+          <div className="bg-white rounded-[24px] shadow-sm border border-[#E5E7EB] overflow-hidden">
+            <div className="px-5 py-[18px] border-b border-[#F1F5F9] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white">
               <div>
                 <h3 className="font-bold text-[#111827] text-[15px]">Live Preview</h3>
                 <p className="text-[12px] font-medium text-[#64748B] mt-0.5">
                   How the kitchen page looks for &ldquo;{draft.keyword}&rdquo;
                 </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <span className="text-[12px] font-bold text-[#64748B] hidden xl:block">Preview As</span>
+                <div className="flex items-center p-1 bg-white border border-[#E5E7EB] shadow-sm rounded-[8px]">
+                  {(
+                    [
+                      { id: "desktop", icon: Monitor, label: "Desktop" },
+                      { id: "tablet", icon: Tablet, label: "Tablet" },
+                      { id: "mobile", icon: Smartphone, label: "Mobile" },
+                    ] as const
+                  ).map((d) => (
+                    <Button
+                      key={d.id}
+                      variant="ghost"
+                      size="sm"
+                      className={`h-7 px-3 rounded-md font-semibold text-[12px] ${
+                        device === d.id
+                          ? "bg-[#ECFDF5] text-[#047857] border border-[#A7F3D0]"
+                          : "text-[#64748B] hover:text-[#111827]"
+                      }`}
+                      onClick={() => setDevice(d.id)}
+                    >
+                      <d.icon className="h-3.5 w-3.5 sm:mr-1.5" strokeWidth={device===d.id?2:1.8} /> <span className="hidden sm:inline">{d.label}</span>
+                    </Button>
+                  ))}
+                </div>
               </div>
             </div>
 
@@ -1032,7 +1031,7 @@ function Editor({ contentId }: EditorProps) {
                 {/* Preview Hero */}
                 <div className="relative h-[160px] w-full bg-gradient-to-br from-orange-100 via-amber-50 to-orange-50">
                   {heroUrl && draft.showHero ? (
-                    <Image src={heroUrl} alt="preview hero" fill className="object-cover" />
+                    <Image src={heroUrl} alt="preview hero" fill sizes="300px" className="object-cover" />
                   ) : (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-2">
                       <ChefHat className="h-10 w-10 text-[#FF4B0B]/40" strokeWidth={1.5} />
@@ -1049,7 +1048,7 @@ function Editor({ contentId }: EditorProps) {
                 <div className="px-5 relative pb-6 border-b border-[#F1F5F9]">
                   <div className="absolute -top-10 left-5 h-[76px] w-[76px] rounded-full border-4 border-white overflow-hidden bg-white shadow-sm flex items-center justify-center">
                     {firstKitchen?.imageUrl ? (
-                      <Image src={firstKitchen.imageUrl} alt="Avatar" fill className="object-cover" />
+                      <Image src={firstKitchen.imageUrl} alt="Avatar" fill sizes="76px" className="object-cover" />
                     ) : (
                       <ChefHat className="h-8 w-8 text-[#CBD5E1]" strokeWidth={1.5} />
                     )}
@@ -1265,10 +1264,10 @@ function Editor({ contentId }: EditorProps) {
 
                           <div className="h-[100px] w-[110px] relative rounded-[12px] overflow-visible flex-shrink-0 bg-slate-100 border border-[#F1F5F9]">
                             {item.imageUrl ? (
-                              <Image src={item.imageUrl} alt={item.name} fill className="object-cover rounded-[12px]" />
+                              <Image src={item.imageUrl} alt={item.name} fill sizes="110px" className="object-cover rounded-[12px]" />
                             ) : (
                               <div className="absolute inset-0 flex items-center justify-center bg-orange-50 rounded-[12px]">
-                                <Image src="/placeholder-food.jpg" alt={item.name} fill className="object-cover opacity-30 rounded-[12px]" />
+                                <Image src="/placeholder-food.jpg" alt={item.name} fill sizes="110px" className="object-cover opacity-30 rounded-[12px]" />
                               </div>
                             )}
                             <div className="absolute -bottom-3.5 left-1/2 -translate-x-1/2 z-10 w-[80%]">
@@ -1344,16 +1343,130 @@ function AddValueInput({ onAdd }: { onAdd: (value: string) => void }) {
   );
 }
 
+
+/* ===================================================================
+   KITCHEN LIST PAGE
+=================================================================== */
+
+interface KitchenListProps {
+  keyword: string;
+  onCancel: () => void;
+  onEditKitchen: (kitchenId: string) => void;
+}
+
+function KitchenList({ keyword, onCancel, onEditKitchen }: KitchenListProps) {
+  const { data, isLoading } = useQuery({
+    queryKey: ["admin-kitchen-preview", keyword],
+    queryFn: () => getKitchenSearchPreview(keyword),
+    enabled: !!keyword,
+  });
+
+  return (
+    <div className="min-h-screen bg-[#f8fafc] p-4 md:p-6 lg:p-8 max-w-[1400px] mx-auto animate-in fade-in duration-300 font-sans">
+      <div className="flex items-center gap-3 md:gap-4 mb-6 md:mb-8">
+        <Button variant="outline" size="icon" onClick={onCancel} className="h-9 w-9 md:h-10 md:w-10 border-slate-200 shrink-0">
+          <ChevronLeft className="h-4 w-4 md:h-5 md:w-5 text-slate-700" />
+        </Button>
+        <div className="min-w-0">
+          <h1 className="text-xl md:text-2xl font-bold text-slate-900 truncate">Select a Kitchen for &ldquo;{keyword}&rdquo;</h1>
+          <p className="text-slate-500 text-xs md:text-sm">Choose a kitchen to edit its search page configuration.</p>
+        </div>
+      </div>
+      
+      <Card className="border-slate-200 shadow-sm overflow-hidden rounded-xl bg-white flex flex-col max-h-[calc(100vh-140px)]">
+        <ScrollArea className="flex-1 w-full" type="auto">
+          <Table>
+            <TableHeader className="sticky top-0 bg-slate-50/95 backdrop-blur z-10">
+              <TableRow>
+                <TableHead className="font-semibold text-slate-600">Kitchen</TableHead>
+                <TableHead className="font-semibold text-slate-600 hidden md:table-cell">Tags</TableHead>
+                <TableHead className="font-semibold text-slate-600">Rating</TableHead>
+                <TableHead className="text-right font-semibold text-slate-600">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <TableRow key={i}>
+                    <TableCell><div className="flex items-center gap-3"><Skeleton className="h-10 w-10 md:h-12 md:w-12 rounded-lg shrink-0" /><Skeleton className="h-4 w-24 md:h-5 md:w-32" /></div></TableCell>
+                    <TableCell className="hidden md:table-cell"><Skeleton className="h-5 w-24" /></TableCell>
+                    <TableCell><Skeleton className="h-4 w-12 md:h-5 md:w-16" /></TableCell>
+                    <TableCell className="text-right"><Skeleton className="h-8 w-16 md:w-20 inline-block" /></TableCell>
+                  </TableRow>
+                ))
+              ) : !data || data.kitchens.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-12 text-slate-500 text-sm">
+                    No kitchens found for this keyword.
+                  </TableCell>
+                </TableRow>
+              ) : (
+                data.kitchens.map((k) => (
+                  <TableRow key={k.id} className="hover:bg-slate-50/50 transition-colors">
+                    <TableCell>
+                      <div className="flex items-center gap-2 md:gap-3">
+                        <div className="relative h-10 w-10 md:h-12 md:w-12 rounded-lg overflow-hidden border border-slate-100 flex-shrink-0 bg-slate-100">
+                          {k.imageUrl ? (
+                            <Image src={k.imageUrl} alt={k.displayName} fill sizes="48px" className="object-cover" />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <ChefHat className="h-4 w-4 md:h-5 md:w-5 text-slate-400" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex flex-col min-w-0">
+                          <span className="font-bold text-[#111827] text-sm md:text-base truncate">{k.displayName}</span>
+                          <span className="text-[11px] md:text-[12px] text-slate-500 md:hidden truncate">{k.cuisineTags.slice(0, 2).join(", ")}</span>
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="hidden md:table-cell">
+                      <div className="flex flex-wrap gap-1">
+                        {k.cuisineTags.slice(0, 3).map((tag, i) => (
+                          <Badge key={i} variant="secondary" className="text-[10px] md:text-[11px] font-normal">{tag}</Badge>
+                        ))}
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1 md:gap-1.5 font-semibold text-slate-700 text-sm md:text-base">
+                        <Star className="h-3.5 w-3.5 md:h-4 md:w-4 fill-amber-400 text-amber-400 shrink-0" />
+                        {k.avgRating}
+                        <span className="text-slate-400 text-[10px] md:text-xs font-normal">({k.totalReviews})</span>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={() => onEditKitchen(k.id)}
+                        className="border-[#E5E7EB] text-[#334155] hover:bg-slate-50 shadow-sm whitespace-nowrap h-8 text-xs md:h-9 md:text-sm px-2 md:px-3"
+                      >
+                        <SquarePen className="h-3.5 w-3.5 md:h-4 md:w-4 mr-1.5 md:mr-2" /> Edit
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </Card>
+    </div>
+  );
+}
+
 /* ===================================================================
    DASHBOARD (LIST)
 =================================================================== */
 
-export default function KitchenSearchPageManagement() {
+export default function KitchenSearchPagesManagement() {
   const queryClient = useQueryClient();
 
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("All");
   const [categoryFilter, setCategoryFilter] = useState("all");
+  const [selectedKeywordId, setSelectedKeywordId] = useState<string | null>(null);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [deleteTarget, setDeleteTarget] = useState<AdminKitchenSearchRow | null>(null);
   const [addDialogOpen, setAddDialogOpen] = useState(false);
@@ -1482,7 +1595,7 @@ export default function KitchenSearchPageManagement() {
           return (
             <div className="flex items-center gap-4">
               <div className="relative h-[44px] w-[68px] rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 border border-slate-100">
-                <Image src={getMockImage(keyword)} alt={keyword} fill className="object-cover" />
+                <Image src={getMockImage(keyword)} alt={keyword} fill sizes="68px" className="object-cover" />
               </div>
               <div className="flex items-center gap-3">
                 <span className="font-bold text-[#111827] capitalize text-[14px]">{keyword}</span>
@@ -1554,7 +1667,7 @@ export default function KitchenSearchPageManagement() {
               <Button
                 variant="outline"
                 size="icon"
-                onClick={() => setEditingId(row.id)}
+                onClick={() => setSelectedKeywordId(row.id)}
                 className="h-[36px] w-[36px] border-[#E5E7EB] rounded-lg bg-white text-[#334155] hover:bg-slate-50 shadow-sm"
               >
                 <SquarePen className="h-[18px] w-[18px]" strokeWidth={1.8} />
@@ -1621,7 +1734,20 @@ export default function KitchenSearchPageManagement() {
 
   if (editingId) {
     return (
-      <Editor contentId={editingId} />
+      <Editor contentId={selectedKeywordId || editingId} onCancel={() => setEditingId(null)} />
+    );
+  }
+
+  if (selectedKeywordId) {
+    const selectedKeyword = contents.find(c => c.id === selectedKeywordId)?.keyword || "";
+    return (
+      <KitchenList
+        keyword={selectedKeyword}
+        onCancel={() => setSelectedKeywordId(null)}
+        onEditKitchen={(kitchenId) => {
+          setEditingId(kitchenId);
+        }}
+      />
     );
   }
 
@@ -1782,20 +1908,21 @@ export default function KitchenSearchPageManagement() {
                 <TableBody>
                   {table.getRowModel().rows?.length ? (
                     table.getRowModel().rows.map((row) => (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && "selected"}
-                        className="border-b-[#EEF0F2] hover:bg-[#FAFCFB] transition-colors"
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell 
-                            key={cell.id}
-                            className="py-[16px] first:pl-6 last:pr-6 align-middle"
-                          >
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </TableRow>
+                      <React.Fragment key={row.id}>
+                        <TableRow
+                          data-state={row.getIsSelected() && "selected"}
+                          className="border-b-[#EEF0F2] hover:bg-[#FAFCFB] transition-colors"
+                        >
+                          {row.getVisibleCells().map((cell) => (
+                            <TableCell 
+                              key={cell.id}
+                              className="py-[16px] first:pl-6 last:pr-6 align-middle"
+                            >
+                              {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      </React.Fragment>
                     ))
                   ) : (
                     <TableRow>

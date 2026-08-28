@@ -26,6 +26,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { ThanjavurMap } from "@/components/map/thanjavur-map";
+import { UpiIcon } from "@/components/icons/upi";
+import { VisaIcon } from "@/components/icons/visa";
 import { useKitchenDetail, useCartConfig, useCartConfigQuery } from "@/stores";
 import type { KitchenDetail } from "@/components/kitchen/kitchen-detail-client";
 import {
@@ -290,7 +292,7 @@ export function InfoKitchenTab({ kitchen: propKitchen }: Props) {
         {/* Food Safety & Hygiene */}
         <Card className="relative overflow-hidden">
           <CardTitle>Food Safety & Hygiene</CardTitle>
-          <div className="space-y-3.5 text-[12px] flex-1 z-10">
+          <div className="space-y-3.5 text-[12px] flex-1 z-10 relative pr-[80px] sm:pr-0">
             <div className="flex items-center gap-2.5 text-[#555555] font-medium">
               <CheckCircle2 className="w-4 h-4 text-[#087A36] shrink-0" strokeWidth={2} />
               FSSAI Certified Kitchen
@@ -312,15 +314,15 @@ export function InfoKitchenTab({ kitchen: propKitchen }: Props) {
               Trained & Verified Home Chefs
             </div>
           </div>
-          <div className="absolute -bottom-4 -right-4 w-[160px] h-[160px] opacity-90 z-0">
-            <Image src="/kitchen/safe.webp" alt="Food Safety" fill className="object-contain" />
+          <div className="absolute bottom-0 right-0 w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] lg:w-[160px] lg:h-[160px] z-0 pointer-events-none">
+            <Image src="/kitchen/safe.webp" alt="Food Safety" fill sizes="(max-width: 768px) 110px, (max-width: 1024px) 130px, 160px" className="object-contain object-bottom right-0" />
           </div>
         </Card>
 
         {/* Ingredients We Use */}
         <Card className="relative overflow-hidden">
           <CardTitle>Ingredients We Use</CardTitle>
-          <div className="space-y-3.5 text-[12px] flex-1 z-10 max-w-[70%]">
+          <div className="space-y-3.5 text-[12px] flex-1 z-10 relative pr-[80px] sm:pr-0">
             <div className="flex items-start gap-2.5 text-[#555555] font-medium leading-tight">
               <CheckCircle2 className="w-4 h-4 text-[#087A36] shrink-0 mt-0.5" strokeWidth={2} />
               Locally sourced vegetables & produce
@@ -338,8 +340,8 @@ export function InfoKitchenTab({ kitchen: propKitchen }: Props) {
               High quality oils & spices
             </div>
           </div>
-          <div className="absolute bottom-0 -right-4 w-[140px] h-[140px] z-0">
-            <Image src="/kitchen/inf-fresh.webp" alt="Fresh Ingredients" fill className="object-contain" />
+          <div className="absolute bottom-0 right-0 w-[110px] h-[110px] sm:w-[130px] sm:h-[130px] lg:w-[150px] lg:h-[150px] z-0 pointer-events-none">
+            <Image src="/kitchen/info-fresh.webp" alt="Fresh Ingredients" fill sizes="(max-width: 768px) 110px, (max-width: 1024px) 130px, 150px" className="object-contain object-bottom right-0" />
           </div>
         </Card>
 
@@ -349,17 +351,13 @@ export function InfoKitchenTab({ kitchen: propKitchen }: Props) {
           <div className="flex items-center gap-3 sm:gap-4 flex-1 mt-4 flex-wrap justify-center sm:justify-start">
             <div className="flex flex-col items-center gap-2">
               <div className="w-14 h-14 rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] flex items-center justify-center shadow-sm">
-                <div className="font-extrabold text-[#171717] text-[18px] italic">UPI</div>
+                <UpiIcon className="w-8 h-8" />
               </div>
               <span className="text-[10px] font-medium text-[#555555]">UPI</span>
             </div>
             <div className="flex flex-col items-center gap-2">
-              <div className="w-14 h-14 rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] flex items-center justify-center flex-col shadow-sm">
-                <div className="flex">
-                  <div className="w-4 h-4 bg-blue-700 rounded-sm -mr-1"></div>
-                  <div className="w-4 h-4 bg-red-600 rounded-sm opacity-90 mix-blend-multiply"></div>
-                  <div className="w-4 h-4 bg-orange-500 rounded-sm -ml-1"></div>
-                </div>
+              <div className="w-14 h-14 rounded-2xl border border-[#EEEEEE] bg-[#FFFFFF] flex items-center justify-center shadow-sm">
+                <VisaIcon className="w-10 h-10" />
               </div>
               <span className="text-[10px] font-medium text-[#555555]">Cards</span>
             </div>

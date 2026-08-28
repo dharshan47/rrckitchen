@@ -10,7 +10,7 @@ const csp = isDev
       `style-src 'self' 'unsafe-inline' https://unpkg.com`,
       `img-src 'self' blob: data: https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://images.unsplash.com https://images.pexels.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://api.maptiler.com https://*.razorpay.com`,
       `font-src 'self'`,
-       `connect-src 'self' ws: http://localhost:* wss://*.ably.io https://*.ably.io https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com https://api.maptiler.com https://unpkg.com https://checkout.razorpay.com `,
+       `connect-src 'self' ws: http://localhost:* wss://*.ably.io https://*.ably.io https://*.ably.net wss://*.ably.net https://*.ably-realtime.com wss://*.ably-realtime.com https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com https://api.maptiler.com https://unpkg.com https://checkout.razorpay.com `,
       `frame-src 'self' https://*.razorpay.com`,
       `worker-src 'self' blob:`,
       `base-uri 'self'`,
@@ -22,7 +22,7 @@ const csp = isDev
       `style-src 'self' 'unsafe-inline' https://unpkg.com`,
       `img-src 'self' blob: data: https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://images.unsplash.com https://images.pexels.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://api.maptiler.com https://*.razorpay.com`,
       `font-src 'self'`,
-       `connect-src 'self' wss://*.ably.io https://*.ably.io https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com https://api.maptiler.com https://unpkg.com https://checkout.razorpay.com `,
+       `connect-src 'self' wss://*.ably.io https://*.ably.io https://*.ably.net wss://*.ably.net https://*.ably-realtime.com wss://*.ably-realtime.com https://*.razorpay.com https://*.r2.dev https://*.cloudinary.com https://maps.googleapis.com https://api.maptiler.com https://unpkg.com https://checkout.razorpay.com `,
       `frame-src 'self' https://*.razorpay.com`,
       `worker-src 'self' blob:`,
       `base-uri 'self'`,
@@ -31,6 +31,10 @@ const csp = isDev
 
 const nextConfig: NextConfig = {
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+
+  // Allow Playwright (127.0.0.1) to access Next.js dev resources during e2e tests
+  allowedDevOrigins: ["127.0.0.1"],
+
 
   images: {
     formats: ["image/avif", "image/webp"],
@@ -93,13 +97,7 @@ const nextConfig: NextConfig = {
         headers: [
           { key: "Content-Type", value: "application/javascript; charset=utf-8" },
           { key: "Cache-Control", value: "no-cache, no-store, must-revalidate" },
-          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'; connect-src 'self' https://*.razorpay.com https://*.ably.io wss://*.ably.io https://unpkg.com https://api.maptiler.com https://maps.googleapis.com https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com; img-src 'self' data: blob: https://*.razorpay.com https://api.maptiler.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://images.unsplash.com https://images.pexels.com; style-src 'self' 'unsafe-inline' https://unpkg.com; font-src 'self'; frame-src 'self' https://*.razorpay.com; worker-src 'self' blob:; base-uri 'self'; form-action 'self'" },
-        ],
-      },
-      {
-        source: "/api/:path*",
-        headers: [
-          { key: "Cache-Control", value: "public, s-maxage=30, stale-while-revalidate=60" },
+          { key: "Content-Security-Policy", value: "default-src 'self'; script-src 'self'; connect-src 'self' wss://*.ably.io https://*.ably.io https://*.ably.net wss://*.ably.net https://*.ably-realtime.com wss://*.ably-realtime.com https://*.razorpay.com https://unpkg.com https://api.maptiler.com https://maps.googleapis.com https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com; img-src 'self' data: blob: https://*.razorpay.com https://api.maptiler.com https://maps.gstatic.com https://*.googleapis.com https://*.tile.openstreetmap.org https://*.r2.dev https://*.cloudfront.net https://*.cloudinary.com https://images.unsplash.com https://images.pexels.com; style-src 'self' 'unsafe-inline' https://unpkg.com; font-src 'self'; frame-src 'self' https://*.razorpay.com; worker-src 'self' blob:; base-uri 'self'; form-action 'self'" },
         ],
       },
       {

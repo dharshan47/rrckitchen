@@ -52,12 +52,12 @@ export async function getAdminCustomers() {
 
   const [total, active, banned, newThisWeek, verifiedCount, repeatCount, weekSignups, cityRows, users] =
     await Promise.all([
-      prisma.user.count({ where: { role: "customer" } }),
-      prisma.user.count({ where: { role: "customer", banned: false, isActive: true } }),
-      prisma.user.count({ where: { role: "customer", banned: true } }),
-      prisma.user.count({ where: { role: "customer", createdAt: { gte: weekStart } } }),
+      prisma.user.count({ where: { role: { in: ["customer", "CUSTOMER"] } } }),
+      prisma.user.count({ where: { role: { in: ["customer", "CUSTOMER"] }, banned: false, isActive: true } }),
+      prisma.user.count({ where: { role: { in: ["customer", "CUSTOMER"] }, banned: true } }),
+      prisma.user.count({ where: { role: { in: ["customer", "CUSTOMER"] }, createdAt: { gte: weekStart } } }),
       prisma.user.count({
-        where: { role: "customer", OR: [{ emailVerified: true }, { phoneNumberVerified: true }] },
+        where: { role: { in: ["customer", "CUSTOMER"] }, OR: [{ emailVerified: true }, { phoneNumberVerified: true }] },
       }),
       prisma.order.groupBy({
         by: ["userId"],
@@ -65,7 +65,7 @@ export async function getAdminCustomers() {
         _count: { userId: true },
       }),
       prisma.user.findMany({
-        where: { role: "customer", createdAt: { gte: weekStart } },
+        where: { role: { in: ["customer", "CUSTOMER"] }, createdAt: { gte: weekStart } },
         select: { createdAt: true },
       }),
       prisma.address.groupBy({
@@ -75,7 +75,7 @@ export async function getAdminCustomers() {
         take: 5,
       }),
       prisma.user.findMany({
-        where: { role: "customer" },
+        where: { role: { in: ["customer", "CUSTOMER"] } },
         orderBy: { createdAt: "desc" },
         take: 250,
         include: {

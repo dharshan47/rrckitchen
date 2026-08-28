@@ -67,6 +67,7 @@ export default function OrdersPageClient() {
   const [activeTab, setActiveTab] = useState<"all" | "today" | "tomorrow">("all")
   const [pickedDate, setPickedDate] = useState<Date | null>(null)
   const [datePickerOpen, setDatePickerOpen] = useState(false)
+  const [filterOpen, setFilterOpen] = useState(false)
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ["kitchen-dashboard"] })
 
@@ -153,7 +154,7 @@ export default function OrdersPageClient() {
     return (
       <div className="space-y-6 pb-20 p-6 bg-[#FEFEFE] min-h-screen">
         <Skeleton className="h-20 w-full rounded-[10px]" />
-        <div className="grid gap-6 xl:grid-cols-[1fr_360px]">
+        <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
           <Skeleton className="h-[600px] rounded-[10px]" />
           <Skeleton className="h-[600px] rounded-[10px]" />
         </div>
@@ -214,7 +215,7 @@ export default function OrdersPageClient() {
       </div>
 
       {/* Tabs & Search */}
-      <div className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 px-6 mb-6">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-6 mb-6">
         <div className="flex flex-wrap items-center gap-3">
           <button
             onClick={() => setActiveTab("all")}
@@ -259,27 +260,49 @@ export default function OrdersPageClient() {
           </button>
         </div>
         
-        <div className="flex flex-col sm:flex-row items-center gap-3 w-full xl:w-auto">
-          <div className="relative w-full xl:w-80">
+        <div className="flex w-full lg:w-auto items-center gap-2 sm:gap-3">
+          <div className="relative flex-1 min-w-0 lg:w-80">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-[16px] w-[16px] text-[#8A939D]" />
             <Input 
               placeholder="Search by Order ID, Customer, Phone..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9 h-[40px] rounded-[8px] border-[#E2E6EA] bg-[#FFFFFF] text-[13px] font-medium placeholder:text-[#8A939D] focus-visible:ring-1 focus-visible:ring-[#00601E] focus-visible:border-[#00601E]" 
+              className="pl-9 h-[40px] w-full rounded-[8px] border-[#E2E6EA] bg-[#FFFFFF] text-[13px] font-medium placeholder:text-[#8A939D] focus-visible:ring-1 focus-visible:ring-[#00601E] focus-visible:border-[#00601E]" 
             />
           </div>
-          <Button variant="outline" className="h-[40px] px-4 w-full sm:w-auto rounded-[8px] border-[#E2E6EA] bg-[#FFFFFF] text-[#374151] hover:bg-gray-50 shrink-0 font-medium text-[13px] shadow-none">
-            <Filter className="h-[16px] w-[16px] mr-2 text-[#374151]" /> Filter
-          </Button>
+          <Popover open={filterOpen} onOpenChange={setFilterOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" className={`h-[40px] px-3 sm:px-4 w-auto rounded-[8px] border-[#E2E6EA] shrink-0 font-medium text-[13px] shadow-none ${filter !== "All Status" ? "bg-[#EAF5ED] text-[#16702E] border-[#65A878] hover:bg-[#EAF5ED]" : "bg-[#FFFFFF] text-[#374151] hover:bg-gray-50"}`}>
+                <Filter className={`h-[16px] w-[16px] mr-1.5 sm:mr-2 shrink-0 ${filter !== "All Status" ? "text-[#16702E]" : "text-[#374151]"}`} /> 
+                <span className="truncate max-w-[70px] sm:max-w-[120px]">{filter !== "All Status" ? filter : "Filter"}</span>
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-48 p-2 rounded-[8px] border-[#E3E7EB] shadow-[0_4px_12px_rgba(0,0,0,0.05)] bg-[#FFFFFF]">
+              <div className="space-y-1">
+                {quickFilters.map((f) => (
+                  <Button
+                    key={f}
+                    variant="ghost"
+                    className={`w-full justify-start text-[13px] h-[36px] font-medium px-3 rounded-[6px] ${filter === f ? "bg-[#F0F7F1] text-[#287844]" : "text-[#4B5563] hover:bg-gray-50 hover:text-[#18212B]"}`}
+                    onClick={() => {
+                      setFilter(f)
+                      setFilterOpen(false)
+                    }}
+                  >
+                    {f}
+                  </Button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1fr_360px] px-6">
+      <div className="grid gap-6 lg:grid-cols-[1fr_360px] px-6">
         {/* Left Column: Order Cards */}
         <div className="min-w-0">
-          <ScrollArea className="h-[800px] xl:h-[calc(100vh-220px)] rounded-[10px]">
-            <div className="space-y-4 pr-3">
+          <ScrollArea className="h-[800px] lg:h-[calc(100vh-220px)] rounded-[10px]">
+            <div className="space-y-4 pr-3 lg:min-w-[850px]">
               {filteredOrders.length === 0 ? (
                 <div className="py-20 flex flex-col items-center justify-center text-gray-400 bg-white rounded-xl border border-[#E7E9EC]">
                   <ClipboardList className="h-12 w-12 mb-3 text-gray-300" />
@@ -452,6 +475,7 @@ export default function OrdersPageClient() {
               )}
             </div>
             <ScrollBar />
+            <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </div>
 
@@ -575,21 +599,21 @@ export default function OrdersPageClient() {
               </p>
               <div className="flex justify-center mt-3">
                 <div className="h-[100px] w-[140px] relative">
-                  <Image src="/kitchen/shield.webp" alt="Keep it Up Shield" fill className="object-contain" />
+                  <Image src="/kitchen/shield.webp" alt="Keep it Up Shield" fill sizes="140px" className="object-contain" />
                 </div>
               </div>
             </CardContent>
           </Card>
           
           {/* Need Help? */}
-          <div className="bg-[#FFFFFF] rounded-[10px] p-5 shadow-[0_1px_3px_rgba(16,24,40,0.025)] border border-[#E7E9EC] flex flex-col sm:flex-row xl:flex-col sm:items-start gap-4">
+          <div className="bg-[#FFFFFF] rounded-[10px] p-5 shadow-[0_1px_3px_rgba(16,24,40,0.025)] border border-[#E7E9EC] flex flex-col sm:flex-row lg:flex-col sm:items-start gap-4">
             <div className="h-[40px] w-[40px] rounded-full bg-[#EAF5ED] flex items-center justify-center shrink-0">
               <Headset className="h-[20px] w-[20px] text-[#16702E]" />
             </div>
             <div>
               <h4 className="text-[14px] font-[600] text-[#18212B]">Need Help?</h4>
               <p className="text-[12px] text-[#4B5563] mt-1 mb-4">Facing issues with orders?</p>
-              <Button asChild variant="outline" className="h-[36px] w-full sm:w-auto xl:w-full text-[13px] font-[500] border-[#65A878] text-[#16702E] bg-[#FFFFFF] hover:bg-[#EAF5ED] rounded-[7px] shadow-none">
+              <Button asChild variant="outline" className="h-[36px] w-full sm:w-auto lg:w-full text-[13px] font-[500] border-[#65A878] text-[#16702E] bg-[#FFFFFF] hover:bg-[#EAF5ED] rounded-[7px] shadow-none">
                 <Link href="/kitchen/dashboard/support">Contact Support <ChevronRight className="h-[14px] w-[14px] ml-1 text-[#16702E]" /></Link>
               </Button>
             </div>

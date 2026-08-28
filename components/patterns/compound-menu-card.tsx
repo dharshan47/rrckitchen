@@ -1,7 +1,6 @@
 "use client";
 
 import { createContext, useContext, useCallback, useMemo, type ReactNode } from "react";
-import Image from "next/image";
 import { ProgressiveImage } from "@/components/patterns/progressive-image";
 import { WishlistButton as WishlistBtn } from "@/components/menu/wishlist-button";
 import { cn } from "@/lib/utils";
@@ -86,7 +85,7 @@ function Root({ item, onAddToCart, onShowAddPopup, onItemClick, showKitchenMeta 
         tabIndex={isClickable ? 0 : undefined}
         onKeyDown={isClickable ? (e) => { if (e.key === "Enter") handleRootClick(); } : undefined}
         className={cn(
-          "bg-[#FFFFFF] rounded-[12px] p-3 md:p-4 flex gap-4 border border-[#E9E9E9] shadow-[0_2px_8px_rgba(20,40,30,0.06)] hover:shadow-[0_6px_18px_rgba(20,40,30,0.10)] transition-shadow group w-full relative overflow-hidden",
+          "bg-[#FFFFFF] rounded-[16px] p-2.5 md:p-3 flex gap-3 md:gap-4 border border-[#F0F0F0] shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] transition-shadow group w-full relative overflow-hidden",
           isClickable && "cursor-pointer"
         )}
       >
@@ -98,23 +97,23 @@ function Root({ item, onAddToCart, onShowAddPopup, onItemClick, showKitchenMeta 
 
 function ImageSection({ children, hideWishlistButton = false }: { children?: ReactNode; hideWishlistButton?: boolean }) {
   const { item } = useMenuCardContext();
-  
+
   let badge = null;
   if (item.isBestseller) {
-    badge = { label: "Bestseller", color: "bg-[#087A36]" };
+    badge = { label: "Bestseller", color: "bg-[#0B6B22]" };
   } else if (item.orderCount && item.orderCount > 10) {
-    badge = { label: "Popular", color: "bg-[#087A36]" };
+    badge = { label: "Popular", color: "bg-[#0B6B22]" };
   } else if (item.orderCount && item.orderCount > 5) {
-    badge = { label: "Bestseller", color: "bg-[#087A36]" };
+    badge = { label: "Bestseller", color: "bg-[#0B6B22]" };
   }
 
   // Adding "Homemade" badge logic if name matches sambar as a design tweak
   if (item.name.toLowerCase().includes("sambar")) {
-    badge = { label: "Homemade", color: "bg-[#087A36]" };
+    badge = { label: "Homemade", color: "bg-[#0B6B22]" };
   }
 
   return (
-    <div className="relative w-[130px] md:w-[150px] h-[130px] md:h-[150px] rounded-[10px] overflow-hidden shrink-0 bg-[#F4EFE9]">
+    <div className="relative w-[120px] md:w-[140px] h-[120px] md:h-[140px] rounded-[12px] overflow-hidden shrink-0 bg-[#F4EFE9]">
       {item.imageUrl ? (
         <ProgressiveImage
           highResUrl={item.imageUrl}
@@ -127,7 +126,7 @@ function ImageSection({ children, hideWishlistButton = false }: { children?: Rea
           <UtensilsCrossed className="w-7 md:w-8 h-7 md:h-8" />
         </div>
       )}
-      
+
       {!hideWishlistButton && (
         <div className="absolute top-2 right-2 z-10" onClick={e => e.stopPropagation()}>
           <WishlistBtn menuItemId={item.id} size="sm" variant="overlay" />
@@ -136,7 +135,7 @@ function ImageSection({ children, hideWishlistButton = false }: { children?: Rea
 
       {badge && (
         <div className={cn(
-          "absolute bottom-2 left-2 text-[#FFFFFF] text-[11px] font-bold px-[10px] py-[4px] rounded-[7px] shadow-sm tracking-wide z-10",
+          "absolute bottom-1.5 left-1.5 text-[#FFFFFF] text-[10px] md:text-[11px] font-bold px-[8px] py-[3px] rounded-[6px] shadow-sm tracking-wide z-10",
           badge.color
         )}>
           {badge.label}
@@ -182,7 +181,7 @@ export function NonVegIcon({ className }: { className?: string }) {
 
 function Header() {
   const ctx = useMenuCardContext();
-  const { item, onAddToCart, onShowAddPopup, showKitchenMeta } = ctx;
+  const { item, onAddToCart, onShowAddPopup, discount } = ctx;
   const cartItems = useCartItems();
   const { updateQuantity, removeFromCart } = useCartActions();
 
@@ -208,40 +207,44 @@ function Header() {
   };
 
   return (
-    <div className="flex-1 flex flex-col justify-between py-0.5 min-w-0">
+    <div className="flex-1 flex flex-col justify-between py-1 min-w-0">
       <div>
         <div className="flex items-center gap-1.5 flex-wrap">
-          <h3 className="font-semibold text-[#171717] text-[15px] md:text-[16px] leading-tight truncate max-w-[85%]">
+          <h3 className="font-bold text-[#111111] text-[15px] md:text-[17px] leading-tight truncate max-w-[85%]">
             {item.name}
           </h3>
-          <Image src="/kitchen/shield-tick.webp" alt="Verified" width={16} height={16} className="w-4 h-4 object-contain shrink-0" />
+          <svg viewBox="0 0 24 24" className="w-[18px] h-[18px] shrink-0 text-[#087A36] fill-[#087A36]">
+            <path d="M10.52 1.34L11.4 1.95a2 2 0 0 0 2.2 0l.88-.61a2 2 0 0 1 3.03 1.14l.32 1.03a2 2 0 0 0 1.63 1.36l1.05.15a2 2 0 0 1 1.67 2.6l-.42.99a2 2 0 0 0 .19 2.1l.73.82a2 2 0 0 1-.22 2.94l-.86.7a2 2 0 0 0-.67 1.98l.26 1.04a2 2 0 0 1-2.2 2.5l-1.06-.21a2 2 0 0 0-2.01.62l-.7.83a2 2 0 0 1-3.07.13l-.78-.76a2 2 0 0 0-2.14-.32l-1.01.37a2 2 0 0 1-2.73-1.63l-.15-1.07a2 2 0 0 0-1.25-1.68l-1-.44a2 2 0 0 1-1.02-2.92l.62-.89a2 2 0 0 0 0-2.1l-.62-.89a2 2 0 0 1 1.02-2.92l1-.44a2 2 0 0 0 1.25-1.68l.15-1.07a2 2 0 0 1 2.73-1.63l1.01.37a2 2 0 0 0 2.14-.32l.78-.76a2 2 0 0 1 1.39-.18Z" />
+            <path d="M9 12l2 2 4-4" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </svg>
         </div>
 
-        {showKitchenMeta && item.kitchenName && (
-          <p className="text-[11px] md:text-[12px] text-gray-500 font-medium mt-0.5 truncate">{item.kitchenName}</p>
-        )}
-
-        <p className="text-[12px] md:text-[13px] text-[#5F6361] leading-snug mt-1.5 line-clamp-2 md:line-clamp-3 font-normal pr-2">
+        <p className="text-[12px] md:text-[13px] text-[#666666] leading-[1.4] mt-1.5 line-clamp-2 pr-2 font-normal">
           {item.description || "Soft and fluffy idlis served with sambar and chutney."}
         </p>
       </div>
 
-      <div className="mt-4 flex items-center justify-between relative">
-        <span className="font-bold text-[15px] md:text-[16px] text-[#087A36] leading-none">₹{item.price}</span>
+      <div className="mt-4 flex items-center justify-between gap-2 relative w-full">
+        <div className="flex items-center gap-1.5 shrink min-w-0">
+          <span className="font-extrabold text-[16px] md:text-[18px] text-[#0B6B22] tracking-tight truncate">₹{item.price}</span>
+          {discount && discount > item.price && (
+            <span className="text-[12px] md:text-[13px] text-[#999999] line-through font-medium truncate shrink-0">₹{discount}</span>
+          )}
+        </div>
 
-        <div onClick={e => e.stopPropagation()}>
+        <div onClick={e => e.stopPropagation()} className="shrink-0 ml-auto">
           {cartItem ? (
-            <div className="flex items-center rounded-[7px] border border-[#FF4D00] bg-[#FFF1E8] shadow-sm h-[32px] md:h-[34px] w-[80px] md:w-[85px]">
+            <div className="flex items-center rounded-[6px] border border-[#FF6B00] bg-[#FFF5ED] h-[32px] md:h-[34px] w-[75px] md:w-[90px]">
               <button
                 onClick={handleDecrement}
-                className="h-full w-7 flex items-center justify-center text-[#FF4D00] hover:bg-[#FF4D00]/10 transition-colors rounded-l-[7px]"
+                className="h-full w-7 md:w-8 flex items-center justify-center text-[#FF6B00] hover:bg-[#FF6B00]/10 transition-colors rounded-l-[6px]"
               >
                 <Minus className="h-3.5 w-3.5 stroke-[3]" />
               </button>
-              <span className="flex-1 text-center text-[13px] font-bold text-[#FF4D00] leading-none">{cartItem.qty}</span>
+              <span className="flex-1 text-center text-[13px] font-bold text-[#FF6B00] leading-none">{cartItem.qty}</span>
               <button
                 onClick={handleIncrement}
-                className="h-full w-7 flex items-center justify-center text-[#FF4D00] hover:bg-[#FF4D00]/10 transition-colors rounded-r-[7px]"
+                className="h-full w-7 md:w-8 flex items-center justify-center text-[#FF6B00] hover:bg-[#FF6B00]/10 transition-colors rounded-r-[6px]"
               >
                 <Plus className="h-3.5 w-3.5 stroke-[3]" />
               </button>
@@ -249,9 +252,9 @@ function Header() {
           ) : (
             <button
               onClick={handleAddClick}
-              className="h-[32px] md:h-[34px] w-[80px] md:w-[85px] rounded-[7px] border border-[#FF4D00] text-[#FF4D00] bg-[#FFFFFF] hover:bg-[#FFF1E8] hover:border-[#E94300] hover:text-[#E94300] font-bold text-[13px] uppercase tracking-wide flex items-center justify-center gap-1 transition-colors shadow-sm"
+              className="h-[32px] md:h-[34px] w-[75px] md:w-[90px] rounded-[6px] border border-[#FF6B00] text-[#FF6B00] bg-[#FFFFFF] hover:bg-[#FFF5ED] font-bold text-[13px] uppercase flex items-center justify-between px-2.5 md:px-3 transition-colors shadow-sm"
             >
-              <span>ADD</span> <span className="text-[15px] md:text-[16px] leading-none font-medium mb-0.5">+</span>
+              <span>ADD</span> <span className="text-[16px] font-medium leading-none mb-0.5">+</span>
             </button>
           )}
         </div>

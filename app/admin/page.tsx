@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import DashboardClient from "@/components/admin/dashboard-client"
+import DashboardClient from "@/components/admin/dashboard-client-lazy"
 
 export const metadata: Metadata = {
   title: "Admin Overview",

@@ -563,7 +563,7 @@ export default function AdminDeliveryPage() {
 
       {/* Partner Details Side Panel */}
       <Sheet open={!!selectedPartner} onOpenChange={(open) => !open && setSelectedPartner(null)}>
-        <SheetContent className="w-full sm:max-w-[600px] overflow-y-auto p-0 flex flex-col bg-white border-l-0 shadow-[0_12px_40px_rgba(0,0,0,0.12)] z-[100]">
+        <SheetContent className="w-full sm:max-w-[800px] p-0 flex flex-col bg-white border-l-0 shadow-[0_12px_40px_rgba(0,0,0,0.12)] z-[100]">
           {selectedPartner && (
             <>
               <SheetHeader className="p-8 pb-0 border-b border-[#E5E7EB] bg-white z-20 sticky top-0 text-left">
@@ -636,7 +636,8 @@ export default function AdminDeliveryPage() {
                 </ScrollArea>
               </SheetHeader>
 
-              <div className="p-8 space-y-6 flex-1 bg-[#F9FAFB] overflow-y-auto">
+              <ScrollArea className="flex-1 bg-[#F9FAFB] w-full">
+                <div className="p-4 sm:p-8 space-y-6 min-w-[320px]">
                 {(activeTab === "overview" || activeTab === "kyc") && (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     {/* Contact Information */}
@@ -644,23 +645,23 @@ export default function AdminDeliveryPage() {
                       <CardContent className="p-5 flex flex-col gap-4">
                         <h4 className="text-[14px] font-bold text-[#1F2937]">Contact Information</h4>
                         <div className="flex flex-col gap-4 mt-1">
-                          <div className="flex items-center justify-between">
-                            <span className="text-[13px] font-medium text-[#374151] flex items-center gap-2"><Phone className="h-4 w-4 text-[#9CA3AF]" /> {selectedPartner.phoneNumber || "Not provided"}</span>
+                          <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-3">
+                            <span className="text-[13px] font-medium text-[#374151] flex items-center gap-2"><Phone className="h-4 w-4 text-[#9CA3AF] shrink-0" /> {selectedPartner.phoneNumber || "Not provided"}</span>
                             {selectedPartner.phoneNumber && (
-                              <a href={`tel:${selectedPartner.phoneNumber}`}>
-                                <Button variant="outline" size="sm" className="h-[28px] px-3 text-[11px] font-bold text-[#15803D] border-[#BBF7D0] bg-[#F0FDF4] hover:bg-[#DCFCE7] shadow-none">Call</Button>
+                              <a href={`tel:${selectedPartner.phoneNumber}`} className="w-full xl:w-auto">
+                                <Button variant="outline" size="sm" className="w-full xl:w-auto h-[28px] px-3 text-[11px] font-bold text-[#15803D] border-[#BBF7D0] bg-[#F0FDF4] hover:bg-[#DCFCE7] shadow-none">Call</Button>
                               </a>
                             )}
                           </div>
-                          <div className="flex items-center justify-between">
-                            <span className="text-[13px] font-medium text-[#374151] flex items-center gap-2 truncate max-w-[180px]"><Mail className="h-4 w-4 text-[#9CA3AF] shrink-0" /> {selectedPartner.email || "Not provided"}</span>
+                          <div className="flex flex-col xl:flex-row items-start xl:items-center justify-between gap-3">
+                            <span className="text-[13px] font-medium text-[#374151] flex items-start xl:items-center gap-2"><Mail className="h-4 w-4 text-[#9CA3AF] shrink-0 mt-0.5 xl:mt-0" /> <span className="break-all">{selectedPartner.email || "Not provided"}</span></span>
                             {selectedPartner.email && (
-                              <a href={`mailto:${selectedPartner.email}`}>
-                                <Button variant="outline" size="sm" className="h-[28px] px-3 text-[11px] font-bold text-[#15803D] border-[#BBF7D0] bg-[#F0FDF4] hover:bg-[#DCFCE7] shadow-none shrink-0">Email</Button>
+                              <a href={`mailto:${selectedPartner.email}`} className="w-full xl:w-auto">
+                                <Button variant="outline" size="sm" className="w-full xl:w-auto h-[28px] px-3 text-[11px] font-bold text-[#15803D] border-[#BBF7D0] bg-[#F0FDF4] hover:bg-[#DCFCE7] shadow-none shrink-0">Email</Button>
                               </a>
                             )}
                           </div>
-                          <span className="text-[13px] font-medium text-[#374151] flex items-center gap-2 mt-1"><MapPin className="h-4 w-4 text-[#9CA3AF]" /> {selectedPartner.isOnline ? "Online now" : "Offline"}</span>
+                          <span className="text-[13px] font-medium text-[#374151] flex items-center gap-2 mt-1"><MapPin className="h-4 w-4 text-[#9CA3AF] shrink-0" /> {selectedPartner.isOnline ? "Online now" : "Offline"}</span>
                         </div>
                       </CardContent>
                     </Card>
@@ -670,9 +671,9 @@ export default function AdminDeliveryPage() {
                       <CardContent className="p-5 flex flex-col gap-4">
                         <h4 className="text-[14px] font-bold text-[#1F2937]">Payment Details</h4>
                         <div className="flex flex-col gap-3 mt-1">
-                          <span className="text-[13px] font-medium text-[#374151] flex items-center gap-3"><Bike className="h-[18px] w-[18px] text-[#6B7280]" /> UPI: {selectedPartner.kyc?.upiId || "Not provided"}</span>
-                          <span className="text-[13px] font-medium text-[#374151] flex items-center gap-3 pl-[30px]">Google Pay: {selectedPartner.kyc?.googlePayNumber || "Not provided"}</span>
-                          <span className="text-[13px] font-medium text-[#374151] flex items-center gap-3 pl-[30px]">PhonePe: {selectedPartner.kyc?.phonePeNumber || "Not provided"}</span>
+                          <span className="text-[13px] font-medium text-[#374151] flex items-start gap-3"><Bike className="h-[18px] w-[18px] text-[#6B7280] shrink-0 mt-0.5" /> <span className="break-all">UPI: {selectedPartner.kyc?.upiId || "Not provided"}</span></span>
+                          <span className="text-[13px] font-medium text-[#374151] flex items-start gap-3 pl-[30px]"><span className="break-all">Google Pay: {selectedPartner.kyc?.googlePayNumber || "Not provided"}</span></span>
+                          <span className="text-[13px] font-medium text-[#374151] flex items-start gap-3 pl-[30px]"><span className="break-all">PhonePe: {selectedPartner.kyc?.phonePeNumber || "Not provided"}</span></span>
                         </div>
                       </CardContent>
                     </Card>
@@ -692,10 +693,10 @@ export default function AdminDeliveryPage() {
                             <div className="h-5 w-5 rounded-full bg-[#F59E0B] flex items-center justify-center text-white"><Clock className="h-3 w-3" /></div>
                           )}
                         </div>
-                        <div className="flex items-center justify-between mt-1">
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-1 gap-3">
                           <div className="flex items-center gap-4">
                             {getKycBadge(selectedPartner.kyc?.verifiedAt ?? null, selectedPartner.status)}
-                            <span className="text-[13px] font-medium text-[#374151] hidden sm:inline-block">{selectedPartner.kyc?.verifiedAt ? "All documents verified" : "Pending verification"}</span>
+                            <span className="text-[13px] font-medium text-[#374151]">{selectedPartner.kyc?.verifiedAt ? "All documents verified" : "Pending verification"}</span>
                           </div>
                           {selectedPartner.kyc?.verifiedAt && (
                             <span className="text-[12px] font-medium text-[#6B7280]">Verified on: {formatDate(selectedPartner.kyc.verifiedAt)}</span>
@@ -792,7 +793,9 @@ export default function AdminDeliveryPage() {
                     )}
                   </div>
                 )}
-              </div>
+                </div>
+                <ScrollBar orientation="horizontal" />
+              </ScrollArea>
             </>
           )}
         </SheetContent>

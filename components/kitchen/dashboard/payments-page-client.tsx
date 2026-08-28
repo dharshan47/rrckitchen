@@ -330,10 +330,10 @@ export default function PaymentsPageClient() {
                 )}
               </div>
             </div>
-            <div className="mt-auto relative h-12 w-full -ml-1">
-              <svg viewBox="0 0 100 25" preserveAspectRatio="none" className="w-[110%] h-full">
-                <path d="M0 20 Q 15 10, 25 15 T 50 10 T 75 15 T 100 5 L 100 25 L 0 25 Z" fill="url(#green-fade)" opacity="1" />
-                <path d="M0 20 Q 15 10, 25 15 T 50 10 T 75 15 T 100 5" fill="none" stroke="#16833A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <div className="mt-auto relative h-12 -mx-5">
+              <svg viewBox="0 0 100 25" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                <path d="M 0 15 C 20 10, 30 20, 50 15 C 70 10, 80 20, 100 15 L 100 25 L 0 25 Z" fill="url(#green-fade)" opacity="1" />
+                <path d="M 0 15 C 20 10, 30 20, 50 15 C 70 10, 80 20, 100 15" fill="none" stroke="#16833A" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 <defs>
                   <linearGradient id="green-fade" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="rgba(22, 131, 58, 0.08)" />
@@ -363,10 +363,10 @@ export default function PaymentsPageClient() {
                 )}
               </div>
             </div>
-            <div className="mt-auto relative h-12 w-full -ml-1">
-              <svg viewBox="0 0 100 25" preserveAspectRatio="none" className="w-[110%] h-full">
-                <path d="M0 10 Q 20 15, 30 10 T 60 15 T 80 5 T 100 10 L 100 25 L 0 25 Z" fill="url(#orange-fade)" opacity="1" />
-                <path d="M0 10 Q 20 15, 30 10 T 60 15 T 80 5 T 100 10" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <div className="mt-auto relative h-12 -mx-5">
+              <svg viewBox="0 0 100 25" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                <path d="M 0 10 C 20 20, 30 5, 50 15 C 70 25, 80 5, 100 10 L 100 25 L 0 25 Z" fill="url(#orange-fade)" opacity="1" />
+                <path d="M 0 10 C 20 20, 30 5, 50 15 C 70 25, 80 5, 100 10" fill="none" stroke="#FF4D00" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 <defs>
                   <linearGradient id="orange-fade" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="rgba(255, 77, 0, 0.06)" />
@@ -396,10 +396,10 @@ export default function PaymentsPageClient() {
                 )}
               </div>
             </div>
-            <div className="mt-auto relative h-12 w-full -ml-1">
-              <svg viewBox="0 0 100 25" preserveAspectRatio="none" className="w-[110%] h-full">
-                <path d="M0 15 Q 15 5, 30 10 T 55 5 T 80 15 T 100 5 L 100 25 L 0 25 Z" fill="url(#blue-fade)" opacity="1" />
-                <path d="M0 15 Q 15 5, 30 10 T 55 5 T 80 15 T 100 5" fill="none" stroke="#1677FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            <div className="mt-auto relative h-12 -mx-5">
+              <svg viewBox="0 0 100 25" preserveAspectRatio="none" className="w-full h-full overflow-visible">
+                <path d="M 0 15 C 15 5, 35 5, 50 15 C 65 25, 85 25, 100 15 L 100 25 L 0 25 Z" fill="url(#blue-fade)" opacity="1" />
+                <path d="M 0 15 C 15 5, 35 5, 50 15 C 65 25, 85 25, 100 15" fill="none" stroke="#1677FF" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 <defs>
                   <linearGradient id="blue-fade" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="rgba(22, 119, 255, 0.06)" />

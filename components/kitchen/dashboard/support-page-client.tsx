@@ -349,7 +349,7 @@ export default function SupportPageClient() {
                     <TabsTrigger
                       key={tab}
                       value={tab}
-                      className="rounded-none px-0 py-3 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[2px] data-[state=active]:border-[#087A3D] data-[state=active]:text-[#087A3D] text-[#374151] font-bold text-[13px] transition-none whitespace-nowrap shadow-none"
+                      className="rounded-none px-0 py-3 border-0 border-b-[2px] border-b-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[#087A3D] data-[state=active]:text-[#087A3D] text-[#374151] font-bold text-[13px] transition-none whitespace-nowrap shadow-none outline-none focus-visible:ring-0 focus:outline-none"
                     >
                       {tab}
                     </TabsTrigger>

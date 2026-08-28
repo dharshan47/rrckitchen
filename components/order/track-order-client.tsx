@@ -1,19 +1,23 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useState } from "react"
-import { useQueryClient } from "@tanstack/react-query"
+import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useQueryClient, useMutation } from "@tanstack/react-query"
 import { useAblyOrderChannel } from "@/hooks/useAblySubscribe"
 import { LiveOrderTrackingMap } from "@/components/map/live-order-tracking-map"
 import { TrackOrderSkeleton } from "@/components/order/track-order-skeleton"
 import { useSession } from "@/lib/auth-client"
+import { assignNearestDeliveryPerson } from "@/actions/dispatch/dispatch-actions"
 import Image from "next/image"
 import Link from "next/link"
 import {
   Package, Check, ChefHat, Bike, Loader2, XCircle,
   ShieldCheck,
-  ChevronRight, Headphones, RotateCcw, Home, Phone,
-  MapPinned, Clock3, Wallet, CreditCard, BadgeCheck
+  ChevronRight, Headphones, Home, Phone,
+  Clock3, Wallet, CreditCard, BadgeCheck
 } from "lucide-react"
+import { RazorpayIcon } from "@/components/icons/razorpay"
+import { PhonePeIcon } from "@/components/icons/phonepe"
+import { UpiIcon } from "@/components/icons/upi"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { cn } from "@/lib/utils"
@@ -50,7 +54,7 @@ function getStatusLabel(status: string | undefined): string {
 }
 
 function formatPaymentStatus(status: string | null | undefined): { label: string; color: string } {
-  if (status === "SUCCESS") return { label: "PAID", color: "bg-[#E6F4EC] text-[#168846]" }
+  if (status === "SUCCESS") return { label: "PAID", color: "bg-[#E6F4EC] text-[#15803D]" }
   if (status === "REFUNDED" || status === "PARTIAL_REFUND") return { label: status === "PARTIAL_REFUND" ? "PARTIAL REFUND" : "REFUNDED", color: "bg-[#F1EDFB] text-[#7C4DFF]" }
   if (status === "FAILED") return { label: "FAILED", color: "bg-[#FDE8E8] text-[#DC2626]" }
   return { label: "PENDING", color: "bg-[#FEF3E2] text-[#B45309]" }
@@ -223,6 +227,56 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
 
   const now = useNow()
 
+  const [assignError, setAssignError] = useState<string | null>(null)
+  const assignRetryRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  const assignMutation = useMutation({
+    mutationFn: () =>
+      assignNearestDeliveryPerson(
+        orderId,
+        order?.kitchenLat ?? order?.customerLat ?? 0,
+        order?.kitchenLng ?? order?.customerLng ?? 0
+      ),
+    onSuccess: () => {
+      setAssignError(null)
+      queryClient.invalidateQueries({ queryKey: ["order-tracking", orderId] })
+    },
+    onError: () => {
+      setAssignError("No delivery partner available right now. We'll keep looking.")
+    },
+  })
+
+  useEffect(() => {
+    const shouldAssign =
+      !!order &&
+      order.status === "READYFORPICKUP" &&
+      !order.deliveryPartner &&
+      !order.deliveryStatus &&
+      !order.deliveryAssignmentStatus
+
+    if (!shouldAssign) return
+
+    const attempt = () => {
+      if (
+        !assignMutation.isPending &&
+        order.status === "READYFORPICKUP" &&
+        !order.deliveryPartner &&
+        !order.deliveryStatus &&
+        !order.deliveryAssignmentStatus
+      ) {
+        assignMutation.mutate()
+      }
+      assignRetryRef.current = setTimeout(attempt, 30_000)
+    }
+
+    attempt()
+
+    return () => {
+      if (assignRetryRef.current) clearTimeout(assignRetryRef.current)
+      assignRetryRef.current = null
+    }
+  }, [order, assignMutation])
+
   if (sessionLoading || isLoading) {
     return <TrackOrderSkeleton />
   }
@@ -305,7 +359,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
         </div>
 
         {/* Header Block */}
-        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 mb-8">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-6 mb-8">
           <div>
             <h1 className="text-[32px] font-bold text-[#111827] leading-tight tracking-tight mb-2">Track Your Order</h1>
             <div className="flex items-center gap-3">
@@ -313,7 +367,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
               <span className={cn("text-[12px] font-bold px-3 py-1 rounded-full", statusColor)}>{getStatusLabel(order.status)}</span>
             </div>
             <div className="text-[15px] text-[#6B7280] mt-2 font-medium">
-              Estimated Delivery: <span className="text-[#FF5A00] font-semibold">{order.timeSlot ? `${formatDateOnly(order.serviceDate || new Date().toISOString())}, ${order.timeSlot}` : "ASAP"}</span>
+              Estimated Delivery: <span className="text-[#F97316] font-semibold">{order.timeSlot ? `${formatDateOnly(order.serviceDate || new Date().toISOString())}, ${order.timeSlot}` : "ASAP"}</span>
             </div>
           </div>
 
@@ -326,7 +380,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
               </div>
             </div>
             <Link href="/account/support" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full sm:w-auto border-[#FFD6C0] text-[#FF5A00] hover:bg-[#FFF1E8] hover:text-[#E94E00] h-10 font-bold text-[15px] rounded-[12px] shadow-none">
+              <Button variant="outline" className="w-full sm:w-auto border-[#F97316] text-[#F97316] hover:bg-[#FFF7ED] hover:text-[#EA580C] h-10 font-bold text-[15px] rounded-[12px] shadow-none">
                 Contact Support
               </Button>
             </Link>
@@ -336,13 +390,13 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
         {/* Middle Section (Grid) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
           {/* Left Column: Timeline */}
-          <div className="lg:col-span-3 bg-[#FFFFFF] rounded-[26px] p-6 border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] flex flex-col relative h-full">
+          <div className="order-2 lg:order-1 lg:col-span-3 bg-[#FFFFFF] rounded-[26px] p-6 border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] flex flex-col relative h-full">
             <h3 className="text-[20px] font-extrabold tracking-[-0.03em] text-[#111827] mb-8">Order Progress</h3>
             <div className="relative flex-1">
               <div className="absolute top-5 bottom-16 left-[19px] w-[2px] bg-[#eef1f5]" />
               {!isDelivered && !isCancelled && (
                 <div 
-                  className="absolute top-5 left-[19px] w-[2px] bg-[#168846] transition-all duration-700" 
+                  className="absolute top-5 left-[19px] w-[2px] bg-[#15803D] transition-all duration-700" 
                   style={{ height: `${currentIdx > 0 ? (currentIdx / (statusFlow.length - 1)) * 100 : 0}%` }} 
                 />
               )}
@@ -358,10 +412,10 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
                   const stepDate = order.statusHistory?.find(h => h.status === step.key)?.changedAt;
 
                   let colorClass = "";
-                  if (isCancelled && idx === 0) colorClass = "bg-[#DC2626] text-white border-transparent shadow-[0_0_0_4px_#FDE8E8]";
-                  else if (done) colorClass = "bg-[#168846] text-white border-transparent shadow-[0_0_0_4px_#E6F4EC]";
-                  else if (current) colorClass = "bg-[#FF5A00] text-white border-transparent shadow-[0_0_0_4px_#FFF1E8]";
-                  else colorClass = "bg-white border-2 border-[#e2e8f0] text-[#9CA3AF]";
+                  if (isCancelled && idx === 0) colorClass = "bg-[#EF4444] text-white border-transparent shadow-[0_0_0_4px_#FEE2E2]";
+                  else if (done) colorClass = "bg-[#15803D] text-white border-transparent shadow-[0_0_0_4px_#DCFCE7]";
+                  else if (current) colorClass = "bg-[#F97316] text-white border-transparent shadow-[0_0_0_4px_#FFEDD5]";
+                  else colorClass = "bg-white border-2 border-[#E5E7EB] text-[#9CA3AF]";
 
                   return (
                     <div key={step.key} className="flex gap-5 relative group">
@@ -394,39 +448,32 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
 
             {/* Bottom Safe Shield */}
             <div className="mt-8 bg-[#F0F8F3] rounded-[16px] p-4 flex items-center gap-3 border border-[#D9EBDD]">
-              <ShieldCheck className="w-6 h-6 text-[#168846]" strokeWidth={1.5} />
+              <ShieldCheck className="w-6 h-6 text-[#15803D]" strokeWidth={1.5} />
               <div>
                  <p className="text-[13px] font-semibold text-[#166534]">Your order is safe with us!</p>
-                 <p className="text-[13px] text-[#168846] mt-0.5">100% contactless delivery</p>
+                 <p className="text-[13px] text-[#15803D] mt-0.5">100% contactless delivery</p>
               </div>
             </div>
           </div>
 
           {/* Center Column: Live Map */}
-          <div className="lg:col-span-9 relative rounded-[26px] overflow-hidden border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] bg-[#F8FAFC] w-full min-h-[400px]">
-            {order.kitchenLat != null && order.kitchenLng != null ? (
-              <LiveOrderTrackingMap
-                orderId={orderId}
-                kitchenLat={order.kitchenLat}
-                kitchenLng={order.kitchenLng}
-                customerLat={order.customerLat ?? undefined}
-                customerLng={order.customerLng ?? undefined}
-                deliveryPersonLat={order.deliveryPersonLat ?? undefined}
-                deliveryPersonLng={order.deliveryPersonLng ?? undefined}
-              />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center space-y-3">
-                  <MapPinned className="h-10 w-10 text-[#9CA3AF] mx-auto" />
-                  <p className="text-[15px] text-[#6B7280] font-medium">Map not available for this order</p>
-                </div>
-              </div>
-            )}
+          <div className="order-1 lg:order-2 lg:col-span-9 relative rounded-[26px] overflow-hidden border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] bg-[#F8FAFC] w-full min-h-[400px]">
+            <LiveOrderTrackingMap
+              orderId={orderId}
+              kitchenLat={order.kitchenLat ?? undefined}
+              kitchenLng={order.kitchenLng ?? undefined}
+              customerLat={order.customerLat ?? undefined}
+              customerLng={order.customerLng ?? undefined}
+              deliveryPersonLat={order.deliveryPersonLat ?? undefined}
+              deliveryPersonLng={order.deliveryPersonLng ?? undefined}
+              height="100%"
+              showFooter={false}
+            />
 
             {/* Map Overlay: Live Tracking */}
             {orderInTransit && (
               <div className="absolute top-6 left-6 bg-[#FFFFFF] rounded-[16px] p-4 shadow-[0_10px_28px_rgba(15,23,42,0.05)] border border-[#eef1f5] flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-[#168846] animate-pulse" />
+                <div className="w-2 h-2 rounded-full bg-[#15803D] animate-pulse" />
                 <div>
                   <p className="text-[15px] font-semibold text-[#111827] leading-tight mb-1">Live Tracking</p>
                   <p className="text-[13px] text-[#6B7280]">{etaSubtitle || "Fetching location..."}</p>
@@ -438,7 +485,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
             {order.timeSlot && (
               <div className="absolute top-6 right-6 bg-[#FFFFFF] rounded-[16px] p-4 shadow-[0_10px_28px_rgba(15,23,42,0.05)] border border-[#eef1f5] text-right">
                 <p className="text-[13px] text-[#6B7280] mb-1">Estimated Delivery Time</p>
-                <p className="text-[20px] font-bold text-[#FF5A00] mb-1">{order.timeSlot}</p>
+                <p className="text-[20px] font-bold text-[#F97316] mb-1">{order.timeSlot}</p>
                 <p className="text-[13px] text-[#9CA3AF]">{formatDateOnly(order.serviceDate || new Date().toISOString())}</p>
               </div>
             )}
@@ -473,7 +520,15 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
             </div>
             <div className="mt-5 flex items-center justify-between">
               <span className="text-[13px] font-medium text-[#111827] flex items-center gap-2">
-                <CreditCard className="w-4 h-4 text-[#2563EB]" /> 
+                {order.paymentProvider && order.paymentProvider.toLowerCase() === 'razorpay' ? (
+                  <RazorpayIcon className="h-[12px] w-auto" />
+                ) : order.paymentProvider && order.paymentProvider.toLowerCase() === 'phonepe' ? (
+                  <PhonePeIcon className="h-[14px] w-auto" />
+                ) : order.paymentProvider && order.paymentProvider.toLowerCase() === 'upi' ? (
+                  <UpiIcon className="h-[12px] w-auto" />
+                ) : (
+                  <CreditCard className="w-4 h-4 text-[#2563EB]" />
+                )}
                 Paid via {order.paymentProvider ? order.paymentProvider.charAt(0).toUpperCase() + order.paymentProvider.slice(1) : "Online"}
               </span>
               <span className={cn("text-[12px] font-bold px-2.5 py-1 rounded-full", payStatus.color)}>{payStatus.label}</span>
@@ -490,7 +545,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
                   <AvatarFallback className="bg-[#F8FAFC] text-[#6B7280] text-[15px] font-semibold">{getInitials(order.deliveryPartner.name)}</AvatarFallback>
                 </Avatar>
                 <div>
-                   <h4 className="font-semibold text-[15px] text-[#111827] flex items-center gap-1.5 mb-1">{order.deliveryPartner.name} <BadgeCheck className="w-4 h-4 text-[#168846]" /></h4>
+                   <h4 className="font-semibold text-[15px] text-[#111827] flex items-center gap-1.5 mb-1">{order.deliveryPartner.name} <BadgeCheck className="w-4 h-4 text-[#15803D]" /></h4>
                    <p className="text-[13px] text-[#6B7280] flex items-center gap-1.5 mb-1"><Phone className="w-3.5 h-3.5" /> {order.deliveryPartner.phone || "Phone not available"}</p>
                 </div>
               </div>
@@ -499,7 +554,18 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
                 <div className="w-14 h-14 rounded-[16px] bg-[#F8FAFC] flex items-center justify-center border border-[#eef1f5]">
                   <Bike className="w-6 h-6 text-[#9CA3AF]" />
                 </div>
-                <p className="text-[15px] text-[#6B7280]">Assigning partner...</p>
+                <div>
+                  <p className="text-[15px] font-semibold text-[#111827] mb-0.5">
+                    {assignError
+                      ? "No delivery partner yet"
+                      : assignMutation.isPending
+                        ? "Assigning partner..."
+                        : "Finding a delivery partner"}
+                  </p>
+                  <p className="text-[13px] text-[#6B7280]">
+                    {assignError ?? "We'll assign the nearest available partner as soon as one is online"}
+                  </p>
+                </div>
               </div>
             )}
           </div>
@@ -508,7 +574,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
           <div className="p-6 border-b md:border-b-0 md:border-r border-[#eef1f5]">
             <h3 className="text-[20px] font-extrabold tracking-[-0.03em] text-[#111827] mb-5">Delivery Address</h3>
             <div className="flex items-center gap-2 mb-3">
-              <span className="font-semibold text-[15px] text-[#111827] flex items-center gap-2"><Home className="w-4 h-4 text-[#168846]" /> {order.customerAddressLabel || "Home"}</span>
+              <span className="font-semibold text-[15px] text-[#111827] flex items-center gap-2"><Home className="w-4 h-4 text-[#15803D]" /> {order.customerAddressLabel || "Home"}</span>
             </div>
             <p className="text-[15px] text-[#6B7280] leading-[1.6] mb-3 pr-4">{order.customerAddress || "Address not available"}</p>
             <p className="text-[13px] text-[#6B7280] flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> {order.customerPhone || "Phone not available"}</p>
@@ -520,7 +586,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
             <div className="space-y-3 text-[15px] text-[#6B7280]">
               <div className="flex justify-between"><span>Item Total</span> <span>₹{itemTotal.toFixed(2)}</span></div>
               {discount > 0 && (
-                <div className="flex justify-between text-[#168846]"><span>Discount</span> <span>-₹{discount.toFixed(2)}</span></div>
+                <div className="flex justify-between text-[#15803D]"><span>Discount</span> <span>-₹{discount.toFixed(2)}</span></div>
               )}
               {feesAndTaxes > 0 && (
                 <div className="flex justify-between"><span>Delivery & Platform Fees</span> <span>₹{feesAndTaxes.toFixed(2)}</span></div>
@@ -528,21 +594,20 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
             </div>
             <div className="mt-5 pt-5 border-t border-[#eef1f5] flex justify-between items-center">
               <span className="font-semibold text-[16px] text-[#111827]">Total Paid</span>
-              <span className="font-bold text-[20px] text-[#168846]">₹{parseFloat(order.totalAmount).toFixed(2)}</span>
+              <span className="font-bold text-[20px] text-[#15803D]">₹{parseFloat(order.totalAmount).toFixed(2)}</span>
             </div>
           </div>
         </div>
 
         {/* Footer: Trust Badges */}
-        <div className="hidden md:flex bg-[#FFFFFF] rounded-[26px] py-8 px-6 border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] w-full">
+        <div className="flex flex-col sm:flex-row flex-wrap md:flex-nowrap bg-[#FFFFFF] rounded-[26px] py-8 px-6 border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] w-full gap-y-6">
           {[
-            { title: "100% Homemade", desc: "Made with love & care", icon: <ChefHat className="w-8 h-8 text-[#FF5A00] shrink-0" strokeWidth={1.5} /> },
-            { title: "Hygienic & Safe", desc: "Verified home kitchens", icon: <ShieldCheck className="w-8 h-8 text-[#168846] shrink-0" strokeWidth={1.5} /> },
-            { title: "On-time Delivery", desc: "Always on time, every time", icon: <Clock3 className="w-8 h-8 text-[#FF5A00] shrink-0" strokeWidth={1.5} /> },
-            { title: "Easy Returns", desc: "Hassle-free refunds", icon: <RotateCcw className="w-8 h-8 text-[#168846] shrink-0" strokeWidth={1.5} /> },
-            { title: "Secure Payments", desc: "100% secure transactions", icon: <Wallet className="w-8 h-8 text-[#168846] shrink-0" strokeWidth={1.5} /> },
+            { title: "100% Homemade", desc: "Made with love & care", icon: <ChefHat className="w-8 h-8 text-[#F97316] shrink-0" strokeWidth={1.5} /> },
+            { title: "Hygienic & Safe", desc: "Verified home kitchens", icon: <ShieldCheck className="w-8 h-8 text-[#15803D] shrink-0" strokeWidth={1.5} /> },
+            { title: "On-time Delivery", desc: "Always on time, every time", icon: <Clock3 className="w-8 h-8 text-[#F97316] shrink-0" strokeWidth={1.5} /> },
+            { title: "Secure Payments", desc: "100% secure transactions", icon: <Wallet className="w-8 h-8 text-[#15803D] shrink-0" strokeWidth={1.5} /> },
           ].map((badge, i, arr) => (
-            <div key={i} className={`flex-1 flex items-center justify-center gap-4 px-6 ${i !== arr.length - 1 ? 'border-r border-[#eef1f5]' : ''}`}>
+            <div key={i} className={`flex-1 flex items-center justify-start sm:justify-center gap-4 sm:px-6 ${i !== arr.length - 1 ? 'sm:border-r border-[#eef1f5]' : ''}`}>
               {badge.icon}
               <div className="flex flex-col">
                 <span className="text-[15px] font-semibold text-[#111827] leading-tight mb-1">{badge.title}</span>

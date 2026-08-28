@@ -91,9 +91,11 @@ const METHOD_COLORS: Record<string, string> = {
 const CHART_COLORS = {
   Successful: "#16A34A",
   Pending: "#F59E0B",
-  Failed: "#EF4444",
-  Refunded: "#7C3AED",
+  Failed: "#DC2626",
+  Refunded: "#6366F1",
 }
+
+const EMPTY_PIE_DATA = [{ name: 'Empty', value: 1, color: '#F1F5F9' }]
 
 const REFUND_STATUS_LABELS: Record<string, string> = {
   INITIATED: "Initiated",
@@ -817,7 +819,7 @@ export default function PaymentsClient() {
                 <div className="relative w-[130px] h-[130px] shrink-0 flex items-center justify-center">
                   <PieChart width={130} height={130}>
                     <Pie
-                      data={chartData}
+                      data={chartData.length > 0 ? chartData : EMPTY_PIE_DATA}
                       cx="50%"
                       cy="50%"
                       innerRadius={46}
@@ -828,7 +830,7 @@ export default function PaymentsClient() {
                       startAngle={90}
                       endAngle={-270}
                     >
-                      {chartData.map((entry, index) => (
+                      {(chartData.length > 0 ? chartData : EMPTY_PIE_DATA).map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={entry.color} />
                       ))}
                     </Pie>

@@ -5,15 +5,18 @@ import { useMenuDeliveryAddress } from "@/stores"
 
 vi.mock("@/stores", () => ({
   useMenuDeliveryAddress: vi.fn(() => ""),
+  useMenuActions: vi.fn(() => ({})),
 }))
 
-vi.mock("next/dynamic", () => {
-  return function dynamic() {
-    return function MockMap(props: Record<string, unknown>) {
-      return <div data-testid="mock-map" data-height={props.height} />
-    }
-  }
-})
+vi.mock("@/actions/cart-checkout/address", () => ({
+  addAddress: vi.fn(),
+}))
+
+vi.mock("next/dynamic", () => ({
+  default: () => function MockMap(props: Record<string, unknown>) {
+    return <div data-testid="mock-map" data-height={props.height} />
+  },
+}))
 
 vi.mock("@/components/ui/sheet", () => ({
   Sheet: ({ open, children }: { open: boolean; children: React.ReactNode }) =>

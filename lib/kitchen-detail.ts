@@ -40,19 +40,20 @@ export async function queryKitchenDetail(kitchenSlug: string): Promise<KitchenDe
         },
       },
       kitchenCategories: { include: { category: true } },
-      kitchenKyc: true,
-      _count: { select: { reviews: true } },
-      reviews: { select: { rating: true } },
+      kitchenKyc: {
+        select: {
+          fssaiNumber: true,
+          fssaiValidTill: true,
+          gstNumber: true,
+        },
+      },
       kitchenAddress: true,
     },
   });
 
   if (!kitchen) return null;
 
-  const avgRating =
-    kitchen.reviews.length > 0
-      ? Math.round((kitchen.reviews.reduce((s, r) => s + r.rating, 0) / kitchen.reviews.length) * 10) / 10
-      : null;
+  const avgRating = kitchen.avgRating ? Number(kitchen.avgRating) : null;
 
   const allItems = kitchen.menus.flatMap((m) => m.menuItems);
   const firstPhoto = allItems.find((i) => i.photos.length > 0)?.photos[0]?.imageUrl;
@@ -79,8 +80,9 @@ export async function queryKitchenDetail(kitchenSlug: string): Promise<KitchenDe
     slug: kitchen.slug,
     displayName: toTitleCase(kitchen.kitchenAlias?.displayName ?? kitchen.slug),
     avgRating,
-    totalReviews: kitchen._count.reviews,
+    totalReviews: kitchen.totalReviews,
     imageUrl: firstPhoto ?? null,
+    kpProfileImageUrl: kitchen.kitchenAlias?.imageUrl ?? null,
     cuisineTags,
     operatingHours: kitchen.operatingHours as OperatingHours | null,
     estimatedPrepTime: kitchen.estimatedPrepTime,

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { sendOtpSms } from "@/lib/twilio";
-import { normalizePhone } from "@/lib/phone";
+import { normalizePhone, toE164 } from "@/lib/phone";
 import prisma from "@/lib/prisma";
 
 function generateOtp(): string {
@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       data: { mobileNumber: mobile, code: otp, expiresAt },
     });
 
-    const result = await sendOtpSms(mobile, otp);
+    const result = await sendOtpSms(toE164(mobile), otp);
     if (!result.success) {
       console.error("[OTP_SEND] Failed:", result.error);
       return NextResponse.json({ error: result.error || "Failed to send OTP" }, { status: 400 });

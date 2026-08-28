@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { Phone, Mail, Clock } from "lucide-react";
-import { FaFacebook, FaInstagram, FaYoutube, FaWhatsapp } from "react-icons/fa";
+import { FaFacebook } from "react-icons/fa6";
+import { FaInstagram } from "react-icons/fa6";
+import { FaYoutube } from "react-icons/fa6";
+import { FaWhatsapp } from "react-icons/fa6";
 
 export function KitchenFooter() {
   return (

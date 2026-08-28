@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { User, ShoppingCart, Home, LayoutGrid, MapPin, ChevronDown, LogOut, Package, Bell , HelpCircle, Search } from "lucide-react";
+import { User, ShoppingCart, Home, LayoutGrid, MapPin, ChevronDown, LogOut, Package, Bell , HelpCircle, Search, Store, ClipboardList } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCartStore, useMenuDeliveryAddress } from "@/stores";
 import { useSession, signOut } from "@/lib/auth-client";
@@ -24,7 +24,7 @@ function MobileNavItem({ href, icon, label, active = false, badge }: { href: str
   return (
     <Link href={href} className={cn("flex flex-col items-center justify-center gap-1 px-3 py-1.5 relative min-h-12 min-w-12 transition-colors", active ? "text-[#F04E00]" : "text-[#6B7280] hover:text-gray-900")}>
       {icon}
-      <span className="text-[10px] font-bold uppercase tracking-wider">{label}</span>
+      <span className="text-[11px] font-medium tracking-wide mt-0.5 capitalize">{label}</span>
       {badge !== undefined && badge !== 0 && (
         <span className="absolute top-1 right-2 h-4 min-w-4 flex items-center justify-center rounded-full bg-[#F04E00] p-0 px-1 text-[9px] font-bold text-white border border-white shadow-sm">{badge}</span>
       )}
@@ -122,12 +122,12 @@ export function SiteHeader() {
           </div>
         </header>
         <nav className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-white border-t border-[#E7E7E7] px-2 py-1.5 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
-          <MobileNavItem href="/" icon={<Home className="h-5 w-5" />} label="Home" active={false} />
-          <MobileNavItem href="/categories" icon={<LayoutGrid className="h-5 w-5" />} label="Categories" active={false} />
-          <MobileNavItem href={cartHref} icon={<ShoppingCart className="h-5 w-5" />} label="Cart" badge={cartCount} active={true} />
-          <MobileNavItem href="/help" icon={<HelpCircle className="h-5 w-5" />} label="Help" active={false} />
+          <MobileNavItem href="/" icon={<Home className="h-[22px] w-[22px]" strokeWidth={2} />} label="Home" active={false} />
+          <MobileNavItem href="/categories" icon={<LayoutGrid className="h-[22px] w-[22px]" strokeWidth={2} />} label="Categories" active={false} />
+          <MobileNavItem href="/kitchens" icon={<Store className="h-[22px] w-[22px]" strokeWidth={2} />} label="Kitchens" active={false} />
+          <MobileNavItem href={isLoggedIn ? "/account/orders" : "/login"} icon={<ClipboardList className="h-[22px] w-[22px]" strokeWidth={2} />} label="Orders" active={false} />
+          <MobileNavItem href={isLoggedIn ? "/account/profile" : "/login"} icon={<User className="h-[22px] w-[22px]" strokeWidth={2} />} label="Profile" active={false} />
         </nav>
-        <div className="h-14 md:hidden" />
       </>
     );
   }
@@ -190,20 +190,28 @@ export function SiteHeader() {
             <div className="flex-1 flex flex-col justify-between h-[75px] pt-1">
               
               {/* Top Row */}
-              <div className="flex items-center justify-between w-full">
+              <div className="flex items-center justify-between w-full mb-3">
                 {/* Search and Location */}
                 <div className="flex items-center gap-4 xl:gap-6 flex-1 max-w-4xl">
-                  <button onClick={() => setLocationOpen(true)} className="flex items-center gap-1.5 text-[15px] font-bold text-[#111111] hover:text-[#F04E00] transition-colors shrink-0 whitespace-nowrap">
-                    <MapPin className="h-[18px] w-[18px] text-[#F04E00]" strokeWidth={2.5} />
-                    <span className="truncate max-w-[160px]">{deliveryAddress || "Select Location"}</span>
-                    <ChevronDown className="h-4 w-4 text-[#111111]" strokeWidth={2.5} />
+                  <button onClick={() => setLocationOpen(true)} className="flex items-center gap-2 text-left group hover:opacity-90 transition-opacity shrink-0 whitespace-nowrap">
+                    <div className="relative text-[#F04E00] flex items-center justify-center shrink-0">
+                      <MapPin className="h-[26px] w-[26px]" strokeWidth={2.2} />
+                      <div className="absolute top-[7px] left-[50%] -translate-x-[50%] w-[5px] h-[5px] bg-[#F04E00] rounded-full"></div>
+                    </div>
+                    <div className="flex flex-col justify-center pt-0.5">
+                      <span className="text-[12px] text-[#6B7280] font-medium leading-none mb-1">Deliver to</span>
+                      <div className="flex items-center gap-1 text-[#111111] group-hover:text-[#F04E00] transition-colors">
+                        <span className="text-[14px] font-bold truncate max-w-[200px] xl:max-w-[260px] leading-none">{deliveryAddress || "Select Location"}</span>
+                        <ChevronDown className="h-[15px] w-[15px]" strokeWidth={2.5} />
+                      </div>
+                    </div>
                   </button>
 
                   <div className="flex-1 w-full relative">
                     <SearchAutocomplete
                       mobileModal={false}
                       placeholder="Search for meals, kitchens, cuisines..."
-                      inputClassName="h-[42px] w-full rounded-lg text-[13px] pl-4 pr-12 focus-visible:ring-1 focus-visible:ring-gray-300 bg-white hover:bg-[#FEFEFE] transition-colors text-gray-900 border border-[#E7E7E7] placeholder:text-[#9CA3AF]"
+                      inputClassName="h-[42px] w-full rounded-lg text-[13px] pl-4 pr-12 focus-visible:ring-1 focus-visible:ring-gray-300 bg-white hover:bg-[#FEFEFE] transition-colors text-gray-900 border border-solid border-gray-300 placeholder:text-[#9CA3AF]"
                     />
                     <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#9CA3AF]">
                       <Search className="h-[18px] w-[18px]" strokeWidth={2} />
@@ -216,9 +224,10 @@ export function SiteHeader() {
                   {isLoggedIn ? (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="flex items-center gap-2.5 text-[14px] font-bold text-[#111111] hover:text-[#F04E00] transition-colors group">
+                        <button className="flex items-center gap-2 text-[14px] font-bold text-[#111111] hover:text-[#F04E00] transition-colors group outline-none focus:outline-none focus:ring-0 border-none bg-transparent">
                           <User className="h-[20px] w-[20px] text-[#111111] group-hover:text-[#F04E00]" strokeWidth={2.2} />
-                          <span>Account</span>
+                          <span>Hello, {session?.user?.name ? session.user.name.split(" ")[0] : "User"}</span>
+                          <ChevronDown className="h-4 w-4 text-[#111111] group-hover:text-[#F04E00]" strokeWidth={2.5} />
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48 font-medium">
@@ -292,34 +301,7 @@ export function SiteHeader() {
                   <Search className="h-[22px] w-[22px]" strokeWidth={2} />
                 </Link>
                 
-                {isLoggedIn ? (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button aria-label="User menu" className="flex items-center justify-center text-[#111111]">
-                        <User className="h-[22px] w-[22px]" strokeWidth={2} />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="min-w-40 font-medium">
-                      <DropdownMenuItem asChild>
-                        <Link href="/account/profile" className="flex items-center gap-2 cursor-pointer text-[#4B5563]"><User className="h-4 w-4" />Profile</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href="/account/orders" className="flex items-center gap-2 cursor-pointer text-[#4B5563]"><Package className="h-4 w-4" />My Orders</Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={requestNotification} className="flex items-center gap-2 cursor-pointer text-[#4B5563]">
-                        <Bell className={`h-4 w-4 ${notifGranted ? "fill-[#087A35] text-[#087A35]" : ""}`} />
-                        {notifGranted ? "Notifications On" : "Enable Notifications"}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => signOut()} className="flex items-center gap-2 cursor-pointer text-red-600"><LogOut className="h-4 w-4" />Sign Out</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                ) : (
-                  <Link href="/login" className="flex items-center justify-center text-[#111111] hover:text-[#F04E00] transition-colors">
-                    <User className="h-[22px] w-[22px]" strokeWidth={2} />
-                  </Link>
-                )}
+
 
                 <Link href={cartHref} className="flex items-center justify-center relative text-[#111111]">
                   <ShoppingCart className="h-[22px] w-[22px]" strokeWidth={2} />
@@ -366,15 +348,13 @@ export function SiteHeader() {
       {isHomePage && <HeroCarousel />}
 
       {(!hideNav || isSupportPage || isCategoriesPage) && (
-        <>
-          <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white border-t border-[#E7E7E7] px-2 py-1.5 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-safe">
-            <MobileNavItem href="/" icon={<Home className="h-5 w-5" />} label="Home" active={pathname === "/"} />
-            <MobileNavItem href="/categories" icon={<LayoutGrid className="h-5 w-5" />} label="Categories" active={pathname.startsWith("/categories")} />
-            <MobileNavItem href={cartHref} icon={<ShoppingCart className="h-5 w-5" />} label="Cart" badge={cartCount} active={pathname === "/cart"} />
-            <MobileNavItem href="/help" icon={<HelpCircle className="h-5 w-5" />} label="Help" active={pathname.startsWith("/help")} />
-          </nav>
-          <div className="h-[60px] lg:hidden" />
-        </>
+        <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden bg-white border-t border-[#E7E7E7] px-2 py-1.5 flex items-center justify-around shadow-[0_-4px_20px_rgba(0,0,0,0.08)] pb-safe">
+          <MobileNavItem href="/" icon={<Home className="h-[22px] w-[22px]" strokeWidth={2} fill={pathname === "/" ? "currentColor" : "none"} />} label="Home" active={pathname === "/"} />
+          <MobileNavItem href="/categories" icon={<LayoutGrid className="h-[22px] w-[22px]" strokeWidth={2} />} label="Categories" active={pathname.startsWith("/categories")} />
+          <MobileNavItem href="/kitchens" icon={<Store className="h-[22px] w-[22px]" strokeWidth={2} />} label="Kitchens" active={pathname.startsWith("/kitchens")} />
+          <MobileNavItem href={isLoggedIn ? "/account/orders" : "/login"} icon={<ClipboardList className="h-[22px] w-[22px]" strokeWidth={2} />} label="Orders" active={pathname.startsWith("/account/orders")} />
+          <MobileNavItem href={isLoggedIn ? "/account/profile" : "/login"} icon={<User className="h-[22px] w-[22px]" strokeWidth={2} />} label="Profile" active={pathname.startsWith("/account/profile")} />
+        </nav>
       )}
 
       <LocationDialog open={locationOpen} onClose={() => setLocationOpen(false)} />

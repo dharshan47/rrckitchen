@@ -45,6 +45,12 @@ export default function AdminTwoFactorSetupPage() {
     }
   }, [session, isPending, step]);
 
+  // On a fresh page load the setup flow starts at the password step. If the
+  // store is somehow still on "verify" without a TOTP URI (no mutation data),
+  // fall back to "password" so the form always renders.
+  const activeStep =
+    step === "verify" && !enableMutation.data?.totpURI ? "password" : step;
+
   const verifyForm = useForm<VerifyForm>({
     resolver: zodResolver(verifySchema),
   });
@@ -110,14 +116,14 @@ export default function AdminTwoFactorSetupPage() {
         <div className="relative flex justify-between items-center max-w-[340px] mx-auto mb-8">
           {/* Progress Component */}
           <Progress 
-            value={step === 'password' ? 0 : step === 'verify' ? 50 : 100}
+            value={activeStep === 'password' ? 0 : activeStep === 'verify' ? 50 : 100}
             className="absolute top-4 sm:top-[18px] left-0 right-0 h-[2px] -z-10 bg-[#E8E8E8] [&>div]:bg-[#FD4F03] [&>div]:transition-all [&>div]:duration-500" 
           />
 
           {/* Step 1 */}
           <div className="flex flex-col items-center gap-2 z-10 bg-white px-3">
             <div className={cn("w-[32px] h-[32px] sm:w-[36px] sm:h-[36px] rounded-full flex items-center justify-center text-[15px] font-bold transition-colors", 
-              step === 'verify' || step === 'codes' ? "bg-[#FD4F03] text-white shadow-sm shadow-orange-200" : "bg-[#FD4F03] text-white")}>
+              activeStep === 'verify' || activeStep === 'codes' ? "bg-[#FD4F03] text-white shadow-sm shadow-orange-200" : "bg-[#FD4F03] text-white")}>
               1
             </div>
             <span className={cn("text-[12px] sm:text-[13px] font-bold text-[#111111] whitespace-nowrap")}>Scan QR Code</span>
@@ -126,26 +132,26 @@ export default function AdminTwoFactorSetupPage() {
           {/* Step 2 */}
           <div className="flex flex-col items-center gap-2 z-10 bg-white px-3">
             <div className={cn("w-[32px] h-[32px] sm:w-[36px] sm:h-[36px] rounded-full flex items-center justify-center text-[15px] font-medium transition-colors border", 
-              step === 'codes' ? "bg-[#FD4F03] border-[#FD4F03] text-white" : "bg-white border-[#E8E8E8] text-[#777777]")}>
+              activeStep === 'codes' ? "bg-[#FD4F03] border-[#FD4F03] text-white" : "bg-white border-[#E8E8E8] text-[#777777]")}>
               2
             </div>
-            <span className={cn("text-[12px] sm:text-[13px] font-medium whitespace-nowrap", step === 'codes' ? "text-[#111111]" : "text-[#777777]")}>Verify Code</span>
+            <span className={cn("text-[12px] sm:text-[13px] font-medium whitespace-nowrap", activeStep === 'codes' ? "text-[#111111]" : "text-[#777777]")}>Verify Code</span>
           </div>
 
           {/* Step 3 */}
           <div className="flex flex-col items-center gap-2 z-10 bg-white px-3">
             <div className={cn("w-[32px] h-[32px] sm:w-[36px] sm:h-[36px] rounded-full flex items-center justify-center text-[15px] font-medium transition-colors border", 
-              step === 'codes' ? "bg-[#FD4F03] border-[#FD4F03] text-white" : "bg-white border-[#E8E8E8] text-[#777777]")}>
+              activeStep === 'codes' ? "bg-[#FD4F03] border-[#FD4F03] text-white" : "bg-white border-[#E8E8E8] text-[#777777]")}>
               3
             </div>
-            <span className={cn("text-[12px] sm:text-[13px] font-medium whitespace-nowrap", step === 'codes' ? "text-[#111111]" : "text-[#777777]")}>Backup Codes</span>
+            <span className={cn("text-[12px] sm:text-[13px] font-medium whitespace-nowrap", activeStep === 'codes' ? "text-[#111111]" : "text-[#777777]")}>Backup Codes</span>
           </div>
         </div>
 
         {/* Content Area wrapped in green border */}
         <div className="bg-[#F9FCFA] border border-[#E6F4EA] rounded-[24px] p-5 sm:p-7 relative overflow-hidden">
           
-          {step === "verify" && enableMutation.data?.totpURI && (
+          {activeStep === "verify" && enableMutation.data?.totpURI && (
             <div className="animate-in fade-in zoom-in-95 duration-500">
               
               <div className="bg-white border border-[#E8E8E8] rounded-[16px] w-[180px] p-5 mx-auto flex flex-col items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.02)] mb-5">
@@ -206,7 +212,7 @@ export default function AdminTwoFactorSetupPage() {
             </div>
           )}
 
-          {step === "password" && (
+          {activeStep === "password" && (
             <div className="animate-in fade-in zoom-in-95 duration-500">
               <div className="text-center mb-6">
                 <h2 className="text-[20px] font-bold text-[#111111]">Confirm Your Password</h2>
@@ -255,7 +261,7 @@ export default function AdminTwoFactorSetupPage() {
             </div>
           )}
 
-          {step === "codes" && backupCodes && (
+          {activeStep === "codes" && backupCodes && (
             <div className="animate-in fade-in zoom-in-95 duration-500">
               <div className="text-center mb-6">
                 <div className="bg-[#F1F8F3] rounded-full p-3 inline-flex mb-3">

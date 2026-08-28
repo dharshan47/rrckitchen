@@ -166,7 +166,8 @@ function VirtualGrid<T>({
   emptyDesc,
   emptyAction,
   emptyHref,
-  layout = "grid"
+  layout = "grid",
+  gridClassName = "grid grid-cols-2 lg:grid-cols-4 gap-4"
 }: {
   items: T[];
   loading: boolean;
@@ -182,6 +183,7 @@ function VirtualGrid<T>({
   emptyAction: string;
   emptyHref: string;
   layout?: "grid" | "list";
+  gridClassName?: string;
 }) {
   const gridRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
@@ -207,7 +209,7 @@ function VirtualGrid<T>({
 
   if (loading && items.length === 0) {
     return (
-      <div className={layout === "grid" ? "grid grid-cols-2 lg:grid-cols-4 gap-4" : "flex flex-col gap-4"}>
+      <div className={layout === "grid" ? gridClassName : "flex flex-col gap-4"}>
         {Array.from({ length: layout === "grid" ? 8 : 4 }).map((_, i) => <div key={i}>{skeleton}</div>)}
       </div>
     );
@@ -230,7 +232,7 @@ function VirtualGrid<T>({
 
   return (
     <div ref={gridRef} className="relative w-full">
-      <div className={layout === "grid" ? "grid grid-cols-2 lg:grid-cols-4 gap-4" : "flex flex-col gap-4"}>
+      <div className={layout === "grid" ? gridClassName : "flex flex-col gap-4"}>
         {items.map((item, index) => (
           <div key={index} className="w-full">
             {renderItem(item)}
@@ -308,21 +310,19 @@ export function FavouritesContent() {
         </div>
 
         <Tabs defaultValue="kitchen" className="space-y-8 w-full">
-          <div className="bg-[#F3F4F6] border border-gray-100 p-1.5 rounded-2xl w-full">
-            <TabsList className="w-full grid grid-cols-2 bg-transparent h-auto p-0 gap-1 relative">
+          <div className="w-full border-b border-gray-200 overflow-x-auto no-scrollbar">
+            <TabsList className="flex w-max justify-start bg-transparent h-auto p-0 gap-8 min-w-full">
               <TabsTrigger 
                 value="kitchen" 
-                className="group relative data-[state=active]:bg-white data-[state=active]:text-[#166534] data-[state=active]:shadow-sm rounded-xl py-3.5 text-sm md:text-base font-semibold gap-2 text-gray-500 transition-all"
+                className="group data-[state=active]:text-[#166534] data-[state=active]:shadow-none rounded-none py-3.5 text-sm md:text-base font-semibold gap-2 text-gray-500 transition-all border-b-2 border-transparent data-[state=active]:border-[#166534] focus-visible:ring-0 focus-visible:outline-none focus-visible:ring-offset-0 whitespace-nowrap"
               >
                 <Store className="h-5 w-5" /> Kitchens
-                <span className="absolute bottom-0 left-[20%] right-[20%] h-[2px] bg-[#15803D] hidden group-data-[state=active]:block rounded-t-full" />
               </TabsTrigger>
               <TabsTrigger 
                 value="menu" 
-                className="group relative data-[state=active]:bg-white data-[state=active]:text-[#166534] data-[state=active]:shadow-sm rounded-xl py-3.5 text-sm md:text-base font-semibold gap-2 text-gray-500 transition-all"
+                className="group data-[state=active]:text-[#166534] data-[state=active]:shadow-none rounded-none py-3.5 text-sm md:text-base font-semibold gap-2 text-gray-500 transition-all border-b-2 border-transparent data-[state=active]:border-[#166534] focus-visible:ring-0 focus-visible:outline-none focus-visible:ring-offset-0 whitespace-nowrap"
               >
                 <Soup className="h-5 w-5" /> Menu Items
-                <span className="absolute bottom-0 left-[20%] right-[20%] h-[2px] bg-[#15803D] hidden group-data-[state=active]:block rounded-t-full" />
               </TabsTrigger>
             </TabsList>
           </div>
@@ -341,7 +341,8 @@ export function FavouritesContent() {
 
             <VirtualGrid<KitchenWishlistItem>
               items={kitchenItems}
-              layout="list"
+              layout="grid"
+              gridClassName="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
               loading={kitchenLoading}
               error={kitchenError}
               hasNextPage={hasNextKitchenPage}
@@ -381,6 +382,7 @@ export function FavouritesContent() {
             <VirtualGrid<MenuWishlistItem>
               items={menuItems}
               layout="grid"
+              gridClassName="grid grid-cols-1 lg:grid-cols-2 gap-3 md:gap-4"
               loading={menuLoading}
               error={menuError}
               hasNextPage={hasNextMenuPage}

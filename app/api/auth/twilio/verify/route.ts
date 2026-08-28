@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { normalizePhone } from "@/lib/phone";
+import { normalizePhone, toE164 } from "@/lib/phone";
 import { cookies } from "next/headers";
 import { client } from "@/lib/twilio";
 import { allocatePublicCode, PUBLIC_ID_SPECS } from "@/lib/public-id";
@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
       try {
         const check = await client.verify.v2.services(verifyServiceSid)
           .verificationChecks
-          .create({ to: phoneNumber, code: otp });
+          .create({ to: toE164(phoneNumber), code: otp });
         verified = check.status === "approved";
       } catch (err) {
         console.error("[OTP_VERIFY] Twilio Verify check failed:", err);
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     let user = await prisma.user.findFirst({
-      where: { phoneNumber },
+      where: { phoneNumber: { in: [phoneNumber, `+91${phoneNumber}`] } },
     });
 
     if (!user) {
@@ -86,7 +86,7 @@ export async function POST(request: NextRequest) {
     } else {
       user = await prisma.user.update({
         where: { id: user.id },
-        data: { phoneNumberVerified: true },
+        data: { phoneNumberVerified: true, phoneNumber },
       });
     }
 

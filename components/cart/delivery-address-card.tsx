@@ -55,8 +55,10 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
   const [selectedLat, setSelectedLat] = useState<number | null>(null)
   const [selectedLng, setSelectedLng] = useState<number | null>(null)
   const [selectedAddress, setSelectedAddress] = useState("")
+  const [selectedPostcode, setSelectedPostcode] = useState("")
   const [geocoding, setGeocoding] = useState(false)
   const [saving, setSaving] = useState(false)
+  const [saveError, setSaveError] = useState<string | null>(null)
 
   const form = useForm<AddressForm>({
     resolver: zodResolver(addressSchema),
@@ -73,6 +75,7 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
     setSelectedLat(lat)
     setSelectedLng(lng)
     setGeocoding(true)
+    setSaveError(null)
     try {
       const res = await fetch(`/api/geocode/reverse?lat=${lat}&lon=${lng}`)
       if (res.ok) {
@@ -80,11 +83,14 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
         setSelectedAddress(
           data.display_name || `Location at ${lat.toFixed(4)}, ${lng.toFixed(4)}`,
         )
+        setSelectedPostcode(data.postcode || "")
       } else {
         setSelectedAddress(`Location at ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
+        setSelectedPostcode("")
       }
     } catch {
       setSelectedAddress(`Location at ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
+      setSelectedPostcode("")
     } finally {
       setGeocoding(false)
     }
@@ -92,34 +98,49 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
 
   const handleSave = useCallback(async () => {
     if (!selectedAddress) return
+    setSaveError(null)
+    const pincode =
+      selectedPostcode ||
+      selectedAddress.match(/\b\d{6}\b/)?.[0] ||
+      ""
+    if (!pincode) {
+      setSaveError("Couldn't find the pincode for this location. Please choose a point closer to your address.")
+      return
+    }
     const values = form.getValues()
     setSaving(true)
     try {
       const parts = [values.doorNo, values.area, values.landmark].filter(Boolean)
       const fullAddress = [...parts, selectedAddress].join(", ")
-      setDeliveryAddress(fullAddress, selectedLat, selectedLng)
 
-      try {
-        const pincode = selectedAddress.match(/\b\d{6}\b/)?.[0] ?? "612001"
-        await addAddress({
-          label: values.label === "OTHERS" ? values.customLabel || "Other" : values.label,
-          lineOne: [values.doorNo, values.area].filter(Boolean).join(", "),
-          lineTwo: values.landmark || undefined,
-          pincode,
-        })
-      } catch {
-        // server save is best-effort
+      const result = await addAddress({
+        label: values.label === "OTHERS" ? values.customLabel || "Other" : values.label,
+        lineOne: [values.doorNo, values.area].filter(Boolean).join(", "),
+        lineTwo: values.landmark || undefined,
+        pincode,
+        latitude: selectedLat ?? undefined,
+        longitude: selectedLng ?? undefined,
+      })
+
+      if (!result.success) {
+        setSaveError(result.error)
+        return
       }
+
+      setDeliveryAddress(fullAddress, selectedLat, selectedLng)
 
       setOpen(false)
       form.reset()
       setSelectedLat(null)
       setSelectedLng(null)
       setSelectedAddress("")
+      setSelectedPostcode("")
+    } catch {
+      setSaveError("Could not save your address. Please try again.")
     } finally {
       setSaving(false)
     }
-  }, [selectedAddress, selectedLat, selectedLng, form, setDeliveryAddress, setOpen])
+  }, [selectedAddress, selectedLat, selectedLng, selectedPostcode, form, setDeliveryAddress, setOpen])
 
   const label = useWatch({ control: form.control, name: "label" })
 
@@ -159,7 +180,7 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
         </CardContent>
       </Card>
 
-      <Sheet open={open} onOpenChange={(o) => { if (!o) { form.reset(); setSelectedLat(null); setSelectedLng(null); setSelectedAddress(""); setOpen(false) } }}>
+      <Sheet open={open} onOpenChange={(o) => { if (!o) { form.reset(); setSelectedLat(null); setSelectedLng(null); setSelectedAddress(""); setSelectedPostcode(""); setSaveError(null); setOpen(false) } }}>
         <SheetContent side="bottom" className="w-full sm:max-w-md p-0 flex flex-col sm:left-auto mx-auto">
           <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
             <SheetTitle className="text-base">Save Delivery Address</SheetTitle>
@@ -190,6 +211,12 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
                     {selectedAddress}
                   </p>
                 </div>
+              </div>
+            )}
+
+            {saveError && (
+              <div className="rounded-lg border border-destructive/30 bg-destructive/5 p-3">
+                <p className="text-xs text-destructive leading-relaxed">{saveError}</p>
               </div>
             )}
 

@@ -14,6 +14,7 @@ import type { Map as LeafletMap, Marker as LeafletMarker, Polyline as LeafletPol
 interface ThanjavurMapProps {
   markerPosition?: [number, number]
   kitchenPosition?: [number, number]
+  destinationPosition?: [number, number]
   routeCoords?: [number, number][]
   height?: string
   onLocationSelect?: (lat: number, lng: number) => void
@@ -24,6 +25,7 @@ interface ThanjavurMapProps {
 export function ThanjavurMap({
   markerPosition,
   kitchenPosition,
+  destinationPosition,
   routeCoords,
   height = "200px",
   onLocationSelect,
@@ -35,6 +37,7 @@ export function ThanjavurMap({
   const leafletRef = useRef<typeof import("leaflet") | null>(null)
   const markerRef = useRef<LeafletMarker | null>(null)
   const kitchenMarkerRef = useRef<LeafletMarker | null>(null)
+  const destMarkerRef = useRef<LeafletMarker | null>(null)
   const routeRef = useRef<LeafletPolyline | null>(null)
   const animFrameRef = useRef(0)
   const hasFittedRef = useRef(false)
@@ -83,10 +86,10 @@ export function ThanjavurMap({
 
   function createDeliveryIcon(L: typeof import("leaflet")) {
     return L.divIcon({
-      html: '<div style="background:#EE7005;color:white;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.3);border:2px solid white;font-size:16px;font-weight:bold;">📍</div>',
+      html: '<div style="background:#F97316;color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(249,115,22,0.3);border:3px solid white;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg></div>',
       className: "",
-      iconSize: [28, 28],
-      iconAnchor: [14, 28],
+      iconSize: [36, 36],
+      iconAnchor: [18, 18],
     })
   }
 
@@ -165,6 +168,7 @@ export function ThanjavurMap({
       leafletRef.current = null
       markerRef.current = null
       kitchenMarkerRef.current = null
+      destMarkerRef.current = null
       routeRef.current = null
       hasFittedRef.current = false
       thanjavurMapStore.getState().clearMap(instanceId)
@@ -181,16 +185,36 @@ export function ThanjavurMap({
       kitchenMarkerRef.current.setLatLng(kitchenPosition)
     } else {
       const kitchenIcon = L.divIcon({
-        html: '<div style="background:#ff5722;color:white;padding:6px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap">🏪 Kitchen</div>',
+        html: '<div style="background:#15803D;width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
         className: "",
-        iconSize: [80, 30],
-        iconAnchor: [40, 15],
+        iconSize: [14, 14],
+        iconAnchor: [7, 7],
       })
       kitchenMarkerRef.current = L.marker(kitchenPosition, { icon: kitchenIcon }).addTo(map)
         .bindPopup("Kitchen")
       if (markerRef.current && !hasFittedRef.current) fitToContent()
     }
   }, [kitchenPosition, loaded])
+
+  // Destination marker
+  useEffect(() => {
+    const map = mapRef.current
+    const L = leafletRef.current
+    if (!map || !L || !destinationPosition) return
+
+    if (destMarkerRef.current) {
+      destMarkerRef.current.setLatLng(destinationPosition)
+    } else {
+      const destIcon = L.divIcon({
+        html: '<div style="background:#15803D;color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(21,128,61,0.3);border:3px solid white;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>',
+        className: "",
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+      })
+      destMarkerRef.current = L.marker(destinationPosition, { icon: destIcon }).addTo(map)
+        .bindPopup("Your Location")
+    }
+  }, [destinationPosition, loaded])
 
   // Rider marker — animate smoothly to new positions without touching the map instance
   useEffect(() => {
@@ -256,10 +280,9 @@ export function ThanjavurMap({
         routeRef.current.setLatLngs(routeCoords)
       } else {
         routeRef.current = L.polyline(routeCoords, {
-          color: "#ff5722",
-          weight: 4,
-          opacity: 0.7,
-          dashArray: "10, 10",
+          color: "#15803D",
+          weight: 3,
+          opacity: 1,
         }).addTo(map)
       }
     }

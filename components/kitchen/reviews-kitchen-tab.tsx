@@ -421,7 +421,7 @@ export function ReviewsKitchenTab({ kitchen }: Props) {
                 <div className="grid grid-cols-3 gap-2">
                   {allPhotos.slice(0, 6).map((photo, idx) => (
                     <div key={`${photo.reviewId}-${idx}`} className="aspect-square rounded-[12px] overflow-hidden bg-[#FAFAFA] relative border border-[#EEEEEE] shadow-sm">
-                      <Image src={photo.url} alt="Customer food photo" fill className="object-cover" />
+                      <Image src={photo.url} alt="Customer food photo" fill sizes="33vw" className="object-cover" />
                     </div>
                   ))}
                 </div>

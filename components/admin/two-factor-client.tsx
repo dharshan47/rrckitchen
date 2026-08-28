@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { OtpInputBoxes } from "@/components/ui/otp-input-boxes";
 import { Mail, Lock, ShieldCheck, ArrowLeft, User, EyeOff, Eye, Smartphone, Calendar, Clock, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import Link from "next/link";
@@ -274,31 +274,25 @@ export default function AdminTwoFactorChallengePage() {
                   <div className="bg-[#F9FCFA] border border-[#E6F4EA] rounded-[24px] p-6 sm:p-8 flex flex-col items-center mb-6">
                     <h3 className="text-[16px] font-bold text-[#111111] mb-2">Enter Verification Code</h3>
                     <p className="text-[14px] text-[#666666] mb-6 text-center">
-                      {method === "totp" ? "Enter the 6-digit code from your authenticator app" : "Enter a 16-character backup code"}
+                      {method === "totp" ? "Enter the 6-digit code from your authenticator app" : "Enter a 10-character backup code (format XXXXX-XXXXX)"}
                     </p>
                     
                     {method === "totp" ? (
-                      <div className="w-full max-w-[360px] mx-auto flex justify-center">
-                        <InputOTP
-                          maxLength={6}
-                          render={({ slots }) => (
-                            <InputOTPGroup className="gap-2 sm:gap-3 w-full justify-center">
-                              {slots.map((slot, index) => (
-                                <InputOTPSlot key={index} index={index} {...slot} className="w-[48px] h-[52px] sm:w-[52px] sm:h-[60px] text-[24px] font-bold border-[#E8E8E8] rounded-[12px] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.01)]" />
-                              ))}
-                            </InputOTPGroup>
-                          )}
-                          disabled={isProcessing}
+                      <div id="code" tabIndex={-1} className="w-full max-w-[360px] mx-auto flex justify-center">
+                        <OtpInputBoxes
                           value={codeValue}
                           onChange={(v) => { codeForm.setValue("code", v); codeForm.clearErrors("code"); }}
+                          disabled={isProcessing}
+                          className="justify-between sm:justify-between sm:gap-2 [&>input]:flex-1 [&>input]:max-w-[60px] [&>input]:h-[52px] sm:[&>input]:h-[60px] [&>input]:rounded-[12px] [&>input]:!border-[1px] [&>input]:!border-[#E8E8E8] [&>input]:bg-white [&>input]:text-[24px] [&>input]:font-bold [&>input]:text-[#111111] [&>input]:shadow-[0_2px_4px_rgba(0,0,0,0.01)] focus:[&>input]:!border-[#22C55E] focus:[&>input]:!ring-0 focus:[&>input]:outline-none"
                         />
                       </div>
                     ) : (
                       <div className="w-full max-w-[400px] mx-auto">
                         <Input
                           id="code"
-                          placeholder="Enter backup code"
-                          className="h-[60px] text-center tracking-widest text-[20px] font-semibold rounded-[12px] border-[#E8E8E8] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.01)] focus-visible:ring-[#FD4F03]"
+                          placeholder="XXXXX-XXXXX"
+                          maxLength={11}
+                          className="h-[60px] text-center tracking-widest text-[20px] font-semibold rounded-[12px] border-[#E8E8E8] bg-white shadow-[0_2px_4px_rgba(0,0,0,0.01)] focus-visible:ring-[#FD4F03] uppercase"
                           disabled={isProcessing}
                           {...codeForm.register("code")}
                         />

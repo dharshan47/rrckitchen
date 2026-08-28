@@ -20,9 +20,9 @@ import { toast } from "sonner";
 import {
   ChevronLeft, ChevronRight, Star, MapPin,
   Share2, Minus, Plus, Heart, Leaf, Flame, Utensils,
-  ShieldCheck, Truck, Timer, Info, Clock,
+  ShieldCheck, Truck, Timer, Clock,
   Package, ShoppingCart, Users, Scale, AlertTriangle,
-  User, Phone, BadgeCheck, Bike
+  User, Phone, BadgeCheck, Bike, ClipboardList, Sparkles, Dna, Gift, ChefHat
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -120,7 +120,7 @@ function MenuItemDetailSkeleton() {
   return (
     <div className="min-h-screen bg-[#FDFDFD] pb-24 md:pb-10 animate-pulse">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="py-4">
+        <div className="pt-1 pb-3">
           <Skeleton className="h-4 w-64" />
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -226,7 +226,7 @@ function KitchenProfile({ kitchenName, imageUrl, avgRating, totalReviews, orderC
         {kitchenSlug && (
           <Link href={`/kitchens/${kitchenSlug}`} className="w-full flex items-center justify-between py-3.5 group">
             <div className="flex items-center gap-3 text-[13px] font-bold text-[#111111]">
-              <Utensils className="h-[18px] w-[18px] text-[#666666] group-hover:text-[#F44A01] transition-colors stroke-[1.5px]" /> 
+              <ChefHat className="h-[18px] w-[18px] text-[#08733F] stroke-[1.5px]" /> 
               View Kitchen Menu
             </div>
             <ChevronRight className="h-4 w-4 text-[#888888]" />
@@ -364,8 +364,8 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
   const aboutTitle = displayItem.aboutTitle ?? `About this dish`;
   const aboutDescription = displayItem.aboutDescription ?? `Our ${displayItem.name} is a perfect blend of fragrant basmati rice, juicy chicken pieces, caramelized onions, and handcrafted spices. Cooked dum-style to bring out rich flavors in every bite.`;
 
-  const totalReviews = displayItem.totalReviews > 0 ? displayItem.totalReviews : 325; // fallback to match UI
-  const orderCount = displayItem.orderCount ?? 2300; // fallback to match UI
+  const totalReviews = displayItem.totalReviews || 0;
+  const orderCount = displayItem.orderCount || 0;
 
   const kitchenAvgRating = kitchen?.avgRating ?? displayItem.avgRating ?? 4.7;
   const kitchenTotalReviews = kitchen?.totalReviews ?? totalReviews;
@@ -424,18 +424,18 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [reviewsQuery, allReviews.length]);
+  }, [reviewsQuery.hasNextPage, reviewsQuery.isFetchingNextPage, reviewsQuery.fetchNextPage, allReviews.length]);
 
   if (isPending && !displayItem) {
     return <MenuItemDetailSkeleton />;
   }
 
   return (
-    <div className="min-h-screen bg-[#FDFDFD] pb-24 md:pb-10 pt-20 font-sans">
+    <div className="min-h-screen bg-[#FDFDFD] pb-24 md:pb-10 font-sans">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
 
         {/* Breadcrumb */}
-        <div className="py-4 mt-2">
+        <div className="pt-1 pb-3">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -443,7 +443,7 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
               </BreadcrumbItem>
               <BreadcrumbSeparator className="text-[#AAAAAA]" />
               <BreadcrumbItem>
-                <BreadcrumbLink href="/search?q=Biryani" className="text-[#555555] font-medium text-[13px] hover:text-[#111111]">Biryani & Rice</BreadcrumbLink>
+                <BreadcrumbLink href={`/kitchens/${kitchenSlug || displayItem.kitchen?.slug || ''}`} className="text-[#555555] font-medium text-[13px] hover:text-[#111111]">{kitchenName}</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator className="text-[#AAAAAA]" />
               <BreadcrumbItem>
@@ -457,8 +457,8 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-12 gap-x-8 gap-y-10 mt-2">
 
           {/* Left Col - Images */}
-          <div className="lg:col-span-1 xl:col-span-5 flex flex-col gap-3.5">
-            <div className="relative w-full aspect-[4/3] rounded-[16px] overflow-hidden bg-muted group shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+          <div className="lg:col-span-1 xl:col-span-5 flex flex-col gap-4">
+            <div className="relative w-full aspect-[3/2] rounded-[12px] md:rounded-[16px] overflow-hidden bg-muted group shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
               {sortedPhotos.length > 0 ? (
                 <ProgressiveImage
                   highResUrl={sortedPhotos[imageIndex].imageUrl}
@@ -473,17 +473,17 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
 
               {/* Badges on Image */}
               {displayItem.bestseller !== false && (
-                <div className="absolute top-4 left-4">
-                  <div className="bg-[#F44A01] text-white px-3.5 py-1.5 text-[11px] font-bold rounded-[6px] tracking-wide shadow-sm">
+                <div className="absolute top-4 left-4 z-10">
+                  <div className="bg-[#FF4D00] text-white px-3 py-1 text-[12px] font-bold rounded-[6px] shadow-sm">
                     Bestseller
                   </div>
                 </div>
               )}
-              <div className="absolute top-4 right-4 z-10">
+              <div className="absolute top-2 right-2 z-10">
                 <WishlistButton 
                   menuItemId={displayItem.id} 
-                  size="md" 
-                  className="h-10 w-10 rounded-full flex items-center justify-center border border-white/20 bg-black/20 backdrop-blur-md text-white hover:bg-black/40 transition-colors shadow-sm"
+                  size="lg" 
+                  className="hover:scale-110 transition-transform"
                 />
               </div>
 
@@ -505,18 +505,20 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
 
             {/* Thumbnails */}
             {sortedPhotos.length > 1 && (
-              <div className="flex gap-2.5 overflow-x-auto pb-1 scrollbar-hide">
+              <div className="flex gap-2.5 overflow-x-auto py-1 scrollbar-hide">
                 {sortedPhotos.map((photo, idx) => (
                   <button
                     key={photo.id || idx}
                     onClick={() => setImageIndex(idx)}
-                    className={`relative w-[calc(16.666%-10px)] aspect-square rounded-[8px] overflow-hidden flex-shrink-0 transition-all ${
+                    className={`relative w-[calc(16.666%-10px)] aspect-square rounded-[8px] flex-shrink-0 transition-all p-[2px] bg-white ${
                       imageIndex === idx 
-                      ? 'border-[2px] border-[#F44A01] opacity-100 shadow-sm' 
-                      : 'border border-transparent opacity-80 hover:opacity-100'
+                      ? 'border-[2px] border-[#FF4D00] opacity-100 shadow-sm' 
+                      : 'border-[2px] border-transparent opacity-70 hover:opacity-100'
                     }`}
                   >
-                    <ProgressiveImage highResUrl={photo.imageUrl} alt="" fill className="object-cover" />
+                    <div className="relative w-full h-full rounded-[4px] overflow-hidden">
+                      <ProgressiveImage highResUrl={photo.imageUrl} alt="" fill className="object-cover" />
+                    </div>
                   </button>
                 ))}
               </div>
@@ -526,10 +528,10 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
           {/* Middle Col - Details & Add to Cart */}
           <div className="lg:col-span-1 xl:col-span-4 flex flex-col">
             
-            {/* Top Row: Ratings, Reviews, Orders & Share */}
-            <div className="flex items-center justify-between mb-4">
+            {/* Top Row: Ratings, Reviews, Orders */}
+            <div className="flex items-center mb-4">
               <div className="flex items-center gap-3">
-                <div className="flex items-center gap-1.5 bg-[#08733F] text-white px-2 py-0.5 rounded-[4px] text-[12px] font-bold">
+                <div className="flex items-center gap-1.5 bg-[#00512F] text-white px-2 py-0.5 rounded-[4px] text-[12px] font-bold">
                   <Star className="h-3 w-3 fill-current" />
                   <span>{displayItem.avgRating?.toFixed(1) || "4.8"}</span>
                 </div>
@@ -538,14 +540,6 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
                   <span className="text-[#DDDDDD]">|</span>
                   <span className="text-[#111111]">{formatCompact(orderCount)}+ orders</span>
                 </div>
-              </div>
-              <div className="hidden lg:flex items-center gap-2">
-                <Badge variant="outline" className="h-[28px] px-2.5 bg-[#F5F8F2] border-[#DCE8DC] text-[#155B38] text-[11px] font-bold rounded-[5px] flex items-center gap-1.5 shadow-none">
-                  <ShieldCheck className="h-3.5 w-3.5 stroke-[2px]" /> Hygienic Kitchen
-                </Badge>
-                <Button onClick={handleShare} variant="outline" className="h-[28px] px-3 border-[#F44A01] text-[#F44A01] text-[11px] font-bold rounded-[5px] flex items-center gap-1.5 bg-transparent hover:bg-[#FFF1EB] hover:text-[#F44A01] shadow-none">
-                  <Share2 className="h-3.5 w-3.5" /> Share
-                </Button>
               </div>
             </div>
 
@@ -560,41 +554,33 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
             {/* Attributes row */}
             <div className="flex flex-wrap items-center gap-2.5 mb-7">
               {displayItem.cuisine && (
-                <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-[#E7E7E7] rounded-[6px] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-                  <div className="h-4 w-4 rounded-full bg-[#EAF5EF] flex items-center justify-center">
-                    <Utensils className="h-2.5 w-2.5 text-[#08733F]" />
-                  </div>
-                  <span className="text-[11px] font-bold text-[#333333]">{displayItem.cuisine} Style</span>
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-[#EEEEEE] rounded-[8px]">
+                  <Utensils className="h-4 w-4 text-[#08733F] stroke-[2px]" />
+                  <span className="text-[12px] font-medium text-[#444444]">{displayItem.cuisine} Style</span>
                 </div>
               )}
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-[#E7E7E7] rounded-[6px] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-                <div className="h-4 w-4 rounded-full bg-[#FFF1EB] flex items-center justify-center">
-                  <Flame className="h-2.5 w-2.5 text-[#F44A01]" />
-                </div>
-                <span className="text-[11px] font-bold text-[#333333]">Non-Veg</span>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-[#EEEEEE] rounded-[8px]">
+                <Flame className="h-4 w-4 text-[#F44A01] stroke-[2px]" />
+                <span className="text-[12px] font-medium text-[#444444]">Non-Veg</span>
               </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-[#E7E7E7] rounded-[6px] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-                <div className="h-4 w-4 rounded-full bg-[#FFF1EB] flex items-center justify-center">
-                  <Flame className="h-2.5 w-2.5 text-[#F44A01]" />
-                </div>
-                <span className="text-[11px] font-bold text-[#333333]">Medium Spicy</span>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-[#EEEEEE] rounded-[8px]">
+                <Flame className="h-4 w-4 text-[#F44A01] stroke-[2px]" />
+                <span className="text-[12px] font-medium text-[#444444]">Medium Spicy</span>
               </div>
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-white border border-[#E7E7E7] rounded-[6px] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-                <div className="h-4 w-4 rounded-full bg-[#EAF5EF] flex items-center justify-center">
-                  <Clock className="h-2.5 w-2.5 text-[#08733F]" />
-                </div>
-                <span className="text-[11px] font-bold text-[#333333]">Lunch & Dinner</span>
+              <div className="flex items-center gap-2 px-3 py-1.5 bg-white border border-[#EEEEEE] rounded-[8px]">
+                <Clock className="h-4 w-4 text-[#08733F] stroke-[2px]" />
+                <span className="text-[12px] font-medium text-[#444444]">Lunch & Dinner</span>
               </div>
             </div>
 
             {/* Pricing */}
             <div className="flex flex-col gap-1.5 mb-5">
               <div className="flex items-end gap-3">
-                <span className="text-[32px] font-extrabold tracking-tight text-[#F44A01] leading-none">₹{price}</span>
+                <span className="text-[34px] font-extrabold tracking-tight text-[#FF4D00] leading-none">₹{price}</span>
                 {hasDiscount && (
                   <>
-                    <span className="text-[16px] text-[#888888] font-bold line-through decoration-[#888888]/50 leading-none mb-1">₹{mrp}</span>
-                    <Badge className="bg-[#EAF5EF] text-[#08733F] hover:bg-[#EAF5EF] border-none font-bold text-[11px] px-2 py-0.5 rounded-[4px] mb-1.5 shadow-none tracking-wide">{discountPercent}% OFF</Badge>
+                    <span className="text-[18px] text-[#888888] font-bold line-through decoration-[#888888]/50 leading-none mb-1">₹{mrp}</span>
+                    <Badge className="bg-[#EAF5EF] text-[#08733F] hover:bg-[#EAF5EF] border-none font-bold text-[12px] px-2.5 py-1 rounded-full mb-1.5 shadow-none tracking-wide">{discountPercent}% OFF</Badge>
                   </>
                 )}
               </div>
@@ -624,46 +610,49 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
                   </button>
                 </div>
               )}
-              <Button onClick={handleAdd} disabled={!displayItem.isAvailable} className="flex-1 h-[48px] bg-[#F44A01] hover:bg-[#E94300] text-white font-bold text-[16px] rounded-[8px] shadow-[0_2px_8px_rgba(244,74,1,0.25)] transition-all">
+              <Button onClick={handleAdd} disabled={!displayItem.isAvailable} className="flex-1 h-[48px] bg-[#FF4D00] hover:bg-[#E94300] text-white font-bold text-[16px] rounded-[8px] shadow-[0_2px_8px_rgba(244,74,1,0.25)] transition-all">
                 <ShoppingCart className="h-5 w-5 mr-2 stroke-[2px]" />
                 {displayItem.isAvailable ? "Add to Cart" : "Unavailable"}
               </Button>
             </div>
 
             {/* Trust Badges */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-               <div className="flex items-center gap-3 p-3 bg-white border border-[#E7E7E7] rounded-[8px] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#EAF5EF] shrink-0">
-                   <Users className="w-4 h-4 text-[#08733F]" />
-                 </div>
-                 <div className="flex flex-col">
-                   <span className="text-[11px] font-bold text-[#111111]">32 people</span>
-                   <span className="text-[10px] text-[#666666] font-medium">added this in the last 1 hour</span>
-                 </div>
-               </div>
-               <div className="flex items-center gap-3 p-3 bg-white border border-[#E7E7E7] rounded-[8px] shadow-[0_1px_2px_rgba(0,0,0,0.02)]">
-                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#EAF5EF] shrink-0">
-                   <Timer className="w-4 h-4 text-[#08733F]" />
-                 </div>
-                 <div className="flex flex-col">
-                   <span className="text-[11px] font-bold text-[#111111]">Extra ₹10 off</span>
-                   <span className="text-[10px] text-[#666666] font-medium">on online payment</span>
-                 </div>
-               </div>
-               <div className="flex items-center gap-3 p-3 bg-white border border-[#E7E7E7] rounded-[8px] shadow-[0_1px_2px_rgba(0,0,0,0.02)] sm:col-span-2">
-                 <div className="flex items-center justify-center w-8 h-8 rounded-full bg-[#EAF5EF] shrink-0">
-                   <Package className="w-4 h-4 text-[#08733F]" />
-                 </div>
-                 <div className="flex flex-col">
-                   <span className="text-[11px] font-bold text-[#111111]">Secure Packaging</span>
-                   <span className="text-[10px] text-[#666666] font-medium">Leak-proof & safe delivery</span>
-                 </div>
-               </div>
+            <div className="flex items-center bg-[#FDFDFD] border border-[#EEEEEE] rounded-[8px] p-2.5 divide-x divide-[#EEEEEE] mt-2 mb-6">
+              <div className="flex items-center gap-2.5 flex-1 px-3 first:pl-1">
+                <Users className="w-5 h-5 text-[#08733F] shrink-0 stroke-[1.5px]" />
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-bold text-[#111111]">32 people</span>
+                  <span className="text-[10px] text-[#666666]">added this in the last 1 hour</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2.5 flex-1 px-3">
+                <Timer className="w-5 h-5 text-[#08733F] shrink-0 stroke-[1.5px]" />
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-bold text-[#111111]">Extra ₹10 off</span>
+                  <span className="text-[10px] text-[#666666]">on online payment</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-2.5 flex-1 px-3 pr-1">
+                <Package className="w-5 h-5 text-[#08733F] shrink-0 stroke-[1.5px]" />
+                <div className="flex flex-col">
+                  <span className="text-[11px] font-bold text-[#111111]">Secure Packaging</span>
+                  <span className="text-[10px] text-[#666666]">Leak-proof & safe delivery</span>
+                </div>
+              </div>
             </div>
           </div>
 
           {/* Right Col - Delivery Details */}
-          <div className="lg:col-span-2 xl:col-span-3 xl:pl-4 mt-2 lg:mt-6 xl:mt-0">
+          <div className="lg:col-span-2 xl:col-span-3 xl:pl-4 mt-2 lg:mt-6 xl:mt-0 flex flex-col">
+            <div className="hidden lg:flex items-center justify-between mb-4 w-full">
+              <Badge variant="outline" className="h-[28px] px-2.5 bg-[#F5F8F2] border-[#DCE8DC] text-[#155B38] text-[11px] font-bold rounded-[5px] flex items-center gap-1.5 shadow-none">
+                <ShieldCheck className="h-3.5 w-3.5 stroke-[2px]" /> Hygienic Kitchen
+              </Badge>
+              <Button onClick={handleShare} variant="outline" className="h-[28px] px-3 border-[#F44A01] text-[#F44A01] text-[11px] font-bold rounded-[5px] flex items-center gap-1.5 bg-transparent hover:bg-[#FFF1EB] hover:text-[#F44A01] shadow-none cursor-pointer z-10">
+                <Share2 className="h-3.5 w-3.5" /> Share
+              </Button>
+            </div>
+
             <div className="w-full mx-auto max-w-md xl:max-w-none">
               <Card className="shadow-[0_2px_12px_rgba(0,0,0,0.04)] border-[#EAEAEA] rounded-[12px] bg-white">
                 <CardContent className="p-5">
@@ -672,10 +661,10 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
                 <div className="space-y-5">
                   {/* Delivery Time */}
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 flex items-center justify-center shrink-0">
-                      <Clock className="w-5 h-5 text-[#555555] stroke-[1.5px]" />
+                    <div className="w-[34px] h-[34px] bg-[#F5F8F2] rounded-full flex items-center justify-center shrink-0">
+                      <Clock className="w-4 h-4 text-[#08733F] stroke-[2px]" />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 mt-0.5">
                       <p className="text-[12px] text-[#666666] font-medium">Delivery Time</p>
                       <p className="text-[14px] font-bold text-[#111111] my-0.5">{deliveryTime}</p>
                       <p className="text-[11px] font-bold text-[#08733F]">Express Delivery</p>
@@ -687,10 +676,10 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
 
                   {/* Delivery To */}
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 flex items-center justify-center shrink-0">
-                      <MapPin className="w-5 h-5 text-[#08733F] stroke-[1.5px]" />
+                    <div className="w-[34px] h-[34px] bg-[#F5F8F2] rounded-full flex items-center justify-center shrink-0">
+                      <MapPin className="w-4 h-4 text-[#08733F] stroke-[2px]" />
                     </div>
-                    <div className="flex-1 pr-2">
+                    <div className="flex-1 pr-2 mt-0.5">
                       <p className="text-[12px] text-[#666666] font-medium">Deliver to</p>
                       <p className="text-[13px] font-bold text-[#111111] leading-snug mt-0.5">{deliveryAddress || "Anna Nagar, Chennai 600040"}</p>
                     </div>
@@ -701,10 +690,10 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
 
                   {/* Delivery Fee */}
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 flex items-center justify-center shrink-0">
-                      <Truck className="w-5 h-5 text-[#555555] stroke-[1.5px]" />
+                    <div className="w-[34px] h-[34px] bg-[#F5F8F2] rounded-full flex items-center justify-center shrink-0">
+                      <Truck className="w-4 h-4 text-[#08733F] stroke-[2px]" />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 mt-0.5">
                       <p className="text-[12px] text-[#666666] font-medium">Delivery Fee</p>
                       <p className="text-[13px] font-bold text-[#111111] mt-0.5">{displayItem.deliveryFee != null ? `₹${displayItem.deliveryFee}+ order` : "₹149+ order"}</p>
                     </div>
@@ -715,10 +704,10 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
 
                   {/* Available */}
                   <div className="flex items-start gap-3">
-                    <div className="w-6 h-6 flex items-center justify-center shrink-0">
-                      <Utensils className="w-5 h-5 text-[#555555] stroke-[1.5px]" />
+                    <div className="w-[34px] h-[34px] bg-[#F5F8F2] rounded-full flex items-center justify-center shrink-0">
+                      <Utensils className="w-4 h-4 text-[#08733F] stroke-[2px]" />
                     </div>
-                    <div className="flex-1">
+                    <div className="flex-1 mt-0.5">
                       <p className="text-[12px] text-[#666666] font-medium">Available</p>
                       <p className="text-[13px] font-bold text-[#111111] mt-0.5">Lunch • Dinner</p>
                       <p className="text-[11px] font-bold text-[#08733F] mt-0.5">11:00 AM – 10:30 PM</p>
@@ -732,37 +721,37 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
         </div>
 
         {/* Feature Banner - Highlights (Full Width) */}
-        <div className="my-10 bg-[#FAFAFA] border border-[#EEEEEE] rounded-[12px] py-6 px-6 sm:px-10 flex overflow-x-auto scrollbar-hide snap-x gap-6 sm:gap-8 xl:justify-between divide-x divide-[#EEEEEE]">
+        <div className="my-10 bg-[#FDFDFD] border border-[#EEEEEE] rounded-[12px] py-6 px-6 sm:px-10 flex overflow-x-auto scrollbar-hide snap-x gap-6 sm:gap-8 xl:justify-between divide-x divide-[#EEEEEE]">
           <div className="flex items-center gap-3.5 min-w-[max-content] snap-start shrink-0">
-            <Heart className="h-7 w-7 text-[#08733F] stroke-[1.5px]" />
+            <Heart className="h-6 w-6 text-[#08733F] stroke-[1.5px]" />
             <div className="flex flex-col">
               <span className="font-bold text-[12px] text-[#111111]">100% Homemade</span>
               <span className="text-[11px] font-medium text-[#666666]">Made with love</span>
             </div>
           </div>
           <div className="flex items-center gap-3.5 min-w-[max-content] snap-start shrink-0 pl-6 sm:pl-8">
-            <Leaf className="h-7 w-7 text-[#08733F] stroke-[1.5px]" />
+            <Leaf className="h-6 w-6 text-[#08733F] stroke-[1.5px]" />
             <div className="flex flex-col">
               <span className="font-bold text-[12px] text-[#111111]">Fresh Ingredients</span>
               <span className="text-[11px] font-medium text-[#666666]">Sourced daily</span>
             </div>
           </div>
           <div className="flex items-center gap-3.5 min-w-[max-content] snap-start shrink-0 pl-6 sm:pl-8">
-            <ShieldCheck className="h-7 w-7 text-[#08733F] stroke-[1.5px]" />
+            <ShieldCheck className="h-6 w-6 text-[#08733F] stroke-[1.5px]" />
             <div className="flex flex-col">
               <span className="font-bold text-[12px] text-[#111111]">Hygienic Kitchen</span>
               <span className="text-[11px] font-medium text-[#666666]">FSSAI Certified</span>
             </div>
           </div>
           <div className="flex items-center gap-3.5 min-w-[max-content] snap-start shrink-0 pl-6 sm:pl-8">
-            <Package className="h-7 w-7 text-[#F44A01] stroke-[1.5px]" />
+            <Package className="h-6 w-6 text-[#FF4D00] stroke-[1.5px]" />
             <div className="flex flex-col">
               <span className="font-bold text-[12px] text-[#111111]">Perfectly Packed</span>
               <span className="text-[11px] font-medium text-[#666666]">Leak-proof pack</span>
             </div>
           </div>
           <div className="flex items-center gap-3.5 min-w-[max-content] snap-start shrink-0 pl-6 sm:pl-8">
-            <Users className="h-7 w-7 text-[#F44A01] stroke-[1.5px]" />
+            <Users className="h-6 w-6 text-[#FF4D00] stroke-[1.5px]" />
             <div className="flex flex-col">
               <span className="font-bold text-[12px] text-[#111111]">Support Local Women</span>
               <span className="text-[11px] font-medium text-[#666666]">Empowering homemakers</span>
@@ -776,21 +765,21 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
           {/* Tabs Section */}
           <div className="lg:col-span-2 xl:col-span-8">
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="w-full justify-start h-auto p-0 bg-transparent border-b border-[#EEEEEE] rounded-none flex-nowrap overflow-x-auto scrollbar-hide gap-8">
-                <TabsTrigger value="overview" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[3px] data-[state=active]:border-[#00512F] rounded-none px-2 py-3 font-bold flex items-center gap-2 text-[#666666] data-[state=active]:text-[#00512F] text-[13px] tracking-wide transition-colors">
-                  <Info className="h-4 w-4" /> Overview
+              <TabsList className="w-full justify-start h-auto p-0 bg-transparent border-b border-[#EEEEEE] rounded-none flex-nowrap overflow-x-auto scrollbar-hide gap-8 outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus:ring-0 ring-0">
+                <TabsTrigger value="overview" className="bg-transparent shadow-none !border-t-0 !border-l-0 !border-r-0 !border-b-[3px] !border-b-transparent data-[state=active]:!border-b-[#08733F] data-[state=active]:bg-transparent rounded-none px-1 py-3 font-bold flex items-center gap-2 text-[#666666] data-[state=active]:text-[#08733F] text-[13px] tracking-wide transition-colors !outline-none focus:!outline-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0 !ring-0 group data-[state=active]:shadow-none mb-[-1px]">
+                  <ClipboardList className="h-4 w-4 group-data-[state=active]:fill-[#08733F] group-data-[state=active]:text-[#08733F] text-current stroke-[1.5px]" /> Overview
                 </TabsTrigger>
-                <TabsTrigger value="ingredients" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[3px] data-[state=active]:border-[#00512F] rounded-none px-2 py-3 font-bold flex items-center gap-2 text-[#666666] data-[state=active]:text-[#00512F] text-[13px] tracking-wide transition-colors">
-                  <Utensils className="h-4 w-4" /> Ingredients
+                <TabsTrigger value="ingredients" className="bg-transparent shadow-none !border-t-0 !border-l-0 !border-r-0 !border-b-[3px] !border-b-transparent data-[state=active]:!border-b-[#08733F] data-[state=active]:bg-transparent rounded-none px-1 py-3 font-bold flex items-center gap-2 text-[#666666] data-[state=active]:text-[#08733F] text-[13px] tracking-wide transition-colors !outline-none focus:!outline-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0 !ring-0 group data-[state=active]:shadow-none mb-[-1px]">
+                  <Sparkles className="h-4 w-4 group-data-[state=active]:fill-[#08733F] group-data-[state=active]:text-[#08733F] text-current stroke-[1.5px]" /> Ingredients
                 </TabsTrigger>
-                <TabsTrigger value="nutrition" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[3px] data-[state=active]:border-[#00512F] rounded-none px-2 py-3 font-bold flex items-center gap-2 text-[#666666] data-[state=active]:text-[#00512F] text-[13px] tracking-wide transition-colors">
-                  <div className="w-4 h-4 border-[1.5px] border-current rounded-[6px] flex items-center justify-center"><div className="w-1.5 h-1.5 bg-current rounded-full" /></div> Nutrition
+                <TabsTrigger value="nutrition" className="bg-transparent shadow-none !border-t-0 !border-l-0 !border-r-0 !border-b-[3px] !border-b-transparent data-[state=active]:!border-b-[#08733F] data-[state=active]:bg-transparent rounded-none px-1 py-3 font-bold flex items-center gap-2 text-[#666666] data-[state=active]:text-[#08733F] text-[13px] tracking-wide transition-colors !outline-none focus:!outline-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0 !ring-0 group data-[state=active]:shadow-none mb-[-1px]">
+                  <Dna className="h-4 w-4 group-data-[state=active]:text-[#08733F] text-current stroke-[1.5px]" /> Nutrition
                 </TabsTrigger>
-                <TabsTrigger value="reviews" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[3px] data-[state=active]:border-[#00512F] rounded-none px-2 py-3 font-bold flex items-center gap-2 text-[#666666] data-[state=active]:text-[#00512F] text-[13px] tracking-wide transition-colors">
-                  <Star className="h-4 w-4" /> Reviews ({totalReviews})
+                <TabsTrigger value="reviews" className="bg-transparent shadow-none !border-t-0 !border-l-0 !border-r-0 !border-b-[3px] !border-b-transparent data-[state=active]:!border-b-[#08733F] data-[state=active]:bg-transparent rounded-none px-1 py-3 font-bold flex items-center gap-2 text-[#666666] data-[state=active]:text-[#08733F] text-[13px] tracking-wide transition-colors !outline-none focus:!outline-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0 !ring-0 group data-[state=active]:shadow-none mb-[-1px]">
+                  <Star className="h-4 w-4 group-data-[state=active]:fill-[#08733F] group-data-[state=active]:text-[#08733F] text-current stroke-[1.5px]" /> Reviews ({totalReviews})
                 </TabsTrigger>
-                <TabsTrigger value="kitchen" className="data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[3px] data-[state=active]:border-[#00512F] rounded-none px-2 py-3 font-bold flex items-center gap-2 text-[#666666] data-[state=active]:text-[#00512F] text-[13px] tracking-wide transition-colors lg:hidden">
-                  <Package className="h-4 w-4" /> Kitchen Info
+                <TabsTrigger value="kitchen" className="bg-transparent shadow-none !border-t-0 !border-l-0 !border-r-0 !border-b-[3px] !border-b-transparent data-[state=active]:!border-b-[#08733F] data-[state=active]:bg-transparent rounded-none px-1 py-3 font-bold flex items-center gap-2 text-[#666666] data-[state=active]:text-[#08733F] text-[13px] tracking-wide transition-colors !outline-none focus:!outline-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0 !ring-0 group data-[state=active]:shadow-none mb-[-1px] lg:hidden">
+                  <Gift className="h-4 w-4 group-data-[state=active]:fill-[#08733F] group-data-[state=active]:text-[#08733F] text-current stroke-[1.5px]" /> Kitchen Info
                 </TabsTrigger>
               </TabsList>
 
@@ -804,30 +793,30 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
                      </p>
                    </div>
 
-                   <div className="flex-1 border border-[#EEEEEE] rounded-[12px] bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+                   <div className="flex-1 bg-[#F9F9F9] border border-[#EEEEEE] rounded-[12px] p-4 lg:p-5">
                      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 h-full divide-x divide-[#EEEEEE]">
-                       <div className="flex flex-col justify-center pl-2">
+                       <div className="flex flex-col justify-center px-1 lg:px-3">
                          <div className="flex items-center gap-2 mb-1">
                            <Users className="h-4 w-4 text-[#08733F]" strokeWidth={2} />
                            <p className="text-[11px] font-bold text-[#666666]">Serves</p>
                          </div>
                          <p className="font-bold text-[13px] text-[#111111]">{displayItem.serves != null ? `${displayItem.serves} Person` : "1 Person"}</p>
                        </div>
-                       <div className="flex flex-col justify-center pl-4">
+                       <div className="flex flex-col justify-center px-2 lg:px-4">
                          <div className="flex items-center gap-2 mb-1">
                            <Scale className="h-4 w-4 text-[#08733F]" strokeWidth={2} />
                            <p className="text-[11px] font-bold text-[#666666]">Portion Size</p>
                          </div>
                          <p className="font-bold text-[13px] text-[#111111]">{displayItem.portionSize || "400 - 450 gms"}</p>
                        </div>
-                       <div className="flex flex-col justify-center pl-4">
+                       <div className="flex flex-col justify-center px-2 lg:px-4">
                          <div className="flex items-center gap-2 mb-1">
                            <Timer className="h-4 w-4 text-[#08733F]" strokeWidth={2} />
                            <p className="text-[11px] font-bold text-[#666666]">Shelf Life</p>
                          </div>
                          <p className="font-bold text-[13px] text-[#111111] leading-tight">{displayItem.shelfLife || "Best consumed hot"}</p>
                        </div>
-                       <div className="flex flex-col justify-center pl-4">
+                       <div className="flex flex-col justify-center px-2 lg:px-4">
                          <div className="flex items-center gap-2 mb-1">
                            <AlertTriangle className="h-4 w-4 text-[#F44A01]" strokeWidth={2} />
                            <p className="text-[11px] font-bold text-[#F44A01]">Allergens</p>
@@ -849,12 +838,12 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
                     <h3 className="text-[18px] font-bold text-[#111111] mb-5">You may also like</h3>
                     <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
                       {displayItem.relatedItems?.length ? displayItem.relatedItems.map((sim) => (
-                        <div key={sim.id} className="min-w-[150px] max-w-[150px] flex-shrink-0 cursor-pointer overflow-hidden group border border-[#EEEEEE] rounded-[10px] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow flex items-center justify-between">
-                          <div className="relative h-[60px] w-[60px] bg-muted shrink-0 border-r border-[#EEEEEE]">
+                        <div key={sim.id} className="min-w-[190px] max-w-[190px] flex-shrink-0 cursor-pointer overflow-hidden group border border-[#EEEEEE] rounded-[10px] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow flex items-center justify-between">
+                          <div className="relative h-[72px] w-[72px] bg-muted shrink-0 border-r border-[#EEEEEE]">
                             {sim.imageUrl && <ProgressiveImage highResUrl={sim.imageUrl} alt={sim.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />}
                           </div>
-                          <div className="p-2 flex-1 flex flex-col justify-center bg-white h-full">
-                            <h4 className="font-bold text-[11px] text-[#111111] mb-1 truncate">{sim.name}</h4>
+                          <div className="p-2 px-3 flex-1 flex flex-col justify-center bg-white h-full">
+                            <h4 className="font-bold text-[12px] text-[#111111] mb-1 truncate">{sim.name}</h4>
                             <div className="flex items-center justify-between mt-auto">
                               <span className="font-extrabold text-[12px] text-[#111111]">₹{sim.price}</span>
                               {sim.avgRating != null && (
@@ -873,12 +862,12 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
                           { id: "3", name: "Egg Biryani", price: 159, avgRating: 4.5, imageUrl: "/api/placeholder/400/400" },
                           { id: "4", name: "Veg Biryani", price: 149, avgRating: 4.4, imageUrl: "/api/placeholder/400/400" }
                         ].map((sim) => (
-                        <div key={sim.id} className="min-w-[160px] max-w-[160px] flex-shrink-0 cursor-pointer overflow-hidden group border border-[#EEEEEE] rounded-[10px] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow flex">
-                          <div className="relative h-[68px] w-[68px] bg-muted shrink-0 border-r border-[#EEEEEE]">
+                        <div key={sim.id} className="min-w-[190px] max-w-[190px] flex-shrink-0 cursor-pointer overflow-hidden group border border-[#EEEEEE] rounded-[10px] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.03)] hover:shadow-md transition-shadow flex">
+                          <div className="relative h-[72px] w-[72px] bg-muted shrink-0 border-r border-[#EEEEEE]">
                             {sim.imageUrl && <ProgressiveImage highResUrl={sim.imageUrl} alt={sim.name} fill className="object-cover group-hover:scale-105 transition-transform duration-300" />}
                           </div>
-                          <div className="py-1.5 px-2.5 flex-1 flex flex-col bg-white justify-center gap-1">
-                            <h4 className="font-bold text-[11px] text-[#111111] line-clamp-2 leading-tight">{sim.name}</h4>
+                          <div className="py-2 px-3 flex-1 flex flex-col bg-white justify-center gap-1">
+                            <h4 className="font-bold text-[12px] text-[#111111] line-clamp-2 leading-tight">{sim.name}</h4>
                             <div className="flex items-center justify-between mt-auto">
                               <span className="font-extrabold text-[12px] text-[#111111]">₹{sim.price}</span>
                               {sim.avgRating != null && (

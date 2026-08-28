@@ -6,7 +6,8 @@ export const metadata: Metadata = {
   description: "Track your RRC Kitchen order in real time.",
 };
 
-export default function TrackOrderPage({ params }: { params: { id: string } }) {
- 
-  return <TrackOrderClient orderId={params.id} />;
+export default async function TrackOrderPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+
+  return <TrackOrderClient orderId={id} />;
 }

@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { KitchenNavbar, KitchenFooter, KitchenFAQ } from "@/components/kitchen";
 import { KitchenTestimonials } from "@/components/kitchen/kitchen-testimonials";
 import { KitchenPageSkeleton } from "@/components/kitchen/kitchen-page-skeleton";
-import { Play, CheckCircle2, ShieldCheck, TrendingUp, Clock, Megaphone, Lock, Users, Wallet, HeartHandshake, CircleDollarSign, ClipboardList, ChefHat, ShoppingBag } from "lucide-react";
+import { Play, CheckCircle2, ShieldCheck, TrendingUp, Clock, Megaphone, Users, Wallet, HeartHandshake, CircleDollarSign, ClipboardList, ChefHat, ShoppingBag } from "lucide-react";
 import { getSession } from "@/lib/auth-server";
 import prisma from "@/lib/prisma";
 
@@ -38,14 +38,14 @@ async function KitchenChefCount() {
   });
 
   return (
-    <div className="absolute top-10 -right-4 lg:-right-4 bg-[#FFFFFF] rounded-[12px] shadow-[0_3px_12px_rgba(0,0,0,0.06)] p-5 flex items-center gap-4 border border-[#EEEEEE] z-10">
-      <div className="h-12 w-12 rounded-full bg-[#F1F8F3] flex items-center justify-center">
-        <Users className="h-6 w-6 text-[#006F3D]" />
+    <div className="absolute top-12 right-0 lg:-right-6 bg-[#FFFFFF] rounded-[20px] shadow-[0_8px_40px_rgba(0,0,0,0.08)] p-6 flex flex-col border border-[#F9F9F9] z-20 w-[180px]">
+      <div className="flex items-center gap-3 mb-4">
+        <Users className="h-8 w-8 text-[#006F3D]" strokeWidth={2} />
+        <p className="font-extrabold text-[#111111] text-2xl">{count > 1500 ? count.toLocaleString("en-IN") + "+" : "1500+"}</p>
       </div>
       <div>
-        <p className="font-extrabold text-[#111111] text-xl">{count.toLocaleString("en-IN")}+</p>
-        <p className="text-sm font-semibold text-[#111111]">Home Chefs</p>
-        <p className="text-xs text-[#666666]">are earning<br/>with RRC Kitchen</p>
+        <p className="text-[14px] font-extrabold text-[#111111] mb-1.5">Home Chefs</p>
+        <p className="text-[12px] text-[#666666] leading-relaxed">are earning<br/>with RRC Kitchen</p>
       </div>
     </div>
   );
@@ -53,12 +53,15 @@ async function KitchenChefCount() {
 
 function KitchenChefCountSkeleton() {
   return (
-    <div className="absolute top-10 -right-4 lg:-right-4 bg-[#FFFFFF] rounded-[12px] shadow-[0_3px_12px_rgba(0,0,0,0.06)] p-5 flex items-center gap-4 border border-[#EEEEEE] z-10 animate-in fade-in duration-300">
-      <Skeleton className="h-12 w-12 rounded-full" />
+    <div className="absolute top-12 right-0 lg:-right-6 bg-[#FFFFFF] rounded-[20px] shadow-[0_8px_40px_rgba(0,0,0,0.08)] p-6 flex flex-col border border-[#F9F9F9] z-20 w-[180px] animate-in fade-in duration-300">
+      <div className="flex items-center gap-3 mb-4">
+        <Skeleton className="h-8 w-8 rounded-full" />
+        <Skeleton className="h-8 w-16" />
+      </div>
       <div>
-        <Skeleton className="h-6 w-20 mb-1" />
-        <Skeleton className="h-4 w-28 mb-1" />
-        <Skeleton className="h-3 w-32" />
+        <Skeleton className="h-4 w-20 mb-2" />
+        <Skeleton className="h-3 w-full mb-1" />
+        <Skeleton className="h-3 w-3/4" />
       </div>
     </div>
   );
@@ -69,63 +72,57 @@ export default async function KitchenPage() {
   const isLoggedIn = !!session?.user;
 
   return (
-    <div className="min-h-screen bg-[#FEFEFE] font-sans">
+    <div className="min-h-screen bg-[#FEFEFE] font-sans overflow-hidden">
       <KitchenNavbar isLoggedIn={isLoggedIn} />
       
       <Suspense fallback={<KitchenPageSkeleton />}>
         <main>
         {/* Hero Section */}
-        <section className="relative overflow-hidden bg-[#FEFBF8] pt-12 pb-20 lg:pt-20 lg:pb-28">
-          {/* Decorative elements */}
-          <div className="absolute top-20 left-10 w-4 h-4 rounded-full bg-[#B8DDBF] opacity-50" />
-          <div className="absolute top-40 right-1/2 w-6 h-6 rounded-full bg-[#B8DDBF] opacity-30" />
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 relative">
-            <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-              <div className="max-w-2xl">
-                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#111111] mb-6 leading-tight">
+        <section className="relative bg-[#FEFCFA] pt-12 pb-20 lg:pt-20 lg:pb-0 overflow-hidden border-b border-[#F5F5F5]">
+          
+          <div className="mx-auto max-w-[1300px] px-4 sm:px-6 relative">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center lg:items-end">
+              <div className="max-w-2xl lg:pb-28">
+                <h1 className="text-4xl sm:text-5xl lg:text-[56px] font-extrabold tracking-tight text-[#111111] mb-6 leading-[1.15]">
                   Turn Your Passion for <br />
-                  <span className="text-[#075C35]">Cooking</span> into <span className="text-[#FD4F03]">Happiness</span>
+                  <span className="text-[#006F3D]">Cooking</span> into <span className="text-[#FD4F03]">Happiness</span>
                 </h1>
-                <p className="text-lg text-[#333333] mb-8 max-w-lg leading-relaxed">
+                <p className="text-[17px] text-[#555555] mb-10 max-w-lg leading-[1.7] font-medium">
                   Join RRC Kitchen and become a trusted home chef. Share your homemade food with more people and earn on your own terms.
                 </p>
                 
-                <div className="flex flex-wrap gap-6 mb-10">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-[#F1F8F3] flex items-center justify-center">
-                      <HeartHandshake className="h-5 w-5 text-[#006F3D]" />
+                <div className="grid grid-cols-3 gap-2 sm:gap-6 mb-12">
+                  <div className="flex flex-col items-start gap-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <ShieldCheck className="h-6 w-6 text-[#006F3D]" strokeWidth={2} />
+                      <p className="font-extrabold text-[#111111] text-[13px] sm:text-[14px] leading-tight">100% Trusted</p>
                     </div>
-                    <div className="text-sm">
-                      <p className="font-bold text-[#111111]">100% Trusted</p>
-                      <p className="text-[#666666] text-xs">Loved by thousands<br/>of families</p>
-                    </div>
+                    <p className="text-[#777777] text-[12px] leading-relaxed">Loved by thousands<br/>of families</p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-[#F1F8F3] flex items-center justify-center">
-                      <TrendingUp className="h-5 w-5 text-[#006F3D]" />
+                  
+                  <div className="flex flex-col items-start gap-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <TrendingUp className="h-6 w-6 text-[#006F3D]" strokeWidth={2} />
+                      <p className="font-extrabold text-[#111111] text-[13px] sm:text-[14px] leading-tight">Grow Your<br/>Business</p>
                     </div>
-                    <div className="text-sm">
-                      <p className="font-bold text-[#111111]">Grow Your Business</p>
-                      <p className="text-[#666666] text-xs">Increase your<br/>income</p>
-                    </div>
+                    <p className="text-[#777777] text-[12px] leading-relaxed mt-1">Increase your<br/>income</p>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-[#F1F8F3] flex items-center justify-center">
-                      <Clock className="h-5 w-5 text-[#006F3D]" />
+                  
+                  <div className="flex flex-col items-start gap-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <ClipboardList className="h-6 w-6 text-[#006F3D]" strokeWidth={2} />
+                      <p className="font-extrabold text-[#111111] text-[13px] sm:text-[14px] leading-tight">Be Your<br/>Own Boss</p>
                     </div>
-                    <div className="text-sm">
-                      <p className="font-bold text-[#111111]">Be Your Own Boss</p>
-                      <p className="text-[#666666] text-xs">Work on your<br/>own schedule</p>
-                    </div>
+                    <p className="text-[#777777] text-[12px] leading-relaxed mt-1">Work on your<br/>own schedule</p>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-4">
-                  <Button asChild size="lg" className="bg-[#FD4F03] hover:bg-[#E94700] text-[#FFFFFF] rounded-[7px] px-8 py-6 text-base font-semibold shadow-[0_3px_12px_rgba(253,79,3,0.2)] transition-all">
-                    <Link href={isLoggedIn ? "/kitchen/dashboard" : "/kitchen/signup"}>Join as a Home Chef!</Link>
+                <div className="flex flex-wrap items-center gap-6">
+                  <Button asChild size="lg" className="bg-[#FD4F03] hover:bg-[#E94700] text-[#FFFFFF] rounded-xl px-8 py-7 text-[16px] font-bold shadow-[0_4px_16px_rgba(253,79,3,0.25)] transition-transform hover:scale-[1.02]">
+                    <Link href={isLoggedIn ? "/kitchen/dashboard" : "/kitchen/signup"}>Join as a Home Chef</Link>
                   </Button>
-                  <Button variant="ghost" size="lg" className="rounded-[7px] px-6 py-6 text-base font-semibold text-[#111111] hover:bg-transparent hover:opacity-80 transition-all group">
-                    <div className="flex items-center justify-center h-10 w-10 rounded-full border-[1.5px] border-[#FD4F03] mr-3 group-hover:bg-[#FFF3EC] transition-colors">
+                  <Button variant="ghost" size="lg" className="rounded-xl px-4 py-7 text-[16px] font-bold text-[#111111] hover:bg-transparent hover:opacity-70 transition-all group">
+                    <div className="flex items-center justify-center h-12 w-12 rounded-full border-[2px] border-[#FD4F03] mr-3 transition-transform group-hover:scale-110">
                       <Play className="h-4 w-4 text-[#FD4F03] ml-1 fill-[#FD4F03]" />
                     </div>
                     Watch How It Works
@@ -133,16 +130,22 @@ export default async function KitchenPage() {
                 </div>
               </div>
               
-              <div className="relative lg:ml-auto flex justify-center lg:justify-end">
+              <div className="relative lg:ml-auto flex justify-center lg:justify-end w-full mt-10 lg:mt-0">
                 {/* Background circle decoration */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] aspect-square bg-[#FFF1E7] rounded-full z-0 opacity-70"></div>
+                <div className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] aspect-square bg-[#FFF4EE] rounded-full z-0 opacity-80"></div>
                 
-                <div className="relative w-full max-w-lg aspect-square z-10">
+                {/* Dotted pattern decoration */}
+                <div className="absolute top-[20%] -left-[10%] w-24 h-24 hidden lg:grid grid-cols-4 gap-2.5 opacity-[0.15] z-0">
+                  {Array.from({length: 12}).map((_, i) => <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#006F3D]"></div>)}
+                </div>
+
+                {/* Explicit height image container to fix visibility issues */}
+                <div className="relative w-full max-w-[550px] h-[450px] sm:h-[550px] lg:h-[700px] z-10">
                   <Image 
                     src="/kitchen/hero-chef.webp" 
                     alt="Home Chef" 
                     fill 
-                    className="object-contain"
+                    className="object-contain object-bottom drop-shadow-2xl"
                     priority
                   />
                   {/* Floating Badge */}
@@ -183,29 +186,32 @@ export default async function KitchenPage() {
         </section>
 
         {/* How It Works Section */}
-        <section id="how-it-works" className="py-20 bg-[#FEFEFE]">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="text-center max-w-3xl mx-auto mb-16 relative flex flex-col items-center">
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#111111] mb-2">How It Works?</h2>
-              <div className="w-8 h-[2px] bg-[#FD4F03] mb-6"></div>
-              <p className="text-lg text-[#666666]">Become a home chef in 4 simple steps</p>
+        <section id="how-it-works" className="py-20 lg:py-28 bg-[#FEFEFE]">
+          <div className="mx-auto max-w-[1300px] px-4 sm:px-6">
+            <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14 relative flex flex-col items-center">
+              <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-[#111111] mb-4 sm:mb-6">How It Works?</h2>
+              <p className="text-base sm:text-lg text-[#555555] font-medium">Become a home chef in 4 simple steps</p>
             </div>
             
-            <div className="relative max-w-5xl mx-auto pt-4">
-              {/* Desktop Connecting Line */}
-              <div className="hidden md:block absolute top-10 left-[12%] right-[12%] h-[1px] bg-[#E7E7E7]"></div>
+            <div className="bg-[#FFFFFF] rounded-[32px] sm:rounded-[40px] shadow-[0_8px_40px_rgba(0,0,0,0.03)] border border-[#F5F5F5] p-8 sm:p-12 lg:p-16 relative w-full mx-auto">
               
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative z-10">
+              {/* Desktop Connecting Line */}
+              <div className="hidden md:block absolute top-[88px] lg:top-[119px] left-[12.5%] right-[12.5%] h-[1px] bg-[#EEEEEE] z-0">
+                {/* Midpoint Orange Dots */}
+                <div className="absolute top-1/2 left-[16.6%] -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#FD4F03] opacity-60"></div>
+                <div className="absolute top-1/2 left-[50%] -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#FD4F03] opacity-60"></div>
+                <div className="absolute top-1/2 left-[83.3%] -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[#FD4F03] opacity-60"></div>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-6 relative z-10">
                 {steps.map((step, i) => (
                   <div key={i} className="flex flex-col items-center text-center group">
-                    <div className="h-20 w-20 rounded-full bg-[#FFFFFF] flex items-center justify-center mb-6 shadow-[0_2px_8px_rgba(0,0,0,0.05)] border-[2px] border-[#E5EDE7] text-[#006F3D] group-hover:border-[#006F3D] transition-colors relative z-10">
-                      <step.icon className="h-8 w-8" />
-                      {/* Orange dots on line */}
-                      {i < 3 && <div className="hidden md:block absolute -right-[120%] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#FD4F03] opacity-40"></div>}
+                    <div className="h-20 w-20 lg:h-[110px] lg:w-[110px] rounded-full bg-[#FFFFFF] flex items-center justify-center mb-5 lg:mb-6 shadow-[0_4px_24px_rgba(0,0,0,0.06)] border border-[#F5F5F5] text-[#006F3D] group-hover:scale-105 transition-transform duration-300 relative z-10">
+                      <step.icon className="h-8 w-8 lg:h-10 lg:w-10" strokeWidth={1.5} />
                     </div>
-                    <span className="text-[#FD4F03] font-bold text-sm mb-2">{step.num}</span>
-                    <h3 className="text-lg font-bold text-[#111111] mb-2">{step.title}</h3>
-                    <p className="text-[#666666] text-sm px-2">{step.desc}</p>
+                    <span className="text-[#FD4F03] font-bold text-[13px] lg:text-[14px] mb-1.5 lg:mb-2 tracking-wide">{step.num}</span>
+                    <h3 className="text-base lg:text-[18px] font-extrabold text-[#111111] mb-1.5 lg:mb-2">{step.title}</h3>
+                    <p className="text-[#777777] text-[13px] lg:text-[14px] px-2 sm:px-6 lg:px-4 leading-[1.6]">{step.desc}</p>
                   </div>
                 ))}
               </div>
@@ -214,89 +220,112 @@ export default async function KitchenPage() {
         </section>
 
         {/* Who Can Join Section */}
-        <section className="py-20 bg-[#FEFEFE] overflow-hidden">
+        <section className="py-20 lg:py-28 bg-[#FEFEFE] overflow-hidden">
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              <div>
-                <div className="relative inline-block mb-4">
-                  <h2 className="text-3xl sm:text-4xl font-extrabold text-[#111111] leading-tight">
+            <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+              
+              <div className="relative z-10 lg:pl-4">
+                <div className="relative inline-block mb-6">
+                  <h2 className="text-3xl sm:text-4xl lg:text-[42px] font-extrabold text-[#111111] leading-[1.2]">
                     Who Can Join <br />
                     <span className="text-[#075C35]">RRC</span> <span className="text-[#FD4F03]">Kitchen?</span>
                   </h2>
-                  <div className="w-8 h-[2px] bg-[#FD4F03] mt-3"></div>
+                  <div className="w-8 h-[3px] bg-[#FD4F03] mt-4"></div>
                 </div>
-                <p className="text-lg text-[#666666] mb-8 leading-relaxed">
-                  If you love cooking and want to share your homemade food with others, you&apos;re eligible!
+                <p className="text-base sm:text-lg text-[#666666] mb-8 leading-relaxed max-w-[95%]">
+                  If you love cooking and want to share your<br className="hidden sm:block" />
+                  homemade food with others, you&apos;re eligible!
                 </p>
                 
                 <ul className="space-y-4 mb-10">
                   {["Passionate home cooks", "Expertise in any cuisine", "Hygienic & safe cooking environment", "Commitment to quality & on-time delivery"].map((item, i) => (
                     <li key={i} className="flex items-center gap-3">
-                      <div className="bg-[#EAF6EE] p-1 rounded-full shrink-0 flex items-center justify-center w-6 h-6">
+                      <div className="bg-[#EAF6EE] p-1 rounded-full shrink-0 flex items-center justify-center w-[22px] h-[22px]">
                         <CheckCircle2 className="h-4 w-4 text-[#006F3D] fill-[#006F3D] stroke-white" />
                       </div>
-                      <span className="text-[#333333] font-medium">{item}</span>
+                      <span className="text-[#333333] font-medium text-[15px]">{item}</span>
                     </li>
                   ))}
                 </ul>
                 
-                <Button asChild variant="outline" size="lg" className="border-[1.5px] border-[#006F3D] text-[#006F3D] hover:bg-[#F1F8F3] hover:text-[#006F3D] rounded-[7px] px-8 py-6 text-base font-semibold bg-[#FFFFFF]">
+                <Button asChild variant="outline" className="border-[1.5px] border-[#006F3D] text-[#006F3D] hover:bg-[#F1F8F3] hover:text-[#006F3D] rounded-lg px-8 py-6 text-base font-semibold bg-[#FFFFFF] transition-colors">
                   <Link href={isLoggedIn ? "/kitchen/dashboard" : "/kitchen/signup"}>Join as a Home Chef</Link>
                 </Button>
               </div>
               
-              <div className="relative mt-8 lg:mt-0">
+              <div className="relative mt-12 lg:mt-0 w-full lg:pr-8">
                 {/* Decorative dots background */}
-                <div className="absolute -top-10 -left-10 w-32 h-32 grid grid-cols-4 gap-2 opacity-20">
+                <div className="absolute -top-10 -right-6 lg:right-6 w-24 h-24 sm:w-32 sm:h-32 grid grid-cols-4 gap-2 sm:gap-3 opacity-30 z-0">
                   {Array.from({length: 16}).map((_, i) => <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#006F3D]"></div>)}
                 </div>
-                <div className="absolute -bottom-10 -right-10 w-32 h-32 grid grid-cols-4 gap-2 opacity-20">
+                <div className="absolute -bottom-8 -left-6 sm:-left-12 w-24 h-24 sm:w-32 sm:h-32 grid grid-cols-4 gap-2 sm:gap-3 opacity-30 z-0">
                   {Array.from({length: 16}).map((_, i) => <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#006F3D]"></div>)}
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4 relative z-10">
-                  <div className="relative h-full min-h-[300px] sm:min-h-[400px] rounded-[14px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.05)] border border-[#E8E8E8]">
-                    <Image src="/kitchen/chef1.webp" alt="Chef 1" fill className="object-cover" />
-                  </div>
-                  <div className="space-y-4 flex flex-col">
-                    <div className="relative h-48 sm:h-64 rounded-[14px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.05)] border border-[#E8E8E8]">
-                      <Image src="/kitchen/chef2.webp" alt="Chef 2" fill className="object-cover" />
+                {/* Decorative Leaves (SVG approximations) */}
+                <div className="absolute bottom-10 -left-16 sm:-left-24 opacity-30 z-0 hidden lg:block" style={{ width: '120px', height: '120px' }}>
+                  <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M40 80 C 20 60, 20 20, 50 10 C 80 20, 80 60, 40 80" fill="#006F3D" opacity="0.3"/>
+                    <path d="M50 10 Q 45 45, 40 80" stroke="#006F3D" strokeWidth="2" fill="none"/>
+                  </svg>
+                </div>
+                
+                <div className="flex flex-row gap-4 sm:gap-6 lg:gap-8 relative z-10 w-full h-[350px] sm:h-[450px] lg:h-[500px]">
+                  
+                  {/* Left Large Image */}
+                  <div className="relative w-[50%] lg:w-[52%] h-full">
+                    <div className="relative w-full h-full rounded-2xl lg:rounded-[24px] overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.06)]">
+                      <Image src="/kitchen/chef1.webp" alt="Chef 1" fill sizes="(min-width: 1024px) 26vw, 45vw" className="object-cover" />
                     </div>
-                    <div className="relative h-40 sm:h-48 rounded-[14px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.05)] border border-[#E8E8E8]">
-                      <Image src="/kitchen/chef3.webp" alt="Chef 3" fill className="object-cover" />
+                    {/* Flexible Time Badge */}
+                    <div className="absolute -bottom-5 sm:-bottom-8 left-1/2 -translate-x-1/2 bg-[#FFFFFF] rounded-xl lg:rounded-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] px-4 py-3 sm:px-6 sm:py-4 flex items-center gap-3 sm:gap-4 border border-[#F5F5F5] z-20 w-max">
+                      <div className="flex items-center justify-center shrink-0">
+                        <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-[#006F3D]" strokeWidth={2} />
+                      </div>
+                      <div>
+                        <p className="text-[13px] sm:text-[15px] font-bold text-[#111111] mb-0.5 sm:mb-1">Flexible Time</p>
+                        <p className="text-[11px] sm:text-[12px] text-[#777777]">Work at your convenience</p>
+                      </div>
                     </div>
                   </div>
-                </div>
-                
-                {/* Floating Badges */}
-                <div className="absolute top-10 -right-4 sm:-right-8 bg-[#FFFFFF] rounded-[12px] shadow-[0_3px_12px_rgba(0,0,0,0.06)] p-3 sm:p-4 flex items-center gap-3 border border-[#EEEEEE] z-20">
-                  <div className="w-10 h-10 rounded-full bg-[#F1F8F3] flex items-center justify-center shrink-0">
-                    <TrendingUp className="h-5 w-5 text-[#006F3D]" />
+                  
+                  {/* Right Two Images */}
+                  <div className="flex flex-col gap-4 sm:gap-6 lg:gap-8 w-[50%] lg:w-[48%] h-full">
+                    {/* Top Right Image */}
+                    <div className="relative w-full h-[calc(50%-8px)] sm:h-[calc(50%-12px)] lg:h-[calc(50%-16px)]">
+                      <div className="relative w-full h-full rounded-2xl lg:rounded-[24px] overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.06)]">
+                        <Image src="/kitchen/chef2.webp" alt="Chef 2" fill sizes="(min-width: 1024px) 24vw, 45vw" className="object-cover" />
+                      </div>
+                      {/* Grow Your Income Badge */}
+                      <div className="absolute -top-4 sm:-top-8 -right-2 sm:-right-12 bg-[#FFFFFF] rounded-xl lg:rounded-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] px-4 py-3 sm:px-6 sm:py-4 flex items-center gap-3 sm:gap-4 border border-[#F5F5F5] z-20 w-max">
+                        <div className="flex items-center justify-center shrink-0">
+                          <TrendingUp className="h-6 w-6 sm:h-8 sm:w-8 text-[#006F3D]" strokeWidth={2} />
+                        </div>
+                        <div>
+                          <p className="text-[13px] sm:text-[15px] font-bold text-[#111111] mb-0.5 sm:mb-1">Grow Your Income</p>
+                          <p className="text-[11px] sm:text-[12px] text-[#777777]">Earn on every order</p>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* Bottom Right Image */}
+                    <div className="relative w-full h-[calc(50%-8px)] sm:h-[calc(50%-12px)] lg:h-[calc(50%-16px)]">
+                      <div className="relative w-full h-full rounded-2xl lg:rounded-[24px] overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.06)]">
+                        <Image src="/kitchen/chef3.webp" alt="Chef 3" fill sizes="(min-width: 1024px) 24vw, 45vw" className="object-cover" />
+                      </div>
+                      {/* Be Your Own Boss Badge */}
+                      <div className="absolute bottom-6 sm:bottom-12 -right-2 sm:-right-12 bg-[#FFFFFF] rounded-xl lg:rounded-[16px] shadow-[0_8px_30px_rgba(0,0,0,0.08)] px-4 py-3 sm:px-6 sm:py-4 flex items-center gap-3 sm:gap-4 border border-[#F5F5F5] z-20 w-max">
+                        <div className="flex items-center justify-center shrink-0">
+                          <ClipboardList className="h-6 w-6 sm:h-8 sm:w-8 text-[#006F3D]" strokeWidth={2} />
+                        </div>
+                        <div>
+                          <p className="text-[13px] sm:text-[15px] font-bold text-[#111111] mb-0.5 sm:mb-1">Be Your Own Boss</p>
+                          <p className="text-[11px] sm:text-[12px] text-[#777777]">Build your brand</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div>
-                    <p className="text-sm font-bold text-[#111111]">Grow Your Income</p>
-                    <p className="text-[11px] text-[#777777]">Earn on every order</p>
-                  </div>
-                </div>
-                
-                <div className="absolute top-[60%] -right-4 sm:-right-8 bg-[#FFFFFF] rounded-[12px] shadow-[0_3px_12px_rgba(0,0,0,0.06)] p-3 sm:p-4 flex items-center gap-3 border border-[#EEEEEE] z-20 hidden sm:flex">
-                  <div className="w-10 h-10 rounded-full bg-[#F1F8F3] flex items-center justify-center shrink-0">
-                    <Lock className="h-5 w-5 text-[#006F3D]" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-[#111111]">Be Your Own Boss</p>
-                    <p className="text-[11px] text-[#777777]">Build your brand</p>
-                  </div>
-                </div>
-                
-                <div className="absolute bottom-8 left-4 sm:left-[10%] bg-[#FFFFFF] rounded-[12px] shadow-[0_3px_12px_rgba(0,0,0,0.06)] p-3 sm:p-4 flex items-center gap-3 border border-[#EEEEEE] z-20">
-                  <div className="w-10 h-10 rounded-full bg-[#F1F8F3] flex items-center justify-center shrink-0">
-                    <Clock className="h-5 w-5 text-[#006F3D]" />
-                  </div>
-                  <div>
-                    <p className="text-sm font-bold text-[#111111]">Flexible Time</p>
-                    <p className="text-[11px] text-[#777777]">Work at your convenience</p>
-                  </div>
+                  
                 </div>
               </div>
             </div>
@@ -322,36 +351,44 @@ export default async function KitchenPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-20 bg-[#FEFEFE]">
-          <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <div className="bg-[#FEFBF8] rounded-[14px] shadow-[0_3px_12px_rgba(0,0,0,0.06)] p-8 md:p-12 lg:p-16 border border-[#E8E8E8] relative overflow-hidden">
-              <div className="grid md:grid-cols-2 gap-8 items-center relative z-10">
-                <div className="flex justify-center md:justify-start">
-                  <div className="relative w-48 h-48 sm:w-64 sm:h-64 md:w-80 md:h-80">
-                    {/* Placeholder for heart bowl image */}
-                    <div className="absolute inset-0 bg-[#F1F8F3] rounded-full opacity-50 blur-3xl"></div>
-                    <Image src="/kitchen/heart-bowl.webp" alt="Heart Bowl" fill className="object-contain relative z-10" />
-                  </div>
-                </div>
-                
-                <div className="text-center md:text-left space-y-6">
-                  <h2 className="text-3xl sm:text-4xl font-extrabold text-[#111111] leading-tight">
-                    Ready to Start Your Journey <br className="hidden md:block" />
-                    as a <span className="text-[#FD4F03]">Home Chef?</span>
-                  </h2>
-                  <p className="text-lg text-[#333333]">
-                    Join thousands of home chefs who are earning with love, trust and RRC Kitchen.
-                  </p>
-                  
-                  <div className="pt-4 flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
-                    <Button asChild size="lg" className="bg-[#FD4F03] hover:bg-[#E94700] text-[#FFFFFF] rounded-[7px] px-8 py-6 text-base font-bold shadow-[0_3px_12px_rgba(253,79,3,0.2)]">
-                      <Link href={isLoggedIn ? "/kitchen/dashboard" : "/kitchen/signup"}>Join as a Home Chef</Link>
-                    </Button>
-                    <p className="text-sm font-medium text-[#666666]">It&apos;s free and only takes a few minutes!</p>
-                  </div>
-                </div>
-              </div>
+        <section className="py-16 lg:py-24 bg-[#FEFEFE] relative overflow-hidden border-t border-[#F9F9F9]">
+          {/* Watermark text */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden z-0 select-none">
+             <span className="text-[100px] sm:text-[160px] lg:text-[200px] font-black text-[#FD4F03] opacity-[0.03] whitespace-nowrap tracking-tighter">
+                HOME CHEF
+             </span>
+          </div>
+          
+          <div className="mx-auto max-w-[1250px] w-full px-4 sm:px-6 relative z-10 flex flex-col lg:flex-row items-center justify-between gap-10 lg:gap-8">
+            
+            {/* Left Image */}
+            <div className="shrink-0 relative w-48 h-48 lg:w-[240px] lg:h-[240px]">
+               <Image src="/kitchen/heart-bowl.webp" alt="Heart Bowl" fill sizes="240px" className="object-contain" priority />
             </div>
+
+            {/* Middle Text */}
+            <div className="flex-1 text-center lg:text-left max-w-xl lg:px-4 relative z-10">
+               <h2 className="text-3xl sm:text-4xl lg:text-[38px] font-extrabold text-[#111111] leading-[1.3] lg:leading-[1.3] mb-4 lg:mb-5">
+                 Ready to Start Your Journey <br className="hidden lg:block"/> as a <span className="text-[#FD4F03]">Home Chef?</span>
+               </h2>
+               <p className="text-[15px] lg:text-[17px] text-[#555555] font-medium leading-[1.6]">
+                 Join thousands of home chefs who are earning <br className="hidden lg:block"/> with love, trust and RRC Kitchen.
+               </p>
+            </div>
+
+            {/* Right Action */}
+            <div className="flex flex-col items-center justify-center shrink-0 lg:pr-32 xl:pr-16 lg:-mt-4 relative z-10">
+               <Button asChild size="lg" className="bg-[#FD4F03] hover:bg-[#E94700] text-[#FFFFFF] rounded-xl px-12 py-7 text-[16px] lg:text-[17px] font-bold shadow-[0_6px_20px_rgba(253,79,3,0.3)] w-full sm:w-auto mb-3 lg:mb-4 transition-transform hover:scale-[1.02]">
+                 <Link href={isLoggedIn ? "/kitchen/dashboard" : "/kitchen/signup"}>Join as a Home Chef</Link>
+               </Button>
+               <p className="text-[13px] sm:text-[14px] text-[#777777] font-medium">It&apos;s free and only takes a few minutes!</p>
+            </div>
+
+            {/* Far Right Image (Leaf) */}
+            <div className="hidden lg:block absolute right-0 xl:-right-10 top-1/2 -translate-y-1/2 w-[160px] h-[160px] xl:w-[200px] xl:h-[200px] pointer-events-none z-0">
+               <Image src="/kitchen/leaf.webp" alt="Leaf Decoration" fill sizes="200px" className="object-contain" priority />
+            </div>
+            
           </div>
         </section>
         </main>

@@ -39,7 +39,27 @@ import {
   PaginationLink,
 } from "@/components/ui/pagination"
 import { Search, ChevronLeft, ChevronRight, RotateCcw, SlidersHorizontal } from "lucide-react"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { cn } from "@/lib/utils"
+
+const LOCATIONS = [
+  "Achampatti", "Aiyanapuram", "Alakkudi", "Annappanpettai", "Arisikara Street", "Avarampatti",
+  "Budalur", "Chennampatti", "Chitrakudi", "Co operative Buildings", "Ganapathi Nagar", "Gudalur",
+  "Inayathukkanpatti", "Indalur", "Irudayapuram", "Kalimedu", "Kallaperambur", "Kalvirayanpettai",
+  "Kangeyampatti", "Karuntattankudi", "Kattur", "Kilavastachavadi", "Kulichapattu", "Kumbakonam",
+  "Kurungulam", "Kurungulam Melpathi", "MGM Sanatorium", "Manambuchavadi", "Manangorai", "Manayeripatti",
+  "Manojipatti", "Mariammancoil", "Marudakudi", "Marungulam", "Melakalakudi", "Melavasthachavadi",
+  "Mukasa Nanjikottai", "Palayapatti South", "Pillaiyarpatti", "Pookkara Street", "Pudukudi",
+  "Raja Serfoji Govt College", "Rajappa Nagar", "Ramanathapuram", "Ravusapatti", "Rayamundanpatti",
+  "Royandur", "Sakkarasamandam", "Sengipatti", "Sholagampatti", "Srinivasapuram", "State Bank Colony",
+  "Sydambalpuram", "TJ Busstand", "TJ Co operative Housing Colony", "Tamil University", "Tandankorai",
+  "Tennangudi", "Thanjavur", "Thanjavur Bazaar", "Thanjavur City", "Thanjavur Collectorate",
+  "Thanjavur East", "Thanjavur East Gate", "Thanjavur Housing Unit", "Thanjavur Medical College",
+  "Thanjavur North Gate", "Thanjavur P&t Colony", "Thanjavur South", "Thanjavur West", "Thethuvasalpatti",
+  "Tirukanurpatti", "Tirumalaisamudram", "Tirumalaisamudram East", "Trichy", "Valamarkottai",
+  "Vallam East", "Vallam Pudur", "Vallam TJ", "Vannarapettai", "Vendayampatti", "Vennamangalam",
+  "Vennar Bank", "Vilar", "Voc Nagar"
+]
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -58,9 +78,29 @@ export function DataTable<TData, TValue>({
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
   const [globalFilter, setGlobalFilter] = React.useState("")
+  const [ratingFilter, setRatingFilter] = React.useState("all")
+  const [orderFilter, setOrderFilter] = React.useState("all")
+
+  const filteredData = React.useMemo(() => {
+    return data.filter((item: any) => {
+      const rating = item.avgRating || 0;
+      const orders = item.orders || 0;
+      
+      if (ratingFilter === "4.5" && rating < 4.5) return false;
+      if (ratingFilter === "4.0" && rating < 4.0) return false;
+      if (ratingFilter === "3.0" && rating < 3.0) return false;
+      if (ratingFilter === "new" && rating > 0) return false;
+
+      if (orderFilter === "1000" && orders < 1000) return false;
+      if (orderFilter === "500" && orders < 500) return false;
+      if (orderFilter === "100" && orders < 100) return false;
+
+      return true;
+    })
+  }, [data, ratingFilter, orderFilter])
 
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -95,7 +135,7 @@ export function DataTable<TData, TValue>({
         <div className="relative w-full 2xl:w-[320px] shrink-0">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-[17px] w-[17px] text-[#475569]" />
           <Input
-            placeholder="Search by name, email, phone, city..."
+            placeholder="Search by name, email, phone, location..."
             value={globalFilter ?? ""}
             onChange={(event) => setGlobalFilter(String(event.target.value))}
             className="w-full pl-9 h-[40px] bg-[#FFFFFF] border-[#E2E8F0] rounded-[8px] text-[#111827] placeholder:text-[#64748B] focus-visible:ring-0 focus-visible:border-[#07883F] focus-visible:ring-offset-0 focus-visible:shadow-[0_0_0_2px_rgba(7,136,63,0.08)]"
@@ -135,30 +175,77 @@ export function DataTable<TData, TValue>({
           </Select>
 
           <Select defaultValue="all">
-            <SelectTrigger className="w-[120px] h-[40px] bg-[#FFFFFF] border-[#E2E8F0] rounded-[8px] text-[#334155] focus:ring-0 [&>svg]:text-[#475569]">
-              <SelectValue placeholder="City: All" />
+            <SelectTrigger className="w-[160px] h-[40px] bg-[#FFFFFF] border-[#E2E8F0] rounded-[8px] text-[#334155] focus:ring-0 [&>svg]:text-[#475569]">
+              <SelectValue placeholder="Location: All" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">City: All</SelectItem>
-              <SelectItem value="thanjavur">Thanjavur</SelectItem>
-              <SelectItem value="trichy">Trichy</SelectItem>
-              <SelectItem value="kumbakonam">Kumbakonam</SelectItem>
+              <SelectItem value="all">Location: All</SelectItem>
+              {LOCATIONS.map((loc) => (
+                <SelectItem key={loc} value={loc.toLowerCase()}>{loc}</SelectItem>
+              ))}
             </SelectContent>
           </Select>
 
-          <Button
-            variant="outline"
-            className="h-[40px] bg-[#FFFFFF] border-[#E2E8F0] text-[#334155] hover:bg-[#F8FAFC] rounded-[8px] px-4 gap-2"
-          >
-            More Filters <SlidersHorizontal className="h-4 w-4" />
-          </Button>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                className="h-[40px] bg-[#FFFFFF] border-[#E2E8F0] text-[#334155] hover:bg-[#F8FAFC] rounded-[8px] px-4 gap-2"
+              >
+                More Filters <SlidersHorizontal className="h-4 w-4" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-80" align="end">
+              <div className="grid gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-medium leading-none text-[#111827]">More Filters</h4>
+                  <p className="text-sm text-[#64748B]">
+                    Refine the list of kitchen partners.
+                  </p>
+                </div>
+                <div className="grid gap-3">
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <label htmlFor="rating" className="text-sm font-medium text-[#334155]">Rating</label>
+                    <Select value={ratingFilter} onValueChange={setRatingFilter}>
+                      <SelectTrigger id="rating" className="col-span-2 h-9 border-[#E2E8F0]">
+                        <SelectValue placeholder="All Ratings" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Ratings</SelectItem>
+                        <SelectItem value="4.5">4.5 & up</SelectItem>
+                        <SelectItem value="4.0">4.0 & up</SelectItem>
+                        <SelectItem value="3.0">3.0 & up</SelectItem>
+                        <SelectItem value="new">New (No rating)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid grid-cols-3 items-center gap-4">
+                    <label htmlFor="orders" className="text-sm font-medium text-[#334155]">Orders</label>
+                    <Select value={orderFilter} onValueChange={setOrderFilter}>
+                      <SelectTrigger id="orders" className="col-span-2 h-9 border-[#E2E8F0]">
+                        <SelectValue placeholder="All Orders" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Orders</SelectItem>
+                        <SelectItem value="1000">1000+ Orders</SelectItem>
+                        <SelectItem value="500">500+ Orders</SelectItem>
+                        <SelectItem value="100">100+ Orders</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
 
-          {(globalFilter || (table.getColumn("status")?.getFilterValue() as string)) && (
+          {(globalFilter || (table.getColumn("status")?.getFilterValue() as string) || ratingFilter !== "all" || orderFilter !== "all") && (
             <Button
               variant="ghost"
               onClick={() => {
                 setGlobalFilter("")
                 table.getColumn("status")?.setFilterValue("")
+                setRatingFilter("all")
+                setOrderFilter("all")
               }}
               className="h-[40px] text-[#475569] hover:bg-[#F8FAFC] hover:text-[#334155]"
             >

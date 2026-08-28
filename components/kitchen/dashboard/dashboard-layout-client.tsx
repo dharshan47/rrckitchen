@@ -32,6 +32,7 @@ import {
   SidebarMenuButton,
   SidebarTrigger,
 } from "@/components/ui/sidebar"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { SwUpdateBanner } from "@/components/patterns/sw-update-banner"
 import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init"
 import { 
@@ -69,7 +70,7 @@ export default function DashboardLayoutClient({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FEFBF9] flex font-sans" role="status" aria-label="Loading dashboard">
+      <div className="h-screen overflow-hidden bg-[#FEFBF9] flex font-sans" role="status" aria-label="Loading dashboard">
         <aside className="hidden lg:flex w-72 flex-col border-r border-[#F0ECE7] bg-[#FEFBF9]">
           {/* Logo */}
           <div className="px-[20px] pt-[25px] pb-[10px] flex flex-col items-center gap-2">
@@ -96,7 +97,7 @@ export default function DashboardLayoutClient({
           <header className="sticky top-0 z-30 bg-[#FEFBF9] border-b border-[#F1EEEA]">
             <div className="flex items-center justify-between px-6 lg:px-10 h-[82px]">
               <div className="flex items-center gap-3">
-                <Skeleton className="lg:hidden h-10 w-10 rounded-lg" />
+                <Skeleton className="h-10 w-10 rounded-lg" />
               </div>
               <div className="flex items-center gap-7 pr-[8px]">
                 <Skeleton className="h-[21px] w-[21px] rounded-full" />
@@ -179,7 +180,7 @@ export default function DashboardLayoutClient({
   return (
     <>
     <SidebarProvider defaultOpen={true}>
-      <div className="min-h-screen bg-[#FEFBF9] flex w-full font-sans">
+      <div className="h-screen overflow-hidden bg-[#FEFBF9] flex w-full font-sans">
         <Sidebar collapsible="offcanvas" side="left" className="bg-[#FEFBF9] border-r border-[#F0ECE7]">
           <SidebarHeader className="px-[20px] pt-[25px] pb-[10px] h-auto flex flex-col items-center justify-center">
             <Link href="/kitchen/dashboard" className="flex flex-col items-center gap-1">
@@ -190,8 +191,9 @@ export default function DashboardLayoutClient({
               <span className="text-[10px] text-[#17191C] font-normal">Every Homemaker is a Chef</span>
             </Link>
           </SidebarHeader>
-          <SidebarContent className="px-[20px] mt-[34px]">
-            <SidebarMenu className="space-y-[10px]">
+          <SidebarContent className="px-[20px] mt-[10px] overflow-hidden flex-1">
+            <ScrollArea className="h-full w-full pr-2">
+            <SidebarMenu className="space-y-[10px] pt-[20px]">
               {navItems.map((item) => {
                 const isActive = pathname === item.href
                 return (
@@ -221,47 +223,47 @@ export default function DashboardLayoutClient({
                 )
               })}
             </SidebarMenu>
+            </ScrollArea>
           </SidebarContent>
-          <SidebarFooter className="px-[20px] pb-4 space-y-4">
+          <SidebarFooter className="px-[20px] pb-3 space-y-3">
             {/* Help Card */}
-            <div className="bg-[#FCFAF7] border border-[#ECE9E5] rounded-[10px] p-[16px] flex flex-col items-center text-center space-y-[10px] w-full mx-auto" style={{ maxWidth: '207px', minHeight: '105px' }}>
-              <div className="h-[26px] flex items-center justify-center">
-                <Headset className="h-[26px] w-[26px] text-[#086B2F] stroke-[1.8px]" />
+            <div className="bg-[#FCFAF7] border border-[#ECE9E5] rounded-[10px] p-[12px] flex flex-col items-center text-center space-y-[6px] w-full mx-auto" style={{ maxWidth: '207px' }}>
+              <div className="h-[20px] flex items-center justify-center">
+                <Headset className="h-[20px] w-[20px] text-[#086B2F] stroke-[1.8px]" />
               </div>
-              <div className="mb-1">
-                <h4 className="text-[12px] font-semibold text-[#17191C] m-0">Need Help?</h4>
-                <p className="text-[11px] text-[#686A6D] mt-[2px] mb-[12px]">We&apos;re here to support you</p>
+              <div className="mb-0.5">
+                <h4 className="text-[11px] font-semibold text-[#17191C] m-0">Need Help?</h4>
               </div>
-              <Button asChild variant="outline" className="w-[140px] bg-[#FFFFFF] text-[#086B2F] border-[#8CB89B] hover:bg-[#F1F6F0] rounded-[6px] h-[29px] text-[11px] font-medium transition-all px-0 mx-auto">
+              <Button asChild variant="outline" className="w-full bg-[#FFFFFF] text-[#086B2F] border-[#8CB89B] hover:bg-[#F1F6F0] rounded-[6px] h-[26px] text-[10px] font-medium transition-all px-0 mx-auto">
                 <Link href="/kitchen/dashboard/support">Contact Support</Link>
               </Button>
             </div>
 
             {/* Profile Card */}
-            <div className="bg-[#FFFDFC] border border-[#ECE9E5] rounded-[11px] w-full mx-auto flex flex-col" style={{ maxWidth: '207px', minHeight: '188px' }}>
-              <div className="p-4 flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="bg-[#E7E7E5] h-[42px] w-[42px] rounded-full overflow-hidden flex items-center justify-center shrink-0">
-                    <Avatar className="h-[42px] w-[42px] rounded-full bg-[#E7E7E5]">
+            <div className="bg-[#FFFDFC] border border-[#ECE9E5] rounded-[11px] w-full mx-auto flex flex-col" style={{ maxWidth: '207px', minHeight: '160px' }}>
+              <div className="p-3 pb-2 flex items-start justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="bg-[#E7E7E5] h-[36px] w-[36px] rounded-full overflow-hidden flex items-center justify-center shrink-0">
+                    <Avatar className="h-[36px] w-[36px] rounded-full bg-[#E7E7E5]">
                       <AvatarImage src={kitchen.imageUrl ?? undefined} alt={kitchen.displayName || "Kitchen"} className="object-cover" />
-                      <AvatarFallback className="bg-[#E7E7E5] text-[#17191C] font-bold text-lg">
+                      <AvatarFallback className="bg-[#E7E7E5] text-[#17191C] font-bold text-sm">
                         {kitchen.displayName?.charAt(0) || "K"}
                       </AvatarFallback>
                     </Avatar>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-[12px] font-semibold text-[#17191C]">{kitchen.displayName}</span>
-                    <span className="text-[10px] font-normal text-[#686A6D]">Kitchen Partner</span>
+                    <span className="text-[11px] font-semibold text-[#17191C] leading-tight truncate w-[100px]">{kitchen.displayName}</span>
+                    <span className="text-[9px] font-normal text-[#686A6D]">Kitchen Partner</span>
                   </div>
                 </div>
-                <ChevronDown className="h-[15px] w-[15px] text-[#3F454A] mt-[14px]" />
+                <ChevronDown className="h-[13px] w-[13px] text-[#3F454A] mt-[10px]" />
               </div>
               
-              <div className="px-4 pb-[20px] flex-1">
+              <div className="px-3 pb-[12px] flex-1">
                 {isVerified && (
-                  <div className="inline-flex items-center justify-center gap-1.5 bg-[#EDF5EA] text-[#086B2F] h-[25px] px-[10px] rounded-[6px]">
-                    <CheckCircle2 className="h-[12px] w-[12px] stroke-[2.5px]" />
-                    <span className="text-[10px] font-medium">Verified Kitchen</span>
+                  <div className="inline-flex items-center justify-center gap-1 bg-[#EDF5EA] text-[#086B2F] h-[22px] px-[8px] rounded-[5px]">
+                    <CheckCircle2 className="h-[10px] w-[10px] stroke-[2.5px]" />
+                    <span className="text-[9px] font-medium">Verified Kitchen</span>
                   </div>
                 )}
               </div>
@@ -269,9 +271,9 @@ export default function DashboardLayoutClient({
               <div className="border-t border-[#F0ECE7]">
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-[8px] w-full px-4 py-[14px] text-[13px] font-medium text-[#17191C] hover:bg-gray-50 transition-all rounded-b-[11px]"
+                  className="flex items-center gap-[6px] w-full px-3 py-[10px] text-[12px] font-medium text-[#17191C] hover:bg-gray-50 transition-all rounded-b-[11px]"
                 >
-                  <LogOut className="h-[19px] w-[19px] text-[#3F454A] stroke-[1.8px]" />
+                  <LogOut className="h-[16px] w-[16px] text-[#3F454A] stroke-[1.8px]" />
                   Logout
                 </button>
               </div>
@@ -283,7 +285,7 @@ export default function DashboardLayoutClient({
           <header className="sticky top-0 z-30 bg-[#FEFBF9] md:bg-[#FEFBF9]/80 backdrop-blur-md border-b border-[#F1EEEA]">
             <div className="flex items-center justify-between px-6 lg:px-10 h-[82px]">
               <div className="flex items-center gap-3">
-                <SidebarTrigger className="flex lg:hidden bg-white shadow-sm border border-[#ECE9E5] h-10 w-10 rounded-lg text-[#3F454A]" />
+                <SidebarTrigger className="flex bg-white shadow-sm border border-[#ECE9E5] h-10 w-10 rounded-lg text-[#3F454A]" />
               </div>
               
               <div className="flex items-center gap-7 pr-[8px] ml-auto">

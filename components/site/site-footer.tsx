@@ -3,7 +3,10 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useSession } from "@/lib/auth-client";
-import { FaFacebookF, FaInstagram, FaYoutube, FaWhatsapp } from "react-icons/fa";
+import { FaFacebookF } from "react-icons/fa6";
+import { FaInstagram } from "react-icons/fa6";
+import { FaYoutube } from "react-icons/fa6";
+import { FaWhatsapp } from "react-icons/fa6";
 
 export function SiteFooter() {
   const { data: session } = useSession();
@@ -145,7 +148,7 @@ export function SiteFooter() {
       </div>
 
       {/* Copyright */}
-      <div className="py-4 text-center">
+      <div className="pt-4 pb-20 lg:pb-4 text-center">
         <p className="text-xs text-white/60">
           &copy; {new Date().getFullYear()} RRC Kitchen Marketplace Pvt. Ltd. All Rights Reserved.
         </p>

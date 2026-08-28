@@ -68,6 +68,39 @@ const FEATURE_ICON_MAP: Record<string, React.ComponentType<{ className?: string 
   HelpCircle,
 };
 
+const BOTTOM_FEATURES = [
+  {
+    icon: ChefHat,
+    title: "100% Homemade",
+    subtitle: "Made with love & care",
+    iconColor: "text-[#FF4B00]",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Hygienic & Safe",
+    subtitle: "Verified home kitchens",
+    iconColor: "text-[#00512F]",
+  },
+  {
+    icon: Clock,
+    title: "Pre-book & Save Time",
+    subtitle: "Order in advance",
+    iconColor: "text-[#FF4B00]",
+  },
+  {
+    icon: Leaf,
+    title: "Fresh Ingredients",
+    subtitle: "Sourced daily",
+    iconColor: "text-[#00512F]",
+  },
+  {
+    icon: Users,
+    title: "Support Local Women",
+    subtitle: "Empowering homemakers",
+    iconColor: "text-[#FF4B00]",
+  },
+];
+
 const MEAL_TYPE_LABELS: Record<string, string> = {
   MORNING: "Breakfast",
   LUNCH: "Lunch",
@@ -625,127 +658,99 @@ export function CategoryCuisineClient({ categoryName }: Props) {
   }
 
   return (
-    <main className="min-h-screen bg-[#FDF9F6] text-foreground font-sans pb-16">
-      {/* Breadcrumb */}
-      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center gap-2 text-[12px] font-bold text-[#222222] animate-in fade-in duration-300">
-        <Link href="/" className="hover:text-[#FF4B00] transition-colors">
-          Home
-        </Link>
-        <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-        <Link href="/categories" className="hover:text-[#FF4B00] transition-colors">
-          Categories
-        </Link>
-        <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
-        <span className="text-gray-500">{displayName}</span>
-      </div>
+    <main className="min-h-screen bg-[#FDF9F6] text-foreground font-sans">
+
 
       {/* Hero Section */}
       {content?.showHero !== false && (
-        <div
-          className={`max-w-7xl mx-auto px-4 md:px-8 relative z-10 overflow-hidden md:rounded-[24px] bg-[#FDF9F6] animate-in fade-in duration-500 ${
-            isFullWidth ? "md:rounded-none" : ""
-          }`}
-        >
-          <div className={`flex ${isFullWidth ? "flex-col" : `flex-col md:flex-row ${isRight ? "md:flex-row-reverse" : ""}`} items-center`}>
-            <div
-              className={`w-full ${isFullWidth ? "" : "md:w-3/5"} py-6 md:py-12 md:pr-8 flex flex-col ${
-                isCenter ? "items-center text-center" : isRight ? "items-center md:items-end text-center md:text-right" : "items-center md:items-start text-center md:text-left"
-              }`}
-            >
-              <div className={`flex ${isCenter ? "flex-col" : "flex-col md:flex-row"} items-center gap-4`}>
-                <div className="h-16 w-16 md:h-20 md:w-20 rounded-full bg-[#00512F] flex items-center justify-center shrink-0 shadow-md overflow-hidden relative">
+        <div className="w-full bg-[#FDF9F6] border-b border-[#EEE7E2] overflow-hidden">
+          <div className="max-w-[1400px] mx-auto relative flex flex-col lg:flex-row items-stretch">
+            
+            {/* Left Content (Text) */}
+            <div className="w-full lg:w-[45%] xl:w-[40%] px-4 md:px-8 py-6 lg:py-10 flex flex-col justify-center z-20 relative bg-[#FDF9F6] lg:bg-transparent">
+              {/* Breadcrumb */}
+              <div className="flex items-center gap-2 text-[12px] font-bold text-[#222222] mb-6">
+                <Link href="/" className="hover:text-[#FF4B00] transition-colors">
+                  Home
+                </Link>
+                <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
+                <Link href="/categories" className="hover:text-[#FF4B00] transition-colors">
+                  Categories
+                </Link>
+                <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
+                <span className="text-gray-500">{displayName}</span>
+              </div>
+
+              <div className="flex items-center gap-4 mb-4">
+                <div className="h-16 w-16 md:h-[76px] md:w-[76px] rounded-full bg-[#00512F] flex items-center justify-center shrink-0 shadow-md overflow-hidden relative">
                   {content?.iconUrl ? (
-                    <Image src={content.iconUrl} alt={displayName} fill className="object-cover" unoptimized />
+                    <Image src={content.iconUrl} alt={displayName} fill sizes="80px" className="object-cover" unoptimized />
                   ) : (
                     <ChefHat className="h-8 w-8 md:h-10 md:w-10 text-white" />
                   )}
                 </div>
-                <div>
-                  <div className={`flex items-center gap-3 ${isCenter ? "justify-center flex-col" : isRight ? "justify-center md:justify-end" : "justify-center md:justify-start"}`}>
-                    <h1 className="text-3xl md:text-[42px] font-black text-[#00512F] leading-tight">
-                      {displayName}
-                    </h1>
-                    {(content?.badgeText || data?.totalCount !== undefined) && (
-                      <Badge
-                        variant="outline"
-                        className="px-3 py-1 rounded-[6px] border-[#FF6A43] text-[#FF4B00] text-[12px] font-bold shrink-0 bg-[#FFFFFF] shadow-sm animate-in zoom-in duration-300"
-                      >
-                        {content?.badgeText || `${data?.totalCount ?? 0}+ Kitchens`}
-                      </Badge>
-                    )}
-                  </div>
+                <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                  <h1 className="text-3xl md:text-[40px] font-black text-[#00512F] leading-none tracking-tight">
+                    {displayName}
+                  </h1>
+                  {(content?.badgeText || data?.totalCount !== undefined) && (
+                    <Badge
+                      variant="outline"
+                      className="px-3 py-1.5 rounded-[6px] border-[#FF6A43] text-[#FF4B00] text-[12px] md:text-[13px] font-bold bg-[#FFFFFF] shadow-sm whitespace-nowrap w-fit"
+                    >
+                      {content?.badgeText || `${data?.totalCount ?? 0}+ Kitchens`}
+                    </Badge>
+                  )}
                 </div>
               </div>
+
               {content?.description && (
-                <p
-                  className={`mt-4 text-[13px] md:text-[15px] font-bold text-gray-600 leading-relaxed ${
-                    isFullWidth ? "max-w-3xl" : "max-w-xl"
-                  } animate-in fade-in slide-in-from-bottom-2 duration-500`}
-                >
+                <p className="text-[13px] md:text-[14px] font-semibold text-gray-600 leading-[1.6] max-w-[95%] lg:max-w-full xl:max-w-[90%]">
                   {content.description}
                 </p>
               )}
             </div>
-            {/* Hero Image */}
-            <div
-              className={`w-full ${isFullWidth ? "h-64 md:h-96 relative" : "md:w-2/5 h-50 md:h-75 relative mt-4 md:mt-0 overflow-hidden md:rounded-r-[24px]"} ${
-                isRight ? "md:rounded-l-[24px] md:rounded-r-none" : ""
-              }`}
-            >
-              {!isFullWidth && (
-                <div className="hidden md:block absolute inset-y-0 left-0 w-32 bg-linear-to-r from-[#fdfbf7] to-transparent z-10" />
-              )}
-              {heroImage ? (
-                <Image
-                  src={heroImage}
-                  alt={displayName}
-                  fill
-                  className="object-cover object-center"
-                  priority
-                />
-              ) : (
-                <div className="absolute inset-0 bg-linear-to-br from-[#00512F] to-[#146c43] flex flex-col items-center justify-center gap-2">
-                  <ChefHat className="h-12 w-12 text-white/70" />
-                  <span className="text-[12px] font-bold text-white/70">
-                    {displayName} from home kitchens
-                  </span>
+
+            {/* Middle Content (Image) */}
+            <div className="w-full h-[250px] lg:absolute lg:inset-0 lg:left-[35%] lg:right-[20%] lg:h-auto z-10 overflow-hidden lg:overflow-visible">
+              <div className="w-full h-full relative">
+                {/* Desktop Fades */}
+                <div className="hidden lg:block absolute inset-y-0 left-0 w-40 bg-gradient-to-r from-[#FDF9F6] via-[#FDF9F6]/80 to-transparent z-10" />
+                <div className="hidden lg:block absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-[#FDF9F6] to-transparent z-10" />
+                
+                {heroImage ? (
+                  <Image
+                    src={heroImage}
+                    alt={displayName}
+                    fill
+                    className="object-cover object-center lg:object-contain xl:object-cover"
+                    priority
+                  />
+                ) : (
+                  <div className="w-full h-full bg-gradient-to-br from-[#00512F]/10 to-[#146c43]/10 flex items-center justify-center">
+                    <ChefHat className="h-16 w-16 text-[#00512F]/20" />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Right Content (Features Box) */}
+            <div className="w-full lg:w-[25%] lg:ml-auto px-4 md:px-8 py-6 lg:py-10 flex flex-col justify-center lg:items-end z-20 relative bg-[#FDF9F6] lg:bg-transparent">
+              {enabledFeatures.length > 0 && (
+                <div className="w-full lg:w-fit min-w-[220px] bg-white rounded-xl border border-orange-100 shadow-sm p-4 md:p-5 flex flex-col gap-4 relative lg:bg-white/95 lg:backdrop-blur-sm">
+                  {enabledFeatures.slice(0, 4).map((feature, i) => {
+                    const Icon = FEATURE_ICON_MAP[feature.icon] ?? ChefHat;
+                    return (
+                      <div key={i} className="flex items-center gap-3.5 group">
+                        <Icon className="h-5 w-5 text-[#00512F] group-hover:scale-110 transition-transform" />
+                        <span className="text-[13px] md:text-[14px] font-bold text-gray-700">{feature.title}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* Features Strip */}
-      {enabledFeatures.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 md:px-8 mt-4 md:mt-6">
-          <div
-            className={`bg-[#FFFFFF] rounded-[9px] shadow-[0_2px_8px_rgba(35,25,20,0.04)] border border-[#EEE7E2] py-4 px-2 md:px-6 grid gap-4 md:gap-8 divide-x divide-[#EEE7E2] animate-in fade-in slide-in-from-top-2 duration-500 ${
-              enabledFeatures.length === 3
-                ? "grid-cols-3"
-                : enabledFeatures.length <= 2
-                ? "grid-cols-2"
-                : "grid-cols-2 md:grid-cols-4"
-            }`}
-          >
-            {enabledFeatures.slice(0, 6).map((feature, i) => {
-              const Icon = FEATURE_ICON_MAP[feature.icon] ?? ChefHat;
-              return (
-                <div
-                  key={feature.title + i}
-                  className="flex flex-col items-center text-center px-2 animate-in fade-in slide-in-from-bottom-2 duration-300 group hover:-translate-y-1 transition-transform"
-                  style={{ animationDelay: `${i * 80}ms` }}
-                >
-                  <Icon className={`h-6 w-6 ${feature.color} mb-1.5 group-hover:scale-110 transition-transform duration-300`} />
-                  <span className="text-[12px] md:text-[14px] font-black text-[#222222]">{feature.title}</span>
-                  {feature.subtitle && (
-                    <span className="text-[10px] md:text-[12px] font-medium text-gray-500 mt-0.5">
-                      {feature.subtitle}
-                    </span>
-                  )}
-                </div>
-              );
-            })}
           </div>
         </div>
       )}
@@ -832,31 +837,17 @@ export function CategoryCuisineClient({ categoryName }: Props) {
             {/* Desktop Toolbar */}
             <div className="hidden lg:flex items-center justify-between w-full">
               <div className="flex items-center gap-3">
-                <p className="text-[14px] font-bold text-[#222222]">
-                  Showing {visibleKitchens.length} of {filteredKitchens.length} Kitchens
+                <p className="text-[14px] font-black text-[#222222]">
+                  Showing {visibleKitchens.length > 0 ? `1 - ${visibleKitchens.length}` : 0} of {filteredKitchens.length} Kitchens
                   {isFetching && !isLoading && (
                     <Loader2 className="inline h-3.5 w-3.5 ml-2 text-[#FF4B00] animate-spin" />
                   )}
                 </p>
-                <span className="hidden xl:inline-flex items-center gap-1 text-[12px] font-semibold text-gray-400">
-                  <MapPin className="h-3.5 w-3.5" /> Home kitchens near you
-                </span>
-                <Badge
-                  variant="outline"
-                  className={`inline-flex items-center gap-1.5 text-[10px] font-bold rounded-full px-2 py-0.5 ${
-                    isFetching
-                      ? "text-[#FF4B00] bg-[#FFF1EB] border-orange-200"
-                      : "text-emerald-600 bg-emerald-50 border-emerald-200"
-                  }`}
-                >
-                  <CheckCircle2 className={`h-3 w-3 ${isFetching ? "animate-pulse" : ""}`} />
-                  {isFetching ? "SYNCING" : "LIVE"}
-                </Badge>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="text-[14px] font-bold text-gray-600">Sort by:</span>
+              <div className="flex items-center gap-3">
+                <span className="text-[14px] font-black text-[#222222]">Sort by:</span>
                 <Select value={filters.sortBy} onValueChange={handleSortChange}>
-                  <SelectTrigger className="w-[180px] h-10 bg-[#FFFFFF] border-[#E9E2DD] rounded-[6px] text-[14px] font-bold text-[#222222] hover:border-gray-300">
+                  <SelectTrigger className="w-[140px] h-9 bg-[#FFFFFF] border border-[#E9E2DD] rounded-[6px] text-[13px] font-bold text-[#222222] hover:border-gray-300 shadow-sm focus:ring-0">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -872,7 +863,7 @@ export function CategoryCuisineClient({ categoryName }: Props) {
 
             {/* Mobile counts */}
             <p className="lg:hidden text-[13px] font-bold text-gray-600 pt-1">
-              Showing {visibleKitchens.length} of {filteredKitchens.length} Kitchens
+              Showing {visibleKitchens.length > 0 ? `1 - ${visibleKitchens.length}` : 0} of {filteredKitchens.length} Kitchens
             </p>
           </div>
 
@@ -926,7 +917,7 @@ export function CategoryCuisineClient({ categoryName }: Props) {
 
       {/* FAQ Section */}
       {faqs.length > 0 && (
-        <div className="max-w-7xl mx-auto px-4 md:px-8 mt-10 animate-in fade-in duration-500">
+        <div className="max-w-7xl mx-auto px-4 md:px-8 mt-10 pb-16 animate-in fade-in duration-500">
           <div className="bg-white rounded-2xl md:rounded-[24px] shadow-sm border border-gray-100 p-6 md:p-10">
             <div className="flex items-center gap-3 mb-6">
               <div className="bg-[#00512F] rounded-full p-2 text-white">
@@ -944,6 +935,27 @@ export function CategoryCuisineClient({ categoryName }: Props) {
           </div>
         </div>
       )}
+
+      {/* Trust Strip */}
+      <div className="mt-8 md:mt-16 bg-[#FDF9F6] border-t border-[#EEE7E2]">
+        <div className="max-w-[1400px] mx-auto px-4 md:px-8 py-10 md:py-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 sm:gap-8 lg:gap-0 lg:divide-x divide-[#E9E2DD]">
+            {BOTTOM_FEATURES.map((feature, i) => {
+              const Icon = feature.icon;
+              return (
+                <div key={i} className="flex items-center gap-4 lg:px-6 justify-start sm:justify-start lg:justify-center">
+                  <Icon className={`h-[28px] w-[28px] shrink-0 ${feature.iconColor} stroke-[1.5]`} />
+                  <div className="flex flex-col text-left">
+                    <h4 className="text-[13px] xl:text-[14px] font-bold text-[#222222] whitespace-nowrap">{feature.title}</h4>
+                    <p className="text-[11px] xl:text-[12px] font-medium text-gray-500 whitespace-nowrap">{feature.subtitle}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="h-4 md:h-5 w-full bg-[#00512F]"></div>
+      </div>
     </main>
   );
 }

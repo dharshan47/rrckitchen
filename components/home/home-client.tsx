@@ -27,18 +27,51 @@ import { HomeKitchenCardSkeleton } from "@/components/home/home-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
-interface Testimonial {
-  id: string;
-  rating: number;
-  comment: string | null;
-  userName: string;
-  userImage: string | null;
-  kitchenName: string | null;
-}
+import {
+  useHomeFilters,
+  useHomeActions,
+  useHomeKitchensQuery,
+  useTestimonialsQuery,
+  type Testimonial,
+} from "@/stores/homeStore";
 
 const STAR_RATING = [1, 2, 3, 4, 5];
-
 const FALLBACK_AVATAR = "/kitchen/profile.webp";
+
+const mockTestimonials: Testimonial[] = [
+  {
+    id: "m1",
+    rating: 5,
+    comment: "The food feels just like home! The ever-silver tiffin box keeps it hot and fresh. Absolutely love it.",
+    userName: "Rahul Sharma",
+    userImage: null,
+    kitchenName: "Aunty's Kitchen",
+  },
+  {
+    id: "m2",
+    rating: 5,
+    comment: "I've been ordering lunch for a month now. Very hygienic, zero plastic, and amazing taste every single day.",
+    userName: "Priya Desai",
+    userImage: null,
+    kitchenName: "Spice Route",
+  },
+  {
+    id: "m3",
+    rating: 4,
+    comment: "Healthy and delicious! It's such a relief to not worry about cooking after a long day at work.",
+    userName: "Amit Kumar",
+    userImage: null,
+    kitchenName: "Healthy Bites",
+  },
+  {
+    id: "m4",
+    rating: 5,
+    comment: "The concept of reusable steel boxes is fantastic. Food stays warm and I don't feel guilty about plastic waste.",
+    userName: "Sneha Reddy",
+    userImage: null,
+    kitchenName: "South Indian Delights",
+  }
+];
 
 function TrendingKitchens() {
   const { data, isLoading } = useExploreKitchens();
@@ -88,44 +121,20 @@ function TrendingKitchens() {
 }
 
 export function HomeClient() {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [sortOption, setSortOption] = useState<SortOption | null>(null);
-  const [vegFilter, setVegFilter] = useState<VegFilterValue>(null);
-  const [selectedCuisines, setSelectedCuisines] = useState<string[]>([]);
+  const { selectedCategory, sortOption, vegFilter, selectedCuisines } = useHomeFilters();
+  const { setSelectedCategory, setSortOption, setVegFilter, setSelectedCuisines } = useHomeActions();
+  
   const { data: categories = [] } = useKitchenCategories();
 
-  const { data: allChefs = [], isLoading: chefsLoading } = useQuery<KitchenData[]>({
-    queryKey: ["home-chefs"],
-    queryFn: async () => {
-      const params = new URLSearchParams({ limit: "50" });
-      const res = await fetch(`/api/kitchen/explore?${params}`, { cache: "no-store" });
-      if (!res.ok) throw new Error("Failed to load home chefs");
-      const json = (await res.json()) as { data: KitchenData[] };
-      return json.data;
-    },
-    staleTime: 60_000,
-    refetchOnWindowFocus: true,
-  });
+  const { data: allChefs = [], isLoading: chefsLoading } = useHomeKitchensQuery();
+  const { data: testimonials = [], isLoading: testimonialsLoading } = useTestimonialsQuery();
 
-  const { data: testimonials = [], isLoading: testimonialsLoading } = useQuery<Testimonial[]>({
-    queryKey: ["home-testimonials"],
-    queryFn: async () => {
-      const res = await fetch("/api/home/testimonials", { cache: "no-store" });
-      if (!res.ok) throw new Error("Failed to load testimonials");
-      const json = (await res.json()) as { data: Testimonial[] };
-      return json.data;
-    },
-    staleTime: 60_000,
-    refetchOnWindowFocus: true,
-  });
-
-  const homeChefs = useMemo(
-    () =>
-      [...allChefs]
-        .sort((a, b) => (b.avgRating ?? 0) - (a.avgRating ?? 0))
-        .slice(0, 3),
-    [allChefs]
-  );
+  const homeChefs = useMemo(() => {
+    if (!Array.isArray(allChefs)) return [];
+    return [...allChefs]
+      .sort((a, b) => (b.avgRating ?? 0) - (a.avgRating ?? 0))
+      .slice(0, 3);
+  }, [allChefs]);
 
   const kitchenSectionRef = useRef<HTMLElement>(null);
   const [isPastHeader, setIsPastHeader] = useState(false);
@@ -206,7 +215,7 @@ export function HomeClient() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-350 px-4 sm:px-6 lg:px-8 pb-20 pt-10 lg:pt-14 space-y-14 lg:space-y-20">
+      <div className="mx-auto max-w-350 px-4 sm:px-6 lg:px-8 pb-8 pt-10 lg:pt-14 space-y-14 lg:space-y-20">
         <ErrorBoundary>
           {/* Category Carousel */}
           <WhatsOnYourMind />
@@ -537,9 +546,9 @@ export function HomeClient() {
                   </div>
                 ))}
               </div>
-            ) : testimonials.length === 0 ? null : (
+            ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-                {testimonials.slice(0, 4).map((review) => (
+                {(testimonials.length > 0 ? testimonials : mockTestimonials).slice(0, 4).map((review) => (
                   <div
                     key={review.id}
                     className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-[#EEEEEE] flex flex-col gap-4"

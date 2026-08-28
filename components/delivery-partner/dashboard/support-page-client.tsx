@@ -351,7 +351,7 @@ export default function SupportPageClient() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-4">
           {kpiCards.map((kpi, i) => {
             const Icon = kpi.icon
             return (
@@ -510,15 +510,17 @@ export default function SupportPageClient() {
             
             <Card className="rounded-[14px] border-[#EDEEEF] bg-[#FFFFFF] shadow-[0_2px_12px_rgba(16,24,40,0.035)] flex-1 overflow-hidden flex flex-col">
                <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
-                 <div className="px-5 border-b border-[#F0F1F2] flex items-center justify-between overflow-x-auto no-scrollbar">
-                   <TabsList className="bg-transparent h-[52px] p-0 space-x-7 flex-1 justify-start">
-                     {["All", "Open", "In Progress", "Waiting for Reply", "Resolved", "Closed"].map(tab => (
-                        <TabsTrigger key={tab} value={tab} className="rounded-none px-0 py-4 h-full data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[2px] data-[state=active]:border-[#0D6C2B] data-[state=active]:text-[#0D6C2B] text-[#454951] font-[700] text-[13px] hover:text-[#0D6C2B] whitespace-nowrap transition-none">
-                          {tab}
-                        </TabsTrigger>
-                     ))}
-                   </TabsList>
-                   <button className="hidden md:flex items-center text-[12px] font-[700] text-[#FA4A05] whitespace-nowrap ml-6 hover:underline">
+                 <div className="px-5 border-b border-[#F0F1F2] flex items-center justify-between gap-4">
+                   <div className="flex-1 overflow-x-auto no-scrollbar">
+                     <TabsList className="bg-transparent h-[52px] p-0 flex justify-start gap-4 lg:gap-6 w-max">
+                       {["All", "Open", "In Progress", "Waiting for Reply", "Resolved", "Closed"].map(tab => (
+                          <TabsTrigger key={tab} value={tab} className="rounded-none px-0 py-4 h-full border-b-[2px] border-transparent bg-transparent shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-[#0D6C2B] data-[state=active]:text-[#0D6C2B] text-[#454951] font-[700] text-[13px] hover:text-[#0D6C2B] whitespace-nowrap transition-none">
+                            {tab}
+                          </TabsTrigger>
+                       ))}
+                     </TabsList>
+                   </div>
+                   <button className="hidden md:flex shrink-0 items-center text-[12px] font-[700] text-[#FA4A05] whitespace-nowrap hover:underline">
                      View All Tickets <ChevronRight className="h-3.5 w-3.5 ml-0.5" strokeWidth={2.5} />
                    </button>
                  </div>
@@ -661,12 +663,12 @@ export default function SupportPageClient() {
 
         {/* Bottom Info Strip */}
         <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-6 mt-8">
-           <Card className="rounded-[14px] border-[#EDEEEF] bg-[#FFFFFF] shadow-[0_2px_12px_rgba(16,24,40,0.035)] p-5 sm:p-6 flex flex-col xl:flex-row xl:items-center justify-between gap-6">
-              <div>
+           <Card className="rounded-[14px] border-[#EDEEEF] bg-[#FFFFFF] shadow-[0_2px_12px_rgba(16,24,40,0.035)] p-5 sm:p-6 flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-6">
+              <div className="shrink-0">
                  <h3 className="text-[18px] font-[700] text-[#111318]">We&apos;re Here to Help</h3>
                  <p className="text-[13px] text-[#747780] font-[500] mt-1.5">Your safety and satisfaction are our top priorities</p>
               </div>
-              <div className="flex flex-wrap lg:flex-nowrap gap-5 xl:gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 xl:gap-6 w-full">
                  {[
                    { icon: LifeBuoy, t: "24/7 Support", s: "Round the clock assistance" },
                    { icon: Clock3, t: "Quick Response", s: "Usually within 30 minutes" },

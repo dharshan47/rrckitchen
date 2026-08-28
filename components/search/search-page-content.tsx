@@ -164,6 +164,7 @@ export function SearchPageContent() {
   const [draftFilters, setDraftFilters] = useState<Record<string, string[]>>({})
   const [appliedFilters, setAppliedFilters] = useState<Record<string, string[]>>({})
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
+  const [collapsedFilters, setCollapsedFilters] = useState<Record<string, boolean>>({})
   const wrapperRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
   const debouncedQuery = useDebouncedValue(localQuery, 300)
@@ -321,6 +322,10 @@ export function SearchPageContent() {
         : [...current, option]
       return { ...prev, [filterId]: next }
     })
+  }, [])
+
+  const toggleFilterCollapse = useCallback((filterId: string) => {
+    setCollapsedFilters((prev) => ({ ...prev, [filterId]: !prev[filterId] }))
   }, [])
 
   const applyFilters = useCallback(() => {
@@ -639,27 +644,42 @@ export function SearchPageContent() {
           ) : (
             <div className="flex flex-col min-h-screen bg-[#FDFDFD]">
               {/* Header Banner */}
-              <div className="bg-[#FCF8F5] relative overflow-hidden border-b border-[#EEE8E4]">
-                 {pageContent?.bannerImageUrl ? (
-                   <div className="absolute top-0 right-0 h-full w-[60%] lg:w-1/2 opacity-90 pointer-events-none" style={{
-                      background: "linear-gradient(90deg, #FCF8F5 0%, rgba(252,248,245,0.85) 25%, rgba(252,248,245,0.15) 60%, transparent 100%)",
-                      zIndex: 1
-                   }}></div>
-                 ) : null}
-                 {pageContent?.bannerImageUrl && (
-                   <div className="absolute top-0 right-0 h-full w-[60%] lg:w-1/2 pointer-events-none">
-                      <Image src={pageContent.bannerImageUrl} alt="" fill className="object-cover" unoptimized={pageContent.bannerImageUrl.startsWith("http")} />
-                   </div>
-                 )}
-                 <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 py-12 lg:py-16 z-10">
-                   <p className="text-[14px] font-bold text-[#111111] mb-1">Search Results for</p>
-                   <h1 className="text-4xl lg:text-5xl font-bold text-[#00512F] mb-3">
-                     <span className="text-[#F44A01]">“</span>{debouncedQuery}<span className="text-[#F44A01]">”</span>
-                   </h1>
-                   <p className="text-[15px] font-normal text-[#333333]">
-                     We found <span className="text-[#F44A01] font-bold">{kitchens.length} kitchens</span> serving delicious <strong>{debouncedQuery}</strong> near you.
-                   </p>
-                 </div>
+              <div className="w-full bg-[#FCF8F5] border-b border-[#EEE8E4] overflow-hidden">
+                <div className="max-w-[1440px] mx-auto relative flex flex-col lg:flex-row items-stretch lg:min-h-[220px]">
+                  {/* Left Content (Text) */}
+                  <div className="w-full lg:w-[50%] xl:w-[45%] px-4 sm:px-6 py-8 lg:py-12 flex flex-col justify-center z-20 relative bg-[#FCF8F5] lg:bg-transparent">
+                    <p className="text-[13px] md:text-[14px] font-bold text-[#111111] mb-1.5 uppercase tracking-wide">
+                      Search Results for
+                    </p>
+                    <h1 className="text-4xl lg:text-5xl font-black text-[#00512F] mb-3.5 tracking-tight">
+                      “{debouncedQuery}”
+                    </h1>
+                    <p className="text-[14px] lg:text-[15px] font-medium text-[#333333] leading-relaxed max-w-xl">
+                      We found <span className="text-[#F44A01] font-bold">{kitchens.length} kitchens</span> serving delicious <strong>{debouncedQuery}</strong> near you.
+                    </p>
+                  </div>
+                  
+                  {/* Right Content (Image) */}
+                  <div className="w-full h-[180px] sm:h-[220px] lg:absolute lg:inset-y-0 lg:right-0 lg:left-[40%] lg:h-auto z-10">
+                    <div className="w-full h-full relative">
+                      {/* Desktop Fades */}
+                      <div className="hidden lg:block absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-[#FCF8F5] via-[#FCF8F5]/90 to-transparent z-10" />
+                      {/* Mobile Top Fade */}
+                      <div className="lg:hidden absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[#FCF8F5] to-transparent z-10" />
+                      
+                      {pageContent?.bannerImageUrl && (
+                        <Image
+                          src={pageContent.bannerImageUrl}
+                          alt={debouncedQuery}
+                          fill
+                          className="object-cover object-center lg:object-left"
+                          priority
+                          unoptimized={pageContent.bannerImageUrl.startsWith("http")}
+                        />
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Main Content */}
@@ -683,40 +703,53 @@ export function SearchPageContent() {
                        {enabledFilters.length > 0 ? (
                          enabledFilters.map((filter, fi) => (
                            <div key={filter.id} className={fi === 0 ? "" : "pt-5 border-t border-[#EEEAE7]"}>
-                              <div className="flex items-center justify-between mb-3 cursor-pointer">
+                              <div 
+                                className="flex items-center justify-between mb-3 cursor-pointer"
+                                onClick={() => toggleFilterCollapse(filter.id)}
+                              >
                                  <h3 className="text-[14px] font-bold text-[#222222]">{filter.name}</h3>
-                                 <ChevronUp className="w-4 h-4 text-[#222222] stroke-[1.8px]" />
+                                 <ChevronUp className={cn("w-4 h-4 text-[#222222] stroke-[1.8px] transition-transform", collapsedFilters[filter.id] && "rotate-180")} />
                               </div>
-                              <div className="space-y-3">
-                                 {filter.options.map((item) => (
-                                   <label key={item} className="flex items-center gap-3 cursor-pointer group">
-                                      <Checkbox
-                                        checked={isFilterSelected(filter.id, item)}
-                                        onCheckedChange={() => toggleFilterOption(filter.id, item)}
-                                        className="w-4.5 h-4.5 border-[#FF8A69] data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] text-white rounded-sm"
-                                      />
-                                      <span className="text-[12px] font-normal text-[#333333] group-hover:text-[#111111]">{item}</span>
-                                   </label>
-                                 ))}
-                              </div>
+                              {!collapsedFilters[filter.id] && (
+                                <div className="space-y-3">
+                                   {filter.options.map((item) => (
+                                     <label key={item} className="flex items-center gap-3 cursor-pointer group">
+                                        <Checkbox
+                                          checked={isFilterSelected(filter.id, item)}
+                                          onCheckedChange={() => toggleFilterOption(filter.id, item)}
+                                          className="w-4.5 h-4.5 border-[#FF8A69] data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] text-white rounded-sm"
+                                        />
+                                        <span className="text-[12px] font-normal text-[#333333] group-hover:text-[#111111]">{item}</span>
+                                     </label>
+                                   ))}
+                                </div>
+                              )}
                            </div>
                          ))
                        ) : (
                          (categoriesData ?? []).length > 0 && (
                            <div>
-                              <h3 className="text-[14px] font-bold text-[#222222] mb-3">Cuisine</h3>
-                              <div className="space-y-3">
-                                 {(categoriesData ?? []).map((cat) => (
-                                   <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
-                                      <Checkbox
-                                        checked={isFilterSelected("cuisine", cat.name)}
-                                        onCheckedChange={() => toggleFilterOption("cuisine", cat.name)}
-                                        className="w-4.5 h-4.5 border-[#FF8A69] data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] text-white rounded-sm"
-                                      />
-                                      <span className="text-[12px] font-normal text-[#333333] group-hover:text-[#111111]">{cat.name}</span>
-                                   </label>
-                                 ))}
+                              <div 
+                                className="flex items-center justify-between mb-3 cursor-pointer"
+                                onClick={() => toggleFilterCollapse("cuisine")}
+                              >
+                                <h3 className="text-[14px] font-bold text-[#222222]">Cuisine</h3>
+                                <ChevronUp className={cn("w-4 h-4 text-[#222222] stroke-[1.8px] transition-transform", collapsedFilters["cuisine"] && "rotate-180")} />
                               </div>
+                              {!collapsedFilters["cuisine"] && (
+                                <div className="space-y-3">
+                                   {(categoriesData ?? []).map((cat) => (
+                                     <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
+                                        <Checkbox
+                                          checked={isFilterSelected("cuisine", cat.name)}
+                                          onCheckedChange={() => toggleFilterOption("cuisine", cat.name)}
+                                          className="w-4.5 h-4.5 border-[#FF8A69] data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] text-white rounded-sm"
+                                        />
+                                        <span className="text-[12px] font-normal text-[#333333] group-hover:text-[#111111]">{cat.name}</span>
+                                     </label>
+                                   ))}
+                                </div>
+                              )}
                            </div>
                          )
                        )}
@@ -807,7 +840,7 @@ export function SearchPageContent() {
                                  width: '100%',
                                  transform: `translateY(${virtualRow.start}px)`,
                                }}
-                               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 pb-6 lg:pb-10"
+                               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5 pb-6 lg:pb-10"
                              >
                                 {rowItems.map((kitchen) => (
                                   <KitchenCard
@@ -826,7 +859,7 @@ export function SearchPageContent() {
                         
                        {(hasNextPage || isFetchingNextPage) && (
                          <div ref={sentinelRef} className="mt-4">
-                           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 pb-6 lg:pb-10 animate-pulse">
+                           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5 pb-6 lg:pb-10 animate-pulse">
                              {Array.from({ length: 6 }).map((_, i) => (
                                <div key={i} className="flex flex-col bg-[#FFFFFF] border border-[#EAEAEA] rounded-[9px] shadow-[0_2px_8px_rgba(30,25,20,0.045)] overflow-hidden">
                                  <div className="relative w-full h-40 bg-muted">
@@ -866,18 +899,28 @@ export function SearchPageContent() {
 
                {/* Mobile Filters Dialog */}
                <Dialog open={mobileFiltersOpen} onOpenChange={setMobileFiltersOpen}>
-                 <DialogContent className="sm:max-w-[420px] max-h-[85vh] overflow-y-auto rounded-[16px] p-0">
+                 <DialogContent className="sm:max-w-[420px] max-h-[85vh] overflow-y-auto rounded-[16px] p-0" showCloseButton={false}>
                    <DialogHeader className="px-5 pt-5 pb-3 border-b border-[#EEEAE7]">
                      <div className="flex items-center justify-between">
                        <DialogTitle className="text-[16px] font-bold text-[#111111]">Filters</DialogTitle>
-                       <button
-                         type="button"
-                         onClick={clearFilters}
-                         disabled={activeFilterCount === 0}
-                         className="text-[13px] font-semibold text-[#F44A01] hover:underline disabled:text-[#9CA3AF] disabled:hover:no-underline disabled:cursor-not-allowed"
-                       >
-                         Clear All
-                       </button>
+                       <div className="flex items-center gap-3">
+                         <button
+                           type="button"
+                           onClick={clearFilters}
+                           disabled={activeFilterCount === 0}
+                           className="text-[13px] font-semibold text-[#F44A01] hover:underline disabled:text-[#9CA3AF] disabled:hover:no-underline disabled:cursor-not-allowed"
+                         >
+                           Clear All
+                         </button>
+                         <button 
+                           type="button" 
+                           onClick={() => setMobileFiltersOpen(false)}
+                           className="text-gray-500 hover:text-gray-800 p-1 rounded-full transition-colors"
+                           aria-label="Close filters"
+                         >
+                           <X className="w-5 h-5" />
+                         </button>
+                       </div>
                      </div>
                    </DialogHeader>
                    <div className="px-5 py-4 space-y-5">

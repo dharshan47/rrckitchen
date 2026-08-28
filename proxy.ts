@@ -69,13 +69,19 @@ export async function proxy(request: NextRequest) {
         new URL("/api/auth/get-session", request.url),
         { headers: { cookie: request.headers.get("cookie") ?? "" } }
       );
-      if (!sessionRes.ok) return NextResponse.rewrite(new URL("/404", request.url));
+      if (!sessionRes.ok) {
+        // Transient failure (e.g. dev server still compiling/OOM) - let the
+        // admin layout handle auth instead of showing a misleading 404.
+        return NextResponse.next();
+      }
       const session = await sessionRes.json();
       if (!session?.user || session.user.role !== "admin") {
-        return NextResponse.rewrite(new URL("/404", request.url));
+        const homeUrl = new URL("/", request.url);
+        return NextResponse.redirect(homeUrl);
       }
     } catch {
-      return NextResponse.rewrite(new URL("/404", request.url));
+      // Same as above: never rewrite to /404 on a failed session fetch.
+      return NextResponse.next();
     }
   }
 

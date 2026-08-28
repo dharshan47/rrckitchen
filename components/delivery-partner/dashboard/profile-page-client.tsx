@@ -366,19 +366,19 @@ export default function ProfilePageClient() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
                       <div className="flex flex-col space-y-2">
                           <Label className="text-[12px] font-[700] text-[#374151]">Bank Name</Label>
-                          <Input readOnly defaultValue={bankDetails.bankName || "State Bank of India"} className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
+                          <Input defaultValue={bankDetails.bankName || ""} placeholder="e.g. State Bank of India" className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
                       </div>
                       <div className="flex flex-col space-y-2">
                           <Label className="text-[12px] font-[700] text-[#374151]">Account Holder Name</Label>
-                          <Input readOnly defaultValue={bankDetails.accountHolderName || profile.name || ""} className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
+                          <Input defaultValue={bankDetails.accountHolderName || profile.name || ""} placeholder="e.g. John Doe" className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
                       </div>
                       <div className="flex flex-col space-y-2">
                           <Label className="text-[12px] font-[700] text-[#374151]">Bank Account Number</Label>
-                          <Input readOnly defaultValue={bankDetails.bankAccountNumber || "1234 5678 9012"} className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
+                          <Input defaultValue={bankDetails.bankAccountNumber || ""} placeholder="e.g. 1234 5678 9012" className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
                       </div>
                       <div className="flex flex-col space-y-2">
                           <Label className="text-[12px] font-[700] text-[#374151]">IFSC Code</Label>
-                          <Input readOnly defaultValue={bankDetails.ifscCode || "SBIN0001234"} className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
+                          <Input defaultValue={bankDetails.ifscCode || ""} placeholder="e.g. SBIN0001234" className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
                       </div>
                   </div>
 
@@ -400,15 +400,15 @@ export default function ProfilePageClient() {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5 md:gap-6">
                       <div className="flex flex-col space-y-2">
                           <Label className="text-[12px] font-[700] text-[#374151]">UPI ID</Label>
-                          <Input readOnly defaultValue={bankDetails.upiId || "dharshan.m@upi"} className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
+                          <Input defaultValue={bankDetails.upiId || ""} placeholder="e.g. yourname@upi" className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
                       </div>
                       <div className="flex flex-col space-y-2">
                           <Label className="text-[12px] font-[700] text-[#374151]">Google Pay Number</Label>
-                          <Input readOnly defaultValue={bankDetails.googlePayNumber || "9876543210"} className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
+                          <Input defaultValue={bankDetails.googlePayNumber || ""} placeholder="e.g. 9876543210" className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
                       </div>
                       <div className="flex flex-col space-y-2">
                           <Label className="text-[12px] font-[700] text-[#374151]">PhonePe Number</Label>
-                          <Input readOnly defaultValue={bankDetails.phonePeNumber || "9876543210"} className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
+                          <Input defaultValue={bankDetails.phonePeNumber || ""} placeholder="e.g. 9876543210" className="h-[44px] rounded-[8px] border-[#D1D5DB] text-[#111827] bg-[#FFFFFF] focus-visible:border-[#22C55E] focus-visible:ring-1 focus-visible:ring-[#22C55E] shadow-sm font-[500]" />
                       </div>
                   </div>
               </div>
@@ -429,7 +429,7 @@ export default function ProfilePageClient() {
         </Card>
 
         {/* Bottom Info Card */}
-        <div className="bg-gradient-to-b from-[#F0FDF4] to-[#FFFFFF] rounded-[16px] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden border border-[#BBF7D0] shadow-sm">
+        <div className="bg-gradient-to-b from-[#F0FDF4] to-[#FFFFFF] rounded-[16px] p-6 md:p-8 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-visible border border-[#BBF7D0] shadow-sm">
             <div className="flex gap-4 relative z-10 max-w-md w-full">
                 <div className="h-12 w-12 rounded-full bg-[#DCFCE7] flex items-center justify-center shrink-0 text-[#15803D] shadow-sm border border-[#BBF7D0]">
                     <ShieldCheck className="h-6 w-6" strokeWidth={2} />

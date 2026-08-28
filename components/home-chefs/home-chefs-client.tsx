@@ -24,41 +24,27 @@ import type { KitchenData } from "@/hooks/useExploreKitchens";
 const STAR_RATING = [1, 2, 3, 4, 5];
 
 const heroHighlights = [
-  { icon: Heart, iconBg: "bg-[#FFEDD5]", iconColor: "text-[#F97316]", title: "Made with Love", desc: "Homemade with care" },
-  { icon: ShieldCheck, iconBg: "bg-[#DCFCE7]", iconColor: "text-[#15803D]", title: "Hygienic & Safe", desc: "Verified home kitchens" },
-  { icon: Leaf, iconBg: "bg-[#DCFCE7]", iconColor: "text-[#15803D]", title: "Support Local", desc: "Empower homemakers" },
+  { icon: Heart, iconBg: "bg-[#FFF7ED]", iconColor: "text-[#EA580C]", title: "Made with Love", desc: "Homemade with care" },
+  { icon: ShieldCheck, iconBg: "bg-[#F0FDF4]", iconColor: "text-[#166534]", title: "Hygienic & Safe", desc: "Verified home kitchens" },
+  { icon: Leaf, iconBg: "bg-[#F0FDF4]", iconColor: "text-[#166534]", title: "Support Local", desc: "Empower homemakers" },
 ];
 
-type CuisineFilter = "all" | string;
-type MealFilter = "all" | "veg" | "non-veg";
-type SlotFilter = "all" | "MORNING" | "LUNCH" | "EVENINGSNACKS" | "DINNER";
-type RatingFilter = "all" | "4+";
-type SortOption = "recommended" | "rating";
-
-const PAGE_SIZE = 15;
+import {
+  useHomeChefsFilters,
+  useHomeChefsActions,
+  useHomeChefsQuery,
+  type CuisineFilter,
+  type MealFilter,
+  type SlotFilter,
+  type RatingFilter,
+  type SortOption
+} from "@/stores/homeChefsStore";
 
 export function HomeChefsClient() {
-  const [search, setSearch] = useState("");
-  const [cuisine, setCuisine] = useState<CuisineFilter>("all");
-  const [mealType, setMealType] = useState<MealFilter>("all");
-  const [availability, setAvailability] = useState<SlotFilter>("all");
-  const [rating, setRating] = useState<RatingFilter>("all");
-  const [sort, setSort] = useState<SortOption>("recommended");
+  const { search, cuisine, mealType, availability, rating, sort } = useHomeChefsFilters();
+  const { setSearch, setCuisine, setMealType, setAvailability, setRating, setSort, resetFilters } = useHomeChefsActions();
 
-  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useInfiniteQuery<{ data: KitchenData[]; nextCursor: string | null }>({
-    queryKey: ["home-chefs"],
-    queryFn: async ({ pageParam }) => {
-      const params = new URLSearchParams({ limit: String(PAGE_SIZE) });
-      if (pageParam) params.set("cursor", pageParam as string);
-      const res = await fetch(`/api/kitchen/explore?${params}`, { cache: "no-store" });
-      if (!res.ok) throw new Error("Failed to load home chefs");
-      return res.json();
-    },
-    initialPageParam: null as string | null,
-    getNextPageParam: (lastPage) => lastPage.nextCursor,
-    staleTime: 60_000,
-    refetchOnWindowFocus: true,
-  });
+  const { data, isLoading, hasNextPage, fetchNextPage, isFetchingNextPage } = useHomeChefsQuery();
 
   const chefs = useMemo(() => {
     const seen = new Set<string>();
@@ -161,7 +147,7 @@ export function HomeChefsClient() {
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] pb-12">
-      <div className="container mx-auto px-4 lg:px-8 py-6">
+      <div className="container mx-auto px-4 lg:px-8 pt-2 pb-6 lg:py-6">
 
         {/* Breadcrumb */}
         <div className="flex items-center text-[13px] mb-5">
@@ -171,43 +157,43 @@ export function HomeChefsClient() {
         </div>
 
         {/* Hero Section */}
-        <div className="relative rounded-2xl overflow-hidden bg-gradient-to-r from-[#FFFFFF] to-[#FFF7ED] shadow-[0_12px_40px_rgba(0,0,0,0.06)] mb-8 flex flex-col md:flex-row items-center border border-[#FAFAFA]">
-          <div className="flex-1 p-8 md:p-12 z-10">
-            <h1 className="text-4xl md:text-[42px] font-bold text-[#166534] mb-3 tracking-tight">Home Chefs</h1>
-            <p className="text-[#6B7280] text-[15px] max-w-xl mb-10 leading-relaxed">
-              Discover talented home chefs who cook with love and passion.
-              <br className="hidden md:block" />
-              Support local homemakers and enjoy homemade meals.
-            </p>
+        <div className="relative bg-[#FFFAF3] rounded-2xl border border-[#F2E8DF] mb-12 flex flex-col lg:flex-row min-h-[160px] lg:min-h-[140px] xl:min-h-[140px] shadow-sm mt-2">
+          {/* Left Side Content */}
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between w-full px-6 py-8 lg:py-0 lg:pl-10 lg:pr-[240px] xl:pr-[300px] h-auto lg:h-[140px] gap-6 lg:gap-4 xl:gap-8">
+            {/* Title & Subtitle */}
+            <div className="text-center lg:text-left shrink-0 lg:max-w-[260px] xl:max-w-[320px]">
+              <h1 className="text-[28px] lg:text-[32px] xl:text-[36px] font-extrabold text-[#064E3B] mb-1.5 tracking-tight whitespace-nowrap">Home Chefs</h1>
+              <p className="text-[#4B5563] text-[12px] lg:text-[13px] leading-[1.6]">
+                Discover talented home chefs who cook with love and passion. Support local homemakers and enjoy homemade meals.
+              </p>
+            </div>
 
-            <div className="flex flex-col sm:flex-row gap-6 md:gap-10">
+            {/* Highlights */}
+            <div className="flex flex-col sm:flex-row flex-nowrap items-center justify-center lg:justify-end gap-5 sm:gap-4 xl:gap-8 shrink-0">
               {heroHighlights.map((item) => (
                 <div key={item.title} className="flex items-center gap-3">
-                  <div className={`w-11 h-11 rounded-full ${item.iconBg} flex items-center justify-center shrink-0`}>
-                    <item.icon className={`w-5 h-5 ${item.iconColor}`} />
+                  <div className={`w-12 h-12 lg:w-11 lg:h-11 xl:w-12 xl:h-12 rounded-full ${item.iconBg} flex items-center justify-center shrink-0`}>
+                    <item.icon className={`w-[20px] h-[20px] xl:w-[22px] xl:h-[22px] ${item.iconColor}`} strokeWidth={1.5} />
                   </div>
-                  <div>
-                    <h4 className="font-bold text-[#166534] text-[13px] leading-tight mb-0.5">{item.title}</h4>
-                    <p className="text-[#6B7280] text-[11px]">{item.desc}</p>
+                  <div className="text-left">
+                    <h4 className="font-bold text-[#064E3B] text-[13px] xl:text-[14px] leading-tight mb-0.5">{item.title}</h4>
+                    <p className="text-[#6B7280] text-[11px] xl:text-[12px] leading-tight whitespace-nowrap">{item.desc}</p>
                   </div>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="w-full md:w-5/12 relative h-[250px] md:h-[320px] mt-4 md:mt-0 flex items-end justify-end">
-            <div className="absolute inset-0 right-0 overflow-hidden">
-              <div className="absolute right-0 bottom-0 w-[90%] md:w-full h-full flex items-end justify-end pr-8 md:pr-12">
-                <Image
-                  src="/hero/hero-women-chef.webp"
-                  alt="Home Chef"
-                  width={380}
-                  height={380}
-                  className="object-contain object-bottom drop-shadow-xl max-h-full w-auto"
-                  priority
-                />
-              </div>
-            </div>
+          {/* Right Side Image Layer */}
+          <div className="w-full lg:w-auto h-[200px] lg:h-full relative mt-auto lg:absolute lg:right-0 lg:bottom-0 pointer-events-none flex items-end justify-center lg:justify-end">
+            <Image
+              src="/hero/hero-women-chef.webp"
+              alt="Home Chef"
+              width={340}
+              height={340}
+              className="object-contain object-bottom drop-shadow-md h-[220px] lg:h-[160px] xl:h-[180px] w-auto max-w-full lg:mr-2 xl:mr-8 lg:translate-y-[8px]"
+              priority
+            />
           </div>
         </div>
 
@@ -298,23 +284,18 @@ export function HomeChefsClient() {
               </Select>
             </div>
 
-            <div className="flex items-end">
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSearch("");
-                  setCuisine("all");
-                  setMealType("all");
-                  setAvailability("all");
-                  setRating("all");
-                  setSort("recommended");
-                }}
-                className="h-[42px] bg-[#FFFFFF] border-[#BBF7D0] text-[#166534] hover:bg-[#F0FDF4] hover:border-[#86EFAC] rounded-lg px-5 gap-2 font-semibold text-[13px] transition-colors"
-              >
-                <SlidersHorizontal className="w-4 h-4 text-[#15803D]" />
-                {hasActiveFilters ? "Clear" : "Filters"}
-              </Button>
-            </div>
+            {hasActiveFilters && (
+              <div className="flex items-end">
+                <Button
+                  variant="outline"
+                  onClick={resetFilters}
+                  className="h-[42px] bg-[#FFFFFF] border-[#BBF7D0] text-[#166534] hover:bg-[#F0FDF4] hover:border-[#86EFAC] rounded-lg px-5 gap-2 font-semibold text-[13px] transition-colors"
+                >
+                  <SlidersHorizontal className="w-4 h-4 text-[#15803D]" />
+                  Clear Filters
+                </Button>
+              </div>
+            )}
           </div>
         </div>
 
@@ -331,7 +312,7 @@ export function HomeChefsClient() {
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
               {topRatedChefs.map((chef) => (
                 <ChefCard key={`top-${chef.id}`} chef={chef} />
               ))}
@@ -380,7 +361,7 @@ export function HomeChefsClient() {
                         width: "100%",
                         transform: `translateY(${virtualRow.start}px)`,
                       }}
-                      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 pb-4"
+                      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-4"
                     >
                       {rowChefs.map((chef) => (
                         <ChefCard key={`all-${chef.id}`} chef={chef} />
@@ -423,14 +404,14 @@ export function HomeChefsClient() {
 }
 
 function ChefCard({ chef }: { chef: KitchenData }) {
-  const imageUrl = chef.imageUrl ?? "/hero/hero-women-chef.webp";
+  const imageUrl = chef.profileImage ?? chef.imageUrl ?? "/kitchen/profile.webp";
   const rating = chef.avgRating ?? 0;
   const cuisine = chef.cuisineTags?.[0] ?? "Home Kitchen";
-  const exp = `${(chef.id.length % 15) + 5}+ Yrs Exp.`;
+  const exp = `${((chef.id || "").length % 15) + 5}+ Yrs Exp.`;
 
   return (
     <Link href={`/kitchens/${chef.slug}`} className="block h-full">
-      <Card className="rounded-xl border border-[#E5E7EB] shadow-[0_2px_10px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:border-[#BBF7D0] transition-all duration-300 overflow-hidden bg-[#FFFFFF] h-full group">
+      <Card className="p-0 rounded-xl border border-[#E5E7EB] shadow-[0_2px_10px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:border-[#BBF7D0] transition-all duration-300 overflow-hidden bg-[#FFFFFF] h-full group">
         <CardContent className="p-3 flex gap-3 h-full items-center">
           <div className="w-[84px] h-[104px] relative rounded-lg overflow-hidden shrink-0 bg-gray-50">
             <Image
@@ -457,7 +438,7 @@ function ChefCard({ chef }: { chef: KitchenData }) {
 
             <div className="mt-auto flex items-center">
               <Badge variant="secondary" className="bg-[#DCFCE7] hover:bg-[#DCFCE7] border-none px-1.5 py-[3px] rounded-[4px] gap-[3px] flex items-center">
-                <Star className="w-[9px] h-[9px] text-[#F97316] fill-[#F97316]" />
+                <Star className="w-[9px] h-[9px] text-[#166534] fill-[#166534]" />
                 <span className="text-[#166534] font-bold text-[10px] leading-none mt-[1px]">{rating.toFixed(1)}</span>
                 <span className="text-[#6B7280] font-normal text-[10px] leading-none mt-[1px]">({chef.totalReviews})</span>
               </Badge>

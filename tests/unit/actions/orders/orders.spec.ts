@@ -9,6 +9,8 @@ const mockPrisma = vi.hoisted(() => ({
   },
   deliverySlot: { findFirst: vi.fn() },
   deliveryPartner: { findMany: vi.fn(), findFirst: vi.fn(), update: vi.fn() },
+  orderItem: { findMany: vi.fn() },
+  orderStatusHistory: { create: vi.fn() },
   $transaction: vi.fn(),
 }))
 
@@ -31,6 +33,7 @@ describe("orders", () => {
         {
           id: "order-1", status: "CONFIRMED", totalAmount: 500, createdAt: now,
           serviceDate: now, timeSlot: "MORNING",
+          statusHistory: [],
           orderItems: [
             {
               id: "oi1", quantity: 2, unitPrice: 100, kitchenPartnerId: "kp1",
@@ -71,9 +74,12 @@ describe("orders", () => {
     it("returns order with delivery partner and location data", async () => {
       mockPrisma.order.findUnique.mockResolvedValue({
         id: "order-1", status: "READYFORPICKUP", totalAmount: 500,
+        discountAmount: 0,
         deliveryStatus: null,
         deliveryAssignment: { status: "ASSIGNED" },
         createdAt: new Date(),
+        serviceDate: new Date(),
+        statusHistory: [],
         deliveryPartner: { id: "dp1", user: { name: "Rider One" } },
         deliveryLocations: [{ latitude: 12.36, longitude: 56.80, updatedAt: new Date() }],
         orderItems: [
@@ -112,8 +118,9 @@ describe("orders", () => {
         orderItems: [{ id: "oi1", kitchenPartnerId: "kp1", menuItem: { name: "Dosa" }, quantity: 2 }],
         user: { phoneNumber: "8888888888" },
       })
-      mockPrisma.deliverySlot.findFirst.mockResolvedValue({ id: "slot1", cutoffTime: "18:00" })
-      mockPrisma.deliveryPartner.findMany.mockResolvedValue([])
+      mockPrisma.orderItem.findMany.mockResolvedValue([
+        { kitchenPartnerId: "kp1" },
+      ])
 
       const result = await updateOrderStatus("order-1", "PREPARING")
 
