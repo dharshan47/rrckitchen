@@ -1362,7 +1362,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
               <div className="p-5 border-b border-[#E9E7E2]">
                 <h2 className="text-lg font-bold text-[#1F1F1F]">SEO & Settings</h2>
                 <p className="text-sm text-[#787878] mt-1">
-                  Search engine metadata and category page behavior
+                  Search engine metadata and category page behaviour
                 </p>
               </div>
               <div className="p-5 space-y-5">

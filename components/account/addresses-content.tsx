@@ -200,7 +200,7 @@ export function AddressesContent() {
             </div>
             <div className="flex items-center gap-3 bg-white/70 backdrop-blur-md rounded-full p-2 px-4 border border-white/50 shadow-[0_4px_12px_rgba(20,30,30,0.05)]">
                <MapPin className="w-4 h-4 md:w-5 md:h-5 text-[#277C36]" />
-               <span className="text-[12px] md:text-[13px] font-bold text-[#1E293B]">Deliver to your favorite places</span>
+               <span className="text-[12px] md:text-[13px] font-bold text-[#1E293B]">Deliver to your favourite places</span>
             </div>
           </div>
         </div>

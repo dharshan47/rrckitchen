@@ -179,7 +179,7 @@ export function PaymentsContent() {
               Payment Methods
             </h1>
             <p className="text-[14px] md:text-[16px] font-medium text-[#475569]">
-              Pay securely with your favorite option
+              Pay securely with your favourite option
             </p>
           </div>
 

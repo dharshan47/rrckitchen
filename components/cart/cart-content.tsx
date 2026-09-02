@@ -399,7 +399,7 @@ export function CartContent() {
           <ShoppingBag className="h-16 w-16 text-muted-foreground/40" />
           <div>
             <h1 className="text-2xl font-bold">Login to view cart</h1>
-            <p className="mt-2 text-sm text-muted-foreground">Please log in to see your cart and place orders.</p>
+            <p className="mt-2 text-sm text-muted-foreground">Please login to see your cart and place orders.</p>
           </div>
           <Button asChild>
             <Link href="/login">Login</Link>

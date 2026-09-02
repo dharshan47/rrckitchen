@@ -152,7 +152,7 @@ export function InfoKitchenTab({ kitchen: propKitchen }: Props) {
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2.5 text-[#555555] font-medium">
-                <CalendarCheck className="w-4 h-4 text-[#087A36]" strokeWidth={2} /> FSSAI Valid Until
+                <CalendarCheck className="w-4 h-4 text-[#087A36]" strokeWidth={2} /> FSSAI Valid Till
               </div>
               <span className="font-semibold text-[#171717]">
                 {kitchen.fssaiValidTill

@@ -129,7 +129,7 @@ export function SupportContent() {
           <Ticket className="h-16 w-16 text-[#9CA3AF]" />
           <div>
             <h1 className="text-2xl font-bold">Login to access Support Center</h1>
-            <p className="mt-2 text-sm text-[#4B5563]">Please log in to create and track support tickets.</p>
+            <p className="mt-2 text-sm text-[#4B5563]">Please login to create and track support tickets.</p>
           </div>
           <Button asChild className="bg-[#087A35] hover:bg-[#066B2E] text-white">
             <Link href="/login">Login</Link>

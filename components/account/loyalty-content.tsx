@@ -546,7 +546,7 @@ export function LoyaltyContent() {
                       </span>
                     </div>
                     <div className="flex flex-col border-l border-gray-200 pl-4 pr-2">
-                      <span className="text-[9px] text-gray-400 font-medium mb-0.5">Valid until</span>
+                      <span className="text-[9px] text-gray-400 font-medium mb-0.5">Valid till</span>
                       <span className="text-[11px] text-gray-700 font-bold mb-1.5">{format(new Date(coupon.expiresAt), "d MMM yyyy")}</span>
                       <span className={`${status.cls} text-[9px] font-extrabold px-2 py-0.5 rounded uppercase w-fit`}>{status.label}</span>
                     </div>
