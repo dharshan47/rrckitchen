@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ArrowLeft, HelpCircle } from "lucide-react";
+import { ArrowLeft, HelpCircle, MessageCircle } from "lucide-react";
+import { useLiveChatStore } from "@/stores";
 import type { LucideIcon } from "lucide-react";
 import type { ReactNode } from "react";
 
@@ -16,6 +17,7 @@ export interface HelpTab {
 
 export function HelpContent({ tabs }: { tabs: HelpTab[] }) {
   const router = useRouter();
+  const openChat = useLiveChatStore((state) => state.openChat);
 
   return (
     <main className="min-h-screen bg-background text-foreground pb-20">
@@ -80,6 +82,13 @@ export function HelpContent({ tabs }: { tabs: HelpTab[] }) {
           ))}
         </Tabs>
       </div>
+
+      <Button
+        className="fixed bottom-6 right-6 h-14 w-14 rounded-full shadow-[0_6px_20px_rgba(8,122,54,0.22)] bg-[#087A36] hover:bg-[#06652D] text-white z-40"
+        onClick={openChat}
+      >
+        <MessageCircle className="h-6 w-6" />
+      </Button>
     </main>
   );
 }

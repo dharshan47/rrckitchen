@@ -24,6 +24,7 @@ import {
 
 type OrderRow = {
   id: string
+  publicCode: string | null
   itemName: string
   timeSlot?: string | null
   quantity: number
@@ -339,7 +340,9 @@ export default function OrdersPageClient() {
                         
                         {/* Column 1: Meta Info */}
                         <div className="flex-none lg:w-[130px] flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-[#EEF0F2] pb-3 lg:pb-0 lg:pr-3">
-                          <div className="text-[14px] font-[600] text-[#18212B] leading-tight">#{order.id.slice(0, 8)}</div>
+                          <div className="text-[14px] font-[600] text-[#18212B] leading-tight">
+                            {order.publicCode ?? `#${order.id.slice(0, 8).toUpperCase()}`}
+                          </div>
                           <div className="text-[12px] text-[#5F6975] flex items-center gap-1.5 mt-2">
                             <CalendarDays className="h-[13px] w-[13px] text-[#68727D]" /> {order.date || "—"}
                           </div>

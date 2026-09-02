@@ -28,7 +28,7 @@ export function RelatedKitchensGrid({ kitchenName, kitchens, title }: Props) {
         </Link>
       </div>
       
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 px-1">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-6 px-1">
         {displayKitchens.map((kitchen) => {
           // Map to KitchenData
           const kitchenData: KitchenData = {
@@ -38,6 +38,7 @@ export function RelatedKitchensGrid({ kitchenName, kitchens, title }: Props) {
             avgRating: kitchen.avgRating,
             totalReviews: kitchen.totalReviews,
             imageUrl: kitchen.imageUrl,
+            coverImageUrl: kitchen.coverImageUrl,
             customOfferText: null,
             cuisineTags: kitchen.cuisineTags,
             items: [],

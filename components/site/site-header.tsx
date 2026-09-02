@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useEffect } from "react";
-import { User, ShoppingCart, Home, LayoutGrid, MapPin, ChevronDown, LogOut, Package, Bell , HelpCircle, Search, Store, ClipboardList } from "lucide-react";
+import { User, ShoppingCart, Home, LayoutGrid, MapPin, ChevronDown, LogOut, Package, HelpCircle, Search, Store, ClipboardList, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCartStore, useMenuDeliveryAddress } from "@/stores";
 import { useSession, signOut } from "@/lib/auth-client";
@@ -40,32 +40,21 @@ export function SiteHeader() {
   const { data: session } = useSession();
   const isLoggedIn = !!session?.user;
 
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const timeout = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timeout);
+  }, []);
+
   const cartHref = isLoggedIn ? "/cart" : "/login";
 
   const isHomePage = pathname === "/";
-  const isAccountPage = pathname.startsWith("/account/");
-  const isMenuDetailPage = pathname.startsWith("/menu/");
   const isSearchPage = pathname === "/search";
   const isCartPage = pathname === "/cart";
   const isHelpPage = pathname === "/help";
   const isSupportPage = pathname === "/support";
   const isCategoriesPage = pathname.startsWith("/categories");
-  const hideNav = isMenuDetailPage || isAccountPage || isHelpPage || isSupportPage || isSearchPage || isCategoriesPage;
-
-  const [categoryFilterActive, setCategoryFilterActive] = useState(false);
-  const [notifGranted, setNotifGranted] = useState(() => {
-    if (typeof Notification !== "undefined") {
-      return Notification.permission === "granted";
-    }
-    return false;
-  });
-
-  const requestNotification = async () => {
-    if (typeof Notification === "undefined") return;
-    if (Notification.permission === "granted") return;
-    const permission = await Notification.requestPermission();
-    setNotifGranted(permission === "granted");
-  };
+  const hideNav = isHelpPage || isSupportPage || isSearchPage;
 
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -76,14 +65,6 @@ export function SiteHeader() {
     window.addEventListener("scroll", handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  useEffect(() => {
-    const check = () => setCategoryFilterActive(document.body.dataset.categoryFilterActive === "true");
-    check();
-    const observer = new MutationObserver(check);
-    observer.observe(document.body, { attributes: true, attributeFilter: ["data-category-filter-active"] });
-    return () => observer.disconnect();
   }, []);
 
   const navLinks = [
@@ -171,8 +152,7 @@ export function SiteHeader() {
       <header
         className={cn(
           "sticky top-0 z-50 w-full transition-all duration-300 bg-white",
-          isScrolled ? "shadow-md border-b border-transparent" : "border-b border-[#EEEEEE]",
-          categoryFilterActive ? "hidden md:block" : ""
+          isScrolled ? "shadow-md border-b border-transparent" : "border-b border-[#EEEEEE]"
         )}
       >
         {/* Desktop navbar */}
@@ -201,7 +181,7 @@ export function SiteHeader() {
                     <div className="flex flex-col justify-center pt-0.5">
                       <span className="text-[12px] text-[#6B7280] font-medium leading-none mb-1">Deliver to</span>
                       <div className="flex items-center gap-1 text-[#111111] group-hover:text-[#F04E00] transition-colors">
-                        <span className="text-[14px] font-bold truncate max-w-[200px] xl:max-w-[260px] leading-none">{deliveryAddress || "Select Location"}</span>
+                        <span className="text-[14px] font-bold truncate max-w-[200px] xl:max-w-[260px] leading-none">{mounted && deliveryAddress ? deliveryAddress : "Select Location"}</span>
                         <ChevronDown className="h-[15px] w-[15px]" strokeWidth={2.5} />
                       </div>
                     </div>
@@ -248,7 +228,7 @@ export function SiteHeader() {
 
                   <Link href={cartHref} className="flex items-center justify-center relative group" aria-label="Cart">
                     <ShoppingCart className="h-6 w-6 text-[#111111] group-hover:text-[#F04E00] transition-colors" strokeWidth={2} />
-                    {cartCount > 0 ? (
+                    {mounted && cartCount > 0 ? (
                       <span className="absolute -top-1.5 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#F04E00] text-[10px] font-bold text-white px-1 shadow-sm">
                         {cartCount}
                       </span>
@@ -289,9 +269,20 @@ export function SiteHeader() {
           <div className="lg:hidden px-4 py-3.5 bg-white">
             <div className="flex items-center justify-between">
               {/* Logo Mobile */}
-              <Link href="/" className="flex flex-col items-start leading-none group">
-                <Image src="/logo.webp" alt="RRC Kitchen" width={180} height={55} className="h-[46px] w-auto group-hover:opacity-90 transition-opacity" priority />
-              </Link>
+              {pathname === "/account/profile" ? (
+                <div className="flex items-center gap-3">
+                  <button onClick={() => window.dispatchEvent(new CustomEvent("toggle-profile-sidebar"))} className="flex items-center justify-center text-[#111111]">
+                    <Menu className="h-6 w-6" strokeWidth={2} />
+                  </button>
+                  <Link href="/" className="flex flex-col items-start leading-none group">
+                    <Image src="/logo.webp" alt="RRC Kitchen" width={140} height={42} className="h-[36px] w-auto group-hover:opacity-90 transition-opacity" priority />
+                  </Link>
+                </div>
+              ) : (
+                <Link href="/" className="flex flex-col items-start leading-none group">
+                  <Image src="/logo.webp" alt="RRC Kitchen" width={180} height={55} className="h-[46px] w-auto group-hover:opacity-90 transition-opacity" priority />
+                </Link>
+              )}
 
               <div className="flex items-center gap-4 sm:gap-5 pr-1">
                 <button onClick={() => setLocationOpen(true)} className="flex items-center justify-center text-[#F04E00]">
@@ -305,7 +296,7 @@ export function SiteHeader() {
 
                 <Link href={cartHref} className="flex items-center justify-center relative text-[#111111]">
                   <ShoppingCart className="h-[22px] w-[22px]" strokeWidth={2} />
-                  {cartCount > 0 ? (
+                  {mounted && cartCount > 0 ? (
                     <span className="absolute -top-1.5 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#F04E00] text-[10px] font-bold text-white px-1 shadow-sm">
                       {cartCount}
                     </span>

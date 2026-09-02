@@ -10,6 +10,7 @@ export interface KitchenData {
   avgRating: number | null;
   totalReviews: number;
   imageUrl: string | null;
+  coverImageUrl :string | null;
   customOfferText: string | null;
   cuisineTags: string[];
   locality?: string | null;

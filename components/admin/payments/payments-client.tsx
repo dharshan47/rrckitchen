@@ -680,7 +680,7 @@ export default function PaymentsClient() {
                                   <div className="flex items-start gap-3">
                                     <div className="mt-0.5 p-1 bg-white border border-[#E2E8F0] rounded"><CreditCard className="h-3.5 w-3.5 text-[#64748B]" /></div>
                                     <div>
-                                      <p className="text-[13px] font-semibold text-[#0F172A] truncate max-w-[120px]" title={p.orderId}>{shortId(p.orderId)}</p>
+                                      <p className="text-[13px] font-semibold text-[#0F172A] truncate max-w-[120px]" title={p.orderPublicCode ?? p.orderId}>{p.orderPublicCode ?? shortId(p.orderId)}</p>
                                       <p className="text-[12px] text-[#64748B] mt-0.5">{formatDate(p.createdAt)}</p>
                                     </div>
                                   </div>
@@ -921,7 +921,7 @@ export default function PaymentsClient() {
                               <CalendarDays className="h-4 w-4 text-[#64748B]" />
                             </div>
                             <div>
-                              <p className="text-[13px] font-semibold text-[#0F172A]">{shortId(p.orderId)}</p>
+                              <p className="text-[13px] font-semibold text-[#0F172A]">{p.orderPublicCode ?? shortId(p.orderId)}</p>
                               <p className="text-[11px] text-[#64748B] mt-0.5">{formatDate(refund?.processedAt ?? refund?.initiatedAt ?? p.createdAt)}</p>
                             </div>
                           </div>
@@ -1048,7 +1048,7 @@ export default function PaymentsClient() {
                 </div>
                 <div className="col-span-2">
                   <p className="text-[11px] font-medium text-[#64748B]">Order ID</p>
-                  <p className="text-[13px] font-semibold text-[#0F172A] mt-1 break-all">{selectedPayment.orderId}</p>
+                  <p className="text-[13px] font-semibold text-[#0F172A] mt-1 break-all">{selectedPayment.orderPublicCode ?? selectedPayment.orderId}</p>
                 </div>
                 <div className="col-span-2">
                   <p className="text-[11px] font-medium text-[#64748B]">Payment ID</p>

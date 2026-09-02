@@ -1,5 +1,6 @@
 import { PrismaClient } from "./generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+export { Prisma } from "./generated/prisma/client";
 
 if (!process.env.DATABASE_URL) {
   throw new Error(

@@ -23,6 +23,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { CloudinaryUpload } from "@/components/cloudinary/cloudinary-upload"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
+import { LiveChatWidget } from "@/components/chat/live-chat-widget"
 
 interface UploadedImage {
   secure_url: string
@@ -560,7 +561,7 @@ export default function SupportPageClient() {
                             
                             <div className="flex items-center justify-between border-t border-[#F0F1F2] pt-3.5 mt-1.5">
                                <div className="flex items-center gap-2.5 flex-wrap">
-                                  <div className="bg-[#F7F8F9] px-2.5 py-1 rounded-full text-[11px] text-[#747780] font-[600]">Order: #{ticket.orderId || "RRC29182"}</div>
+                                  <div className="bg-[#F7F8F9] px-2.5 py-1 rounded-full text-[11px] text-[#747780] font-[600]">Order: {ticket.order?.publicCode ?? ticket.publicCode ?? ticket.orderId ?? "-"}</div>
                                   <div className="bg-[#F7F8F9] px-2.5 py-1 rounded-full text-[11px] text-[#747780] font-[600]">Created: {formatFullDate(ticket.createdAt)}</div>
                                </div>
                                
@@ -698,6 +699,7 @@ export default function SupportPageClient() {
         </div>
 
       </div>
+      <LiveChatWidget />
     </div>
   )
 }

@@ -12,6 +12,7 @@ export interface NearbyKitchen {
   avgRating: number | null
   totalReviews: number
   imageUrl: string | null
+  coverImageUrl: string | null
   cuisineTags: string[]
   distanceKm: number | null | undefined
 }
@@ -106,15 +107,14 @@ export async function getNearbyKitchens(
           ? Math.round((k.reviews.reduce((s, r) => s + r.rating, 0) / k.reviews.length) * 10) / 10
           : null
 
-      const firstItemPhoto = k.menus[0]?.menuItems[0]?.photos[0]?.imageUrl
-
       return {
         id: k.id,
         slug: k.slug,
         displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
         avgRating,
         totalReviews: k._count.reviews,
-        imageUrl: firstItemPhoto,
+        coverImageUrl: k.kitchenAlias?.coverImageUrl ?? null,
+        imageUrl: k.kitchenAlias?.imageUrl ?? null,
         cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
         distanceKm: kitchenDistances.get(k.id),
       }

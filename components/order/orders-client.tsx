@@ -1,6 +1,7 @@
 "use client"
 
 import { useCallback } from "react"
+import Link from "next/link"
 import { useSession } from "@/lib/auth-client"
 import { useQueryClient } from "@tanstack/react-query"
 import { OrderCard, OrderCardSkeleton } from "./order-card"
@@ -11,7 +12,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { cn } from "@/lib/utils"
 import { useAblyOrderListChannels } from "@/hooks/useAblySubscribe"
-import { ChefHat, ShieldCheck, Clock, ShoppingBag, RotateCcw, Briefcase } from "lucide-react"
+import { ChefHat, ShieldCheck, Clock, ShoppingBag, RotateCcw, Briefcase, ChevronRight } from "lucide-react"
 import {
   useUserOrdersListQuery,
   useUserOrdersList,
@@ -124,6 +125,13 @@ export function OrdersClient() {
   return (
     <div className="container max-w-6xl mx-auto px-4 py-6 md:py-10">
       <div className="mb-8">
+        <div className="flex items-center gap-2 text-sm text-[#6B7280] mb-4">
+          <Link href="/" className="hover:text-[#F97316] transition-colors">Home</Link>
+          <ChevronRight className="h-4 w-4 text-[#9CA3AF]" />
+          <Link href="/account" className="hover:text-[#F97316] transition-colors">Account</Link>
+          <ChevronRight className="h-4 w-4 text-[#9CA3AF]" />
+          <span className="text-[#111827] font-medium">Orders</span>
+        </div>
         <h1 className="text-2xl md:text-[28px] font-bold text-[#111827]">My Orders</h1>
         <p className="text-[14px] text-[#6B7280] mt-1.5 font-medium">
           Track and manage all your orders in one place.

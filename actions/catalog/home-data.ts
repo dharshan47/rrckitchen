@@ -12,6 +12,7 @@ export interface HomePageData {
     avgRating: number | null;
     totalReviews: number;
     imageUrl: string | null;
+    coverImageUrl: string | null;
     cuisineTags: string[];
     timeSlots: string[];
     estimatedPrepTime: number | null;
@@ -94,7 +95,6 @@ async function _getKitchenData() {
           ? k.reviews.reduce((s, r) => s + r.rating, 0) / k.reviews.length
           : null;
       const allItems = k.menus.flatMap((m) => m.menuItems);
-      const firstItemPhoto = allItems.find((i) => i.photos.length > 0)?.photos[0]?.imageUrl;
       const timeSlots = [...new Set(allItems.map((i) => i.timeSlot))];
       const cuisineTags = k.kitchenCategories.map((kc) => toTitleCase(kc.category.name));
       return {
@@ -103,7 +103,8 @@ async function _getKitchenData() {
         displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
         avgRating: avgRating ? Math.round(avgRating * 10) / 10 : null,
         totalReviews: k._count.reviews,
-        imageUrl: firstItemPhoto ?? null,
+        imageUrl: k.kitchenAlias?.imageUrl ?? null,
+        coverImageUrl: k.kitchenAlias?.coverImageUrl ?? null,
         cuisineTags,
         timeSlots,
         estimatedPrepTime: k.estimatedPrepTime,
@@ -149,7 +150,7 @@ export async function getRecentOrderKitchens(userId?: string) {
   });
 
   const seen = new Set<string>();
-  const kitchens: Array<{ id: string; slug: string; displayName: string; imageUrl: string | null }> = [];
+  const kitchens: Array<{ id: string; slug: string; displayName: string; imageUrl: string | null; coverImageUrl: string | null }> = [];
   for (const order of recentOrders) {
     const kp = order.orderItems[0]?.kitchenPartner;
     if (kp && !seen.has(kp.id)) {
@@ -158,7 +159,8 @@ export async function getRecentOrderKitchens(userId?: string) {
         id: kp.id,
         slug: kp.slug,
         displayName: toTitleCase(kp.kitchenAlias?.displayName ?? kp.slug),
-        imageUrl: null,
+        imageUrl: kp.kitchenAlias?.imageUrl ?? null,
+        coverImageUrl: kp.kitchenAlias?.coverImageUrl ?? null,
       });
     }
   }
@@ -342,6 +344,7 @@ export interface RelatedKitchen {
   avgRating: number | null;
   totalReviews: number;
   imageUrl: string | null;
+  coverImageUrl: string | null;
   cuisineTags: string[];
   timeSlots: string[];
   estimatedPrepTime: number | null;
@@ -392,7 +395,6 @@ async function _getRelatedKitchens(excludeKitchenId: string, cuisineTags: string
         ? Math.round((k.reviews.reduce((s, r) => s + r.rating, 0) / k.reviews.length) * 10) / 10
         : null;
     const allItems = k.menus.flatMap((m) => m.menuItems);
-    const firstItemPhoto = allItems.find((i) => i.photos.length > 0)?.photos[0]?.imageUrl;
     const timeSlots = [...new Set(allItems.map((i) => i.timeSlot))];
     const tags = k.kitchenCategories.map((kc) => toTitleCase(kc.category.name));
 
@@ -402,7 +404,8 @@ async function _getRelatedKitchens(excludeKitchenId: string, cuisineTags: string
       displayName: toTitleCase(k.kitchenAlias?.displayName ?? k.slug),
       avgRating,
       totalReviews: k._count.reviews,
-      imageUrl: firstItemPhoto ?? null,
+      imageUrl: k.kitchenAlias?.imageUrl ?? null,
+      coverImageUrl: k.kitchenAlias?.coverImageUrl ?? null,
       cuisineTags: tags,
       timeSlots,
       estimatedPrepTime: k.estimatedPrepTime,

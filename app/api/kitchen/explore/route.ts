@@ -111,8 +111,6 @@ export async function GET(request: Request) {
       const avgRating = k.avgRating ? Number(k.avgRating) : null;
 
       const allItems = k.menus.flatMap((m) => m.menuItems);
-      const firstItemPhoto =
-        allItems.find((i) => i.photos.length > 0)?.photos[0]?.imageUrl ?? null;
       const timeSlots = [...new Set(allItems.map((i) => i.timeSlot))];
       const cuisineTags = k.kitchenCategories.map((kc) =>
         toTitleCase(kc.category.name),
@@ -130,10 +128,8 @@ export async function GET(request: Request) {
         profileImage: k.kitchenAlias?.imageUrl ?? null,
         avgRating,
         totalReviews: k.totalReviews,
-        imageUrl:
-          k.kitchenAlias?.coverImageUrl ??
-          k.kitchenAlias?.imageUrl ??
-          firstItemPhoto,
+        coverImageUrl: k.kitchenAlias?.coverImageUrl ?? null,
+        imageUrl: k.kitchenAlias?.imageUrl ?? null,
         customOfferText: k.kitchenAlias?.customOfferText ?? null,
         cuisineTags,
         locality:

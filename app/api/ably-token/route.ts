@@ -2,7 +2,7 @@ import { getAblyRest } from "@/lib/ably/server"
 import { auth } from "@/lib/auth"
 import prisma from "@/lib/prisma"
 
-const CHANNEL_RE = /^(order|kitchen|deliveryPartner|user):[a-zA-Z0-9_-]+$/
+const CHANNEL_RE = /^(order|kitchen|deliveryPartner|user|live-chat):[a-zA-Z0-9_-]+$/
 
 function unauthorized() {
   return new Response("Unauthorized", { status: 401, headers: { "Cache-Control": "no-store" } })
@@ -89,6 +89,24 @@ export async function GET(req: Request) {
     // An order channel we couldn't look up (no permission to query) is rejected.
     const granted = new Set(orders.map((o) => o.id))
     if (orderIds.some((id) => !granted.has(id))) return errorResponse("Order not found", 404)
+  }
+
+  const liveChatChannels = [...channelNames].filter((c) => c.startsWith("live-chat:"))
+  if (liveChatChannels.length > 0) {
+    if (!user) return unauthorized()
+
+    const ticketIds = liveChatChannels.map((c) => c.slice("live-chat:".length))
+    const tickets = await prisma.supportTicket.findMany({
+      where: { id: { in: ticketIds } },
+      select: { id: true, userId: true },
+    })
+
+    const isAdmin = user.role === "admin" || user.role === "support" || user.role === "SUPPORTAGENT"
+
+    for (const ticket of tickets) {
+      if (ticket.userId !== user.id && !isAdmin) return forbidden()
+      capability[`live-chat:${ticket.id}`] = ["subscribe"]
+    }
   }
 
   const deliveryChannels = [...channelNames].filter((c) => c.startsWith("deliveryPartner:"))

@@ -118,44 +118,100 @@ function ReviewStars({ rating }: { rating: number }) {
 
 function MenuItemDetailSkeleton() {
   return (
-    <div className="min-h-screen bg-[#FDFDFD] pb-24 md:pb-10 animate-pulse">
+    <div className="min-h-screen bg-[#FDFDFD] pb-24 md:pb-10 font-sans">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="pt-1 pb-3">
-          <Skeleton className="h-4 w-64" />
+        {/* Breadcrumb */}
+        <div className="pt-1 pb-3 flex gap-2 items-center">
+          <Skeleton className="h-4 w-12 rounded" />
+          <Skeleton className="h-3.5 w-3.5 rounded-full" />
+          <Skeleton className="h-4 w-16 rounded" />
+          <Skeleton className="h-3.5 w-3.5 rounded-full" />
+          <Skeleton className="h-4 w-24 rounded" />
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <div className="lg:col-span-5 space-y-4">
-            <Skeleton className="aspect-video lg:aspect-square rounded-2xl" />
-            <div className="flex gap-3">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <Skeleton key={i} className="h-20 w-20 rounded-xl" />
+
+        {/* Top Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-12 gap-x-8 gap-y-10 mt-2">
+          
+          {/* Left Col - Images */}
+          <div className="lg:col-span-1 xl:col-span-5 flex flex-col gap-4">
+            <Skeleton className="w-full aspect-[3/2] rounded-[12px] md:rounded-[16px]" />
+            <div className="flex gap-2.5 overflow-x-auto py-1">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Skeleton key={i} className="w-[calc(16.666%-10px)] aspect-square rounded-[8px] flex-shrink-0" />
               ))}
             </div>
           </div>
-          <div className="lg:col-span-7 flex flex-col xl:flex-row gap-6">
-            <div className="flex-1 space-y-5">
-              <div className="space-y-2">
-                <Skeleton className="h-8 w-24" />
-                <Skeleton className="h-9 w-72" />
-              </div>
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-5/6" />
-              <div className="flex gap-2">
-                <Skeleton className="h-6 w-28 rounded-full" />
-                <Skeleton className="h-6 w-20 rounded-full" />
-                <Skeleton className="h-6 w-24 rounded-full" />
-              </div>
-              <Skeleton className="h-9 w-40" />
-              <Skeleton className="h-12 w-44 rounded-lg" />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
-                <Skeleton className="h-16 rounded-lg" />
-                <Skeleton className="h-16 rounded-lg" />
-                <Skeleton className="h-16 rounded-lg sm:col-span-2" />
-              </div>
+
+          {/* Middle Col - Details */}
+          <div className="lg:col-span-1 xl:col-span-4 flex flex-col">
+            <div className="flex items-center mb-4 gap-3">
+              <Skeleton className="h-[20px] w-12 rounded-[4px]" />
+              <Skeleton className="h-[14px] w-48 rounded" />
             </div>
-            <div className="w-full xl:w-80 shrink-0">
-              <Skeleton className="h-80 rounded-xl" />
+            
+            <Skeleton className="h-[42px] w-3/4 rounded mb-3" />
+            
+            <div className="flex flex-col gap-1.5 mb-5 pr-4">
+              <Skeleton className="h-[14px] w-full rounded" />
+              <Skeleton className="h-[14px] w-full rounded" />
+              <Skeleton className="h-[14px] w-4/5 rounded" />
             </div>
+
+            <div className="flex flex-wrap gap-2.5 mb-7">
+              <Skeleton className="h-[28px] w-24 rounded-[8px]" />
+              <Skeleton className="h-[28px] w-20 rounded-[8px]" />
+              <Skeleton className="h-[28px] w-28 rounded-[8px]" />
+            </div>
+
+            <div className="flex flex-col gap-1.5 mb-5">
+              <Skeleton className="h-[34px] w-32 rounded" />
+              <Skeleton className="h-[12px] w-24 rounded" />
+            </div>
+
+            <div className="flex items-center gap-3 mb-6">
+              <Skeleton className="h-[48px] w-[110px] rounded-[8px]" />
+              <Skeleton className="flex-1 h-[48px] rounded-[8px]" />
+            </div>
+
+            <Skeleton className="h-[52px] w-full rounded-[8px] mt-2 mb-6" />
+          </div>
+
+          {/* Right Col - Delivery Details */}
+          <div className="lg:col-span-2 xl:col-span-3 xl:pl-4 mt-2 lg:mt-6 xl:mt-0 flex flex-col">
+            <div className="hidden lg:flex items-center justify-between mb-4 w-full">
+              <Skeleton className="h-[28px] w-[120px] rounded-[5px]" />
+              <Skeleton className="h-[28px] w-[80px] rounded-[5px]" />
+            </div>
+            <div className="w-full mx-auto max-w-md xl:max-w-none">
+              <Skeleton className="h-[320px] w-full rounded-[12px]" />
+            </div>
+          </div>
+        </div>
+
+        {/* Feature Banner - Highlights */}
+        <Skeleton className="my-10 h-[88px] w-full rounded-[12px]" />
+
+        {/* Bottom Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-12 gap-8">
+          <div className="lg:col-span-2 xl:col-span-8 flex flex-col gap-8">
+            <div className="flex gap-8 border-b border-[#EEEEEE] pb-1">
+              <Skeleton className="h-[36px] w-24 rounded-none" />
+              <Skeleton className="h-[36px] w-24 rounded-none" />
+              <Skeleton className="h-[36px] w-24 rounded-none" />
+              <Skeleton className="h-[36px] w-24 rounded-none" />
+            </div>
+            <div className="flex flex-col lg:flex-row gap-8">
+              <div className="flex-1 lg:max-w-[40%] flex flex-col gap-3">
+                <Skeleton className="h-[24px] w-32 rounded" />
+                <Skeleton className="h-[14px] w-full rounded" />
+                <Skeleton className="h-[14px] w-full rounded" />
+                <Skeleton className="h-[14px] w-4/5 rounded" />
+              </div>
+              <Skeleton className="flex-1 h-[140px] rounded-[12px]" />
+            </div>
+          </div>
+          <div className="lg:col-span-1 xl:col-span-4 hidden lg:block">
+             <Skeleton className="w-full h-[400px] rounded-[12px]" />
           </div>
         </div>
       </div>
@@ -424,7 +480,7 @@ export function MenuItemDetail({ item, kitchenSlug, itemIdentifier }: MenuItemDe
     );
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [reviewsQuery.hasNextPage, reviewsQuery.isFetchingNextPage, reviewsQuery.fetchNextPage, allReviews.length]);
+  }, [reviewsQuery, allReviews.length]);
 
   if (isPending && !displayItem) {
     return <MenuItemDetailSkeleton />;

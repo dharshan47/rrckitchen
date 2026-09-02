@@ -131,27 +131,31 @@ export default async function KitchenPage() {
               </div>
               
               <div className="relative lg:ml-auto flex justify-center lg:justify-end w-full mt-10 lg:mt-0">
-                {/* Background circle decoration */}
-                <div className="absolute top-[40%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] aspect-square bg-[#FFF4EE] rounded-full z-0 opacity-80"></div>
-                
-                {/* Dotted pattern decoration */}
-                <div className="absolute top-[20%] -left-[10%] w-24 h-24 hidden lg:grid grid-cols-4 gap-2.5 opacity-[0.15] z-0">
-                  {Array.from({length: 12}).map((_, i) => <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#006F3D]"></div>)}
-                </div>
+                {/* Responsive aspect ratio image container for perfect scaling across devices */}
+                <div className="relative w-full max-w-[450px] lg:max-w-[550px] aspect-[4/5] z-10 mx-auto lg:mr-0 lg:ml-auto">
+                  
+                  {/* Background circle decoration - positioned slightly above bottom to let the food bowls pop out */}
+                  <div className="absolute bottom-[8%] sm:bottom-[10%] left-1/2 -translate-x-1/2 w-[85%] sm:w-[90%] aspect-square bg-[#FFF4EE] rounded-full z-0 opacity-100"></div>
+                  
+                  {/* Dotted pattern decoration */}
+                  <div className="absolute top-[15%] -left-[5%] w-24 h-24 hidden lg:grid grid-cols-4 gap-2.5 opacity-[0.15] z-0">
+                    {Array.from({length: 12}).map((_, i) => <div key={i} className="w-1.5 h-1.5 rounded-full bg-[#006F3D]"></div>)}
+                  </div>
 
-                {/* Explicit height image container to fix visibility issues */}
-                <div className="relative w-full max-w-[550px] h-[450px] sm:h-[550px] lg:h-[700px] z-10">
                   <Image 
                     src="/kitchen/hero-chef.webp" 
                     alt="Home Chef" 
                     fill 
-                    className="object-contain object-bottom drop-shadow-2xl"
+                    className="object-contain object-bottom drop-shadow-2xl z-10"
                     priority
                   />
-                  {/* Floating Badge */}
-                  <Suspense fallback={<KitchenChefCountSkeleton />}>
-                    <KitchenChefCount />
-                  </Suspense>
+                  
+                  {/* Floating Badge - scaled down on mobile */}
+                  <div className="absolute z-20 right-[2%] sm:right-[-10px] top-[10%] sm:top-[20%] scale-[0.7] sm:scale-100 origin-top-right">
+                    <Suspense fallback={<KitchenChefCountSkeleton />}>
+                      <KitchenChefCount />
+                    </Suspense>
+                  </div>
                 </div>
               </div>
             </div>

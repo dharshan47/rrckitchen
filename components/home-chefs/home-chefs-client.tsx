@@ -3,7 +3,7 @@
 import React, { useMemo, useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useInfiniteQuery } from "@tanstack/react-query";
+
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
 import { Search, SlidersHorizontal, Heart, ShieldCheck, Leaf, Star, Truck, UserRound, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -157,7 +157,7 @@ export function HomeChefsClient() {
         </div>
 
         {/* Hero Section */}
-        <div className="relative bg-[#FFFAF3] rounded-2xl border border-[#F2E8DF] mb-12 flex flex-col lg:flex-row min-h-[160px] lg:min-h-[140px] xl:min-h-[140px] shadow-sm mt-2">
+        <div className="relative bg-[#FFFAF3] rounded-2xl border border-[#F2E8DF] mb-12 flex flex-col lg:flex-row min-h-[160px] lg:min-h-[140px] xl:min-h-[140px] shadow-sm mt-2 overflow-hidden">
           {/* Left Side Content */}
           <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between w-full px-6 py-8 lg:py-0 lg:pl-10 lg:pr-[240px] xl:pr-[300px] h-auto lg:h-[140px] gap-6 lg:gap-4 xl:gap-8">
             {/* Title & Subtitle */}
@@ -169,15 +169,15 @@ export function HomeChefsClient() {
             </div>
 
             {/* Highlights */}
-            <div className="flex flex-col sm:flex-row flex-nowrap items-center justify-center lg:justify-end gap-5 sm:gap-4 xl:gap-8 shrink-0">
+            <div className="flex flex-col sm:flex-row flex-nowrap items-center justify-center lg:justify-end gap-4 sm:gap-3 xl:gap-6 shrink-0 mt-2 lg:mt-0">
               {heroHighlights.map((item) => (
-                <div key={item.title} className="flex items-center gap-3">
-                  <div className={`w-12 h-12 lg:w-11 lg:h-11 xl:w-12 xl:h-12 rounded-full ${item.iconBg} flex items-center justify-center shrink-0`}>
-                    <item.icon className={`w-[20px] h-[20px] xl:w-[22px] xl:h-[22px] ${item.iconColor}`} strokeWidth={1.5} />
+                <div key={item.title} className="flex items-center gap-2.5">
+                  <div className={`w-10 h-10 lg:w-9 lg:h-9 xl:w-10 xl:h-10 rounded-full ${item.iconBg} flex items-center justify-center shrink-0`}>
+                    <item.icon className={`w-[18px] h-[18px] xl:w-[20px] xl:h-[20px] ${item.iconColor}`} strokeWidth={1.5} />
                   </div>
                   <div className="text-left">
-                    <h4 className="font-bold text-[#064E3B] text-[13px] xl:text-[14px] leading-tight mb-0.5">{item.title}</h4>
-                    <p className="text-[#6B7280] text-[11px] xl:text-[12px] leading-tight whitespace-nowrap">{item.desc}</p>
+                    <h4 className="font-bold text-[#064E3B] text-[12px] xl:text-[13px] leading-tight mb-0.5">{item.title}</h4>
+                    <p className="text-[#6B7280] text-[10px] xl:text-[11px] leading-tight whitespace-nowrap">{item.desc}</p>
                   </div>
                 </div>
               ))}
@@ -185,13 +185,13 @@ export function HomeChefsClient() {
           </div>
 
           {/* Right Side Image Layer */}
-          <div className="w-full lg:w-auto h-[200px] lg:h-full relative mt-auto lg:absolute lg:right-0 lg:bottom-0 pointer-events-none flex items-end justify-center lg:justify-end">
+          <div className="w-full lg:w-[280px] xl:w-[320px] h-[180px] lg:h-full relative mt-4 lg:mt-0 lg:absolute lg:right-0 lg:bottom-0 lg:top-0 pointer-events-none flex items-center justify-center lg:justify-end">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#FFFAF3] via-transparent to-transparent lg:bg-gradient-to-r lg:from-[#FFFAF3] lg:via-[#FFFAF3]/20 lg:to-transparent z-10 pointer-events-none" />
             <Image
               src="/hero/hero-women-chef.webp"
               alt="Home Chef"
-              width={340}
-              height={340}
-              className="object-contain object-bottom drop-shadow-md h-[220px] lg:h-[160px] xl:h-[180px] w-auto max-w-full lg:mr-2 xl:mr-8 lg:translate-y-[8px]"
+              fill
+              className="object-cover object-center lg:object-right"
               priority
             />
           </div>

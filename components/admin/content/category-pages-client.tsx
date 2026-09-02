@@ -1738,9 +1738,9 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                           style={{ animationDelay: `${i * 80}ms` }}
                         >
                           <div className="aspect-[4/3] relative bg-[#F5F5F4]">
-                            {kitchen.imageUrl ? (
+                            {kitchen.coverImageUrl ? (
                               <Image
-                                src={kitchen.imageUrl}
+                                src={kitchen.coverImageUrl}
                                 alt={kitchen.displayName}
                                 fill
                                 className="object-cover group-hover:scale-105 transition-transform duration-500"

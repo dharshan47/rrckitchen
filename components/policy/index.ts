@@ -1,2 +1,1 @@
-
-export { PolicyFooter } from "./policy-footer";
+export { PolicyHeader } from "./policy-header";

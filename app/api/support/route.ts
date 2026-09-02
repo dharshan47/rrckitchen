@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
+import { allocatePublicCode, PUBLIC_ID_SPECS } from "@/lib/public-id";
 
 export async function POST(req: NextRequest) {
   try {
@@ -17,16 +18,19 @@ export async function POST(req: NextRequest) {
 
     const validCategory = ["order", "delivery", "food", "payment", "account", "kitchen", "menu", "delivery-partner", "customer-order", "kitchen-partner", "delivery-issue", "ingredient", "equipment", "safety", "other"].includes(category) ? category : "other";
 
-    const ticket = await prisma.supportTicket.create({
-      data: {
-        userId: session.user.id,
-        orderId: orderId || null,
-        subject: subject.trim(),
-        description: description.trim(),
-        category: validCategory,
-        priority: priority || "MEDIUM",
-        mediaUrls: mediaUrls || [],
-      },
+    const ticket = await prisma.$transaction(async (tx) => {
+      return await tx.supportTicket.create({
+        data: {
+          publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.SUPPORT_TICKET),
+          userId: session.user.id,
+          orderId: orderId || null,
+          subject: subject.trim(),
+          description: description.trim(),
+          category: validCategory,
+          priority: priority || "MEDIUM",
+          mediaUrls: mediaUrls || [],
+        },
+      });
     });
 
     return NextResponse.json({ success: true, ticket });
@@ -47,6 +51,7 @@ export async function GET() {
       where: { userId: session.user.id },
       include: {
         messages: { orderBy: { createdAt: "asc" }, take: 5 },
+        order: { select: { publicCode: true } },
       },
       orderBy: { createdAt: "desc" },
     });

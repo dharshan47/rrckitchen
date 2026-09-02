@@ -199,7 +199,7 @@ export default function AdminOrdersPage() {
     return orders.filter((o) => {
       if (q) {
         const haystack = [
-          o.id.slice(-6),
+          o.publicCode ?? o.id.slice(-6),
           o.customer.name ?? "",
           o.customer.phone ?? "",
           o.customer.email ?? "",
@@ -251,7 +251,7 @@ export default function AdminOrdersPage() {
       header: "ORDER",
       cell: ({ row }) => (
         <div className="flex flex-col gap-0.5 min-w-[120px]">
-          <span className="font-extrabold text-[13px] text-[#111827] uppercase">ORD{row.original.id.slice(-6)}</span>
+          <span className="font-extrabold text-[13px] text-[#111827] uppercase">{row.original.publicCode ?? `ORD${row.original.id.slice(-6)}`}</span>
           <span className="text-[11px] font-medium text-[#6B7280]">{formatOrderDate(row.original.date)}</span>
         </div>
       ),
@@ -650,7 +650,7 @@ function OrderSheet({
         </div>
         
         <div className="flex items-center gap-3 mb-6">
-          <h2 className="text-xl font-extrabold text-[#111827]">ORD{order.id.slice(-6)}</h2>
+          <h2 className="text-xl font-extrabold text-[#111827]">{order.publicCode ?? `ORD${order.id.slice(-6)}`}</h2>
           {getPaymentBadge(order.payment)}
         </div>
 

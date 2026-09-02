@@ -27,6 +27,7 @@ export async function getAdminPayments() {
   return payments.map((p) => ({
     id: p.id,
     orderId: p.orderId,
+    orderPublicCode: p.order?.publicCode,
     customer: {
       name: p.order?.user?.name,
       phone: p.order?.user?.phoneNumber,

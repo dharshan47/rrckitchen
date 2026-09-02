@@ -17,7 +17,9 @@ export interface TicketMessage {
 export interface SupportTicket {
   id: string;
   userId: string;
+  publicCode: string | null;
   orderId: string | null;
+  order?: { publicCode: string | null } | null;
   subject: string;
   description: string;
   status: "OPEN" | "INPROGRESS" | "RESOLVED" | "CLOSED";

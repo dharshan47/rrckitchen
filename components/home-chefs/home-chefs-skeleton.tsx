@@ -1,82 +1,86 @@
 "use client"
 
 import { Skeleton } from "@/components/ui/skeleton"
+import { ChevronRight } from "lucide-react"
 
 export function HomeChefsSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-50/50 pb-12">
-      <div className="container mx-auto px-4 lg:px-8 py-6">
+    <div className="min-h-screen bg-[#FAFAFA] pb-12">
+      <div className="container mx-auto px-4 lg:px-8 pt-2 pb-6 lg:py-6">
+
         {/* Breadcrumb */}
-        <div className="flex items-center gap-2 mb-6">
-          <Skeleton className="h-4 w-10" />
-          <Skeleton className="h-4 w-4" />
-          <Skeleton className="h-4 w-20" />
+        <div className="flex items-center text-[13px] mb-5">
+          <Skeleton className="h-[18px] w-10" />
+          <ChevronRight className="w-3.5 h-3.5 mx-2 text-[#9CA3AF]" />
+          <Skeleton className="h-[18px] w-[74px]" />
         </div>
 
         {/* Hero Section */}
-        <div className="relative rounded-3xl overflow-hidden bg-gradient-to-r from-orange-50/80 to-orange-100/40 mb-10 flex flex-col md:flex-row items-center">
-          <div className="flex-1 p-8 md:p-12 z-10 w-full">
-            <Skeleton className="h-12 md:h-14 w-64 md:w-80 mb-4" />
-            <div className="space-y-2 max-w-2xl mb-8">
-              <Skeleton className="h-5 w-full" />
-              <Skeleton className="h-5 w-3/4" />
+        <div className="relative bg-[#FFFAF3] rounded-2xl border border-[#F2E8DF] mb-12 flex flex-col lg:flex-row min-h-[160px] lg:min-h-[140px] xl:min-h-[140px] shadow-sm mt-2">
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between w-full px-6 py-8 lg:py-0 lg:pl-10 lg:pr-[240px] xl:pr-[300px] h-auto lg:h-[140px] gap-6 lg:gap-4 xl:gap-8">
+            {/* Title & Subtitle */}
+            <div className="flex flex-col items-center lg:items-start text-center lg:text-left shrink-0 lg:max-w-[260px] xl:max-w-[320px] w-full">
+              <Skeleton className="h-[40px] w-[200px] mb-1.5" />
+              <div className="space-y-1 w-full flex flex-col items-center lg:items-start">
+                <Skeleton className="h-3.5 w-full max-w-[280px]" />
+                <Skeleton className="h-3.5 w-[85%] max-w-[240px]" />
+              </div>
             </div>
-            <div className="flex flex-col sm:flex-row gap-6 mt-8">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <Skeleton className="h-12 w-12 rounded-full" />
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-3 w-24" />
+
+            {/* Highlights */}
+            <div className="flex flex-col sm:flex-row flex-nowrap items-center justify-center lg:justify-end gap-5 sm:gap-4 xl:gap-8 shrink-0">
+              {[1, 2, 3].map((item) => (
+                <div key={item} className="flex items-center gap-3">
+                  <Skeleton className="w-12 h-12 lg:w-11 lg:h-11 xl:w-12 xl:h-12 rounded-full shrink-0" />
+                  <div className="text-left flex flex-col gap-1">
+                    <Skeleton className="h-3.5 w-24" />
+                    <Skeleton className="h-3 w-28" />
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <div className="w-full md:w-1/3 relative h-[300px] md:h-[400px] mt-8 md:mt-0">
-            <div className="absolute inset-0 right-0 overflow-hidden">
-              <div className="absolute right-0 bottom-0 w-[90%] md:w-[120%] h-full flex items-end">
-                <Skeleton className="w-full h-full rounded-tl-3xl" />
-              </div>
+
+          {/* Right Side Image Layer placeholder */}
+          <div className="w-full lg:w-auto h-[200px] lg:h-full relative mt-auto lg:absolute lg:right-0 lg:bottom-0 pointer-events-none flex items-end justify-center lg:justify-end">
+            <div className="h-[220px] lg:h-[160px] xl:h-[180px] w-[180px] lg:w-[140px] xl:w-[160px] lg:mr-2 xl:mr-8 lg:translate-y-[8px] flex items-end">
+              <Skeleton className="w-full h-[90%] rounded-t-full opacity-50" />
             </div>
           </div>
         </div>
 
         {/* Filters Section */}
-        <div className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100 mb-12 flex flex-col lg:flex-row gap-4 items-end">
-          <div className="w-full lg:w-1/3">
-            <Skeleton className="h-4 w-32 mb-2" />
-            <Skeleton className="h-11 w-full rounded-xl" />
+        <div className="bg-[#FFFFFF] rounded-xl p-4 shadow-[0_2px_10px_rgba(0,0,0,0.05)] border border-[#E5E7EB] mb-10 flex flex-wrap lg:flex-nowrap gap-4 items-end">
+          <div className="flex-1 min-w-[200px] w-full lg:w-auto">
+            <Skeleton className="h-[14px] w-[120px] mb-2" />
+            <Skeleton className="h-[42px] w-full rounded-lg" />
           </div>
-          <div className="w-full lg:w-auto flex-1 grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i}>
-                <Skeleton className="h-4 w-20 mb-2" />
-                <Skeleton className="h-11 w-full rounded-xl" />
-              </div>
-            ))}
-          </div>
-          <div className="flex gap-4 w-full lg:w-auto">
-            <div className="flex-1 lg:flex-none">
-              <Skeleton className="h-4 w-16 mb-2" />
-              <Skeleton className="h-11 w-full lg:w-36 rounded-xl" />
+
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="w-[calc(50%-8px)] sm:w-[calc(25%-12px)] lg:w-[140px]">
+              <Skeleton className="h-[14px] w-[80px] mb-2" />
+              <Skeleton className="h-[42px] w-full rounded-lg" />
             </div>
-            <div className="flex items-end">
-              <Skeleton className="h-11 w-28 rounded-xl" />
+          ))}
+
+          <div className="w-full sm:w-auto flex gap-4 lg:ml-auto">
+            <div className="flex-1 sm:flex-none sm:w-[140px]">
+              <Skeleton className="h-[14px] w-[60px] mb-2" />
+              <Skeleton className="h-[42px] w-full rounded-lg" />
             </div>
           </div>
         </div>
 
         {/* Top Rated Home Chefs */}
-        <div className="mb-12">
-          <div className="flex items-center gap-2 mb-6">
-            <Skeleton className="h-8 w-8 rounded-full" />
-            <div className="space-y-1.5">
-              <Skeleton className="h-5 w-48" />
-              <Skeleton className="h-3.5 w-40" />
+        <div className="mb-10 bg-[#FCFCFC] border border-[#E5E7EB] rounded-2xl p-5">
+          <div className="flex items-center gap-3 mb-5">
+            <Skeleton className="w-8 h-8 rounded-full shrink-0" />
+            <div className="flex flex-col gap-1">
+              <Skeleton className="h-5 w-[180px]" />
+              <Skeleton className="h-3 w-[150px]" />
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {[1, 2, 3, 4, 5].map((i) => (
               <HomeChefCardSkeleton key={i} />
             ))}
@@ -84,48 +88,53 @@ export function HomeChefsSkeleton() {
         </div>
 
         {/* All Home Chefs */}
-        <div className="mb-16">
-          <Skeleton className="h-6 w-56 mb-6" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
+        <div className="mb-12">
+          <Skeleton className="h-6 w-[200px] mb-5" />
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-4">
+            {Array.from({ length: 15 }).map((_, i) => (
               <HomeChefCardSkeleton key={i} />
             ))}
           </div>
         </div>
 
         {/* Bottom Features Banner */}
-        <div className="bg-white rounded-2xl p-6 md:p-8 shadow-sm border border-gray-100 flex flex-wrap justify-between gap-8 md:gap-4">
+        <div className="bg-gradient-to-b from-[#FFFFFF] to-[#F9FAFB] rounded-2xl p-6 lg:p-8 shadow-[0_2px_10px_rgba(0,0,0,0.05)] border border-[#E5E7EB] flex flex-wrap items-center justify-between gap-6">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="flex items-center gap-4 flex-1 min-w-[200px]">
-              <Skeleton className="h-12 w-12 rounded-full" />
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-32" />
-                <Skeleton className="h-3 w-24" />
+            <div key={i} className="flex items-center gap-3 flex-1 min-w-[160px]">
+              <Skeleton className="w-[26px] h-[26px] rounded-full shrink-0" />
+              <div className="flex flex-col gap-1">
+                <Skeleton className="h-[14px] w-[110px]" />
+                <Skeleton className="h-[12px] w-[90px]" />
               </div>
             </div>
           ))}
         </div>
+
       </div>
     </div>
   )
 }
 
-function HomeChefCardSkeleton() {
+export function HomeChefCardSkeleton() {
   return (
-    <div className="rounded-2xl border border-gray-100 shadow-sm overflow-hidden bg-white p-4">
-      <div className="flex gap-4">
-        <Skeleton className="w-20 h-24 rounded-xl shrink-0" />
-        <div className="flex flex-col py-1 flex-1 min-w-0">
-          <Skeleton className="h-4 w-24 mb-1.5" />
-          <Skeleton className="h-3 w-16 mb-1" />
-          <Skeleton className="h-3 w-20 mb-2" />
+    <div className="p-0 rounded-xl border border-[#E5E7EB] shadow-[0_2px_10px_rgba(0,0,0,0.05)] overflow-hidden bg-[#FFFFFF] h-full flex flex-col">
+      <div className="p-3 flex gap-3 h-full items-center">
+        <Skeleton className="w-[84px] h-[104px] rounded-lg shrink-0" />
+        
+        <div className="flex flex-col min-w-0 justify-center flex-1 py-0.5">
+          <Skeleton className="h-4 w-3/4 mb-1" />
+          <Skeleton className="h-[13px] w-20 mb-0.5" />
+          <Skeleton className="h-[13px] w-24 mb-1.5" />
+
           <div className="flex items-center gap-0.5 mb-2">
-            {[1, 2, 3, 4, 5].map((j) => (
-              <Skeleton key={j} className="h-3 w-3 rounded-sm" />
+            {[1, 2, 3, 4, 5].map((star) => (
+              <Skeleton key={star} className="w-[11px] h-[11px] rounded-sm" />
             ))}
           </div>
-          <div className="mt-auto">
-            <Skeleton className="h-5 w-20 rounded-md" />
+
+          <div className="mt-auto flex items-center">
+            <Skeleton className="h-[18px] w-14 rounded-[4px]" />
           </div>
         </div>
       </div>

@@ -7,6 +7,7 @@ import {
   updateKitchenDetails,
   updateKitchenPartnerStatus,
   updateKitchenImage,
+  updateKitchenCoverImage,
   updateKitchenOfferText,
   updateKitchenCuisines,
 } from "@/actions/admin/admin-partners";
@@ -123,6 +124,20 @@ export function useUpdateKitchenImageMutation() {
   return useMutation({
     mutationFn: ({ kitchenId, imageUrl }: { kitchenId: string; imageUrl: string }) =>
       updateKitchenImage(kitchenId, imageUrl),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-kitchen-partners"] });
+    },
+  });
+}
+
+/**
+ * Updates a kitchen's cover image (banner). Invalidates the partners query on success.
+ */
+export function useUpdateKitchenCoverImageMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ kitchenId, coverImageUrl }: { kitchenId: string; coverImageUrl: string }) =>
+      updateKitchenCoverImage(kitchenId, coverImageUrl),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-kitchen-partners"] });
     },

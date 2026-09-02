@@ -12,7 +12,7 @@ const InstallPrompt = dynamic(() => import("@/components/patterns/install-prompt
 
 const HIDE_HEADER_FOOTER_PATHS = [
   "/login", "/signup", "/admin", "/kitchen", "/delivery-partner",
-  "/privacy-policy", "/terms-of-use",
+  "/privacy-policy", "/terms-of-use", "/shipping-policy", "/refund-policy"
 ];
 
 const HIDE_FOOTER_ON_LARGE_SCREEN_PATHS = ["/contact"];

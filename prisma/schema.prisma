@@ -839,7 +839,9 @@ model NotificationLog {
 
 model SupportTicket {
   id          String         @id @default(cuid())
-  userId      String
+  publicCode  String?        @unique
+  userId      String?
+  guestId     String?
   orderId     String?
   subject     String
   description String
@@ -851,10 +853,11 @@ model SupportTicket {
   updatedAt   DateTime       @updatedAt
 
   messages TicketMessage[]
-  user     User            @relation(fields: [userId], references: [id])
+  user     User?           @relation(fields: [userId], references: [id])
   order    Order?          @relation(fields: [orderId], references: [id])
 
   @@index([userId])
+  @@index([guestId])
   @@index([status])
   @@index([category])
   @@map("support_ticket")

@@ -32,6 +32,7 @@ import {
   useUpdateKitchenDetailsMutation,
   useUpdateKitchenStatusMutation,
   useUpdateKitchenImageMutation,
+  useUpdateKitchenCoverImageMutation,
   useUpdateKitchenOfferTextMutation,
   useUpdateKitchenCuisinesMutation,
 } from "@/stores/adminKitchensStore"
@@ -129,6 +130,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
   const detailsMutation = useUpdateKitchenDetailsMutation()
   const offerTextMutation = useUpdateKitchenOfferTextMutation()
   const imageMutation = useUpdateKitchenImageMutation()
+  const coverImageMutation = useUpdateKitchenCoverImageMutation()
   const statusMutation = useUpdateKitchenStatusMutation()
   const cuisinesMutation = useUpdateKitchenCuisinesMutation()
 
@@ -279,8 +281,8 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
 
           <div className="flex items-start gap-5 mb-6">
             <div className="relative w-[140px] h-[140px] rounded-[8px] overflow-hidden shrink-0 border border-[#E2E8F0]">
-              {kitchen.imageUrl ? (
-                <Image src={kitchen.imageUrl} alt="Banner" fill className="object-cover" sizes="140px" />
+              {kitchen.coverImageUrl ? (
+                <Image src={kitchen.coverImageUrl} alt="Banner" fill className="object-cover" sizes="140px" />
               ) : (
                 <div className="w-full h-full bg-[#FAFBFC] flex items-center justify-center">
                   <Camera className="w-8 h-8 text-[#94A3B8]" />
@@ -290,13 +292,13 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
               <div className="absolute bottom-2 left-2 right-2">
                 <CloudinaryUpload
                   onUpload={(result) =>
-                    imageMutation
-                      .mutateAsync({ kitchenId: kitchen.id, imageUrl: result.secure_url })
+                    coverImageMutation
+                      .mutateAsync({ kitchenId: kitchen.id, coverImageUrl: result.secure_url })
                       .then((res) => {
                         if (res.success) {
-                          toast.success("Image updated successfully")
+                          toast.success("Cover image updated successfully")
                         } else {
-                          toast.error(res.error ?? "Failed to update image")
+                          toast.error(res.error ?? "Failed to update cover image")
                         }
                       })
                   }
@@ -319,10 +321,31 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
 
             <div className="flex flex-col pt-1">
               <div className="flex items-center gap-3 mb-1.5">
-                <Avatar className="h-9 w-9 rounded-full border border-[#E2E8F0] bg-[#F8FAFC]">
-                  <AvatarImage src={kitchen.imageUrl ?? ""} alt={name} className="object-cover" />
-                  <AvatarFallback className="rounded-full bg-[#F8FAFC] text-[#475569] text-[14px] font-semibold">{initials}</AvatarFallback>
-                </Avatar>
+                <CloudinaryUpload
+                  onUpload={(result) =>
+                    imageMutation
+                      .mutateAsync({ kitchenId: kitchen.id, imageUrl: result.secure_url })
+                      .then((res) => {
+                        if (res.success) {
+                          toast.success("Profile image updated")
+                        } else {
+                          toast.error(res.error ?? "Failed to update profile image")
+                        }
+                      })
+                  }
+                >
+                  {({ uploading, startUpload }) => (
+                    <button type="button" onClick={startUpload} disabled={uploading} className="relative group rounded-full overflow-hidden h-9 w-9">
+                      <Avatar className="h-9 w-9 rounded-full border border-[#E2E8F0] bg-[#F8FAFC]">
+                        <AvatarImage src={kitchen.imageUrl ?? ""} alt={name} className="object-cover" />
+                        <AvatarFallback className="rounded-full bg-[#F8FAFC] text-[#475569] text-[14px] font-semibold">{initials}</AvatarFallback>
+                      </Avatar>
+                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        {uploading ? <Loader2 className="h-4 w-4 text-white animate-spin" /> : <Camera className="h-4 w-4 text-white" />}
+                      </div>
+                    </button>
+                  )}
+                </CloudinaryUpload>
                 <h3 className="text-[18px] font-bold text-[#111827]">{name}</h3>
                 <Badge variant="outline" className={`uppercase font-bold tracking-wide px-2 py-0.5 text-[10px] rounded-[6px] ${statusStyles[kitchen.status]}`}>
                   {kitchen.status === "PENDINGAPPROVAL" ? "PENDING" : kitchen.status}

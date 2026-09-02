@@ -1,127 +1,152 @@
-"use client"
+"use client";
 
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function KitchenCardSkeleton() {
   return (
-    <div className="flex flex-col bg-white rounded-2xl shadow-sm border border-border overflow-hidden">
-      {/* Image */}
-      <div className="relative w-full h-[160px] md:h-[180px] shrink-0 bg-muted/50">
-        <Skeleton className="absolute top-2 md:top-3 left-2 md:left-3 h-5 w-16 rounded-sm" />
-        <Skeleton className="absolute top-2 right-2 md:top-3 md:right-3 h-5 w-20 rounded-sm" />
-        <div className="absolute -bottom-4 md:-bottom-5 left-3 md:left-4">
-          <Skeleton className="h-10 w-10 md:h-11 md:w-11 rounded-full border-[2.5px] border-white" />
+    <div className="flex flex-col shadow-[0_2px_8px_rgba(0,0,0,0.045)] border border-[#E7E7E7] overflow-visible bg-[#FFFFFF] w-full h-full relative group rounded-[16px]">
+      <div className="flex flex-col flex-1">
+        {/* Image Section */}
+        <div className="relative w-full h-[132px] sm:h-[140px] bg-[#F8F8F8] shrink-0 rounded-t-[16px]">
+          {/* Top Left Badge */}
+          <div className="absolute top-2.5 left-2.5 z-10 flex flex-col items-start gap-1">
+            <Skeleton className="h-[23px] w-[70px] rounded-[6px]" />
+          </div>
+
+          {/* Top Right Diet Badge */}
+          <div className="absolute top-2.5 right-2.5 z-10 flex flex-col gap-1 items-end">
+            <Skeleton className="h-[22px] w-[64px] rounded-[5px]" />
+          </div>
+
+          {/* Chef Avatar with Checkmark */}
+          <div className="absolute -bottom-[22px] left-4 z-20">
+            <div className="relative">
+              <Skeleton className="h-11 w-11 rounded-full border-[2px] border-[#FFFFFF] shadow-[0_1px_4px_rgba(0,0,0,0.18)]" />
+              <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-[2px] z-20 shadow-sm flex items-center justify-center">
+                 <Skeleton className="h-[16px] w-[16px] rounded-full" />
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-      {/* Content */}
-      <div className="flex-1 p-3 md:p-4 pt-6 md:pt-7 flex flex-col justify-between">
-        <div>
-          <div className="flex items-start justify-between gap-2">
-            <Skeleton className="h-4 md:h-5 w-40" />
+
+        {/* Content Section */}
+        <div className="px-4 pb-3 pt-8 flex flex-col flex-1">
+          {/* Kitchen Name */}
+          <div className="flex items-center gap-1.5">
+            <Skeleton className="h-[20px] w-3/4 rounded-md" />
           </div>
-          <div className="flex items-center gap-2 mt-1.5">
-            <Skeleton className="h-3.5 w-10" />
-            <Skeleton className="h-3.5 w-14" />
+
+          {/* Rating & Reviews */}
+          <div className="flex items-center gap-1 mt-1.5">
+            <Skeleton className="h-[18px] w-16 rounded" />
           </div>
-          <Skeleton className="h-3 md:h-3.5 w-3/4 mt-1.5" />
-          <div className="flex items-center gap-3 mt-2 md:mt-2.5">
-            <Skeleton className="h-3 md:h-4 w-16" />
-            <Skeleton className="h-3 md:h-4 w-14" />
+
+          {/* Cuisines */}
+          <div className="mt-1.5">
+            <Skeleton className="h-[18px] w-1/2 rounded" />
+          </div>
+
+          {/* Time & Distance */}
+          <div className="flex items-center gap-4 mt-1.5">
+            <Skeleton className="h-[18px] w-24 rounded" />
+            <Skeleton className="h-[18px] w-16 rounded" />
           </div>
         </div>
-        <div className="mt-4 pt-3 border-t border-border flex items-center justify-between">
-          <Skeleton className="h-6 md:h-7 w-28 rounded-md" />
-          <Skeleton className="h-7 md:h-8 w-24 rounded-md" />
+
+        {/* Footer Section */}
+        <div className="px-2.5 sm:px-4 pb-2.5 sm:pb-4 mt-auto flex items-center justify-between gap-1 flex-nowrap">
+          <Skeleton className="h-[26px] w-[90px] sm:w-[100px] rounded-[6px] shrink" />
+          <Skeleton className="h-[26px] sm:h-[28px] w-[72px] sm:w-[86px] rounded-[6px] shrink-0" />
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export function KitchensPageSkeleton() {
   return (
-    <div className="bg-[#fcfbf9] min-h-screen pt-4 md:pt-6 pb-20">
-      <div className="max-w-[1400px] mx-auto px-4 md:px-6 lg:px-8">
-
-        {/* Breadcrumb */}
-        <div className="flex items-center gap-2 mb-6">
-          <Skeleton className="h-3.5 w-12" />
-          <Skeleton className="h-3 w-3" />
-          <Skeleton className="h-3.5 w-16" />
+    <div className="bg-[#F8F8F8] min-h-screen pt-4 pb-20 text-[#111111]">
+      <div className="max-w-[1440px] mx-auto px-4 md:px-6 lg:px-8">
+        
+        {/* Header */}
+        <div className="mb-6">
+          <div className="flex items-center gap-2 text-[12px] font-normal text-[#777777] mb-4">
+            <Skeleton className="h-[18px] w-12 rounded" />
+            <Skeleton className="h-3 w-3 rounded-sm" />
+            <Skeleton className="h-[18px] w-16 rounded" />
+          </div>
+          <Skeleton className="h-[40px] w-40 rounded-lg mb-1" />
+          <Skeleton className="h-[20px] w-96 max-w-full rounded" />
         </div>
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
-
+          
           {/* Desktop Sidebar */}
-          <aside className="hidden lg:block w-[280px] shrink-0 bg-white border border-gray-200 rounded-2xl p-5 sticky top-24 shadow-sm">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
-              <Skeleton className="h-6 w-20" />
-              <Skeleton className="h-3 w-12" />
+          <aside className="hidden lg:block w-[240px] shrink-0 bg-[#FFFFFF] border border-[#E8E8E8] rounded-[7px] p-5 shadow-[0_2px_8px_rgba(0,0,0,0.035)] sticky top-24">
+            <div className="flex items-center justify-between mb-5">
+              <Skeleton className="h-6 w-20 rounded" />
+              <Skeleton className="h-4 w-12 rounded" />
             </div>
             <div className="space-y-6">
-              {/* Diet Preference */}
-              <div>
-                <Skeleton className="h-4 w-32 mb-3" />
-                <div className="flex flex-col gap-2.5">
-                  {Array.from({ length: 4 }).map((_, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <Skeleton className="h-4 w-4 rounded-full" />
-                      <Skeleton className="h-3.5 w-20" />
-                    </div>
-                  ))}
+              {/* Filter sections mock */}
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i}>
+                  <Skeleton className="h-5 w-32 mb-4" />
+                  <div className="flex flex-col gap-3">
+                    {Array.from({ length: 4 }).map((_, j) => (
+                      <div key={j} className="flex items-center gap-3">
+                        <Skeleton className="h-[15px] w-[15px] rounded-sm" />
+                        <Skeleton className="h-4 w-24 rounded" />
+                      </div>
+                    ))}
+                  </div>
+                  {i < 4 && <div className="h-px bg-[#EEEEEE] w-full mt-6" />}
                 </div>
-              </div>
-
-              {/* Cuisine */}
-              <div>
-                <Skeleton className="h-4 w-20 mb-3" />
-                <div className="flex flex-col gap-2.5">
-                  {Array.from({ length: 6 }).map((_, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <Skeleton className="h-4 w-4 rounded" />
-                      <Skeleton className="h-3.5 w-28" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <Skeleton className="w-full h-11 rounded-lg mt-4" />
+              ))}
             </div>
           </aside>
 
           {/* Main Content */}
-          <main className="flex-1 min-w-0">
-
-            {/* Header section */}
-            <div className="mb-6">
-              <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4">
-                <div className="space-y-2">
-                  <Skeleton className="h-8 md:h-9 w-40" />
-                  <Skeleton className="h-4 w-44" />
-                </div>
-                <div className="flex items-center gap-3 self-start sm:self-auto w-full sm:w-auto">
-                  <Skeleton className="h-11 flex-1 sm:flex-none w-full sm:w-28 rounded-lg lg:hidden" />
-                  <Skeleton className="h-11 flex-1 sm:flex-none w-full sm:w-32 rounded-lg" />
-                </div>
+          <main className="flex-1 min-w-0 w-full lg:w-auto">
+            
+            {/* Top Quick Filters & Mobile Sort Row */}
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-6 gap-4 w-full min-w-0">
+              
+              {/* Mobile Filter Toggle & Sort */}
+              <div className="flex lg:hidden items-center justify-between w-full">
+                <Skeleton className="h-[36px] w-[90px] rounded-[6px]" />
+                <Skeleton className="h-[36px] w-[120px] rounded-[6px]" />
               </div>
 
-              {/* Quick Filters Row */}
-              <div className="flex items-center gap-2.5 overflow-x-auto scrollbar-none pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+              {/* Quick Filters */}
+              <div className="flex items-center gap-3 overflow-x-auto w-full pb-2 lg:pb-0 scrollbar-hide">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <Skeleton key={i} className="shrink-0 h-9 w-24 rounded-full" />
+                  <Skeleton key={i} className="shrink-0 h-[34px] w-[90px] rounded-[6px]" />
                 ))}
+              </div>
+
+              {/* Desktop Sort */}
+              <div className="hidden lg:flex items-center gap-2">
+                 <Skeleton className="h-4 w-14 rounded" />
+                 <Skeleton className="h-[34px] w-[120px] rounded-[6px]" />
               </div>
             </div>
 
-            {/* Kitchen Cards Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
-              {Array.from({ length: 8 }).map((_, i) => (
+            {/* Showing Results Info */}
+            <div className="mb-4">
+               <Skeleton className="h-5 w-48 rounded" />
+            </div>
+
+            {/* Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-7">
+              {Array.from({ length: 12 }).map((_, i) => (
                 <KitchenCardSkeleton key={i} />
               ))}
             </div>
+            
           </main>
         </div>
       </div>
     </div>
-  )
+  );
 }

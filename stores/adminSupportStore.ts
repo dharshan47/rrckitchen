@@ -16,6 +16,7 @@ export interface AdminSupportTicketMessage {
 export interface AdminSupportTicket {
   id: string;
   userId: string;
+  publicCode: string | null;
   orderId: string | null;
   subject: string;
   description: string;

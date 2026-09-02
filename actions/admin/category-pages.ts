@@ -1,6 +1,6 @@
 "use server"
 
-import prisma from "@/lib/prisma"
+import prisma, { Prisma } from "@/lib/prisma"
 import { requirePermission } from "@/lib/auth-guards"
 import { toTitleCase } from "@/lib/utils"
 
@@ -82,8 +82,8 @@ export interface AdminCategoryPageDetail {
   updatedAt: string
   createdAt: string
   fallbackKitchenImageUrl: string
-  filterConfig: any
-  sortOptionsConfig: any
+  filterConfig: unknown
+  sortOptionsConfig: unknown
   features: AdminCategoryPageFeature[]
   offers: AdminCategoryPageOffer[]
   faqs: AdminCategoryPageFaq[]
@@ -109,8 +109,8 @@ export interface AdminCategoryPageSaveInput {
   featuredKitchenIds: string[]
   featuredMenuIds: string[]
   fallbackKitchenImageUrl: string
-  filterConfig: any
-  sortOptionsConfig: any
+  filterConfig: unknown
+  sortOptionsConfig: unknown
   features: { icon: string; title: string; subtitle: string; color: string; isEnabled: boolean }[]
   offers: { title: string; subtitle: string; badge: string; isEnabled: boolean }[]
   faqs: { question: string; answer: string }[]
@@ -123,6 +123,7 @@ export interface AdminCategoryPreviewKitchen {
   avgRating: number | null
   totalReviews: number
   imageUrl: string | null
+  coverImageUrl: string | null
   profileImage: string | null
   cuisineTags: string[]
   items: { id: string; name: string; price: number; imageUrl: string | null }[]
@@ -346,8 +347,8 @@ export async function saveCategoryPageContent(
         featuredKitchenIds: input.featuredKitchenIds,
         featuredMenuIds: input.featuredMenuIds,
         fallbackKitchenImageUrl: input.fallbackKitchenImageUrl,
-        filterConfig: input.filterConfig,
-        sortOptionsConfig: input.sortOptionsConfig,
+        filterConfig: input.filterConfig as Prisma.InputJsonValue,
+        sortOptionsConfig: input.sortOptionsConfig as Prisma.InputJsonValue,
         version: { increment: 1 },
         updatedBy: session.user.name ?? "Admin",
       },
@@ -450,7 +451,7 @@ export async function getCategoryPreviewKitchens(categoryName: string): Promise<
     take: 12,
     orderBy: [{ avgRating: "desc" }, { totalReviews: "desc" }],
     include: {
-      kitchenAlias: { select: { displayName: true, imageUrl: true } },
+      kitchenAlias: { select: { displayName: true, imageUrl: true, coverImageUrl: true } },
       kitchenCategories: { select: { category: { select: { name: true } } } },
       menus: {
         where: { isActive: true },
@@ -475,6 +476,7 @@ export async function getCategoryPreviewKitchens(categoryName: string): Promise<
       avgRating: k.avgRating ? Number(k.avgRating) : null,
       totalReviews: k.totalReviews,
       imageUrl: k.kitchenAlias?.imageUrl ?? firstItemPhoto,
+      coverImageUrl: k.kitchenAlias?.coverImageUrl ?? null,
       profileImage: k.kitchenAlias?.imageUrl ?? null,
       cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
       items: allItems.map((i) => ({

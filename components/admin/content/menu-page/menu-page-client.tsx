@@ -4,7 +4,7 @@ import { useMemo, useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import {
   Eye, Plus, Search, Filter, Download, XCircle,
-  Loader2, RotateCcw, Utensils, ClipboardList, ChefHat, CircleAlert, List, Grid2X2
+  Loader2, RotateCcw, Utensils, ClipboardList, ChefHat, CircleAlert
 } from "lucide-react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"

@@ -6,15 +6,14 @@ import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import {
-  MapPin, Plus, Home, Briefcase, MoreHorizontal, Loader2, ChevronRight,
+  MapPin, Home, Briefcase, MoreHorizontal, Loader2,
 } from "lucide-react"
-import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
   Sheet, SheetContent, SheetHeader, SheetTitle,
 } from "@/components/ui/sheet"
-import { useMenuDeliveryAddress, useMenuActions } from "@/stores"
+import { useMenuActions } from "@/stores"
 import { addAddress } from "@/actions/cart-checkout/address"
 
 const Map = dynamic(
@@ -44,7 +43,6 @@ interface DeliveryAddressCardProps {
 }
 
 export function DeliveryAddressCard({ open: externalOpen, onOpenChange: externalOnOpenChange }: DeliveryAddressCardProps) {
-  const deliveryAddress = useMenuDeliveryAddress()
   const { setDeliveryAddress } = useMenuActions()
   const [internalOpen, setInternalOpen] = useState(false)
   const open = externalOpen ?? internalOpen
@@ -146,40 +144,6 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
 
   return (
     <>
-      <Card>
-        <CardContent className="p-4 space-y-3">
-          <div className="flex items-start gap-3">
-            <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-              <MapPin className="h-5 w-5 text-primary" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-sm">Add a delivery address</h3>
-              <p className="text-xs text-muted-foreground">
-                You seem to be in the new location
-              </p>
-            </div>
-          </div>
-
-          {deliveryAddress && (
-            <div className="rounded-lg border border-border bg-muted/30 p-3">
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                {deliveryAddress}
-              </p>
-            </div>
-          )}
-
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => setOpen(true)}
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            Add New
-            <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground" />
-          </Button>
-        </CardContent>
-      </Card>
-
       <Sheet open={open} onOpenChange={(o) => { if (!o) { form.reset(); setSelectedLat(null); setSelectedLng(null); setSelectedAddress(""); setSelectedPostcode(""); setSaveError(null); setOpen(false) } }}>
         <SheetContent side="bottom" className="w-full sm:max-w-md p-0 flex flex-col sm:left-auto mx-auto">
           <SheetHeader className="border-b border-border px-4 py-3 shrink-0">

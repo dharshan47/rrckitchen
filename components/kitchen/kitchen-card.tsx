@@ -138,14 +138,14 @@ export function KitchenCard({
           )}
         >
           <div className="absolute inset-0 overflow-hidden rounded-t-[16px]">
-            {kitchen.imageUrl ? (
+            {kitchen.coverImageUrl ? (
               <>
                 <Image
-                  src={kitchen.imageUrl}
+                  src={kitchen.coverImageUrl}
                   alt={kitchen.displayName}
                   fill
                   className={cn(
-                    "object-cover group-hover:scale-105 transition-transform duration-500",
+                    "object-cover ",
                     isClosed && "grayscale opacity-90",
                   )}
                   sizes="(max-width: 768px) 100vw, 300px"
@@ -229,7 +229,7 @@ export function KitchenCard({
             <div className="relative">
               <Avatar className="h-11 w-11 rounded-full border-[2px] border-[#FFFFFF] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.18)] overflow-hidden">
                 <AvatarImage
-                  src={kitchen.profileImage ?? "/kitchen/profile.webp"}
+                  src={kitchen.imageUrl ?? "/kitchen/profile.webp"}
                   alt={kitchen.displayName}
                   className="object-cover"
                 />

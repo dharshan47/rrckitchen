@@ -50,6 +50,7 @@ type MenuItemSummary = {
 
 type KitchenOrder = {
   id: string
+  publicCode: string | null
   status?: string | null
   time?: string | null
   customerName?: string | null
@@ -660,7 +661,7 @@ export default function DashboardPageClient() {
                   return (
                     <div key={order.id} className="flex items-center justify-between gap-3 text-[12px] pb-[10px]" style={{ borderBottom: `1px solid ${COLORS.borderSoft}` }}>
                       <div className="w-16" style={{ color: COLORS.textMuted }}>
-                        #{order.id.slice(0, 6)}
+                        {order.publicCode ?? `#${order.id.slice(0, 6)}`}
                       </div>
                       <div className="w-20 truncate font-medium" style={{ color: COLORS.text }}>
                         {order.customerName?.split(' ')[0]}

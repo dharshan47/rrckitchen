@@ -17,6 +17,7 @@ import {
   useHelpActiveTab,
   useHelpActions,
 } from "@/stores/helpStore";
+import { LiveChatWidget } from "@/components/chat/live-chat-widget";
 
 const CATEGORIES = [
   { id: "orders", icon: ShoppingBag, title: "Help with Orders", subtitle: "Track, cancel, return or modify orders", color: "text-orange-500" },
@@ -295,6 +296,7 @@ export default function HelpPage() {
           </div>
        </div>
 
+       <LiveChatWidget />
      </div>
   );
 }

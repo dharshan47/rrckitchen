@@ -410,8 +410,11 @@ export async function getOrderForTracking(orderId: string) {
   const session = await getSession()
   if (!session?.user?.id) throw new Error("Not authenticated")
 
-  const order = await prisma.order.findUnique({
-    where: { id: orderId, userId: session.user.id },
+  const order = await prisma.order.findFirst({
+    where: {
+      OR: [{ id: orderId }, { publicCode: orderId }],
+      userId: session.user.id
+    },
     include: {
       orderItems: {
         include: {

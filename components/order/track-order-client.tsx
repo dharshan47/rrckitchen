@@ -194,7 +194,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
   const order = useOrderTracking()
 
   useAblyOrderChannel(
-    orderId,
+    order?.id ?? "",
     useCallback(
       (msg: { name: string }) => {
         if (
@@ -207,7 +207,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
       },
       [orderId, queryClient]
     ),
-    !!session?.user && !!orderId
+    !!session?.user && !!order?.id
   )
 
   const orderStatus = order?.status
@@ -233,7 +233,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
   const assignMutation = useMutation({
     mutationFn: () =>
       assignNearestDeliveryPerson(
-        orderId,
+        order?.id ?? "",
         order?.kitchenLat ?? order?.customerLat ?? 0,
         order?.kitchenLng ?? order?.customerLng ?? 0
       ),
@@ -363,7 +363,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
           <div>
             <h1 className="text-[32px] font-bold text-[#111827] leading-tight tracking-tight mb-2">Track Your Order</h1>
             <div className="flex items-center gap-3">
-              <span className="text-[16px] font-semibold text-[#111827]">Order ID: #{order.publicCode ?? orderId}</span>
+              <span className="text-[16px] font-semibold text-[#111827]">Order ID: {order.publicCode ?? `#${order.id.slice(-6).toUpperCase()}`}</span>
               <span className={cn("text-[12px] font-bold px-3 py-1 rounded-full", statusColor)}>{getStatusLabel(order.status)}</span>
             </div>
             <div className="text-[15px] text-[#6B7280] mt-2 font-medium">
@@ -459,7 +459,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
           {/* Center Column: Live Map */}
           <div className="order-1 lg:order-2 lg:col-span-9 relative rounded-[26px] overflow-hidden border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] bg-[#F8FAFC] w-full min-h-[400px]">
             <LiveOrderTrackingMap
-              orderId={orderId}
+              orderId={order?.id ?? ""}
               kitchenLat={order.kitchenLat ?? undefined}
               kitchenLng={order.kitchenLng ?? undefined}
               customerLat={order.customerLat ?? undefined}

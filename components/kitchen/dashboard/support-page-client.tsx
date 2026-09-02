@@ -26,6 +26,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { CloudinaryUpload } from "@/components/patterns/cloudinary-upload"
+import { LiveChatWidget } from "@/components/chat/live-chat-widget"
 
 interface TicketMessage {
   id: string
@@ -39,6 +40,8 @@ interface SupportTicket {
   id: string
   userId: string
   orderId: string | null
+  publicCode: string | null
+  order?: { publicCode: string | null } | null
   subject: string
   description: string
   status: "OPEN" | "INPROGRESS" | "RESOLVED" | "CLOSED"
@@ -371,7 +374,7 @@ export default function SupportPageClient() {
                       const CatIcon = catInfo.icon
 
                       return (
-                        <Link href={`/support?ticket=${ticket.id}`} key={ticket.id} className="block group">
+                        <Link href={`/support?ticket=${ticket.publicCode ?? ticket.id}`} key={ticket.id} className="block group">
                           <div className="rounded-[12px] border border-[#E5E7EB] p-4 sm:p-5 transition-all hover:border-[#DCE8DF] bg-[#FFFFFF] relative overflow-hidden">
                             <div className="flex gap-4">
                               <div className={cn("h-12 w-12 rounded-full flex items-center justify-center shrink-0", catInfo.bg)}>
@@ -379,7 +382,9 @@ export default function SupportPageClient() {
                               </div>
                               <div className="flex-1 min-w-0 pr-6">
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1.5">
-                                  <h3 className="font-bold text-[14px] text-[#111827] truncate pr-2">{ticket.subject}</h3>
+                                  <h3 className="font-bold text-[14px] text-[#111827] truncate pr-2">
+                                    {ticket.publicCode ?? `#${ticket.id.slice(-6).toUpperCase()}`} - {ticket.subject}
+                                  </h3>
                                   <Badge variant="outline" className={cn("text-[10px] font-bold px-2 py-0.5 border w-fit shrink-0 rounded-[8px] uppercase", statusInfo.color)}>
                                     {statusInfo.label}
                                   </Badge>
@@ -570,6 +575,7 @@ export default function SupportPageClient() {
         </div>
       </div>
 
+      <LiveChatWidget />
     </div>
   )
 }

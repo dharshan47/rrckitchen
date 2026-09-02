@@ -53,7 +53,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { ChartLineDots } from "@/components/ui/line-chart"
 import { ChartPieDonut } from "@/components/ui/donut-chart"
 import { toast } from "sonner"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+
 import type { AdminCustomerRow, AdminCustomerOrderRow } from "@/actions/admin/admin-customers"
 import {
   useAdminCustomersQuery,

@@ -6785,7 +6785,9 @@ export type NotificationLogScalarFieldEnum = (typeof NotificationLogScalarFieldE
 
 export const SupportTicketScalarFieldEnum = {
   id: 'id',
+  publicCode: 'publicCode',
   userId: 'userId',
+  guestId: 'guestId',
   orderId: 'orderId',
   subject: 'subject',
   description: 'description',

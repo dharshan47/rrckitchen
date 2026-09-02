@@ -21,8 +21,6 @@ import {
   HelpCircle,
   Loader2,
   RotateCcw,
-  MapPin,
-  CheckCircle2,
   ChevronUp,
 } from "lucide-react";
 import { KitchenCard } from "@/components/kitchen/kitchen-card";
@@ -548,10 +546,7 @@ export function CategoryCuisineClient({ categoryName }: Props) {
     [content?.offers]
   );
   const faqs = useMemo(() => content?.faqs ?? [], [content?.faqs]);
-  const heroLayout = useMemo(() => content?.heroLayout ?? "LEFT_TEXT", [content?.heroLayout]);
-  const isCenter = heroLayout === "CENTER_TEXT";
-  const isRight = heroLayout === "RIGHT_TEXT";
-  const isFullWidth = heroLayout === "FULL_WIDTH";
+
 
   const matchesFilters = useCallback(
     (kitchen: PublicCategoryBundle["kitchens"][number]): boolean => {

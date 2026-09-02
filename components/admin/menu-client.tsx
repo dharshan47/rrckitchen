@@ -307,8 +307,7 @@ export default function AdminMenuPage() {
         cell: ({ row }) => (
           <div className="flex items-center gap-4 py-2 min-w-[280px]">
             {row.original.imageUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={row.original.imageUrl} alt={row.original.name} className="h-14 w-14 rounded-[10px] object-cover border border-[#E5E7EB]" />
+              <Image src={row.original.imageUrl} alt={row.original.name} width={56} height={56} className="h-14 w-14 rounded-[10px] object-cover border border-[#E5E7EB]" />
             ) : (
               <div className="h-14 w-14 rounded-[10px] bg-[#F3F4F6] flex items-center justify-center border border-[#E5E7EB]">
                 <UtensilsCrossed className="h-5 w-5 text-[#9CA3AF]" />
@@ -1056,7 +1055,6 @@ function MenuEditMode({ item, onClose }: { item: AdminMenuItemRow; onClose: () =
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {item.photos.map((p, idx) => (
             <div key={p.id} className="relative group">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <Image src={p.imageUrl} alt="" className={`w-full aspect-square rounded-[16px] object-cover bg-gray-100 ${idx === 0 ? "border-2 border-[#15803D]" : "border border-[#E5E7EB]"}`} />
               {idx === 0 && (
                 <span className="absolute top-4 left-4 bg-[#16A34A] text-white text-[11px] font-extrabold px-3 py-1 rounded-full shadow-sm tracking-wide">Cover</span>

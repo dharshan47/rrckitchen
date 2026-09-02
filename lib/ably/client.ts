@@ -15,7 +15,7 @@ const requestedChannels = new Set<string>()
 // subscription is lost when the client is recreated with a wider token.
 const listeners = new Map<string, Set<AblyHandler>>()
 
-const CHANNEL_RE = /^(order|kitchen|deliveryPartner|user):[a-zA-Z0-9_-]+$/
+const CHANNEL_RE = /^(order|kitchen|deliveryPartner|user|live-chat):[a-zA-Z0-9_-]+$/
 
 function buildAuthUrl() {
   const qs = new URLSearchParams()

@@ -38,6 +38,7 @@ import {
   Lock,
   type LucideIcon,
 } from "lucide-react";
+import { subscribeAbly, unsubscribeAbly } from "@/lib/ably/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -183,8 +184,8 @@ function getInitials(name: string | null | undefined) {
     .toUpperCase();
 }
 
-function formatTicketId(id: string) {
-  return `TKT-${format(new Date(), "yyyy")}-${id.slice(-4).toUpperCase()}`;
+function formatTicketId(id: string, publicCode?: string | null) {
+  return publicCode ?? `TKT-${format(new Date(), "yyyy")}-${id.slice(-4).toUpperCase()}`;
 }
 
 const columnHelper = createColumnHelper<AdminSupportTicket>();
@@ -320,6 +321,21 @@ export default function AdminSupportPage() {
     setDetailTab("conversation");
   }, [selectedTicket?.id]);
 
+  // Subscribe to real-time chat for the selected ticket
+  useEffect(() => {
+    if (!selectedTicket?.id) return;
+    
+    const channelName = `live-chat:${selectedTicket.id}`;
+    const handleNewMessage = () => {
+      refetch();
+    };
+
+    subscribeAbly(channelName, handleNewMessage);
+    return () => {
+      unsubscribeAbly(channelName, handleNewMessage);
+    };
+  }, [selectedTicket?.id, refetch]);
+
   const tabCounts = useMemo(() => ({
     ALL: tickets.length,
     OPEN: tickets.filter((t) => t.status === "OPEN").length,
@@ -368,7 +384,7 @@ export default function AdminSupportPage() {
       .filter((t) =>
         !search ||
         (t.subject && t.subject.toLowerCase().includes(search.toLowerCase())) ||
-        (t.id && t.id.toLowerCase().includes(search.toLowerCase())) ||
+        ((t.publicCode || t.id)?.toLowerCase().includes(search.toLowerCase())) ||
         (t.user?.name || "").toLowerCase().includes(search.toLowerCase())
       );
   }, [tickets, activeTab, statusFilter, priorityFilter, categoryFilter, search]);
@@ -383,7 +399,7 @@ export default function AdminSupportPage() {
     }
     const header = ["Ticket ID", "Customer", "Email", "Phone", "Subject", "Category", "Priority", "Status", "Created At"];
     const rows = filtered.map((t) => [
-      `TKT-${t.id.slice(-4).toUpperCase()}`,
+      formatTicketId(t.id, t.publicCode),
       `"${(t.user?.name ?? "Unknown").replace(/"/g, '""')}"`,
       `"${(t.user?.email ?? "").replace(/"/g, '""')}"`,
       `"${(t.user?.phoneNumber ?? "").replace(/"/g, '""')}"`,
@@ -416,7 +432,7 @@ export default function AdminSupportPage() {
           <div className="flex items-center gap-3 relative">
             <div className={cn("absolute -left-4 w-[2px] h-[28px] rounded-r-md", catInfo.barColor)} />
             <span className="text-[12px] font-bold text-[#1F2937] font-mono">
-              {formatTicketId(ticket.id)}
+              {formatTicketId(ticket.id, ticket.publicCode)}
             </span>
           </div>
         );
@@ -846,11 +862,11 @@ export default function AdminSupportPage() {
                 <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">Ticket ID</p>
                 <div className="flex items-center justify-end gap-1.5">
                   <span className="text-[13px] font-bold text-[#1F2937] font-mono">
-                    {formatTicketId(selectedTicket.id)}
+                    {formatTicketId(selectedTicket.id, selectedTicket.publicCode)}
                   </span>
                   <button
                     onClick={() => {
-                      navigator.clipboard.writeText(formatTicketId(selectedTicket.id));
+                      navigator.clipboard.writeText(formatTicketId(selectedTicket.id, selectedTicket.publicCode));
                       toast.success("Copied!");
                     }}
                     className="text-[#64748B] hover:text-[#111827] transition-colors"
@@ -894,7 +910,7 @@ export default function AdminSupportPage() {
               <div className="text-right">
                 <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">Order ID</p>
                 <p className="text-[13px] font-bold text-[#16A34A] font-mono mb-2">
-                  {selectedTicket.orderId ? `ORD-${selectedTicket.orderId.slice(-8).toUpperCase()}` : "—"}
+                  {selectedTicket.order?.publicCode ? `ORD-${selectedTicket.order.publicCode}` : selectedTicket.orderId ? `ORD-${selectedTicket.orderId.slice(-8).toUpperCase()}` : "—"}
                 </p>
                 <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">Created At</p>
                 <p className="text-[11px] font-semibold text-[#334155]">

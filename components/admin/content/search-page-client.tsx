@@ -672,6 +672,7 @@ function Editor({ contentId, onCancel }: EditorProps) {
                     <div className="p-4 flex flex-col gap-4">
                       {banner ? (
                         <div className="relative rounded-lg overflow-hidden border border-[#E8ECEA] group">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={banner} alt="Banner" className="w-full aspect-[21/9] object-cover" />
                           <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <CloudinaryUpload
@@ -720,16 +721,17 @@ function Editor({ contentId, onCancel }: EditorProps) {
                     <div className="p-4 border-b border-[#E8ECEA] flex flex-col gap-1">
                       <h3 className="font-semibold text-[#111827] text-[15px]">Kitchen Cards</h3>
                       <p className="text-[13px] text-[#64748B]">
-                        Customize images for kitchens serving "{draft.keyword}".
+                        Customize images for kitchens serving &quot;{draft.keyword}&quot;.
                       </p>
                     </div>
                     <div className="p-4 grid grid-cols-1 gap-4 max-h-[500px] overflow-y-auto custom-scrollbar">
                       {previewKitchens.map(kitchen => {
                         const override = draft.kitchenCards.find(c => c.kitchenPartnerId === kitchen.id);
-                        const displayUrl = override?.imageUrl ?? kitchen.imageUrl;
+                        const displayUrl = override?.imageUrl ?? kitchen.coverImageUrl;
                         return (
                           <div key={kitchen.id} className="flex items-center gap-4 p-3 border border-[#E8ECEA] rounded-[8px] bg-[#FAFAFA]">
                             <div className="w-16 h-16 rounded-[8px] overflow-hidden bg-slate-100 shrink-0 relative border border-slate-200">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
                               {displayUrl ? <img src={displayUrl} className="w-full h-full object-cover" alt={kitchen.displayName} /> : <div className="w-full h-full flex items-center justify-center text-slate-300"><Layers className="w-6 h-6" /></div>}
                             </div>
                             <div className="flex-1 min-w-0">
@@ -761,7 +763,7 @@ function Editor({ contentId, onCancel }: EditorProps) {
                       })}
                       {previewKitchens.length === 0 && (
                         <div className="text-center py-8 text-sm text-[#64748B]">
-                          No active kitchens found serving "{draft.keyword}".
+                          No active kitchens found serving &quot;{draft.keyword}&quot;.
                         </div>
                       )}
                     </div>
@@ -1088,7 +1090,7 @@ function Editor({ contentId, onCancel }: EditorProps) {
 
                        // Find if the image was explicitly overridden in this draft
                        const override = draft.kitchenCards?.find(c => c.kitchenPartnerId === kitchen.id);
-                       const displayImage = override?.imageUrl ?? kitchen.imageUrl;
+                       const displayImage = override?.imageUrl ?? kitchen.coverImageUrl;
 
                        return (
                           <div

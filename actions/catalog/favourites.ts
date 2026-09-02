@@ -13,6 +13,7 @@ export async function getRecommendedKitchens(): Promise<RelatedKitchen[]> {
       avgRating: k.avgRating,
       totalReviews: k.totalReviews,
       imageUrl: k.imageUrl,
+      coverImageUrl: k.coverImageUrl,
       cuisineTags: k.cuisineTags,
       timeSlots: k.timeSlots,
       estimatedPrepTime: k.estimatedPrepTime,

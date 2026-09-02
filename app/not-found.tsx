@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import NotFoundIcon from "@/components/icons/404";
+import { Home, Compass } from "lucide-react";
 
 export default function NotFound() {
   const router = useRouter();
@@ -25,34 +27,37 @@ export default function NotFound() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-white px-6 py-12 md:py-20">
       <div className="flex w-full max-w-4xl flex-col items-center text-center">
-
-        <div className="flex items-center justify-center gap-2 sm:gap-4 md:gap-6">
-          <span className="text-7xl font-black tracking-tighter sm:text-8xl md:text-9xl" style={{ color: "#1B2F45" }}>4</span>
-          <span className="text-7xl font-black tracking-tighter text-primary sm:text-8xl md:text-9xl">0</span>
-          <span className="text-7xl font-black tracking-tighter sm:text-8xl md:text-9xl" style={{ color: "#1B2F45" }}>4</span>
+        
+        <div className="w-full max-w-2xl px-4 flex justify-center">
+          <NotFoundIcon className="w-full h-auto" />
         </div>
 
-        <div className="mt-8 space-y-6 md:mt-12">
-          <h1 className="text-3xl font-black uppercase tracking-tight text-foreground md:text-5xl">
-            Lost in the Kitchen?
+        <div className="mt-8 space-y-4 md:mt-8">
+          <h1 className="text-4xl font-bold tracking-tight text-[#0F172A] md:text-5xl">
+            Oops!
           </h1>
-          <p className="mx-auto max-w-xl text-base text-muted-foreground md:text-lg">
-            The page you are looking for seems to have been eaten! 
-            Let&apos;s get you back to delicious meals.
-          </p>
+          <h2 className="text-xl font-bold tracking-tight text-[#0F172A] md:text-2xl">
+            The page you&apos;re looking for is not found.
+          </h2>
+          <div className="mx-auto max-w-xl text-sm text-gray-500 md:text-base space-y-1">
+            <p>It might have been removed, renamed, or temporarily unavailable.</p>
+            <p>Let&apos;s get you back on track!</p>
+          </div>
 
-          <div className="flex flex-col items-center justify-center gap-4 pt-4 sm:flex-row">
+          <div className="flex flex-col items-center justify-center gap-4 pt-6 sm:flex-row">
             <button
               onClick={() => router.push("/")}
-              className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-8 py-3.5 text-base font-extrabold text-primary-foreground transition-all hover:brightness-110 active:scale-95 sm:w-auto"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border-none bg-[#087F35] px-6 py-3.5 text-sm font-bold text-white shadow-[0_4px_12px_rgba(8,127,53,0.18)] transition-all hover:bg-[#066B2C] active:scale-95 sm:w-auto"
             >
-              GO TO HOME
+              <Home className="h-5 w-5" />
+              <span>Back to Home</span>
             </button>
             <button
               onClick={() => router.push("/categories")}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border-2 border-foreground px-8 py-3.5 text-base font-extrabold text-foreground transition-all hover:bg-foreground hover:text-white active:scale-95 sm:w-auto"
+              className="flex w-full items-center justify-center gap-2 rounded-xl border-[1.5px] border-[#159447] bg-white px-6 py-3.5 text-sm font-bold text-[#087F35] shadow-none transition-all hover:border-[#087F35] hover:bg-[#F0FDF4] active:scale-95 sm:w-auto"
             >
-              BROWSE CATEGORIES
+              <Compass className="h-5 w-5" />
+              <span>Explore Kitchens</span>
             </button>
           </div>
         </div>

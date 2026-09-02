@@ -50,6 +50,7 @@ export interface KitchenWishlistItem {
     avgRating: number | null;
     totalReviews: number;
     imageUrl: string | null;
+    coverImageUrl: string | null;
     lat: number | null;
     lng: number | null;
     user: { name: string | null };

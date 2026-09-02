@@ -1,6 +1,6 @@
 "use server"
 
-import prisma from "@/lib/prisma"
+import prisma, { Prisma } from "@/lib/prisma"
 import { requirePermission } from "@/lib/auth-guards"
 import { toTitleCase } from "@/lib/utils"
 
@@ -146,6 +146,7 @@ export interface AdminSearchKitchen {
   avgRating: number
   totalReviews: number
   imageUrl: string | null
+  coverImageUrl: string | null
   profileImage: string | null
   cuisineTags: string[]
   estimatedPrepTime: number | null
@@ -158,7 +159,7 @@ export interface AdminSearchKitchen {
 export async function getSearchPageKitchens(limit = 12, keyword?: string): Promise<AdminSearchKitchen[]> {
   await requirePermission("MANAGE_CMS")
 
-  const whereClause: any = { status: { in: ["APPROVED", "ACTIVE"] } }
+  const whereClause: Prisma.KitchenPartnerWhereInput = { status: { in: ["APPROVED", "ACTIVE"] } }
   
   if (keyword) {
     whereClause.OR = [
@@ -179,7 +180,7 @@ export async function getSearchPageKitchens(limit = 12, keyword?: string): Promi
       totalReviews: true,
       estimatedPrepTime: true,
       operatingHours: true,
-      kitchenAlias: { select: { displayName: true, imageUrl: true } },
+      kitchenAlias: { select: { displayName: true, imageUrl: true, coverImageUrl: true } },
       kitchenCategories: { select: { category: { select: { name: true } } } },
       kitchenAddress: { select: { latitude: true, longitude: true } },
       menus: {
@@ -204,6 +205,7 @@ export async function getSearchPageKitchens(limit = 12, keyword?: string): Promi
       avgRating: Number(k.avgRating),
       totalReviews: k.totalReviews,
       imageUrl: k.kitchenAlias?.imageUrl ?? firstItemPhoto,
+      coverImageUrl: k.kitchenAlias?.coverImageUrl ?? null,
       profileImage: k.kitchenAlias?.imageUrl ?? null,
       cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
       estimatedPrepTime: k.estimatedPrepTime ?? null,

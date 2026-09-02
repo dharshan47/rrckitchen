@@ -32,7 +32,7 @@ export async function GET(req: NextRequest) {
             totalReviews: true,
             operatingHours: true,
             estimatedPrepTime: true,
-            kitchenAlias: { select: { displayName: true, imageUrl: true } },
+            kitchenAlias: { select: { displayName: true, imageUrl: true, coverImageUrl: true } },
             kitchenAddress: {
               select: { lineOne: true, pincode: true, latitude: true, longitude: true },
             },
@@ -79,8 +79,8 @@ export async function GET(req: NextRequest) {
           cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
           avgRating,
           totalReviews: k.totalReviews,
-          imageUrl:
-            k.kitchenAlias?.imageUrl ?? k.menus[0]?.menuItems[0]?.photos[0]?.imageUrl ?? null,
+          imageUrl: k.kitchenAlias?.imageUrl ?? null,
+          coverImageUrl: k.kitchenAlias?.coverImageUrl ?? null,
           lat: k.kitchenAddress?.latitude ?? null,
           lng: k.kitchenAddress?.longitude ?? null,
           user: k.user,

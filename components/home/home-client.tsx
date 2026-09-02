@@ -4,8 +4,6 @@ import Link from "next/link";
 import Image from "next/image";
 import { ErrorBoundary } from "@/components/patterns/error-boundary";
 import { KitchenCard } from "@/components/kitchen/kitchen-card";
-import type { SortOption } from "@/components/kitchen/sort-by-dialog";
-import type { VegFilterValue } from "@/components/kitchen/veg-filter";
 import {
   Star,
   ShieldCheck,
@@ -17,12 +15,11 @@ import {
   Users,
 } from "lucide-react";
 import { useState, useEffect, useMemo, useRef } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { WhatsOnYourMind } from "@/components/home/whats-on-your-mind";
 import { SearchAutocomplete } from "@/components/search/search-autocomplete";
 import { KitchenFilters } from "@/components/kitchen/kitchen-filters";
 import { AppDownloadBanner } from "@/components/home/app-download-banner";
-import { useKitchenCategories, useExploreKitchens, type KitchenData } from "@/hooks/useExploreKitchens";
+import { useKitchenCategories, useExploreKitchens } from "@/hooks/useExploreKitchens";
 import { HomeKitchenCardSkeleton } from "@/components/home/home-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
@@ -406,7 +403,21 @@ export function HomeClient() {
                     </svg>
                   </div>
                   <span className="text-[11px] font-bold text-[#111111] leading-tight">
-                    Receive in<br/>Tiffin Box
+                    Receive<br/>Tiffin
+                  </span>
+                </div>
+                
+                <div className="text-[#6B7280] font-light text-base mt-1.5 shrink-0 hidden sm:block">→</div>
+                
+                {/* Step 5 */}
+                <div className="flex flex-col items-center text-center gap-2.5 flex-1 relative hidden sm:flex">
+                  <div className="flex items-center justify-center mb-1 h-8">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-7 w-7 text-[#003015]">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
+                  </div>
+                  <span className="text-[11px] font-bold text-[#111111] leading-tight">
+                    Return<br/>Pickup
                   </span>
                 </div>
                 

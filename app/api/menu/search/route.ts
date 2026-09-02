@@ -67,7 +67,7 @@ export async function GET(request: Request) {
       slug: true,
       avgRating: true,
       totalReviews: true,
-      kitchenAlias: { select: { displayName: true, imageUrl: true } },
+      kitchenAlias: { select: { displayName: true, imageUrl: true, coverImageUrl: true } },
       kitchenCategories: {
         select: { category: { select: { name: true } } },
       },
@@ -116,7 +116,7 @@ export async function GET(request: Request) {
                   select: {
                     id: true,
                     slug: true,
-                    kitchenAlias: { select: { displayName: true, imageUrl: true } },
+                    kitchenAlias: { select: { displayName: true, imageUrl: true, coverImageUrl: true } },
                   },
                 },
               },
@@ -217,7 +217,8 @@ export async function GET(request: Request) {
         avgRating: Number(k.avgRating),
         totalReviews: k.totalReviews,
         cuisineTags: k.kitchenCategories.map((kc) => toTitleCase(kc.category.name)),
-        imageUrl: kitchenItems[0]?.imageUrl ?? k.kitchenAlias?.imageUrl ?? null,
+        imageUrl: k.kitchenAlias?.imageUrl ?? null,
+        coverImageUrl: k.kitchenAlias?.coverImageUrl ?? null,
         profileImage: k.kitchenAlias?.imageUrl ?? null,
         items: kitchenItems,
         operatingHours: k.operatingHours as Record<string, { open: string; close: string }> | null,

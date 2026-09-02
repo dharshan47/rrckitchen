@@ -35,6 +35,7 @@ export * from "./supportStore";
 export * from "./ratingStore";
 export * from "./favouritesStore";
 export * from "./loyaltyStore";
+export * from "./liveChatStore";
 
 // Backward compatible re-exports
 import { authStore } from "./authStore";

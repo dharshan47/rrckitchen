@@ -82,7 +82,7 @@ export function DataTable<TData, TValue>({
   const [orderFilter, setOrderFilter] = React.useState("all")
 
   const filteredData = React.useMemo(() => {
-    return data.filter((item: any) => {
+    return (data as (TData & { avgRating?: number; orders?: number })[]).filter((item) => {
       const rating = item.avgRating || 0;
       const orders = item.orders || 0;
       

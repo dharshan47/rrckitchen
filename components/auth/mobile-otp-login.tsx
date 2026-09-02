@@ -12,8 +12,9 @@ import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
 import { OtpInputBoxes } from "@/components/ui/otp-input-boxes";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, CheckCircle, LogIn, ArrowRight, ShieldCheck, RotateCw, ChevronDown } from "lucide-react";
+import { ArrowLeft, CheckCircle, LogIn, ArrowRight, ShieldCheck, RotateCw } from "lucide-react";
 import Link from "next/link";
+import IndianFlag from "@/components/icons/indian-flag";
 
 export type UserRole = "customer" | "delivery-partner" | "kitchen";
 
@@ -39,18 +40,6 @@ interface MobileOtpLoginProps {
   noAccountLabel?: string;
 }
 
-const IndianFlag = ({ className }: { className?: string }) => (
-  <svg viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" className={`rounded-sm shadow-sm shrink-0 w-[16px] sm:w-[24px] h-auto ${className || ''}`}>
-    <rect width="24" height="16" fill="#FFFFFF" />
-    <rect width="24" height="5.33" fill="#FF9933" />
-    <rect y="10.67" width="24" height="5.33" fill="#138808" />
-    <circle cx="12" cy="8" r="1.5" stroke="#000080" strokeWidth="0.5" fill="none" />
-    <circle cx="12" cy="8" r="0.5" fill="#000080" />
-    {Array.from({ length: 8 }).map((_, i) => (
-      <line key={i} x1="12" y1="8" x2={12 + 1.5 * Math.cos(i * Math.PI / 4)} y2={8 + 1.5 * Math.sin(i * Math.PI / 4)} stroke="#000080" strokeWidth="0.2" />
-    ))}
-  </svg>
-);
 
 function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel }: MobileOtpLoginProps) {
   const { step, errorMessage, isLoading, resendCooldown, verified, sendOtp, verifyOtp, resendOtp } = usePhoneAuth(role);
@@ -94,18 +83,18 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
           <form onSubmit={phoneForm.handleSubmit((d) => sendOtp(d.phone))} className="grid gap-6">
             <div className="grid gap-2">
               <Label htmlFor="phone" className="text-sm font-semibold text-gray-900">Phone number</Label>
-              <div className="flex items-center border border-green-700 rounded-[8px] focus-within:ring-2 focus-within:ring-green-700/20 transition-all bg-white h-[56px] pl-4">
-                <div className="flex items-center gap-2 shrink-0 pr-3 cursor-pointer">
+              <div className="flex items-center border border-green-700 rounded-[8px] focus-within:ring-2 focus-within:ring-green-700/20 transition-all bg-white h-[56px] pl-3 sm:pl-4 overflow-hidden">
+                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 pr-2 sm:pr-3 cursor-pointer">
                   <IndianFlag className="!w-[22px]" />
                   <span className="text-[15px] font-medium text-[#4B5563]">+91</span>
-                  <ChevronDown className="h-[18px] w-[18px] text-[#9CA3AF] ml-0.5" strokeWidth={2.5} />
+                
                 </div>
                 <div className="w-[1px] h-[28px] bg-[#E5E7EB] shrink-0"></div>
                 <Input
                   id="phone"
                   inputMode="tel"
                   placeholder="Enter your phone number"
-                  className="border-0 focus-visible:ring-0 rounded-none bg-transparent flex-1 text-[16px] px-4 py-6 h-full placeholder:text-[#6B7280] text-[#111827]"
+                  className="border-0 focus-visible:ring-0 rounded-none bg-transparent flex-1 min-w-0 w-full text-[16px] px-3 sm:px-4 py-6 h-full placeholder:text-[#6B7280] text-[#111827]"
                   {...phoneForm.register("phone")}
                 />
               </div>
@@ -195,17 +184,17 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
         {!verified && step === "phone" && (
           <div className="bg-[#F6FAF7] rounded-xl p-4 sm:p-5 grid grid-cols-3 gap-0 divide-x divide-gray-200">
             <div className="flex flex-col items-center text-center gap-1 sm:gap-1.5 px-1 sm:px-2">
-              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-green-700" strokeWidth={1.5} />
+              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-[#087A35]" fill="none" strokeWidth={1.5} />
               <h4 className="text-[10px] sm:text-[13px] font-bold text-gray-900 leading-tight">Secure Login</h4>
               <p className="text-[9px] sm:text-[11px] text-muted-foreground leading-tight hidden sm:block">Your data is safe with us</p>
             </div>
             <div className="flex flex-col items-center text-center gap-1 sm:gap-1.5 px-1 sm:px-2">
-              <RotateCw className="h-5 w-5 sm:h-6 sm:w-6 text-green-700" strokeWidth={1.5} />
+              <RotateCw className="h-5 w-5 sm:h-6 sm:w-6 text-[#087A35]" fill="none" strokeWidth={1.5} />
               <h4 className="text-[10px] sm:text-[13px] font-bold text-gray-900 leading-tight">Quick Access</h4>
               <p className="text-[9px] sm:text-[11px] text-muted-foreground leading-tight hidden sm:block">Login in seconds with OTP</p>
             </div>
             <div className="flex flex-col items-center text-center gap-1 sm:gap-1.5 px-1 sm:px-2">
-              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-green-700" strokeWidth={1.5} />
+              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-[#087A35]" fill="none" strokeWidth={1.5} />
               <h4 className="text-[10px] sm:text-[13px] font-bold text-gray-900 leading-tight">Trusted Support</h4>
               <p className="text-[9px] sm:text-[11px] text-muted-foreground leading-tight hidden sm:block">Real people, real support</p>
             </div>
@@ -223,9 +212,9 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
             
             <p className="text-[13px] text-muted-foreground max-w-sm mx-auto leading-relaxed">
               By continuing, you agree to our{" "}
-              <Link href="/terms" className="text-green-700 hover:underline font-medium">Terms of Service</Link>{" "}
+              <Link href="/terms-of-use" className="text-[#087A35] hover:underline font-medium">Terms of Service</Link>{" "}
               and{" "}
-              <Link href="/privacy" className="text-green-700 hover:underline font-medium">Privacy Policy</Link>
+              <Link href="/privacy-policy" className="text-[#087A35] hover:underline font-medium">Privacy Policy</Link>
             </p>
           </div>
         )}

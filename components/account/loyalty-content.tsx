@@ -13,6 +13,8 @@ import {
   Clock,
   Loader2,
 } from "lucide-react";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useRef, useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
@@ -118,30 +120,50 @@ function HistoryRowBadge({ row }: { row: HistoryRow }) {
   );
 }
 
-function SkeletonRow() {
+function SkeletonCouponCard() {
   return (
-    <div className="animate-pulse">
-      <div className="h-4 bg-[#F3F4F6] rounded w-1/3 mb-1.5"></div>
-      <div className="h-4 bg-[#F3F4F6] rounded w-1/2 mb-1.5"></div>
-      <div className="h-4 bg-[#F3F4F6] rounded w-1/4"></div>
+    <div className="min-w-[260px] max-w-[260px] rounded-xl border border-[#E5E7EB] bg-white flex flex-col p-4 shrink-0">
+      <div className="flex gap-4 items-center mb-5">
+        <Skeleton className="w-16 h-16 rounded-full shrink-0" />
+        <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+          <Skeleton className="h-[18px] w-24 rounded" />
+          <Skeleton className="h-[14px] w-full rounded" />
+        </div>
+      </div>
+      <div className="flex items-center gap-2 mb-4">
+        <Skeleton className="h-[16px] w-16 rounded" />
+      </div>
+      <Skeleton className="h-[40px] w-full rounded-lg" />
     </div>
   );
 }
 
-function SkeletonCouponCard() {
+function SkeletonPurchasedCoupon() {
   return (
-    <div className="min-w-[260px] max-w-[260px] rounded-xl border border-[#E5E7EB] bg-white flex flex-col p-4 animate-pulse shrink-0">
-      <div className="flex gap-4 items-center mb-5">
-        <div className="w-16 h-16 rounded-full bg-[#F3F4F6]"></div>
-        <div className="flex flex-col gap-2 flex-1">
-          <div className="h-3.5 bg-[#F3F4F6] rounded w-3/4"></div>
-          <div className="h-3 bg-[#F3F4F6] rounded w-1/2"></div>
-        </div>
+    <div className="flex items-center border border-gray-100 rounded-xl p-3 bg-[#FAFAFA]">
+      <Skeleton className="h-[46px] w-[110px] rounded-lg shrink-0" />
+      <div className="flex-1 px-4 flex flex-col gap-1 min-w-0">
+        <Skeleton className="h-[18px] w-32 rounded" />
+        <Skeleton className="h-[14px] w-48 rounded" />
       </div>
-      <div className="h-3 bg-[#F3F4F6] rounded w-1/3 mb-4"></div>
-      <div className="h-10 bg-[#F3F4F6] rounded-lg"></div>
+      <div className="flex flex-col gap-1.5 border-l border-gray-200 pl-4 pr-2">
+        <Skeleton className="h-[12px] w-12 rounded" />
+        <Skeleton className="h-[16px] w-20 rounded" />
+        <Skeleton className="h-[16px] w-12 rounded" />
+      </div>
     </div>
-  );
+  )
+}
+
+function SkeletonHistoryRow() {
+  return (
+    <tr className="border-b border-gray-50">
+      <td className="py-4 whitespace-nowrap"><Skeleton className="h-[18px] w-32 rounded" /></td>
+      <td className="py-4"><Skeleton className="h-[18px] w-40 rounded" /></td>
+      <td className="py-4"><Skeleton className="h-[20px] w-16 rounded" /></td>
+      <td className="py-4 flex justify-end pr-2"><Skeleton className="h-[20px] w-12 rounded" /></td>
+    </tr>
+  )
 }
 
 // -----------------------------------------
@@ -230,7 +252,26 @@ export function LoyaltyContent() {
   const visiblePurchased = showAllPurchased ? purchased : purchased.slice(0, 3);
 
   return (
-    <div className="w-full flex flex-col gap-6 md:gap-8 max-w-6xl mx-auto pb-12">
+    <div className="w-full flex flex-col gap-6 md:gap-8 max-w-6xl mx-auto pb-12 px-4 md:px-0">
+
+      {/* Breadcrumb Section */}
+      <div className="pt-6 pb-2">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/" className="text-[#555555] font-medium text-[13px] hover:text-[#111111]">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="text-[#AAAAAA]" />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/account/profile" className="text-[#555555] font-medium text-[13px] hover:text-[#111111]">Account</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator className="text-[#AAAAAA]" />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="text-[#166534] font-bold text-[13px]">Loyalty Points</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+      </div>
 
       {/* BANNER */}
       <div className="relative w-full h-[180px] md:h-[220px] rounded-[24px] overflow-hidden bg-gradient-to-r from-[#FFF4E5] to-[#FFEDD5] flex items-center px-6 md:px-12 border border-[#FEE2E2]">
@@ -478,10 +519,10 @@ export function LoyaltyContent() {
           </div>
 
           {purchasedLoading ? (
-            <div className="space-y-3">
-              <SkeletonRow />
-              <SkeletonRow />
-              <SkeletonRow />
+            <div className="flex flex-col gap-3">
+              <SkeletonPurchasedCoupon />
+              <SkeletonPurchasedCoupon />
+              <SkeletonPurchasedCoupon />
             </div>
           ) : visiblePurchased.length === 0 ? (
             <p className="text-[13px] text-gray-500 text-center py-10 border border-dashed border-[#E5E7EB] rounded-xl">
@@ -595,14 +636,7 @@ export function LoyaltyContent() {
             )}
           </div>
 
-          {historyLoading ? (
-            <div className="space-y-4">
-              <SkeletonRow />
-              <SkeletonRow />
-              <SkeletonRow />
-              <SkeletonRow />
-            </div>
-          ) : visibleHistory.length === 0 ? (
+          {!historyLoading && visibleHistory.length === 0 ? (
             <p className="text-[13px] text-gray-500 text-center py-10 border border-dashed border-[#E5E7EB] rounded-xl">
               No points activity yet. Place your first order to start earning!
             </p>
@@ -618,7 +652,14 @@ export function LoyaltyContent() {
                   </tr>
                 </thead>
                 <tbody className="text-[12px] text-gray-700">
-                  {visibleHistory.map((row, index) => {
+                  {historyLoading ? (
+                    <>
+                      <SkeletonHistoryRow />
+                      <SkeletonHistoryRow />
+                      <SkeletonHistoryRow />
+                      <SkeletonHistoryRow />
+                    </>
+                  ) : visibleHistory.map((row, index) => {
                     const isRedeem = row.type === "REDEEMED";
                     return (
                       <tr key={row.id} className={index < visibleHistory.length - 1 ? "border-b border-gray-50" : ""}>

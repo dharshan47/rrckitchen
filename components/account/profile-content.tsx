@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -10,13 +10,21 @@ import { z } from "zod"
 import { 
   User, Mail, Phone, MapPin, LogOut, Package, 
   Pencil, Loader2, Heart, Trash2,
-  Settings, CreditCard, Bell, HelpCircle, Star, CheckCircle2, Menu,
+  Settings, CreditCard, Bell, HelpCircle, Star, CheckCircle2,
   ChefHat, ShieldCheck, Clock, Leaf, Users
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { ProfileSkeleton } from "@/components/account/profile-skeleton"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 import { useSession, signOut } from "@/lib/auth-client"
 import { toast } from "sonner"
 import { format } from "date-fns"
@@ -63,6 +71,12 @@ export function ProfileContent() {
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingProfile, setEditingProfile] = useState(false)
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
+
+  useEffect(() => {
+    const handleToggle = () => setIsSidebarOpen(prev => !prev);
+    window.addEventListener("toggle-profile-sidebar", handleToggle);
+    return () => window.removeEventListener("toggle-profile-sidebar", handleToggle);
+  }, []);
 
   const profile = useUserProfile()
   const addresses = useUserAddresses()
@@ -173,22 +187,14 @@ export function ProfileContent() {
 
   return (
     <div className="min-h-screen bg-[#FEFEFE] text-[#111111] pb-12 font-sans">
-      {/* Mobile Header */}
-      <div className="md:hidden sticky top-0 z-20 bg-white border-b border-[#E6E6E6] px-4 h-14 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-            <Menu className="h-5 w-5 text-[#111111]" />
-          </Button>
-          <span className="font-semibold text-[#111111]">My Account</span>
-        </div>
-      </div>
+      {/* Mobile Header Removed - Using SiteHeader */}
 
       <div className="mx-auto max-w-7xl px-4 py-6 md:py-8 flex gap-6 relative">
         
         {/* Mobile Sidebar Overlay */}
         {isSidebarOpen && (
           <div 
-            className="fixed inset-0 bg-black/20 z-30 md:hidden" 
+            className="fixed inset-0 bg-black/20 z-[60] md:hidden" 
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
@@ -196,7 +202,7 @@ export function ProfileContent() {
         {/* Sidebar Navigation */}
         <aside className={`
           fixed md:sticky top-0 md:top-8 left-0 h-full md:h-auto 
-          w-64 bg-white md:bg-transparent shadow-xl md:shadow-none z-40 md:z-auto
+          w-64 bg-white md:bg-transparent shadow-xl md:shadow-none z-[70] md:z-auto
           transform transition-transform duration-300 ease-in-out overflow-y-auto
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
         `}>
@@ -249,8 +255,25 @@ export function ProfileContent() {
         </aside>
 
         {/* Main Content Area */}
-        <main className="flex-1 space-y-6 min-w-0">
+        <main className="flex-1 space-y-6 min-w-0 pt-2 md:pt-0">
           
+          {/* BREADCRUMB */}
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/" className="text-[#64748B] hover:text-[#0F172A] font-semibold text-[13px]">Home</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/account/profile" className="text-[#64748B] hover:text-[#0F172A] font-semibold text-[13px]">Account</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-[#1E293B] font-bold text-[13px]">Profile</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+
           {/* Profile Header Card */}
           <Card className="p-6 md:p-8 rounded-[12px] shadow-[0_1px_3px_rgba(0,0,0,0.03)] border-[#E7E7E7] bg-white">
             <div className="flex flex-col md:flex-row items-center md:items-start md:justify-between gap-6">

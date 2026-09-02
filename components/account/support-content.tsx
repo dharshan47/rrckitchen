@@ -146,6 +146,13 @@ export function SupportContent() {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 bg-[#FAFAFA] p-2 sm:p-4">
           <div>
+            <div className="flex items-center gap-2 text-sm text-[#6B7280] mb-4">
+              <Link href="/" className="hover:text-[#087A35] transition-colors">Home</Link>
+              <ChevronRight className="h-4 w-4 text-[#9CA3AF]" />
+              <Link href="/account" className="hover:text-[#087A35] transition-colors">Account</Link>
+              <ChevronRight className="h-4 w-4 text-[#9CA3AF]" />
+              <span className="text-[#111827] font-medium">Support</span>
+            </div>
             <h1 className="text-3xl font-bold tracking-tight text-[#111827] mb-2">Support Center</h1>
             <p className="text-[#4B5563] text-sm sm:text-base">We&apos;re here to help! Raise a ticket, track your issues and get the assistance you need.</p>
           </div>
@@ -277,7 +284,7 @@ export function SupportContent() {
                       <TabsTrigger 
                         key={tab} 
                         value={tab} 
-                        className="rounded-none px-0 py-3 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-[#087A35] data-[state=active]:text-[#087A35] text-[#6B7280] font-semibold text-sm transition-none"
+                        className="rounded-none border-x-0 border-t-0 border-b-2 border-b-transparent px-0 py-3 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[#087A35] data-[state=active]:text-[#087A35] text-[#6B7280] font-semibold text-sm transition-none hover:bg-transparent focus-visible:ring-0 outline-none"
                       >
                         {tab}
                       </TabsTrigger>
@@ -298,7 +305,7 @@ export function SupportContent() {
                       const CatIcon = catInfo.icon;
                       
                       return (
-                        <Link href={`/support?ticket=${ticket.id}`} key={ticket.id} className="block group">
+                        <Link href={`/support?ticket=${ticket.publicCode ?? ticket.id}`} key={ticket.id} className="block group">
                           <div className="rounded-[10px] border border-[#E9ECEF] p-4 transition-all hover:border-[#D1D5DB] hover:shadow-[0_2px_8px_rgba(17,24,39,0.04)] bg-[#FFFFFF]">
                             <div className="flex gap-4">
                               <div className={cn("h-[52px] w-[52px] rounded-full flex items-center justify-center shrink-0", catInfo.bg)}>
@@ -306,7 +313,9 @@ export function SupportContent() {
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex justify-between items-start mb-1">
-                                  <h3 className="font-bold text-sm text-[#111827] truncate pr-2">{ticket.subject}</h3>
+                                  <h3 className="font-bold text-sm text-[#111827] truncate pr-2">
+                                    {ticket.publicCode ?? `#${ticket.id.slice(-6).toUpperCase()}`} - {ticket.subject}
+                                  </h3>
                                   <Badge variant="outline" className={cn("text-[10px] font-bold px-2.5 py-0.5 border rounded-[6px] uppercase", statusInfo.color)}>
                                     {statusInfo.label}
                                   </Badge>

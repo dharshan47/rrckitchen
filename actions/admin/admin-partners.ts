@@ -39,6 +39,7 @@ export async function getAdminKitchenPartners() {
     phoneNumber: p.user?.phoneNumber,
     email: p.user?.email,
     imageUrl: p.kitchenAlias?.imageUrl,
+    coverImageUrl: p.kitchenAlias?.coverImageUrl,
     customOfferText: p.kitchenAlias?.customOfferText,
     description: p.kitchenAlias?.description ?? null,
     displayName: p.kitchenAlias?.displayName ?? p.user?.name,
@@ -376,6 +377,31 @@ export async function updateKitchenImage(kitchenId: string, imageUrl: string | n
     return { success: true }
   } catch {
     return { success: false, error: "Failed to update kitchen image" }
+  }
+}
+
+export async function updateKitchenCoverImage(kitchenId: string, coverImageUrl: string | null) {
+  let session
+  try { const result = await requirePermission("MANAGE_CMS"); session = result.session } catch {
+    return { success: false, error: "Unauthorized" }
+  }
+
+  try {
+    await prisma.kitchenAlias.update({
+      where: { kitchenPartnerId: kitchenId },
+      data: { coverImageUrl },
+    })
+    await logAdminAction({
+      actorUserId: session.user.id,
+      action: "UPDATE_KITCHEN_COVER_IMAGE",
+      targetType: "KitchenAlias",
+      targetId: kitchenId,
+      metadata: { coverImageUrl },
+    })
+    await publishKitchenUpdate(kitchenId, "cover-image-updated", { coverImageUrl })
+    return { success: true }
+  } catch {
+    return { success: false, error: "Failed to update kitchen cover image" }
   }
 }
 

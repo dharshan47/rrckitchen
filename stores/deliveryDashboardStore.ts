@@ -22,6 +22,8 @@ export interface DeliverySupportTicket {
   id: string
   userId: string
   orderId: string | null
+  publicCode: string | null
+  order?: { publicCode: string | null } | null
   subject: string
   description: string
   status: "OPEN" | "INPROGRESS" | "RESOLVED" | "CLOSED" | "URGENT"

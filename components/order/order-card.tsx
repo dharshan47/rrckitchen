@@ -263,13 +263,13 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
           <div className="flex items-start md:items-center justify-between gap-3 mb-2 flex-col md:flex-row">
             <div className="flex items-center gap-3">
               <span className="text-[15px] font-[600] text-[#111827]">
-                Order ID: #{order.id.slice(-6).toUpperCase()}
+                Order ID: {order.publicCode ?? `#${order.id.slice(-6).toUpperCase()}`}
               </span>
               <button
                 type="button"
                 onClick={() => {
                   navigator.clipboard
-                    .writeText(order.id)
+                    .writeText(order.publicCode ?? order.id)
                     .then(() => toast.success("Order ID copied"))
                     .catch(() => toast.error("Failed to copy"))
                 }}
@@ -348,7 +348,7 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
           {isOngoing && (
             <>
               <Button asChild className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white rounded-[12px] h-[48px] text-[15px] font-[600] gap-2 transition-colors shadow-[0_4px_12px_rgba(249,115,22,0.2)]">
-                <Link href={`/account/orders/${order.id}/track`}>
+                <Link href={`/account/orders/${order.publicCode ?? order.id}/track`}>
                   <MapPin className="w-[18px] h-[18px]" /> Track Order
                 </Link>
               </Button>

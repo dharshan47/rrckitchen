@@ -316,7 +316,7 @@ export async function getAdminDashboardData() {
   const recentOrders = recentOrdersData.map((o) => {
     const kitchen = o.orderItems[0]?.kitchenPartner?.kitchenAlias?.displayName
     return {
-      id: o.id,
+      id: o.publicCode ?? o.id,
       customer: o.user?.name,
       kitchen,
       date: format(o.createdAt, "dd MMM yyyy"),
@@ -534,6 +534,7 @@ export async function getKitchenDashboardData() {
         order: {
           select: {
             id: true,
+            publicCode: true,
             status: true,
             createdAt: true,
             serviceDate: true,
@@ -636,6 +637,7 @@ export async function getKitchenDashboardData() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const orderList = recentOrderItems.map((oi: any) => ({
     id: oi.order.id,
+    publicCode: oi.order.publicCode,
     itemName: oi.menuItem.name,
     timeSlot: formatTimeSlot(oi.menuItem.timeSlot),
     quantity: oi.quantity,

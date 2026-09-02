@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { useSession } from "@/lib/auth-client";
 import { useCartActions } from "@/stores";
 import { RelatedKitchensGrid } from "@/components/kitchen/related-kitchens-grid";
@@ -128,6 +129,7 @@ function KitchenCard({ item, onRemove, isRemoving }: { item: KitchenWishlistItem
     avgRating: kitchen.avgRating,
     totalReviews: kitchen.totalReviews,
     imageUrl: kitchen.imageUrl,
+    coverImageUrl:kitchen.coverImageUrl,
     customOfferText: null,
     cuisineTags: kitchen.cuisineTags,
     items: [],
@@ -299,28 +301,47 @@ export function FavouritesContent() {
     <main className="min-h-screen bg-[#FAFAFA] text-foreground pb-20">
       <div className="mx-auto max-w-5xl px-4 lg:px-8 py-8">
         
+        {/* Breadcrumb Section */}
+        <div className="pt-1 pb-4">
+          <Breadcrumb>
+            <BreadcrumbList>
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/" className="text-[#555555] font-medium text-[13px] hover:text-[#111111]">Home</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="text-[#AAAAAA]" />
+              <BreadcrumbItem>
+                <BreadcrumbLink href="/account/profile" className="text-[#555555] font-medium text-[13px] hover:text-[#111111]">Account</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbSeparator className="text-[#AAAAAA]" />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-[#166534] font-bold text-[13px]">Favourites</BreadcrumbPage>
+              </BreadcrumbItem>
+            </BreadcrumbList>
+          </Breadcrumb>
+        </div>
+
         {/* Header Section */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-              My <span className="text-[#166534]">Favorites</span>
+              My <span className="text-[#166534]">Favourites</span>
             </h1>
             <p className="text-sm md:text-base text-muted-foreground mt-2">Your saved kitchens and menu items</p>
           </div>
         </div>
 
         <Tabs defaultValue="kitchen" className="space-y-8 w-full">
-          <div className="w-full border-b border-gray-200 overflow-x-auto no-scrollbar">
-            <TabsList className="flex w-max justify-start bg-transparent h-auto p-0 gap-8 min-w-full">
+          <div className="w-full overflow-x-auto no-scrollbar">
+            <TabsList className="flex w-max justify-start bg-transparent h-auto p-0 gap-8 min-w-full outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus:ring-0 ring-0">
               <TabsTrigger 
                 value="kitchen" 
-                className="group data-[state=active]:text-[#166534] data-[state=active]:shadow-none rounded-none py-3.5 text-sm md:text-base font-semibold gap-2 text-gray-500 transition-all border-b-2 border-transparent data-[state=active]:border-[#166534] focus-visible:ring-0 focus-visible:outline-none focus-visible:ring-offset-0 whitespace-nowrap"
+                className="group bg-transparent shadow-none !border-t-0 !border-l-0 !border-r-0 !border-b-[3px] !border-b-transparent data-[state=active]:!border-b-[#166534] data-[state=active]:bg-transparent rounded-none py-3.5 text-sm md:text-base font-semibold gap-2 text-gray-500 data-[state=active]:text-[#166534] transition-all !outline-none focus:!outline-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0 !ring-0 data-[state=active]:shadow-none whitespace-nowrap mb-[-1px]"
               >
                 <Store className="h-5 w-5" /> Kitchens
               </TabsTrigger>
               <TabsTrigger 
                 value="menu" 
-                className="group data-[state=active]:text-[#166534] data-[state=active]:shadow-none rounded-none py-3.5 text-sm md:text-base font-semibold gap-2 text-gray-500 transition-all border-b-2 border-transparent data-[state=active]:border-[#166534] focus-visible:ring-0 focus-visible:outline-none focus-visible:ring-offset-0 whitespace-nowrap"
+                className="group bg-transparent shadow-none !border-t-0 !border-l-0 !border-r-0 !border-b-[3px] !border-b-transparent data-[state=active]:!border-b-[#166534] data-[state=active]:bg-transparent rounded-none py-3.5 text-sm md:text-base font-semibold gap-2 text-gray-500 data-[state=active]:text-[#166534] transition-all !outline-none focus:!outline-none focus:!ring-0 focus-visible:!outline-none focus-visible:!ring-0 !ring-0 data-[state=active]:shadow-none whitespace-nowrap mb-[-1px]"
               >
                 <Soup className="h-5 w-5" /> Menu Items
               </TabsTrigger>
@@ -342,7 +363,7 @@ export function FavouritesContent() {
             <VirtualGrid<KitchenWishlistItem>
               items={kitchenItems}
               layout="grid"
-              gridClassName="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
+              gridClassName="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-6"
               loading={kitchenLoading}
               error={kitchenError}
               hasNextPage={hasNextKitchenPage}

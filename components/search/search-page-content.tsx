@@ -47,6 +47,7 @@ interface SearchKitchen {
   slug: string
   displayName: string
   imageUrl: string | null
+  coverImageUrl: string | null
   avgRating: number
   totalReviews: number
   cuisineTags: string[]
@@ -111,6 +112,7 @@ function toKitchenData(kitchen: SearchKitchen): KitchenData {
     avgRating: kitchen.avgRating,
     totalReviews: kitchen.totalReviews,
     imageUrl: kitchen.imageUrl,
+    coverImageUrl: kitchen.coverImageUrl,
     customOfferText: kitchen.customOfferText ?? null,
     cuisineTags: kitchen.cuisineTags ?? [],
     locality: kitchen.locality ?? null,
