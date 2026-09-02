@@ -10,7 +10,7 @@ const BUSINESS_ERROR_PREFIXES = [
   "Cart is empty",
   "Some menu items not found",
   "Invalid delivery date",
-  "Same day delivery is not available",
+  "Same-day delivery is not available",
   "Orders for this time slot closed",
   "Delivery is not available for this address",
 ];

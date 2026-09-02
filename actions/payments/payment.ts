@@ -66,7 +66,7 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
     const tomorrow = new Date(today);
     tomorrow.setDate(tomorrow.getDate() + 1);
     if (picked.getTime() < tomorrow.getTime()) {
-      throw new Error("Same day delivery is not available. Please choose a future date.");
+      throw new Error("Same-day delivery is not available. Please choose a future date.");
     }
     serviceDate = picked;
     resolvedServiceDateType = picked.getTime() === tomorrow.getTime() ? "TOMORROW" : "FUTURE";

@@ -157,7 +157,7 @@ describe("cravings-nudge", () => {
       const result = await getUserCravingBanner("user-1")
 
       expect(result).not.toBeNull()
-      expect(result?.message).toContain("check today's menu")
+      expect(result?.message).toContain("check the menu")
     })
 
     it("includes timeSlot based on current hour", async () => {

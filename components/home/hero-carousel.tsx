@@ -65,7 +65,7 @@ const slides: HeroSlide[] = [
       { icon: Clock, text: "On-time\nDelivery" },
       { icon: Package, text: "Packed in a\nTiffin Carrier" },
       { icon: Leaf, text: "Fresh\nIngredients" },
-      { icon: Package, text: "Steel Tiffin\nCarrier" },
+      { icon: Package, text: "A Steel Tiffin\nCarrier" },
     ],
     rightCard: [
       { icon: Flame, title: "Food stays hot", subtitle: "for longer" },
@@ -99,7 +99,7 @@ const slides: HeroSlide[] = [
     trustBar: [
       { icon: Heart, text: "Be Your\nOwn Boss" },
       { icon: Clock, text: "Flexible\nHours" },
-      { icon: ShieldCheck, text: "Trusted\nPlatform" },
+      { icon: ShieldCheck, text: "A Trusted\nPlatform" },
       { icon: Package, text: "We Handle\nDelivery" },
     ],
     rightCard: [
@@ -113,7 +113,7 @@ const slides: HeroSlide[] = [
     imageAlt: "Become a home chef with RRC Kitchen",
   },
   {
-    tag: "FRESHLY COOKED DAILY",
+    tag: "FRESHLY COOKED",
     headline: (
       <>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight">
@@ -129,10 +129,10 @@ const slides: HeroSlide[] = [
     ),
     description:
       "Explore a rotating menu crafted by home chefs using the freshest ingredients, delivered in eco-friendly packaging.",
-    primaryCta: { label: "VIEW TODAY'S MENU", href: "/search" },
+    primaryCta: { label: "VIEW MENU", href: "/search" },
     secondaryCta: { label: "EXPLORE KITCHENS", href: "/kitchens" },
     trustBar: [
-      { icon: Clock, text: "Fresh Rotating\nMenu" },
+      { icon: Clock, text: "A Fresh Rotating\nMenu" },
       { icon: Leaf, text: "Farm Fresh\nProduce" },
       { icon: ShieldCheck, text: "Home Chef\nCertified" },
       { icon: Flame, text: "Hot\nDelivery" },
@@ -141,7 +141,7 @@ const slides: HeroSlide[] = [
       { icon: Heart, title: "Cooked with", subtitle: "love & care" },
       { icon: Leaf, title: "Farm to", subtitle: "table freshness" },
       { icon: Recycle, title: "Eco-friendly", subtitle: "packaging" },
-      { icon: Flame, title: "Hot & fresh", subtitle: "every day" },
+      { icon: Flame, title: "Hot & fresh", subtitle: "every time" },
     ],
     bgImage:
       "/hero/hero-delivery-with-us.webp",

@@ -39,7 +39,7 @@ const mockTestimonials: Testimonial[] = [
   {
     id: "m1",
     rating: 5,
-    comment: "The food feels just like home! The ever-silver tiffin box keeps it hot and fresh. Absolutely love it.",
+    comment: "The food feels just like home! The eversilver tiffin box keeps it hot and fresh. Absolutely love it.",
     userName: "Rahul Sharma",
     userImage: null,
     kitchenName: "Aunty's Kitchen",
@@ -386,7 +386,7 @@ export function HomeClient() {
                     </svg>
                   </div>
                   <span className="text-[11px] font-bold text-[#111111] leading-tight">
-                    Pick Today&apos;s<br/>Menu
+                    Pick Your<br/>Menu
                   </span>
                 </div>
                 

@@ -47,7 +47,7 @@ export async function processCravingsNudge(daysSinceLastOrder = 3): Promise<Crav
 
     const title = "Missing your favorite tiffin?"
     const body = lastKitchenName
-      ? `${lastKitchenName} has today's menu ready`
+      ? `${lastKitchenName} has the menu ready`
       : "See what's cooking near you today"
 
     try {
@@ -119,7 +119,7 @@ export async function getUserCravingBanner(userId: string) {
     show: true,
     message: kitchenName
       ? `Reorder your usual from ${kitchenName}?`
-      : "Time to order — check today's menu",
+      : "Time to order — check the menu",
     kitchenId: lastOrder.orderItems[0]?.kitchenPartnerId ?? null,
     timeSlot,
   }
