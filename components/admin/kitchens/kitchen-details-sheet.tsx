@@ -746,7 +746,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
                     />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[12px] font-semibold text-[#334155]">FSSAI Valid Till</Label>
+                    <Label className="text-[12px] font-semibold text-[#334155]">FSSAI Valid Until</Label>
                     <Input
                       value={fssaiValidTill}
                       onChange={(e) => setFssaiValidTill(e.target.value)}

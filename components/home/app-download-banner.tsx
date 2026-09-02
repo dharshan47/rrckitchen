@@ -126,9 +126,9 @@ export function AppDownloadBanner() {
             {/* Text & Buttons */}
             <div className="flex flex-col justify-center items-start text-left z-10 flex-1 min-w-0">
               <h2 className="text-sm sm:text-xl md:text-2xl lg:text-[24px] xl:text-[30px] font-bold text-white tracking-wide leading-snug lg:leading-[1.25]">
-                Delicious Home Cooked Meals
+                Delicious Home-Cooked Meals
                 <br className="hidden sm:block" />
-                {" "}Delivered in Ever Silver Box Carrier
+                {" "}Delivered in an eversilver tiffin carrier
               </h2>
               <p className="text-emerald-100/90 text-xs sm:text-sm lg:text-[15px] xl:text-[17px] mt-1 mb-2.5 sm:mt-2 sm:mb-4 lg:mt-2.5 lg:mb-5 font-medium">
                 Download the RRC Kitchen App Today!

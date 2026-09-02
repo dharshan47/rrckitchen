@@ -723,7 +723,7 @@ export function EditMenuDashboard({ onClose }: EditMenuDashboardProps) {
                               onValueChange={(v) => updateDraft(selectedItemId, { categoryId: v || null })}
                             >
                               <SelectTrigger className="h-[40px] text-[14px] font-medium text-[#111827] border-[#DCE3EA] rounded-[7px] shadow-none focus:ring-0 focus:border-[#087A35]">
-                                <SelectValue placeholder="Select category" />
+                                <SelectValue placeholder="Select a category" />
                               </SelectTrigger>
                               <SelectContent>
                                 {(options?.categories ?? []).map((c) => (

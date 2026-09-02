@@ -1362,7 +1362,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
               <div className="p-5 border-b border-[#E9E7E2]">
                 <h2 className="text-lg font-bold text-[#1F1F1F]">SEO & Settings</h2>
                 <p className="text-sm text-[#787878] mt-1">
-                  Search engine metadata and category page behaviour
+                  Search engine metadata and category page behavior
                 </p>
               </div>
               <div className="p-5 space-y-5">
@@ -1796,7 +1796,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                             </p>
                             <div className="flex items-center justify-between text-[8px] text-[#777777] pb-2 border-b border-[#E9E7E2]">
                               <div className="flex items-center gap-1">
-                                <Clock className="h-2.5 w-2.5" /> Home cooked
+                                <Clock className="h-2.5 w-2.5" /> Home-cooked
                               </div>
                               <div className="flex items-center gap-1">
                                 <MapPin className="h-2.5 w-2.5" /> Near you

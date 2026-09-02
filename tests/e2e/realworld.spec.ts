@@ -46,7 +46,7 @@ test.describe('Real-world: home & navigation', () => {
     const res = await page.goto('/', { waitUntil: 'domcontentloaded' });
     expect(res?.status()).toBe(200);
 
-    await expect(page.getByText(/100% HOME COOKED/i)).toBeVisible({ timeout: 30_000 });
+    await expect(page.getByText(/100% HOME-COOKED/i)).toBeVisible({ timeout: 30_000 });
     await expect(page.getByRole('link', { name: /RRC Kitchen/i }).first()).toBeVisible();
     await expect(page.getByText(/Gandhi Nagar, Thanjavur/)).toBeVisible({ timeout: 15_000 });
     await expect(page.getByRole('link', { name: /Kitchens/i }).first()).toBeVisible();

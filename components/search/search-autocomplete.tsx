@@ -47,7 +47,7 @@ interface SearchAutocompleteProps {
 }
 
 export function SearchAutocomplete({
-  placeholder = "Search for meals..",
+  placeholder = "Search for meals...",
   inputClassName,
   onNavigate,
   onSearch,

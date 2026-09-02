@@ -288,8 +288,8 @@ export function FavouritesContent() {
             <Heart className="h-10 w-10 text-[#16A34A]" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold">Login to view Favourites</h1>
-            <p className="mt-3 text-base text-muted-foreground">Please log in to see your favourite items and kitchens.</p>
+            <h1 className="text-3xl font-bold">Login to view Favorites</h1>
+            <p className="mt-3 text-base text-muted-foreground">Please log in to see your favorite items and kitchens.</p>
           </div>
           <Button asChild size="lg" className="bg-[#16A34A] hover:bg-[#15803D] text-white rounded-xl px-8"><Link href="/login">Login</Link></Button>
         </div>
@@ -314,7 +314,7 @@ export function FavouritesContent() {
               </BreadcrumbItem>
               <BreadcrumbSeparator className="text-[#AAAAAA]" />
               <BreadcrumbItem>
-                <BreadcrumbPage className="text-[#166534] font-bold text-[13px]">Favourites</BreadcrumbPage>
+                <BreadcrumbPage className="text-[#166534] font-bold text-[13px]">Favorites</BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
@@ -324,7 +324,7 @@ export function FavouritesContent() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
           <div>
             <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-              My <span className="text-[#166534]">Favourites</span>
+              My <span className="text-[#166534]">Favorites</span>
             </h1>
             <p className="text-sm md:text-base text-muted-foreground mt-2">Your saved kitchens and menu items</p>
           </div>

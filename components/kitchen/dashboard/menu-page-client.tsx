@@ -180,7 +180,7 @@ function MenuForm() {
               <Label className="text-[13px] font-[500] text-[#252D36]">Category <span className="text-[#E53935]">*</span></Label>
               <Select value={form.watch("category")} onValueChange={(v) => form.setValue("category", v, { shouldValidate: true })}>
                 <SelectTrigger className="h-[36px] rounded-[8px] border-[#E1E5E8] text-[#252D36] focus:border-[#9BC8A8] focus:ring-0 focus:shadow-[0_0_0_2px_rgba(61,139,90,0.08)] text-[13px]">
-                  <SelectValue placeholder="Select category" />
+                  <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
                 <SelectContent>
                   {categories.map((cat) => (

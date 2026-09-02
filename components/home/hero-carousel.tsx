@@ -33,28 +33,28 @@ interface HeroSlide {
 
 const slides: HeroSlide[] = [
   {
-    tag: "100% HOME COOKED",
+    tag: "100% HOME-COOKED",
     headline: (
       <>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight">
-          Home cooked food
+          Home-cooked food
         </span>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight mt-0.5 lg:mt-2">
           in{" "}
           <span className="text-[#F04E00] font-serif italic font-semibold">
-            ever silver
+            eversilver
           </span>
         </span>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight mt-0.5 lg:mt-2">
-          Box carrier
+          tiffin carriers
         </span>
       </>
     ),
     description: (
       <span className="block">
-        Healthy, hygienic and delicious meals prepared by trusted<br className="hidden lg:inline" />
+        Healthy, hygienic, and delicious meals prepared by trusted<br className="hidden lg:inline" />
         home chefs and delivered to your doorstep in<br className="hidden lg:inline" />
-        <span className="text-[#003015] font-bold"> traditional stainless steel tiffin box carrier.</span>
+        <span className="text-[#003015] font-bold"> a traditional stainless steel tiffin carrier.</span>
       </span>
     ),
     primaryCta: { label: "ORDER NOW", href: "/search" },
@@ -63,15 +63,15 @@ const slides: HeroSlide[] = [
       { icon: Heart, text: "Cooked\nwith Love" },
       { icon: ShieldCheck, text: "Hygienic\n& Safe" },
       { icon: Clock, text: "On-time\nDelivery" },
-      { icon: Package, text: "Packed in\nTiffin Carrier" },
+      { icon: Package, text: "Packed in a\nTiffin Carrier" },
       { icon: Leaf, text: "Fresh\nIngredients" },
       { icon: Package, text: "Steel Tiffin\nCarrier" },
     ],
     rightCard: [
       { icon: Flame, title: "Food stays hot", subtitle: "for longer" },
       { icon: ShieldCheck, title: "Leak proof", subtitle: "& spill safe" },
-      { icon: Leaf, title: "Eco friendly", subtitle: "custom reusable" },
-      { icon: Ban, title: "No plastic", subtitle: "Only stainless steel" },
+      { icon: Leaf, title: "Eco-friendly", subtitle: "custom reusable" },
+      { icon: Ban, title: "No plastic", subtitle: "only stainless steel" },
     ],
     bgImage:
       "/hero/hero-tiffin-carrier.webp",
@@ -121,31 +121,31 @@ const slides: HeroSlide[] = [
         </span>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight mt-0.5 lg:mt-2">
           <span className="text-[#F04E00] font-serif italic font-semibold">
-            Daily Menu
+            Meals
           </span>{" "}
           Delivered
         </span>
       </>
     ),
     description:
-      "Explore a rotating daily menu crafted by home chefs using the freshest ingredients. Order by noon for same-day delivery in eco-friendly packaging.",
+      "Explore a rotating menu crafted by home chefs using the freshest ingredients, delivered in eco-friendly packaging.",
     primaryCta: { label: "VIEW TODAY'S MENU", href: "/search" },
-    secondaryCta: { label: "SUBSCRIBE NOW", href: "/categories" },
+    secondaryCta: { label: "EXPLORE KITCHENS", href: "/kitchens" },
     trustBar: [
-      { icon: Clock, text: "Daily Rotating\nMenu" },
+      { icon: Clock, text: "Fresh Rotating\nMenu" },
       { icon: Leaf, text: "Farm Fresh\nProduce" },
       { icon: ShieldCheck, text: "Home Chef\nCertified" },
       { icon: Flame, text: "Hot\nDelivery" },
     ],
     rightCard: [
-      { icon: Clock, title: "Order by", subtitle: "12:00 PM" },
+      { icon: Heart, title: "Cooked with", subtitle: "love & care" },
       { icon: Leaf, title: "Farm to", subtitle: "table freshness" },
-      { icon: Recycle, title: "Eco friendly", subtitle: "packaging" },
+      { icon: Recycle, title: "Eco-friendly", subtitle: "packaging" },
       { icon: Flame, title: "Hot & fresh", subtitle: "every day" },
     ],
     bgImage:
       "/hero/hero-delivery-with-us.webp",
-    imageAlt: "Fresh daily home cooked meals",
+    imageAlt: "Fresh daily home-cooked meals",
   },
 ]
 

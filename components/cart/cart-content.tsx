@@ -446,7 +446,7 @@ export function CartContent() {
           </div>
           <div className="flex-1 min-w-0">
             <h3 className="text-[15px] font-bold text-[#F4511E]">Pre-Book Orders Only</h3>
-            <p className="text-[13px] text-[#444444] font-medium mt-0.5">All orders must be placed in advance. Same day delivery is not available.</p>
+            <p className="text-[13px] text-[#444444] font-medium mt-0.5">All orders must be placed in advance. Same-day delivery is not available.</p>
           </div>
         </div>
       </div>

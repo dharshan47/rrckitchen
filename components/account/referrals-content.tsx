@@ -489,7 +489,7 @@ export function ReferralsContent() {
                   2
                 </div>
                 <div className="flex flex-col gap-1 pt-1">
-                  <h3 className="text-[14px] font-bold text-[#0F172A]">They join & place order</h3>
+                  <h3 className="text-[14px] font-bold text-[#0F172A]">They join & place an order</h3>
                   <p className="text-[12px] text-[#64748B] font-medium leading-relaxed">Your friend signs up and places their first order</p>
                 </div>
               </div>

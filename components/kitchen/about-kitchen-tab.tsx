@@ -424,7 +424,7 @@ export function AboutKitchenTab({ kitchen: propKitchen }: Props) {
             <Leaf className="w-5 h-5 text-[#087A36]" strokeWidth={1.5} />
           </div>
           <div>
-            <div className="text-[11px] font-extrabold text-[#171717] mb-0.5">Eco Friendly Practices</div>
+            <div className="text-[11px] font-extrabold text-[#171717] mb-0.5">Eco-Friendly Practices</div>
             <div className="text-[9px] font-semibold text-[#555555]">We care for nature</div>
           </div>
         </div>

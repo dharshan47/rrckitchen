@@ -84,7 +84,7 @@ function TrendingKitchens() {
           </h2>
           <div className="flex items-center gap-1.5 text-sm text-[#6B7280] font-medium mt-0.5">
             <MapPin className="h-4 w-4 text-[#F04E00]" />
-            <p>Serving delicious meals in tiffin box</p>
+            <p>Serving delicious meals in eversilver tiffin carriers</p>
           </div>
         </div>
         <Link
@@ -227,14 +227,14 @@ export function HomeClient() {
               {/* Left text */}
               <div className="flex flex-col justify-center text-center lg:text-left">
                 <h2 className="text-[20px] lg:text-[24px] font-bold text-[#003015] tracking-wide uppercase mb-4 lg:mb-10">
-                  WHY TIFFIN CARRIER?
+                  WHY A TIFFIN CARRIER?
                 </h2>
                 <div className="space-y-1.5">
                   <p className="text-[#4B5563] font-medium text-[14px] lg:text-[15px]">
-                    Not Plastic. Not Aluminium.
+                    Not plastic. Not aluminium.
                   </p>
                   <p className="text-[#003015] font-bold text-[15px] lg:text-[16px]">
-                    Authentic Stainless Steel.
+                    Authentic stainless steel.
                   </p>
                 </div>
               </div>
@@ -255,9 +255,9 @@ export function HomeClient() {
               <div className="flex flex-col justify-center gap-3.5 lg:gap-5 items-start mx-auto lg:mx-0 lg:pl-16">
                 {[
                   "Keeps food hot & fresh",
-                  "Leak proof & spill safe",
-                  "Eco friendly & reusable",
-                  "Healthy & chemical free",
+                  "Leak-proof & spill-safe",
+                  "Eco-friendly & reusable",
+                  "Healthy & chemical-free",
                   "Traditional & reliable",
                 ].map((item) => (
                   <div key={item} className="flex items-center gap-4">

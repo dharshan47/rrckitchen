@@ -80,7 +80,7 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
           Create Your <span className="text-green-700">Account</span>
         </h1>
         <p className="text-muted-foreground text-[15px]">
-          {subtitle ?? "Sign up to your account to continue"}
+          {subtitle ?? "Create an account to continue"}
         </p>
       </CardHeader>
       
