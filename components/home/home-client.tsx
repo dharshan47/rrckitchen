@@ -246,6 +246,61 @@ export function HomeClient() {
             </div>
           </section>
 
+          {/* Tiffin Carrier Section */}
+          <section className="bg-[#FDF8F1] rounded-2xl lg:rounded-xl overflow-hidden">
+            <div className="p-6 sm:p-8 lg:px-16 lg:py-12 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_1.2fr] gap-8 lg:gap-12 items-center">
+              {/* Left text */}
+              <div className="flex flex-col justify-center text-center lg:text-left">
+                <h2 className="text-[20px] lg:text-[24px] font-bold text-[#003015] tracking-wide uppercase mb-4 lg:mb-10">
+                  WHY A TIFFIN CARRIER?
+                </h2>
+                <div className="space-y-1.5">
+                  <p className="text-[#4B5563] font-medium text-[14px] lg:text-[15px]">
+                    Not plastic. Not aluminium.
+                  </p>
+                  <p className="text-[#003015] font-bold text-[15px] lg:text-[16px]">
+                    Authentic stainless steel.
+                  </p>
+                </div>
+              </div>
+
+              {/* Middle Image */}
+              <div className="relative h-[220px] sm:h-[280px] lg:h-[300px] flex items-center justify-center">
+                <Image
+                  src="/home/tiffin-carrier.webp"
+                  alt="Stainless steel tiffin carrier"
+                  fill
+                  className="object-contain drop-shadow-md scale-[1.15]"
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  priority
+                />
+              </div>
+
+              {/* Right Checkmarks */}
+              <div className="flex flex-col justify-center gap-3.5 lg:gap-5 items-start mx-auto lg:mx-0 lg:pl-16">
+                {[
+                  "Keeps food hot & fresh",
+                  "Leak proof & spill safe",
+                  "Eco friendly & reusable",
+                  "Healthy & chemical free",
+                  "Traditional & reliable",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-4">
+                    <div className="flex items-center justify-center shrink-0 text-[#087A35]">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-[20px] w-[20px]">
+                        <rect x="3" y="3" width="18" height="18" rx="4" />
+                        <path d="M8 12.5l3 3 5-6" />
+                      </svg>
+                    </div>
+                    <span className="text-[13px] lg:text-[14px] font-medium text-[#111111]">
+                      {item}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+
           {/* Info Grid: How It Works, Meet Chefs, Become Chef */}
           <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {/* How It Works */}
