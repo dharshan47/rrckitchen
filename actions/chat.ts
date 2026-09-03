@@ -57,7 +57,10 @@ export async function startLiveChatSession() {
   if (!userId) {
     guestId = cookieStore.get("live_chat_guest_id")?.value
     if (!guestId) {
-      guestId = crypto.randomUUID()
+      // Allocate a new public code for the guest ID instead of a UUID
+      guestId = await prisma.$transaction(async (tx) => {
+        return await allocatePublicCode(tx, PUBLIC_ID_SPECS.GUEST)
+      })
       cookieStore.set("live_chat_guest_id", guestId, { maxAge: 60 * 60 * 24 * 7 }) // 7 days
     }
   }
@@ -110,7 +113,7 @@ export async function sendChatMessage(ticketId: string, message: string, mediaUr
 
   // Ensure ticket belongs to user OR user is admin
   const ticket = await prisma.supportTicket.findUnique({
-    where: { id: ticketId },
+    where: { publicCode: ticketId },
   })
   
   if (!ticket) return { success: false, error: "Ticket not found" }
@@ -127,7 +130,7 @@ export async function sendChatMessage(ticketId: string, message: string, mediaUr
 
   const msg = await prisma.ticketMessage.create({
     data: {
-      ticketId,
+      ticketId: ticket.id,
       senderId: userId || guestId,
       message,
       mediaUrls,
@@ -136,14 +139,14 @@ export async function sendChatMessage(ticketId: string, message: string, mediaUr
   
   // Update the ticket's updatedAt timestamp to bring it to the top of the list
   await prisma.supportTicket.update({
-    where: { id: ticketId },
+    where: { id: ticket.id },
     data: { updatedAt: new Date() }
   })
   
   // Publish to Ably channel
   try {
     const ably = getAblyRest();
-    const channel = ably.channels.get(`live-chat:${ticketId}`);
+    const channel = ably.channels.get(`live-chat:${ticket.publicCode}`);
     await channel.publish("message", { message: msg });
   } catch (err) {
     console.error("Failed to publish to Ably:", err);
@@ -167,7 +170,7 @@ export async function getLiveChatMessages(ticketId: string) {
   }
   
   const ticket = await prisma.supportTicket.findUnique({
-    where: { id: ticketId },
+    where: { publicCode: ticketId },
   })
   
   if (!ticket) return { success: false, error: "Ticket not found" }
@@ -183,7 +186,7 @@ export async function getLiveChatMessages(ticketId: string) {
   }
 
   const messages = await prisma.ticketMessage.findMany({
-    where: { ticketId },
+    where: { ticketId: ticket.id },
     orderBy: { createdAt: "asc" }
   })
 

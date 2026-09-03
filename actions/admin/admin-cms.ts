@@ -49,7 +49,7 @@ async function publishCategoryUpdate(categoryId: string, event: string, data: Re
   }
 }
 
-export async function addCategory(data: { name: string; description?: string | null }) {
+export async function addCategory(data: { name: string; description?: string | null; imageUrl?: string | null }) {
   await requirePermission("MANAGE_CMS")
 
   const existing = await prisma.category.findUnique({
@@ -60,7 +60,7 @@ export async function addCategory(data: { name: string; description?: string | n
     if (!existing.isActive) {
       await prisma.category.update({
         where: { id: existing.id },
-        data: { isActive: true },
+        data: { isActive: true, imageUrl: data.imageUrl !== undefined ? data.imageUrl : existing.imageUrl },
       })
       return { success: true, id: existing.id }
     }
@@ -68,18 +68,19 @@ export async function addCategory(data: { name: string; description?: string | n
   }
 
   const category = await prisma.category.create({
-    data: { name: data.name, description: data.description || null },
+    data: { name: data.name, description: data.description || null, imageUrl: data.imageUrl || null },
   })
 
   return { success: true, id: category.id }
 }
 
-export async function updateCategory(id: string, data: { name?: string; description?: string | null }) {
+export async function updateCategory(id: string, data: { name?: string; description?: string | null; imageUrl?: string | null }) {
   await requirePermission("MANAGE_CMS")
 
   const updateData: Record<string, string | null> = {}
   if (data.name !== undefined) updateData.name = data.name
   if (data.description !== undefined) updateData.description = data.description
+  if (data.imageUrl !== undefined) updateData.imageUrl = data.imageUrl
 
   if (Object.keys(updateData).length === 0) return { success: true }
 
@@ -102,6 +103,25 @@ export async function toggleCategory(id: string, isActive: boolean) {
     where: { id },
     data: { isActive },
   })
+
+  return { success: true }
+}
+
+export async function deleteCategory(id: string) {
+  await requirePermission("MANAGE_CMS")
+
+  await prisma.$transaction([
+    prisma.kitchenCategory.deleteMany({
+      where: { categoryId: id },
+    }),
+    prisma.menuItem.updateMany({
+      where: { categoryId: id },
+      data: { categoryId: null },
+    }),
+    prisma.category.delete({
+      where: { id },
+    }),
+  ])
 
   return { success: true }
 }

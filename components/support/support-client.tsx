@@ -7,6 +7,8 @@ import {
   ChefHat, Truck, CreditCard, AlertTriangle, BookOpen, Clock, AlertCircle 
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLiveChatStore } from "@/stores";
+import { LiveChatWidget } from "@/components/chat/live-chat-widget";
 
 // Help Topics based on input.txt and screenshots
 const helpTopics = [
@@ -25,6 +27,8 @@ const helpTopics = [
 ];
 
 export function SupportClient() {
+  const openChat = useLiveChatStore((state) => state.openChat);
+
   return (
     <div className="bg-[#FEFEFE] min-h-screen text-[#334155]" style={{ fontFamily: "'Inter', sans-serif" }}>
       
@@ -174,7 +178,10 @@ export function SupportClient() {
             </div>
             
             <div className="flex-1 space-y-4">
-              <div className="bg-white rounded-[12px] border border-[#E5E7EB] p-4 flex items-center gap-4 hover:shadow-sm transition-shadow cursor-pointer">
+              <div 
+                className="bg-white rounded-[12px] border border-[#E5E7EB] p-4 flex items-center gap-4 hover:shadow-sm transition-shadow cursor-pointer"
+                onClick={openChat}
+              >
                 <div className="w-10 h-10 rounded-full bg-[#EAF7EF] text-[#087A36] flex items-center justify-center shrink-0">
                   <MessageSquare className="w-5 h-5" />
                 </div>
@@ -283,6 +290,7 @@ export function SupportClient() {
         </section>
 
       </div>
+      <LiveChatWidget />
     </div>
   );
 }

@@ -7,6 +7,7 @@ import {
   toggleCategory,
   addCategory,
   updateCategory,
+  deleteCategory,
 } from "@/actions/admin/admin-cms";
 
 /** Shape of a category row as returned by getAllCategories. */
@@ -114,6 +115,20 @@ export function useUpdateCategoryMutation() {
       id: string;
       data: Parameters<typeof updateCategory>[1];
     }) => updateCategory(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["admin-categories-list"] });
+    },
+  });
+}
+
+/**
+ * Deletes a category and invalidates the categories query.
+ * Returns the action result object ({ success, error? }).
+ */
+export function useDeleteCategoryMutation() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteCategory(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-categories-list"] });
     },

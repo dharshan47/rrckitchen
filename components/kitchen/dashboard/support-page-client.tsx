@@ -27,6 +27,7 @@ import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { CloudinaryUpload } from "@/components/patterns/cloudinary-upload"
 import { LiveChatWidget } from "@/components/chat/live-chat-widget"
+import { useLiveChatStore } from "@/stores"
 
 interface TicketMessage {
   id: string
@@ -90,6 +91,7 @@ export default function SupportPageClient() {
   const [priority, setPriority] = useState<"LOW" | "MEDIUM" | "HIGH" | "URGENT">("MEDIUM")
   const [uploadedImages, setUploadedImages] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState("All")
+  const openChat = useLiveChatStore((state) => state.openChat)
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<TicketForm>({
     resolver: zodResolver(ticketFormSchema),
@@ -509,15 +511,15 @@ export default function SupportPageClient() {
               <div>
                 <h4 className="font-bold text-[14px] text-[#075C30] mb-4">Other Ways to Reach Us</h4>
                 <div className="space-y-4">
-                  <Link href="/support" className="flex items-center gap-3 group">
-                    <div className="h-10 w-10 rounded-[8px] border border-[#E5E7EB] bg-[#FCFDFC] flex items-center justify-center group-hover:border-[#087A3D] transition-colors">
+                  <button type="button" onClick={openChat} className="flex items-center gap-3 group text-left">
+                    <div className="h-10 w-10 rounded-[8px] border border-[#E5E7EB] bg-[#FCFDFC] flex items-center justify-center group-hover:border-[#087A3D] transition-colors shrink-0">
                       <MessageSquare className="h-4 w-4 text-[#075C30]" strokeWidth={2} />
                     </div>
                     <div>
                       <h4 className="font-bold text-[13px] text-[#111827]">Live Chat</h4>
                       <p className="text-[12px] text-[#4B5563] font-medium">Chat with our support team</p>
                     </div>
-                  </Link>
+                  </button>
                   <a href="mailto:support@rrckitchen.com" className="flex items-center gap-3 group">
                     <div className="h-10 w-10 rounded-[8px] border border-[#E5E7EB] bg-[#FCFDFC] flex items-center justify-center group-hover:border-[#087A3D] transition-colors">
                       <Mail className="h-4 w-4 text-[#075C30]" strokeWidth={2} />

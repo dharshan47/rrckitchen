@@ -305,11 +305,15 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
   const kitchenLng = kitchen.address?.longitude ?? null;
   const distanceKm = useMemo(() => {
     if (kitchenLat == null || kitchenLng == null) return null;
+    const kLat = Number(kitchenLat);
+    const kLng = Number(kitchenLng);
+    if (isNaN(kLat) || isNaN(kLng)) return null;
+
     return haversineDistance(
       deliveryLat ?? THANJAVUR_CENTER[0],
       deliveryLng ?? THANJAVUR_CENTER[1],
-      kitchenLat,
-      kitchenLng
+      kLat,
+      kLng
     );
   }, [deliveryLat, deliveryLng, kitchenLat, kitchenLng]);
   const distanceLabel = distanceKm == null ? "—" : distanceKm < 1 ? `${Math.round(distanceKm * 1000)} m` : `${distanceKm.toFixed(1)} km`;
@@ -408,17 +412,17 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
 
   const searchFilterOptions = useMemo(() => {
     if (!searchQuery) return { mealTypes: [], dietPrefs: [], cuisines: [] };
-    
+
     const mealTypesSet = new Set<string>();
     const dietPrefsSet = new Set<string>();
-    
+
     kitchen.items.forEach(i => {
       if (i.timeSlot && TIME_SLOT_CONFIG[i.timeSlot]) {
         mealTypesSet.add(TIME_SLOT_CONFIG[i.timeSlot].label);
       } else if (i.timeSlot) {
         mealTypesSet.add(i.timeSlot);
       }
-      
+
       if (i.foodType === "VEG") dietPrefsSet.add("Pure Veg");
       else if (i.foodType === "NONVEG") dietPrefsSet.add("Non Veg");
       else if (i.foodType) dietPrefsSet.add(i.foodType);
@@ -555,7 +559,7 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
         <div className="max-w-[1200px] mx-auto px-4 md:px-6 pb-4 md:pb-6">
           <div className="bg-[#FFFFFF] border border-[#f0f0f0] rounded-[20px] shadow-[0_4px_16px_rgba(0,0,0,0.04)] p-3 md:p-4">
             <div className="flex flex-col lg:flex-row gap-4 md:gap-6 lg:gap-8">
-              
+
               <div className="relative w-full lg:w-[420px] h-[200px] md:h-[240px] lg:h-[280px] shrink-0 rounded-[12px] bg-[#FEF9F5]">
                 {kitchen.imageUrl ? (
                   <>
@@ -690,7 +694,7 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
                       <span className="text-[12px] text-[#666666] font-normal">Happy Customers</span>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-4 py-3 border-b border-[#F5F5F5]">
                     <Star className="w-[18px] h-[18px] text-[#087A36]" strokeWidth={2} />
                     <div className="flex items-center gap-2">
@@ -701,7 +705,7 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
                       <span className="text-[12px] text-[#666666] font-normal">Average Rating</span>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-4 py-3 border-b border-[#F5F5F5]">
                     <ShoppingBag className="w-[18px] h-[18px] text-[#087A36]" strokeWidth={2} />
                     <div className="flex items-center gap-2">
@@ -709,7 +713,7 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
                       <span className="text-[12px] text-[#666666] font-normal">Orders Delivered</span>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center gap-4 py-3">
                     <Calendar className="w-[18px] h-[18px] text-[#087A36]" strokeWidth={2} />
                     <div className="flex items-center gap-2">
@@ -859,7 +863,7 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
                     Clear All
                   </button>
                 </div>
-                
+
                 {/* Meal Type */}
                 {searchFilterOptions.mealTypes.length > 0 && (
                   <div className="mb-5">
@@ -953,191 +957,191 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
                 ) : null
               }
             >
-            {activeTab === "menu" ? (
-              <>
-                <div className="relative mb-4 md:mb-5">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888888]" />
-                  <input
-                    type="text"
-                    placeholder="Search for dishes"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    className="w-full pl-11 pr-4 py-3 rounded-[12px] border border-[#EEEEEE] bg-[#FFFFFF] text-[13px] md:text-[14px] text-[#171717] font-medium outline-none focus:border-[#FF4D00] focus:ring-1 focus:ring-[#FF4D00]/20 transition-all shadow-[0_2px_8px_rgba(0,0,0,0.03)]"
-                  />
-                </div>
+              {activeTab === "menu" ? (
+                <>
+                  <div className="relative mb-4 md:mb-5">
+                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[#888888]" />
+                    <input
+                      type="text"
+                      placeholder="Search for dishes"
+                      value={searchQuery}
+                      onChange={e => setSearchQuery(e.target.value)}
+                      className="w-full pl-11 pr-4 py-3 rounded-[12px] border border-[#EEEEEE] bg-[#FFFFFF] text-[13px] md:text-[14px] text-[#171717] font-medium outline-none focus:border-[#FF4D00] focus:ring-1 focus:ring-[#FF4D00]/20 transition-all shadow-[0_2px_8px_rgba(0,0,0,0.03)]"
+                    />
+                  </div>
 
-                {!searchQuery ? (
-                  <>
-                    <div className="flex items-center gap-2 mb-4 md:mb-6 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-                      <button
-                        onClick={() => { setFoodFilter("ALL"); setBestsellerOnly(false); }}
-                        className={cn("px-4 py-2 rounded-[8px] text-[12px] font-bold whitespace-nowrap transition-colors border shadow-sm",
-                          foodFilter === "ALL" && !bestsellerOnly
-                            ? "bg-[#FF4D00] text-[#FFFFFF] border-[#FF4D00]"
-                            : "bg-[#FFFFFF] text-[#555555] border-[#E8E8E8] hover:bg-[#F9F9F9]"
-                        )}
-                      >
-                        All
-                      </button>
-                      <button
-                        onClick={() => setFoodFilter(foodFilter === "VEG" ? "ALL" : "VEG")}
-                        className={cn("px-4 py-2 rounded-[8px] text-[12px] font-bold whitespace-nowrap transition-colors border shadow-sm flex items-center gap-1.5",
-                          foodFilter === "VEG"
-                            ? "bg-[#F0F8F3] text-[#087A36] border-[#D9EBDD]"
-                            : "bg-[#FFFFFF] text-[#555555] border-[#E8E8E8] hover:bg-[#F9F9F9]"
-                        )}
-                      >
-                        <VegIcon className="w-3.5 h-3.5" /> Veg
-                      </button>
-                      <button
-                        onClick={() => setFoodFilter(foodFilter === "NONVEG" ? "ALL" : "NONVEG")}
-                        className={cn("px-4 py-2 rounded-[8px] text-[12px] font-bold whitespace-nowrap transition-colors border shadow-sm flex items-center gap-1.5",
-                          foodFilter === "NONVEG"
-                            ? "bg-[#FFF0F0] text-[#E02020] border-[#FAD4D4]"
-                            : "bg-[#FFFFFF] text-[#555555] border-[#E8E8E8] hover:bg-[#F9F9F9]"
-                        )}
-                      >
-                        <NonVegIcon className="w-3.5 h-3.5" /> Non Veg
-                      </button>
-                      {hasBestseller && (
+                  {!searchQuery ? (
+                    <>
+                      <div className="flex items-center gap-2 mb-4 md:mb-6 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
                         <button
-                          onClick={() => setBestsellerOnly(!bestsellerOnly)}
+                          onClick={() => { setFoodFilter("ALL"); setBestsellerOnly(false); }}
                           className={cn("px-4 py-2 rounded-[8px] text-[12px] font-bold whitespace-nowrap transition-colors border shadow-sm",
-                            bestsellerOnly
-                              ? "bg-[#FFF1E8] text-[#FF4D00] border-[#FFD0B5]"
+                            foodFilter === "ALL" && !bestsellerOnly
+                              ? "bg-[#FF4D00] text-[#FFFFFF] border-[#FF4D00]"
                               : "bg-[#FFFFFF] text-[#555555] border-[#E8E8E8] hover:bg-[#F9F9F9]"
                           )}
                         >
-                          Bestseller
+                          All
                         </button>
-                      )}
-                    </div>
-
-                    <div className="flex items-center justify-between mb-4 md:mb-6">
-                      <h2 className="text-[18px] md:text-[20px] font-bold text-[#101010]">
-                        {activeCategory === "Recommended" ? "Recommended for You" : `${menuCategories.find((c: MenuCategory) => c.id === activeCategory)?.label}`}
-                      </h2>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <div className="flex items-center gap-2 text-[12px] md:text-[13px] text-[#555555] bg-[#FFFFFF] px-3 md:px-4 py-1.5 md:py-2 rounded-[8px] border border-[#E8E8E8] shadow-sm cursor-pointer font-medium hover:bg-[#F9F9F9]">
-                            Sort by: <span className="text-[#171717] font-bold ml-1">{sortBy === "rating" ? "Rating" : sortBy === "price-low" ? "Price: Low to High" : sortBy === "price-high" ? "Price: High to Low" : "Popularity"}</span> <ChevronDown className="w-3.5 h-3.5 ml-1 text-[#171717]" />
-                          </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 bg-[#FFFFFF] border-[#E5E5E5]">
-                          <DropdownMenuRadioGroup value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-                            <DropdownMenuRadioItem value="popularity">Popularity</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="rating">Rating</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="price-low">Price: Low to High</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="price-high">Price: High to Low</DropdownMenuRadioItem>
-                          </DropdownMenuRadioGroup>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="flex flex-col md:flex-row md:items-end justify-between mb-4 md:mb-5 gap-3">
-                      <div>
-                        <h2 className="text-[18px] md:text-[22px] font-bold text-[#101010]">
-                          Menu for <span className="text-[#087A36]">&quot;{searchQuery}&quot;</span>
-                        </h2>
-                        <p className="text-[12px] md:text-[13px] font-bold text-[#555555] mt-1">
-                          Showing {filteredItems.length} results for {searchQuery}
-                        </p>
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <div className="flex items-center gap-1.5 text-[11px] md:text-[12px] text-[#555555] bg-[#FFFFFF] px-3 py-1.5 rounded-[8px] border border-[#E8E8E8] shadow-sm cursor-pointer hover:bg-[#F9F9F9] transition-colors shrink-0 self-start md:self-auto">
-                            Sort by: <span className="text-[#171717] font-semibold ml-0.5">{sortBy === "rating" ? "Rating" : sortBy === "price-low" ? "Price: Low to High" : sortBy === "price-high" ? "Price: High to Low" : "Popularity"}</span> <ChevronDown className="w-3.5 h-3.5 ml-0.5 text-[#555555]" />
-                          </div>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end" className="w-48 bg-[#FFFFFF] border-[#E5E5E5]">
-                          <DropdownMenuRadioGroup value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
-                            <DropdownMenuRadioItem value="popularity">Popularity</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="rating">Rating</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="price-low">Price: Low to High</DropdownMenuRadioItem>
-                            <DropdownMenuRadioItem value="price-high">Price: High to Low</DropdownMenuRadioItem>
-                          </DropdownMenuRadioGroup>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-
-                    <div className="flex items-center gap-2.5 mb-5 md:mb-6 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
-                      <button
-                        onClick={() => setNameFilter(null)}
-                        className={cn("px-3.5 py-1.5 rounded-[20px] text-[11px] md:text-[12px] font-bold whitespace-nowrap transition-colors border",
-                          nameFilter === null
-                            ? "bg-[#FFF1E8] text-[#FF4D00] border-[#FF4D00]"
-                            : "bg-[#FFFFFF] text-[#555555] border-[#E8E8E8] hover:bg-[#F9F9F9]"
-                        )}
-                      >
-                        All ({filteredItems.length})
-                      </button>
-                      
-                      {Array.from(new Set(filteredItems.map(i => i.name.split(" ")[0] + " " + (i.name.split(" ")[1] || ""))))
-                        .slice(0, 5)
-                        .map((name, idx) => (
+                        <button
+                          onClick={() => setFoodFilter(foodFilter === "VEG" ? "ALL" : "VEG")}
+                          className={cn("px-4 py-2 rounded-[8px] text-[12px] font-bold whitespace-nowrap transition-colors border shadow-sm flex items-center gap-1.5",
+                            foodFilter === "VEG"
+                              ? "bg-[#F0F8F3] text-[#087A36] border-[#D9EBDD]"
+                              : "bg-[#FFFFFF] text-[#555555] border-[#E8E8E8] hover:bg-[#F9F9F9]"
+                          )}
+                        >
+                          <VegIcon className="w-3.5 h-3.5" /> Veg
+                        </button>
+                        <button
+                          onClick={() => setFoodFilter(foodFilter === "NONVEG" ? "ALL" : "NONVEG")}
+                          className={cn("px-4 py-2 rounded-[8px] text-[12px] font-bold whitespace-nowrap transition-colors border shadow-sm flex items-center gap-1.5",
+                            foodFilter === "NONVEG"
+                              ? "bg-[#FFF0F0] text-[#E02020] border-[#FAD4D4]"
+                              : "bg-[#FFFFFF] text-[#555555] border-[#E8E8E8] hover:bg-[#F9F9F9]"
+                          )}
+                        >
+                          <NonVegIcon className="w-3.5 h-3.5" /> Non Veg
+                        </button>
+                        {hasBestseller && (
                           <button
-                            key={idx}
-                            onClick={() => setNameFilter(nameFilter === name.trim() ? null : name.trim())}
-                            className={cn("px-3.5 py-1.5 rounded-[20px] text-[11px] md:text-[12px] font-bold whitespace-nowrap transition-colors border",
-                              nameFilter === name.trim()
-                                ? "bg-[#FFF1E8] text-[#FF4D00] border-[#FF4D00]"
-                                : "bg-[#FFFFFF] text-[#555555] border-[#E8E8E8] hover:bg-[#F9F9F9] shadow-sm"
+                            onClick={() => setBestsellerOnly(!bestsellerOnly)}
+                            className={cn("px-4 py-2 rounded-[8px] text-[12px] font-bold whitespace-nowrap transition-colors border shadow-sm",
+                              bestsellerOnly
+                                ? "bg-[#FFF1E8] text-[#FF4D00] border-[#FFD0B5]"
+                                : "bg-[#FFFFFF] text-[#555555] border-[#E8E8E8] hover:bg-[#F9F9F9]"
                             )}
                           >
-                            {name.trim()} ({filteredItems.filter(i => i.name.includes(name.trim())).length})
+                            Bestseller
                           </button>
+                        )}
+                      </div>
+
+                      <div className="flex items-center justify-between mb-4 md:mb-6">
+                        <h2 className="text-[18px] md:text-[20px] font-bold text-[#101010]">
+                          {activeCategory === "Recommended" ? "Recommended for You" : `${menuCategories.find((c: MenuCategory) => c.id === activeCategory)?.label}`}
+                        </h2>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <div className="flex items-center gap-2 text-[12px] md:text-[13px] text-[#555555] bg-[#FFFFFF] px-3 md:px-4 py-1.5 md:py-2 rounded-[8px] border border-[#E8E8E8] shadow-sm cursor-pointer font-medium hover:bg-[#F9F9F9]">
+                              Sort by: <span className="text-[#171717] font-bold ml-1">{sortBy === "rating" ? "Rating" : sortBy === "price-low" ? "Price: Low to High" : sortBy === "price-high" ? "Price: High to Low" : "Popularity"}</span> <ChevronDown className="w-3.5 h-3.5 ml-1 text-[#171717]" />
+                            </div>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48 bg-[#FFFFFF] border-[#E5E5E5]">
+                            <DropdownMenuRadioGroup value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+                              <DropdownMenuRadioItem value="popularity">Popularity</DropdownMenuRadioItem>
+                              <DropdownMenuRadioItem value="rating">Rating</DropdownMenuRadioItem>
+                              <DropdownMenuRadioItem value="price-low">Price: Low to High</DropdownMenuRadioItem>
+                              <DropdownMenuRadioItem value="price-high">Price: High to Low</DropdownMenuRadioItem>
+                            </DropdownMenuRadioGroup>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex flex-col md:flex-row md:items-end justify-between mb-4 md:mb-5 gap-3">
+                        <div>
+                          <h2 className="text-[18px] md:text-[22px] font-bold text-[#101010]">
+                            Menu for <span className="text-[#087A36]">&quot;{searchQuery}&quot;</span>
+                          </h2>
+                          <p className="text-[12px] md:text-[13px] font-bold text-[#555555] mt-1">
+                            Showing {filteredItems.length} results for {searchQuery}
+                          </p>
+                        </div>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <div className="flex items-center gap-1.5 text-[11px] md:text-[12px] text-[#555555] bg-[#FFFFFF] px-3 py-1.5 rounded-[8px] border border-[#E8E8E8] shadow-sm cursor-pointer hover:bg-[#F9F9F9] transition-colors shrink-0 self-start md:self-auto">
+                              Sort by: <span className="text-[#171717] font-semibold ml-0.5">{sortBy === "rating" ? "Rating" : sortBy === "price-low" ? "Price: Low to High" : sortBy === "price-high" ? "Price: High to Low" : "Popularity"}</span> <ChevronDown className="w-3.5 h-3.5 ml-0.5 text-[#555555]" />
+                            </div>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="w-48 bg-[#FFFFFF] border-[#E5E5E5]">
+                            <DropdownMenuRadioGroup value={sortBy} onValueChange={(v) => setSortBy(v as typeof sortBy)}>
+                              <DropdownMenuRadioItem value="popularity">Popularity</DropdownMenuRadioItem>
+                              <DropdownMenuRadioItem value="rating">Rating</DropdownMenuRadioItem>
+                              <DropdownMenuRadioItem value="price-low">Price: Low to High</DropdownMenuRadioItem>
+                              <DropdownMenuRadioItem value="price-high">Price: High to Low</DropdownMenuRadioItem>
+                            </DropdownMenuRadioGroup>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+
+                      <div className="flex items-center gap-2.5 mb-5 md:mb-6 overflow-x-auto" style={{ scrollbarWidth: 'none' }}>
+                        <button
+                          onClick={() => setNameFilter(null)}
+                          className={cn("px-3.5 py-1.5 rounded-[20px] text-[11px] md:text-[12px] font-bold whitespace-nowrap transition-colors border",
+                            nameFilter === null
+                              ? "bg-[#FFF1E8] text-[#FF4D00] border-[#FF4D00]"
+                              : "bg-[#FFFFFF] text-[#555555] border-[#E8E8E8] hover:bg-[#F9F9F9]"
+                          )}
+                        >
+                          All ({filteredItems.length})
+                        </button>
+
+                        {Array.from(new Set(filteredItems.map(i => i.name.split(" ")[0] + " " + (i.name.split(" ")[1] || ""))))
+                          .slice(0, 5)
+                          .map((name, idx) => (
+                            <button
+                              key={idx}
+                              onClick={() => setNameFilter(nameFilter === name.trim() ? null : name.trim())}
+                              className={cn("px-3.5 py-1.5 rounded-[20px] text-[11px] md:text-[12px] font-bold whitespace-nowrap transition-colors border",
+                                nameFilter === name.trim()
+                                  ? "bg-[#FFF1E8] text-[#FF4D00] border-[#FF4D00]"
+                                  : "bg-[#FFFFFF] text-[#555555] border-[#E8E8E8] hover:bg-[#F9F9F9] shadow-sm"
+                              )}
+                            >
+                              {name.trim()} ({filteredItems.filter(i => i.name.includes(name.trim())).length})
+                            </button>
+                          ))}
+                      </div>
+                    </>
+                  )}
+
+                  {filteredItems.length === 0 ? (
+                    <div className="bg-[#FFFFFF] rounded-[26px] p-8 md:p-12 text-center border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] flex flex-col items-center">
+                      <Search className="w-10 md:w-12 h-10 md:h-12 text-[#DDDDDD] mb-3 md:mb-4" />
+                      <h3 className="text-[16px] md:text-[18px] font-bold text-[#171717]">No dishes found</h3>
+                      <p className="text-[#555555] mt-1.5 md:mt-2 text-[13px] md:text-[14px] font-medium">Try selecting a different category or adjusting filters.</p>
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 2xl:grid-cols-2 gap-3 md:gap-4">
+                      {filteredItems.map((item) => (
+                        <CompoundMenuCard.Root
+                          key={item.id}
+                          item={{
+                            ...item,
+                            kitchenRating: kitchen.avgRating,
+                          }}
+                          onShowAddPopup={handleShowAddPopup}
+                          onItemClick={handleItemClick}
+                        >
+                          <CompoundMenuCard.ImageSection />
+                          <CompoundMenuCard.Header />
+                        </CompoundMenuCard.Root>
                       ))}
                     </div>
-                  </>
-                )}
+                  )}
 
-                {filteredItems.length === 0 ? (
-                  <div className="bg-[#FFFFFF] rounded-[26px] p-8 md:p-12 text-center border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] flex flex-col items-center">
-                    <Search className="w-10 md:w-12 h-10 md:h-12 text-[#DDDDDD] mb-3 md:mb-4" />
-                    <h3 className="text-[16px] md:text-[18px] font-bold text-[#171717]">No dishes found</h3>
-                    <p className="text-[#555555] mt-1.5 md:mt-2 text-[13px] md:text-[14px] font-medium">Try selecting a different category or adjusting filters.</p>
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 2xl:grid-cols-2 gap-3 md:gap-4">
-                    {filteredItems.map((item) => (
-                      <CompoundMenuCard.Root
-                        key={item.id}
-                        item={{
-                          ...item,
-                          kitchenRating: kitchen.avgRating,
-                        }}
-                        onShowAddPopup={handleShowAddPopup}
-                        onItemClick={handleItemClick}
-                      >
-                        <CompoundMenuCard.ImageSection />
-                        <CompoundMenuCard.Header />
-                      </CompoundMenuCard.Root>
-                    ))}
-                  </div>
-                )}
-
-                {activeCategory === "Recommended" && !showFullMenu && filteredItems.length > 0 && (
-                  <button
-                    onClick={() => setShowFullMenu(true)}
-                    className="w-full mt-4 md:mt-6 h-10 md:h-12 rounded-[10px] border border-[#FF4D00] text-[#FF4D00] hover:bg-[#FFF1E8] font-bold text-[12px] md:text-[13px] uppercase tracking-wider bg-[#FFFFFF] transition-colors cursor-pointer shadow-sm"
-                  >
-                    VIEW FULL MENU
-                  </button>
-                )}
-              </>
-            ) : activeTab === "about" ? (
-              <AboutKitchenTab kitchen={kitchen} />
-            ) : activeTab === "reviews" ? (
-              <ReviewsKitchenTab kitchen={kitchen} />
-            ) : activeTab === "info" ? (
-              <InfoKitchenTab kitchen={kitchen} />
-            ) : (
-              <div className="bg-[#FFFFFF] rounded-[26px] p-6 md:p-8 shadow-[0_10px_28px_rgba(15,23,42,0.05)] border border-[#eef1f5] flex items-center justify-center min-h-[300px] md:min-h-[400px]">
-                <p className="text-[#555555] font-medium">This section is currently being updated.</p>
-              </div>
-            )}
+                  {activeCategory === "Recommended" && !showFullMenu && filteredItems.length > 0 && (
+                    <button
+                      onClick={() => setShowFullMenu(true)}
+                      className="w-full mt-4 md:mt-6 h-10 md:h-12 rounded-[10px] border border-[#FF4D00] text-[#FF4D00] hover:bg-[#FFF1E8] font-bold text-[12px] md:text-[13px] uppercase tracking-wider bg-[#FFFFFF] transition-colors cursor-pointer shadow-sm"
+                    >
+                      VIEW FULL MENU
+                    </button>
+                  )}
+                </>
+              ) : activeTab === "about" ? (
+                <AboutKitchenTab kitchen={kitchen} />
+              ) : activeTab === "reviews" ? (
+                <ReviewsKitchenTab kitchen={kitchen} />
+              ) : activeTab === "info" ? (
+                <InfoKitchenTab kitchen={kitchen} />
+              ) : (
+                <div className="bg-[#FFFFFF] rounded-[26px] p-6 md:p-8 shadow-[0_10px_28px_rgba(15,23,42,0.05)] border border-[#eef1f5] flex items-center justify-center min-h-[300px] md:min-h-[400px]">
+                  <p className="text-[#555555] font-medium">This section is currently being updated.</p>
+                </div>
+              )}
             </Suspense>
           </div>
 

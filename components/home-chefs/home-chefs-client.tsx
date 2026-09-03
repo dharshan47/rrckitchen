@@ -1,11 +1,10 @@
 "use client"
 
-import React, { useMemo, useState, useRef, useEffect } from "react";
+import React, { useMemo, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
-import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { Search, SlidersHorizontal, Heart, ShieldCheck, Leaf, Star, Truck, UserRound, ChevronRight } from "lucide-react";
+import { Search, SlidersHorizontal, Heart, ShieldCheck, Leaf, Star, Truck, UserRound, ChevronRight, Package } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -90,27 +89,7 @@ export function HomeChefsClient() {
     return list;
   }, [filteredChefs, sort]);
 
-  const [colCount, setColCount] = useState(1);
-  useEffect(() => {
-    const updateCols = () => {
-      const width = window.innerWidth;
-      if (width >= 1280) setColCount(6);
-      else if (width >= 1024) setColCount(5);
-      else if (width >= 768) setColCount(3);
-      else if (width >= 640) setColCount(2);
-      else setColCount(1);
-    };
-    updateCols();
-    window.addEventListener("resize", updateCols);
-    return () => window.removeEventListener("resize", updateCols);
-  }, []);
-
-  const rowCount = Math.ceil(sortedChefs.length / colCount);
-  const virtualizer = useWindowVirtualizer({
-    count: rowCount,
-    estimateSize: () => 140,
-    overscan: 2,
-  });
+  // Removed virtualizer and colCount logic to prevent web-vitals crash and hydration mismatches
 
   const sentinelRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -345,36 +324,16 @@ export function HomeChefsClient() {
             </div>
           ) : (
             <>
-              <div style={{ height: `${virtualizer.getTotalSize()}px`, width: "100%", position: "relative" }}>
-                {virtualizer.getVirtualItems().map((virtualRow) => {
-                  const startIndex = virtualRow.index * colCount;
-                  const rowChefs = sortedChefs.slice(startIndex, startIndex + colCount);
-                  return (
-                    <div
-                      key={virtualRow.key}
-                      data-index={virtualRow.index}
-                      ref={virtualizer.measureElement}
-                      style={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        transform: `translateY(${virtualRow.start}px)`,
-                      }}
-                      className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-4"
-                    >
-                      {rowChefs.map((chef) => (
-                        <ChefCard key={`all-${chef.id}`} chef={chef} />
-                      ))}
-                    </div>
-                  );
-                })}
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 pb-4">
+                {sortedChefs.map((chef) => (
+                  <ChefCard key={`all-${chef.id}`} chef={chef} />
+                ))}
               </div>
               {(hasNextPage || isFetchingNextPage) && (
                 <div ref={sentinelRef}>
                   {isFetchingNextPage && (
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 mt-2 animate-pulse">
-                      {Array.from({ length: colCount }).map((_, i) => (
+                      {Array.from({ length: 5 }).map((_, i) => (
                         <HomeChefCardSkeleton key={i} />
                       ))}
                     </div>
@@ -396,6 +355,8 @@ export function HomeChefsClient() {
           <FeatureFooterItem icon={<Truck className="w-[26px] h-[26px] text-[#15803D]" strokeWidth={1.5} />} title="On-time Delivery" desc="Right to your doorstep" />
           <div className="hidden lg:block w-px h-10 bg-[#E5E7EB]" />
           <FeatureFooterItem icon={<UserRound className="w-[26px] h-[26px] text-[#F97316]" strokeWidth={1.5} />} title="Support Local Women" desc="Empowering homemakers" />
+          <div className="hidden lg:block w-px h-10 bg-[#E5E7EB]" />
+          <FeatureFooterItem icon={<Package className="w-[26px] h-[26px] text-[#15803D]" strokeWidth={1.5} />} title="Ever Silver Tiffin" desc="Zero plastic delivery" />
         </div>
 
       </div>

@@ -48,7 +48,7 @@ export const useLiveChatStore = create<LiveChatState>((set) => ({
     try {
       const res = await getActiveLiveChat();
       if (res.success && res.data) {
-        set({ sessionData: res.data as LiveChatSession, activeTicketId: res.data.id });
+        set({ sessionData: res.data as LiveChatSession, activeTicketId: (res.data as { publicCode: string }).publicCode });
       } else {
         set({ sessionData: null, activeTicketId: null });
       }
@@ -64,7 +64,7 @@ export const useLiveChatStore = create<LiveChatState>((set) => ({
     try {
       const res = await startLiveChatSession();
       if (res.success && res.data) {
-        set({ sessionData: res.data as LiveChatSession, activeTicketId: res.data.id });
+        set({ sessionData: res.data as LiveChatSession, activeTicketId: (res.data as { publicCode: string }).publicCode });
       }
     } catch (e) {
       console.error(e);

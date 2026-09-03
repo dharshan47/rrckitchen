@@ -292,7 +292,7 @@ export function InfoKitchenTab({ kitchen: propKitchen }: Props) {
         {/* Food Safety & Hygiene */}
         <Card className="relative overflow-hidden">
           <CardTitle>Food Safety & Hygiene</CardTitle>
-          <div className="space-y-3.5 text-[12px] flex-1 z-10 relative pr-[80px] sm:pr-0">
+          <div className="space-y-3.5 text-[12px] flex-1 z-10 relative pr-[80px] md:pr-[120px] lg:pr-0 lg:pb-[110px] xl:pb-[120px]">
             <div className="flex items-center gap-2.5 text-[#555555] font-medium">
               <CheckCircle2 className="w-4 h-4 text-[#087A36] shrink-0" strokeWidth={2} />
               FSSAI Certified Kitchen
@@ -322,7 +322,7 @@ export function InfoKitchenTab({ kitchen: propKitchen }: Props) {
         {/* Ingredients We Use */}
         <Card className="relative overflow-hidden">
           <CardTitle>Ingredients We Use</CardTitle>
-          <div className="space-y-3.5 text-[12px] flex-1 z-10 relative pr-[80px] sm:pr-0">
+          <div className="space-y-3.5 text-[12px] flex-1 z-10 relative pr-[80px] md:pr-[120px] lg:pr-0 lg:pb-[110px] xl:pb-[120px]">
             <div className="flex items-start gap-2.5 text-[#555555] font-medium leading-tight">
               <CheckCircle2 className="w-4 h-4 text-[#087A36] shrink-0 mt-0.5" strokeWidth={2} />
               Locally sourced vegetables & produce

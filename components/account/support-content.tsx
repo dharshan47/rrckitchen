@@ -24,6 +24,8 @@ import { SupportSkeleton } from "@/components/account/support-skeleton";
 import { CloudinaryUpload } from "@/components/cloudinary/cloudinary-upload";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { LiveChatWidget } from "@/components/chat/live-chat-widget";
+import { useLiveChatStore } from "@/stores";
 import {
   useSupportTicketsQuery,
   useCreateSupportTicketMutation,
@@ -72,6 +74,7 @@ export function SupportContent() {
 
   const activeTab = useSupportActiveTab();
   const selectedCategory = useSupportCategory();
+  const openChat = useLiveChatStore((state) => state.openChat);
   const priority = useSupportPriority();
   const uploadedImages = useSupportUploadedImages();
   const {
@@ -423,7 +426,10 @@ export function SupportContent() {
             <div>
               <h3 className="font-bold text-[#111827] mb-4 px-1 text-sm relative after:content-[''] after:block after:w-[25px] after:h-[2px] after:bg-[#FF4B00] after:mt-2">Other Ways to Reach Us</h3>
               <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3.5 rounded-[10px] border border-[#DCE9DF] bg-[#FBFDFC] shadow-[0_2px_8px_rgba(17,24,39,0.04)] hover:border-[#D8EBDD] transition-colors cursor-pointer">
+                <div 
+                  className="flex items-center gap-3 p-3.5 rounded-[10px] border border-[#DCE9DF] bg-[#FBFDFC] shadow-[0_2px_8px_rgba(17,24,39,0.04)] hover:border-[#D8EBDD] transition-colors cursor-pointer"
+                  onClick={openChat}
+                >
                   <MessageCircle className="h-5 w-5 text-[#087A35] shrink-0 stroke-[1.8px]" />
                   <div>
                     <h4 className="font-bold text-xs text-[#087A35]">Live Chat</h4>
@@ -476,6 +482,7 @@ export function SupportContent() {
         </div>
 
       </div>
+      <LiveChatWidget />
     </main>
   );
 }

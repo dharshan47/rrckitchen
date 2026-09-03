@@ -16,8 +16,9 @@ import {
   useHelpActiveCategory,
   useHelpActiveTab,
   useHelpActions,
-} from "@/stores/helpStore";
+} from "@/stores";
 import { LiveChatWidget } from "@/components/chat/live-chat-widget";
+import { useLiveChatStore } from "@/stores";
 
 const CATEGORIES = [
   { id: "orders", icon: ShoppingBag, title: "Help with Orders", subtitle: "Track, cancel, return or modify orders", color: "text-orange-500" },
@@ -66,6 +67,7 @@ export default function HelpPage() {
   const activeCategory = useHelpActiveCategory();
   const activeTab = useHelpActiveTab();
   const actions = useHelpActions();
+  const openChat = useLiveChatStore((state) => state.openChat);
 
   const activeCategoryInfo = CATEGORIES.find((c) => c.id === activeCategory) ?? CATEGORIES[0];
 
@@ -238,7 +240,11 @@ export default function HelpPage() {
                    </div>
                 </div>
                 <div className="flex gap-3 w-full md:w-auto">
-                   <Button variant="outline" className="flex-1 md:flex-none border-gray-200 text-gray-700 font-bold bg-white hover:bg-gray-50 h-11 px-6 shadow-sm">
+                   <Button 
+                      variant="outline" 
+                      className="flex-1 md:flex-none border-gray-200 text-gray-700 font-bold bg-white hover:bg-gray-50 h-11 px-6 shadow-sm"
+                      onClick={openChat}
+                   >
                       <MessageSquare className="mr-2 h-4 w-4 text-emerald-600 stroke-[2.5]" />
                       Chat with Us
                    </Button>

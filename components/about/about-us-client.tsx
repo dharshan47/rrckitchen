@@ -5,7 +5,19 @@ import Image from "next/image";
 import Link from "next/link";
 import { AppDownloadBanner } from "@/components/home/app-download-banner";
 
-export function AboutUsClient() {
+export interface AboutUsStats {
+  chefsCount: number;
+  customersCount: number;
+  ordersCount: number;
+}
+
+export function AboutUsClient({ stats }: { stats?: AboutUsStats }) {
+   // Format numbers nicely
+   const formatNumber = (num?: number) => {
+     if (num === undefined) return "0";
+     return new Intl.NumberFormat('en-IN').format(num);
+   };
+
    return (
       <div className="bg-[#FEFEFE] min-h-screen text-[#333333] font-sans overflow-x-hidden">
 
@@ -55,7 +67,7 @@ export function AboutUsClient() {
             <div className="flex items-center gap-4">
               <ChefHat className="w-10 h-10 text-[#F04E00] shrink-0" strokeWidth={1.5} />
               <div>
-                <h3 className="text-[20px] lg:text-[24px] font-bold text-[#111111] leading-none mb-1">500+</h3>
+                <h3 className="text-[20px] lg:text-[24px] font-bold text-[#111111] leading-none mb-1">{formatNumber(stats?.chefsCount)}+</h3>
                 <p className="text-[13px] text-[#4B5563] font-medium">Home Chefs</p>
               </div>
             </div>
@@ -63,7 +75,7 @@ export function AboutUsClient() {
             <div className="flex items-center gap-4">
               <Users className="w-10 h-10 text-[#087A35] shrink-0" strokeWidth={1.5} />
               <div>
-                <h3 className="text-[20px] lg:text-[24px] font-bold text-[#111111] leading-none mb-1">10,000+</h3>
+                <h3 className="text-[20px] lg:text-[24px] font-bold text-[#111111] leading-none mb-1">{formatNumber(stats?.customersCount)}+</h3>
                 <p className="text-[13px] text-[#4B5563] font-medium">Happy Customers</p>
               </div>
             </div>
@@ -71,7 +83,7 @@ export function AboutUsClient() {
             <div className="flex items-center gap-4">
               <Package className="w-10 h-10 text-[#F04E00] shrink-0" strokeWidth={1.5} />
               <div>
-                <h3 className="text-[20px] lg:text-[24px] font-bold text-[#111111] leading-none mb-1">25,000+</h3>
+                <h3 className="text-[20px] lg:text-[24px] font-bold text-[#111111] leading-none mb-1">{formatNumber(stats?.ordersCount)}+</h3>
                 <p className="text-[13px] text-[#4B5563] font-medium">Orders Delivered</p>
               </div>
             </div>
@@ -107,7 +119,7 @@ export function AboutUsClient() {
       </section>
 
       {/* 4. Why RRC Kitchen & Our Journey */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-12 lg:mt-8">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 mt-6 mb-8 lg:mt-8 lg:mb-4">
         <div className="flex flex-col lg:flex-row gap-6 items-stretch">
           
           {/* Why RRC Kitchen */}
@@ -120,7 +132,7 @@ export function AboutUsClient() {
               <div className="space-y-3 mb-8 lg:mb-0">
                 <div className="flex gap-2.5 items-start">
                   <CheckCircle2 className="w-4 h-4 text-[#087A35] shrink-0 mt-0.5" strokeWidth={2} />
-                  <span className="text-[13px] text-[#111111] font-bold leading-snug">100% homemade food by verified home chefs</span>
+                  <span className="text-[13px] text-[#111111] font-bold leading-snug">100% homemade food by verified home kitchens</span>
                 </div>
                 <div className="flex gap-2.5 items-start">
                   <CheckCircle2 className="w-4 h-4 text-[#087A35] shrink-0 mt-0.5" strokeWidth={2} />
@@ -179,9 +191,9 @@ export function AboutUsClient() {
       </section>
 
       {/* 5. How RRC Kitchen Works */}
-      <section className="bg-[#FEFEFE] py-12 lg:py-16">
+      <section className="bg-[#FEFEFE] pt-4 lg:pt-4 pb-12 lg:pb-16">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative border border-[#E7E7E7] rounded-[16px] mt-4 lg:mt-8 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
+          <div className="relative border border-[#E7E7E7] rounded-[16px] mt-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
             <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#FEFEFE] px-6 z-10">
               <h2 className="text-[18px] md:text-[20px] font-bold text-[#003015] tracking-tight whitespace-nowrap">How RRC Kitchen Works</h2>
             </div>
@@ -193,7 +205,8 @@ export function AboutUsClient() {
                   { step: 3, icon: CalendarDays, title: "Pre-Book\nYour Meal", desc: "Select date, time\nand place your order" },
                   { step: 4, icon: ConciergeBell, title: "Home Chef\nPrepares", desc: "Fresh, hygienic and\nhomemade with love" },
                   { step: 5, icon: Bike, title: "Delivered\nto You", desc: "Get your order\non time at your door" },
-               ].map((item, index) => (
+                  { step: 6, icon: Package, title: "Return\nPickup", desc: "We pickup the\nTiffin Carrier" },
+               ].map((item, index, arr) => (
                   <div key={item.step} className="flex flex-col lg:flex-row items-center lg:flex-1 shrink-0 w-full lg:w-auto">
                     <div className="flex flex-row items-center w-full lg:w-auto justify-start lg:justify-center">
                        {/* Overlapping Badges */}
@@ -212,7 +225,7 @@ export function AboutUsClient() {
                           <p className="text-[11px] text-[#6B7280] font-medium leading-[1.3] whitespace-pre-line">{item.desc}</p>
                        </div>
                     </div>
-                    {index < 4 && (
+                    {index < arr.length - 1 && (
                       <>
                         <div className="hidden lg:flex shrink-0 px-3 lg:px-2 xl:px-4 items-center justify-center">
                           <ArrowRight className="w-[14px] h-[14px] text-[#087A35] opacity-80" strokeWidth={2} />
@@ -230,7 +243,7 @@ export function AboutUsClient() {
       </section>
 
       {/* 6. Values & Home Chef CTA */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 mb-10">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 mb-6 lg:mb-0">
         <div className="flex flex-col lg:flex-row gap-6">
           
           {/* Our Values */}
@@ -316,7 +329,9 @@ export function AboutUsClient() {
       </section>
 
       {/* 7. App Download Banner */}
-      <AppDownloadBanner />
+      <div className="lg:-mt-10 xl:-mt-16">
+        <AppDownloadBanner />
+      </div>
 
     </div>
   );

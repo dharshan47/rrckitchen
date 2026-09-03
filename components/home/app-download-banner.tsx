@@ -105,19 +105,19 @@ export function AppDownloadBanner() {
   ];
 
   return (
-    <section className="w-full px-3 sm:px-6 lg:px-8 mt-14 sm:mt-20 lg:mt-28 xl:mt-32 mb-6 overflow-visible">
+    <section className="w-full px-3 sm:px-6 lg:px-8 mt-10 sm:mt-12 lg:mt-16 xl:mt-20 mb-6">
       <div className="w-full mx-auto max-w-[1300px]">
-        <div className="bg-gradient-to-br from-[#003015] via-[#003819] to-[#00220e] border border-emerald-900/40 w-full rounded-2xl sm:rounded-[24px] shadow-xl sm:shadow-2xl relative px-4 sm:px-8 lg:px-10 xl:px-12 py-5 sm:py-7 lg:py-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 lg:gap-8">
+        <div className="bg-gradient-to-br from-[#003015] via-[#003819] to-[#00220e] border border-emerald-900/40 w-full rounded-2xl sm:rounded-[24px] shadow-xl sm:shadow-2xl relative px-4 sm:px-8 lg:px-10 xl:px-12 py-5 sm:py-7 lg:py-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 lg:gap-8 overflow-hidden">
           
           {/* Left Side: Phone Mockup + Text Content + Download Buttons */}
           <div className="flex flex-row items-center gap-3 sm:gap-6 lg:gap-8 flex-1 min-w-0">
-            {/* Phone mockup popping out of banner */}
-            <div className="relative h-[150px] w-[80px] sm:h-[240px] sm:w-[135px] md:h-[280px] md:w-[155px] lg:h-[330px] lg:w-[185px] xl:h-[390px] xl:w-[220px] -mt-12 sm:-mt-24 md:-mt-28 lg:-mt-36 xl:-mt-44 shrink-0 z-10">
+            {/* Phone mockup inside banner */}
+            <div className="relative h-[150px] w-[80px] sm:h-[200px] sm:w-[110px] md:h-[240px] md:w-[135px] lg:h-[280px] lg:w-[155px] xl:h-[320px] xl:w-[180px] shrink-0 z-10">
               <Image
                 src="/home/mobile-template.webp"
                 alt="RRC Kitchen App on Mobile"
                 fill
-                className="object-contain object-bottom drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)] sm:drop-shadow-[0_16px_28px_rgba(0,0,0,0.55)]"
+                className="object-contain object-center drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)] sm:drop-shadow-[0_16px_28px_rgba(0,0,0,0.55)]"
                 sizes="(max-width: 640px) 90px, (max-width: 768px) 135px, (max-width: 1024px) 155px, (max-width: 1280px) 185px, 220px"
                 priority
               />
@@ -128,15 +128,41 @@ export function AppDownloadBanner() {
               <h2 className="text-sm sm:text-xl md:text-2xl lg:text-[24px] xl:text-[30px] font-bold text-white tracking-wide leading-snug lg:leading-[1.25]">
                 Delicious Home-Cooked Meals
                 <br className="hidden sm:block" />
-                {" "}Delivered in an eversilver tiffin carrier
+                {" "}Delivered in an Ever Silver Tiffin Carrier
               </h2>
+              <div className="mt-1 sm:mt-2 lg:mt-3 mb-4 sm:mb-5 flex flex-col items-start gap-1">
+                <span className="text-emerald-100/90 text-xs sm:text-sm lg:text-[15px] xl:text-[17px] font-medium">
+                  The RRC Kitchen App is
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#D9B84C] text-xl sm:text-2xl lg:text-3xl xl:text-[34px] font-black tracking-wide">
+                    Coming Soon!
+                  </span>
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-[#D9B84C] animate-pulse">
+                    <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="currentColor" />
+                  </svg>
+                </div>
+              </div>
+
+              {/* Stay Tuned Card */}
+              <div className="flex flex-row items-center gap-3 sm:gap-4 p-2.5 sm:p-3 lg:p-4 rounded-xl border border-[#D9B84C]/40 bg-[#00220e]/60 shadow-inner max-w-[280px] sm:max-w-sm w-full">
+                <div className="h-8 w-8 sm:h-10 sm:w-10 lg:h-11 lg:w-11 rounded-full bg-[#D9B84C]/10 flex items-center justify-center shrink-0 border border-[#D9B84C]/20">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 sm:h-5 sm:w-5 text-[#D9B84C]">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                  </svg>
+                </div>
+                <div className="flex flex-col text-left">
+                  <span className="text-white text-xs sm:text-sm lg:text-[15px] font-bold tracking-wide">Stay Tuned!</span>
+                  <span className="text-emerald-100/90 text-[10px] sm:text-xs leading-snug mt-0.5">We&apos;re cooking something amazing for you.</span>
+                </div>
+              </div>
+              
+              {/* App store buttons - HIDDEN FOR NOW
               <p className="text-emerald-100/90 text-xs sm:text-sm lg:text-[15px] xl:text-[17px] mt-1 mb-2.5 sm:mt-2 sm:mb-4 lg:mt-2.5 lg:mb-5 font-medium">
                 Download the RRC Kitchen App Today!
               </p>
-              
-              {/* App store buttons */}
               <div className="flex flex-row items-center gap-1.5 sm:gap-3 flex-wrap sm:flex-nowrap">
-                {/* Google Play */}
                 <button
                   type="button"
                   className="bg-black/90 hover:bg-black text-white px-2 py-1.5 sm:px-3.5 sm:py-2 lg:px-4 lg:py-2.5 rounded-lg flex items-center gap-1.5 sm:gap-2.5 hover:scale-[1.02] active:scale-[0.98] transition-all border border-white/20 shrink-0 shadow-md sm:shadow-lg cursor-pointer"
@@ -161,7 +187,6 @@ export function AppDownloadBanner() {
                   </div>
                 </button>
 
-                {/* App Store */}
                 <button
                   type="button"
                   className="bg-black/90 hover:bg-black text-white px-2 py-1.5 sm:px-3.5 sm:py-2 lg:px-4 lg:py-2.5 rounded-lg flex items-center gap-1.5 sm:gap-2.5 hover:scale-[1.02] active:scale-[0.98] transition-all border border-white/20 shrink-0 shadow-md sm:shadow-lg cursor-pointer"
@@ -183,6 +208,7 @@ export function AppDownloadBanner() {
                   </div>
                 </button>
               </div>
+              */}
             </div>
           </div>
 

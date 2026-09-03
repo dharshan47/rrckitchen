@@ -150,8 +150,8 @@ export async function GET(request: Request) {
           imageUrl: i.photos[0]?.imageUrl ?? null,
         })),
         timeSlots,
-        lat: k.kitchenAddress?.latitude ?? null,
-        lng: k.kitchenAddress?.longitude ?? null,
+        lat: k.kitchenAddress?.latitude != null ? Number(k.kitchenAddress.latitude) : null,
+        lng: k.kitchenAddress?.longitude != null ? Number(k.kitchenAddress.longitude) : null,
         estimatedPrepTime: k.estimatedPrepTime,
         operatingHours: k.operatingHours as Record<
           string,

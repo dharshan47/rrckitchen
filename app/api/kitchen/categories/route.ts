@@ -27,11 +27,13 @@ export async function GET() {
       orderBy: { name: "asc" },
     });
 
+    const { getCategoryImageUrl } = await import("@/lib/category-images");
+
     const payload = categories.map((c) => ({
       id: c.id,
       name: c.name,
       kitchenCount: c._count.kitchenCategories,
-      imageUrl: c.imageUrl,
+      imageUrl: c.imageUrl ?? getCategoryImageUrl(c.name),
     }));
 
     await redis.set(cacheKey, payload, { ex: 60 });

@@ -3,7 +3,7 @@
 import { useQuery } from "@tanstack/react-query"
 import Link from "next/link"
 import Image from "next/image"
-import { ChefHat, ShieldCheck, Clock3, Leaf, UsersRound, ChevronRight } from "lucide-react"
+import { ChefHat, ShieldCheck, Clock3, Leaf, UsersRound, ChevronRight, Package } from "lucide-react"
 import { CategoriesSkeleton } from "@/components/categories/categories-skeleton"
 
 const CATEGORY_COLORS: Record<string, string> = {
@@ -32,6 +32,7 @@ const features = [
   { title: "Pre-book & Save Time", desc: "Order in advance", icon: Clock3, color: "#FE4A00" },
   { title: "Fresh Ingredients", desc: "Sourced daily", icon: Leaf, color: "#00512F" },
   { title: "Support Local Women", desc: "Empowering homemakers", icon: UsersRound, color: "#FE4A00" },
+  { title: "Delivered in an Ever Silver Tiffin Carrier", desc: "Eco-friendly packaging", icon: Package, color: "#00512F" },
 ]
 
 interface Category {

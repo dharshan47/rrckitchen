@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import {
   AdminCategory,
   useAdminCategories,
@@ -8,6 +8,7 @@ import {
   useToggleCategoryMutation,
   useAddCategoryMutation,
   useUpdateCategoryMutation,
+  useDeleteCategoryMutation,
 } from "@/stores";
 import { format, subDays, startOfDay } from "date-fns";
 import {
@@ -33,9 +34,12 @@ import {
   ChevronLeft,
   ChevronRight,
   ArrowUp,
-  Loader2
+  Loader2,
+  Trash2,
+  ImagePlus
 } from "lucide-react";
 import Image from "next/image";
+import { CloudinaryUpload } from "@/components/patterns/cloudinary-upload";
 
 import { Button } from "@/components/ui/button";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
@@ -173,8 +177,10 @@ export default function CategoriesPage() {
   const [editTarget, setEditTarget] = useState<AdminCategory | null>(null);
   const [addName, setAddName] = useState("");
   const [addDescription, setAddDescription] = useState("");
+  const [addImageUrl, setAddImageUrl] = useState<string | null>(null);
   const [editName, setEditName] = useState("");
   const [editDescription, setEditDescription] = useState("");
+  const [editImageUrl, setEditImageUrl] = useState<string | null>(null);
   const [pendingToggleId, setPendingToggleId] = useState<string | null>(null);
 
   const { isLoading, isError, refetch } = useAdminCategoriesQuery();
@@ -182,8 +188,9 @@ export default function CategoriesPage() {
   const toggleMutation = useToggleCategoryMutation();
   const addMutation = useAddCategoryMutation();
   const updateMutation = useUpdateCategoryMutation();
+  const deleteMutation = useDeleteCategoryMutation();
 
-  const handleToggle = (id: string, isActive: boolean) => {
+  const handleToggle = useCallback((id: string, isActive: boolean) => {
     setPendingToggleId(id);
     toggleMutation.mutateAsync({ id, isActive }).then(() => {
       toast.success("Category status updated");
@@ -192,7 +199,7 @@ export default function CategoriesPage() {
     }).finally(() => {
       setPendingToggleId(null);
     });
-  };
+  }, [toggleMutation]);
 
   const filteredCategories = useMemo(() => {
     return categories.filter((cat) => {
@@ -212,7 +219,9 @@ export default function CategoriesPage() {
 
   const totalPages = Math.max(1, Math.ceil(sortedCategories.length / rowsPerPage));
   const safePage = Math.min(currentPage, totalPages);
-  const pageItems = sortedCategories.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
+  const pageItems = useMemo(() => {
+    return sortedCategories.slice((safePage - 1) * rowsPerPage, safePage * rowsPerPage);
+  }, [sortedCategories, safePage, rowsPerPage]);
   const showingFrom = sortedCategories.length === 0 ? 0 : (safePage - 1) * rowsPerPage + 1;
   const showingTo = Math.min(safePage * rowsPerPage, sortedCategories.length);
 
@@ -250,24 +259,35 @@ export default function CategoriesPage() {
     setEditTarget(cat);
     setEditName(cat.name);
     setEditDescription(cat.description ?? "");
+    setEditImageUrl(cat.imageUrl ?? null);
   };
 
   const submitAdd = () => {
     if (!addName.trim()) { toast.error("Category name is required"); return; }
-    addMutation.mutateAsync({ name: addName.trim(), description: addDescription.trim() || null }).then((res) => {
+    addMutation.mutateAsync({ name: addName.trim(), description: addDescription.trim() || null, imageUrl: addImageUrl }).then((res) => {
       if (!res.success) { toast.error(res.error || "Failed to add category"); return; }
       toast.success("Category added");
-      setAddDialogOpen(false); setAddName(""); setAddDescription("");
+      setAddDialogOpen(false); setAddName(""); setAddDescription(""); setAddImageUrl(null);
     }).catch(() => { toast.error("Failed to add category"); });
   };
 
   const submitEdit = () => {
     if (!editTarget) return;
     if (!editName.trim()) { toast.error("Category name is required"); return; }
-    updateMutation.mutateAsync({ id: editTarget.id, data: { name: editName.trim(), description: editDescription.trim() || null } }).then(() => {
+    updateMutation.mutateAsync({ id: editTarget.id, data: { name: editName.trim(), description: editDescription.trim() || null, imageUrl: editImageUrl } }).then(() => {
       toast.success("Category updated");
       setEditTarget(null);
     }).catch(() => { toast.error("Failed to update category"); });
+  };
+
+  const handleDelete = () => {
+    if (!editTarget) return;
+    if (confirm("Are you sure you want to delete this category?")) {
+      deleteMutation.mutateAsync(editTarget.id).then(() => {
+        toast.success("Category deleted");
+        setEditTarget(null);
+      }).catch(() => { toast.error("Failed to delete category"); });
+    }
   };
 
   const statCards = [
@@ -285,7 +305,7 @@ export default function CategoriesPage() {
     ), icon: Eye, iconBg: "bg-[#F5F0FF]", iconColor: "text-[#7C3AED]" },
   ];
 
-  const columns: ColumnDef<AdminCategory>[] = [
+  const columns = useMemo<ColumnDef<AdminCategory>[]>(() => [
     {
       accessorKey: "name",
       header: "Category",
@@ -401,7 +421,7 @@ export default function CategoriesPage() {
         </div>
       ),
     },
-  ];
+  ], [pendingToggleId, handleToggle]);
 
   const table = useReactTable({
     data: pageItems,
@@ -686,7 +706,7 @@ export default function CategoriesPage() {
                  </div>
                  <div className="flex-1">
                     <p className="text-[13px] font-semibold text-[#101828]">Most Popular</p>
-<p className="text-[12px] text-[#475467]">{mostPopular?.name ?? "—"}</p>
+                    <p className="text-[12px] text-[#475467]">{mostPopular?.name ?? "—"}</p>
                   </div>
                   <div className="text-[12px] text-[#475467]">
                      {mostPopular?.kitchenCount ?? 0} Kitchens
@@ -698,7 +718,7 @@ export default function CategoriesPage() {
                  </div>
                  <div className="flex-1">
                     <p className="text-[13px] font-semibold text-[#101828]">New Addition</p>
-<p className="text-[12px] text-[#475467]">{newestCategory?.name ?? "—"}</p>
+                    <p className="text-[12px] text-[#475467]">{newestCategory?.name ?? "—"}</p>
                   </div>
                   <div className="text-[12px] text-[#475467]">
                      {newestCategory ? daysAgo(newestCategory.createdAt) : "—"}
@@ -757,6 +777,30 @@ export default function CategoriesPage() {
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
+              <Label>Category Image</Label>
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16 rounded-md">
+                  {addImageUrl ? (
+                    <AvatarImage asChild src={addImageUrl} alt="Preview">
+                      <Image src={addImageUrl} alt="Preview" fill sizes="64px" className="object-cover" />
+                    </AvatarImage>
+                  ) : (
+                    <AvatarFallback className="rounded-md bg-slate-100 text-slate-500">
+                      <ImagePlus className="h-6 w-6" />
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <CloudinaryUpload onUpload={(res) => setAddImageUrl(res.secure_url)}>
+                  {({ uploading, startUpload }) => (
+                    <Button type="button" variant="outline" size="sm" onClick={startUpload} disabled={uploading}>
+                      {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ImagePlus className="h-4 w-4 mr-2" />}
+                      {addImageUrl ? "Change Image" : "Upload Image"}
+                    </Button>
+                  )}
+                </CloudinaryUpload>
+              </div>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="cat-name">Name</Label>
               <Input id="cat-name" placeholder="e.g. Biryani" value={addName} onChange={(e) => setAddName(e.target.value)} />
             </div>
@@ -783,6 +827,30 @@ export default function CategoriesPage() {
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
+              <Label>Category Image</Label>
+              <div className="flex items-center gap-4">
+                <Avatar className="h-16 w-16 rounded-md">
+                  {editImageUrl ? (
+                    <AvatarImage asChild src={editImageUrl} alt="Preview">
+                      <Image src={editImageUrl} alt="Preview" fill sizes="64px" className="object-cover" />
+                    </AvatarImage>
+                  ) : (
+                    <AvatarFallback className="rounded-md bg-slate-100 text-slate-500">
+                      <ImagePlus className="h-6 w-6" />
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <CloudinaryUpload onUpload={(res) => setEditImageUrl(res.secure_url)}>
+                  {({ uploading, startUpload }) => (
+                    <Button type="button" variant="outline" size="sm" onClick={startUpload} disabled={uploading}>
+                      {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <ImagePlus className="h-4 w-4 mr-2" />}
+                      {editImageUrl ? "Change Image" : "Upload Image"}
+                    </Button>
+                  )}
+                </CloudinaryUpload>
+              </div>
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="edit-cat-name">Name</Label>
               <Input id="edit-cat-name" value={editName} onChange={(e) => setEditName(e.target.value)} />
             </div>
@@ -791,12 +859,18 @@ export default function CategoriesPage() {
               <Textarea id="edit-cat-desc" value={editDescription} onChange={(e) => setEditDescription(e.target.value)} rows={3} />
             </div>
           </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setEditTarget(null)}>Cancel</Button>
-            <Button onClick={submitEdit} disabled={updateMutation.isPending} className="bg-[#1D9333] hover:bg-[#147A2B] text-white gap-2">
-              {updateMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
-              Save Changes
+          <DialogFooter className="flex flex-col sm:flex-row items-center sm:justify-between w-full gap-2">
+            <Button variant="ghost" className="text-red-600 hover:text-red-700 hover:bg-red-50 w-full sm:w-auto" onClick={handleDelete} disabled={deleteMutation.isPending}>
+              {deleteMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
+              Delete
             </Button>
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <Button variant="outline" className="flex-1 sm:flex-none" onClick={() => setEditTarget(null)}>Cancel</Button>
+              <Button onClick={submitEdit} disabled={updateMutation.isPending} className="flex-1 sm:flex-none bg-[#1D9333] hover:bg-[#147A2B] text-white gap-2">
+                {updateMutation.isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+                Save Changes
+              </Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

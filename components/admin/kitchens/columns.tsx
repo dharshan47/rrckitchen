@@ -30,7 +30,7 @@ const cuisineStyles: Record<string, string> = {
 }
 
 function kitchenDisplayName(kitchen: KitchenPartnerRow) {
-  return kitchen.displayName || kitchen.name || "Unknown Kitchen"
+  return kitchen.displayName || kitchen.name || "Kitchen"
 }
 
 export const columns = (

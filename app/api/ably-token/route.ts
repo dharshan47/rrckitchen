@@ -97,15 +97,17 @@ export async function GET(req: Request) {
 
     const ticketIds = liveChatChannels.map((c) => c.slice("live-chat:".length))
     const tickets = await prisma.supportTicket.findMany({
-      where: { id: { in: ticketIds } },
-      select: { id: true, userId: true },
+      where: { publicCode: { in: ticketIds } },
+      select: { publicCode: true, userId: true },
     })
 
     const isAdmin = user.role === "admin" || user.role === "support" || user.role === "SUPPORTAGENT"
 
     for (const ticket of tickets) {
-      if (ticket.userId !== user.id && !isAdmin) return forbidden()
-      capability[`live-chat:${ticket.id}`] = ["subscribe"]
+      if (ticket.publicCode) {
+        if (ticket.userId !== user.id && !isAdmin) return forbidden()
+        capability[`live-chat:${ticket.publicCode}`] = ["subscribe"]
+      }
     }
   }
 

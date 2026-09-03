@@ -62,9 +62,13 @@ export function KitchenCard({
   // chosen a delivery location yet.
   const distanceKm = useMemo(() => {
     if (kitchen.lat == null || kitchen.lng == null) return null;
+    const kLat = Number(kitchen.lat);
+    const kLng = Number(kitchen.lng);
+    if (isNaN(kLat) || isNaN(kLng)) return null;
+
     const fromLat = deliveryLat ?? THANJAVUR_CENTER[0];
     const fromLng = deliveryLng ?? THANJAVUR_CENTER[1];
-    return haversineDistance(fromLat, fromLng, kitchen.lat, kitchen.lng);
+    return haversineDistance(fromLat, fromLng, kLat, kLng);
   }, [deliveryLat, deliveryLng, kitchen.lat, kitchen.lng]);
 
   // Badges derived from real backend data.

@@ -39,7 +39,7 @@ const mockTestimonials: Testimonial[] = [
   {
     id: "m1",
     rating: 5,
-    comment: "The food feels just like home! The eversilver tiffin box keeps it hot and fresh. Absolutely love it.",
+    comment: "The food feels just like home! The Ever Silver Tiffin Carrier keeps it hot and fresh. Absolutely love it.",
     userName: "Rahul Sharma",
     userImage: null,
     kitchenName: "Aunty's Kitchen",
@@ -84,7 +84,7 @@ function TrendingKitchens() {
           </h2>
           <div className="flex items-center gap-1.5 text-sm text-[#6B7280] font-medium mt-0.5">
             <MapPin className="h-4 w-4 text-[#F04E00]" />
-            <p>Serving delicious meals in eversilver tiffin carriers</p>
+            <p>Serving delicious meals in an Ever Silver Tiffin Carrier</p>
           </div>
         </div>
         <Link
@@ -407,10 +407,10 @@ export function HomeClient() {
                   </span>
                 </div>
                 
-                <div className="text-[#6B7280] font-light text-base mt-1.5 shrink-0 hidden sm:block">→</div>
+                <div className="text-[#6B7280] font-light text-base mt-1.5 shrink-0">→</div>
                 
                 {/* Step 5 */}
-                <div className="flex flex-col items-center text-center gap-2.5 flex-1 relative hidden sm:flex">
+                <div className="flex flex-col items-center text-center gap-2.5 flex-1 relative">
                   <div className="flex items-center justify-center mb-1 h-8">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-7 w-7 text-[#003015]">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
@@ -609,7 +609,9 @@ export function HomeClient() {
           </section>
 
           {/* App Download Banner */}
-          <AppDownloadBanner />
+          <div className="lg:-mt-10 xl:-mt-16">
+            <AppDownloadBanner />
+          </div>
         </ErrorBoundary>
       </div>
     </main>

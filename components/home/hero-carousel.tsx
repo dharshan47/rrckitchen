@@ -16,6 +16,7 @@ import {
   Recycle,
   Ban,
   ChevronRight,
+  UsersRound,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 
@@ -33,49 +34,48 @@ interface HeroSlide {
 
 const slides: HeroSlide[] = [
   {
-    tag: "100% HOME-COOKED",
+    tag: "100% HOMEMADE",
     headline: (
       <>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight">
-          Home-cooked food
+          Homemade Food
         </span>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight mt-0.5 lg:mt-2">
-          in{" "}
+          Delivered in an{" "}
           <span className="text-[#F04E00] font-serif italic font-semibold">
-            eversilver
+            Ever Silver
           </span>
         </span>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight mt-0.5 lg:mt-2">
-          tiffin carriers
+          Tiffin Carrier
         </span>
       </>
     ),
     description: (
       <span className="block">
-        Healthy, hygienic, and delicious meals prepared by trusted<br className="hidden lg:inline" />
-        home chefs and delivered to your doorstep in<br className="hidden lg:inline" />
-        <span className="text-[#003015] font-bold"> a traditional stainless steel tiffin carrier.</span>
+        Healthy, hygienic, and delicious meals prepared by <span className="text-[#003015] font-bold">verified home chefs</span>{" "}
+        and delivered to your doorstep in an <span className="text-[#003015] font-bold">Ever Silver Tiffin Carrier.</span>
       </span>
     ),
-    primaryCta: { label: "ORDER NOW", href: "/search" },
+    primaryCta: { label: "ORDER NOW", href: "/kitchens" },
     secondaryCta: { label: "EXPLORE KITCHENS", href: "/categories" },
     trustBar: [
-      { icon: Heart, text: "Cooked\nwith Love" },
-      { icon: ShieldCheck, text: "Hygienic\n& Safe" },
+      { icon: Heart, text: "100%\nHomemade" },
+      { icon: ShieldCheck, text: "Verified\nKitchens" },
       { icon: Clock, text: "On-time\nDelivery" },
-      { icon: Package, text: "Packed in a\nTiffin Carrier" },
+      { icon: Package, text: "Ever Silver\nTiffin Carrier" },
       { icon: Leaf, text: "Fresh\nIngredients" },
-      { icon: Package, text: "A Steel Tiffin\nCarrier" },
+      { icon: UsersRound, text: "Support a\nHomemaker" },
     ],
     rightCard: [
       { icon: Flame, title: "Food stays hot", subtitle: "for longer" },
-      { icon: ShieldCheck, title: "Leak proof", subtitle: "& spill safe" },
-      { icon: Leaf, title: "Eco-friendly", subtitle: "custom reusable" },
-      { icon: Ban, title: "No plastic", subtitle: "only stainless steel" },
+      { icon: ShieldCheck, title: "Leak-proof", subtitle: "& spill-safe" },
+      { icon: Recycle, title: "Eco-friendly", subtitle: "completely reusable" },
+      { icon: Ban, title: "Zero plastic", subtitle: "only Ever Silver" },
     ],
     bgImage:
       "/hero/hero-tiffin-carrier.webp",
-    imageAlt: "Home chef holding stainless steel tiffin carrier",
+    imageAlt: "Home chef holding an Ever Silver tiffin carrier",
   },
   {
     tag: "BECOME A HOME CHEF",
@@ -93,13 +93,13 @@ const slides: HeroSlide[] = [
       </>
     ),
     description:
-      "Cook from home, earn on your terms, and build something extraordinary with RRC Kitchen. Join our growing community of passionate home chefs.",
+      "Cook from home, earn on your own terms, and support your family. Join our growing community of verified home kitchens at RRC Kitchen.",
     primaryCta: { label: "JOIN NOW", href: "/kitchen/signup" },
     secondaryCta: { label: "LEARN MORE", href: "/kitchen" },
     trustBar: [
       { icon: Heart, text: "Be Your\nOwn Boss" },
       { icon: Clock, text: "Flexible\nHours" },
-      { icon: ShieldCheck, text: "A Trusted\nPlatform" },
+      { icon: ShieldCheck, text: "Verified\nPlatform" },
       { icon: Package, text: "We Handle\nDelivery" },
     ],
     rightCard: [
@@ -110,42 +110,45 @@ const slides: HeroSlide[] = [
     ],
     bgImage:
       "/hero/hero-women-chef.webp",
-    imageAlt: "Become a home chef with RRC Kitchen",
+    imageAlt: "Become a verified home kitchen with RRC Kitchen",
   },
   {
-    tag: "FRESHLY COOKED",
+    tag: "SUPPORT A HOMEMAKER",
     headline: (
       <>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight">
-          Fresh & Healthy
+          Every Order Supports
         </span>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight mt-0.5 lg:mt-2">
+          a{" "}
           <span className="text-[#F04E00] font-serif italic font-semibold">
-            Meals
-          </span>{" "}
-          Delivered
+            Homemaker
+          </span>
+        </span>
+        <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight mt-0.5 lg:mt-2">
+          & Her Family
         </span>
       </>
     ),
     description:
-      "Explore a rotating menu crafted by home chefs using the freshest ingredients, delivered in eco-friendly packaging.",
+      "Enjoy 100% homemade meals cooked with love and care by verified home kitchens, delivered fresh in an Ever Silver Tiffin Carrier.",
     primaryCta: { label: "VIEW MENU", href: "/search" },
     secondaryCta: { label: "EXPLORE KITCHENS", href: "/kitchens" },
     trustBar: [
-      { icon: Clock, text: "A Fresh Rotating\nMenu" },
-      { icon: Leaf, text: "Farm Fresh\nProduce" },
-      { icon: ShieldCheck, text: "Home Chef\nCertified" },
+      { icon: UsersRound, text: "Empowering\nWomen" },
+      { icon: ShieldCheck, text: "Verified\nKitchens" },
+      { icon: Heart, text: "Cooked with\nLove" },
       { icon: Flame, text: "Hot\nDelivery" },
     ],
     rightCard: [
-      { icon: Heart, title: "Cooked with", subtitle: "love & care" },
-      { icon: Leaf, title: "Farm to", subtitle: "table freshness" },
-      { icon: Recycle, title: "Eco-friendly", subtitle: "packaging" },
-      { icon: Flame, title: "Hot & fresh", subtitle: "every time" },
+      { icon: Heart, title: "100% Homemade", subtitle: "cooked with care" },
+      { icon: UsersRound, title: "Supports", subtitle: "local families" },
+      { icon: ShieldCheck, title: "Verified", subtitle: "home kitchens" },
+      { icon: Package, title: "Delivered in", subtitle: "an Ever Silver Tiffin" },
     ],
     bgImage:
       "/hero/hero-delivery-with-us.webp",
-    imageAlt: "Fresh daily home-cooked meals",
+    imageAlt: "Freshly cooked 100% homemade meals delivered to your doorstep",
   },
 ]
 
@@ -191,7 +194,7 @@ function SlideContent({
 }) {
   return (
     <div className="relative flex flex-row w-full bg-[#FDFBF7] overflow-hidden min-h-[280px] sm:min-h-[400px] lg:min-h-[650px]">
-      
+
       {/* Left Text Section - Exactly 50% Width */}
       <div className="w-[50%] flex flex-col justify-center px-3 sm:px-8 lg:px-12 pt-6 pb-16 sm:pt-12 sm:pb-28 lg:pt-24 lg:pb-40 z-10 relative">
         <div className="max-w-[700px] ml-auto w-full">
@@ -248,7 +251,7 @@ function SlideContent({
         />
         {/* Soft edge blend for a smooth transition from the background color to the image */}
         <div className="absolute inset-y-0 left-0 w-[15%] lg:w-[20%] bg-gradient-to-r from-[#FDFBF7] to-transparent z-10" />
-        
+
         {/* Right card on desktop absolute positioned */}
         <div className="hidden 2xl:flex absolute right-8 top-1/2 -translate-y-1/2 z-20">
           <div

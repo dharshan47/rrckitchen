@@ -24,6 +24,7 @@ import { CloudinaryUpload } from "@/components/cloudinary/cloudinary-upload"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { LiveChatWidget } from "@/components/chat/live-chat-widget"
+import { useLiveChatStore } from "@/stores"
 
 interface UploadedImage {
   secure_url: string
@@ -99,6 +100,7 @@ export default function SupportPageClient() {
   const [priority, setPriority] = useState<"LOW" | "MEDIUM" | "HIGH" | "URGENT">("MEDIUM")
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([])
   const [activeTab, setActiveTab] = useState("All")
+  const openChat = useLiveChatStore((state) => state.openChat)
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<TicketForm>({
     resolver: zodResolver(ticketFormSchema),
@@ -605,13 +607,13 @@ export default function SupportPageClient() {
                <Card className="rounded-[14px] border-[#EDEEEF] bg-[#FFFFFF] shadow-[0_2px_12px_rgba(16,24,40,0.035)]">
                   <CardContent className="p-2.5 space-y-1">
                      {[
-                       { icon: MessageCircle, title: "Live Chat", sub: "Chat with support" },
+                       { icon: MessageCircle, title: "Live Chat", sub: "Chat with support", action: openChat },
                        { icon: Phone, title: "Call Support", sub: "Speak with executive" },
                        { icon: MessageCircle, title: "WhatsApp Support", sub: "Chat on WhatsApp" },
                        { icon: Share2, title: "Track Existing Ticket", sub: "Check ticket status" },
                        { icon: CircleHelp, title: "FAQs", sub: "Find quick answers" },
                      ].map((item, i) => (
-                       <div key={i} className="flex items-center justify-between p-3 rounded-[10px] hover:bg-[#FAFAFA] cursor-pointer group transition-colors">
+                       <div key={i} onClick={item.action} className="flex items-center justify-between p-3 rounded-[10px] hover:bg-[#FAFAFA] cursor-pointer group transition-colors">
                           <div className="flex items-center gap-3.5">
                              <div className="h-[36px] w-[36px] rounded-full bg-[#EFF8F1] flex items-center justify-center shrink-0">
                                 <item.icon className="h-[18px] w-[18px] text-[#0D6C2B]" strokeWidth={2} />
@@ -692,7 +694,7 @@ export default function SupportPageClient() {
            <Card className="rounded-[14px] border-[#EEF0E7] bg-[#F8FAF2] p-5 shadow-[0_2px_12px_rgba(16,24,40,0.035)] flex flex-col justify-center">
               <h4 className="text-[14px] font-[700] text-[#252830]">Need immediate help?</h4>
               <p className="text-[11px] text-[#747780] font-[500] mb-3.5 mt-0.5">Our team is available 24/7 to assist you</p>
-              <Button className="w-full h-[40px] bg-[#0D6C2B] hover:bg-[#09541B] text-white text-[13px] font-[700] rounded-[8px] shadow-sm">
+              <Button onClick={openChat} className="w-full h-[40px] bg-[#0D6C2B] hover:bg-[#09541B] text-white text-[13px] font-[700] rounded-[8px] shadow-sm">
                  <MessageCircle className="h-4 w-4 mr-2" strokeWidth={2.5} /> Contact Live Support
               </Button>
            </Card>

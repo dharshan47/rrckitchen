@@ -15,6 +15,7 @@ export const PUBLIC_ID_SPECS = {
   MENU_ITEM: { prefix: "M", digits: 8 },
   CUSTOMER: { prefix: "CUS", digits: 9 },
   SUPPORT_TICKET: { prefix: "TKT", digits: 8 },
+  GUEST: { prefix: "GST", digits: 9 },
 } as const satisfies Record<string, PublicIdSpec>
 
 export function formatPublicCode(prefix: string, sequence: number, digits: number): string {

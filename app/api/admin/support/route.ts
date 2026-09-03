@@ -41,7 +41,12 @@ export async function GET() {
       orderBy: { updatedAt: "desc" },
     });
 
-    return NextResponse.json(tickets);
+    const mapped = tickets.map(t => ({
+      ...t,
+      id: t.publicCode || t.id, // Hide internal ID, use publicCode instead
+    }));
+
+    return NextResponse.json(mapped);
   } catch (error) {
     console.error("[Admin Support] GET failed:", error);
     return NextResponse.json({ error: "Failed to fetch tickets" }, { status: 500 });
@@ -64,7 +69,7 @@ export async function PATCH(req: NextRequest) {
     }
 
     const ticket = await prisma.supportTicket.update({
-      where: { id: ticketId },
+      where: { publicCode: ticketId },
       data: { status: status as "OPEN" | "INPROGRESS" | "RESOLVED" | "CLOSED" },
     });
 
@@ -85,16 +90,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "ticketId and message are required" }, { status: 400 });
     }
 
+    const ticket = await prisma.supportTicket.findUnique({
+      where: { publicCode: ticketId }
+    });
+
+    if (!ticket) {
+      return NextResponse.json({ error: "Ticket not found" }, { status: 404 });
+    }
+
     const msg = await prisma.ticketMessage.create({
       data: {
-        ticketId,
+        ticketId: ticket.id,
         senderId: admin.id,
         message: message.trim(),
       },
     });
 
     await prisma.supportTicket.update({
-      where: { id: ticketId },
+      where: { id: ticket.id },
       data: { status: "INPROGRESS" },
     });
 

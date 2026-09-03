@@ -8,13 +8,14 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { X, MoreVertical, Paperclip, Send, Smile } from "lucide-react"
-import { CldUploadWidget } from "next-cloudinary"
+import { CloudinaryUpload } from "@/components/patterns/cloudinary-upload"
+import { toast } from "sonner"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import EmojiPicker, { Theme, EmojiStyle } from "emoji-picker-react"
 
-const DEFAULT_QUICK_REPLIES = ["Resend OTP", "Change Number", "Other Issue"]
+const DEFAULT_QUICK_REPLIES = ["Track my order", "Report an issue", "Payment help"]
 
 export function LiveChatWidget() {
   const {
@@ -88,12 +89,21 @@ export function LiveChatWidget() {
   }, [messages, isOpen])
 
   const handleSend = async () => {
-    if (!message.trim() || !activeTicketId) return
+    if (!message.trim()) return
+    let ticketId = activeTicketId
+    if (!ticketId) {
+       await startSession()
+       ticketId = useLiveChatStore.getState().activeTicketId
+       if (!ticketId) {
+          toast.error("Failed to start chat session")
+          return
+       }
+    }
     const textToSend = message
     setMessage("")
     setIsEmojiOpen(false)
     setTimeout(scrollToBottom, 50)
-    await sendMessage(activeTicketId, textToSend)
+    await sendMessage(ticketId, textToSend)
   }
 
   const dynamicQuickReplies = useMemo(() => {
@@ -102,12 +112,15 @@ export function LiveChatWidget() {
     const isMe = sessionData ? lastMsg.senderId === (sessionData.userId || sessionData.guestId) : (lastMsg.senderId === "currentUser")
     
     if (isMe) {
-      return ["Thanks", "Okay", "Can you explain more?"]
+      // Hide quick replies when the user just sent a message and is waiting for support
+      return []
     } else {
       const lower = lastMsg.message.toLowerCase()
+      if (lower.includes("hello") || lower.includes("hi") || lower.includes("welcome")) return ["I need help with an order", "I have a payment issue", "General question"]
       if (lower.includes("?")) return ["Yes", "No", "I'm not sure"]
       if (lower.includes("order")) return ["Track my order", "Cancel order", "Order is wrong"]
-      if (lower.includes("payment") || lower.includes("refund")) return ["Check status", "How long will it take?", "Other payment issue"]
+      if (lower.includes("payment") || lower.includes("refund")) return ["Check refund status", "Payment failed", "Other payment issue"]
+      if (lower.includes("delivery")) return ["Delivery is late", "Delivery partner issue", "Change address"]
       return ["Understood", "I need more help", "Thank you!"]
     }
   }, [messages, sessionData])
@@ -117,17 +130,25 @@ export function LiveChatWidget() {
   }
 
   const handleQuickReply = async (reply: string) => {
-    if (!activeTicketId) return
-    await sendMessage(activeTicketId, reply)
+    let ticketId = activeTicketId
+    if (!ticketId) {
+       await startSession()
+       ticketId = useLiveChatStore.getState().activeTicketId
+       if (!ticketId) {
+          toast.error("Failed to start chat session")
+          return
+       }
+    }
+    await sendMessage(ticketId, reply)
   }
 
   if (!isOpen) return null
 
 
   return (
-    <div className="fixed bottom-6 right-6 w-[360px] max-w-[calc(100vw-32px)] bg-white rounded-2xl shadow-[0_6px_20px_rgba(8,122,54,0.22)] flex flex-col border border-border z-50 overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex h-[100dvh] w-full flex-col bg-white sm:inset-auto sm:bottom-6 sm:right-6 sm:h-auto sm:w-[360px] sm:max-w-[calc(100vw-32px)] sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_6px_20px_rgba(8,122,54,0.22)]">
       {/* Header */}
-      <div className="bg-[#087A36] text-white p-4 flex items-center justify-between">
+      <div className="bg-[#087A36] text-white p-4 flex items-center justify-between sm:rounded-t-2xl">
         <div className="flex items-center gap-3">
           <div className="flex -space-x-2">
             <Image src="https://api.dicebear.com/7.x/avataaars/svg?seed=Support1" alt="Support" width={32} height={32} className="w-8 h-8 rounded-full border-2 border-[#087A36] bg-white" />
@@ -149,7 +170,7 @@ export function LiveChatWidget() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 min-h-[350px] max-h-[400px] overflow-y-auto p-4 bg-[#FEFEFE] space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 bg-[#FEFEFE] space-y-4 sm:min-h-[350px] sm:max-h-[400px]">
         {/* Welcome Message (Static for now if empty) */}
         {messages.length === 0 && (
           <div className="flex items-start gap-2">
@@ -191,17 +212,19 @@ export function LiveChatWidget() {
       </div>
 
       {/* Quick Replies */}
-      <div className="px-4 py-2 border-t border-border flex gap-2 overflow-x-auto no-scrollbar bg-white">
-        {dynamicQuickReplies.map(reply => (
-          <button
-            key={reply}
-            onClick={() => handleQuickReply(reply)}
-            className="whitespace-nowrap px-3 py-1.5 rounded-full border border-[#D7EBDD] bg-[#F4FAF6] text-[#087A36] text-xs font-medium hover:bg-[#EAF7EF] transition-colors"
-          >
-            {reply}
-          </button>
-        ))}
-      </div>
+      {dynamicQuickReplies.length > 0 && (
+        <div className="px-4 py-2 border-t border-border flex gap-2 overflow-x-auto no-scrollbar bg-white">
+          {dynamicQuickReplies.map(reply => (
+            <button
+              key={reply}
+              onClick={() => handleQuickReply(reply)}
+              className="whitespace-nowrap px-3 py-1.5 rounded-full border border-[#D7EBDD] bg-[#F4FAF6] text-[#087A36] text-xs font-medium hover:bg-[#EAF7EF] transition-colors"
+            >
+              {reply}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Input Area */}
       <div className="p-3 bg-white border-t border-border flex items-center gap-2">
@@ -216,9 +239,9 @@ export function LiveChatWidget() {
           <div className="flex items-center gap-1 text-[#64748B]">
             <Popover open={isEmojiOpen} onOpenChange={setIsEmojiOpen}>
               <PopoverTrigger asChild>
-                <button className="p-1.5 hover:text-[#087A36] transition-colors"><Smile className="w-4 h-4" /></button>
+                <button type="button" className="p-1.5 hover:text-[#087A36] transition-colors"><Smile className="w-4 h-4" /></button>
               </PopoverTrigger>
-              <PopoverContent side="top" className="w-fit p-0 border-none shadow-none mb-2 bg-transparent">
+              <PopoverContent side="top" className="w-fit p-0 border-none shadow-none mb-2 bg-transparent z-[60]">
                 <EmojiPicker 
                   onEmojiClick={(emojiData) => {
                     setMessage((m) => m + emojiData.emoji)
@@ -232,21 +255,28 @@ export function LiveChatWidget() {
               </PopoverContent>
             </Popover>
 
-            <CldUploadWidget
-              uploadPreset="rrc_kitchen"
+            <CloudinaryUpload
               onUpload={async (result) => {
-                const info = result.info
-                if (info && typeof info === "object" && "secure_url" in info && activeTicketId) {
-                  await sendMessage(activeTicketId, "Sent an attachment", [(info as { secure_url: string }).secure_url])
+                let ticketId = activeTicketId
+                if (!ticketId) {
+                   await startSession()
+                   ticketId = useLiveChatStore.getState().activeTicketId
+                   if (!ticketId) {
+                      toast.error("Failed to start chat session")
+                      return
+                   }
+                }
+                if (result.secure_url) {
+                  await sendMessage(ticketId, "Sent an attachment", [result.secure_url])
                 }
               }}
             >
-              {({ open }) => (
-                <button onClick={() => open()} className="p-1.5 hover:text-[#087A36] transition-colors">
+              {({ startUpload, uploading }) => (
+                <button type="button" onClick={startUpload} disabled={uploading} className="p-1.5 hover:text-[#087A36] transition-colors disabled:opacity-50">
                   <Paperclip className="w-4 h-4" />
                 </button>
               )}
-            </CldUploadWidget>
+            </CloudinaryUpload>
           </div>
         </div>
         <Button 

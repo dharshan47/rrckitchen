@@ -173,7 +173,7 @@ export function InfiniteKitchenGrid() {
         <AccordionTrigger className="text-[14px] font-bold text-[#222222] py-3 hover:no-underline select-none">
           Meal Type
         </AccordionTrigger>
-        <AccordionContent className="pb-4">
+        <AccordionContent className="pb-4 !h-auto">
           <div className="flex flex-col gap-2.5">
             {mealTypeOptions.map((option) => (
               <div key={option.key} className="flex items-center gap-3 group">
@@ -197,7 +197,7 @@ export function InfiniteKitchenGrid() {
         <AccordionTrigger className="text-[14px] font-bold text-[#222222] py-3 hover:no-underline select-none">
           Cuisine
         </AccordionTrigger>
-        <AccordionContent className="pb-4">
+        <AccordionContent className="pb-4 !h-auto">
           <div className="flex flex-col gap-2.5">
             {(showAllCuisines ? categories : categories.slice(0, 5)).map((category) => (
               <div key={category.id} className="flex items-center gap-3 group">
@@ -229,7 +229,7 @@ export function InfiniteKitchenGrid() {
         <AccordionTrigger className="text-[14px] font-bold text-[#222222] py-3 hover:no-underline select-none">
           Ratings
         </AccordionTrigger>
-        <AccordionContent className="pb-4">
+        <AccordionContent className="pb-4 !h-auto">
           <div className="flex flex-col gap-2.5">
             {[
               { label: "4.5 & above", value: 4.5 },
@@ -273,7 +273,7 @@ export function InfiniteKitchenGrid() {
         <AccordionTrigger className="text-[14px] font-bold text-[#222222] py-3 hover:no-underline select-none">
           Delivery Time
         </AccordionTrigger>
-        <AccordionContent className="pb-4">
+        <AccordionContent className="pb-4 !h-auto">
           <div className="flex flex-col gap-2.5">
             {[
               { label: "25 mins or less", min: null, max: 25 },

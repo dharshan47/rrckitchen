@@ -11,7 +11,7 @@ export function HomeKitchenCardSkeleton() {
         {/* Image Section */}
         <div className="relative w-full h-[132px] sm:h-[140px] bg-muted shrink-0 rounded-t-[16px]">
           <Skeleton className="absolute inset-0 rounded-t-[16px]" />
-          
+
           {/* Top Left Badge */}
           <div className="absolute top-2.5 left-2.5 z-10 flex flex-col items-start gap-1">
             <Skeleton className="h-6 w-20 rounded-[6px]" />
@@ -66,7 +66,7 @@ export function HomeSkeleton() {
   return (
     <main className="min-h-screen bg-white text-[#111111] relative">
       <div className="mx-auto max-w-350 px-4 sm:px-6 lg:px-8 pb-8 pt-10 lg:pt-14 space-y-14 lg:space-y-20">
-        
+
         {/* Category Carousel (WhatsOnYourMind) */}
         <section>
           <div className="flex items-center justify-between gap-4 mb-6 sm:mb-8">
@@ -104,7 +104,7 @@ export function HomeSkeleton() {
               </h2>
               <div className="flex items-center gap-1.5 text-sm text-[#6B7280] font-medium mt-0.5">
                 <MapPin className="h-4 w-4 text-[#F04E00]" />
-                <p>Serving delicious meals in tiffin box</p>
+                <p>Serving delicious meals in an Ever Silver Tiffin Carrier</p>
               </div>
             </div>
             <div className="hidden sm:flex items-center gap-1.5 text-sm font-bold text-[#F04E00] shrink-0 mt-0.5">
@@ -187,7 +187,7 @@ export function HomeSkeleton() {
             <h3 className="text-sm font-bold text-[#111111] uppercase tracking-wide mb-8">
               How It Works
             </h3>
-            
+
             <div className="flex-1 flex flex-row items-start justify-between w-full">
               {[1, 2, 3, 4, 5].map((step, idx) => (
                 <div key={idx} className={cn("flex flex-col items-center text-center gap-2.5 flex-1 relative", step === 5 ? "hidden sm:flex" : "")}>
@@ -286,7 +286,7 @@ export function HomeSkeleton() {
         <section className="w-full px-3 sm:px-6 lg:px-8 mt-14 sm:mt-20 lg:mt-28 xl:mt-32 mb-6 overflow-visible">
           <div className="w-full mx-auto max-w-[1300px]">
             <div className="bg-gradient-to-br from-[#003015] via-[#003819] to-[#00220e] border border-emerald-900/40 w-full rounded-2xl sm:rounded-[24px] shadow-xl sm:shadow-2xl relative px-4 sm:px-8 lg:px-10 xl:px-12 py-5 sm:py-7 lg:py-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 lg:gap-8">
-              
+
               <div className="flex flex-row items-center gap-3 sm:gap-6 lg:gap-8 flex-1 min-w-0">
                 <div className="relative h-[150px] w-[80px] sm:h-[240px] sm:w-[135px] md:h-[280px] md:w-[155px] lg:h-[330px] lg:w-[185px] xl:h-[390px] xl:w-[220px] -mt-12 sm:-mt-24 md:-mt-28 lg:-mt-36 xl:-mt-44 shrink-0 z-10">
                   <Skeleton className="absolute inset-0 rounded-[24px]" />
@@ -296,7 +296,7 @@ export function HomeSkeleton() {
                   <Skeleton className="h-6 sm:h-8 lg:h-10 w-full max-w-[400px] mb-2" />
                   <Skeleton className="h-6 sm:h-8 lg:h-10 w-3/4 max-w-[300px]" />
                   <Skeleton className="h-4 sm:h-5 w-48 mt-3 mb-5" />
-                  
+
                   <div className="flex flex-row items-center gap-1.5 sm:gap-3 flex-wrap sm:flex-nowrap">
                     <Skeleton className="h-[36px] sm:h-[44px] lg:h-[48px] w-[120px] sm:w-[140px] lg:w-[160px] rounded-lg" />
                     <Skeleton className="h-[36px] sm:h-[44px] lg:h-[48px] w-[120px] sm:w-[140px] lg:w-[160px] rounded-lg" />
