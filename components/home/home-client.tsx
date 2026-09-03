@@ -29,46 +29,12 @@ import {
   useHomeActions,
   useHomeKitchensQuery,
   useTestimonialsQuery,
-  type Testimonial,
 } from "@/stores/homeStore";
 
 const STAR_RATING = [1, 2, 3, 4, 5];
 const FALLBACK_AVATAR = "/kitchen/profile.webp";
 
-const mockTestimonials: Testimonial[] = [
-  {
-    id: "m1",
-    rating: 5,
-    comment: "The food feels just like home! The Ever Silver Tiffin Carrier keeps it hot and fresh. Absolutely love it.",
-    userName: "Rahul Sharma",
-    userImage: null,
-    kitchenName: "Aunty's Kitchen",
-  },
-  {
-    id: "m2",
-    rating: 5,
-    comment: "I've been ordering lunch for a month now. Very hygienic, zero plastic, and amazing taste every single day.",
-    userName: "Priya Desai",
-    userImage: null,
-    kitchenName: "Spice Route",
-  },
-  {
-    id: "m3",
-    rating: 4,
-    comment: "Healthy and delicious! It's such a relief to not worry about cooking after a long day at work.",
-    userName: "Amit Kumar",
-    userImage: null,
-    kitchenName: "Healthy Bites",
-  },
-  {
-    id: "m4",
-    rating: 5,
-    comment: "The concept of reusable steel boxes is fantastic. Food stays warm and I don't feel guilty about plastic waste.",
-    userName: "Sneha Reddy",
-    userImage: null,
-    kitchenName: "South Indian Delights",
-  }
-];
+
 
 function TrendingKitchens() {
   const { data, isLoading } = useExploreKitchens();
@@ -222,59 +188,7 @@ export function HomeClient() {
             <TrendingKitchens />
           </section>
 
-          <section className="bg-[#FDF8F1] rounded-2xl lg:rounded-xl overflow-hidden">
-            <div className="p-6 sm:p-8 lg:px-16 lg:py-12 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_1.2fr] gap-8 lg:gap-12 items-center">
-              {/* Left text */}
-              <div className="flex flex-col justify-center text-center lg:text-left">
-                <h2 className="text-[20px] lg:text-[24px] font-bold text-[#003015] tracking-wide uppercase mb-4 lg:mb-10">
-                  WHY A TIFFIN CARRIER?
-                </h2>
-                <div className="space-y-1.5">
-                  <p className="text-[#4B5563] font-medium text-[14px] lg:text-[15px]">
-                    Not plastic. Not aluminium.
-                  </p>
-                  <p className="text-[#003015] font-bold text-[15px] lg:text-[16px]">
-                    Authentic stainless steel.
-                  </p>
-                </div>
-              </div>
 
-              {/* Middle Image */}
-              <div className="relative h-[220px] sm:h-[280px] lg:h-[300px] flex items-center justify-center">
-                <Image
-                  src="/home/tiffin-carrier.webp"
-                  alt="Stainless steel tiffin carrier"
-                  fill
-                  className="object-contain drop-shadow-md scale-[1.15]"
-                  sizes="(max-width: 1024px) 100vw, 33vw"
-                  priority
-                />
-              </div>
-
-              {/* Right Checkmarks */}
-              <div className="flex flex-col justify-center gap-3.5 lg:gap-5 items-start mx-auto lg:mx-0 lg:pl-16">
-                {[
-                  "Keeps food hot & fresh",
-                  "Leak-proof & spill-safe",
-                  "Eco-friendly & reusable",
-                  "Healthy & chemical-free",
-                  "Traditional & reliable",
-                ].map((item) => (
-                  <div key={item} className="flex items-center gap-4">
-                    <div className="flex items-center justify-center shrink-0 text-[#087A35]">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-[20px] w-[20px]">
-                        <rect x="3" y="3" width="18" height="18" rx="4" />
-                        <path d="M8 12.5l3 3 5-6" />
-                      </svg>
-                    </div>
-                    <span className="text-[13px] lg:text-[14px] font-medium text-[#111111]">
-                      {item}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </section>
 
           {/* Service Icons Bar */}
           <section className="bg-[#FDF8F1] rounded-2xl lg:rounded-3xl overflow-x-auto scrollbar-none snap-x snap-mandatory">
@@ -524,92 +438,94 @@ export function HomeClient() {
           </section>
 
           {/* Testimonials */}
-          <section className="space-y-5">
-            <h2 className="text-[14px] sm:text-[15px] font-bold text-[#111111] uppercase tracking-wide">
-              Loved by Thousands of Families
-            </h2>
+          {testimonials.length > 0 && (
+            <section className="space-y-5">
+              <h2 className="text-[14px] sm:text-[15px] font-bold text-[#111111] uppercase tracking-wide">
+                Loved by Thousands of Families
+              </h2>
 
-            {testimonialsLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-[#EEEEEE] flex flex-col gap-4 relative min-h-[140px]"
-                  >
-                    <div className="flex items-start gap-3">
-                      <Skeleton className="h-6 w-6 shrink-0" />
-                      <div className="space-y-2 w-full mt-1">
-                        <Skeleton className="h-3 w-full" />
-                        <Skeleton className="h-3 w-4/5" />
+              {testimonialsLoading ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                  {[1, 2, 3, 4].map((i) => (
+                    <div
+                      key={i}
+                      className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-[#EEEEEE] flex flex-col gap-4 relative min-h-[140px]"
+                    >
+                      <div className="flex items-start gap-3">
+                        <Skeleton className="h-6 w-6 shrink-0" />
+                        <div className="space-y-2 w-full mt-1">
+                          <Skeleton className="h-3 w-full" />
+                          <Skeleton className="h-3 w-4/5" />
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between mt-auto pt-2">
+                        <div className="flex items-center gap-2.5">
+                          <Skeleton className="h-8 w-8 rounded-full" />
+                          <Skeleton className="h-3 w-20" />
+                        </div>
+                        <div className="flex items-center gap-0.5">
+                          {STAR_RATING.map((j) => (
+                            <Skeleton key={j} className="h-3.5 w-3.5 rounded-sm" />
+                          ))}
+                        </div>
                       </div>
                     </div>
-                    <div className="flex items-center justify-between mt-auto pt-2">
-                      <div className="flex items-center gap-2.5">
-                        <Skeleton className="h-8 w-8 rounded-full" />
-                        <Skeleton className="h-3 w-20" />
-                      </div>
-                      <div className="flex items-center gap-0.5">
-                        {STAR_RATING.map((j) => (
-                          <Skeleton key={j} className="h-3.5 w-3.5 rounded-sm" />
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-                {(testimonials.length > 0 ? testimonials : mockTestimonials).slice(0, 4).map((review) => (
-                  <div
-                    key={review.id}
-                    className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-[#EEEEEE] flex flex-col gap-4"
-                  >
-                    <div className="flex items-start gap-2.5">
-                      <span className="text-[32px] text-[#F04E00] font-serif leading-[0.7] mt-2">
-                        &ldquo;
-                      </span>
-                      <p className="text-[12.5px] sm:text-[13px] font-medium text-[#4B5563] leading-relaxed min-h-[40px]">
-                        {review.comment}
-                      </p>
-                    </div>
-                    <div className="flex items-center justify-between mt-auto">
-                      <div className="flex items-center gap-2.5">
-                        {review.userImage ? (
-                          <div className="relative h-8 w-8 rounded-full overflow-hidden bg-[#E7E7E7] shrink-0">
-                            <Image
-                              src={review.userImage}
-                              alt={review.userName}
-                              fill
-                              className="object-cover"
-                              sizes="32px"
-                            />
-                          </div>
-                        ) : (
-                          <div className="h-8 w-8 rounded-full bg-[#003015] text-white flex items-center justify-center text-[11px] font-bold shrink-0">
-                            {review.userName.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                        <span className="text-[13px] font-bold text-[#111111] truncate">
-                          {review.userName}
+                  ))}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+                  {testimonials.slice(0, 4).map((review) => (
+                    <div
+                      key={review.id}
+                      className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-[#EEEEEE] flex flex-col gap-4"
+                    >
+                      <div className="flex items-start gap-2.5">
+                        <span className="text-[32px] text-[#F04E00] font-serif leading-[0.7] mt-2">
+                          &ldquo;
                         </span>
+                        <p className="text-[12.5px] sm:text-[13px] font-medium text-[#4B5563] leading-relaxed min-h-[40px]">
+                          {review.comment}
+                        </p>
                       </div>
-                      <div className="flex items-center gap-0.5">
-                        {STAR_RATING.map((star) => (
-                          <Star
-                            key={star}
-                            className={`h-[13px] w-[13px] ${star <= review.rating ? "fill-[#FF9F00] text-[#FF9F00]" : "text-[#E7E7E7] fill-[#E7E7E7]"}`}
-                          />
-                        ))}
+                      <div className="flex items-center justify-between mt-auto">
+                        <div className="flex items-center gap-2.5">
+                          {review.userImage ? (
+                            <div className="relative h-8 w-8 rounded-full overflow-hidden bg-[#E7E7E7] shrink-0">
+                              <Image
+                                src={review.userImage}
+                                alt={review.userName}
+                                fill
+                                className="object-cover"
+                                sizes="32px"
+                              />
+                            </div>
+                          ) : (
+                            <div className="h-8 w-8 rounded-full bg-[#003015] text-white flex items-center justify-center text-[11px] font-bold shrink-0">
+                              {review.userName.charAt(0).toUpperCase()}
+                            </div>
+                          )}
+                          <span className="text-[13px] font-bold text-[#111111] truncate">
+                            {review.userName}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-0.5">
+                          {STAR_RATING.map((star) => (
+                            <Star
+                              key={star}
+                              className={`h-[13px] w-[13px] ${star <= review.rating ? "fill-[#FF9F00] text-[#FF9F00]" : "text-[#E7E7E7] fill-[#E7E7E7]"}`}
+                            />
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </section>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
 
           {/* App Download Banner */}
-          <div className="lg:-mt-10 xl:-mt-16">
+          <div>
             <AppDownloadBanner />
           </div>
         </ErrorBoundary>

@@ -188,7 +188,11 @@ export function useKitchensGridQuery(category?: string | null) {
       query.hasNextPage &&
       !query.isFetchingNextPage
     ) {
-      query.fetchNextPage();
+      // Add a small delay to prevent hammering the server with back-to-back requests
+      const timer = setTimeout(() => {
+        query.fetchNextPage();
+      }, 300);
+      return () => clearTimeout(timer);
     }
   }, [query.hasNextPage, query.isFetchingNextPage, query.isLoading, query.isPending, query.isError, query.fetchNextPage, query]);
 

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { SiteHeader } from "@/components/site/site-header";
 import { 
   Search, ShoppingBag, Wallet, ChefHat, HelpCircle, 
   CheckCircle2, MessageSquare, PhoneCall, 
@@ -73,6 +74,9 @@ export default function HelpPage() {
 
   return (
      <div className="min-h-screen bg-gray-50/40 flex flex-col items-center">
+       <div className="w-full">
+         <SiteHeader />
+       </div>
        {/* Hero Section */}
        <div className="w-full max-w-[1200px] px-4 md:px-8 pt-12 pb-16 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="max-w-xl">

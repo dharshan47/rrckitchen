@@ -34,7 +34,7 @@ export interface CategoryData {
   imageUrl: string;
 }
 
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 50;
 
 export function useExploreKitchens(category?: string | null) {
   return useInfiniteQuery<ExploreResponse>({

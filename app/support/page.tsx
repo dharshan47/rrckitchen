@@ -1,4 +1,5 @@
 import { SupportClient } from "@/components/support/support-client";
+import { SiteHeader } from "@/components/site/site-header";
 
 export const metadata = {
   title: "Support | RRC Kitchen",
@@ -6,5 +7,10 @@ export const metadata = {
 };
 
 export default function SupportPage() {
-  return <SupportClient />;
+  return (
+    <>
+      <SiteHeader />
+      <SupportClient />
+    </>
+  );
 }

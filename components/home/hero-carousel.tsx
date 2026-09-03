@@ -38,7 +38,7 @@ const slides: HeroSlide[] = [
     headline: (
       <>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight">
-          Homemade Food
+          Home-Cooked Food
         </span>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight mt-0.5 lg:mt-2">
           Delivered in an{" "}
@@ -144,7 +144,7 @@ const slides: HeroSlide[] = [
       { icon: Heart, title: "100% Homemade", subtitle: "cooked with care" },
       { icon: UsersRound, title: "Supports", subtitle: "local families" },
       { icon: ShieldCheck, title: "Verified", subtitle: "home kitchens" },
-      { icon: Package, title: "Delivered in", subtitle: "an Ever Silver Tiffin" },
+      { icon: Package, title: "Delivered in", subtitle: "an Ever Silver Tiffin Carrier" },
     ],
     bgImage:
       "/hero/hero-delivery-with-us.webp",

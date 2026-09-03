@@ -544,8 +544,8 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
     <main className="min-h-screen bg-[#fcfbf9] text-foreground pb-20 lg:pb-20" style={{ fontFamily: "'Inter', 'Segoe UI', system-ui, sans-serif" }}>
 
       <div className="bg-[#FEF9F5]">
-        <div className="hidden md:block">
-          <div className="max-w-[1200px] mx-auto px-6 py-4">
+        <div className="block">
+          <div className="max-w-[1200px] mx-auto px-4 md:px-6 py-3 md:py-4">
             <div className="text-[13px] font-medium text-[#555555] flex items-center gap-2">
               <Link href="/" className="hover:text-primary cursor-pointer transition-colors">Home</Link>
               <span className="text-[#999999]">›</span>

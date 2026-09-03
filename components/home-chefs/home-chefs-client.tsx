@@ -356,7 +356,7 @@ export function HomeChefsClient() {
           <div className="hidden lg:block w-px h-10 bg-[#E5E7EB]" />
           <FeatureFooterItem icon={<UserRound className="w-[26px] h-[26px] text-[#F97316]" strokeWidth={1.5} />} title="Support Local Women" desc="Empowering homemakers" />
           <div className="hidden lg:block w-px h-10 bg-[#E5E7EB]" />
-          <FeatureFooterItem icon={<Package className="w-[26px] h-[26px] text-[#15803D]" strokeWidth={1.5} />} title="Ever Silver Tiffin" desc="Zero plastic delivery" />
+          <FeatureFooterItem icon={<Package className="w-[26px] h-[26px] text-[#15803D]" strokeWidth={1.5} />} title="Ever Silver Tiffin Carrier" desc="Zero plastic delivery" />
         </div>
 
       </div>

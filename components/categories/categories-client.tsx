@@ -32,7 +32,7 @@ const features = [
   { title: "Pre-book & Save Time", desc: "Order in advance", icon: Clock3, color: "#FE4A00" },
   { title: "Fresh Ingredients", desc: "Sourced daily", icon: Leaf, color: "#00512F" },
   { title: "Support Local Women", desc: "Empowering homemakers", icon: UsersRound, color: "#FE4A00" },
-  { title: "Delivered in an Ever Silver Tiffin Carrier", desc: "Eco-friendly packaging", icon: Package, color: "#00512F" },
+  { title: "Delivered in an Ever Silver Tiffin Carrier", desc: "Reusable Ever Silver Tiffin Carrier", icon: Package, color: "#00512F" },
 ]
 
 interface Category {

@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { SlidersHorizontal, ChevronRight, Star as StarIcon, UsersRound, Leaf, CircleCheck, Sparkles, ChevronDown, CircleSlash, X } from "lucide-react";
-import { KitchensPageSkeleton } from "@/components/kitchen/kitchens-page-skeleton";
+import {  KitchenCardSkeleton } from "@/components/kitchen/kitchens-page-skeleton";
 import type { SortOption } from "@/components/kitchen/sort-by-dialog";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
@@ -462,9 +462,9 @@ export function InfiniteKitchenGrid() {
 
             {/* Grid */}
             {isLoading ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-7">
                 {Array.from({ length: 12 }).map((_, i) => (
-                  <KitchensPageSkeleton key={i} />
+                  <KitchenCardSkeleton key={i} />
                 ))}
               </div>
             ) : isError && kitchens.length === 0 ? (

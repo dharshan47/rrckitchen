@@ -30,33 +30,35 @@ export function KitchenCardSkeleton() {
         </div>
 
         {/* Content Section */}
-        <div className="px-4 pb-3 pt-8 flex flex-col flex-1">
-          {/* Kitchen Name */}
-          <div className="flex items-center gap-1.5">
-            <Skeleton className="h-[20px] w-3/4 rounded-md" />
+        <div className="px-3 pb-3 pt-7 sm:px-4 sm:pb-4 sm:pt-8 flex flex-col flex-1">
+          <div className="flex items-start justify-between gap-2">
+            <div className="flex flex-col flex-1 min-w-0">
+              {/* Kitchen Name & Verified Badge */}
+              <div className="flex items-center gap-1.5">
+                <Skeleton className="h-[16px] sm:h-[18px] w-3/4 rounded-md" />
+                <Skeleton className="h-[16px] w-[16px] sm:h-[18px] sm:w-[18px] rounded-full shrink-0" />
+              </div>
+              
+              {/* Rating & Cuisines */}
+              <div className="flex items-center gap-1.5 mt-2">
+                <Skeleton className="h-[14px] w-[35px] rounded" />
+                <span className="text-[#D1D5DB]">•</span>
+                <Skeleton className="h-[14px] w-[100px] rounded" />
+              </div>
+            </div>
           </div>
 
-          {/* Rating & Reviews */}
-          <div className="flex items-center gap-1 mt-1.5">
-            <Skeleton className="h-[18px] w-16 rounded" />
-          </div>
-
-          {/* Cuisines */}
-          <div className="mt-1.5">
-            <Skeleton className="h-[18px] w-1/2 rounded" />
+          {/* Price Info */}
+          <div className="mt-3">
+            <Skeleton className="h-[14px] w-[80px] rounded" />
           </div>
 
           {/* Time & Distance */}
-          <div className="flex items-center gap-4 mt-1.5">
-            <Skeleton className="h-[18px] w-24 rounded" />
-            <Skeleton className="h-[18px] w-16 rounded" />
+          <div className="flex items-center gap-3 sm:gap-4 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-[#F0F0F0] mt-auto">
+            <Skeleton className="h-[14px] w-[60px] rounded" />
+            <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#D1D5DB]" />
+            <Skeleton className="h-[14px] w-[50px] rounded" />
           </div>
-        </div>
-
-        {/* Footer Section */}
-        <div className="px-2.5 sm:px-4 pb-2.5 sm:pb-4 mt-auto flex items-center justify-between gap-1 flex-nowrap">
-          <Skeleton className="h-[26px] w-[90px] sm:w-[100px] rounded-[6px] shrink" />
-          <Skeleton className="h-[26px] sm:h-[28px] w-[72px] sm:w-[86px] rounded-[6px] shrink-0" />
         </div>
       </div>
     </div>
