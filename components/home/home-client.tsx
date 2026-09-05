@@ -354,7 +354,7 @@ export function HomeClient() {
                     desc: "Enjoy fresh, homemade food at home.",
                     img: "/home/bowl.webp",
                     color: "green",
-                    imageClassName: "scale-125",
+                    imageClassName: "scale-[1.15] translate-y-1",
                   },
                   {
                     num: 6,
