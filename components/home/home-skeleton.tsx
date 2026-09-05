@@ -17,14 +17,9 @@ export function HomeKitchenCardSkeleton() {
             <Skeleton className="h-6 w-20 rounded-[6px]" />
           </div>
 
-          {/* Chef Avatar with Checkmark */}
+          {/* Chef Avatar without Checkmark */}
           <div className="absolute -bottom-[22px] left-4 z-20">
-            <div className="relative">
-              <Skeleton className="h-11 w-11 rounded-full border-[2px] border-[#FFFFFF] shadow-[0_1px_4px_rgba(0,0,0,0.18)]" />
-              <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-[2px] z-20 shadow-sm flex items-center justify-center">
-                <Skeleton className="h-[16px] w-[16px] rounded-full" />
-              </div>
-            </div>
+            <Skeleton className="h-11 w-11 rounded-full border-[2px] border-[#FFFFFF] shadow-[0_1px_4px_rgba(0,0,0,0.18)] bg-white" />
           </div>
         </div>
 

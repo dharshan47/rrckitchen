@@ -632,8 +632,8 @@ export default function AdminCouponsPage() {
               {/* Subtle sparkline simulation via SVG */}
               <div className="absolute bottom-0 left-0 w-full h-[40px] pointer-events-none opacity-80 z-0">
                 <svg width="100%" height="100%" preserveAspectRatio="none" viewBox="0 0 100 40">
-                  <path d="M0,40 Q10,25 20,30 T40,20 T60,25 T80,10 T100,5 L100,40 Z" fill={stat.svgArea} />
-                  <path d="M0,40 Q10,25 20,30 T40,20 T60,25 T80,10 T100,5" fill="none" stroke={stat.svgLine} strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+                  <path d="M0,40 Q10,25 20,30 T40,20 T60,25 T80,10 T100,5 T120,15 L120,40 Z" fill={stat.svgArea} />
+                  <path d="M0,40 Q10,25 20,30 T40,20 T60,25 T80,10 T100,5 T120,15" fill="none" stroke={stat.svgLine} strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
                 </svg>
               </div>
             </Card>

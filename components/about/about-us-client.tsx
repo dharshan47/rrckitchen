@@ -1,9 +1,12 @@
 "use client";
 
-import { ChevronRight, ChefHat, Users, Package, ShieldCheck, CheckCircle2, MapPin, CalendarDays, Bike, Heart, Leaf, ConciergeBell, FileSearch, ArrowRight } from "lucide-react";
+import { ChevronRight, ChefHat, Users, Package, ShieldCheck, CheckCircle2, Heart, Leaf, Clock } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { AppDownloadBanner } from "@/components/home/app-download-banner";
+import CustomLeaf from "@/components/icons/leaf";
+import React from "react";
+import { cn } from "@/lib/utils";
 
 export interface AboutUsStats {
   chefsCount: number;
@@ -191,59 +194,182 @@ export function AboutUsClient({ stats }: { stats?: AboutUsStats }) {
       </section>
 
       {/* 5. How RRC Kitchen Works */}
-      <section className="bg-[#FEFEFE] pt-4 lg:pt-4 pb-12 lg:pb-16">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="relative border border-[#E7E7E7] rounded-[16px] mt-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)]">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#FEFEFE] px-6 z-10">
-              <h2 className="text-[18px] md:text-[20px] font-bold text-[#003015] tracking-tight whitespace-nowrap">How RRC Kitchen Works</h2>
+      <section className="flex flex-col items-center pt-8 pb-4 lg:pt-10 lg:pb-6 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FBFCF5] border border-[#F0F2E3] mb-8">
+          <CustomLeaf className="w-3.5 h-3.5 text-[#0A6831]" />
+          <span className="text-[11px] font-bold text-[#3D8135] tracking-wider uppercase">How It Works</span>
+          <CustomLeaf className="w-3.5 h-3.5 text-[#0A6831]" />
+        </div>
+        
+        <h2 className="text-3xl md:text-4xl font-bold text-[#0A151F] mb-4 text-center">
+          From Order to <span className="text-[#0A6831]">Next-Day Tiffin Pickup</span>
+        </h2>
+        
+        <p className="text-[#455064] text-[14px] md:text-[15px] text-center max-w-2xl mb-12 px-4">
+          Simple steps to enjoy homemade meals in a reusable tiffin – delivered to you, picked up by us. <span className="text-[#F8680A]">♡</span>
+        </p>
+
+        <div className="bg-[#FFFFFF] border border-[#EEF1EC] rounded-[24px] lg:rounded-[32px] shadow-[0_8px_30px_rgba(10,21,31,0.06)] w-full">
+          <div className="w-full px-6 lg:px-10 xl:px-14 py-6 lg:py-10 flex justify-center">
+            <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-10 lg:gap-2 w-full max-w-7xl">
+            {[
+              {
+                num: 1,
+                title: "Choose Location",
+                desc: "Select your delivery location.",
+                img: "/home/location.webp",
+                color: "green",
+              },
+              {
+                num: 2,
+                title: "Select Kitchen",
+                desc: "Choose a trusted home kitchen.",
+                img: "/home/house.webp",
+                color: "orange",
+              },
+              {
+                num: 3,
+                title: "Pick Your Menu",
+                desc: "Choose the meal you want.",
+                img: "/home/menu-pointing.webp",
+                color: "green",
+              },
+              {
+                num: 4,
+                title: "Receive Tiffin",
+                desc: "Your meal arrives in our reusable tiffin carrier.",
+                img: "/home/carrier.webp",
+                color: "orange",
+              },
+              {
+                num: 5,
+                title: "Enjoy Your Meal",
+                desc: "Enjoy fresh, homemade food at home.",
+                img: "/home/bowl.webp",
+                color: "green",
+                imageClassName: "scale-125",
+              },
+              {
+                num: 6,
+                title: "Keep Tiffin Ready",
+                desc: "Keep the empty carrier ready after your meal.",
+                img: "/home/open-carrier.webp",
+                color: "orange",
+              },
+              {
+                num: 7,
+                title: "We Pick It Up",
+                desc: "We collect the tiffin carrier the next day.",
+                img: "/home/delivery-person.webp",
+                color: "green",
+              },
+            ].map((step, idx, arr) => (
+              <React.Fragment key={step.num}>
+                <div className="flex flex-col items-center text-center flex-1 min-w-[100px] max-w-[130px]">
+                  <div className={`w-[28px] h-[28px] rounded-full flex items-center justify-center text-white text-[14px] font-bold mb-4 ${step.color === 'green' ? 'bg-[#0A6831]' : 'bg-[#F8680A]'}`}>
+                    {step.num}
+                  </div>
+                  
+                  <div className="mb-5 flex items-center justify-center">
+                    <Image src={step.img} alt={step.title} width={100} height={100} className={cn("object-contain", step.imageClassName)} />
+                  </div>
+                  
+                  <h4 className={`text-[15px] font-bold mb-3 leading-tight ${step.color === 'green' ? 'text-[#0A6831]' : 'text-[#BE5A10]'}`}>
+                    {step.title.split(' ').map((word, i, words) => (
+                      <React.Fragment key={i}>
+                        {word}
+                        {i < words.length - 1 && (
+                            words.length === 2 || (words.length === 3 && i === 1) ? <br className="hidden lg:block"/> : ' '
+                        )}
+                      </React.Fragment>
+                    ))}
+                  </h4>
+                  
+                  <div className={`w-[46px] h-1 rounded-full mb-3 ${step.color === 'green' ? 'bg-[#0A6831]' : 'bg-[#F8680A]'}`} />
+                  
+                  <p className="text-[12px] text-[#455064] leading-relaxed px-1">
+                    {step.desc}
+                  </p>
+                </div>
+
+                {/* Desktop Arrow */}
+                {idx < arr.length - 1 && (
+                  <div className="hidden lg:flex items-center justify-center h-[100px] mt-[44px] text-[#0A6831] opacity-90 shrink-0 mx-1 xl:mx-2">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M2 12h18" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" />
+                      <path d="M14 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                )}
+                
+                {/* Mobile Arrow down */}
+                {idx < arr.length - 1 && (
+                  <div className="flex lg:hidden items-center justify-center h-10 text-[#0A6831] opacity-90">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="rotate-90">
+                      <path d="M2 12h18" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" />
+                      <path d="M14 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                )}
+              </React.Fragment>
+            ))}
+            </div>
+          </div>
+          
+          {/* Reusable Tiffin Section */}
+          <div className="mt-12 bg-[#F8FAF5] border border-[#E8EEE7] rounded-b-[20px] p-6 md:p-8 flex flex-col xl:flex-row items-center justify-between gap-8">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-5 max-w-2xl">
+              <div className="relative shrink-0 flex items-center justify-center mt-1">
+                 <Image src="/home/carrier.webp" alt="Reusable Tiffin" width={64} height={64} className="object-contain drop-shadow-sm" />
+              </div>
+              <div className="pt-1">
+                <h4 className="text-[16px] md:text-[18px] font-bold text-[#0A6831] mb-2 leading-tight">Reusable Tiffin. Hassle-Free for You.</h4>
+                <p className="text-[13px] md:text-[14px] text-[#455064] leading-relaxed font-medium">
+                  We deliver your meals in reusable tiffin carriers and pick them up the next day, making it easy, convenient, and mindful.
+                </p>
+              </div>
             </div>
             
-            <div className="flex flex-col lg:flex-row items-start lg:items-center justify-start lg:justify-between gap-8 lg:gap-2 px-6 py-10 lg:px-8 lg:py-12">
-               {[
-                  { step: 1, icon: MapPin, title: "Choose\nLocation", desc: "Select your\ndelivery location" },
-                  { step: 2, icon: FileSearch, title: "Browse\nKitchens", desc: "Explore home chefs\nand their menus" },
-                  { step: 3, icon: CalendarDays, title: "Pre-Book\nYour Meal", desc: "Select date, time\nand place your order" },
-                  { step: 4, icon: ConciergeBell, title: "Home Chef\nPrepares", desc: "Fresh, hygienic and\nhomemade with love" },
-                  { step: 5, icon: Bike, title: "Delivered\nto You", desc: "Get your order\non time at your door" },
-                  { step: 6, icon: Package, title: "Return\nPickup", desc: "We pickup the\nTiffin Carrier" },
-               ].map((item, index, arr) => (
-                  <div key={item.step} className="flex flex-col lg:flex-row items-center lg:flex-1 shrink-0 w-full lg:w-auto">
-                    <div className="flex flex-row items-center w-full lg:w-auto justify-start lg:justify-center">
-                       {/* Overlapping Badges */}
-                       <div className="relative flex items-center w-[84px] h-[56px] shrink-0">
-                         <div className="absolute left-0 w-10 h-10 rounded-full bg-[#FFF6F0] flex items-center justify-center z-0">
-                           <span className="font-bold text-[#F04E00] text-[15px]">{item.step}</span>
-                         </div>
-                         <div className="absolute right-0 w-14 h-14 rounded-full bg-[#FFF6F0] flex items-center justify-center z-10 border-[3px] border-[#FEFEFE]">
-                           <item.icon className="w-[24px] h-[24px] text-[#003015]" strokeWidth={1.5} />
-                         </div>
-                       </div>
-                       
-                       {/* Text */}
-                       <div className="text-left ml-3">
-                          <h4 className="font-bold text-[13px] text-[#111111] leading-tight mb-1 whitespace-pre-line">{item.title}</h4>
-                          <p className="text-[11px] text-[#6B7280] font-medium leading-[1.3] whitespace-pre-line">{item.desc}</p>
-                       </div>
-                    </div>
-                    {index < arr.length - 1 && (
-                      <>
-                        <div className="hidden lg:flex shrink-0 px-3 lg:px-2 xl:px-4 items-center justify-center">
-                          <ArrowRight className="w-[14px] h-[14px] text-[#087A35] opacity-80" strokeWidth={2} />
-                        </div>
-                        <div className="flex lg:hidden shrink-0 py-4 items-center justify-start w-full pl-[42px]">
-                          <ArrowRight className="w-[14px] h-[14px] text-[#087A35] opacity-80 rotate-90" strokeWidth={2} />
-                        </div>
-                      </>
-                    )}
-                  </div>
-               ))}
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 w-full xl:w-auto mt-4 xl:mt-0">
+              {/* Feature 1 */}
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#F3F6EF] border border-[#E8F0E0] flex items-center justify-center shrink-0">
+                  <ShieldCheck className="w-[18px] h-[18px] text-[#0A6831]" strokeWidth={2} />
+                </div>
+                <span className="text-[12px] font-bold text-[#455064] leading-[1.2]">Safe &<br/>Hygienic</span>
+              </div>
+              
+              {/* Feature 2 */}
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#FEF4E8] border border-[#F8E2CC] flex items-center justify-center shrink-0">
+                  <Clock className="w-[18px] h-[18px] text-[#F8680A]" strokeWidth={2} />
+                </div>
+                <span className="text-[12px] font-bold text-[#455064] leading-[1.2]">Next-Day<br/>Pickup</span>
+              </div>
+              
+              {/* Feature 3 */}
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#F3F6EF] border border-[#E8F0E0] flex items-center justify-center shrink-0">
+                  <CustomLeaf className="w-[18px] h-[18px] text-[#0A6831]" />
+                </div>
+                <span className="text-[12px] font-bold text-[#455064] leading-[1.2]">Convenient<br/>for You</span>
+              </div>
+
+              {/* Feature 4 */}
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#FEF4E8] border border-[#F8E2CC] flex items-center justify-center shrink-0">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[18px] h-[18px] text-[#F8680A]"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                </div>
+                <span className="text-[12px] font-bold text-[#455064] leading-[1.2]">Zero Extra<br/>Effort</span>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
+
       {/* 6. Values & Home Chef CTA */}
-      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 mb-6 lg:mb-0">
+      <section className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-8 lg:pt-4 lg:pb-12 mb-6 lg:mb-0">
         <div className="flex flex-col lg:flex-row gap-6">
           
           {/* Our Values */}
@@ -329,7 +455,7 @@ export function AboutUsClient({ stats }: { stats?: AboutUsStats }) {
       </section>
 
       {/* 7. App Download Banner */}
-      <div className="lg:-mt-10 xl:-mt-16">
+      <div className="lg:-mt-10 xl:-mt-16 mb-4">
         <AppDownloadBanner />
       </div>
 

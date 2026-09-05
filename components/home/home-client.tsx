@@ -14,7 +14,7 @@ import {
   ArrowRight,
   Users,
 } from "lucide-react";
-import { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import { WhatsOnYourMind } from "@/components/home/whats-on-your-mind";
 import { SearchAutocomplete } from "@/components/search/search-autocomplete";
 import { KitchenFilters } from "@/components/kitchen/kitchen-filters";
@@ -22,6 +22,7 @@ import { AppDownloadBanner } from "@/components/home/app-download-banner";
 import { useKitchenCategories, useExploreKitchens } from "@/hooks/useExploreKitchens";
 import { HomeKitchenCardSkeleton } from "@/components/home/home-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import CustomLeaf from "@/components/icons/leaf";
 import { cn } from "@/lib/utils";
 
 import {
@@ -63,9 +64,9 @@ function TrendingKitchens() {
       </div>
 
       {isLoading ? (
-        <div className="flex lg:grid lg:grid-cols-4 gap-4 sm:gap-5 overflow-x-auto lg:overflow-visible scrollbar-none pb-4">
+        <div className="flex lg:grid lg:grid-cols-4 gap-4 sm:gap-5 overflow-x-auto lg:overflow-visible scrollbar-none pb-4 snap-x snap-mandatory lg:snap-none">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="w-[90vw] sm:w-[calc(50%-10px)] lg:w-auto shrink-0">
+            <div key={i} className="snap-start shrink-0 w-[90vw] sm:w-[calc(50%-10px)] lg:w-auto">
               <HomeKitchenCardSkeleton />
             </div>
           ))}
@@ -86,7 +87,7 @@ function TrendingKitchens() {
 export function HomeClient() {
   const { selectedCategory, sortOption, vegFilter, selectedCuisines } = useHomeFilters();
   const { setSelectedCategory, setSortOption, setVegFilter, setSelectedCuisines } = useHomeActions();
-  
+
   const { data: categories = [] } = useKitchenCategories();
 
   const { data: allChefs = [], isLoading: chefsLoading } = useHomeKitchensQuery();
@@ -184,14 +185,67 @@ export function HomeClient() {
           <WhatsOnYourMind />
 
           {/* Top Home Kitchens */}
-          <section ref={kitchenSectionRef}>
+          <section ref={kitchenSectionRef} className="!mt-6 lg:!mt-8">
             <TrendingKitchens />
           </section>
 
+          {/* Tiffin Carrier Section */}
+          <section className="bg-[#FDF8F1] rounded-2xl lg:rounded-xl overflow-hidden !mt-4 lg:!mt-5">
+            <div className="p-6 sm:p-8 lg:px-16 lg:py-6 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_1.2fr] gap-8 lg:gap-12 items-center">
+              {/* Left text */}
+              <div className="flex flex-col justify-center text-center lg:text-left">
+                <h2 className="text-[20px] lg:text-[24px] font-bold text-[#003015] tracking-wide uppercase mb-4 lg:mb-10">
+                  WHY A TIFFIN CARRIER?
+                </h2>
+                <div className="space-y-1.5">
+                  <p className="text-[#4B5563] font-medium text-[14px] lg:text-[15px]">
+                    Not plastic. Not aluminium.
+                  </p>
+                  <p className="text-[#003015] font-bold text-[15px] lg:text-[16px]">
+                    Authentic stainless steel.
+                  </p>
+                </div>
+              </div>
 
+              {/* Middle Image */}
+              <div className="relative h-[220px] sm:h-[280px] lg:h-[300px] flex items-center justify-center">
+                <Image
+                  src="/home/tiffin-carrier.webp"
+                  alt="Stainless steel tiffin carrier"
+                  fill
+                  className="object-contain drop-shadow-md scale-[1.15]"
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  priority
+                />
+              </div>
+
+              {/* Right Checkmarks */}
+              <div className="flex flex-col justify-center gap-3.5 lg:gap-5 items-start mx-auto lg:mx-0 lg:pl-16">
+                {[
+                  "Keeps food hot & fresh",
+                  "Leak proof & spill safe",
+                  "Eco friendly & reusable",
+                  "Healthy & chemical free",
+                  "Traditional & reliable",
+                ].map((item) => (
+                  <div key={item} className="flex items-center gap-4">
+                    <div className="flex items-center justify-center shrink-0 text-[#087A35]">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-[20px] w-[20px]">
+                        <rect x="3" y="3" width="18" height="18" rx="4" />
+                        <path d="M8 12.5l3 3 5-6" />
+                      </svg>
+                    </div>
+                    <span className="text-[13px] lg:text-[14px] font-medium text-[#111111]">
+                      {item}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
 
           {/* Service Icons Bar */}
-          <section className="bg-[#FDF8F1] rounded-2xl lg:rounded-3xl overflow-x-auto scrollbar-none snap-x snap-mandatory">
+          <section className="bg-[#FDF8F1] rounded-2xl lg:rounded-3xl overflow-x-auto scrollbar-none snap-x snap-mandatory !mt-2 lg:!mt-3">
             <div className="flex items-stretch min-w-max lg:min-w-0 lg:grid lg:grid-cols-5 py-4 lg:py-0">
               {[
                 {
@@ -246,153 +300,133 @@ export function HomeClient() {
             </div>
           </section>
 
-          {/* Tiffin Carrier Section */}
-          <section className="bg-[#FDF8F1] rounded-2xl lg:rounded-xl overflow-hidden">
-            <div className="p-6 sm:p-8 lg:px-16 lg:py-12 grid grid-cols-1 lg:grid-cols-[1.2fr_1fr_1.2fr] gap-8 lg:gap-12 items-center">
-              {/* Left text */}
-              <div className="flex flex-col justify-center text-center lg:text-left">
-                <h2 className="text-[20px] lg:text-[24px] font-bold text-[#003015] tracking-wide uppercase mb-4 lg:mb-10">
-                  WHY A TIFFIN CARRIER?
-                </h2>
-                <div className="space-y-1.5">
-                  <p className="text-[#4B5563] font-medium text-[14px] lg:text-[15px]">
-                    Not plastic. Not aluminium.
-                  </p>
-                  <p className="text-[#003015] font-bold text-[15px] lg:text-[16px]">
-                    Authentic stainless steel.
-                  </p>
-                </div>
-              </div>
+          {/* How It Works Section */}
+          <section className="flex flex-col items-center py-4 !mt-2 lg:!mt-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FBFCF5] border border-[#F0F2E3] mb-8">
+              <CustomLeaf className="w-3.5 h-3.5 text-[#0A6831]" />
+              <span className="text-[11px] font-bold text-[#3D8135] tracking-wider uppercase">How It Works</span>
+              <CustomLeaf className="w-3.5 h-3.5 text-[#0A6831]" />
+            </div>
 
-              {/* Middle Image */}
-              <div className="relative h-[220px] sm:h-[280px] lg:h-[300px] flex items-center justify-center">
-                <Image
-                  src="/home/tiffin-carrier.webp"
-                  alt="Stainless steel tiffin carrier"
-                  fill
-                  className="object-contain drop-shadow-md scale-[1.15]"
-                  sizes="(max-width: 1024px) 100vw, 33vw"
-                  priority
-                />
-              </div>
+            <h2 className="text-3xl md:text-4xl font-bold text-[#0A151F] mb-4 text-center">
+              From Order to <span className="text-[#0A6831]">Next-Day Tiffin Pickup</span>
+            </h2>
 
-              {/* Right Checkmarks */}
-              <div className="flex flex-col justify-center gap-3.5 lg:gap-5 items-start mx-auto lg:mx-0 lg:pl-16">
-                {[
-                  "Keeps food hot & fresh",
-                  "Leak proof & spill safe",
-                  "Eco friendly & reusable",
-                  "Healthy & chemical free",
-                  "Traditional & reliable",
-                ].map((item) => (
-                  <div key={item} className="flex items-center gap-4">
-                    <div className="flex items-center justify-center shrink-0 text-[#087A35]">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-[20px] w-[20px]">
-                        <rect x="3" y="3" width="18" height="18" rx="4" />
-                        <path d="M8 12.5l3 3 5-6" />
-                      </svg>
+            <p className="text-[#455064] text-[14px] md:text-[15px] text-center max-w-2xl mb-12 px-4">
+              Simple steps to enjoy homemade meals in a reusable tiffin – delivered to you, picked up by us. <span className="text-[#F8680A]">♡</span>
+            </p>
+
+            <div className="bg-[#FFFFFF] border border-[#EEF1EC] rounded-[24px] lg:rounded-[32px] shadow-[0_8px_30px_rgba(10,21,31,0.06)] w-full">
+              <div className="w-full px-6 lg:px-10 xl:px-14 py-6 lg:py-10 flex justify-center">
+                <div className="flex flex-col lg:flex-row justify-between items-center lg:items-start gap-10 lg:gap-2 w-full max-w-7xl">
+                  {[
+                  {
+                    num: 1,
+                    title: "Choose Location",
+                    desc: "Select your delivery location.",
+                    img: "/home/location.webp",
+                    color: "green",
+                  },
+                  {
+                    num: 2,
+                    title: "Select Kitchen",
+                    desc: "Choose a trusted home kitchen.",
+                    img: "/home/house.webp",
+                    color: "orange",
+                  },
+                  {
+                    num: 3,
+                    title: "Pick Your Menu",
+                    desc: "Choose the meal you want.",
+                    img: "/home/menu-pointing.webp",
+                    color: "green",
+                  },
+                  {
+                    num: 4,
+                    title: "Receive Tiffin",
+                    desc: "Your meal arrives in our reusable tiffin carrier.",
+                    img: "/home/carrier.webp",
+                    color: "orange",
+                  },
+                  {
+                    num: 5,
+                    title: "Enjoy Your Meal",
+                    desc: "Enjoy fresh, homemade food at home.",
+                    img: "/home/bowl.webp",
+                    color: "green",
+                    imageClassName: "scale-125",
+                  },
+                  {
+                    num: 6,
+                    title: "Keep Tiffin Ready",
+                    desc: "Keep the empty carrier ready after your meal.",
+                    img: "/home/open-carrier.webp",
+                    color: "orange",
+                  },
+                  {
+                    num: 7,
+                    title: "We Pick It Up",
+                    desc: "We collect the tiffin carrier the next day.",
+                    img: "/home/delivery-person.webp",
+                    color: "green",
+                  },
+                ].map((step, idx, arr) => (
+                  <React.Fragment key={step.num}>
+                    <div className="flex flex-col items-center text-center flex-1 min-w-[100px] max-w-[130px]">
+                      <div className={`w-[28px] h-[28px] rounded-full flex items-center justify-center text-white text-[14px] font-bold mb-4 ${step.color === 'green' ? 'bg-[#0A6831]' : 'bg-[#F8680A]'}`}>
+                        {step.num}
+                      </div>
+                      
+                      <div className="mb-5 flex items-center justify-center">
+                        <Image src={step.img} alt={step.title} width={100} height={100} className={cn("object-contain", step.imageClassName)} />
+                      </div>
+
+                      <h4 className={`text-[15px] font-bold mb-3 leading-tight ${step.color === 'green' ? 'text-[#0A6831]' : 'text-[#BE5A10]'}`}>
+                        {step.title.split(' ').map((word, i, words) => (
+                          <React.Fragment key={i}>
+                            {word}
+                            {i < words.length - 1 && (
+                              words.length === 2 || (words.length === 3 && i === 1) ? <br className="hidden lg:block" /> : ' '
+                            )}
+                          </React.Fragment>
+                        ))}
+                      </h4>
+
+                      <div className={`w-[46px] h-1 rounded-full mb-3 ${step.color === 'green' ? 'bg-[#0A6831]' : 'bg-[#F8680A]'}`} />
+
+                      <p className="text-[12px] text-[#455064] leading-relaxed px-1">
+                        {step.desc}
+                      </p>
                     </div>
-                    <span className="text-[13px] lg:text-[14px] font-medium text-[#111111]">
-                      {item}
-                    </span>
-                  </div>
+
+                    {/* Desktop Arrow */}
+                    {idx < arr.length - 1 && (
+                      <div className="hidden lg:flex items-center justify-center h-[100px] mt-[44px] text-[#0A6831] opacity-90 shrink-0 mx-1 xl:mx-2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                          <path d="M2 12h18" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" />
+                          <path d="M14 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                    )}
+
+                    {/* Mobile Arrow down */}
+                    {idx < arr.length - 1 && (
+                      <div className="flex lg:hidden items-center justify-center h-10 text-[#0A6831] opacity-90">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="rotate-90">
+                          <path d="M2 12h18" stroke="currentColor" strokeWidth="2" strokeDasharray="4 4" strokeLinecap="round" />
+                          <path d="M14 6l6 6-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                    )}
+                  </React.Fragment>
                 ))}
+                </div>
               </div>
             </div>
           </section>
 
-          {/* Info Grid: How It Works, Meet Chefs, Become Chef */}
-          <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {/* How It Works */}
-            <div className="bg-[#FDF8F1] rounded-[20px] p-5 lg:p-6 xl:p-8 relative flex flex-col justify-center min-h-[220px] shadow-sm overflow-hidden">
-              <h3 className="text-sm font-bold text-[#111111] uppercase tracking-wide mb-8">
-                How It Works
-              </h3>
-              
-              <div className="flex-1 flex flex-row items-start justify-between w-full">
-                
-                {/* Step 1 */}
-                <div className="flex flex-col items-center text-center gap-2.5 flex-1 relative">
-                  <div className="flex items-center justify-center mb-1 h-8">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-7 w-7 text-[#003015]">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 21s-6-5.5-6-10.5a6 6 0 1112 0c0 5-6 10.5-6 10.5z" />
-                      <circle cx="12" cy="10.5" r="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                  <span className="text-[11px] font-bold text-[#111111] leading-tight">
-                    Choose<br/>Location
-                  </span>
-                </div>
-                
-                <div className="text-[#6B7280] font-light text-base mt-1.5 shrink-0">→</div>
-                
-                {/* Step 2 */}
-                <div className="flex flex-col items-center text-center gap-2.5 flex-1 relative">
-                  <div className="flex items-center justify-center mb-1 h-8">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-7 w-7 text-[#003015]">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 9l-1 11h12l-1-11" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 9q2.5 3 5 0q2.5-3 5 0" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 4v2M12 3v3M15 4v2" />
-                      <circle cx="12" cy="15" r="1.5" stroke="currentColor" />
-                    </svg>
-                  </div>
-                  <span className="text-[11px] font-bold text-[#111111] leading-tight">
-                    Select<br/>Kitchen
-                  </span>
-                </div>
-                
-                <div className="text-[#6B7280] font-light text-base mt-1.5 shrink-0">→</div>
-                
-                {/* Step 3 */}
-                <div className="flex flex-col items-center text-center gap-2.5 flex-1 relative">
-                  <div className="flex items-center justify-center mb-1 h-8">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-7 w-7 text-[#003015]">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 8h12l1 12H5L6 8z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 8V5a3 3 0 116 0v3" />
-                      <circle cx="9" cy="14" r="1" fill="currentColor" stroke="none" />
-                      <circle cx="15" cy="14" r="1" fill="currentColor" stroke="none" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M7 4l-1-1M17 4l1-1M12 2v1" />
-                    </svg>
-                  </div>
-                  <span className="text-[11px] font-bold text-[#111111] leading-tight">
-                    Pick Your<br/>Menu
-                  </span>
-                </div>
-                
-                <div className="text-[#6B7280] font-light text-base mt-1.5 shrink-0">→</div>
-                
-                {/* Step 4 */}
-                <div className="flex flex-col items-center text-center gap-2.5 flex-1 relative">
-                  <div className="flex items-center justify-center mb-1 h-8">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-7 w-7 text-[#003015]">
-                      <rect x="7" y="8" width="10" height="4" rx="1" strokeLinecap="round" strokeLinejoin="round" />
-                      <rect x="7" y="12" width="10" height="4" rx="1" strokeLinecap="round" strokeLinejoin="round" />
-                      <rect x="7" y="16" width="10" height="4" rx="1" strokeLinecap="round" strokeLinejoin="round" />
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v5M9 3h6M7 10h10M7 14h10M5 5l2 3M19 5l-2 3" />
-                    </svg>
-                  </div>
-                  <span className="text-[11px] font-bold text-[#111111] leading-tight">
-                    Receive<br/>Tiffin
-                  </span>
-                </div>
-                
-                <div className="text-[#6B7280] font-light text-base mt-1.5 shrink-0">→</div>
-                
-                {/* Step 5 */}
-                <div className="flex flex-col items-center text-center gap-2.5 flex-1 relative">
-                  <div className="flex items-center justify-center mb-1 h-8">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-7 w-7 text-[#003015]">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                  </div>
-                  <span className="text-[11px] font-bold text-[#111111] leading-tight">
-                    Return<br/>Pickup
-                  </span>
-                </div>
-                
-              </div>
-            </div>
-
+          {/* Info Grid: Meet Chefs, Become Chef */}
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
             {/* Meet Our Home Chefs */}
             <div className="bg-[#FEFEFE] rounded-2xl p-6 border border-[#EEEEEE] flex flex-col">
               <div className="flex items-center justify-between mb-5">
@@ -494,7 +528,7 @@ export function HomeClient() {
 
           {/* Testimonials */}
           {testimonials.length > 0 && (
-            <section className="space-y-5">
+            <section className="space-y-5 !mt-4 lg:!mt-6">
               <h2 className="text-[14px] sm:text-[15px] font-bold text-[#111111] uppercase tracking-wide">
                 Loved by Thousands of Families
               </h2>

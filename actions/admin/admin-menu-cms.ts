@@ -65,6 +65,7 @@ export interface AdminMenuItemHighlight {
 
 export interface AdminMenuItemEditorRow {
   id: string
+  publicCode: string | null
   name: string
   description: string | null
   price: number
@@ -270,6 +271,7 @@ export async function getAdminMenuItemsByKitchen(kitchenId: string): Promise<Adm
 
   return items.map((item) => ({
     id: item.id,
+    publicCode: item.publicCode,
     name: item.name,
     description: item.description,
     price: Number(item.price),

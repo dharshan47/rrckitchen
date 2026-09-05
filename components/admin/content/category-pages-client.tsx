@@ -124,7 +124,7 @@ import {
   type AdminCategoryPreviewKitchen,
 } from "@/actions/admin/category-pages";
 
-import { updateKitchenImage } from "@/actions/admin/admin-partners";
+import { updateKitchenCoverImage } from "@/actions/admin/admin-partners";
 
 import {
   useCategoryPageEditorDraft,
@@ -519,16 +519,16 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
     staleTime: 60_000,
   });
 
-  const updateKitchenImageMutation = useMutation({
-    mutationFn: async ({ kitchenId, imageUrl }: { kitchenId: string; imageUrl: string }) => {
-      const res = await updateKitchenImage(kitchenId, imageUrl);
+  const updateKitchenCoverImageMutation = useMutation({
+    mutationFn: async ({ kitchenId, coverImageUrl }: { kitchenId: string; coverImageUrl: string }) => {
+      const res = await updateKitchenCoverImage(kitchenId, coverImageUrl);
       if (!res.success) throw new Error(res.error);
       return res;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-category-page-kitchens", previewCategoryName.toLowerCase()] });
     },
-    onError: () => toast.error("Failed to update kitchen image"),
+    onError: () => toast.error("Failed to update kitchen cover image"),
   });
 
   if (isFetching && !detail) {
@@ -1189,9 +1189,9 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                         </div>
                         <ImageUploadField
                           label={kitchen.displayName}
-                          value={kitchen.profileImage || ""}
+                          value={kitchen.coverImageUrl || ""}
                           onChange={(url) => {
-                            updateKitchenImageMutation.mutate({ kitchenId: kitchen.id, imageUrl: url })
+                            updateKitchenCoverImageMutation.mutate({ kitchenId: kitchen.id, coverImageUrl: url })
                           }}
                           hint="Recommended: 800x600px"
                         />

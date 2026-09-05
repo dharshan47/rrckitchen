@@ -11,7 +11,7 @@ export function AppDownloadBanner() {
           fill="none"
           stroke="currentColor"
           strokeWidth="1.75"
-          className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 xl:h-7 xl:w-7 text-[#D9B84C]"
+          className="h-4 w-4 sm:h-5 sm:w-5 lg:h-5 lg:w-5 xl:h-5 xl:w-5 text-[#D9B84C]"
         >
           <path
             strokeLinecap="round"
@@ -29,7 +29,7 @@ export function AppDownloadBanner() {
           fill="none"
           stroke="currentColor"
           strokeWidth="1.75"
-          className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 xl:h-7 xl:w-7 text-[#D9B84C]"
+          className="h-4 w-4 sm:h-5 sm:w-5 lg:h-5 lg:w-5 xl:h-5 xl:w-5 text-[#D9B84C]"
         >
           <path
             strokeLinecap="round"
@@ -48,7 +48,7 @@ export function AppDownloadBanner() {
           fill="none"
           stroke="currentColor"
           strokeWidth="1.75"
-          className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 xl:h-7 xl:w-7 text-[#D9B84C]"
+          className="h-4 w-4 sm:h-5 sm:w-5 lg:h-5 lg:w-5 xl:h-5 xl:w-5 text-[#D9B84C]"
         >
           <rect
             x="3"
@@ -84,7 +84,7 @@ export function AppDownloadBanner() {
           fill="none"
           stroke="currentColor"
           strokeWidth="1.75"
-          className="h-4 w-4 sm:h-5 sm:w-5 lg:h-6 lg:w-6 xl:h-7 xl:w-7 text-[#D9B84C]"
+          className="h-4 w-4 sm:h-5 sm:w-5 lg:h-5 lg:w-5 xl:h-5 xl:w-5 text-[#D9B84C]"
         >
           <path
             strokeLinecap="round"
@@ -105,14 +105,14 @@ export function AppDownloadBanner() {
   ];
 
   return (
-    <section className="w-full px-3 sm:px-6 lg:px-8 mt-10 sm:mt-12 lg:mt-16 xl:mt-20 mb-6">
+    <section className="w-full px-3 sm:px-6 lg:px-8 mt-10 sm:mt-12 lg:mt-12 xl:mt-16 mb-1">
       <div className="w-full mx-auto max-w-[1300px]">
-        <div className="bg-gradient-to-br from-[#003015] via-[#003819] to-[#00220e] border border-emerald-900/40 w-full rounded-2xl sm:rounded-[24px] shadow-xl sm:shadow-2xl relative px-4 sm:px-8 lg:px-10 xl:px-12 py-5 sm:py-7 lg:py-8 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 lg:gap-8 overflow-hidden">
+        <div className="bg-gradient-to-br from-[#003015] via-[#003819] to-[#00220e] border border-emerald-900/40 w-full rounded-2xl sm:rounded-[24px] shadow-xl sm:shadow-2xl relative px-4 sm:px-8 lg:px-8 xl:px-10 py-5 sm:py-7 lg:py-4 xl:py-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5 lg:gap-6 overflow-hidden">
           
           {/* Left Side: Phone Mockup + Text Content + Download Buttons */}
           <div className="flex flex-row items-center gap-3 sm:gap-6 lg:gap-8 flex-1 min-w-0">
             {/* Phone mockup inside banner */}
-            <div className="relative h-[150px] w-[80px] sm:h-[200px] sm:w-[110px] md:h-[240px] md:w-[135px] lg:h-[280px] lg:w-[155px] xl:h-[320px] xl:w-[180px] shrink-0 z-10">
+            <div className="relative h-[150px] w-[80px] sm:h-[200px] sm:w-[110px] md:h-[240px] md:w-[135px] lg:h-[160px] lg:w-[90px] xl:h-[180px] xl:w-[100px] shrink-0 z-10">
               <Image
                 src="/home/mobile-template.webp"
                 alt="RRC Kitchen App on Mobile"
@@ -125,36 +125,36 @@ export function AppDownloadBanner() {
 
             {/* Text & Buttons */}
             <div className="flex flex-col justify-center items-start text-left z-10 flex-1 min-w-0">
-              <h2 className="text-sm sm:text-xl md:text-2xl lg:text-[24px] xl:text-[30px] font-bold text-white tracking-wide leading-snug lg:leading-[1.25]">
+              <h2 className="text-sm sm:text-xl md:text-2xl lg:text-[18px] xl:text-[20px] font-bold text-white tracking-wide leading-snug lg:leading-[1.25]">
                 Delicious Home-Cooked Meals
                 <br className="hidden sm:block" />
                 {" "}Delivered in an Ever Silver Tiffin Carrier
               </h2>
-              <div className="mt-1 sm:mt-2 lg:mt-3 mb-4 sm:mb-5 flex flex-col items-start gap-1">
-                <span className="text-emerald-100/90 text-xs sm:text-sm lg:text-[15px] xl:text-[17px] font-medium">
+              <div className="mt-1 sm:mt-2 lg:mt-1.5 xl:mt-2 mb-4 sm:mb-5 lg:mb-3 flex flex-col items-start gap-0.5 xl:gap-1">
+                <span className="text-emerald-100/90 text-xs sm:text-sm lg:text-[13px] xl:text-[14px] font-medium">
                   The RRC Kitchen App is
                 </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-[#D9B84C] text-xl sm:text-2xl lg:text-3xl xl:text-[34px] font-black tracking-wide">
+                <div className="flex items-center gap-1.5 xl:gap-2">
+                  <span className="text-[#D9B84C] text-xl sm:text-2xl lg:text-2xl xl:text-[28px] font-black tracking-wide">
                     Coming Soon!
                   </span>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="h-5 w-5 sm:h-6 sm:w-6 lg:h-8 lg:w-8 text-[#D9B84C] animate-pulse">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="h-5 w-5 sm:h-6 sm:w-6 lg:h-5 lg:w-5 xl:h-6 xl:w-6 text-[#D9B84C] animate-pulse">
                     <path d="M12 2L13.5 8.5L20 10L13.5 11.5L12 18L10.5 11.5L4 10L10.5 8.5L12 2Z" fill="currentColor" />
                   </svg>
                 </div>
               </div>
 
               {/* Stay Tuned Card */}
-              <div className="flex flex-row items-center gap-3 sm:gap-4 p-2.5 sm:p-3 lg:p-4 rounded-xl border border-[#D9B84C]/40 bg-[#00220e]/60 shadow-inner max-w-[280px] sm:max-w-sm w-full">
-                <div className="h-8 w-8 sm:h-10 sm:w-10 lg:h-11 lg:w-11 rounded-full bg-[#D9B84C]/10 flex items-center justify-center shrink-0 border border-[#D9B84C]/20">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 sm:h-5 sm:w-5 text-[#D9B84C]">
+              <div className="flex flex-row items-center gap-3 sm:gap-4 p-2.5 sm:p-3 lg:p-2 xl:p-2.5 rounded-xl border border-[#D9B84C]/40 bg-[#00220e]/60 shadow-inner max-w-[280px] sm:max-w-sm lg:max-w-[240px] xl:max-w-[260px] w-full">
+                <div className="h-8 w-8 sm:h-10 sm:w-10 lg:h-8 lg:w-8 xl:h-9 xl:w-9 rounded-full bg-[#D9B84C]/10 flex items-center justify-center shrink-0 border border-[#D9B84C]/20">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 sm:h-5 sm:w-5 lg:h-4 lg:w-4 xl:h-4 xl:w-4 text-[#D9B84C]">
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
                     <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
                   </svg>
                 </div>
                 <div className="flex flex-col text-left">
-                  <span className="text-white text-xs sm:text-sm lg:text-[15px] font-bold tracking-wide">Stay Tuned!</span>
-                  <span className="text-emerald-100/90 text-[10px] sm:text-xs leading-snug mt-0.5">We&apos;re cooking something amazing for you.</span>
+                  <span className="text-white text-xs sm:text-sm lg:text-[13px] xl:text-sm font-bold tracking-wide">Stay Tuned!</span>
+                  <span className="text-emerald-100/90 text-[10px] sm:text-xs lg:text-[9px] xl:text-[10px] leading-snug mt-0.5">We&apos;re cooking something amazing for you.</span>
                 </div>
               </div>
               
@@ -213,19 +213,19 @@ export function AppDownloadBanner() {
           </div>
 
           {/* Right Side: Feature icons with perfect horizontal alignment (items-start) */}
-          <div className="flex flex-row flex-nowrap items-start justify-between sm:justify-around lg:justify-end gap-2 sm:gap-4 lg:gap-3 xl:gap-6 z-10 w-full lg:w-auto shrink-0 pt-4 lg:pt-0 border-t border-white/10 lg:border-t-0">
+          <div className="flex flex-row flex-nowrap items-start justify-between sm:justify-around lg:justify-end gap-2 sm:gap-4 lg:gap-2 xl:gap-4 z-10 w-full lg:w-auto shrink-0 pt-4 lg:pt-0 border-t border-white/10 lg:border-t-0">
             {features.map((item, index) => (
               <div
                 key={index}
-                className="flex flex-col items-center w-[72px] sm:w-[86px] lg:w-[84px] xl:w-[96px]"
+                className="flex flex-col items-center w-[72px] sm:w-[86px] lg:w-[72px] xl:w-[86px]"
               >
                 {/* Circle Icon Container - Exact same size for all items */}
-                <div className="h-9 w-9 sm:h-11 sm:w-11 lg:h-12 lg:w-12 xl:h-14 xl:w-14 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 flex items-center justify-center relative shadow-[0_2px_8px_rgba(0,0,0,0.2)] shrink-0 transition-transform duration-200 hover:scale-105">
+                <div className="h-9 w-9 sm:h-11 sm:w-11 lg:h-10 lg:w-10 xl:h-11 xl:w-11 rounded-full bg-white/10 hover:bg-white/15 border border-white/10 flex items-center justify-center relative shadow-[0_2px_8px_rgba(0,0,0,0.2)] shrink-0 transition-transform duration-200 hover:scale-105">
                   {item.icon}
                 </div>
 
                 {/* Text Label - Aligned below circle with consistent top alignment */}
-                <span className="text-[10px] sm:text-[11px] lg:text-[11px] xl:text-[12px] font-medium text-white/95 text-center leading-tight sm:leading-snug mt-2 min-h-[2.2rem] sm:min-h-[2.5rem] flex items-start justify-center">
+                <span className="text-[10px] sm:text-[11px] lg:text-[10px] xl:text-[11px] font-medium text-white/95 text-center leading-tight sm:leading-snug mt-2 min-h-[2.2rem] sm:min-h-[2.5rem] flex items-start justify-center">
                   {item.label}
                 </span>
               </div>

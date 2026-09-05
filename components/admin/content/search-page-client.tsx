@@ -1,7 +1,13 @@
 "use client";
 
-import { useEffect, useMemo, useState,useRef } from "react";
-import { useReactTable, getCoreRowModel, getPaginationRowModel, flexRender, createColumnHelper } from "@tanstack/react-table";
+import { useEffect, useMemo, useState, useRef } from "react";
+import {
+  useReactTable,
+  getCoreRowModel,
+  getPaginationRowModel,
+  flexRender,
+  createColumnHelper,
+} from "@tanstack/react-table";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
@@ -23,9 +29,6 @@ import {
   Save,
   Check,
   GripVertical,
-  MapPin,
-  User,
-  ShoppingCart,
   Clock,
   Star,
   ShieldCheck,
@@ -38,9 +41,41 @@ import {
   Tag,
   Info,
   Upload,
-  ChefHat,
-  BadgeCheck,
 } from "lucide-react";
+import { KitchenCard } from "@/components/kitchen/kitchen-card";
+import type { KitchenData } from "@/hooks/useExploreKitchens";
+
+function toKitchenData(
+  kitchen: AdminSearchKitchen,
+  overrideImage?: string | null,
+): KitchenData {
+  return {
+    id: kitchen.id,
+    slug: kitchen.slug,
+    displayName: kitchen.displayName,
+    profileImage: kitchen.profileImage ?? null,
+    avgRating: kitchen.avgRating,
+    totalReviews: kitchen.totalReviews,
+    imageUrl: kitchen.imageUrl,
+    coverImageUrl: overrideImage ?? kitchen.coverImageUrl,
+    customOfferText: null,
+    cuisineTags: kitchen.cuisineTags ?? [],
+    locality: null,
+    items: kitchen.items.map((i) => ({
+      id: i.id,
+      name: i.name,
+      price: i.price,
+      imageUrl: i.imageUrl,
+      foodType: "",
+      timeSlot: "",
+    })),
+    timeSlots: [],
+    lat: kitchen.lat,
+    lng: kitchen.lng,
+    estimatedPrepTime: kitchen.estimatedPrepTime ?? null,
+    operatingHours: kitchen.operatingHours ?? null,
+  };
+}
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -88,8 +123,20 @@ import { CloudinaryUpload } from "@/components/patterns/cloudinary-upload";
 import Image from "next/image";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { Trophy, Sparkles, Egg, Drumstick, Image as ImageIcon } from "lucide-react";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+} from "@/components/ui/pagination";
+import {
+  Trophy,
+  Sparkles,
+  Egg,
+  Drumstick,
+  Image as ImageIcon,
+} from "lucide-react";
 
 import {
   getSearchPageContents,
@@ -113,7 +160,10 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 
 const WEEK_START = Date.now() - 7 * 24 * 60 * 60 * 1000;
 
-const INFO_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
+const INFO_ICON_MAP: Record<
+  string,
+  React.ComponentType<{ className?: string; style?: React.CSSProperties }>
+> = {
   Heart,
   ShieldCheck,
   Clock,
@@ -124,7 +174,6 @@ const INFO_ICON_MAP: Record<string, React.ComponentType<{ className?: string }>>
 /* ===================================================================
    SKELETONS — exact shape with animation
    =================================================================== */
-
 
 function EditorSkeleton() {
   return (
@@ -287,7 +336,12 @@ function Editor({ contentId, onCancel }: EditorProps) {
     updateKitchenCard,
   } = useSearchEditorActions();
 
-  const { data: detail, isFetching, isError, refetch } = useQuery({
+  const {
+    data: detail,
+    isFetching,
+    isError,
+    refetch,
+  } = useQuery({
     queryKey: ["admin-search-page-detail", contentId],
     queryFn: () => getSearchPageContent(contentId),
     enabled: !!contentId,
@@ -296,7 +350,11 @@ function Editor({ contentId, onCancel }: EditorProps) {
 
   const openedRef = useRef<string | null>(null);
   useEffect(() => {
-    if (detail && (!draft || draft.id !== detail.id) && openedRef.current !== detail.id) {
+    if (
+      detail &&
+      (!draft || draft.id !== detail.id) &&
+      openedRef.current !== detail.id
+    ) {
       openedRef.current = detail.id;
       openEditor(detail);
     }
@@ -314,7 +372,9 @@ function Editor({ contentId, onCancel }: EditorProps) {
       }
       markSaved();
       queryClient.invalidateQueries({ queryKey: ["admin-search-page"] });
-      queryClient.invalidateQueries({ queryKey: ["admin-search-page-detail", contentId] });
+      queryClient.invalidateQueries({
+        queryKey: ["admin-search-page-detail", contentId],
+      });
       toast.success(`"${draft?.keyword ?? "Search page"}" content saved`);
       onCancel();
     },
@@ -337,7 +397,9 @@ function Editor({ contentId, onCancel }: EditorProps) {
       <div className="min-h-screen bg-gray-50/50 flex items-center justify-center p-8">
         <div className="flex flex-col items-center gap-4 text-center">
           <AlertTriangle className="h-12 w-12 text-red-400" />
-          <p className="text-red-500 font-semibold">Failed to load search content</p>
+          <p className="text-red-500 font-semibold">
+            Failed to load search content
+          </p>
           <Button variant="outline" onClick={() => refetch()}>
             <RotateCcw className="h-4 w-4 mr-2" /> Retry
           </Button>
@@ -369,7 +431,12 @@ function Editor({ contentId, onCancel }: EditorProps) {
           <Button
             variant="outline"
             className="border-[#9DD4B4] text-[#087A3E] hover:bg-[#EAF7EF] hover:text-[#056331] h-10 bg-[#FFFFFF] shadow-sm rounded-[8px]"
-            onClick={() => window.open(`/search?q=${encodeURIComponent(draft.keyword)}`, "_blank")}
+            onClick={() =>
+              window.open(
+                `/search?q=${encodeURIComponent(draft.keyword)}`,
+                "_blank",
+              )
+            }
           >
             <Eye className="mr-2 h-4 w-4 text-[#087A3E]" />
             Preview Live Page
@@ -410,28 +477,50 @@ function Editor({ contentId, onCancel }: EditorProps) {
         <div className="w-full flex flex-col">
           <Tabs defaultValue="search_content" className="w-full">
             <TabsList className="bg-transparent border-b border-[#E5E7EB] rounded-none w-full justify-start h-auto p-0 mb-6 space-x-6 md:space-x-8 overflow-x-auto custom-scrollbar flex-nowrap">
-              <TabsTrigger value="search_content" className="data-[state=active]:border-b-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-0 border-b-[2px] border-b-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">Search Content</TabsTrigger>
-              <TabsTrigger value="images" className="data-[state=active]:border-b-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-0 border-b-[2px] border-b-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">Images</TabsTrigger>
-              <TabsTrigger value="filters" className="data-[state=active]:border-b-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-0 border-b-[2px] border-b-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">Filters</TabsTrigger>
-              <TabsTrigger value="settings" className="data-[state=active]:border-b-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-0 border-b-[2px] border-b-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0">Settings</TabsTrigger>
+              <TabsTrigger
+                value="search_content"
+                className="data-[state=active]:border-b-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-0 border-b-[2px] border-b-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
+              >
+                Search Content
+              </TabsTrigger>
+              <TabsTrigger
+                value="images"
+                className="data-[state=active]:border-b-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-0 border-b-[2px] border-b-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
+              >
+                Images
+              </TabsTrigger>
+              <TabsTrigger
+                value="filters"
+                className="data-[state=active]:border-b-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-0 border-b-[2px] border-b-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
+              >
+                Filters
+              </TabsTrigger>
+              <TabsTrigger
+                value="settings"
+                className="data-[state=active]:border-b-[#FF4D00] data-[state=active]:text-[#FF4D00] data-[state=active]:bg-transparent border-0 border-b-[2px] border-b-transparent rounded-none px-0 py-3 text-[#1F2937] data-[state=active]:shadow-none font-medium whitespace-nowrap focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
+              >
+                Settings
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="search_content" className="mt-0">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-                
                 {/* Left Sub-Column */}
                 <div className="flex flex-col gap-6">
                   {/* Search Banner Block */}
                   <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
                     <div className="p-4 flex flex-col gap-1">
                       <div className="flex items-center gap-2">
-                        <h3 className="font-semibold text-[#111827] text-[15px]">Search Banner</h3>
+                        <h3 className="font-semibold text-[#111827] text-[15px]">
+                          Search Banner
+                        </h3>
                         <div className="bg-[#EAF7EF] text-[#087A3E] text-[10px] font-bold px-2 py-0.5 rounded-full">
                           Active
                         </div>
                       </div>
                       <p className="text-[13px] text-[#64748B]">
-                        Customize the banner that appears on top of search results.
+                        Customize the banner that appears on top of search
+                        results.
                       </p>
                     </div>
                     <div className="px-4 pb-5 space-y-4">
@@ -452,24 +541,32 @@ function Editor({ contentId, onCancel }: EditorProps) {
                             Search Results for
                           </p>
                           <h2 className="text-xl md:text-2xl font-bold text-[#087A3E] tracking-tight flex items-center">
-                            <span className="text-[#FF4D00]">“</span>{draft.keyword}<span className="text-[#FF4D00]">”</span>
+                            <span className="text-[#FF4D00]">“</span>
+                            {draft.keyword}
+                            <span className="text-[#FF4D00]">”</span>
                           </h2>
                           <p className="text-[10px] text-[#334155] mt-1.5 max-w-[65%] font-medium leading-snug">
-                            We found <span className="text-[#FF4D00] font-bold">{draft.kitchensCount} kitchens</span> serving delicious {draft.keyword} near you.
+                            We found{" "}
+                            <span className="text-[#FF4D00] font-bold">
+                              {draft.kitchensCount} kitchens
+                            </span>{" "}
+                            serving delicious {draft.keyword} near you.
                           </p>
                         </div>
                       </div>
-                      
+
                       <div className="flex justify-end mt-2">
-                         <div className="relative cursor-pointer bg-[#FFFFFF] text-[#FF4D00] border border-[#FFB89A] hover:bg-[#FFF1EB] rounded-[7px] px-3 py-1.5 flex items-center gap-1.5 text-xs font-semibold shadow-sm transition-colors">
-                           <ImageIcon className="h-3.5 w-3.5" /> Change Image
-                           <div className="absolute inset-0 opacity-0 overflow-hidden cursor-pointer">
-                              <ImageUrlInput
-                                value={draft.bannerImageUrl}
-                                onChange={(url) => updateDraft({ bannerImageUrl: url })}
-                              />
-                           </div>
-                         </div>
+                        <div className="relative cursor-pointer bg-[#FFFFFF] text-[#FF4D00] border border-[#FFB89A] hover:bg-[#FFF1EB] rounded-[7px] px-3 py-1.5 flex items-center gap-1.5 text-xs font-semibold shadow-sm transition-colors">
+                          <ImageIcon className="h-3.5 w-3.5" /> Change Image
+                          <div className="absolute inset-0 opacity-0 overflow-hidden cursor-pointer">
+                            <ImageUrlInput
+                              value={draft.bannerImageUrl}
+                              onChange={(url) =>
+                                updateDraft({ bannerImageUrl: url })
+                              }
+                            />
+                          </div>
+                        </div>
                       </div>
 
                       <div className="space-y-4 pt-1">
@@ -485,7 +582,9 @@ function Editor({ contentId, onCancel }: EditorProps) {
                           <Input
                             value={draft.heading}
                             maxLength={60}
-                            onChange={(e) => updateDraft({ heading: e.target.value })}
+                            onChange={(e) =>
+                              updateDraft({ heading: e.target.value })
+                            }
                             className="h-9 text-sm text-[#111827] border-[#DDE3E0] rounded-[7px] focus-visible:border-[#FF4D00] focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:shadow-[0_0_0_3px_rgba(255,77,0,0.10)]"
                           />
                         </div>
@@ -502,7 +601,9 @@ function Editor({ contentId, onCancel }: EditorProps) {
                             className="flex w-full rounded-[7px] border border-[#DDE3E0] bg-[#FFFFFF] px-3 py-2 text-sm text-[#111827] focus-visible:outline-none focus-visible:border-[#FF4D00] focus-visible:shadow-[0_0_0_3px_rgba(255,77,0,0.10)] min-h-[70px] resize-none"
                             value={draft.subHeading}
                             maxLength={120}
-                            onChange={(e) => updateDraft({ subHeading: e.target.value })}
+                            onChange={(e) =>
+                              updateDraft({ subHeading: e.target.value })
+                            }
                           />
                         </div>
                       </div>
@@ -516,37 +617,55 @@ function Editor({ contentId, onCancel }: EditorProps) {
                         Top Info Items
                       </h3>
                       <p className="text-[13px] text-[#64748B] mt-1">
-                        Manage the quick info items shown below the search results.
+                        Manage the quick info items shown below the search
+                        results.
                       </p>
                     </div>
                     <div className="px-4 pb-5 space-y-4 mt-2">
                       <div className="space-y-4">
                         {draft.infoItems.map((item, i) => {
                           const IconComp = INFO_ICON_MAP[item.icon] ?? Heart;
-                          const isGreen = ["ShieldCheck", "Leaf"].includes(item.icon);
-                          const iconBg = isGreen ? "bg-[#EAF7EF]" : "bg-[#FFF1EB]";
-                          const iconColor = isGreen ? "text-[#087A3E]" : "text-[#FF4D00]";
+                          const isGreen = ["ShieldCheck", "Leaf"].includes(
+                            item.icon,
+                          );
+                          const iconBg = isGreen
+                            ? "bg-[#EAF7EF]"
+                            : "bg-[#FFF1EB]";
+                          const iconColor = isGreen
+                            ? "text-[#087A3E]"
+                            : "text-[#FF4D00]";
 
                           return (
-                            <div key={item.id ?? i} className="flex items-center justify-between group">
+                            <div
+                              key={item.id ?? i}
+                              className="flex items-center justify-between group"
+                            >
                               <div className="flex gap-2.5 items-center w-full min-w-0 pr-2">
                                 <GripVertical className="h-4 w-4 text-[#FF4D00] opacity-85 cursor-grab shrink-0" />
-                                <div className={`w-8 h-8 rounded-[8px] flex items-center justify-center shrink-0 ${iconBg}`}>
-                                  <IconComp className={`h-4 w-4 ${iconColor}`} />
+                                <div
+                                  className={`w-8 h-8 rounded-[8px] flex items-center justify-center shrink-0 ${iconBg}`}
+                                >
+                                  <IconComp
+                                    className={`h-4 w-4 ${iconColor}`}
+                                  />
                                 </div>
                                 <div className="flex flex-col flex-1 min-w-0">
                                   <input
                                     className="text-xs font-semibold text-[#111827] bg-transparent outline-none border border-transparent hover:border-[#E8ECEA] rounded px-1 -mx-1 w-full truncate"
                                     value={item.title}
                                     onChange={(e) =>
-                                      updateInfoItem(i, { title: e.target.value })
+                                      updateInfoItem(i, {
+                                        title: e.target.value,
+                                      })
                                     }
                                   />
                                   <input
                                     className="text-[10px] text-[#64748B] bg-transparent outline-none border border-transparent hover:border-[#E8ECEA] rounded px-1 -mx-1 w-full block truncate"
                                     value={item.subtitle}
                                     onChange={(e) =>
-                                      updateInfoItem(i, { subtitle: e.target.value })
+                                      updateInfoItem(i, {
+                                        subtitle: e.target.value,
+                                      })
                                     }
                                   />
                                 </div>
@@ -585,64 +704,92 @@ function Editor({ contentId, onCancel }: EditorProps) {
                     <div className="px-4 pb-5 space-y-4 mt-2">
                       <div className="space-y-4 pl-1">
                         {draft.badges.map((badge, i) => {
-                           let badgeClass = "text-[#FF4D00] bg-[#FFF1EB] border-[#FFD0BF]";
-                           let IconB = Trophy;
-                           const nameLow = badge.name.toLowerCase();
-                           if(nameLow.includes("top rated")) { badgeClass = "text-[#0891B2] bg-[#EFFAFF] border-[#BCEAF3]"; IconB = Star; }
-                           else if(nameLow.includes("new")) { badgeClass = "text-[#7C3AED] bg-[#F4EEFF] border-[#DDD0FF]"; IconB = Sparkles; }
-                           else if(nameLow.includes("pure veg")) { badgeClass = "text-[#087A3E] bg-[#EAF7EF] border-[#C9E8D4]"; IconB = Leaf; }
-                           else if(nameLow.includes("egg")) { badgeClass = "text-[#D97706] bg-[#FFF7E8] border-[#F8DFA8]"; IconB = Egg; }
-                           else if(nameLow.includes("chicken")) { badgeClass = "text-[#EA580C] bg-[#FFF1EB] border-[#FFD0BF]"; IconB = Drumstick; }
+                          let badgeClass =
+                            "text-[#FF4D00] bg-[#FFF1EB] border-[#FFD0BF]";
+                          let IconB = Trophy;
+                          const nameLow = badge.name.toLowerCase();
+                          if (nameLow.includes("top rated")) {
+                            badgeClass =
+                              "text-[#0891B2] bg-[#EFFAFF] border-[#BCEAF3]";
+                            IconB = Star;
+                          } else if (nameLow.includes("new")) {
+                            badgeClass =
+                              "text-[#7C3AED] bg-[#F4EEFF] border-[#DDD0FF]";
+                            IconB = Sparkles;
+                          } else if (nameLow.includes("pure veg")) {
+                            badgeClass =
+                              "text-[#087A3E] bg-[#EAF7EF] border-[#C9E8D4]";
+                            IconB = Leaf;
+                          } else if (nameLow.includes("egg")) {
+                            badgeClass =
+                              "text-[#D97706] bg-[#FFF7E8] border-[#F8DFA8]";
+                            IconB = Egg;
+                          } else if (nameLow.includes("chicken")) {
+                            badgeClass =
+                              "text-[#EA580C] bg-[#FFF1EB] border-[#FFD0BF]";
+                            IconB = Drumstick;
+                          }
 
-                           return (
-                              <div key={badge.id ?? i} className="flex items-center justify-between gap-3 group">
-                                <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-bold ${badgeClass}`}>
-                                  <IconB className="h-3.5 w-3.5" />
-                                  <input
-                                    value={badge.name}
-                                    onChange={(e) => updateBadge(i, { name: e.target.value })}
-                                    className="bg-transparent outline-none w-20 md:w-24 placeholder:text-current/50 truncate"
-                                  />
-                                </div>
-                                <div className="flex items-center gap-2">
-                                   <div className="flex items-center gap-0.5 rounded-full border border-[#E5E7EB] bg-[#F9FAFB] p-0.5">
-                                     <button
-                                       type="button"
-                                       onClick={() => updateBadge(i, { position: "left" })}
-                                       title="Show on left side of kitchen card"
-                                       className={cn(
-                                         "text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors",
-                                         badge.position === "left"
-                                           ? "bg-[#FF4D00] text-[#FFFFFF]"
-                                           : "text-[#64748B] hover:text-[#111827]"
-                                       )}
-                                     >
-                                       Left
-                                     </button>
-                                     <button
-                                       type="button"
-                                       onClick={() => updateBadge(i, { position: "right" })}
-                                       title="Show on right side of kitchen card"
-                                       className={cn(
-                                         "text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors",
-                                         badge.position === "right"
-                                           ? "bg-[#FF4D00] text-[#FFFFFF]"
-                                           : "text-[#64748B] hover:text-[#111827]"
-                                       )}
-                                     >
-                                       Right
-                                     </button>
-                                   </div>
-                                   <Switch
-                                     checked={badge.isEnabled}
-                                     onCheckedChange={(checked) =>
-                                       updateBadge(i, { isEnabled: checked })
-                                     }
-                                     className="data-[state=checked]:bg-[#087A3E] data-[state=unchecked]:bg-[#D1D5DB] scale-90"
-                                   />
-                                </div>
+                          return (
+                            <div
+                              key={badge.id ?? i}
+                              className="flex items-center justify-between gap-3 group"
+                            >
+                              <div
+                                className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-bold ${badgeClass}`}
+                              >
+                                <IconB className="h-3.5 w-3.5" />
+                                <input
+                                  value={badge.name}
+                                  onChange={(e) =>
+                                    updateBadge(i, { name: e.target.value })
+                                  }
+                                  className="bg-transparent outline-none w-20 md:w-24 placeholder:text-current/50 truncate"
+                                />
                               </div>
-                           )
+                              <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-0.5 rounded-full border border-[#E5E7EB] bg-[#F9FAFB] p-0.5">
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      updateBadge(i, { position: "left" })
+                                    }
+                                    title="Show on left side of kitchen card"
+                                    className={cn(
+                                      "text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors",
+                                      badge.position === "left"
+                                        ? "bg-[#FF4D00] text-[#FFFFFF]"
+                                        : "text-[#64748B] hover:text-[#111827]",
+                                    )}
+                                  >
+                                    Left
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      updateBadge(i, { position: "right" })
+                                    }
+                                    title="Show on right side of kitchen card"
+                                    className={cn(
+                                      "text-[10px] font-bold px-2 py-0.5 rounded-full transition-colors",
+                                      badge.position === "right"
+                                        ? "bg-[#FF4D00] text-[#FFFFFF]"
+                                        : "text-[#64748B] hover:text-[#111827]",
+                                    )}
+                                  >
+                                    Right
+                                  </button>
+                                </div>
+                                <Switch
+                                  checked={badge.isEnabled}
+                                  onCheckedChange={(checked) =>
+                                    updateBadge(i, { isEnabled: checked })
+                                  }
+                                  className="data-[state=checked]:bg-[#087A3E] data-[state=unchecked]:bg-[#D1D5DB] scale-90"
+                                />
+                              </div>
+                            </div>
+                          );
                         })}
                       </div>
 
@@ -657,7 +804,6 @@ function Editor({ contentId, onCancel }: EditorProps) {
                     </div>
                   </div>
                 </div>
-
               </div>
             </TabsContent>
 
@@ -667,28 +813,51 @@ function Editor({ contentId, onCancel }: EditorProps) {
                   {/* Banner Setting */}
                   <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
                     <div className="p-4 border-b border-[#E8ECEA] flex justify-between items-center bg-[#FAFAFA]">
-                      <h3 className="font-semibold text-[#111827] text-[15px]">Page Banner</h3>
+                      <h3 className="font-semibold text-[#111827] text-[15px]">
+                        Page Banner
+                      </h3>
                     </div>
                     <div className="p-4 flex flex-col gap-4">
                       {banner ? (
                         <div className="relative rounded-lg overflow-hidden border border-[#E8ECEA] group">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={banner} alt="Banner" className="w-full aspect-[21/9] object-cover" />
+                          <img
+                            src={banner}
+                            alt="Banner"
+                            className="w-full aspect-[21/9] object-cover"
+                          />
                           <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <CloudinaryUpload
                               onUpload={(result) => {
-                                updateDraft({ bannerImageUrl: result.secure_url });
+                                updateDraft({
+                                  bannerImageUrl: result.secure_url,
+                                });
                                 toast.success("Banner updated");
                               }}
                             >
                               {({ uploading, startUpload }) => (
-                                <Button onClick={startUpload} disabled={uploading} variant="secondary" className="mb-2">
-                                  {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
+                                <Button
+                                  onClick={startUpload}
+                                  disabled={uploading}
+                                  variant="secondary"
+                                  className="mb-2"
+                                >
+                                  {uploading ? (
+                                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                  ) : (
+                                    <Upload className="h-4 w-4 mr-2" />
+                                  )}
                                   Change Banner
                                 </Button>
                               )}
                             </CloudinaryUpload>
-                            <Button variant="destructive" size="sm" onClick={() => updateDraft({ bannerImageUrl: "" })}>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() =>
+                                updateDraft({ bannerImageUrl: "" })
+                              }
+                            >
                               Remove
                             </Button>
                           </div>
@@ -697,18 +866,31 @@ function Editor({ contentId, onCancel }: EditorProps) {
                         <div className="aspect-[21/9] rounded-lg border-2 border-dashed border-[#E5E7EB] flex flex-col items-center justify-center bg-[#F8FAFC]">
                           <CloudinaryUpload
                             onUpload={(result) => {
-                              updateDraft({ bannerImageUrl: result.secure_url });
+                              updateDraft({
+                                bannerImageUrl: result.secure_url,
+                              });
                               toast.success("Banner uploaded");
                             }}
                           >
                             {({ uploading, startUpload }) => (
-                              <Button onClick={startUpload} disabled={uploading} variant="outline" className="border-[#FF4D00] text-[#FF4D00] hover:bg-[#FFF1EB] hover:text-[#FF4D00]">
-                                {uploading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Upload className="h-4 w-4 mr-2" />}
+                              <Button
+                                onClick={startUpload}
+                                disabled={uploading}
+                                variant="outline"
+                                className="border-[#FF4D00] text-[#FF4D00] hover:bg-[#FFF1EB] hover:text-[#FF4D00]"
+                              >
+                                {uploading ? (
+                                  <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                                ) : (
+                                  <Upload className="h-4 w-4 mr-2" />
+                                )}
                                 Upload Banner
                               </Button>
                             )}
                           </CloudinaryUpload>
-                          <p className="text-xs text-[#64748B] mt-2">Recommended size: 1200x400px</p>
+                          <p className="text-xs text-[#64748B] mt-2">
+                            Recommended size: 1200x400px
+                          </p>
                         </div>
                       )}
                     </div>
@@ -719,51 +901,99 @@ function Editor({ contentId, onCancel }: EditorProps) {
                   {/* Kitchen Cards Overrides */}
                   <div className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
                     <div className="p-4 border-b border-[#E8ECEA] flex flex-col gap-1">
-                      <h3 className="font-semibold text-[#111827] text-[15px]">Kitchen Cards</h3>
+                      <h3 className="font-semibold text-[#111827] text-[15px]">
+                        Kitchen Cards
+                      </h3>
                       <p className="text-[13px] text-[#64748B]">
-                        Customize images for kitchens serving &quot;{draft.keyword}&quot;.
+                        Customize images for kitchens serving &quot;
+                        {draft.keyword}&quot;.
                       </p>
                     </div>
                     <div className="p-4 grid grid-cols-1 gap-4 max-h-[500px] overflow-y-auto custom-scrollbar">
-                      {previewKitchens.map(kitchen => {
-                        const override = draft.kitchenCards.find(c => c.kitchenPartnerId === kitchen.id);
-                        const displayUrl = override?.imageUrl ?? kitchen.coverImageUrl;
+                      {previewKitchens.map((kitchen) => {
+                        const override = draft.kitchenCards.find(
+                          (c) => c.kitchenPartnerId === kitchen.id,
+                        );
+                        const displayUrl =
+                          override?.imageUrl ?? kitchen.coverImageUrl;
                         return (
-                          <div key={kitchen.id} className="flex items-center gap-4 p-3 border border-[#E8ECEA] rounded-[8px] bg-[#FAFAFA]">
+                          <div
+                            key={kitchen.id}
+                            className="flex items-center gap-4 p-3 border border-[#E8ECEA] rounded-[8px] bg-[#FAFAFA]"
+                          >
                             <div className="w-16 h-16 rounded-[8px] overflow-hidden bg-slate-100 shrink-0 relative border border-slate-200">
-                              {/* eslint-disable-next-line @next/next/no-img-element */}
-                              {displayUrl ? <img src={displayUrl} className="w-full h-full object-cover" alt={kitchen.displayName} /> : <div className="w-full h-full flex items-center justify-center text-slate-300"><Layers className="w-6 h-6" /></div>}
+                              {displayUrl ? (
+                                <Image
+                                  src={displayUrl}
+                                  className="w-full h-full object-cover"
+                                  alt={kitchen.displayName}
+                                  fill
+                                />
+                              ) : (
+                                <div className="w-full h-full flex items-center justify-center text-slate-300">
+                                  <Layers className="w-6 h-6" />
+                                </div>
+                              )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <h4 className="font-semibold text-sm text-[#111827] truncate">{kitchen.displayName}</h4>
-                              <p className="text-xs text-[#64748B] truncate">{kitchen.cuisineTags.join(", ")}</p>
+                              <h4 className="font-semibold text-sm text-[#111827] truncate">
+                                {kitchen.displayName}
+                              </h4>
+                              <p className="text-xs text-[#64748B] truncate">
+                                {kitchen.cuisineTags.join(", ")}
+                              </p>
                             </div>
                             <div className="shrink-0 flex items-center gap-2">
                               {override?.imageUrl && (
-                                <Button size="icon" variant="ghost" className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50" onClick={() => updateKitchenCard(kitchen.id, { imageUrl: null })} title="Reset to default">
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                                  onClick={() =>
+                                    updateKitchenCard(kitchen.id, {
+                                      imageUrl: null,
+                                    })
+                                  }
+                                  title="Reset to default"
+                                >
                                   <RotateCcw className="h-4 w-4" />
                                 </Button>
                               )}
                               <CloudinaryUpload
                                 onUpload={(result) => {
-                                  updateKitchenCard(kitchen.id, { imageUrl: result.secure_url });
-                                  toast.success(`Image updated for ${kitchen.displayName}`);
+                                  updateKitchenCard(kitchen.id, {
+                                    imageUrl: result.secure_url,
+                                  });
+                                  toast.success(
+                                    `Image updated for ${kitchen.displayName}`,
+                                  );
                                 }}
                               >
                                 {({ uploading, startUpload }) => (
-                                  <Button size="sm" variant="outline" onClick={startUpload} disabled={uploading} className="h-8 text-xs">
-                                    {uploading ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <Upload className="h-3 w-3 mr-1" />}
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={startUpload}
+                                    disabled={uploading}
+                                    className="h-8 text-xs"
+                                  >
+                                    {uploading ? (
+                                      <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                                    ) : (
+                                      <Upload className="h-3 w-3 mr-1" />
+                                    )}
                                     Change
                                   </Button>
                                 )}
                               </CloudinaryUpload>
                             </div>
                           </div>
-                        )
+                        );
                       })}
                       {previewKitchens.length === 0 && (
                         <div className="text-center py-8 text-sm text-[#64748B]">
-                          No active kitchens found serving &quot;{draft.keyword}&quot;.
+                          No active kitchens found serving &quot;{draft.keyword}
+                          &quot;.
                         </div>
                       )}
                     </div>
@@ -873,19 +1103,25 @@ function Editor({ contentId, onCancel }: EditorProps) {
                           </label>
                           <Select
                             value={draft.defaultSort}
-                            onValueChange={(v) => updateDraft({ defaultSort: v })}
+                            onValueChange={(v) =>
+                              updateDraft({ defaultSort: v })
+                            }
                           >
                             <SelectTrigger className="h-9 w-full bg-[#FFFFFF] border-[#DDE3E0] rounded-[7px] text-sm text-[#111827] focus:ring-0 focus:border-[#FF4D00]">
                               <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
-                              {["Relevance", "Rating", "Distance", "Newest", "Recommended"].map(
-                                (s) => (
-                                  <SelectItem key={s} value={s}>
-                                    {s}
-                                  </SelectItem>
-                                )
-                              )}
+                              {[
+                                "Relevance",
+                                "Rating",
+                                "Distance",
+                                "Newest",
+                                "Recommended",
+                              ].map((s) => (
+                                <SelectItem key={s} value={s}>
+                                  {s}
+                                </SelectItem>
+                              ))}
                             </SelectContent>
                           </Select>
                         </div>
@@ -914,357 +1150,254 @@ function Editor({ contentId, onCancel }: EditorProps) {
         <div className="w-full bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] shadow-[0_2px_8px_rgba(15,23,42,0.04)] overflow-hidden flex flex-col h-[700px] mt-2">
           <div className="bg-[#FFFFFF] border-b border-[#EEF1EF] p-4 flex flex-col gap-1 z-20 shadow-sm relative">
             <div className="flex items-center justify-between">
-               <div className="flex items-center gap-2">
-                 <div className="w-2.5 h-2.5 rounded-full bg-[#087A3E] animate-pulse" />
-                 <h3 className="font-bold text-[#111827] text-sm">Live Preview</h3>
-               </div>
-               <span className="text-[10px] text-[#94A3B8] hidden sm:inline-block">(Scroll to preview full page)</span>
+              <div className="flex items-center gap-2">
+                <div className="w-2.5 h-2.5 rounded-full bg-[#087A3E] animate-pulse" />
+                <h3 className="font-bold text-[#111827] text-sm">
+                  Live Preview
+                </h3>
+              </div>
+              <span className="text-[10px] text-[#94A3B8] hidden sm:inline-block">
+                (Scroll to preview full page)
+              </span>
             </div>
             <p className="text-[11px] text-[#64748B]">
-              This is exactly how the search page appears to customers on desktop devices.
+              This is exactly how the search page appears to customers on
+              desktop devices.
             </p>
           </div>
 
           <div className="flex-1 overflow-y-auto bg-[#FAFBFA] pb-8 relative custom-scrollbar">
             <div className="bg-[#FFFFFF] min-h-full w-full mx-auto pb-8 overflow-x-hidden">
-              {/* Navbar mock */}
-              <div className="px-4 py-3 border-b border-[#EEF1EF] flex items-center justify-between bg-[#FFFFFF] sticky top-0 z-10">
-                <div className="flex flex-col">
-                  <span className="font-bold italic text-base md:text-lg leading-tight flex gap-1 text-[#087A3E]">
-                    <span className="text-[#FF4D00]">RRC</span> Kitchen
-                  </span>
-                  <span className="text-[6px] md:text-[7px] text-[#64748B] tracking-wider uppercase font-medium mt-0.5">
-                    Every Homemaker is a Chef
-                  </span>
-                </div>
-                <div className="hidden sm:flex items-center text-[10px] font-semibold text-[#111827] gap-1">
-                  <MapPin className="h-3 w-3 text-[#FF4D00]" />
-                  <span>Select Location</span>
-                  <ChevronDown className="h-3 w-3 opacity-60" />
-                </div>
-                <div className="hidden md:flex relative flex-1 max-w-[200px] mx-4">
-                  <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-[#475569]" />
-                  <input
-                    className="w-full border border-[#DDE3E0] rounded-[7px] pl-7 py-1.5 text-[10px] bg-[#FFFFFF] outline-none font-medium text-[#111827]"
-                    value={draft.keyword}
-                    readOnly
-                  />
-                  <X className="absolute right-2.5 top-1/2 -translate-y-1/2 h-3 w-3 text-[#475569] cursor-pointer" />
-                </div>
-                <div className="flex items-center gap-3 text-[10px] font-semibold text-[#334155]">
-                  <div className="hidden sm:flex items-center gap-1 cursor-pointer">
-                    <User className="h-3.5 w-3.5 text-[#334155]" /> Login
+              {/* Header Banner */}
+              <div className="w-full bg-[#FCF8F5] border-b border-[#EEE8E4] overflow-hidden">
+                <div className="max-w-[1440px] mx-auto relative flex flex-col lg:flex-row items-stretch lg:min-h-[220px]">
+                  {/* Left Content (Text) */}
+                  <div className="w-full lg:w-[50%] xl:w-[45%] px-4 sm:px-6 py-8 lg:py-12 flex flex-col justify-center z-20 relative bg-[#FCF8F5] lg:bg-transparent">
+                    <p className="text-[13px] md:text-[14px] font-bold text-[#111111] mb-1.5 uppercase tracking-wide">
+                      Search Results for
+                    </p>
+                    <h1 className="text-4xl lg:text-5xl font-black text-[#00512F] mb-3.5 tracking-tight">
+                      “{draft.keyword}”
+                    </h1>
+                    <p className="text-[14px] lg:text-[15px] font-medium text-[#333333] leading-relaxed max-w-xl">
+                      We found{" "}
+                      <span className="text-[#F44A01] font-bold">
+                        {draft.kitchensCount} kitchens
+                      </span>{" "}
+                      serving delicious <strong>{draft.keyword}</strong> near
+                      you.
+                    </p>
                   </div>
-                  <div className="relative cursor-pointer">
-                    <ShoppingCart className="h-4 w-4 text-[#334155]" />
-                    <span className="absolute -top-1.5 -right-1.5 bg-[#FF4D00] text-[#FFFFFF] text-[8px] font-bold rounded-full w-3.5 h-3.5 flex items-center justify-center border-2 border-[#FFFFFF]">
-                      3
-                    </span>
+
+                  {/* Right Content (Image) */}
+                  <div className="w-full h-[180px] sm:h-[220px] lg:absolute lg:inset-y-0 lg:right-0 lg:left-[40%] lg:h-auto z-10">
+                    <div className="w-full h-full relative">
+                      {/* Desktop Fades */}
+                      <div className="hidden lg:block absolute inset-y-0 left-0 w-48 bg-gradient-to-r from-[#FCF8F5] via-[#FCF8F5]/90 to-transparent z-10" />
+                      {/* Mobile Top Fade */}
+                      <div className="lg:hidden absolute inset-x-0 top-0 h-12 bg-gradient-to-b from-[#FCF8F5] to-transparent z-10" />
+
+                      {banner && (
+                        <Image
+                          src={banner}
+                          alt={draft.keyword}
+                          fill
+                          className="object-cover object-center lg:object-left"
+                          priority
+                          unoptimized={banner.startsWith("http")}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Nav links mock */}
-              <div className="hidden md:flex items-center justify-center gap-4 lg:gap-6 py-2.5 border-b border-[#EEF1EF] text-[8px] font-bold text-[#111827] tracking-wider bg-[#FFFFFF]">
-                {["HOME", "CATEGORIES", "KITCHENS", "TODAY'S SPECIALS", "ABOUT US", "BECOME A CHEF"].map(
-                  (item, i) => (
-                    <span
-                      key={item}
-                      className={
-                        i === 2
-                          ? "text-[#FF4D00] cursor-pointer"
-                          : "hover:text-[#FF4D00] cursor-pointer"
-                      }
-                    >
-                      {item}
-                    </span>
-                  )
-                )}
-              </div>
-
-              {/* Banner */}
-              <div className="w-full h-32 md:h-40 relative overflow-hidden bg-[#FFF8F3]">
-                {banner ? (
-                  <div className="absolute right-0 top-0 bottom-0 w-[60%] sm:w-[55%]">
-                     <Image
-                       src={banner}
-                       fill
-                       sizes="(max-width: 768px) 100vw, 50vw"
-                       className="object-cover"
-                       alt="Banner"
-                     />
-                     <div className="absolute inset-0 bg-gradient-to-r from-[#FFF8F3] to-transparent" />
-                  </div>
-                ) : null}
-                <div className="absolute inset-0 p-4 md:p-8 flex flex-col justify-center z-10 w-3/4 sm:w-2/3">
-                  <p className="text-[10px] font-semibold text-[#334155] mb-0.5">
-                    Search Results for
-                  </p>
-                  <h2 className="text-xl md:text-3xl font-bold text-[#087A3E] tracking-tight">
-                    <span className="text-[#FF4D00]">“</span>{draft.keyword}<span className="text-[#FF4D00]">”</span>
-                  </h2>
-                  <p className="text-[9px] md:text-[10px] text-[#334155] mt-1.5 md:mt-2 font-medium leading-relaxed max-w-[90%]">
-                    We found <span className="text-[#FF4D00] font-bold">{draft.kitchensCount} kitchens</span> serving delicious {draft.keyword} near you.
-                  </p>
-                </div>
-              </div>
-
-              {/* Content Layout */}
-              <div className="p-3 md:p-5 flex gap-4 md:gap-5 flex-col md:flex-row">
-                {/* Left Filters - Responsive Hidden */}
-                <div className="hidden md:block w-32 xl:w-36 shrink-0">
-                  <div className="flex justify-between items-center mb-4 pb-2 border-b border-[#EEF1EF]">
-                    <h4 className="font-bold text-xs text-[#111827]">Filters</h4>
-                    <span className="text-[9px] text-[#FF4D00] font-semibold cursor-pointer">
-                      Clear All
-                    </span>
-                  </div>
-
-                  <div className="space-y-4">
-                    {enabledFilters.map((filter, fi) => (
-                      <div
-                        key={filter.id ?? fi}
-                        className={fi === 0 ? "" : "pt-3 border-t border-[#EEF1EF]"}
+              {/* Main Content */}
+              <div className="max-w-[1440px] mx-auto w-full px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8">
+                {/* Sidebar */}
+                <div className="hidden lg:block w-64 shrink-0 space-y-6">
+                  <div className="bg-[#FFFFFF] border border-[#ECE8E5] rounded-[8px] p-5 shadow-[0_2px_8px_rgba(40,30,25,0.035)]">
+                    <div className="flex items-center justify-between pb-3 border-b border-[#EEEAE7] mb-5">
+                      <h2 className="text-[16px] font-bold text-[#111111]">
+                        Filters
+                      </h2>
+                      <button
+                        type="button"
+                        disabled
+                        className="text-[13px] font-semibold text-[#F44A01] hover:underline disabled:text-[#9CA3AF] disabled:hover:no-underline disabled:cursor-not-allowed"
                       >
-                        <div className="flex justify-between items-center text-[10px] font-bold text-[#111827] mb-2">
-                          <span>{filter.name}</span>
-                          <ChevronDown className="h-3 w-3 text-[#475569]" />
-                        </div>
-                        <div className="space-y-2">
-                          {(filter.options.length ? filter.options : ["Option 1", "Option 2"]).slice(0, 5).map(
-                            (option, oi) => {
-                               const isChecked = fi === 0 && oi < 2; // Mock some checked states
-                               return (
-                                  <div
-                                    key={`${option}-${oi}`}
-                                    className="flex items-center gap-2 cursor-pointer group"
-                                  >
-                                    <div className={`w-3 h-3 rounded-[3px] border flex items-center justify-center transition-colors ${isChecked ? "bg-[#FF4D00] border-[#FF4D00]" : "bg-[#FFFFFF] border-[#CBD5E1] group-hover:border-[#FFB89A]"}`}>
-                                      {isChecked && <Check className="h-2 w-2 text-[#FFFFFF]" />}
-                                    </div>
-                                    <span className="text-[10px] text-[#475569] font-medium group-hover:text-[#111827] transition-colors">
-                                      {option}
-                                    </span>
-                                  </div>
-                               )
+                        Clear All
+                      </button>
+                    </div>
+
+                    <div className="space-y-5">
+                      {enabledFilters.length > 0 ? (
+                        enabledFilters.map((filter, fi) => (
+                          <div
+                            key={filter.id ?? fi}
+                            className={
+                              fi === 0 ? "" : "pt-5 border-t border-[#EEEAE7]"
                             }
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                    {enabledFilters.length === 0 && (
-                      <p className="text-[10px] text-[#94A3B8] font-medium">
-                        No active filters.
-                      </p>
-                    )}
+                          >
+                            <div className="flex items-center justify-between mb-3 cursor-pointer">
+                              <h3 className="text-[14px] font-bold text-[#222222]">
+                                {filter.name}
+                              </h3>
+                              <ChevronDown className="w-4 h-4 text-[#222222] stroke-[1.8px]" />
+                            </div>
+                            <div className="space-y-3">
+                              {filter.options.map((item) => (
+                                <label
+                                  key={item}
+                                  className="flex items-center gap-3 cursor-pointer group"
+                                >
+                                  <Checkbox className="w-4.5 h-4.5 border-[#FF8A69] data-[state=checked]:bg-[#F44A01] data-[state=checked]:border-[#F44A01] text-white rounded-sm" />
+                                  <span className="text-[12px] font-normal text-[#333333] group-hover:text-[#111111]">
+                                    {item}
+                                  </span>
+                                </label>
+                              ))}
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-[12px] text-[#9CA3AF]">
+                          No filters enabled.
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
 
-                {/* Right Products */}
+                {/* Grid Results */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2 mb-4 pb-2 border-b border-[#EEF1EF] text-[10px] font-bold">
-                    <span className="text-[#111827]">
-                      Showing 1 - {previewKitchens.length} of {previewKitchens.length} Kitchens
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 lg:mb-8 gap-4 border-b border-[#EEEAE7] pb-4">
+                    <span className="text-[15px] font-bold text-[#111111]">
+                      Showing 1 - {previewKitchens.length} of{" "}
+                      {previewKitchens.length} Kitchens
                     </span>
-                    <div className="flex items-center gap-1.5 self-end sm:self-auto">
-                      <span className="text-[#475569] font-medium">Sort by:</span>
-                      <div className="flex items-center gap-1 border border-[#DDE3E0] px-2 py-1 rounded-[7px] bg-[#FFFFFF] cursor-pointer hover:border-[#FFB89A]">
-                        <span className="text-[#111827]">{draft.defaultSort}</span>
-                        <ChevronDown className="h-3 w-3 text-[#475569]" />
+                    <div className="hidden lg:flex items-center gap-3">
+                      <span className="text-[14px] font-bold text-gray-700">
+                        Sort by:
+                      </span>
+                      <div className="flex items-center justify-between w-40 px-4 py-2 border border-gray-300 rounded-lg text-[14px] font-bold text-gray-800 hover:bg-muted/50 bg-white shadow-sm cursor-pointer">
+                        {draft.defaultSort || "Relevance"}
+                        <ChevronDown className="w-4 h-4 text-muted-foreground" />
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 xl:gap-4">
-                    {previewKitchens.map((kitchen, i) => {
-                       const leftBadges = enabledBadges.filter((b) => b.position !== "right");
-                       const rightBadges = enabledBadges.filter((b) => b.position === "right");
-                       const badge = leftBadges[i % Math.max(leftBadges.length, 1)];
-                       const rightBadge = rightBadges[i % Math.max(rightBadges.length, 1)];
-                       let badgeClass = "text-[#FFFFFF] bg-[#FF4D00]"; // Default bestseller
-                       if(badge) {
-                          const nameLow = badge.name.toLowerCase();
-                          if(nameLow.includes("top rated")) badgeClass = "text-[#FFFFFF] bg-[#087A3E]";
-                          else if(nameLow.includes("new")) badgeClass = "text-[#FFFFFF] bg-[#7C3AED]";
-                       }
+                  {previewKitchens.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5 pb-6 lg:pb-10">
+                      {previewKitchens.map((kitchen) => {
+                        const override = draft.kitchenCards?.find(
+                          (c) => c.kitchenPartnerId === kitchen.id,
+                        );
+                        const leftBadges = enabledBadges
+                          .filter((b) => b.position !== "right")
+                          .map((b) => b.name);
+                        const rightBadges = enabledBadges
+                          .filter((b) => b.position === "right")
+                          .map((b) => b.name);
 
-                       // Find if the image was explicitly overridden in this draft
-                       const override = draft.kitchenCards?.find(c => c.kitchenPartnerId === kitchen.id);
-                       const displayImage = override?.imageUrl ?? kitchen.coverImageUrl;
-
-                       return (
-                          <div
-                            key={kitchen.id}
-                            className="border border-[#E5E7EB] rounded-[10px] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.05)] hover:shadow-md transition-shadow flex flex-col group relative"
-                          >
-                            <div className="relative h-28 sm:h-24 overflow-hidden rounded-t-[9px] bg-[#F3F4F6]">
-                              {displayImage ? (
-                                <Image
-                                  src={displayImage}
-                                  fill
-                                  sizes="(max-width: 640px) 100vw, 200px"
-                                  className="object-cover transition-transform group-hover:scale-105"
-                                  alt={kitchen.displayName}
-                                />
-                              ) : (
-                                <div className="flex items-center justify-center h-full bg-[#FFF1EB]">
-                                  <ChefHat className="h-6 w-6 text-[#FFB89A]" />
-                                </div>
+                        return (
+                          <div key={kitchen.id} className="relative group">
+                            <KitchenCard
+                              kitchen={toKitchenData(
+                                kitchen,
+                                override?.imageUrl,
                               )}
-
-                              {/* Kitchen Card Image Upload Button */}
+                              variant="search"
+                              query={draft.keyword}
+                              badges={leftBadges}
+                              rightBadges={rightBadges}
+                            />
+                            {/* Admin Image Upload Overlay */}
+                            <div className="absolute top-2 right-2 z-20">
                               <CloudinaryUpload
                                 onUpload={(result) => {
-                                  updateKitchenCard(kitchen.id, { imageUrl: result.secure_url });
+                                  updateKitchenCard(kitchen.id, {
+                                    imageUrl: result.secure_url,
+                                  });
                                 }}
                               >
                                 {({ uploading, startUpload }) => (
-                                   <button
-                                     onClick={(e) => { e.preventDefault(); e.stopPropagation(); startUpload(); }}
-                                     disabled={uploading}
-                                     className="absolute top-2 right-2 bg-white/90 hover:bg-white text-gray-700 hover:text-[#FF4D00] shadow-sm p-1.5 rounded-[6px] z-20 flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
-                                     title="Change kitchen image for this search"
-                                   >
-                                     {uploading ? <Loader2 className="h-3 w-3 animate-spin" /> : <ImageIcon className="h-3 w-3" />}
-                                   </button>
+                                  <button
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      e.stopPropagation();
+                                      startUpload();
+                                    }}
+                                    disabled={uploading}
+                                    className="bg-white/90 hover:bg-white text-gray-700 hover:text-[#FF4D00] shadow-sm p-1.5 rounded-[6px] flex items-center justify-center transition-all opacity-0 group-hover:opacity-100"
+                                    title="Change kitchen image for this search"
+                                  >
+                                    {uploading ? (
+                                      <Loader2 className="h-4 w-4 animate-spin" />
+                                    ) : (
+                                      <ImageIcon className="h-4 w-4" />
+                                    )}
+                                  </button>
                                 )}
                               </CloudinaryUpload>
-
-                              {badge && (
-                                <div className={`absolute top-2 left-2 text-[8px] font-bold px-1.5 py-0.5 rounded-[4px] shadow-sm ${badgeClass} z-10`}>
-                                  {badge.name}
-                                </div>
-                              )}
-                              
-                              {rightBadge && (
-                                <div className="absolute top-2 right-2 text-[8px] font-bold px-1.5 py-0.5 rounded-[4px] shadow-sm text-[#FFFFFF] bg-[#00512F] z-10">
-                                  {rightBadge.name}
-                                </div>
-                              )}
-                              
-                              <div className="absolute -bottom-3 left-2.5 w-8 h-8 rounded-full border-[1.5px] border-[#FFFFFF] overflow-hidden shadow-sm bg-[#FFF1EB] z-10 flex items-center justify-center text-[#FF4D00] font-bold text-xs">
-                                {kitchen.displayName.charAt(0).toUpperCase()}
-                                {kitchen.profileImage && <Image src={kitchen.profileImage} fill className="object-cover" alt="" />}
-                              </div>
-                            </div>
-                            
-                            <div className="p-3 pt-4 flex-1 flex flex-col">
-                              <h5 className="font-bold text-[#111827] text-[11px] xl:text-xs leading-tight flex items-center gap-1 truncate">
-                                <span className="truncate">{kitchen.displayName}</span>
-                                <BadgeCheck className="h-3 w-3 xl:h-3.5 xl:w-3.5 text-[#087A3E] shrink-0" />
-                              </h5>
-                              
-                              <div className="flex items-center gap-1 mt-1 mb-2 text-[#475569] text-[8px] xl:text-[9px] font-medium truncate">
-                                 <span className="truncate">{kitchen.cuisineTags[0] || "South Indian"}</span>
-                                 <span>·</span>
-                                 <span className="truncate">{kitchen.cuisineTags[1] || "Homemade"}</span>
-                              </div>
-
-                              <div className="flex items-center gap-2 mb-2">
-                                <div className="flex items-center gap-0.5 text-[#FF4D00]">
-                                  <Star className="h-2 w-2 xl:h-2.5 xl:w-2.5 fill-[#FF4D00]" />
-                                  <span className="text-[9px] xl:text-[10px] font-bold ml-0.5">
-                                    {kitchen.avgRating > 0 ? kitchen.avgRating.toFixed(1) : "NEW"}
-                                  </span>
-                                </div>
-                                <span className="text-[8px] xl:text-[9px] text-[#64748B] font-medium">
-                                  ({kitchen.totalReviews.toLocaleString()})
-                                </span>
-                              </div>
-                              
-                              <div className="flex items-center justify-between text-[8px] xl:text-[9px] font-medium text-[#475569] mt-auto pt-2 border-t border-[#EEF1EF]">
-                                <div className="flex items-center gap-1">
-                                  <Clock className="h-2.5 w-2.5 xl:h-3 xl:w-3 text-[#475569]" /> {kitchen.estimatedPrepTime ?? 25}-{kitchen.estimatedPrepTime ? kitchen.estimatedPrepTime + 15 : 40} mins
-                                </div>
-                                <div className="flex items-center gap-1">
-                                  <MapPin className="h-2.5 w-2.5 xl:h-3 xl:w-3 text-[#475569]" /> 2.1 km
-                                </div>
-                              </div>
-                              
-                              <div className="flex items-center justify-between mt-2.5">
-                                <div className="flex items-center gap-1 text-[7px] xl:text-[8px] font-bold text-[#087A3E] bg-[#F0FAF3] px-1.5 py-1 rounded-[4px] border border-[#CFE9D8]">
-                                  <ShieldCheck className="h-2.5 w-2.5" /> 100% Hygienic
-                                </div>
-                                <Button
-                                  variant="outline"
-                                  className="h-5 xl:h-6 text-[8px] xl:text-[9px] px-1.5 xl:px-2 font-bold text-[#FF4D00] border-[#FF8F6B] hover:bg-[#FFF1EB] hover:text-[#FF4D00] rounded-[4px] xl:rounded-[6px] shadow-none"
-                                >
-                                  View Menu
-                                </Button>
-                              </div>
                             </div>
                           </div>
-                       )
-                    })}
-                  </div>
-
-                  {/* Pagination */}
-                  <div className="flex justify-center mt-6 mb-4">
-                     <Pagination>
-                       <PaginationContent className="flex-wrap justify-center gap-1">
-                         <PaginationItem>
-                           <PaginationPrevious href="#" className="h-6 w-6 xl:h-7 xl:w-7 text-[#64748B] border border-[#E5E7EB] bg-[#FFFFFF] rounded-[7px] p-0 flex items-center justify-center opacity-50 hover:bg-[#F3F4F6]" />
-                         </PaginationItem>
-                         <PaginationItem>
-                           <PaginationLink href="#" isActive className="h-6 w-6 xl:h-7 xl:w-7 bg-[#FF4D00] text-[#FFFFFF] border border-[#FF4D00] rounded-[7px] font-bold text-[10px] xl:text-[11px] flex items-center justify-center hover:bg-[#FF4D00] hover:text-[#FFFFFF]">1</PaginationLink>
-                         </PaginationItem>
-                         <PaginationItem>
-                           <PaginationLink href="#" className="h-6 w-6 xl:h-7 xl:w-7 bg-[#FFFFFF] text-[#334155] border border-[#E5E7EB] rounded-[7px] font-bold text-[10px] xl:text-[11px] flex items-center justify-center hover:bg-[#F3F4F6]">2</PaginationLink>
-                         </PaginationItem>
-                         <PaginationItem className="hidden sm:inline-block">
-                           <PaginationLink href="#" className="h-6 w-6 xl:h-7 xl:w-7 bg-[#FFFFFF] text-[#334155] border border-[#E5E7EB] rounded-[7px] font-bold text-[10px] xl:text-[11px] flex items-center justify-center hover:bg-[#F3F4F6]">3</PaginationLink>
-                         </PaginationItem>
-                         <PaginationItem>
-                           <PaginationEllipsis className="h-6 w-6 xl:h-7 xl:w-7 flex items-center justify-center text-[#64748B]" />
-                         </PaginationItem>
-                         <PaginationItem>
-                           <PaginationLink href="#" className="h-6 w-6 xl:h-7 xl:w-7 bg-[#FFFFFF] text-[#334155] border border-[#E5E7EB] rounded-[7px] font-bold text-[10px] xl:text-[11px] flex items-center justify-center hover:bg-[#F3F4F6]">6</PaginationLink>
-                         </PaginationItem>
-                         <PaginationItem>
-                           <PaginationNext href="#" className="h-6 w-6 xl:h-7 xl:w-7 text-[#64748B] border border-[#E5E7EB] bg-[#FFFFFF] rounded-[7px] p-0 flex items-center justify-center hover:bg-[#F3F4F6]" />
-                         </PaginationItem>
-                       </PaginationContent>
-                     </Pagination>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Info Bar mock */}
-              <div className="border-t border-[#EEF1EF] bg-[#FFFFFF] py-4 mt-2">
-                <div className="flex flex-wrap justify-center gap-x-6 lg:gap-x-8 gap-y-4 max-w-5xl mx-auto px-4">
-                  {enabledInfoItems.length ? (
-                    enabledInfoItems.map((item, i) => {
-                      const IconComp = INFO_ICON_MAP[item.icon] ?? Heart;
-                      const isGreen = ["ShieldCheck", "Leaf"].includes(item.icon);
-                      const iconColor = isGreen ? "text-[#087A3E]" : "text-[#FF4D00]";
-                      return (
-                        <div key={item.id ?? i} className="flex items-center gap-1.5 md:gap-2">
-                          <IconComp className={`h-4 w-4 md:h-5 md:w-5 ${iconColor}`} />
-                          <div className="flex flex-col">
-                            <span className="text-[9px] md:text-[10px] font-bold text-[#111827]">
-                              {item.title}
-                            </span>
-                            <span className="text-[7px] md:text-[8px] text-[#64748B] font-medium mt-0.5 max-w-[80px] md:max-w-none truncate">
-                              {item.subtitle}
-                            </span>
-                          </div>
-                        </div>
-                      );
-                    })
+                        );
+                      })}
+                    </div>
                   ) : (
-                    <p className="text-[10px] text-[#94A3B8] font-medium py-2">
-                      No info items enabled.
-                    </p>
+                    <div className="flex flex-col items-center justify-center py-16 text-center px-4 bg-white rounded-[8px] border border-[#ECE8E5]">
+                      <p className="text-[16px] font-bold text-[#111111]">
+                        No kitchens found
+                      </p>
+                    </div>
                   )}
                 </div>
               </div>
+
+              {/* Bottom Feature Banner */}
+              {enabledInfoItems.length > 0 && (
+                <div className="bg-[#FFFFFF] border border-[#EEE7E3] rounded-[10px] mx-4 sm:mx-6 lg:mx-auto max-w-[1400px] mb-12 shadow-[0_2px_8px_rgba(40,30,20,0.035)] mt-8">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between px-6 py-6 divide-y lg:divide-y-0 lg:divide-x divide-[#E9E5E2]">
+                    {enabledInfoItems.map((item, i) => {
+                      const IconComp = INFO_ICON_MAP[item.icon] ?? Heart;
+                      const iconColor =
+                        item.title.includes("Homemade") ||
+                        item.title.includes("Pre-book") ||
+                        item.title.includes("Women")
+                          ? "#F44A01"
+                          : "#00512F";
+                      return (
+                        <div
+                          key={item.id ?? i}
+                          className="flex items-center gap-4 py-4 lg:py-0 lg:px-6 first:pt-0 lg:first:pl-0 last:pb-0 lg:last:pr-0 flex-1"
+                        >
+                          <div className="flex items-center justify-center shrink-0">
+                            <IconComp
+                              className="w-8 h-8"
+                              style={{ color: iconColor, strokeWidth: 1.8 }}
+                            />
+                          </div>
+                          <div className="flex flex-col">
+                            <h4 className="text-[14px] font-bold text-[#111111] mb-0.5">
+                              {item.title}
+                            </h4>
+                            <p className="text-[12px] font-medium text-[#4b5563] leading-snug">
+                              {item.subtitle}
+                            </p>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
       </div>
     </div>
   );
-
 }
 
 /* ======================================================================
@@ -1277,7 +1410,9 @@ export default function SearchPageContent() {
   const [statusFilter, setStatusFilter] = useState("All");
   const [sortBy, setSortBy] = useState("Latest");
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [deleteTarget, setDeleteTarget] = useState<AdminSearchPageRow | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<AdminSearchPageRow | null>(
+    null,
+  );
   const [addDialogOpen, setAddDialogOpen] = useState(false);
   const [addKeyword, setAddKeyword] = useState("");
   const [pendingToggleId, setPendingToggleId] = useState<string | null>(null);
@@ -1295,7 +1430,8 @@ export default function SearchPageContent() {
   });
 
   const createMutation = useMutation({
-    mutationFn: ({ keyword }: { keyword: string }) => createSearchPageContent({ keyword }),
+    mutationFn: ({ keyword }: { keyword: string }) =>
+      createSearchPageContent({ keyword }),
     onSuccess: (res) => {
       if (!res.success) {
         toast.error(res.error || "Failed to create content");
@@ -1358,10 +1494,14 @@ export default function SearchPageContent() {
 
   const sorted = useMemo(() => {
     const arr = [...filtered];
-    if (sortBy === "Latest") arr.sort((a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt));
-    if (sortBy === "Oldest") arr.sort((a, b) => +new Date(a.updatedAt) - +new Date(b.updatedAt));
-    if (sortBy === "A-Z") arr.sort((a, b) => a.keyword.localeCompare(b.keyword));
-    if (sortBy === "Kitchens") arr.sort((a, b) => b.kitchensCount - a.kitchensCount);
+    if (sortBy === "Latest")
+      arr.sort((a, b) => +new Date(b.updatedAt) - +new Date(a.updatedAt));
+    if (sortBy === "Oldest")
+      arr.sort((a, b) => +new Date(a.updatedAt) - +new Date(b.updatedAt));
+    if (sortBy === "A-Z")
+      arr.sort((a, b) => a.keyword.localeCompare(b.keyword));
+    if (sortBy === "Kitchens")
+      arr.sort((a, b) => b.kitchensCount - a.kitchensCount);
     return arr;
   }, [filtered, sortBy]);
 
@@ -1369,186 +1509,208 @@ export default function SearchPageContent() {
     return {
       total: contents.length,
       live: contents.filter((c) => c.isActive).length,
-      recentlyUpdated: contents.filter((c) => +new Date(c.updatedAt) >= WEEK_START).length,
+      recentlyUpdated: contents.filter(
+        (c) => +new Date(c.updatedAt) >= WEEK_START,
+      ).length,
       totalFilters: contents.reduce((sum, c) => sum + c.filtersCount, 0),
     };
   }, [contents]);
 
   const columnHelper = createColumnHelper<AdminSearchPageRow>();
 
-  const columns = useMemo(() => [
-    columnHelper.accessor("keyword", {
-      header: "Search Keyword",
-      cell: (info) => {
-        const row = info.row.original;
-        return (
-          <div className="flex items-center gap-2">
-            {row.isActive && (
-              <div className="w-2.5 h-2.5 rounded-full bg-[#15803D]" />
-            )}
-            <div className="flex flex-col">
-              <span className="font-semibold text-[#166534] capitalize">
-                {row.keyword}
-              </span>
-              {row.keyword === "default" && (
-                <span className="text-xs text-[#94A3B8]">
-                  Fallback search page
+  const columns = useMemo(
+    () => [
+      columnHelper.accessor("keyword", {
+        header: "Search Keyword",
+        cell: (info) => {
+          const row = info.row.original;
+          return (
+            <div className="flex items-center gap-2">
+              {row.isActive && (
+                <div className="w-2.5 h-2.5 rounded-full bg-[#15803D]" />
+              )}
+              <div className="flex flex-col">
+                <span className="font-semibold text-[#166534] capitalize">
+                  {row.keyword}
                 </span>
+                {row.keyword === "default" && (
+                  <span className="text-xs text-[#94A3B8]">
+                    Fallback search page
+                  </span>
+                )}
+              </div>
+            </div>
+          );
+        },
+      }),
+      columnHelper.accessor("bannerImageUrl", {
+        header: "Banner Preview",
+        cell: (info) => {
+          const row = info.row.original;
+          return (
+            <div className="w-[120px] h-[40px] rounded-[10px] overflow-hidden relative border border-[#E5E7EB] bg-gray-50">
+              {row.keyword === "default" ? (
+                <div className="absolute inset-0 bg-[#FFF3EC] flex flex-col items-center justify-center">
+                  <span className="text-[#F4511E] font-bold italic text-[10px]">
+                    RRC Kitchen
+                  </span>
+                </div>
+              ) : row.bannerImageUrl ? (
+                <Image
+                  src={row.bannerImageUrl}
+                  alt={row.keyword}
+                  fill
+                  sizes="120px"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="absolute inset-0 bg-[#FFF3EC] flex flex-col items-center justify-center">
+                  <span className="text-[#F4511E] font-bold italic text-[10px]">
+                    RRC Kitchen
+                  </span>
+                </div>
               )}
             </div>
-          </div>
-        );
-      },
-    }),
-    columnHelper.accessor("bannerImageUrl", {
-      header: "Banner Preview",
-      cell: (info) => {
-        const row = info.row.original;
-        return (
-          <div className="w-[120px] h-[40px] rounded-[10px] overflow-hidden relative border border-[#E5E7EB] bg-gray-50">
-            {row.keyword === "default" ? (
-              <div className="absolute inset-0 bg-[#FFF3EC] flex flex-col items-center justify-center">
-                <span className="text-[#F4511E] font-bold italic text-[10px]">
-                  RRC Kitchen
-                </span>
-              </div>
-            ) : row.bannerImageUrl ? (
-              <Image
-                src={row.bannerImageUrl}
-                alt={row.keyword}
-                fill
-                sizes="120px"
-                className="object-cover"
-              />
-            ) : (
-              <div className="absolute inset-0 bg-[#FFF3EC] flex flex-col items-center justify-center">
-                <span className="text-[#F4511E] font-bold italic text-[10px]">
-                  RRC Kitchen
-                </span>
-              </div>
-            )}
-          </div>
-        );
-      },
-    }),
-    columnHelper.accessor("filtersCount", {
-      header: "Filters",
-      cell: (info) => {
-        const count = info.getValue();
-        return (
-          <div className="flex flex-row items-center gap-2">
-            <span className="text-sm font-medium text-[#334155]">
-              {count} filters
-            </span>
-            {count > 0 && (
-              <Badge variant="outline" className="bg-[#ECFDF3] text-[#15803D] border-[#D1FAE5] px-2 py-0 h-5 text-[11px] rounded-[7px]">
-                Modified
+          );
+        },
+      }),
+      columnHelper.accessor("filtersCount", {
+        header: "Filters",
+        cell: (info) => {
+          const count = info.getValue();
+          return (
+            <div className="flex flex-row items-center gap-2">
+              <span className="text-sm font-medium text-[#334155]">
+                {count} filters
+              </span>
+              {count > 0 && (
+                <Badge
+                  variant="outline"
+                  className="bg-[#ECFDF3] text-[#15803D] border-[#D1FAE5] px-2 py-0 h-5 text-[11px] rounded-[7px]"
+                >
+                  Modified
+                </Badge>
+              )}
+            </div>
+          );
+        },
+      }),
+      columnHelper.display({
+        id: "section",
+        header: "Section",
+        cell: (info) => {
+          const row = info.row.original;
+          return (
+            <div className="flex items-center gap-1.5 flex-wrap max-w-[140px]">
+              <Badge
+                variant="outline"
+                className="bg-[#FFF3EC] text-[#F4511E] border-[#FED7C3] px-2 py-0 h-5 text-[11px] gap-1 rounded-[7px]"
+              >
+                <Tag className="h-3 w-3" />
+                {row.badgesCount}
               </Badge>
-            )}
-          </div>
-        );
-      },
-    }),
-    columnHelper.display({
-      id: "section",
-      header: "Section",
-      cell: (info) => {
-        const row = info.row.original;
-        return (
-          <div className="flex items-center gap-1.5 flex-wrap max-w-[140px]">
-            <Badge variant="outline" className="bg-[#FFF3EC] text-[#F4511E] border-[#FED7C3] px-2 py-0 h-5 text-[11px] gap-1 rounded-[7px]">
-              <Tag className="h-3 w-3" />
-              {row.badgesCount}
-            </Badge>
-            <Badge variant="outline" className="bg-[#EFF6FF] text-[#2563EB] border-[#DBEAFE] px-2 py-0 h-5 text-[11px] gap-1 rounded-[7px]">
-              <Info className="h-3 w-3" />
-              {row.infoItemsCount}
-            </Badge>
-          </div>
-        );
-      },
-    }),
-    columnHelper.accessor("kitchensCount", {
-      header: "Kitchens",
-      cell: (info) => (
-        <span className="text-sm font-medium text-[#334155]">
-          {info.getValue()} kitchens
-        </span>
-      ),
-    }),
-    columnHelper.accessor("isActive", {
-      header: "Status",
-      cell: (info) => {
-        const row = info.row.original;
-        return (
-          <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-            <Switch
-              checked={row.isActive}
-              disabled={pendingToggleId === row.id}
-              onCheckedChange={(checked) =>
-                toggleMutation.mutate({ id: row.id, isActive: checked })
-              }
-              className={row.isActive ? "data-[state=checked]:bg-[#15803D]" : ""}
-            />
-            <Badge
-              variant="outline"
-              className={
-                row.isActive
-                  ? "bg-[#ECFDF3] text-[#15803D] border-[#D1FAE5] px-2 py-0 h-5 text-[11px] rounded-[7px]"
-                  : "bg-gray-100 text-gray-500 border-gray-200 px-2 py-0 h-5 text-[11px] rounded-[7px]"
-              }
+              <Badge
+                variant="outline"
+                className="bg-[#EFF6FF] text-[#2563EB] border-[#DBEAFE] px-2 py-0 h-5 text-[11px] gap-1 rounded-[7px]"
+              >
+                <Info className="h-3 w-3" />
+                {row.infoItemsCount}
+              </Badge>
+            </div>
+          );
+        },
+      }),
+      columnHelper.accessor("kitchensCount", {
+        header: "Kitchens",
+        cell: (info) => (
+          <span className="text-sm font-medium text-[#334155]">
+            {info.getValue()} kitchens
+          </span>
+        ),
+      }),
+      columnHelper.accessor("isActive", {
+        header: "Status",
+        cell: (info) => {
+          const row = info.row.original;
+          return (
+            <div
+              className="flex items-center gap-2"
+              onClick={(e) => e.stopPropagation()}
             >
-              {row.isActive ? "Active" : "Inactive"}
-            </Badge>
-          </div>
-        );
-      },
-    }),
-    columnHelper.accessor("updatedBy", {
-      header: "Updated By",
-      cell: (info) => (
-        <span className="text-sm font-medium text-[#334155]">
-          {info.getValue() ?? "Admin"}
-        </span>
-      ),
-    }),
-    columnHelper.accessor("updatedAt", {
-      header: "Updated At",
-      cell: (info) => (
-        <span className="text-sm text-[#64748B]">
-          {formatDateStats(info.getValue())}
-        </span>
-      ),
-    }),
-    columnHelper.display({
-      id: "actions",
-      header: () => <div className="text-right w-full">Actions</div>,
-      cell: (info) => {
-        const row = info.row.original;
-        return (
-          <div className="flex gap-2 justify-end" onClick={(e) => e.stopPropagation()}>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setEditingId(row.id)}
-              className="h-8 border-[#9BD5B2] text-[#15803D] hover:bg-[#F0FDF4] hover:border-[#15803D] hover:text-[#15803D] px-3 flex gap-1 font-medium rounded-[8px]"
+              <Switch
+                checked={row.isActive}
+                disabled={pendingToggleId === row.id}
+                onCheckedChange={(checked) =>
+                  toggleMutation.mutate({ id: row.id, isActive: checked })
+                }
+                className={
+                  row.isActive ? "data-[state=checked]:bg-[#15803D]" : ""
+                }
+              />
+              <Badge
+                variant="outline"
+                className={
+                  row.isActive
+                    ? "bg-[#ECFDF3] text-[#15803D] border-[#D1FAE5] px-2 py-0 h-5 text-[11px] rounded-[7px]"
+                    : "bg-gray-100 text-gray-500 border-gray-200 px-2 py-0 h-5 text-[11px] rounded-[7px]"
+                }
+              >
+                {row.isActive ? "Active" : "Inactive"}
+              </Badge>
+            </div>
+          );
+        },
+      }),
+      columnHelper.accessor("updatedBy", {
+        header: "Updated By",
+        cell: (info) => (
+          <span className="text-sm font-medium text-[#334155]">
+            {info.getValue() ?? "Admin"}
+          </span>
+        ),
+      }),
+      columnHelper.accessor("updatedAt", {
+        header: "Updated At",
+        cell: (info) => (
+          <span className="text-sm text-[#64748B]">
+            {formatDateStats(info.getValue())}
+          </span>
+        ),
+      }),
+      columnHelper.display({
+        id: "actions",
+        header: () => <div className="text-right w-full">Actions</div>,
+        cell: (info) => {
+          const row = info.row.original;
+          return (
+            <div
+              className="flex gap-2 justify-end"
+              onClick={(e) => e.stopPropagation()}
             >
-              <Pencil className="h-3.5 w-3.5" />
-              Edit
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setDeleteTarget(row)}
-              className="h-8 w-8 p-0 border-[#FCA5A5] text-[#EF4444] hover:bg-[#FEF2F2] hover:border-[#FCA5A5] hover:text-[#EF4444] shrink-0 rounded-[8px]"
-            >
-              <Trash2 className="h-4 w-4" />
-            </Button>
-          </div>
-        );
-      },
-    }),
-  ], [pendingToggleId, toggleMutation, columnHelper]);
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setEditingId(row.id)}
+                className="h-8 border-[#9BD5B2] text-[#15803D] hover:bg-[#F0FDF4] hover:border-[#15803D] hover:text-[#15803D] px-3 flex gap-1 font-medium rounded-[8px]"
+              >
+                <Pencil className="h-3.5 w-3.5" />
+                Edit
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setDeleteTarget(row)}
+                className="h-8 w-8 p-0 border-[#FCA5A5] text-[#EF4444] hover:bg-[#FEF2F2] hover:border-[#FCA5A5] hover:text-[#EF4444] shrink-0 rounded-[8px]"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          );
+        },
+      }),
+    ],
+    [pendingToggleId, toggleMutation, columnHelper],
+  );
 
   const table = useReactTable({
     data: sorted,
@@ -1589,7 +1751,9 @@ export default function SearchPageContent() {
       <div className="min-h-screen bg-[#FFFFFF] p-6 md:p-8 max-w-[1400px] mx-auto flex items-center justify-center">
         <div className="flex flex-col items-center gap-4 text-center">
           <AlertTriangle className="h-12 w-12 text-[#EF4444]" />
-          <p className="text-[#EF4444] font-semibold">Failed to load search page content</p>
+          <p className="text-[#EF4444] font-semibold">
+            Failed to load search page content
+          </p>
           <Button variant="outline" onClick={() => refetch()}>
             <RotateCcw className="h-4 w-4 mr-2" /> Retry
           </Button>
@@ -1643,9 +1807,15 @@ export default function SearchPageContent() {
                 <Layers className="h-6 w-6 text-[#F4511E]" />
               </div>
               <div>
-                <p className="text-sm font-medium text-[#64748B]">Total Search Contents</p>
-                <h3 className="text-3xl font-bold text-[#F4511E] mt-1">{stats.total}</h3>
-                <p className="text-xs text-[#94A3B8] mt-1">Active search configurations</p>
+                <p className="text-sm font-medium text-[#64748B]">
+                  Total Search Contents
+                </p>
+                <h3 className="text-3xl font-bold text-[#F4511E] mt-1">
+                  {stats.total}
+                </h3>
+                <p className="text-xs text-[#94A3B8] mt-1">
+                  Active search configurations
+                </p>
               </div>
             </div>
           </CardContent>
@@ -1658,9 +1828,15 @@ export default function SearchPageContent() {
                 <CheckCircle2 className="h-6 w-6 text-[#15803D]" />
               </div>
               <div>
-                <p className="text-sm font-medium text-[#64748B]">Live on Website</p>
-                <h3 className="text-3xl font-bold text-[#15803D] mt-1">{stats.live}</h3>
-                <p className="text-xs text-[#94A3B8] mt-1">Currently visible to users</p>
+                <p className="text-sm font-medium text-[#64748B]">
+                  Live on Website
+                </p>
+                <h3 className="text-3xl font-bold text-[#15803D] mt-1">
+                  {stats.live}
+                </h3>
+                <p className="text-xs text-[#94A3B8] mt-1">
+                  Currently visible to users
+                </p>
               </div>
             </div>
           </CardContent>
@@ -1673,8 +1849,12 @@ export default function SearchPageContent() {
                 <History className="h-6 w-6 text-[#2563EB]" />
               </div>
               <div>
-                <p className="text-sm font-medium text-[#64748B]">Recently Updated</p>
-                <h3 className="text-3xl font-bold text-[#2563EB] mt-1">{stats.recentlyUpdated}</h3>
+                <p className="text-sm font-medium text-[#64748B]">
+                  Recently Updated
+                </p>
+                <h3 className="text-3xl font-bold text-[#2563EB] mt-1">
+                  {stats.recentlyUpdated}
+                </h3>
                 <p className="text-xs text-[#94A3B8] mt-1">In last 7 days</p>
               </div>
             </div>
@@ -1688,9 +1868,15 @@ export default function SearchPageContent() {
                 <Filter className="h-6 w-6 text-[#7C3AED]" />
               </div>
               <div>
-                <p className="text-sm font-medium text-[#64748B]">Total Filters Used</p>
-                <h3 className="text-3xl font-bold text-[#7C3AED] mt-1">{stats.totalFilters}</h3>
-                <p className="text-xs text-[#94A3B8] mt-1">Across all search contents</p>
+                <p className="text-sm font-medium text-[#64748B]">
+                  Total Filters Used
+                </p>
+                <h3 className="text-3xl font-bold text-[#7C3AED] mt-1">
+                  {stats.totalFilters}
+                </h3>
+                <p className="text-xs text-[#94A3B8] mt-1">
+                  Across all search contents
+                </p>
               </div>
             </div>
           </CardContent>
@@ -1706,7 +1892,9 @@ export default function SearchPageContent() {
               <List className="h-5 w-5 text-[#2563EB]" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-[#111827]">Search Content History</h2>
+              <h2 className="text-lg font-bold text-[#111827]">
+                Search Content History
+              </h2>
               <p className="text-sm text-[#475569]">
                 View and manage all search page configurations.
               </p>
@@ -1779,12 +1967,21 @@ export default function SearchPageContent() {
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow key={headerGroup.id} className="border-b-[#E5E7EB] bg-[#FCFDFE] hover:bg-[#FCFDFE]">
+                <TableRow
+                  key={headerGroup.id}
+                  className="border-b-[#E5E7EB] bg-[#FCFDFE] hover:bg-[#FCFDFE]"
+                >
                   {headerGroup.headers.map((header) => (
-                    <TableHead key={header.id} className="h-12 font-semibold text-[#334155] text-[13px] tracking-wider py-4">
+                    <TableHead
+                      key={header.id}
+                      className="h-12 font-semibold text-[#334155] text-[13px] tracking-wider py-4"
+                    >
                       {header.isPlaceholder
                         ? null
-                        : flexRender(header.column.columnDef.header, header.getContext())}
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
                     </TableHead>
                   ))}
                 </TableRow>
@@ -1801,14 +1998,20 @@ export default function SearchPageContent() {
                   >
                     {row.getVisibleCells().map((cell) => (
                       <TableCell key={cell.id} className="py-4 align-middle">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
+                        )}
                       </TableCell>
                     ))}
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns.length} className="h-32 text-center text-[#94A3B8]">
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-32 text-center text-[#94A3B8]"
+                  >
                     No search content found.
                   </TableCell>
                 </TableRow>
@@ -1825,10 +2028,15 @@ export default function SearchPageContent() {
               <FileText className="h-4 w-4" />
             </div>
             <span className="font-medium text-[#475569]">
-              Showing {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{" "}
+              Showing{" "}
+              {table.getState().pagination.pageIndex *
+                table.getState().pagination.pageSize +
+                1}{" "}
+              to{" "}
               {Math.min(
-                (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-                sorted.length
+                (table.getState().pagination.pageIndex + 1) *
+                  table.getState().pagination.pageSize,
+                sorted.length,
               )}{" "}
               of {sorted.length} entries
             </span>
@@ -1851,62 +2059,75 @@ export default function SearchPageContent() {
           </div>
 
           <div className="flex items-center gap-1">
-             <Pagination>
-               <PaginationContent className="gap-1">
-                 <PaginationItem>
-                   <Button
-                     variant="outline"
-                     size="icon"
-                     className="h-8 w-8 rounded-[8px] border-[#E2E8F0] bg-[#FFFFFF] text-[#64748B] hover:text-[#111827] shadow-none disabled:opacity-50"
-                     onClick={(e) => { e.preventDefault(); table.previousPage(); }}
-                     disabled={!table.getCanPreviousPage()}
-                   >
-                     <ChevronLeft className="h-4 w-4" />
-                   </Button>
-                 </PaginationItem>
-                 
-                 {table.getPageOptions().slice(0, 5).map((pageIdx) => {
-                   const isActive = pageIdx === table.getState().pagination.pageIndex;
-                   return (
-                     <PaginationItem key={pageIdx}>
-                       <PaginationLink
-                         href="#"
-                         onClick={(e) => { e.preventDefault(); table.setPageIndex(pageIdx); }}
-                         className={`h-8 w-8 rounded-[8px] font-medium text-[13px] flex items-center justify-center border transition-colors ${
-                           isActive 
-                             ? "bg-[#F4511E] text-[#FFFFFF] border-[#F4511E] hover:bg-[#F4511E] hover:text-[#FFFFFF]" 
-                             : "bg-[#FFFFFF] text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC]"
-                         }`}
-                       >
-                         {pageIdx + 1}
-                       </PaginationLink>
-                     </PaginationItem>
-                   );
-                 })}
-                 
-                 {table.getPageCount() > 5 && (
-                   <PaginationItem>
-                     <PaginationEllipsis className="h-8 w-8 text-[#64748B]" />
-                   </PaginationItem>
-                 )}
+            <Pagination>
+              <PaginationContent className="gap-1">
+                <PaginationItem>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-[8px] border-[#E2E8F0] bg-[#FFFFFF] text-[#64748B] hover:text-[#111827] shadow-none disabled:opacity-50"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      table.previousPage();
+                    }}
+                    disabled={!table.getCanPreviousPage()}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </Button>
+                </PaginationItem>
 
-                 <PaginationItem>
-                   <Button
-                     variant="outline"
-                     size="icon"
-                     className="h-8 w-8 rounded-[8px] border-[#E2E8F0] bg-[#FFFFFF] text-[#64748B] hover:text-[#111827] shadow-none disabled:opacity-50"
-                     onClick={(e) => { e.preventDefault(); table.nextPage(); }}
-                     disabled={!table.getCanNextPage()}
-                   >
-                     <ChevronRight className="h-4 w-4" />
-                   </Button>
-                 </PaginationItem>
-               </PaginationContent>
-             </Pagination>
+                {table
+                  .getPageOptions()
+                  .slice(0, 5)
+                  .map((pageIdx) => {
+                    const isActive =
+                      pageIdx === table.getState().pagination.pageIndex;
+                    return (
+                      <PaginationItem key={pageIdx}>
+                        <PaginationLink
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            table.setPageIndex(pageIdx);
+                          }}
+                          className={`h-8 w-8 rounded-[8px] font-medium text-[13px] flex items-center justify-center border transition-colors ${
+                            isActive
+                              ? "bg-[#F4511E] text-[#FFFFFF] border-[#F4511E] hover:bg-[#F4511E] hover:text-[#FFFFFF]"
+                              : "bg-[#FFFFFF] text-[#334155] border-[#E2E8F0] hover:bg-[#F8FAFC]"
+                          }`}
+                        >
+                          {pageIdx + 1}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  })}
+
+                {table.getPageCount() > 5 && (
+                  <PaginationItem>
+                    <PaginationEllipsis className="h-8 w-8 text-[#64748B]" />
+                  </PaginationItem>
+                )}
+
+                <PaginationItem>
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    className="h-8 w-8 rounded-[8px] border-[#E2E8F0] bg-[#FFFFFF] text-[#64748B] hover:text-[#111827] shadow-none disabled:opacity-50"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      table.nextPage();
+                    }}
+                    disabled={!table.getCanNextPage()}
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           </div>
         </div>
       </Card>
-      
+
       {/* Add Dialog */}
       <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
         <DialogContent className="max-w-md rounded-[12px]">
@@ -1976,7 +2197,9 @@ export default function SearchPageContent() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel className="rounded-[8px]">Cancel</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-[8px]">
+              Cancel
+            </AlertDialogCancel>
             <AlertDialogAction
               className="bg-[#EF4444] text-[#FFFFFF] hover:bg-[#DC2626] rounded-[8px]"
               disabled={deleteMutation.isPending}
@@ -2016,7 +2239,10 @@ function DashboardSkeleton() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="border-[#E5E7EB] shadow-[0_1px_3px_rgba(15,23,42,0.04)] bg-[#FFFFFF] rounded-[12px]">
+          <Card
+            key={i}
+            className="border-[#E5E7EB] shadow-[0_1px_3px_rgba(15,23,42,0.04)] bg-[#FFFFFF] rounded-[12px]"
+          >
             <CardContent className="p-5">
               <div className="flex items-start gap-4">
                 <Skeleton className="h-12 w-12 rounded-[10px]" />
@@ -2072,17 +2298,27 @@ function DashboardSkeleton() {
                   <TableCell>
                     <Skeleton className="h-[40px] w-[120px] rounded-[10px]" />
                   </TableCell>
-                  <TableCell><Skeleton className="h-5 w-20 rounded-[7px]" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-5 w-20 rounded-[7px]" />
+                  </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
                       <Skeleton className="h-5 w-12 rounded-[7px]" />
                       <Skeleton className="h-5 w-12 rounded-[7px]" />
                     </div>
                   </TableCell>
-                  <TableCell><Skeleton className="h-4 w-20 rounded-md" /></TableCell>
-                  <TableCell><Skeleton className="h-6 w-24 rounded-[7px]" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-20 rounded-md" /></TableCell>
-                  <TableCell><Skeleton className="h-4 w-32 rounded-md" /></TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20 rounded-md" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-6 w-24 rounded-[7px]" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-20 rounded-md" />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton className="h-4 w-32 rounded-md" />
+                  </TableCell>
                   <TableCell className="text-right flex justify-end gap-2">
                     <Skeleton className="h-8 w-16 rounded-[8px]" />
                     <Skeleton className="h-8 w-8 rounded-[8px]" />
