@@ -809,7 +809,7 @@ function OrderSheet({
                   <span className="text-[12px] font-bold text-[#6B7280] w-4">{idx + 1}</span>
                   {item.imageUrl ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={item.imageUrl} alt={item.name} className="h-12 w-12 rounded-[10px] object-cover border border-[#E5E7EB]" />
+                    <img src={item.imageUrl} alt={item.name} width={48} height={48} className="h-12 w-12 rounded-[10px] object-cover border border-[#E5E7EB]" />
                   ) : (
                     <div className="h-12 w-12 rounded-[10px] bg-[#F3F4F6] flex items-center justify-center">
                       <ChefHat className="h-5 w-5 text-[#9CA3AF]" />

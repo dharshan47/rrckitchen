@@ -206,7 +206,19 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
 
   // Re-evaluate open/closed status immediately and every minute so the badge stays live
   useEffect(() => {
-    const computeStatus = () => setStatus(getKitchenStatus(kitchen.operatingHours ?? null));
+    const computeStatus = () => {
+      const newStatus = getKitchenStatus(kitchen.operatingHours ?? null);
+      setStatus((prev) => {
+        if (
+          prev.isOpen === newStatus.isOpen &&
+          prev.closeTime === newStatus.closeTime &&
+          prev.opensNextAt?.time === newStatus.opensNextAt?.time
+        ) {
+          return prev;
+        }
+        return newStatus;
+      });
+    };
     computeStatus();
     const timer = window.setInterval(computeStatus, 60_000);
     return () => window.clearInterval(timer);
@@ -608,7 +620,7 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
                         <span className="text-[#555555] ml-1 font-medium">({kitchen.totalReviews} Reviews)</span>
                       </>
                     ) : (
-                      <span className="text-[#777777] font-medium">New</span>
+                      <span className="text-[#595959] font-medium">New</span>
                     )}
                   </div>
                   <div className="w-px h-3.5 bg-[#E0E0E0] hidden md:block"></div>

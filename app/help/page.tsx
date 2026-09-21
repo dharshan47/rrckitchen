@@ -18,7 +18,8 @@ import {
   useHelpActiveTab,
   useHelpActions,
 } from "@/stores";
-import { LiveChatWidget } from "@/components/chat/live-chat-widget";
+import dynamic from "next/dynamic";
+const LiveChatWidget = dynamic(() => import("@/components/chat/live-chat-widget").then(mod => mod.LiveChatWidget), { ssr: false });
 import { useLiveChatStore } from "@/stores";
 
 const CATEGORIES = [

@@ -72,7 +72,7 @@ export function KitchensPageSkeleton() {
         
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-[12px] font-normal text-[#777777] mb-4">
+          <div className="flex items-center gap-2 text-[12px] font-normal text-[#595959] mb-4">
             <Skeleton className="h-[18px] w-12 rounded" />
             <Skeleton className="h-3 w-3 rounded-sm" />
             <Skeleton className="h-[18px] w-16 rounded" />

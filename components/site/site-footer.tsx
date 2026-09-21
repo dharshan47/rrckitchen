@@ -144,6 +144,8 @@ export function SiteFooter() {
               <label htmlFor="newsletter-email" className="sr-only">Enter your email address</label>
               <input
                 id="newsletter-email"
+                name="email"
+                autoComplete="email"
                 type="email"
                 placeholder="Enter your email"
                 className="flex-1 h-10 px-3 min-w-0 rounded bg-[#FFFFFF] text-[#111111] placeholder:text-[#9CA3AF] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-[#003015] focus-visible:ring-white"
@@ -152,7 +154,7 @@ export function SiteFooter() {
               />
               <button 
                 type="submit" 
-                className="h-10 px-6 bg-[#F04E00] text-[#FFFFFF] font-bold rounded hover:bg-[#FF5A00] transition-colors uppercase text-sm shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#003015]"
+                className="h-10 px-6 bg-[#c03a00] text-[#FFFFFF] font-bold rounded hover:bg-[#FF5A00] transition-colors uppercase text-sm shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#003015]"
                 aria-label="Subscribe to Newsletter"
               >
                 Subscribe

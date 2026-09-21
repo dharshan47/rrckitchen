@@ -1,7 +1,7 @@
 # Routing & Middleware Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [System Architecture](01-system-architecture.md), [Auth & Security](05-auth-security.md), [Roles & Permissions](16-roles-permissions.md)
 
 > **Note:** This app uses **no `middleware.ts`**. Route protection is split between a Next.js 16 **proxy file** (`proxy.ts`, edge/Node runtime, cookie-only checks) and **server-side guards** (`lib/auth-guards.ts`, full session validation, used by layouts/actions).
@@ -15,6 +15,7 @@
 | Route | Purpose | Auth Required |
 |-------|---------|---------------|
 | `/` | Home — featured kitchens, testimonials, search | No |
+| `/about-us` | About page with stats, mission, values | No |
 | `/kitchens` | Kitchen listing | No |
 | `/kitchens/[slug]` | Kitchen detail + menu (tabs: Menu / About / Info / Reviews) | No |
 | `/categories/[slug]` | Category landing (CMS content) | No |
@@ -22,10 +23,12 @@
 | `/menu/[kitchenSlug]` | Kitchen menu | No |
 | `/menu/[kitchenSlug]/[itemIdentifier]` | Menu item detail | No |
 | `/search` | Cross-kitchen search | No |
-| `/home-chefs` | Home chefs landing | No |
-| `/about-us`, `/contact`, `/help`, `/support` | Static/info pages | No |
-| `/policy/privacy-policy`, `/policy/terms-of-use` | Legal pages | No |
-| `/invite/[token]` | Referral landing | No |
+| `/home-chefs` | Home chefs landing page | No |
+| `/contact` | Contact page | No |
+| `/help` | Help center | No |
+| `/support` | Support page | No |
+| `/privacy-policy`, `/terms-of-use`, `/refund-policy`, `/shipping-policy` | Legal pages | No |
+| `/invite/[token]` | Admin invite acceptance | No |
 
 ### 1.2 Auth Routes
 

@@ -46,8 +46,19 @@ export function KitchenCard({
 
   // Re-evaluate open/closed status every minute so the badge stays live.
   useEffect(() => {
-    const computeStatus = () =>
-      setStatus(getKitchenStatus(kitchen.operatingHours ?? null));
+    const computeStatus = () => {
+      const newStatus = getKitchenStatus(kitchen.operatingHours ?? null);
+      setStatus((prev) => {
+        if (
+          prev.isOpen === newStatus.isOpen &&
+          prev.closeTime === newStatus.closeTime &&
+          prev.opensNextAt?.time === newStatus.opensNextAt?.time
+        ) {
+          return prev;
+        }
+        return newStatus;
+      });
+    };
     computeStatus();
     const timer = window.setInterval(computeStatus, 60_000);
     return () => window.clearInterval(timer);
@@ -281,7 +292,7 @@ export function KitchenCard({
                     )}
                   </>
                 ) : (
-                  <span className="text-[#777777]">New</span>
+                  <span className="text-[#595959]">New</span>
                 )}
               </div>
 
@@ -376,13 +387,13 @@ export function KitchenCard({
                     </span>
                     <Star className="h-3.5 w-3.5 fill-[#F44A01] text-[#F44A01] -mt-[1px]" />
                     {kitchen.totalReviews > 0 && (
-                      <span className="text-[#777777] font-medium text-[13px] ml-0.5">
+                      <span className="text-[#595959] font-medium text-[13px] ml-0.5">
                         ({kitchen.totalReviews})
                       </span>
                     )}
                   </>
                 ) : (
-                  <span className="text-[#777777] font-medium text-[13px]">
+                  <span className="text-[#595959] font-medium text-[13px]">
                     New
                   </span>
                 )}

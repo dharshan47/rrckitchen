@@ -1,7 +1,7 @@
 # System Architecture
 
 > **Level:** C4 Model — Context → Container → Component → Code
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [ADRs](02-architecture-decisions.md), [Data Model](03-data-model.md), [Performance](11-performance-scaling.md)
 
 ---

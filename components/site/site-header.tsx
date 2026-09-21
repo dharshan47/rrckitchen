@@ -22,11 +22,11 @@ import {
 
 function MobileNavItem({ href, icon, label, active = false, badge }: { href: string; icon: React.ReactNode; label: string; active?: boolean; badge?: number | string }) {
   return (
-    <Link href={href} className={cn("flex flex-col items-center justify-center gap-1 px-3 py-1.5 relative min-h-12 min-w-12 transition-colors", active ? "text-[#F04E00]" : "text-[#6B7280] hover:text-gray-900")}>
+    <Link href={href} className={cn("flex flex-col items-center justify-center gap-1 px-3 py-1.5 relative min-h-12 min-w-12 transition-colors", active ? "text-[#c03a00]" : "text-[#6B7280] hover:text-gray-900")}>
       {icon}
       <span className="text-[11px] font-medium tracking-wide mt-0.5 capitalize">{label}</span>
       {badge !== undefined && badge !== 0 && (
-        <span className="absolute top-1 right-2 h-4 min-w-4 flex items-center justify-center rounded-full bg-[#F04E00] p-0 px-1 text-[9px] font-bold text-white border border-white shadow-sm">{badge}</span>
+        <span className="absolute top-1 right-2 h-4 min-w-4 flex items-center justify-center rounded-full bg-[#c03a00] p-0 px-1 text-[9px] font-bold text-white border border-white shadow-sm">{badge}</span>
       )}
     </Link>
   );
@@ -54,7 +54,7 @@ export function SiteHeader() {
   const isHelpPage = pathname === "/help";
   const isSupportPage = pathname === "/support";
   const isCategoriesPage = pathname.startsWith("/categories");
-  const hideNav = isHelpPage || isSupportPage || isSearchPage;
+  const hideNav = isHelpPage || isSearchPage;
 
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -84,17 +84,17 @@ export function SiteHeader() {
               <span className="text-xs md:text-sm font-bold tracking-widest uppercase text-[#6B7280]">SECURE CHECKOUT</span>
             </div>
             <div className="flex items-center gap-4">
-              <Link href="/help" className="hidden md:flex items-center gap-1.5 text-xs font-bold text-[#6B7280] hover:text-[#F04E00] transition-colors">
+              <Link href="/help" className="hidden md:flex items-center gap-1.5 text-xs font-bold text-[#6B7280] hover:text-[#c03a00] transition-colors">
                 <HelpCircle className="h-4 w-4" />
                 Help
               </Link>
               {isLoggedIn ? (
-                <Link href="/account/profile" className="flex items-center gap-1.5 text-xs font-bold text-[#6B7280] hover:text-[#F04E00] transition-colors">
+                <Link href="/account/profile" className="flex items-center gap-1.5 text-xs font-bold text-[#6B7280] hover:text-[#c03a00] transition-colors">
                   <User className="h-5 w-5" />
                   <span className="hidden md:inline">Profile</span>
                 </Link>
               ) : (
-                <Link href="/login" className="flex items-center gap-1.5 text-xs font-bold text-[#6B7280] hover:text-[#F04E00] transition-colors">
+                <Link href="/login" className="flex items-center gap-1.5 text-xs font-bold text-[#6B7280] hover:text-[#c03a00] transition-colors">
                   <User className="h-5 w-5" />
                   <span className="hidden md:inline">Login</span>
                 </Link>
@@ -136,7 +136,7 @@ export function SiteHeader() {
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
-              <Link href="/login" className="flex items-center gap-1.5 rounded-full border border-[#E7E7E7] px-4 py-1.5 text-xs font-bold text-[#4B5563] hover:border-[#FFB18D] hover:text-[#F04E00] transition-colors">
+              <Link href="/login" className="flex items-center gap-1.5 rounded-full border border-[#E7E7E7] px-4 py-1.5 text-xs font-bold text-[#4B5563] hover:border-[#FFB18D] hover:text-[#c03a00] transition-colors">
                 <User className="h-4 w-4" />
                 Login
               </Link>
@@ -174,13 +174,13 @@ export function SiteHeader() {
                 {/* Search and Location */}
                 <div className="flex items-center gap-4 xl:gap-6 flex-1 max-w-4xl">
                   <button onClick={() => setLocationOpen(true)} className="flex items-center gap-2 text-left group hover:opacity-90 transition-opacity shrink-0 whitespace-nowrap">
-                    <div className="relative text-[#F04E00] flex items-center justify-center shrink-0">
+                    <div className="relative text-[#c03a00] flex items-center justify-center shrink-0">
                       <MapPin className="h-[26px] w-[26px]" strokeWidth={2.2} />
-                      <div className="absolute top-[7px] left-[50%] -translate-x-[50%] w-[5px] h-[5px] bg-[#F04E00] rounded-full"></div>
+                      <div className="absolute top-[7px] left-[50%] -translate-x-[50%] w-[5px] h-[5px] bg-[#c03a00] rounded-full"></div>
                     </div>
                     <div className="flex flex-col justify-center pt-0.5">
                       <span className="text-[12px] text-[#6B7280] font-medium leading-none mb-1">Deliver to</span>
-                      <div className="flex items-center gap-1 text-[#111111] group-hover:text-[#F04E00] transition-colors">
+                      <div className="flex items-center gap-1 text-[#111111] group-hover:text-[#c03a00] transition-colors">
                         <span className="text-[14px] font-bold truncate max-w-[200px] xl:max-w-[260px] leading-none">{mounted && deliveryAddress ? deliveryAddress : "Select Location"}</span>
                         <ChevronDown className="h-[15px] w-[15px]" strokeWidth={2.5} />
                       </div>
@@ -204,10 +204,10 @@ export function SiteHeader() {
                   {isLoggedIn ? (
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <button className="flex items-center gap-2 text-[14px] font-bold text-[#111111] hover:text-[#F04E00] transition-colors group outline-none focus:outline-none focus:ring-0 border-none bg-transparent">
-                          <User className="h-[20px] w-[20px] text-[#111111] group-hover:text-[#F04E00]" strokeWidth={2.2} />
+                        <button className="flex items-center gap-2 text-[14px] font-bold text-[#111111] hover:text-[#c03a00] transition-colors group outline-none focus:outline-none focus:ring-0 border-none bg-transparent">
+                          <User className="h-[20px] w-[20px] text-[#111111] group-hover:text-[#c03a00]" strokeWidth={2.2} />
                           <span>Hello, {session?.user?.name ? session.user.name.split(" ")[0] : "User"}</span>
-                          <ChevronDown className="h-4 w-4 text-[#111111] group-hover:text-[#F04E00]" strokeWidth={2.5} />
+                          <ChevronDown className="h-4 w-4 text-[#111111] group-hover:text-[#c03a00]" strokeWidth={2.5} />
                         </button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-48 font-medium">
@@ -218,8 +218,8 @@ export function SiteHeader() {
                       </DropdownMenuContent>
                     </DropdownMenu>
                   ) : (
-                    <Link href="/login" className="flex items-center gap-2.5 text-[14px] font-bold text-[#111111] hover:text-[#F04E00] transition-colors group">
-                      <User className="h-[20px] w-[20px] text-[#111111] group-hover:text-[#F04E00]" strokeWidth={2.2} />
+                    <Link href="/login" className="flex items-center gap-2.5 text-[14px] font-bold text-[#111111] hover:text-[#c03a00] transition-colors group">
+                      <User className="h-[20px] w-[20px] text-[#111111] group-hover:text-[#c03a00]" strokeWidth={2.2} />
                       <span>Login / Signup</span>
                     </Link>
                   )}
@@ -227,13 +227,13 @@ export function SiteHeader() {
                   <div className="h-5 w-[1px] bg-[#E7E7E7]"></div>
 
                   <Link href={cartHref} className="flex items-center justify-center relative group" aria-label="Cart">
-                    <ShoppingCart className="h-6 w-6 text-[#111111] group-hover:text-[#F04E00] transition-colors" strokeWidth={2} />
+                    <ShoppingCart className="h-6 w-6 text-[#111111] group-hover:text-[#c03a00] transition-colors" strokeWidth={2} />
                     {mounted && cartCount > 0 ? (
-                      <span className="absolute -top-1.5 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#F04E00] text-[10px] font-bold text-white px-1 shadow-sm">
+                      <span className="absolute -top-1.5 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#c03a00] text-[10px] font-bold text-white px-1 shadow-sm">
                         {cartCount}
                       </span>
                     ) : (
-                      <span className="absolute -top-1.5 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#F04E00] text-[10px] font-bold text-white px-1 shadow-sm">
+                      <span className="absolute -top-1.5 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#c03a00] text-[10px] font-bold text-white px-1 shadow-sm">
                         0
                       </span>
                     )}
@@ -249,12 +249,12 @@ export function SiteHeader() {
                     href={link.href}
                     className={cn(
                       "text-[12.5px] font-bold uppercase transition-colors relative pb-[4px]",
-                      pathname === link.href ? "text-[#F04E00]" : "text-[#111111] hover:text-[#F04E00]"
+                      pathname === link.href ? "text-[#B83A00]" : "text-[#111111] hover:text-[#B83A00]"
                     )}
                   >
                     {link.label}
                     {pathname === link.href && (
-                      <span className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-[#F04E00]" />
+                      <span className="absolute bottom-[-2px] left-0 w-full h-[2px] bg-[#B83A00]" />
                     )}
                   </Link>
                 ))}
@@ -271,7 +271,7 @@ export function SiteHeader() {
               {/* Logo Mobile */}
               {pathname === "/account/profile" ? (
                 <div className="flex items-center gap-3">
-                  <button onClick={() => window.dispatchEvent(new CustomEvent("toggle-profile-sidebar"))} className="flex items-center justify-center text-[#111111]">
+                  <button onClick={() => window.dispatchEvent(new CustomEvent("toggle-profile-sidebar"))} className="flex items-center justify-center text-[#111111]" aria-label="Open menu">
                     <Menu className="h-6 w-6" strokeWidth={2} />
                   </button>
                   <Link href="/" className="flex flex-col items-start leading-none group">
@@ -285,23 +285,23 @@ export function SiteHeader() {
               )}
 
               <div className="flex items-center gap-4 sm:gap-5 pr-1">
-                <button onClick={() => setLocationOpen(true)} className="flex items-center justify-center text-[#F04E00]">
-                  <MapPin className="h-[22px] w-[22px]" strokeWidth={2} />
+                <button onClick={() => setLocationOpen(true)} className="flex items-center justify-center text-[#c03a00]" aria-label="Set delivery location">
+                  <MapPin className="h-[22px] w-[22px]" strokeWidth={2} aria-hidden="true" />
                 </button>
-                <Link href="/search" className="flex items-center justify-center text-[#111111]">
-                  <Search className="h-[22px] w-[22px]" strokeWidth={2} />
+                <Link href="/search" className="flex items-center justify-center text-[#111111]" aria-label="Search meals and kitchens">
+                  <Search className="h-[22px] w-[22px]" strokeWidth={2} aria-hidden="true" />
                 </Link>
                 
 
 
-                <Link href={cartHref} className="flex items-center justify-center relative text-[#111111]">
-                  <ShoppingCart className="h-[22px] w-[22px]" strokeWidth={2} />
+                <Link href={cartHref} className="flex items-center justify-center relative text-[#111111]" aria-label={`Shopping cart, ${mounted ? cartCount : 0} items`}>
+                  <ShoppingCart className="h-[22px] w-[22px]" strokeWidth={2} aria-hidden="true" />
                   {mounted && cartCount > 0 ? (
-                    <span className="absolute -top-1.5 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#F04E00] text-[10px] font-bold text-white px-1 shadow-sm">
+                    <span className="absolute -top-1.5 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#c03a00] text-[10px] font-bold text-white px-1 shadow-sm">
                       {cartCount}
                     </span>
                   ) : (
-                    <span className="absolute -top-1.5 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#F04E00] text-[10px] font-bold text-white px-1 shadow-sm">
+                    <span className="absolute -top-1.5 -right-2 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-[#c03a00] text-[10px] font-bold text-white px-1 shadow-sm">
                       0
                     </span>
                   )}
@@ -321,12 +321,12 @@ export function SiteHeader() {
                   href={link.href}
                   className={cn(
                     "text-[11px] font-black tracking-widest uppercase transition-colors relative h-full flex items-center",
-                    pathname === link.href ? "text-[#F04E00]" : "text-[#003015]"
+                    pathname === link.href ? "text-[#B83A00]" : "text-[#003015]"
                   )}
                 >
                   {link.label}
                   {pathname === link.href && (
-                    <span className="absolute bottom-0 left-0 w-full h-[3px] bg-[#F04E00] rounded-t-sm" />
+                    <span className="absolute bottom-0 left-0 w-full h-[3px] bg-[#B83A00] rounded-t-sm" />
                   )}
                 </Link>
               ))}

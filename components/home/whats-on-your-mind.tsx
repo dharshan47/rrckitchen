@@ -106,10 +106,12 @@ export function WhatsOnYourMind() {
             <div className="relative w-full aspect-square rounded-full overflow-hidden transition-transform duration-300 group-hover/cat:scale-105 shadow-[0_4px_20px_rgba(0,0,0,0.08)] bg-white">
               <Image
                 src={cat.image}
-                alt={cat.name}
+                alt=""
+                role="presentation"
                 fill
                 sizes="(max-width: 640px) 85px, (max-width: 768px) 110px, 130px"
                 className="object-cover"
+                quality={60}
               />
             </div>
             <span className="text-[12px] sm:text-[14px] font-bold text-center text-black group-hover/cat:text-[#FF4B00] transition-colors leading-tight">

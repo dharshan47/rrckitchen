@@ -1,7 +1,7 @@
 # Performance & Scaling Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [System Architecture](01-system-architecture.md), [PWA & Offline](10-pwa-offline.md), [Observability](12-observability.md)
 
 ---

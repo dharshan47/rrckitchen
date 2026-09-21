@@ -8,7 +8,8 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLiveChatStore } from "@/stores";
-import { LiveChatWidget } from "@/components/chat/live-chat-widget";
+import dynamic from "next/dynamic";
+const LiveChatWidget = dynamic(() => import("@/components/chat/live-chat-widget").then(mod => mod.LiveChatWidget), { ssr: false });
 
 // Help Topics based on input.txt and screenshots
 const helpTopics = [

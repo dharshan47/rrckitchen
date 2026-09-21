@@ -119,7 +119,6 @@ export function AppDownloadBanner() {
                 fill
                 className="object-contain object-center drop-shadow-[0_8px_16px_rgba(0,0,0,0.5)] sm:drop-shadow-[0_16px_28px_rgba(0,0,0,0.55)]"
                 sizes="(max-width: 640px) 90px, (max-width: 768px) 135px, (max-width: 1024px) 155px, (max-width: 1280px) 185px, 220px"
-                priority
               />
             </div>
 

@@ -252,7 +252,7 @@ export function AcceptInviteForm({ token }: { token: string }) {
             <button 
               type="button"
               onClick={toggleShowPassword}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#777777] hover:text-[#333333] transition-colors"
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#595959] hover:text-[#333333] transition-colors"
             >
               {showPassword ? <EyeOff className="h-5 w-5" strokeWidth={2} /> : <Eye className="h-5 w-5" strokeWidth={2} />}
             </button>
@@ -262,8 +262,8 @@ export function AcceptInviteForm({ token }: { token: string }) {
           {/* Password Strength Indicator */}
           <div className="mt-3">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-[13px] font-medium text-[#777777]">Password strength:</span>
-              <span className="text-[13px] font-medium text-[#777777]">Use 8+ characters</span>
+              <span className="text-[13px] font-medium text-[#595959]">Password strength:</span>
+              <span className="text-[13px] font-medium text-[#595959]">Use 8+ characters</span>
             </div>
             <div className="flex gap-1.5 h-[3px]">
               <div className={cn("flex-1 rounded-full transition-colors duration-500", strengthLevel >= 1 ? "bg-[#FD4F03]" : "bg-[#E8E8E8]")}></div>
@@ -301,7 +301,7 @@ export function AcceptInviteForm({ token }: { token: string }) {
       </form>
 
       {/* Security notice below button */}
-      <div className="mt-6 flex items-center justify-center gap-2 text-[12px] text-[#777777] mb-8">
+      <div className="mt-6 flex items-center justify-center gap-2 text-[12px] text-[#595959] mb-8">
         <Lock className="w-[14px] h-[14px] text-[#22C55E]" strokeWidth={2} />
         <span>Invitation secured with encrypted verification.</span>
       </div>
@@ -314,7 +314,7 @@ export function AcceptInviteForm({ token }: { token: string }) {
           <ShieldCheck className="w-6 h-6 text-[#22C55E]" strokeWidth={1.5} />
           <div>
             <h5 className="text-[12px] sm:text-[11px] font-bold text-[#111111] mb-[1px]">Secure Access</h5>
-            <p className="text-[10px] sm:text-[9px] text-[#777777] leading-snug">Only invited users<br className="hidden sm:block"/>can create accounts</p>
+            <p className="text-[10px] sm:text-[9px] text-[#595959] leading-snug">Only invited users<br className="hidden sm:block"/>can create accounts</p>
           </div>
         </div>
         
@@ -326,7 +326,7 @@ export function AcceptInviteForm({ token }: { token: string }) {
           </div>
           <div>
             <h5 className="text-[12px] sm:text-[11px] font-bold text-[#111111] mb-[1px]">Encrypted</h5>
-            <p className="text-[10px] sm:text-[9px] text-[#777777] leading-snug">Your data is protected<br className="hidden sm:block"/>with encryption</p>
+            <p className="text-[10px] sm:text-[9px] text-[#595959] leading-snug">Your data is protected<br className="hidden sm:block"/>with encryption</p>
           </div>
         </div>
 
@@ -338,7 +338,7 @@ export function AcceptInviteForm({ token }: { token: string }) {
           </div>
           <div>
             <h5 className="text-[12px] sm:text-[11px] font-bold text-[#111111] mb-[1px]">Admin Only</h5>
-            <p className="text-[10px] sm:text-[9px] text-[#777777] leading-snug">Full access to admin<br className="hidden sm:block"/>dashboard</p>
+            <p className="text-[10px] sm:text-[9px] text-[#595959] leading-snug">Full access to admin<br className="hidden sm:block"/>dashboard</p>
           </div>
         </div>
       </div>

@@ -132,19 +132,19 @@ export default function AdminTwoFactorSetupPage() {
           {/* Step 2 */}
           <div className="flex flex-col items-center gap-2 z-10 bg-white px-3">
             <div className={cn("w-[32px] h-[32px] sm:w-[36px] sm:h-[36px] rounded-full flex items-center justify-center text-[15px] font-medium transition-colors border", 
-              activeStep === 'codes' ? "bg-[#FD4F03] border-[#FD4F03] text-white" : "bg-white border-[#E8E8E8] text-[#777777]")}>
+              activeStep === 'codes' ? "bg-[#FD4F03] border-[#FD4F03] text-white" : "bg-white border-[#E8E8E8] text-[#595959]")}>
               2
             </div>
-            <span className={cn("text-[12px] sm:text-[13px] font-medium whitespace-nowrap", activeStep === 'codes' ? "text-[#111111]" : "text-[#777777]")}>Verify Code</span>
+            <span className={cn("text-[12px] sm:text-[13px] font-medium whitespace-nowrap", activeStep === 'codes' ? "text-[#111111]" : "text-[#595959]")}>Verify Code</span>
           </div>
 
           {/* Step 3 */}
           <div className="flex flex-col items-center gap-2 z-10 bg-white px-3">
             <div className={cn("w-[32px] h-[32px] sm:w-[36px] sm:h-[36px] rounded-full flex items-center justify-center text-[15px] font-medium transition-colors border", 
-              activeStep === 'codes' ? "bg-[#FD4F03] border-[#FD4F03] text-white" : "bg-white border-[#E8E8E8] text-[#777777]")}>
+              activeStep === 'codes' ? "bg-[#FD4F03] border-[#FD4F03] text-white" : "bg-white border-[#E8E8E8] text-[#595959]")}>
               3
             </div>
-            <span className={cn("text-[12px] sm:text-[13px] font-medium whitespace-nowrap", activeStep === 'codes' ? "text-[#111111]" : "text-[#777777]")}>Backup Codes</span>
+            <span className={cn("text-[12px] sm:text-[13px] font-medium whitespace-nowrap", activeStep === 'codes' ? "text-[#111111]" : "text-[#595959]")}>Backup Codes</span>
           </div>
         </div>
 
@@ -204,8 +204,8 @@ export default function AdminTwoFactorSetupPage() {
                 </Button>
 
                 {/* Footer Security Text inside Verify box */}
-                <div className="mt-5 flex items-center justify-center gap-2 text-[12px] text-[#777777]">
-                  <ShieldCheck className="w-[14px] h-[14px] text-[#777777]" strokeWidth={2} />
+                <div className="mt-5 flex items-center justify-center gap-2 text-[12px] text-[#595959]">
+                  <ShieldCheck className="w-[14px] h-[14px] text-[#595959]" strokeWidth={2} />
                   <span>Your account will be protected with two-factor authentication.</span>
                 </div>
               </form>
@@ -253,8 +253,8 @@ export default function AdminTwoFactorSetupPage() {
                   {!enableMutation.isPending && <ArrowRight className="ml-2 w-5 h-5" />}
                 </Button>
                 
-                <div className="mt-5 flex items-center justify-center gap-2 text-[12px] text-[#777777]">
-                  <ShieldCheck className="w-[14px] h-[14px] text-[#777777]" strokeWidth={2} />
+                <div className="mt-5 flex items-center justify-center gap-2 text-[12px] text-[#595959]">
+                  <ShieldCheck className="w-[14px] h-[14px] text-[#595959]" strokeWidth={2} />
                   <span>Your account will be protected with two-factor authentication.</span>
                 </div>
               </form>
@@ -325,8 +325,8 @@ export default function AdminTwoFactorSetupPage() {
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
               
-              <div className="mt-5 flex items-center justify-center gap-2 text-[12px] text-[#777777]">
-                <ShieldCheck className="w-[14px] h-[14px] text-[#777777]" strokeWidth={2} />
+              <div className="mt-5 flex items-center justify-center gap-2 text-[12px] text-[#595959]">
+                <ShieldCheck className="w-[14px] h-[14px] text-[#595959]" strokeWidth={2} />
                 <span>Your account is now protected with two-factor authentication.</span>
               </div>
             </div>

@@ -33,7 +33,7 @@ import {
   Loader2, Tag, Percent, ChevronRight, ChevronDown,
   MapPin, Clock, Lock, ShieldCheck, Info,
   Home, Briefcase,
-  Check, Calendar as CalendarIcon, X, Edit3, Banknote
+  Check, Calendar as CalendarIcon, X, Banknote
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -223,7 +223,7 @@ const PriceBreakdown = memo(function PriceBreakdown({
 });
 
 export function CartContent() {
-  const { cart, updateQuantity, removeFromCart, clearCart, total } = useOptimisticCart();
+  const { cart, updateQuantity, removeFromCart, total } = useOptimisticCart();
   const { initiateCheckout, isProcessing, paymentResult, resetPayment } = useRazorpay();
   const { data: session, isPending } = useSession();
   const deliveryAddress = useMenuDeliveryAddress();
@@ -460,9 +460,6 @@ export function CartContent() {
                 <h1 className="text-[20px] font-bold text-[#171717]">
                   Your Cart ({itemCounts} Items)
                 </h1>
-                <button onClick={clearCart} className="md:hidden flex items-center gap-1.5 text-[#FE4D02] text-[13px] font-bold">
-                  Edit Cart <Edit3 className="h-3.5 w-3.5" />
-                </button>
               </div>
 
               {/* Cart items — single white card with dividers */}
@@ -616,7 +613,7 @@ export function CartContent() {
                     </button>
                   </PopoverTrigger>
                   <PopoverContent align="start" className="w-64 p-2 rounded-[7px] border-[#DFDFDF]">
-                    <p className="text-[12px] font-bold text-[#777777] px-3 pt-2 pb-1">Delivery Time</p>
+                    <p className="text-[12px] font-bold text-[#595959] px-3 pt-2 pb-1">Delivery Time</p>
                     {timeSlotOptions.length === 0 ? (
                       <p className="text-[13px] text-[#999999] font-medium px-3 py-3">No time slots available</p>
                     ) : (
@@ -682,7 +679,7 @@ export function CartContent() {
                     onChange={(e) => setCouponInput(e.target.value)}
                     placeholder="Enter coupon code"
                     disabled={applyCouponMutation.isPending || !!appliedCoupon}
-                    className="flex-1 min-w-0 border border-[#DEDEDE] rounded-[7px] px-4 py-3 text-[14px] text-[#222222] placeholder-[#777777] focus:outline-none focus:border-[#FE4D02] disabled:opacity-60"
+                    className="flex-1 min-w-0 border border-[#DEDEDE] rounded-[7px] px-4 py-3 text-[14px] text-[#222222] placeholder-[#595959] focus:outline-none focus:border-[#FE4D02] disabled:opacity-60"
                   />
                   <button
                     type="submit"
@@ -710,7 +707,7 @@ export function CartContent() {
                 <h2 className="text-[16px] font-bold text-[#171717] mb-4">Available Offers</h2>
                 <div className="space-y-4">
                   {availableCoupons.length === 0 ? (
-                    <p className="text-[13px] text-[#777777] text-center py-4">No offers available right now</p>
+                    <p className="text-[13px] text-[#595959] text-center py-4">No offers available right now</p>
                   ) : (
                     availableCoupons.map((offer) => (
                       <div key={offer.code} className="flex items-start gap-3">
@@ -721,7 +718,7 @@ export function CartContent() {
                           <p className="text-[13px] font-bold text-[#222222] leading-snug">{offer.description}</p>
                           <p className="text-[12px] font-bold text-[#222222] mt-0.5">{offer.code}</p>
                         </div>
-                        <span className="text-[12px] font-bold text-[#777777] shrink-0 mt-0.5">T&amp;C</span>
+                        <span className="text-[12px] font-bold text-[#595959] shrink-0 mt-0.5">T&amp;C</span>
                       </div>
                     ))
                   )}

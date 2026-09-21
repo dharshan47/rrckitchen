@@ -1,7 +1,7 @@
 # API Design & Contracts
 
 > **Status:** Active
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [Data Model](03-data-model.md), [System Architecture](01-system-architecture.md), [Payment Architecture](08-payment-system.md)
 
 ---

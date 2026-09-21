@@ -13,7 +13,10 @@ import { toast } from "sonner"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import EmojiPicker, { Theme, EmojiStyle } from "emoji-picker-react"
+import dynamic from "next/dynamic"
+
+const EmojiPicker = dynamic(() => import("emoji-picker-react"), { ssr: false })
+import { Theme, EmojiStyle } from "emoji-picker-react"
 
 const DEFAULT_QUICK_REPLIES = ["Track my order", "Report an issue", "Payment help"]
 
@@ -171,17 +174,15 @@ export function LiveChatWidget() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 bg-[#FEFEFE] space-y-4 sm:min-h-[350px] sm:max-h-[400px]">
-        {/* Welcome Message (Static for now if empty) */}
-        {messages.length === 0 && (
-          <div className="flex items-start gap-2">
-            <Image src="https://api.dicebear.com/7.x/avataaars/svg?seed=Support1" alt="Support" width={32} height={32} className="w-8 h-8 rounded-full bg-white shadow-sm" />
-            <div className="bg-[#F5F7F6] text-[#1F2937] p-3 rounded-2xl rounded-tl-none max-w-[85%] text-sm">
-              <p>Hello! 👋</p>
-              <p className="mt-1">Welcome to RRC Kitchen Support. How can we assist you today?</p>
-              <span className="text-[10px] text-[#94A3B8] mt-1 block">{format(new Date(), "hh:mm a")}</span>
-            </div>
+        {/* Welcome Message (Static) */}
+        <div className="flex items-start gap-2">
+          <Image src="https://api.dicebear.com/7.x/avataaars/svg?seed=Support1" alt="Support" width={32} height={32} className="w-8 h-8 rounded-full bg-white shadow-sm" />
+          <div className="bg-[#F5F7F6] text-[#1F2937] p-3 rounded-2xl rounded-tl-none max-w-[85%] text-sm">
+            <p>Hello! 👋</p>
+            <p className="mt-1">Welcome to RRC Kitchen Support. How can we assist you today?</p>
+            <span className="text-[10px] text-[#94A3B8] mt-1 block">{format(new Date(), "hh:mm a")}</span>
           </div>
-        )}
+        </div>
 
         {messages.map((msg: LiveChatMessage) => {
           const isMe = sessionData ? msg.senderId === (sessionData.userId || sessionData.guestId) : true;
@@ -230,6 +231,10 @@ export function LiveChatWidget() {
       <div className="p-3 bg-white border-t border-border flex items-center gap-2">
         <div className="flex-1 flex items-center border border-[#E5E7EB] rounded-full px-3 py-1 bg-white ">
           <Input
+            id="chat-message-input"
+            name="chat-message"
+            autoComplete="off"
+            aria-label="Chat message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}

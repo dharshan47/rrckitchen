@@ -1,7 +1,7 @@
 # RRC Kitchen — Architecture Documentation
 
-> **Version:** 1.1.0
-> **Last Updated:** 2026-08-05
+> **Version:** 1.2.0
+> **Last Updated:** 2026-09-20
 > **Repository:** [github.com/dharshan47/rrckitchen](https://github.com/dharshan47/rrckitchen)
 
 ---
@@ -47,6 +47,11 @@ RRC Kitchen is a full-stack food ordering platform connecting customers with loc
 | 15 | [Routing & Middleware](15-routing-middleware.md) | Route map, middleware chain, guard composition, layout architecture | Frontend |
 | 16 | [Roles & Permissions](16-roles-permissions.md) | RBAC model, permission bitfield design, audit trail, admin scoping | All engineers |
 | 17 | [Cravings Popup](17-cravings-popup.md) | Cross-sell rules (schema, actions, store), admin UI, customer popup + Ably events | All engineers |
+| 18 | [Admin Dashboard](18-admin-dashboard.md) | Admin dashboard architecture, 16 stores, permissions matrix, security | All engineers |
+| 19 | [Production Readiness](19-production-readiness.md) | Comprehensive production audit, implementation status, launch checklist, enterprise comparison | All engineers, Leadership |
+| 20 | [Deployment Options](20-deployment-options.md) | Vercel vs AWS ECS vs Kubernetes vs Cloud Run, cost comparison, IaC examples, migration path | DevOps, Leadership |
+| 21 | [Enterprise Launch Checklist](21-enterprise-launch-checklist.md) | Production-grade launch checklist, P0/P1/P2 priorities, 10-day timeline, success criteria | All engineers, Leadership |
+| — | [Dependencies & Replacements](dependencies-and-replacements.md) | Service replacement guide, integration files, API keys | DevOps, Backend |
 
 ---
 

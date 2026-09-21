@@ -1,7 +1,7 @@
 # PWA & Offline Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [System Architecture](01-system-architecture.md), [Performance](11-performance-scaling.md), [State Management](06-state-data-flow.md)
 
 ---
@@ -255,6 +255,196 @@ interface PushPayload {
 | **Images** | Cloudinary CDN | Cached images (7 days) | Show cached |
 | **Auth (login)** | Full | Disabled | Show cached session |
 | **API responses** | Fresh | Cached (if previously fetched) | Network-first |
+
+---
+
+## 6. PWA Install Components (Added September 2026)
+
+### 6.1 InstallPrompt Component
+
+**Location:** `components/patterns/install-prompt.tsx`
+
+**Purpose:** Native PWA installation prompt that guides users to install the app on their devices.
+
+**Features:**
+- Detects `beforeinstallprompt` event (Chrome, Edge, Samsung Internet)
+- Shows platform-specific instructions (iOS Safari, Android Chrome, Desktop)
+- Dismissable with localStorage persistence
+- Auto-hides after successful installation
+- Tracks installation analytics
+
+**Detection Logic:**
+```typescript
+useEffect(() => {
+  const handler = (e: BeforeInstallPromptEvent) => {
+    e.preventDefault();
+    setDeferredPrompt(e);
+    setShowPrompt(true);
+  };
+  window.addEventListener('beforeinstallprompt', handler);
+  return () => window.removeEventListener('beforeinstallprompt', handler);
+}, []);
+
+const handleInstall = async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  if (outcome === 'accepted') {
+    trackInstallEvent('accepted');
+    setShowPrompt(false);
+  }
+};
+```
+
+**Platform-Specific Instructions:**
+- **iOS Safari**: "Tap Share → Add to Home Screen"
+- **Android Chrome**: "Use the browser menu → Add to Home Screen"  
+- **Desktop Chrome**: "Click the install icon in the address bar"
+- **Samsung Internet**: "Use the menu → Add page to Home screens"
+
+**Dismissal Storage:**
+```typescript
+const DISMISS_KEY = 'pwa-install-dismissed';
+const DISMISS_DURATION = 7 * 24 * 60 * 60 * 1000; // 7 days
+
+const handleDismiss = () => {
+  localStorage.setItem(DISMISS_KEY, Date.now().toString());
+  setShowPrompt(false);
+};
+```
+
+### 6.2 AppDownloadBanner Component
+
+**Location:** `components/home/app-download-banner.tsx`
+
+**Purpose:** Promotes PWA installation with QR code scanning and app store links.
+
+**Features:**
+- QR code generation for quick mobile installation
+- Platform detection (iOS/Android/Desktop)
+- Custom imagery and branding
+- Dismissable state
+- Tracks installation events
+- Links to app stores where applicable
+
+**Layout:**
+```tsx
+<div className="bg-white rounded-xl shadow-lg p-6">
+  <div className="flex flex-col md:flex-row items-center gap-8">
+    <div className="flex-1">
+      <h3 className="text-2xl font-bold mb-4">Get the RRC Kitchen App</h3>
+      <p className="text-gray-600 mb-6">
+        Order faster, track deliveries in real-time, and get exclusive offers.
+      </p>
+      
+      {/* Platform-specific CTA */}
+      {platform === 'ios' && (
+        <div className="flex gap-4">
+          <a href={APP_STORE_URL} className="inline-flex items-center">
+            <AppleLogo /> Download on App Store
+          </a>
+        </div>
+      )}
+      
+      {platform === 'android' && (
+        <div className="flex gap-4">
+          <a href={PLAY_STORE_URL} className="inline-flex items-center">
+            <GooglePlayLogo /> Get it on Google Play
+          </a>
+        </div>
+      )}
+    </div>
+    
+    <div className="flex-shrink-0">
+      <QRCode value={INSTALL_URL} size={200} />
+      <p className="text-center mt-4 text-sm text-gray-500">
+        Scan to install
+      </p>
+    </div>
+  </div>
+</div>
+```
+
+**Platform Detection:**
+```typescript
+const getPlatform = (): 'ios' | 'android' | 'desktop' => {
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+  
+  if (/android/i.test(userAgent)) return 'android';
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) return 'ios';
+  return 'desktop';
+};
+```
+
+### 6.3 Installation Flow
+
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant B as AppDownloadBanner
+    participant QR as QR Code
+    participant SW as Service Worker
+    participant A as App Store
+
+    U->>B: Views home page
+    B->>B: Detects platform
+    alt Desktop
+        B->>U: Shows install prompt
+        U->>B: Clicks install
+        B->>SW: Triggers beforeinstallprompt
+        SW-->>U: Browser install dialog
+    else Mobile
+        B->>QR: Generates QR code
+        U->>QR: Scans with camera
+        QR-->>U: Opens install URL
+        U->>A: Redirects to app store
+        A-->>U: Install confirmation
+    end
+```
+
+### 6.4 Install Analytics
+
+```typescript
+interface InstallEvent {
+  platform: 'ios' | 'android' | 'desktop';
+  source: 'banner' | 'prompt' | 'qr-scan';
+  outcome: 'accepted' | 'dismissed' | 'redirected';
+  timestamp: number;
+}
+
+const trackInstallEvent = (event: InstallEvent) => {
+  // Send to analytics (e.g., Google Analytics, custom endpoint)
+  if (typeof gtag === 'function') {
+    gtag('event', 'pwa_install', {
+      event_category: 'engagement',
+      event_label: `${event.platform}_${event.source}`,
+      value: event.outcome === 'accepted' ? 1 : 0,
+    });
+  }
+};
+```
+
+---
+
+## 7. Updated Offline Behavior Matrix
+
+| Feature | Online | Offline | Partial Connectivity |
+|---------|--------|---------|---------------------|
+| **Home page** | SSR (fresh) | Cached `/` (from `rrc-dynamic-v1`/precache) | Network-first |
+| **Kitchen menus** | Fresh from server | Cached page | Show cached, refetch |
+| **Item detail** | Fresh from server | Cached page | Show cached, refetch |
+| **Search** | Server-side search | Cached page | Show cached, refetch |
+| **Cart** | Full functionality | Full functionality (localStorage) | Full functionality |
+| **Add to cart** | Optimistic + server sync | Optimistic (pending until online) | Optimistic |
+| **Checkout** | Full | Disabled (no network) | Show "retry" state |
+| **Order tracking** | Real-time (Ably) | Cached status (last known) | Polling fallback |
+| **Reviews** | Submit to server | Disabled | Disabled |
+| **Profile** | Fresh | Cached (show stale) | Stale-while-revalidate |
+| **Images** | Cloudinary CDN | Cached images (7 days) | Show cached |
+| **Auth (login)** | Full | Disabled | Show cached session |
+| **API responses** | Fresh | Cached (if previously fetched) | Network-first |
+| **PWA Install** | Full (banner + prompt) | Cached banner (static) | Cached banner |
+| **QR Code Scan** | Full (scans to install URL) | N/A (static QR) | N/A (static QR) |
 
 ---
 

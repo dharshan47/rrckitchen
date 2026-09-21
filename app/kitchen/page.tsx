@@ -97,7 +97,7 @@ export default async function KitchenPage() {
                       <ShieldCheck className="h-6 w-6 text-[#006F3D]" strokeWidth={2} />
                       <p className="font-extrabold text-[#111111] text-[13px] sm:text-[14px] leading-tight">100% Trusted</p>
                     </div>
-                    <p className="text-[#777777] text-[12px] leading-relaxed">Loved by thousands<br/>of families</p>
+                    <p className="text-[#595959] text-[12px] leading-relaxed">Loved by thousands<br/>of families</p>
                   </div>
                   
                   <div className="flex flex-col items-start gap-1">
@@ -105,7 +105,7 @@ export default async function KitchenPage() {
                       <TrendingUp className="h-6 w-6 text-[#006F3D]" strokeWidth={2} />
                       <p className="font-extrabold text-[#111111] text-[13px] sm:text-[14px] leading-tight">Grow Your<br/>Business</p>
                     </div>
-                    <p className="text-[#777777] text-[12px] leading-relaxed mt-1">Increase your<br/>income</p>
+                    <p className="text-[#595959] text-[12px] leading-relaxed mt-1">Increase your<br/>income</p>
                   </div>
                   
                   <div className="flex flex-col items-start gap-1">
@@ -113,7 +113,7 @@ export default async function KitchenPage() {
                       <ClipboardList className="h-6 w-6 text-[#006F3D]" strokeWidth={2} />
                       <p className="font-extrabold text-[#111111] text-[13px] sm:text-[14px] leading-tight">Be Your<br/>Own Boss</p>
                     </div>
-                    <p className="text-[#777777] text-[12px] leading-relaxed mt-1">Work on your<br/>own schedule</p>
+                    <p className="text-[#595959] text-[12px] leading-relaxed mt-1">Work on your<br/>own schedule</p>
                   </div>
                 </div>
 
@@ -215,7 +215,7 @@ export default async function KitchenPage() {
                     </div>
                     <span className="text-[#FD4F03] font-bold text-[13px] lg:text-[14px] mb-1.5 lg:mb-2 tracking-wide">{step.num}</span>
                     <h3 className="text-base lg:text-[18px] font-extrabold text-[#111111] mb-1.5 lg:mb-2">{step.title}</h3>
-                    <p className="text-[#777777] text-[13px] lg:text-[14px] px-2 sm:px-6 lg:px-4 leading-[1.6]">{step.desc}</p>
+                    <p className="text-[#595959] text-[13px] lg:text-[14px] px-2 sm:px-6 lg:px-4 leading-[1.6]">{step.desc}</p>
                   </div>
                 ))}
               </div>
@@ -288,7 +288,7 @@ export default async function KitchenPage() {
                       </div>
                       <div>
                         <p className="text-[13px] sm:text-[15px] font-bold text-[#111111] mb-0.5 sm:mb-1">Flexible Time</p>
-                        <p className="text-[11px] sm:text-[12px] text-[#777777]">Work at your convenience</p>
+                        <p className="text-[11px] sm:text-[12px] text-[#595959]">Work at your convenience</p>
                       </div>
                     </div>
                   </div>
@@ -307,7 +307,7 @@ export default async function KitchenPage() {
                         </div>
                         <div>
                           <p className="text-[13px] sm:text-[15px] font-bold text-[#111111] mb-0.5 sm:mb-1">Grow Your Income</p>
-                          <p className="text-[11px] sm:text-[12px] text-[#777777]">Earn on every order</p>
+                          <p className="text-[11px] sm:text-[12px] text-[#595959]">Earn on every order</p>
                         </div>
                       </div>
                     </div>
@@ -324,7 +324,7 @@ export default async function KitchenPage() {
                         </div>
                         <div>
                           <p className="text-[13px] sm:text-[15px] font-bold text-[#111111] mb-0.5 sm:mb-1">Be Your Own Boss</p>
-                          <p className="text-[11px] sm:text-[12px] text-[#777777]">Build your brand</p>
+                          <p className="text-[11px] sm:text-[12px] text-[#595959]">Build your brand</p>
                         </div>
                       </div>
                     </div>
@@ -385,7 +385,7 @@ export default async function KitchenPage() {
                <Button asChild size="lg" className="bg-[#FD4F03] hover:bg-[#E94700] text-[#FFFFFF] rounded-xl px-12 py-7 text-[16px] lg:text-[17px] font-bold shadow-[0_6px_20px_rgba(253,79,3,0.3)] w-full sm:w-auto mb-3 lg:mb-4 transition-transform hover:scale-[1.02]">
                  <Link href={isLoggedIn ? "/kitchen/dashboard" : "/kitchen/signup"}>Join as a Home Chef</Link>
                </Button>
-               <p className="text-[13px] sm:text-[14px] text-[#777777] font-medium">It&apos;s free and only takes a few minutes!</p>
+               <p className="text-[13px] sm:text-[14px] text-[#595959] font-medium">It&apos;s free and only takes a few minutes!</p>
             </div>
 
             {/* Far Right Image (Leaf) */}

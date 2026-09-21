@@ -1766,7 +1766,7 @@ function Editor({ contentId, onCancel }: EditorProps) {
                                 </>
                               )}
                             </div>
-                            <p className="text-[11px] text-[#777777] font-medium line-clamp-2 leading-[1.6]">
+                            <p className="text-[11px] text-[#595959] font-medium line-clamp-2 leading-[1.6]">
                               Delicious freshly prepared{" "}
                               {item.name.toLowerCase()} with traditional spices.
                             </p>

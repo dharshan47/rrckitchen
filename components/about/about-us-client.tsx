@@ -36,7 +36,7 @@ export function AboutUsClient({ stats }: { stats?: AboutUsStats }) {
 
           <div className="max-w-xl">
             <h1 className="text-[32px] md:text-[56px] font-bold text-[#003015] leading-[1.1] mb-4 lg:mb-5 tracking-tight">
-              About <span className="text-[#F04E00]">RRC Kitchen</span>
+              About <span className="text-[#c03a00]">RRC Kitchen</span>
             </h1>
             <p className="text-[16px] md:text-[22px] font-bold text-[#111111] leading-snug mb-4 lg:mb-5 max-w-lg">
               A platform that celebrates the love, tradition, and flavors of homemade food.
@@ -68,7 +68,7 @@ export function AboutUsClient({ stats }: { stats?: AboutUsStats }) {
           {/* Stats */}
           <div className="flex-[2.5] bg-[#FFF7F1] rounded-[16px] border border-[#FFE5D7] p-6 lg:p-8 grid grid-cols-2 lg:flex items-center justify-between gap-y-8 gap-x-4 lg:gap-y-0 shadow-[0_2px_8px_rgba(0,0,0,0.05)]">
             <div className="flex items-center gap-4">
-              <ChefHat className="w-10 h-10 text-[#F04E00] shrink-0" strokeWidth={1.5} />
+              <ChefHat className="w-10 h-10 text-[#c03a00] shrink-0" strokeWidth={1.5} />
               <div>
                 <h3 className="text-[20px] lg:text-[24px] font-bold text-[#111111] leading-none mb-1">{formatNumber(stats?.chefsCount)}+</h3>
                 <p className="text-[13px] text-[#4B5563] font-medium">Home Chefs</p>
@@ -84,7 +84,7 @@ export function AboutUsClient({ stats }: { stats?: AboutUsStats }) {
             </div>
 
             <div className="flex items-center gap-4">
-              <Package className="w-10 h-10 text-[#F04E00] shrink-0" strokeWidth={1.5} />
+              <Package className="w-10 h-10 text-[#c03a00] shrink-0" strokeWidth={1.5} />
               <div>
                 <h3 className="text-[20px] lg:text-[24px] font-bold text-[#111111] leading-none mb-1">{formatNumber(stats?.ordersCount)}+</h3>
                 <p className="text-[13px] text-[#4B5563] font-medium">Orders Delivered</p>
@@ -274,16 +274,23 @@ export function AboutUsClient({ stats }: { stats?: AboutUsStats }) {
                     <Image src={step.img} alt={step.title} width={100} height={100} className={cn("object-contain", step.imageClassName)} />
                   </div>
                   
-                  <h4 className={`text-[15px] font-bold mb-3 leading-tight ${step.color === 'green' ? 'text-[#0A6831]' : 'text-[#BE5A10]'}`}>
+                  <h3 className={`text-[15px] font-bold mb-3 leading-tight ${step.color === 'green' ? 'text-[#0A6831]' : 'text-[#BE5A10]'}`}>
                     {step.title.split(' ').map((word, i, words) => (
                       <React.Fragment key={i}>
                         {word}
                         {i < words.length - 1 && (
-                            words.length === 2 || (words.length === 3 && i === 1) ? <br className="hidden lg:block"/> : ' '
+                            words.length === 2 || (words.length === 3 && i === 1) ? (
+                              <>
+                                <span className="lg:hidden"> </span>
+                                <br className="hidden lg:block" />
+                              </>
+                            ) : (
+                              ' '
+                            )
                         )}
                       </React.Fragment>
                     ))}
-                  </h4>
+                  </h3>
                   
                   <div className={`w-[46px] h-1 rounded-full mb-3 ${step.color === 'green' ? 'bg-[#0A6831]' : 'bg-[#F8680A]'}`} />
                   
@@ -323,7 +330,7 @@ export function AboutUsClient({ stats }: { stats?: AboutUsStats }) {
                  <Image src="/home/carrier.webp" alt="Reusable Tiffin" width={64} height={64} className="object-contain drop-shadow-sm" />
               </div>
               <div className="pt-1">
-                <h4 className="text-[16px] md:text-[18px] font-bold text-[#0A6831] mb-2 leading-tight">Reusable Tiffin. Hassle-Free for You.</h4>
+                <h3 className="text-[16px] md:text-[18px] font-bold text-[#0A6831] mb-2 leading-tight">Reusable Tiffin. Hassle-Free for You.</h3>
                 <p className="text-[13px] md:text-[14px] text-[#455064] leading-relaxed font-medium">
                   We deliver your meals in reusable tiffin carriers and pick them up the next day, making it easy, convenient, and mindful.
                 </p>
@@ -379,9 +386,9 @@ export function AboutUsClient({ stats }: { stats?: AboutUsStats }) {
               
               <div className="flex flex-col items-center flex-1 min-w-[120px]">
                  <div className="w-12 h-12 flex items-center justify-center mb-3">
-                    <Heart className="w-8 h-8 text-[#F04E00] stroke-[1.5]" />
+                    <Heart className="w-8 h-8 text-[#c03a00] stroke-[1.5]" />
                  </div>
-                 <h4 className="font-bold text-[13px] text-[#111111] mb-1">Love & Care</h4>
+                 <h3 className="font-bold text-[13px] text-[#111111] mb-1">Love & Care</h3>
                  <p className="text-[11px] text-[#6B7280] font-medium leading-snug">Every meal is cooked<br/>with love and care</p>
               </div>
 
@@ -389,7 +396,7 @@ export function AboutUsClient({ stats }: { stats?: AboutUsStats }) {
                  <div className="w-12 h-12 flex items-center justify-center mb-3">
                     <Leaf className="w-8 h-8 text-[#087A35] stroke-[1.5]" />
                  </div>
-                 <h4 className="font-bold text-[13px] text-[#111111] mb-1">Hygiene First</h4>
+                 <h3 className="font-bold text-[13px] text-[#111111] mb-1">Hygiene First</h3>
                  <p className="text-[11px] text-[#6B7280] font-medium leading-snug">Clean, safe and hygienic<br/>at every step</p>
               </div>
 
@@ -397,15 +404,15 @@ export function AboutUsClient({ stats }: { stats?: AboutUsStats }) {
                  <div className="w-12 h-12 flex items-center justify-center mb-3">
                     <ShieldCheck className="w-8 h-8 text-[#087A35] stroke-[1.5]" />
                  </div>
-                 <h4 className="font-bold text-[13px] text-[#111111] mb-1">Trust & Transparency</h4>
+                 <h3 className="font-bold text-[13px] text-[#111111] mb-1">Trust & Transparency</h3>
                  <p className="text-[11px] text-[#6B7280] font-medium leading-snug">Verified chefs and<br/>transparent process</p>
               </div>
 
               <div className="flex flex-col items-center flex-1 min-w-[120px]">
                  <div className="w-12 h-12 flex items-center justify-center mb-3">
-                    <Users className="w-8 h-8 text-[#F04E00] stroke-[1.5]" />
+                    <Users className="w-8 h-8 text-[#c03a00] stroke-[1.5]" />
                  </div>
-                 <h4 className="font-bold text-[13px] text-[#111111] mb-1">Community Support</h4>
+                 <h3 className="font-bold text-[13px] text-[#111111] mb-1">Community Support</h3>
                  <p className="text-[11px] text-[#6B7280] font-medium leading-snug">Empowering homemakers<br/>and local communities</p>
               </div>
             </div>

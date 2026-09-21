@@ -72,7 +72,7 @@ export function CategoriesClient() {
               <Link href="/" className="text-[#333333] text-[12px] font-[500] hover:underline transition-all">
                 Home
               </Link>
-              <ChevronRight className="w-[12px] h-[12px] text-[#777777]" strokeWidth={2} />
+              <ChevronRight className="w-[12px] h-[12px] text-[#595959]" strokeWidth={2} />
               <span className="text-[#333333] text-[12px] font-[500]">
                 Categories
               </span>

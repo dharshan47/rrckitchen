@@ -1,14 +1,14 @@
 # Deployment & DevOps Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [System Architecture](01-system-architecture.md), [Observability](12-observability.md), [Testing](13-testing-quality.md)
 
 ---
 
 ## 1. CI/CD Pipeline
 
-> **Current state:** No CI exists — there is no `.github/workflows/` directory and no `vercel.json`. The pipeline below is the **target design**. Today, deploys are manual via `next dev` / `next build` / `next start`, and tests run locally (`npm run lint`, `npm run test:unit`).
+> **Current state:** Partial CI exists — `.github/workflows/` has 2 workflow files (scheduled-jobs.yml, process-events.yml) for cron jobs only. No build/test/lint CI on push/PR. No `vercel.json` exists. The pipeline below is the **target design**. Today, deploys are manual via `next dev` / `next build` / `next start`, and tests run locally (`npm run lint`, `npm run test:unit`).
 
 ```mermaid
 %%{init: {'flowchart': {'curve': 'basis', 'useMaxWidth': true}}}%%

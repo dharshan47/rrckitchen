@@ -1,7 +1,7 @@
 # Dependencies & Replacements Guide
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-09-20
 > **Purpose:** Documents every external service actually used, how it's integrated, API key locations, and how to replace each with alternatives.
 
 ---

@@ -1530,7 +1530,7 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
               >
                 <div className="p-6">
                   {/* Breadcrumb */}
-                  <div className="flex items-center gap-2 text-[12px] font-semibold text-[#777777] mb-6">
+                  <div className="flex items-center gap-2 text-[12px] font-semibold text-[#595959] mb-6">
                     <span>Home</span> <ChevronRight className="h-[14px] w-[14px] text-[#A1A1A1]" /> <span className="text-[#999999]">Categories</span>{" "}
                     <ChevronRight className="h-[14px] w-[14px] text-[#A1A1A1]" />{" "}
                     <span className="text-[#222222]">{draft.title || draft.categoryName}</span>
@@ -1784,17 +1784,17 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
                                 <CheckCircle2 className="h-2.5 w-2.5 text-[#15803D]" />
                               </div>
                             </div>
-                            <div className="flex items-center gap-1 text-[9px] text-[#777777] mb-1.5 font-medium">
+                            <div className="flex items-center gap-1 text-[9px] text-[#595959] mb-1.5 font-medium">
                               <Star className="h-2.5 w-2.5 text-[#F59E0B] fill-[#F59E0B]" />
                               <span className="font-bold text-[#D97706]">
                                 {kitchen.avgRating ? kitchen.avgRating.toFixed(1) : "New"}
                               </span>
-                              <span className="text-[#777777]">({kitchen.totalReviews})</span>
+                              <span className="text-[#595959]">({kitchen.totalReviews})</span>
                             </div>
-                            <p className="text-[8px] text-[#777777] truncate mb-1.5">
+                            <p className="text-[8px] text-[#595959] truncate mb-1.5">
                               {kitchen.cuisineTags.join(" • ") || "Home Kitchen"}
                             </p>
-                            <div className="flex items-center justify-between text-[8px] text-[#777777] pb-2 border-b border-[#E9E7E2]">
+                            <div className="flex items-center justify-between text-[8px] text-[#595959] pb-2 border-b border-[#E9E7E2]">
                               <div className="flex items-center gap-1">
                                 <Clock className="h-2.5 w-2.5" /> Home-cooked
                               </div>

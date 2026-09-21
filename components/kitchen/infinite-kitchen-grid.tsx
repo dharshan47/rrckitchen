@@ -315,9 +315,9 @@ export function InfiniteKitchenGrid() {
         
         {/* Header */}
         <div className="mb-6">
-          <div className="flex items-center gap-2 text-[12px] font-normal text-[#777777] mb-4">
+          <div className="flex items-center gap-2 text-[12px] font-normal text-[#595959] mb-4">
             <Link href="/" className="hover:text-[#111111]">Home</Link>
-            <ChevronRight className="h-3.5 w-3.5 text-[#777777]" />
+            <ChevronRight className="h-3.5 w-3.5 text-[#595959]" />
             <span className="text-[#111111]">Kitchens</span>
           </div>
           <h1 className="text-[30px] font-bold text-[#00512F] mb-1">Kitchens</h1>
@@ -379,7 +379,7 @@ export function InfiniteKitchenGrid() {
                     vegFilter === null ? "bg-[#FFF5F0] border-[#FF8A69] text-[#F44A01]" : "bg-[#FFFFFF] border-[#E8E8E8] text-[#222222] hover:bg-[#FAFAFA]"
                   )}
                 >
-                  <UsersRound className={cn("h-3.5 w-3.5", vegFilter === null ? "text-[#F44A01]" : "text-[#777777]")} strokeWidth={1.8} /> All Kitchens
+                  <UsersRound className={cn("h-3.5 w-3.5", vegFilter === null ? "text-[#F44A01]" : "text-[#595959]")} strokeWidth={1.8} /> All Kitchens
                 </button>
                 <button
                   onClick={() => actions.setVegFilter("pure-veg")}

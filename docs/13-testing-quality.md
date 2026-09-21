@@ -1,7 +1,7 @@
 # Testing & Quality Assurance Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [Deployment Pipeline](14-deployment-devops.md), [Component System](07-component-system.md), [System Architecture](01-system-architecture.md)
 
 ---

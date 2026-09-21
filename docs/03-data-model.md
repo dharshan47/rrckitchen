@@ -1,7 +1,7 @@
 # Data Model & Storage Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [API Design](04-api-design.md), [System Architecture](01-system-architecture.md), [Architecture Decisions (Prisma)](02-architecture-decisions.md#adr-006-prisma-as-orm)
 
 ---

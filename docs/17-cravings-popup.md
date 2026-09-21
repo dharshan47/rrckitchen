@@ -1,7 +1,7 @@
 # Cravings Popup Management
 
 > **Status:** Active
-> **Last updated:** 2026-08-04
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [Data Model](03-data-model.md), [State & Data Flow](06-state-data-flow.md), [Real-Time System](09-real-time-system.md), [Roles & Permissions](16-roles-permissions.md)
 
 ---

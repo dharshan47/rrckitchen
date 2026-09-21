@@ -1,7 +1,7 @@
 # Roles & Permissions Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-07-21
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [Auth & Security](05-auth-security.md), [Routing & Middleware](15-routing-middleware.md), [Data Model](03-data-model.md)
 
 ---

@@ -121,7 +121,7 @@ export default function AdminTwoFactorChallengePage() {
                 <div className="space-y-2">
                   <Label htmlFor="email" className="text-[14px] font-semibold text-[#111111] block mb-2">Email Address</Label>
                   <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-[22px] w-[22px] text-[#777777]" strokeWidth={1.5} />
+                    <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-[22px] w-[22px] text-[#595959]" strokeWidth={1.5} />
                     <Input
                       id="email"
                       type="email"
@@ -139,7 +139,7 @@ export default function AdminTwoFactorChallengePage() {
                 <div className="space-y-2">
                   <Label htmlFor="password" className="text-[14px] font-semibold text-[#111111] block mb-2">Password</Label>
                   <div className="relative">
-                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-[22px] w-[22px] text-[#777777]" strokeWidth={1.5} />
+                    <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-[22px] w-[22px] text-[#595959]" strokeWidth={1.5} />
                     <Input
                       id="password"
                       type={showPassword ? "text" : "password"}
@@ -151,7 +151,7 @@ export default function AdminTwoFactorChallengePage() {
                     <button 
                       type="button" 
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[#777777] hover:text-[#333333] focus:outline-none transition-colors"
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[#595959] hover:text-[#333333] focus:outline-none transition-colors"
                     >
                       {showPassword ? <Eye className="h-[22px] w-[22px]" strokeWidth={1.5} /> : <EyeOff className="h-[22px] w-[22px]" strokeWidth={1.5} />}
                     </button>
@@ -241,11 +241,11 @@ export default function AdminTwoFactorChallengePage() {
                     className={`flex items-center p-5 rounded-[16px] border text-left transition-all ${method === "totp" ? "border-[#22C55E] bg-[#F4FAF6] ring-1 ring-[#22C55E]/20" : "border-[#E8E8E8] hover:border-[#CCCCCC] bg-white"}`}
                   >
                     <div className="h-[44px] w-[44px] rounded-[12px] flex items-center justify-center mr-4 shrink-0 bg-white shadow-sm border border-[#E8E8E8]">
-                      <Smartphone className={`h-5 w-5 ${method === "totp" ? "text-[#22C55E]" : "text-[#777777]"}`} strokeWidth={2} />
+                      <Smartphone className={`h-5 w-5 ${method === "totp" ? "text-[#22C55E]" : "text-[#595959]"}`} strokeWidth={2} />
                     </div>
                     <div>
                       <h3 className={`text-[15px] font-bold ${method === "totp" ? "text-[#111111]" : "text-[#333333]"}`}>Authenticator App</h3>
-                      <p className="text-[12px] text-[#777777] mt-0.5">Use code from your app</p>
+                      <p className="text-[12px] text-[#595959] mt-0.5">Use code from your app</p>
                     </div>
                   </button>
 
@@ -260,11 +260,11 @@ export default function AdminTwoFactorChallengePage() {
                     className={`flex items-center p-5 rounded-[16px] border text-left transition-all ${method === "backup" ? "border-[#FD4F03] bg-orange-50/50 ring-1 ring-[#FD4F03]/20" : "border-[#E8E8E8] hover:border-[#CCCCCC] bg-white"}`}
                   >
                     <div className="h-[44px] w-[44px] rounded-[12px] flex items-center justify-center mr-4 shrink-0 bg-white shadow-sm border border-[#E8E8E8]">
-                      <Calendar className={`h-5 w-5 ${method === "backup" ? "text-[#FD4F03]" : "text-[#777777]"}`} strokeWidth={2} />
+                      <Calendar className={`h-5 w-5 ${method === "backup" ? "text-[#FD4F03]" : "text-[#595959]"}`} strokeWidth={2} />
                     </div>
                     <div>
                       <h3 className={`text-[15px] font-bold ${method === "backup" ? "text-[#111111]" : "text-[#333333]"}`}>Backup Code</h3>
-                      <p className="text-[12px] text-[#777777] mt-0.5">Use one of your backup codes</p>
+                      <p className="text-[12px] text-[#595959] mt-0.5">Use one of your backup codes</p>
                     </div>
                   </button>
                 </div>
@@ -357,21 +357,21 @@ export default function AdminTwoFactorChallengePage() {
                   <Lock className="h-5 w-5 text-[#22C55E] mt-0.5 shrink-0" strokeWidth={1.5} />
                   <div>
                     <h4 className="text-[13px] font-bold text-[#111111]">Secure & Private</h4>
-                    <p className="text-[11px] text-[#777777] mt-1">Your data is encrypted</p>
+                    <p className="text-[11px] text-[#595959] mt-1">Your data is encrypted</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <Clock className="h-5 w-5 text-[#22C55E] mt-0.5 shrink-0" strokeWidth={1.5} />
                   <div>
                     <h4 className="text-[13px] font-bold text-[#111111]">24/7 Protection</h4>
-                    <p className="text-[11px] text-[#777777] mt-1">Always monitoring</p>
+                    <p className="text-[11px] text-[#595959] mt-1">Always monitoring</p>
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
                   <ShieldCheck className="h-5 w-5 text-[#22C55E] mt-0.5 shrink-0" strokeWidth={1.5} />
                   <div>
                     <h4 className="text-[13px] font-bold text-[#111111]">Trusted Platform</h4>
-                    <p className="text-[11px] text-[#777777] mt-1">Enterprise security</p>
+                    <p className="text-[11px] text-[#595959] mt-1">Enterprise security</p>
                   </div>
                 </div>
                 <div className="flex flex-col sm:items-end sm:text-right">

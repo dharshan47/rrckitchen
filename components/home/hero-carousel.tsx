@@ -34,7 +34,7 @@ interface HeroSlide {
 
 const slides: HeroSlide[] = [
   {
-    tag: "100% HOMEMADE",
+    tag: "100% Homemade",
     headline: (
       <>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight">
@@ -42,7 +42,7 @@ const slides: HeroSlide[] = [
         </span>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight mt-0.5 lg:mt-2">
           Delivered in an{" "}
-          <span className="text-[#F04E00] font-serif italic font-semibold">
+          <span className="text-[#c03a00] font-serif italic font-semibold">
             Ever Silver
           </span>
         </span>
@@ -57,8 +57,8 @@ const slides: HeroSlide[] = [
         and delivered to your doorstep in an <span className="text-[#003015] font-bold">Ever Silver Tiffin Carrier.</span>
       </span>
     ),
-    primaryCta: { label: "ORDER NOW", href: "/kitchens" },
-    secondaryCta: { label: "EXPLORE KITCHENS", href: "/categories" },
+    primaryCta: { label: "Order Now", href: "/kitchens" },
+    secondaryCta: { label: "Explore Kitchens", href: "/categories" },
     trustBar: [
       { icon: Heart, text: "100%\nHomemade" },
       { icon: ShieldCheck, text: "Verified\nKitchens" },
@@ -78,7 +78,7 @@ const slides: HeroSlide[] = [
     imageAlt: "Home chef holding an Ever Silver tiffin carrier",
   },
   {
-    tag: "BECOME A HOME CHEF",
+    tag: "Become a Home Chef",
     headline: (
       <>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight">
@@ -86,7 +86,7 @@ const slides: HeroSlide[] = [
         </span>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight mt-0.5 lg:mt-2">
           Into Your{" "}
-          <span className="text-[#F04E00] font-serif italic font-semibold">
+          <span className="text-[#c03a00] font-serif italic font-semibold">
             Profession
           </span>
         </span>
@@ -94,8 +94,8 @@ const slides: HeroSlide[] = [
     ),
     description:
       "Cook from home, earn on your own terms, and support your family. Join our growing community of verified home kitchens at RRC Kitchen.",
-    primaryCta: { label: "JOIN NOW", href: "/kitchen/signup" },
-    secondaryCta: { label: "LEARN MORE", href: "/kitchen" },
+    primaryCta: { label: "Join Now", href: "/kitchen/signup" },
+    secondaryCta: { label: "Learn More About Kitchens", href: "/kitchen" },
     trustBar: [
       { icon: Heart, text: "Be Your\nOwn Boss" },
       { icon: Clock, text: "Flexible\nHours" },
@@ -113,7 +113,7 @@ const slides: HeroSlide[] = [
     imageAlt: "Become a verified home kitchen with RRC Kitchen",
   },
   {
-    tag: "SUPPORT A HOMEMAKER",
+    tag: "Support a Homemaker",
     headline: (
       <>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight">
@@ -121,7 +121,7 @@ const slides: HeroSlide[] = [
         </span>
         <span className="block text-[#003015] font-black text-lg sm:text-4xl lg:text-[4rem] leading-[1.1] tracking-tight mt-0.5 lg:mt-2">
           a{" "}
-          <span className="text-[#F04E00] font-serif italic font-semibold">
+          <span className="text-[#c03a00] font-serif italic font-semibold">
             Homemaker
           </span>
         </span>
@@ -132,8 +132,8 @@ const slides: HeroSlide[] = [
     ),
     description:
       "Enjoy 100% homemade meals cooked with love and care by verified home kitchens, delivered fresh in an Ever Silver Tiffin Carrier.",
-    primaryCta: { label: "VIEW MENU", href: "/search" },
-    secondaryCta: { label: "EXPLORE KITCHENS", href: "/kitchens" },
+    primaryCta: { label: "View Menu", href: "/search" },
+    secondaryCta: { label: "Explore Kitchens", href: "/kitchens" },
     trustBar: [
       { icon: UsersRound, text: "Empowering\nWomen" },
       { icon: ShieldCheck, text: "Verified\nKitchens" },
@@ -176,7 +176,7 @@ export function HeroCarousel() {
         <div className="flex">
           {slides.map((slide, index) => (
             <div key={index} className="min-w-0 shrink-0 grow-0 basis-full">
-              <SlideContent slide={slide} isActive={current === index} />
+              <SlideContent slide={slide} isActive={current === index} isFirst={index === 0} />
             </div>
           ))}
         </div>
@@ -188,9 +188,11 @@ export function HeroCarousel() {
 function SlideContent({
   slide,
   isActive,
+  isFirst,
 }: {
   slide: HeroSlide
   isActive: boolean
+  isFirst?: boolean
 }) {
   return (
     <div className="relative flex flex-row w-full bg-[#FDFBF7] overflow-hidden min-h-[280px] sm:min-h-[400px] lg:min-h-[650px]">
@@ -211,9 +213,9 @@ function SlideContent({
               </span>
             </div>
 
-            <h1 className="flex flex-col items-start w-full">
+            <h2 className="flex flex-col items-start w-full">
               {slide.headline}
-            </h1>
+            </h2>
 
             <div className="text-[#333333] text-[9px] sm:text-sm lg:text-xl font-medium leading-[1.3] sm:leading-relaxed max-w-[95%]">
               {slide.description}
@@ -222,14 +224,14 @@ function SlideContent({
             <div className="flex flex-row flex-wrap items-center justify-start gap-2 sm:gap-4 pt-2 sm:pt-2">
               <Link
                 href={slide.primaryCta.href}
-                className="inline-flex items-center justify-center gap-1 sm:gap-2 rounded-full px-3 sm:px-8 py-1.5 sm:py-4 text-[9px] sm:text-sm lg:text-base font-bold text-white shadow-sm sm:shadow-lg transition-all hover:opacity-90 active:scale-95 bg-[#F04E00]"
+                className="inline-flex items-center justify-center gap-1 sm:gap-2 rounded-full px-3 sm:px-8 py-1.5 sm:py-4 text-[9px] sm:text-sm lg:text-base font-bold text-white shadow-sm sm:shadow-lg transition-all hover:opacity-90 active:scale-95 bg-[#c03a00] uppercase"
               >
                 {slide.primaryCta.label}
                 <ArrowRight className="h-2.5 w-2.5 sm:h-5 sm:w-5" />
               </Link>
               <Link
                 href={slide.secondaryCta.href}
-                className="inline-flex items-center justify-center gap-1 sm:gap-2 rounded-full px-3 sm:px-8 py-1.5 sm:py-4 text-[9px] sm:text-sm lg:text-base font-bold text-[#003015] bg-white border border-[#DCDCDC] shadow-sm transition-all hover:bg-gray-50 active:scale-95"
+                className="inline-flex items-center justify-center gap-1 sm:gap-2 rounded-full px-3 sm:px-8 py-1.5 sm:py-4 text-[9px] sm:text-sm lg:text-base font-bold text-[#003015] bg-white border border-[#DCDCDC] shadow-sm transition-all hover:bg-gray-50 active:scale-95 uppercase"
               >
                 {slide.secondaryCta.label}
                 <ChevronRight className="h-2.5 w-2.5 sm:h-5 sm:w-5 text-[#003015]" />
@@ -247,7 +249,7 @@ function SlideContent({
           fill
           className="object-cover object-[70%_center] lg:object-center"
           sizes="50vw"
-          priority
+          priority={isFirst}
         />
         {/* Soft edge blend for a smooth transition from the background color to the image */}
         <div className="absolute inset-y-0 left-0 w-[15%] lg:w-[20%] bg-gradient-to-r from-[#FDFBF7] to-transparent z-10" />
@@ -287,12 +289,12 @@ function SlideContent({
       {/* Trust bar positioned over the entire width at the bottom */}
       <div className="absolute bottom-2 sm:bottom-6 lg:bottom-10 left-0 right-0 z-30 px-2 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-[1400px]">
-          <div className="bg-white/95 backdrop-blur-sm rounded-lg lg:rounded-2xl border border-gray-100 shadow-[0_4px_15px_rgba(0,0,0,0.06)] px-2 sm:px-6 py-2 lg:px-8 lg:py-6 flex overflow-x-auto lg:overflow-visible items-center justify-between gap-3 sm:gap-6 scrollbar-hide">
+          <div className="bg-white/95 backdrop-blur-sm rounded-lg lg:rounded-2xl border border-gray-100 shadow-[0_4px_15px_rgba(0,0,0,0.06)] px-2 sm:px-6 py-2 lg:px-8 lg:py-6 flex overflow-x-auto lg:overflow-visible items-center justify-between gap-3 sm:gap-6 scrollbar-hide" tabIndex={0} role="region" aria-label="Trust highlights">
             {slide.trustBar.map((item, i) => (
               <div key={i} className="flex items-center gap-2 sm:gap-4 shrink-0">
                 <div className="flex items-center gap-1.5 sm:gap-3">
                   <div className="flex items-center justify-center shrink-0">
-                    <item.icon className={cn("h-3 w-3 sm:h-6 sm:w-6", i % 2 === 0 ? "text-[#F04E00]" : "text-[#087A35]")} strokeWidth={2} />
+                    <item.icon className={cn("h-3 w-3 sm:h-6 sm:w-6", i % 2 === 0 ? "text-[#c03a00]" : "text-[#087A35]")} strokeWidth={2} />
                   </div>
                   <span className="text-[8px] sm:text-sm lg:text-[15px] leading-tight font-bold text-gray-900 whitespace-pre-line text-left">
                     {item.text}

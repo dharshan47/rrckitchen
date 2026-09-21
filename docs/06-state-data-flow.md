@@ -1,7 +1,7 @@
 # State Management & Data Flow Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [System Architecture](01-system-architecture.md), [API Design](04-api-design.md), [Component System](07-component-system.md)
 
 ---
@@ -140,7 +140,7 @@ interface MenuState {
 }
 ```
 
-#### Auth Store (`stores/auth-store.ts`)
+#### Auth Store (`stores/authStore.ts`)
 
 ```typescript
 interface AuthState {
@@ -165,6 +165,214 @@ interface AuthState {
   logout: () => void;
   resetAuth: () => void;
 }
+```
+
+### 2.2 Complete Store Registry (46 Stores)
+
+The application uses **46 Zustand stores** organized by domain. Each store follows the pattern: state + actions, with no derived state (use selectors instead).
+
+#### Customer-Facing Stores (11 stores)
+
+| Store | File | Purpose | Persistence |
+|-------|------|---------|-------------|
+| **Cart Store** | `cartStore.ts` | Shopping cart items, coupon, order type | ✓ localStorage |
+| **Home Store** | `homeStore.ts` | Home page filters, categories, testimonials | ✗ |
+| **Menu Store** | `menuStore.ts` | Menu search, filters, sort options | ✗ |
+| **Kitchen Detail Store** | `kitchenDetailStore.ts` | Kitchen page state, tab selection | ✗ |
+| **Kitchen Reviews Store** | `kitchenReviewsStore.ts` | Reviews pagination, filters | ✗ |
+| **Kitchens Grid Store** | `kitchensGridStore.ts` | Kitchen listing infinite scroll | ✗ |
+| **Search Store** | `searchEditorStore.ts` | Search autocomplete, recent searches | ✓ localStorage |
+| **Favourites Store** | `favouritesStore.ts` | Wishlist items (menu + kitchens) | ✗ |
+| **Order Tracking Store** | `orderTrackingStore.ts` | Live order tracking state | ✗ |
+| **Order Tracking Map Store** | `orderTrackingMapStore.ts` | Delivery location map state | ✗ |
+| **User Orders Store** | `userOrdersStore.ts` | Order history pagination | ✗ |
+
+#### Location & Map Stores (4 stores)
+
+| Store | File | Purpose | Persistence |
+|-------|------|---------|-------------|
+| **Location Dialog Store** | `locationDialogStore.ts` | Location picker modal state | ✗ |
+| **Location Search Store** | `locationSearchStore.ts` | Address search autocomplete | ✗ |
+| **Thanjavur Map Store** | `thanjavurMapStore.ts` | Service area map visualization | ✗ |
+| **Rating Store** | `ratingStore.ts` | Rating submission flow | ✗ |
+
+#### Admin Stores (16 stores)
+
+| Store | File | Purpose | Persistence |
+|-------|------|---------|-------------|
+| **Admin Store** | `adminStore.ts` | Admin session, permissions, navigation | ✗ |
+| **Admin Dashboard Store** | (inline in dashboard-client) | Dashboard stats, filters | ✗ |
+| **Admin Orders Store** | `adminOrdersStore.ts` | Order management table state | ✗ |
+| **Admin Kitchens Store** | `adminKitchensStore.ts` | Kitchen approval, KYC management | ✗ |
+| **Admin Customers Store** | `adminCustomersStore.ts` | Customer list, filters, bans | ✗ |
+| **Admin Delivery Store** | `adminDeliveryStore.ts` | Delivery partner management | ✗ |
+| **Admin Menu Store** | `adminMenuStore.ts` | Menu item moderation | ✗ |
+| **Admin Coupons Store** | `adminCouponsStore.ts` | Coupon CRUD, usage analytics | ✗ |
+| **Admin Payments Store** | `adminPaymentsStore.ts` | Payment reconciliation table | ✗ |
+| **Admin Payment Offers Store** | `adminPaymentOffersStore.ts` | Payment offer management | ✗ |
+| **Admin Loyalty Coupons Store** | `adminLoyaltyCouponsStore.ts` | Loyalty reward catalog | ✗ |
+| **Admin Invites Store** | `adminInvitesStore.ts` | Admin invite management | ✗ |
+| **Admin Support Store** | `adminSupportStore.ts` | Support ticket queue | ✗ |
+| **Admin Categories Store** | `adminCategoriesStore.ts` | Category management | ✗ |
+| **Admin 2FA Store** | `adminTwoFactorStore.ts` | 2FA login flow | ✗ |
+| **Admin 2FA Setup Store** | `adminTwoFactorSetupStore.ts` | 2FA enrollment flow | ✗ |
+
+#### CMS & Content Stores (4 stores)
+
+| Store | File | Purpose | Persistence |
+|-------|------|---------|-------------|
+| **Category Page Store** | `categoryPageStore.ts` | Category page rendering | ✗ |
+| **Category Page Editor Store** | `categoryPageEditorStore.ts` | Category page CMS editor | ✗ |
+| **Kitchen Search Page Store** | `kitchenSearchPageStore.ts` | Kitchen search page CMS | ✗ |
+| **Cravings Popup Store** | `cravingsPopupStore.ts` | Cross-sell rule management | ✗ |
+
+#### Kitchen Partner Stores (2 stores)
+
+| Store | File | Purpose | Persistence |
+|-------|------|---------|-------------|
+| **Kitchen Dashboard Store** | `kitchenDashboardStore.ts` | Kitchen dashboard state | ✗ |
+| **Menu Editor Store** | `menuEditorStore.ts` | Kitchen menu CRUD | ✗ |
+
+#### Delivery Partner Stores (1 store)
+
+| Store | File | Purpose | Persistence |
+|-------|------|---------|-------------|
+| **Delivery Dashboard Store** | `deliveryDashboardStore.ts` | Delivery partner dashboard | ✗ |
+
+#### Support & Chat Stores (4 stores)
+
+| Store | File | Purpose | Persistence |
+|-------|------|---------|-------------|
+| **Live Chat Store** | `liveChatStore.ts` | Real-time chat widget state | ✗ |
+| **Support Store** | `supportStore.ts` | Customer support ticket form | ✗ |
+| **Help Store** | `helpStore.ts` | Help center navigation | ✗ |
+| **Home Chefs Store** | `homeChefsStore.ts` | Home chefs page filters | ✗ |
+
+#### User Profile & Loyalty Stores (3 stores)
+
+| Store | File | Purpose | Persistence |
+|-------|------|---------|-------------|
+| **User Profile Store** | `userProfileStore.ts` | Profile edit form state | ✗ |
+| **Loyalty Store** | `loyaltyStore.ts` | Loyalty points, redemption | ✗ |
+| **Accept Invite Store** | `acceptInviteStore.ts` | Admin invite acceptance flow | ✗ |
+
+### 2.3 Store Organization Principles
+
+#### Naming Convention
+```
+{domain}{Entity}Store.ts
+└─ camelCase, ends with "Store.ts"
+
+Examples:
+- adminOrdersStore.ts      (admin domain, orders entity)
+- kitchenDashboardStore.ts (kitchen domain, dashboard entity)
+- cartStore.ts             (implicit customer domain, cart entity)
+```
+
+#### Store Structure Pattern
+```typescript
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
+interface {Domain}State {
+  // 1. Data state (primitives, arrays, objects)
+  items: Item[];
+  selectedId: string | null;
+  filters: FilterState;
+  
+  // 2. UI state (modals, loading, errors)
+  isLoading: boolean;
+  error: string | null;
+  
+  // 3. Actions (mutations only, no derived state)
+  setItems: (items: Item[]) => void;
+  addItem: (item: Item) => void;
+  updateItem: (id: string, data: Partial<Item>) => void;
+  deleteItem: (id: string) => void;
+  setFilters: (filters: Partial<FilterState>) => void;
+  reset: () => void;
+}
+
+export const use{Domain}Store = create<{Domain}State>()(
+  persist(
+    (set) => ({
+      // Initial state
+      items: [],
+      selectedId: null,
+      filters: {},
+      isLoading: false,
+      error: null,
+      
+      // Actions
+      setItems: (items) => set({ items }),
+      addItem: (item) => set((state) => ({ items: [...state.items, item] })),
+      updateItem: (id, data) => set((state) => ({
+        items: state.items.map(i => i.id === id ? { ...i, ...data } : i)
+      })),
+      deleteItem: (id) => set((state) => ({
+        items: state.items.filter(i => i.id !== id)
+      })),
+      setFilters: (filters) => set((state) => ({
+        filters: { ...state.filters, ...filters }
+      })),
+      reset: () => set(initialState),
+    }),
+    {
+      name: '{domain}-storage', // localStorage key
+      // Only persist data state, not UI state
+      partialize: (state) => ({
+        items: state.items,
+        filters: state.filters,
+      }),
+    }
+  )
+);
+```
+
+#### Store Usage Pattern
+```typescript
+// Component: Select specific state slices
+function MyComponent() {
+  // ✓ Good: Select only needed state
+  const items = useCartStore(state => state.items);
+  const addItem = useCartStore(state => state.addItem);
+  
+  // ✗ Bad: Select entire store (causes re-renders on any state change)
+  const cartStore = useCartStore();
+  
+  // ✓ Good: Use shallow equality for multiple selectors
+  const { items, count } = useCartStore(
+    state => ({ items: state.items, count: state.items.length }),
+    shallow
+  );
+}
+```
+
+### 2.4 Persistence Strategy
+
+Only **2 stores** use localStorage persistence:
+
+| Store | Storage Key | Persisted State | Rationale |
+|-------|-------------|-----------------|-----------|
+| **cartStore** | `cart-storage` | items, couponCode, orderType, deliveryAddressId | Cart must survive page refresh |
+| **searchEditorStore** | `search-history` | recentSearches[] | Improve UX with search history |
+
+**Why minimal persistence?**
+- Server is source of truth (TanStack Query handles server state)
+- Reduces hydration mismatches
+- Prevents stale data issues
+- Simplifies state management
+
+**Hydration pattern:**
+```typescript
+// In _app.tsx or layout.tsx
+useEffect(() => {
+  // Hydrate cart from server after initial render
+  if (session?.user) {
+    const serverCart = await fetchCartFromDB();
+    useCartStore.getState().syncWithServer(serverCart);
+  }
+}, [session]);
 ```
 
 ### 2.2 Store Inventory

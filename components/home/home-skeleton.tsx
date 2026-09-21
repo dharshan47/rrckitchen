@@ -98,11 +98,11 @@ export function HomeSkeleton() {
                 Top Home Kitchens Near You
               </h2>
               <div className="flex items-center gap-1.5 text-sm text-[#6B7280] font-medium mt-0.5">
-                <MapPin className="h-4 w-4 text-[#F04E00]" />
+                <MapPin className="h-4 w-4 text-[#c03a00]" />
                 <p>Serving delicious meals in an Ever Silver Tiffin Carrier</p>
               </div>
             </div>
-            <div className="hidden sm:flex items-center gap-1.5 text-sm font-bold text-[#F04E00] shrink-0 mt-0.5">
+            <div className="hidden sm:flex items-center gap-1.5 text-sm font-bold text-[#c03a00] shrink-0 mt-0.5">
               View All Kitchens
               <ArrowRight className="h-4 w-4" />
             </div>
@@ -225,7 +225,7 @@ export function HomeSkeleton() {
           {/* Become a Home Chef */}
           <div className="bg-[#FDF8F1] rounded-[20px] p-6 lg:p-8 relative overflow-hidden flex flex-col justify-center min-h-[220px] shadow-sm">
             <div className="relative z-10 w-[60%] sm:w-[55%] flex flex-col items-start">
-              <h3 className="text-sm font-bold text-[#F04E00] uppercase tracking-wide mb-3">
+              <h3 className="text-sm font-bold text-[#c03a00] uppercase tracking-wide mb-3">
                 Become a Home Chef
               </h3>
               <div className="space-y-1 mb-5">

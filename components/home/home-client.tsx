@@ -50,13 +50,13 @@ function TrendingKitchens() {
             Top Home Kitchens Near You
           </h2>
           <div className="flex items-center gap-1.5 text-sm text-[#6B7280] font-medium mt-0.5">
-            <MapPin className="h-4 w-4 text-[#F04E00]" />
+            <MapPin className="h-4 w-4 text-[#c03a00]" />
             <p>Serving delicious meals in an Ever Silver Tiffin Carrier</p>
           </div>
         </div>
         <Link
           href="/kitchens"
-          className="hidden sm:flex items-center gap-1.5 text-sm font-bold text-[#F04E00] hover:underline shrink-0 mt-0.5"
+          className="hidden sm:flex items-center gap-1.5 text-sm font-bold text-[#c03a00] hover:underline shrink-0 mt-0.5"
         >
           View All Kitchens
           <ArrowRight className="h-4 w-4" />
@@ -135,7 +135,8 @@ export function HomeClient() {
   }, []);
 
   return (
-    <main className="min-h-screen bg-white text-[#111111] relative">
+    <main id="main-content" className="min-h-screen bg-white text-[#111111] relative">
+      <h1 className="sr-only">RRC Kitchen — Home-Cooked Meals Delivered in Thanjavur</h1>
       {/* Mobile sticky search + filters */}
       <div
         className={cn(
@@ -195,7 +196,7 @@ export function HomeClient() {
               {/* Left text */}
               <div className="flex flex-col justify-center text-center lg:text-left">
                 <h2 className="text-[20px] lg:text-[24px] font-bold text-[#003015] tracking-wide uppercase mb-4 lg:mb-10">
-                  WHY A TIFFIN CARRIER?
+                  Why a Tiffin Carrier?
                 </h2>
                 <div className="space-y-1.5">
                   <p className="text-[#4B5563] font-medium text-[14px] lg:text-[15px]">
@@ -214,7 +215,7 @@ export function HomeClient() {
                   alt="Stainless steel tiffin carrier"
                   fill
                   className="object-contain drop-shadow-md scale-[1.15]"
-                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                   priority
                 />
               </div>
@@ -250,7 +251,7 @@ export function HomeClient() {
               {[
                 {
                   icon: ChefHat,
-                  iconColor: "text-[#F04E00]",
+                  iconColor: "text-[#c03a00]",
                   title: "Curated Home Chefs",
                   desc: "Verified and trusted home chefs who cook with passion.",
                 },
@@ -262,19 +263,19 @@ export function HomeClient() {
                 },
                 {
                   icon: Clock,
-                  iconColor: "text-[#F04E00]",
+                  iconColor: "text-[#c03a00]",
                   title: "Timely Delivery",
                   desc: "Your meals delivered on time, every time.",
                 },
                 {
                   icon: ShieldCheck,
-                  iconColor: "text-[#F04E00]",
+                  iconColor: "text-[#c03a00]",
                   title: "Safe & Hygienic",
                   desc: "Packed with care and hygiene you can trust.",
                 },
                 {
                   icon: Users,
-                  iconColor: "text-[#F04E00]",
+                  iconColor: "text-[#c03a00]",
                   title: "Support Local",
                   desc: "Empowering homemakers and local communities.",
                 },
@@ -283,7 +284,7 @@ export function HomeClient() {
                   <div className="flex items-start gap-4 p-5 lg:p-6 xl:p-8">
                     <item.icon className={`w-8 h-8 lg:w-9 lg:h-9 shrink-0 ${item.iconColor}`} strokeWidth={1.5} />
                     <div className="flex flex-col gap-1.5">
-                      <span className="font-bold text-[#F04E00] text-[13px] lg:text-[14px] leading-tight">
+                      <span className="font-bold text-[#c03a00] text-[13px] lg:text-[14px] leading-tight">
                         {item.title}
                       </span>
                       <span className="text-[11px] lg:text-[12px] text-[#4B5563] font-medium leading-relaxed">
@@ -381,16 +382,23 @@ export function HomeClient() {
                         <Image src={step.img} alt={step.title} width={100} height={100} className={cn("object-contain", step.imageClassName)} />
                       </div>
 
-                      <h4 className={`text-[15px] font-bold mb-3 leading-tight ${step.color === 'green' ? 'text-[#0A6831]' : 'text-[#BE5A10]'}`}>
+                      <h3 className={`text-[15px] font-bold mb-3 leading-tight ${step.color === 'green' ? 'text-[#0A6831]' : 'text-[#BE5A10]'}`}>
                         {step.title.split(' ').map((word, i, words) => (
                           <React.Fragment key={i}>
                             {word}
                             {i < words.length - 1 && (
-                              words.length === 2 || (words.length === 3 && i === 1) ? <br className="hidden lg:block" /> : ' '
+                              words.length === 2 || (words.length === 3 && i === 1) ? (
+                                <>
+                                  <span className="lg:hidden"> </span>
+                                  <br className="hidden lg:block" />
+                                </>
+                              ) : (
+                                ' '
+                              )
                             )}
                           </React.Fragment>
                         ))}
-                      </h4>
+                      </h3>
 
                       <div className={`w-[46px] h-1 rounded-full mb-3 ${step.color === 'green' ? 'bg-[#0A6831]' : 'bg-[#F8680A]'}`} />
 
@@ -500,7 +508,7 @@ export function HomeClient() {
             {/* Become a Home Chef */}
             <div className="bg-[#FDF8F1] rounded-[20px] p-6 lg:p-8 relative overflow-hidden flex flex-col justify-center min-h-[220px] shadow-sm">
               <div className="relative z-10 w-[60%] sm:w-[55%] flex flex-col items-start">
-                <h3 className="text-sm font-bold text-[#F04E00] uppercase tracking-wide mb-3">
+                <h3 className="text-sm font-bold text-[#c03a00] uppercase tracking-wide mb-3">
                   Become a Home Chef
                 </h3>
                 <p className="text-[14px] sm:text-[15px] text-[#111111] font-semibold leading-relaxed mb-5">
@@ -569,7 +577,7 @@ export function HomeClient() {
                       className="bg-white rounded-xl p-5 shadow-[0_2px_10px_rgba(0,0,0,0.04)] border border-[#EEEEEE] flex flex-col gap-4"
                     >
                       <div className="flex items-start gap-2.5">
-                        <span className="text-[32px] text-[#F04E00] font-serif leading-[0.7] mt-2">
+                        <span className="text-[32px] text-[#c03a00] font-serif leading-[0.7] mt-2">
                           &ldquo;
                         </span>
                         <p className="text-[12.5px] sm:text-[13px] font-medium text-[#4B5563] leading-relaxed min-h-[40px]">

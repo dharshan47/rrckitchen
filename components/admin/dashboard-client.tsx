@@ -581,25 +581,25 @@ export default function AdminOverview() {
                   return (
                     <div
                       key={order.id}
-                      className="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors group cursor-pointer border-b border-[#F3F4F6] last:border-0"
+                      className="flex items-center justify-between py-3 hover:bg-gray-50 transition-colors group cursor-pointer border-b border-[#F3F4F6] last:border-0 gap-2"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className={cn("h-12 w-12 rounded-full flex items-center justify-center shrink-0", details.iconBg)}>
-                          <details.icon className={cn("h-5 w-5", details.iconColor)} strokeWidth={2.5} />
+                      <div className="flex items-center gap-3 sm:gap-4 min-w-0">
+                        <div className={cn("h-10 w-10 sm:h-12 sm:w-12 rounded-full flex items-center justify-center shrink-0", details.iconBg)}>
+                          <details.icon className={cn("h-4 w-4 sm:h-5 sm:w-5", details.iconColor)} strokeWidth={2.5} />
                         </div>
-                        <div>
-                          <p className="text-[14px] md:text-[15px] font-bold text-[#111827]">{order.id}</p>
+                        <div className="min-w-0">
+                          <p className="text-[13px] sm:text-[14px] md:text-[15px] font-bold text-[#111827] truncate">{order.id}</p>
                           <p className="text-[12px] md:text-[13px] font-medium text-[#6B7280] mt-0.5 whitespace-nowrap">{order.date}</p>
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-3 md:gap-6">
-                        <span className={cn("text-[11px] md:text-[13px] font-bold px-2 py-1 md:px-3 md:py-1.5 rounded-[999px] whitespace-nowrap", details.bg, details.text)}>
+                      <div className="flex items-center gap-2 sm:gap-3 md:gap-6 shrink-0">
+                        <span className={cn("text-[10px] sm:text-[11px] md:text-[13px] font-bold px-2 py-1 md:px-3 md:py-1.5 rounded-[999px] whitespace-nowrap", details.bg, details.text)}>
                           {details.label}
                         </span>
-                        <div className="flex items-center gap-1 md:gap-3 w-12 md:w-16 justify-end">
-                          <span className="text-[14px] md:text-[15px] font-bold text-[#111827]">₹{order.amount}</span>
-                          <ChevronRight className="h-4 w-4 md:h-5 md:w-5 text-[#9CA3AF] group-hover:text-[#15803D] transition-colors hidden sm:block" />
+                        <div className="flex items-center gap-1 md:gap-3 justify-end sm:w-12 md:w-16">
+                          <span className="text-[13px] sm:text-[14px] md:text-[15px] font-bold text-[#111827]">₹{order.amount}</span>
+                          <ChevronRight className="h-4 w-4 md:h-5 md:w-5 text-[#9CA3AF] group-hover:text-[#15803D] transition-colors hidden sm:block shrink-0" />
                         </div>
                       </div>
                     </div>

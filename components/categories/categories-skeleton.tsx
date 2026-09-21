@@ -16,7 +16,7 @@ export function CategoriesSkeleton() {
             {/* Breadcrumb */}
             <div className="flex items-center gap-[6px] mb-[24px]">
               <Skeleton className="h-[18px] w-10" />
-              <ChevronRight className="w-[12px] h-[12px] text-[#777777]" strokeWidth={2} />
+              <ChevronRight className="w-[12px] h-[12px] text-[#595959]" strokeWidth={2} />
               <Skeleton className="h-[18px] w-20" />
             </div>
 

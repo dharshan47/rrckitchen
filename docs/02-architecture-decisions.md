@@ -1,7 +1,7 @@
 # Architecture Decision Records
 
 > **Status:** Active
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-09-20
 > **Format:** ADR (based on Michael Nygard's template)
 > **Total ADRs:** 21
 

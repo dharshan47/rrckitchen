@@ -1,7 +1,7 @@
 # Authentication & Security Architecture
 
 > **Status:** Active
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [API Design](04-api-design.md), [Architecture Decisions (Better-Auth)](02-architecture-decisions.md#adr-005-better-auth-for-authentication), [Roles](16-roles-permissions.md)
 
 ---

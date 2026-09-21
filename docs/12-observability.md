@@ -1,7 +1,7 @@
 # Observability & Monitoring
 
 > **Status:** Active
-> **Last updated:** 2026-08-05
+> **Last updated:** 2026-09-20
 > **Cross-refs:** [Dependencies & Replacements](dependencies-and-replacements.md#9-monitoring-not-present), [System Architecture](01-system-architecture.md)
 
 ---

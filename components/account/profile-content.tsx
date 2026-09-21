@@ -242,7 +242,7 @@ export function ProfileContent() {
                 </div>
                 <div>
                   <h4 className="text-[14px] font-bold text-[#005B32]">Need Help?</h4>
-                  <p className="text-[12px] text-[#777777]">We&apos;re here to assist you</p>
+                  <p className="text-[12px] text-[#595959]">We&apos;re here to assist you</p>
                 </div>
               </div>
               <Link href="/account/support">
@@ -415,7 +415,7 @@ export function ProfileContent() {
                 <div className="flex items-baseline gap-2 mb-1 mt-2">
                   <span className="text-[36px] font-bold text-[#111111] leading-none">{wishlist.length}</span>
                 </div>
-                <div className="text-[11px] text-[#777777] font-medium mt-1">
+                <div className="text-[11px] text-[#595959] font-medium mt-1">
                   Favorite Kitchens
                 </div>
               </div>
@@ -443,7 +443,7 @@ export function ProfileContent() {
                 <div className="flex items-baseline gap-2 mb-1 mt-2">
                   <span className="text-[36px] font-bold text-[#111111] leading-none">{referralStats?.totalReferrals ?? 0}</span>
                 </div>
-                <div className="text-[11px] text-[#777777] font-medium mb-3">
+                <div className="text-[11px] text-[#595959] font-medium mb-3">
                   Friends Referred
                 </div>
                 <div className="text-[#006B3C] text-[11px] font-bold">
@@ -481,7 +481,7 @@ export function ProfileContent() {
               </div>
               <div className="flex-1 space-y-4">
                 {orders.length === 0 ? (
-                  <p className="text-[13px] text-[#777777] py-4 text-center">No recent orders</p>
+                  <p className="text-[13px] text-[#595959] py-4 text-center">No recent orders</p>
                 ) : (
                   orders.slice(0, 3).map((order) => (
                     <div key={order.id} className="flex gap-3 pb-4 border-b border-[#EEEEEE] last:border-0 last:pb-0">
@@ -507,9 +507,9 @@ export function ProfileContent() {
                           {order.items.map(i => i.name).join(", ")}
                         </p>
                         <div className="flex justify-between items-end mt-1.5">
-                          <span className="text-[10px] text-[#777777]">Order ID: #{order.id.slice(0, 8).toUpperCase()}</span>
+                          <span className="text-[10px] text-[#595959]">Order ID: #{order.id.slice(0, 8).toUpperCase()}</span>
                           <div className="text-right">
-                             <div className="text-[9px] text-[#777777] mb-0.5">{format(new Date(order.createdAt), "dd MMM yyyy")}</div>
+                             <div className="text-[9px] text-[#595959] mb-0.5">{format(new Date(order.createdAt), "dd MMM yyyy")}</div>
                              <div className="font-bold text-[12px] text-[#333333]">₹{parseFloat(order.totalAmount).toFixed(0)}</div>
                           </div>
                         </div>
@@ -550,7 +550,7 @@ export function ProfileContent() {
                       <p className="text-[10px] text-[#E53935]">{addMutation.error?.message ?? "Could not save address"}</p>
                     )}
                     <div className="flex gap-2 justify-end pt-2">
-                      <Button type="button" variant="ghost" size="sm" onClick={() => { setShowAddForm(false); addMutation.reset() }} className="h-8 text-[12px] font-semibold text-[#777777]">Cancel</Button>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => { setShowAddForm(false); addMutation.reset() }} className="h-8 text-[12px] font-semibold text-[#595959]">Cancel</Button>
                       <Button type="submit" size="sm" disabled={addMutation.isPending} className="h-8 text-[12px] font-semibold bg-[#FF4B00] text-white hover:bg-[#E84300] rounded-[6px]">Save</Button>
                     </div>
                   </form>
@@ -558,7 +558,7 @@ export function ProfileContent() {
               ) : (
                 <div className="flex-1 space-y-3">
                   {addresses.length === 0 ? (
-                    <p className="text-[13px] text-[#777777] py-4 text-center">No saved addresses</p>
+                    <p className="text-[13px] text-[#595959] py-4 text-center">No saved addresses</p>
                   ) : (
                     addresses.slice(0, 2).map((addr) => (
                       <div key={addr.id} className="flex items-start justify-between gap-3 p-4 rounded-[10px] border border-[#E7E7E7] bg-white hover:border-[#CCCCCC] transition-colors relative">
@@ -606,7 +606,7 @@ export function ProfileContent() {
               </div>
               <div className="flex-1 space-y-4">
                 {recentReviews.length === 0 ? (
-                   <p className="text-[13px] text-[#777777] py-4 text-center">No recent reviews</p>
+                   <p className="text-[13px] text-[#595959] py-4 text-center">No recent reviews</p>
                 ) : (
                   recentReviews.map((review) => (
                     <div key={review.id} className="flex gap-3 pb-4 border-b border-[#EEEEEE] last:border-0 last:pb-0">
@@ -628,7 +628,7 @@ export function ProfileContent() {
                                <Star key={i} className={`h-3 w-3 ${i < review.rating ? "fill-[#FFB000] text-[#FFB000]" : "fill-transparent text-[#E6E6E6]"}`} />
                              ))}
                           </div>
-                          <span className="text-[9px] font-medium text-[#777777] shrink-0 border-l border-[#EEEEEE] pl-2">
+                          <span className="text-[9px] font-medium text-[#595959] shrink-0 border-l border-[#EEEEEE] pl-2">
                             {format(new Date(review.date), "dd MMM yyyy")}
                           </span>
                         </div>
@@ -661,35 +661,35 @@ export function ProfileContent() {
                   <ChefHat className="h-[28px] w-[28px] text-[#FF4B00]" strokeWidth={1.5} />
                   <div>
                     <h5 className="text-[12px] font-bold text-[#111111]">100% Homemade</h5>
-                    <p className="text-[10px] text-[#777777] mt-1 font-medium">Made with love & care</p>
+                    <p className="text-[10px] text-[#595959] mt-1 font-medium">Made with love & care</p>
                   </div>
                </div>
                <div className="flex flex-col items-center gap-2 px-2">
                   <ShieldCheck className="h-[28px] w-[28px] text-[#006B3C]" strokeWidth={1.5} />
                   <div>
                     <h5 className="text-[12px] font-bold text-[#111111]">Hygienic & Safe</h5>
-                    <p className="text-[10px] text-[#777777] mt-1 font-medium">Verified home kitchens</p>
+                    <p className="text-[10px] text-[#595959] mt-1 font-medium">Verified home kitchens</p>
                   </div>
                </div>
                <div className="flex flex-col items-center gap-2 px-2">
                   <Clock className="h-[28px] w-[28px] text-[#FF4B00]" strokeWidth={1.5} />
                   <div>
                     <h5 className="text-[12px] font-bold text-[#111111]">Pre-book & Save Time</h5>
-                    <p className="text-[10px] text-[#777777] mt-1 font-medium">Order in advance</p>
+                    <p className="text-[10px] text-[#595959] mt-1 font-medium">Order in advance</p>
                   </div>
                </div>
                <div className="flex flex-col items-center gap-2 px-2">
                   <Leaf className="h-[28px] w-[28px] text-[#006B3C]" strokeWidth={1.5} />
                   <div>
                     <h5 className="text-[12px] font-bold text-[#111111]">Fresh Ingredients</h5>
-                    <p className="text-[10px] text-[#777777] mt-1 font-medium">Sourced daily</p>
+                    <p className="text-[10px] text-[#595959] mt-1 font-medium">Sourced daily</p>
                   </div>
                </div>
                <div className="flex flex-col items-center gap-2 px-2 col-span-2 md:col-span-1">
                   <Users className="h-[28px] w-[28px] text-[#FF4B00]" strokeWidth={1.5} />
                   <div>
                     <h5 className="text-[12px] font-bold text-[#111111]">Support Local Women</h5>
-                    <p className="text-[10px] text-[#777777] mt-1 font-medium">Empowering homemakers</p>
+                    <p className="text-[10px] text-[#595959] mt-1 font-medium">Empowering homemakers</p>
                   </div>
                </div>
             </div>

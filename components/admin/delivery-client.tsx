@@ -120,9 +120,9 @@ const columnHelper = createColumnHelper<AdminDeliveryPartner>()
 // --- Skeletons ---
 function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-5 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-5 gap-4 sm:gap-6">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="rounded-[16px] border border-[#E5E7EB] bg-white p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+        <div key={i} className="rounded-[16px] border border-[#E5E7EB] bg-white p-5 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
           <div className="flex items-start gap-4">
             <Skeleton className="h-14 w-14 rounded-full" />
             <div className="flex-1 space-y-2 mt-1">
@@ -371,17 +371,17 @@ export default function AdminDeliveryPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-[36px] font-bold text-[#111827] tracking-tight leading-tight">Delivery Partner Management</h1>
-          <p className="text-[14px] font-normal text-[#6B7280] mt-1">Manage and monitor all delivery partners</p>
+          <h1 className="text-[28px] sm:text-[36px] font-bold text-[#111827] tracking-tight leading-tight">Delivery Partner Management</h1>
+          <p className="text-[13px] sm:text-[14px] font-normal text-[#6B7280] mt-1">Manage and monitor all delivery partners</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Button variant="outline" className="bg-white border-[#D1D5DB] text-[#374151] rounded-[12px] h-[44px] px-5 font-semibold gap-2 shadow-none hover:bg-gray-50" onClick={() => refetch()} disabled={isLoading || isFetching}>
-            <RefreshCw className={`h-4 w-4 text-[#6B7280] ${isFetching ? "animate-spin" : ""}`} /> Refresh
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3 w-full md:w-auto mt-1 md:mt-0">
+          <Button variant="outline" className="bg-white border-[#D1D5DB] text-[#374151] rounded-[12px] h-[40px] sm:h-[44px] px-4 sm:px-5 font-semibold gap-2 shadow-none hover:bg-gray-50 flex-1 md:flex-none" onClick={() => refetch()} disabled={isLoading || isFetching}>
+            <RefreshCw className={`h-4 w-4 text-[#6B7280] ${isFetching ? "animate-spin" : ""}`} /> <span className="hidden sm:inline">Refresh</span>
           </Button>
-          <Button variant="outline" className="bg-white border-[#D1D5DB] text-[#374151] rounded-[12px] h-[44px] px-5 font-semibold gap-2 shadow-none hover:bg-gray-50" onClick={exportCSV} disabled={isLoading}>
-            <Upload className="h-4 w-4 text-[#6B7280]" /> Export
+          <Button variant="outline" className="bg-white border-[#D1D5DB] text-[#374151] rounded-[12px] h-[40px] sm:h-[44px] px-4 sm:px-5 font-semibold gap-2 shadow-none hover:bg-gray-50 flex-1 md:flex-none" onClick={exportCSV} disabled={isLoading}>
+            <Upload className="h-4 w-4 text-[#6B7280]" /> <span className="hidden sm:inline">Export</span>
           </Button>
-          <Button className="bg-[#15803D] hover:bg-[#166534] text-white rounded-[12px] h-[44px] px-5 font-bold shadow-[0_2px_6px_rgba(21,128,61,0.2)] gap-2" onClick={() => router.push("/admin/invite")}>
+          <Button className="bg-[#15803D] hover:bg-[#166534] text-white rounded-[12px] h-[40px] sm:h-[44px] px-4 sm:px-5 font-bold shadow-[0_2px_6px_rgba(21,128,61,0.2)] gap-2 w-full md:w-auto" onClick={() => router.push("/admin/invite")}>
             <Plus className="h-4 w-4" strokeWidth={3} /> Add New Partner
           </Button>
         </div>
@@ -391,7 +391,7 @@ export default function AdminDeliveryPage() {
       {isLoading ? (
         <StatsSkeleton />
       ) : (
-        <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-5 gap-4 sm:gap-6">
           {[
             { title: "Total Partners", value: stats.total.toLocaleString("en-IN"), trend: "registered", trendPercent: "Real-time", trendUp: null, icon: Users, color: "text-[#15803D]", bg: "bg-[#F0FDF4]", circle: "bg-[#DCFCE7]" },
             { title: "Active", value: stats.active.toLocaleString("en-IN"), trend: "of total", trendPercent: `${shareOf(stats.active)}%`, trendUp: null, icon: ShieldCheck, color: "text-[#2563EB]", bg: "bg-[#EFF6FF]", circle: "bg-[#DBEAFE]" },
@@ -400,19 +400,19 @@ export default function AdminDeliveryPage() {
             { title: "Completed Deliveries", value: stats.deliveries.toLocaleString("en-IN"), trend: "delivered", trendPercent: "Real-time", trendUp: null, icon: Bike, color: "text-[#7C3AED]", bg: "bg-white", circle: "bg-[#F3E8FF]" },
           ].map((stat, i) => (
             <Card key={i} className="rounded-[16px] shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_20px_rgba(0,0,0,0.08)] border border-[#E5E7EB] bg-white transition-shadow overflow-hidden">
-              <CardContent className="p-[24px] flex flex-col gap-4">
+              <CardContent className="p-5 sm:p-[24px] flex flex-col gap-4">
                 <div className="flex items-start gap-4">
-                  <div className={`relative h-[56px] w-[56px] rounded-full flex items-center justify-center ${stat.bg} shrink-0`}>
-                    <div className={`h-[40px] w-[40px] rounded-full flex items-center justify-center ${stat.circle}`}>
-                      <stat.icon className={`h-5 w-5 ${stat.color}`} strokeWidth={2.5} />
+                  <div className={`relative h-[48px] w-[48px] sm:h-[56px] sm:w-[56px] rounded-full flex items-center justify-center ${stat.bg} shrink-0`}>
+                    <div className={`h-[36px] w-[36px] sm:h-[40px] sm:w-[40px] rounded-full flex items-center justify-center ${stat.circle}`}>
+                      <stat.icon className={`h-4 w-4 sm:h-5 sm:w-5 ${stat.color}`} strokeWidth={2.5} />
                     </div>
                   </div>
                   <div className="flex flex-col">
-                    <p className="text-[13px] font-normal text-[#6B7280] leading-tight mb-1 truncate">{stat.title}</p>
-                    <h3 className="text-[30px] font-bold text-[#111827] leading-none">{stat.value}</h3>
+                    <p className="text-[12px] sm:text-[13px] font-normal text-[#6B7280] leading-tight mb-1 truncate">{stat.title}</p>
+                    <h3 className="text-[24px] sm:text-[30px] font-bold text-[#111827] leading-none">{stat.value}</h3>
                   </div>
                 </div>
-                <p className="text-[13px] font-normal mt-1">
+                <p className="text-[12px] sm:text-[13px] font-normal mt-1">
                   <span className="text-[#6B7280] font-bold">{stat.trendPercent}</span>
                   <span className="text-[#6B7280] ml-1.5">{stat.trend}</span>
                 </p>

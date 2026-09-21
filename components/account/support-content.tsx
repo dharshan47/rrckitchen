@@ -24,7 +24,8 @@ import { SupportSkeleton } from "@/components/account/support-skeleton";
 import { CloudinaryUpload } from "@/components/cloudinary/cloudinary-upload";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { LiveChatWidget } from "@/components/chat/live-chat-widget";
+import dynamic from "next/dynamic";
+const LiveChatWidget = dynamic(() => import("@/components/chat/live-chat-widget").then(mod => mod.LiveChatWidget), { ssr: false });
 import { useLiveChatStore } from "@/stores";
 import {
   useSupportTicketsQuery,
