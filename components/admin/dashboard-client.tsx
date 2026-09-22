@@ -635,20 +635,20 @@ export default function AdminOverview() {
                     key={idx}
                     className="flex items-center justify-between py-2.5 hover:bg-gray-50 transition-colors"
                   >
-                    <div className="flex items-center gap-4">
-                      <span className="text-[15px] font-extrabold text-[#111827] w-4">{idx + 1}</span>
-                      <div className="h-10 w-10 rounded-[999px] bg-[#111827] flex items-center justify-center text-white font-bold text-xs overflow-hidden">
+                    <div className="flex items-center gap-3 md:gap-4 min-w-0 pr-2">
+                      <span className="text-[14px] md:text-[15px] font-extrabold text-[#111827] w-4 shrink-0">{idx + 1}</span>
+                      <div className="h-9 w-9 md:h-10 md:w-10 shrink-0 rounded-[999px] bg-[#111827] flex items-center justify-center text-white font-bold text-xs overflow-hidden">
                         {kitchen.name ? kitchen.name.charAt(0) : "?"}
                       </div>
-                      <span className="text-[15px] font-bold text-[#111827]">{kitchen.name ?? "Unnamed"}</span>
+                      <span className="text-[14px] md:text-[15px] font-bold text-[#111827] truncate">{kitchen.name ?? "Unnamed"}</span>
                     </div>
 
-                    <div className="flex items-center gap-8">
+                    <div className="flex items-center gap-3 md:gap-8 shrink-0">
                       <div className="flex items-center gap-1">
-                        <span className="text-[#F59E0B] text-[15px]">★</span>
-                        <span className="text-[15px] font-bold text-[#111827]">{kitchen.rating?.toFixed(1) ?? "—"}</span>
+                        <span className="text-[#F59E0B] text-[14px] md:text-[15px]">★</span>
+                        <span className="text-[14px] md:text-[15px] font-bold text-[#111827]">{kitchen.rating?.toFixed(1) ?? "—"}</span>
                       </div>
-                      <span className="text-[13px] font-medium text-[#6B7280] w-20 text-right">
+                      <span className="text-[12px] md:text-[13px] font-medium text-[#6B7280] w-16 md:w-20 text-right shrink-0">
                         {kitchen.orders} Orders
                       </span>
                     </div>
@@ -739,18 +739,18 @@ export default function AdminOverview() {
         </div>
 
         {/* Footer Health Banner */}
-        <div className="bg-[#FAFAFA] rounded-[16px] border border-[#E5E7EB] p-4 flex items-center justify-between shadow-[0_2px_8px_rgba(15,23,42,.05)] mt-2">
-          <div className="flex items-center gap-4">
-            <div className="h-10 w-10 rounded-[999px] bg-[#DCFCE7] flex items-center justify-center">
+        <div className="bg-[#FAFAFA] rounded-[16px] border border-[#E5E7EB] p-4 flex flex-col md:flex-row items-center justify-between gap-4 md:gap-0 shadow-[0_2px_8px_rgba(15,23,42,.05)] mt-2">
+          <div className="flex items-center gap-3 md:gap-4 w-full md:w-auto">
+            <div className="h-10 w-10 shrink-0 rounded-[999px] bg-[#DCFCE7] flex items-center justify-center">
               <CheckCircle className="h-6 w-6 text-[#15803D]" strokeWidth={2.5} />
             </div>
-            <p className="text-[15px] font-semibold text-[#374151]">
+            <p className="text-[14px] md:text-[15px] font-semibold text-[#374151]">
               All systems are running smoothly! No critical issues at the moment.
             </p>
           </div>
           <Button
             variant="ghost"
-            className="text-[#374151] hover:bg-gray-100 hover:text-[#111827] h-[44px] rounded-[12px] text-[15px] font-bold border border-[#E5E7EB] px-4"
+            className="text-[#374151] hover:bg-gray-100 hover:text-[#111827] h-[44px] rounded-[12px] text-[14px] md:text-[15px] font-bold border border-[#E5E7EB] px-4 w-full md:w-auto shrink-0"
           >
             View System Health <ArrowRight className="ml-2 h-4 w-4" strokeWidth={2.5} />
           </Button>

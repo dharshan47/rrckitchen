@@ -4,7 +4,7 @@ import { InfiniteKitchenGrid } from "@/components/kitchen/infinite-kitchen-grid"
 import { KitchensPageSkeleton } from "@/components/kitchen/kitchens-page-skeleton";
 
 export const metadata: Metadata = {
-  title: "Kitchens | RRC Kitchen",
+  title: "Kitchens",
   description: "Explore home kitchens near you and order fresh homemade food.",
 };
 

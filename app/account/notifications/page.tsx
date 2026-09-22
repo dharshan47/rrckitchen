@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { NotificationsContent } from "@/components/account/notifications-content";
 
 export const metadata: Metadata = {
-  title: "Notifications | RRC Kitchen",
+  title: "Notifications",
   description: "Order updates, offers and reward alerts",
 };
 

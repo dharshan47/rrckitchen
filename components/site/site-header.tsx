@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { User, ShoppingCart, Home, LayoutGrid, MapPin, ChevronDown, LogOut, Package, HelpCircle, Search, Store, ClipboardList, Menu } from "lucide-react";
+import { User, ShoppingCart, Home, LayoutGrid, MapPin, ChevronDown, LogOut, Package, HelpCircle, Search, Store, ClipboardList, Menu, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useCartStore, useMenuDeliveryAddress } from "@/stores";
 import { useSession, signOut } from "@/lib/auth-client";
@@ -34,6 +34,7 @@ function MobileNavItem({ href, icon, label, active = false, badge }: { href: str
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const router = useRouter();
   const [locationOpen, setLocationOpen] = useState(false);
   const cartCount = useCartStore((s) => s.cart.reduce((t, i) => t + i.qty, 0));
   const deliveryAddress = useMenuDeliveryAddress();
@@ -81,6 +82,9 @@ export function SiteHeader() {
         <header className="sticky top-0 z-50 border-b border-[#E7E7E7] bg-white shadow-sm">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 lg:px-8 h-14 md:h-16">
             <div className="flex items-center gap-2">
+              <button onClick={() => router.back()} className="md:hidden text-[#6B7280] hover:text-[#c03a00] transition-colors" aria-label="Go back">
+                <ArrowLeft className="h-5 w-5" />
+              </button>
               <span className="text-xs md:text-sm font-bold tracking-widest uppercase text-[#6B7280]">SECURE CHECKOUT</span>
             </div>
             <div className="flex items-center gap-4">

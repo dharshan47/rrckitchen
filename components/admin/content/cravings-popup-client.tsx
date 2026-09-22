@@ -974,12 +974,12 @@ export default function CravingsPopupPage() {
             Manage smart recommendations shown to customers after placing orders
           </p>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto mt-4 sm:mt-0">
           <Button
             variant="outline"
             onClick={() => setPreviewOpen(true)}
             disabled={!effectiveSelectedId}
-            className="border-[#06701E] text-[#06701E] hover:bg-[#EAF6ED] hover:text-[#06701E] rounded-[8px] h-10 px-4"
+            className="w-full sm:w-auto border-[#06701E] text-[#06701E] hover:bg-[#EAF6ED] hover:text-[#06701E] rounded-[8px] h-10 px-4"
           >
             <Eye className="w-4 h-4 mr-2" />
             Preview Popup
@@ -987,7 +987,7 @@ export default function CravingsPopupPage() {
           <Button
             onClick={handleSaveAll}
             disabled={!editing || savingAll}
-            className="bg-[#FF4B04] hover:bg-[#E63F00] text-white rounded-[8px] h-10 px-4"
+            className="w-full sm:w-auto bg-[#FF4B04] hover:bg-[#E63F00] text-white rounded-[8px] h-10 px-4"
           >
             {savingAll ? (
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />

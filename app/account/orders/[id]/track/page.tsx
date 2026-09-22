@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { TrackOrderClient } from "@/components/order/track-order-client";
 
 export const metadata: Metadata = {
-  title: "Track Order | RRC Kitchen",
+  title: "Track Order",
   description: "Track your RRC Kitchen order in real time.",
 };
 

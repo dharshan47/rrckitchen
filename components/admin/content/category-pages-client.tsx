@@ -577,17 +577,17 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
             Manage how each category page looks on the website
           </p>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
           {dirty && (
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#F4511E] bg-[#FFF7ED] border border-[#FDBA74] rounded-full px-3 py-1.5 animate-in fade-in">
+            <span className="inline-flex items-center justify-center sm:justify-start gap-1.5 text-xs font-semibold text-[#F4511E] bg-[#FFF7ED] border border-[#FDBA74] rounded-full px-3 py-1.5 animate-in fade-in w-full sm:w-auto">
               <span className="w-1.5 h-1.5 rounded-full bg-[#F4511E]" /> Unsaved changes
             </span>
           )}
           
-          <div className="flex items-center gap-3 px-3 py-1.5 border border-[#E9E7E2] bg-white rounded-[7px] mr-2">
+          <div className="flex flex-row items-center justify-between gap-3 px-3 py-1.5 border border-[#E9E7E2] bg-white rounded-[7px] w-full sm:w-auto">
             <span className="text-[14px] text-[#575757] whitespace-nowrap font-medium">Select Category</span>
             <Select value={draft.categoryId} onValueChange={handleCategoryChange}>
-              <SelectTrigger className="h-[32px] w-[180px] bg-white border-none text-[#292929] text-[14px] font-semibold focus:ring-0 shadow-none px-2">
+              <SelectTrigger className="h-[32px] w-[180px] sm:w-[180px] flex-1 sm:flex-none bg-white border-none text-[#292929] text-[14px] font-semibold focus:ring-0 shadow-none px-2">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -600,35 +600,39 @@ function Editor({ contentId, onCancel, onOpenContent }: EditorProps) {
             </Select>
           </div>
 
-          <a
-            href={liveUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 h-[40px] px-5 rounded-[7px] text-[14px] font-semibold border border-[#B9D8C7] text-[#075C30] hover:bg-[#F3FAF6] transition-colors bg-[#FFFFFF] shadow-none"
-          >
-            View Live Page <ExternalLink className="h-[16px] w-[16px]" />
-          </a>
-          <Button
-            className="h-[40px] px-5 rounded-[7px] bg-[#075C30] hover:bg-[#064A27] text-white font-medium border border-[#075C30] shadow-none"
-            onClick={() => saveMutation.mutate()}
-            disabled={saveMutation.isPending || !dirty}
-          >
-            {saveMutation.isPending ? (
-              <Loader2 className="h-[16px] w-[16px] mr-2 animate-spin" />
-            ) : (
-              <Save className="h-[16px] w-[16px] mr-2" />
-            )}
-            Save Changes
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onCancel}
-            className="h-[40px] w-[40px] rounded-[7px] text-[#575757] hover:text-[#111111] hover:bg-[#F5F5F4] border border-transparent"
-            aria-label="Close Editor"
-          >
-            <X className="h-5 w-5" />
-          </Button>
+          <div className="flex flex-row gap-3 w-full sm:w-auto">
+            <a
+              href={liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex flex-1 sm:flex-none justify-center items-center gap-2 h-[40px] px-5 rounded-[7px] text-[14px] font-semibold border border-[#B9D8C7] text-[#075C30] hover:bg-[#F3FAF6] transition-colors bg-[#FFFFFF] shadow-none"
+            >
+              <span className="hidden sm:inline">View Live Page</span>
+              <span className="sm:hidden">Live</span>
+              <ExternalLink className="h-[16px] w-[16px]" />
+            </a>
+            <Button
+              className="flex-1 sm:flex-none h-[40px] px-5 rounded-[7px] bg-[#075C30] hover:bg-[#064A27] text-white font-medium border border-[#075C30] shadow-none"
+              onClick={() => saveMutation.mutate()}
+              disabled={saveMutation.isPending || !dirty}
+            >
+              {saveMutation.isPending ? (
+                <Loader2 className="h-[16px] w-[16px] mr-2 animate-spin" />
+              ) : (
+                <Save className="h-[16px] w-[16px] mr-2" />
+              )}
+              Save
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onCancel}
+              className="h-[40px] w-[40px] rounded-[7px] text-[#575757] hover:text-[#111111] hover:bg-[#F5F5F4] border border-transparent shrink-0"
+              aria-label="Close Editor"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </div>
 

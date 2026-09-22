@@ -4,7 +4,7 @@ import { HomeChefsClient } from "@/components/home-chefs/home-chefs-client";
 import { HomeChefsSkeleton } from "@/components/home-chefs/home-chefs-skeleton";
 
 export const metadata: Metadata = {
-  title: "Home Chefs | RRC Kitchen",
+  title: "Home Chefs",
   description: "Discover talented home chefs who cook with love and passion. Support local homemakers and enjoy homemade meals.",
 };
 

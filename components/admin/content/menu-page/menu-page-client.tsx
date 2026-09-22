@@ -245,15 +245,15 @@ export function MenuPageClient() {
           <h1 className="text-[26px] font-bold text-[#111827] tracking-tight">Menu Detail Management</h1>
           <p className="text-[15px] text-[#64748B] mt-1 font-normal">Manage and customize menu details for all kitchens</p>
         </div>
-        <div className="flex items-center gap-3">
-          <Link href="/kitchens">
-            <Button variant="outline" className="text-[#087A36] border-[#A7D9B9] bg-[#FFFFFF] hover:bg-[#F1FAF4] hover:border-[#008A3D] font-medium h-[42px] px-4 shadow-none rounded-[8px]">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto mt-4 sm:mt-0">
+          <Link href="/kitchens" className="w-full sm:w-auto block">
+            <Button variant="outline" className="w-full sm:w-auto text-[#087A36] border-[#A7D9B9] bg-[#FFFFFF] hover:bg-[#F1FAF4] hover:border-[#008A3D] font-medium h-[42px] px-4 shadow-none rounded-[8px]">
               <Eye className="h-[18px] w-[18px] mr-2" strokeWidth={1.8} />
               Preview Live Menu
             </Button>
           </Link>
           <Button
-            className="bg-[#FF4B16] hover:bg-[#E63F0D] text-[#FFFFFF] font-medium h-[42px] px-4 shadow-[0_2px_6px_rgba(255,75,22,0.12)] rounded-[8px]"
+            className="w-full sm:w-auto bg-[#FF4B16] hover:bg-[#E63F0D] text-[#FFFFFF] font-medium h-[42px] px-4 shadow-[0_2px_6px_rgba(255,75,22,0.12)] rounded-[8px]"
             onClick={() => setAddDialogOpen(true)}
           >
             <Plus className="h-[18px] w-[18px] mr-2" strokeWidth={1.8} />

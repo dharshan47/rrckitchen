@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 
 export const metadata: Metadata = {
-  title: "About Us | RRC Kitchen",
+  title: "About Us",
   description: "Learn more about RRC Kitchen, our mission, values, and how we connect you with passionate home chefs.",
 };
 

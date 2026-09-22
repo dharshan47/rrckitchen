@@ -1,5 +1,7 @@
 "use client"
 
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+
 import {
   ColumnDef,
   flexRender,
@@ -64,49 +66,52 @@ export function DataTable<TData, TValue>({
   return (
     <div className="space-y-4">
       <div className="rounded-[10px] border border-[#E5E9ED] bg-[#FFFFFF] shadow-[0_1px_4px_rgba(15,23,42,0.025)] overflow-hidden">
-        <Table>
-          <TableHeader className="bg-[#F7FBF8] border-b border-[#E5E9ED]">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-transparent border-none">
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} className="h-11 text-[13px] font-semibold text-[#1F2937] whitespace-nowrap px-4">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="hover:bg-[#FAFCFB] transition-colors border-b border-[#EDF0F2]"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="px-4 py-3 align-top sm:align-middle border-none">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
+        <ScrollArea className="w-full">
+          <Table className="min-w-[1000px] w-full">
+            <TableHeader className="bg-[#F7FBF8] border-b border-[#E5E9ED]">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id} className="hover:bg-transparent border-none">
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id} className="h-11 text-[13px] font-semibold text-[#1F2937] whitespace-nowrap px-4">
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    )
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center text-[#64748B]">
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="hover:bg-[#FAFCFB] transition-colors border-b border-[#EDF0F2]"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} className="px-4 py-3 align-top sm:align-middle border-none">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={columns.length} className="h-24 text-center text-[#64748B]">
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 px-2 py-4">

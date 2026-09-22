@@ -12,7 +12,7 @@ import { getSession } from "@/lib/auth-server";
 import prisma from "@/lib/prisma";
 
 export const metadata: Metadata = {
-  title: "Become a Home Chef | RRC Kitchen",
+  title: "Become a Home Chef",
   description: "Join RRC Kitchen and become a trusted home chef. Share your homemade food with more people and earn on your own terms.",
 };
 

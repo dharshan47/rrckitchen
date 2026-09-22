@@ -877,15 +877,15 @@ export default function AdminInvitesClient() {
                     </div>
                   )}
 
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col sm:flex-row gap-3 w-full">
                     <button
-                      className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                      className="px-5 py-2.5 text-sm font-medium text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors w-full sm:w-auto"
                       onClick={resetPermissions}
                     >
                       Reset
                     </button>
                     <button
-                      className="px-5 py-2.5 text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors flex items-center justify-center gap-2 flex-1 whitespace-nowrap disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="px-5 py-2.5 text-sm font-medium text-white bg-violet-600 hover:bg-violet-700 rounded-lg transition-colors flex items-center justify-center gap-2 flex-1 w-full disabled:opacity-60 disabled:cursor-not-allowed"
                       onClick={handleGenerateInvite}
                       disabled={
                         createInviteMutation.isPending ||
@@ -893,11 +893,11 @@ export default function AdminInvitesClient() {
                       }
                     >
                       {createInviteMutation.isPending ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin shrink-0" />
                       ) : (
-                        <LinkIcon className="h-4 w-4" />
+                        <LinkIcon className="h-4 w-4 shrink-0" />
                       )}
-                      Generate Invite Link
+                      <span className="truncate">Generate Invite Link</span>
                     </button>
                   </div>
                 </div>

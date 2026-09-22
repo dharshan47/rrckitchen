@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { LoyaltyContent } from "@/components/account/loyalty-content";
 
 export const metadata: Metadata = {
-  title: "Loyalty & Rewards | RRC Kitchen",
+  title: "Loyalty & Rewards",
   description: "Earn points with every order and unlock exciting rewards",
 };
 

@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { OrdersClient } from "@/components/order/orders-client";
 
 export const metadata: Metadata = {
-  title: "My Orders | RRC Kitchen",
+  title: "My Orders",
   description: "Track and manage all your orders in one place.",
 };
 

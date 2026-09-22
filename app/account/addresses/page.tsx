@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { AddressesContent } from "@/components/account/addresses-content";
 
 export const metadata: Metadata = {
-  title: "Saved Addresses | RRC Kitchen",
+  title: "Saved Addresses",
   description: "Manage your saved delivery addresses",
 };
 

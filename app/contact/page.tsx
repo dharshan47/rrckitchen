@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Contact Us | RRC Kitchen",
+  title: "Contact Us",
   description: "Have a question, feedback, or need support? Reach out to RRC Kitchen and we'll get back to you within 24 hours.",
 };
 

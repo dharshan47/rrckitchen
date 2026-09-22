@@ -430,13 +430,13 @@ export default function CategoriesPage() {
   });
 
   return (
-    <div className="flex flex-col 2xl:flex-row gap-6 w-full max-w-[1600px] mx-auto min-h-screen bg-[#FCFCFD] pb-10">
+    <div className="flex flex-col 2xl:flex-row gap-6 w-full max-w-[1600px] mx-auto min-h-screen bg-[#FCFCFD] pb-10 overflow-x-hidden">
       <div className="flex-1 flex flex-col min-w-0">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
           <div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
               <h1 className="text-[24px] font-bold text-[#101828] tracking-tight">Category Management</h1>
-              <Badge variant="outline" className="bg-[#EEF8F0] text-[#147A2B] border-none rounded-[9999px] font-semibold text-[11px] h-[22px] px-2">
+              <Badge variant="outline" className="bg-[#EEF8F0] text-[#147A2B] border-none rounded-[9999px] font-semibold text-[11px] h-[22px] px-2 shrink-0">
                 {totalCategories} Categories
               </Badge>
             </div>
@@ -444,7 +444,7 @@ export default function CategoriesPage() {
               Manage food categories to help customers discover the right kitchens and cuisines
             </p>
           </div>
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
             <Button
               variant="outline"
               className="h-[38px] w-full sm:w-auto bg-[#FFFFFF] text-[#344054] border-[#E2E8E4] rounded-[7px] hover:bg-[#F8FAF9] hover:border-[#D0D7D2] gap-2"
@@ -454,13 +454,13 @@ export default function CategoriesPage() {
                 toast.success(`${sortedCategories.length} categories exported`);
               }}
             >
-              <Download className="h-[15px] w-[15px]" /> Export
+              <Download className="h-[15px] w-[15px] shrink-0" /> Export
             </Button>
             <Button
               onClick={() => setAddDialogOpen(true)}
               className="bg-[#1D9333] hover:bg-[#147A2B] text-[#FFFFFF] border-[#1D9333] h-[38px] w-full sm:w-auto rounded-[7px] gap-2 shadow-[0_2px_5px_rgba(29,147,51,0.15)]"
             >
-              <Plus className="h-[16px] w-[16px]" /> Add New Category
+              <Plus className="h-[16px] w-[16px] shrink-0" /> <span className="truncate">Add New Category</span>
             </Button>
           </div>
         </div>
@@ -494,9 +494,9 @@ export default function CategoriesPage() {
               onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
             />
           </div>
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-center gap-3 w-full sm:w-auto">
             <Select value={statusFilter} onValueChange={(v) => { setStatusFilter(v); setCurrentPage(1); }}>
-              <SelectTrigger className="w-[140px] h-[40px] bg-[#FFFFFF] border-[#E2E8E4] rounded-[7px] text-[#344054] focus:ring-0">
+              <SelectTrigger className="w-full sm:w-[140px] h-[40px] bg-[#FFFFFF] border-[#E2E8E4] rounded-[7px] text-[#344054] focus:ring-0">
                 <SelectValue placeholder="Status: All" />
               </SelectTrigger>
               <SelectContent>
@@ -506,7 +506,7 @@ export default function CategoriesPage() {
               </SelectContent>
             </Select>
             <Select value={sortBy} onValueChange={(v) => { setSortBy(v); setCurrentPage(1); }}>
-              <SelectTrigger className="w-[150px] h-[40px] bg-[#FFFFFF] border-[#E2E8E4] rounded-[7px] text-[#344054] focus:ring-0">
+              <SelectTrigger className="w-full sm:w-[150px] h-[40px] bg-[#FFFFFF] border-[#E2E8E4] rounded-[7px] text-[#344054] focus:ring-0">
                 <SelectValue placeholder="Sort by: Name" />
               </SelectTrigger>
               <SelectContent>
@@ -517,10 +517,10 @@ export default function CategoriesPage() {
             </Select>
             <Button
               variant="outline"
-              className="h-[40px] bg-[#FFFFFF] border-[#E2E8E4] text-[#344054] rounded-[7px] hover:bg-[#F8FAF9] px-4 gap-2"
+              className="w-full sm:w-auto h-[40px] bg-[#FFFFFF] border-[#E2E8E4] text-[#344054] rounded-[7px] hover:bg-[#F8FAF9] px-4 gap-2 shrink-0"
               onClick={() => { setSearchTerm(""); setStatusFilter("All"); setSortBy("name"); setCurrentPage(1); }}
             >
-              <RotateCcw className="h-4 w-4" /> Reset
+              <RotateCcw className="h-4 w-4 shrink-0" /> Reset
             </Button>
           </div>
         </div>
@@ -532,9 +532,9 @@ export default function CategoriesPage() {
             <Button variant="outline" onClick={() => refetch()}><RotateCcw className="h-4 w-4 mr-2" /> Retry</Button>
           </div>
         ) : (
-          <div className="bg-[#FFFFFF] border border-[#E7EBE8] rounded-[10px] overflow-hidden flex-1 flex flex-col shadow-none">
-            <ScrollArea className="flex-1 w-full">
-              <Table>
+          <div className="bg-[#FFFFFF] border border-[#E7EBE8] rounded-[10px] overflow-hidden flex-1 flex flex-col shadow-none w-full min-w-0">
+            <ScrollArea className="w-[calc(100vw-32px)] sm:w-full max-w-full flex-1 rounded-t-[10px]">
+              <Table className="min-w-[800px]">
                 <TableHeader className="bg-[#F5FAF6]">
                   {table.getHeaderGroups().map((headerGroup) => (
                     <TableRow key={headerGroup.id} className="hover:bg-transparent border-b border-[#E7EBE8]">
@@ -584,11 +584,11 @@ export default function CategoriesPage() {
               <ScrollBar orientation="horizontal" />
             </ScrollArea>
             {!isLoading && (
-              <div className="p-4 border-t border-[#E7EBE8] flex items-center justify-between text-[13px] text-[#475467] bg-[#FFFFFF]">
-                <div>
+              <div className="p-4 border-t border-[#E7EBE8] flex flex-col xl:flex-row items-center justify-between gap-4 text-[13px] text-[#475467] bg-[#FFFFFF]">
+                <div className="text-center xl:text-left">
                   Showing {showingFrom} to {showingTo} of {sortedCategories.length} categories
                 </div>
-                <div className="flex items-center gap-6">
+                <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 w-full xl:w-auto justify-center xl:justify-end">
                   <Pagination className="mx-0 w-auto">
                     <PaginationContent>
                       <PaginationItem>

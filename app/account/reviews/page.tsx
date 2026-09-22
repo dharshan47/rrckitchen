@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import { ReviewsContent } from "@/components/account/reviews-content";
 
 export const metadata: Metadata = {
-  title: "My Reviews | RRC Kitchen",
+  title: "My Reviews",
   description: "Reviews you have given for orders",
 };
 

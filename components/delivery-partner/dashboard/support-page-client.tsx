@@ -211,7 +211,7 @@ export default function SupportPageClient() {
           </div>
 
           {/* KPI Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
               <Card key={i} className="bg-[#FFFFFF] border-[#EDEEEF] rounded-[12px] shadow-none">
                 <CardContent className="p-4 sm:p-5 flex items-start gap-4">
@@ -355,7 +355,7 @@ export default function SupportPageClient() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-4">
           {kpiCards.map((kpi, i) => {
             const Icon = kpi.icon
             return (
@@ -515,10 +515,10 @@ export default function SupportPageClient() {
             <Card className="rounded-[14px] border-[#EDEEEF] bg-[#FFFFFF] shadow-[0_2px_12px_rgba(16,24,40,0.035)] flex-1 overflow-hidden flex flex-col">
                <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
                  <div className="px-5 border-b border-[#F0F1F2] flex items-center justify-between gap-4">
-                   <div className="flex-1 overflow-x-auto no-scrollbar">
-                     <TabsList className="bg-transparent h-[52px] p-0 flex justify-start gap-4 lg:gap-6 w-max">
+                   <div className="flex-1 overflow-x-auto no-scrollbar outline-none border-none">
+                     <TabsList className="bg-transparent h-[52px] p-0 flex justify-start gap-4 lg:gap-6 w-max border-none outline-none">
                        {["All", "Open", "In Progress", "Waiting for Reply", "Resolved", "Closed"].map(tab => (
-                          <TabsTrigger key={tab} value={tab} className="rounded-none px-0 py-4 h-full border-b-[2px] border-transparent bg-transparent shadow-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-[#0D6C2B] data-[state=active]:text-[#0D6C2B] text-[#454951] font-[700] text-[13px] hover:text-[#0D6C2B] whitespace-nowrap transition-none">
+                          <TabsTrigger key={tab} value={tab} className="rounded-none px-0 py-4 h-full border-b-[2px] border-transparent bg-transparent shadow-none outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-[#0D6C2B] data-[state=active]:text-[#0D6C2B] data-[state=active]:outline-none text-[#454951] font-[700] text-[13px] hover:text-[#0D6C2B] whitespace-nowrap transition-none">
                             {tab}
                           </TabsTrigger>
                        ))}

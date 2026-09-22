@@ -134,7 +134,7 @@ function downloadCSV(filename: string, content: string) {
 
 function StatsSkeleton() {
   return (
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 animate-pulse">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 animate-pulse">
         {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] p-4 flex items-start gap-3">
           <Skeleton className="h-[52px] w-[52px] rounded-[16px] flex-shrink-0" />
@@ -555,7 +555,7 @@ export default function AdminLoyaltyPointsPage() {
           {isLoading ? (
             <StatsSkeleton />
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
               {[
                 {
                   label: "Total Coupons",

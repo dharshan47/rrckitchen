@@ -1,13 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { SiteHeader } from "@/components/site/site-header";
 import { 
   Search, ShoppingBag, Wallet, ChefHat, HelpCircle, 
   CheckCircle2, MessageSquare, PhoneCall, 
   ShieldCheck, ThumbsUp, Bike, User, Lock
 } from "lucide-react";
-
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { 
@@ -19,6 +17,9 @@ import {
   useHelpActions,
 } from "@/stores";
 import dynamic from "next/dynamic";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 const LiveChatWidget = dynamic(() => import("@/components/chat/live-chat-widget").then(mod => mod.LiveChatWidget), { ssr: false });
 import { useLiveChatStore } from "@/stores";
 
@@ -31,27 +32,133 @@ const CATEGORIES = [
   { id: "general", icon: HelpCircle, title: "General Help", subtitle: "Policies, terms and other information", color: "text-emerald-600" }
 ];
 
-const FAQ_DATA = {
-  placing: [
-    { q: "How to place an order?", a: "Browse kitchens and menus, add items to your cart, choose delivery address, select payment method and place your order. You will receive a confirmation once the kitchen accepts." },
-    { q: "Order not going through?", a: "Please check your internet connection or try a different payment method. If the issue persists, contact our support team." },
-  ],
-  tracking: [
-    { q: "How do I track my order?", a: "You can track your order in real-time on the 'My Orders' page once it has been accepted by the kitchen." },
-    { q: "Where is my delivery partner?", a: "Once your order is picked up, you will see the delivery partner's location on the live map." },
-  ],
-  cancel: [
-    { q: "Cancel or modify an order", a: "You can cancel or modify your order within 1 minute of placing it from the order details page." },
-    { q: "Why was my order cancelled?", a: "Orders may be cancelled if the kitchen is unable to fulfill them or if there are payment issues." },
-  ],
-  returns: [
-    { q: "How do I get a refund?", a: "Refunds for cancelled orders are processed automatically and will reflect in your account within 5-7 business days." },
-    { q: "Food quality issue", a: "If you have issues with the food quality, please take a photo and contact support within 24 hours." },
-  ],
-  others: [
-    { q: "Can I change my delivery address after placing an order?", a: "Delivery addresses cannot be changed once the order is placed to ensure timely delivery." },
-    { q: "How to reorder from the same kitchen?", a: "Go to your 'My Orders' history and click the 'Reorder' button next to your past order." },
-  ]
+const HELP_CONTENT: Record<string, { tabs: string[], data: Record<string, {q: string, a: string}[]> }> = {
+  orders: {
+    tabs: ["Placing an Order", "Tracking Orders", "Cancel / Modify", "Returns & Refunds", "Others"],
+    data: {
+      placing: [
+        { q: "How to place an order?", a: "Browse kitchens and menus, add items to your cart, choose delivery address, select payment method and place your order. You will receive a confirmation once the kitchen accepts." },
+        { q: "Order not going through?", a: "Please check your internet connection or try a different payment method. If the issue persists, contact our support team." },
+      ],
+      tracking: [
+        { q: "How do I track my order?", a: "You can track your order in real-time on the 'My Orders' page once it has been accepted by the kitchen." },
+        { q: "Where is my delivery partner?", a: "Once your order is picked up, you will see the delivery partner's location on the live map." },
+      ],
+      cancel: [
+        { q: "Cancel or modify an order", a: "You can cancel or modify your order within 1 minute of placing it from the order details page." },
+        { q: "Why was my order cancelled?", a: "Orders may be cancelled if the kitchen is unable to fulfill them or if there are payment issues." },
+      ],
+      returns: [
+        { q: "How do I get a refund?", a: "Refunds for cancelled orders are processed automatically and will reflect in your account within 5-7 business days." },
+        { q: "Food quality issue", a: "If you have issues with the food quality, please take a photo and contact support within 24 hours." },
+      ],
+      others: [
+        { q: "Can I change my delivery address after placing an order?", a: "Delivery addresses cannot be changed once the order is placed to ensure timely delivery." },
+        { q: "How to reorder from the same kitchen?", a: "Go to your 'My Orders' history and click the 'Reorder' button next to your past order." },
+      ]
+    }
+  },
+  delivery: {
+    tabs: ["Delivery Issues", "Address Issues", "Others"],
+    data: {
+      delivery: [
+        { q: "My order is delayed", a: "We apologize for the delay. Sometimes bad weather or traffic can cause delays. You can track your partner's live location." },
+        { q: "Order marked delivered but not received", a: "Please check with your security desk or neighbors. If still not found, contact support immediately." }
+      ],
+      address: [
+        { q: "Can I change my delivery address?", a: "Once an order is placed, the delivery address cannot be changed." },
+      ],
+      others: [
+        { q: "How do I contact the delivery partner?", a: "Once the partner is assigned, you will see a call button on the tracking page." }
+      ]
+    }
+  },
+  payments: {
+    tabs: ["Refunds", "Payment Methods", "Offers"],
+    data: {
+      refunds: [
+        { q: "Where is my refund?", a: "Refunds are processed to the original payment method and typically take 5-7 business days to reflect." }
+      ],
+      payment: [
+        { q: "What payment methods are accepted?", a: "We accept UPI, Credit/Debit cards, Net Banking, and Wallets. Cash on Delivery is currently not available." }
+      ],
+      offers: [
+        { q: "How do I apply a coupon code?", a: "You can apply available coupon codes in the cart page before proceeding to checkout." }
+      ]
+    }
+  },
+  kitchens: {
+    tabs: ["Onboarding", "Earnings", "Menus"],
+    data: {
+      onboarding: [
+        { q: "How do I become a home chef?", a: "Go to the 'Kitchens' page and click on 'Become a Home Chef' to fill out the registration form." },
+        { q: "What are the requirements?", a: "You need a valid FSSAI registration, clean kitchen environment, and basic cooking equipment." }
+      ],
+      earnings: [
+        { q: "When do I get paid?", a: "Earnings are credited to your bank account on a weekly basis." }
+      ],
+      menus: [
+        { q: "Can I change my menu daily?", a: "Yes, you have full control over your menu and availability." }
+      ]
+    }
+  },
+  partners: {
+    tabs: ["Onboarding", "Payouts", "Others"],
+    data: {
+      onboarding: [
+        { q: "How to join as delivery partner?", a: "Download the partner app and submit your driving license, vehicle RC, and PAN card." }
+      ],
+      payouts: [
+        { q: "What is the payout structure?", a: "You earn per delivery based on distance, plus incentives during peak hours." }
+      ],
+      others: [
+        { q: "What are the working hours?", a: "You have complete flexibility to log in and take orders whenever you want." }
+      ]
+    }
+  },
+  general: {
+    tabs: ["Account", "Policies", "Others"],
+    data: {
+      account: [
+        { q: "How to delete my account?", a: "Please contact support to process your account deletion request." },
+        { q: "How to change phone number?", a: "You can update your phone number from your profile settings." }
+      ],
+      policies: [
+        { q: "Privacy Policy", a: "Your data is encrypted and securely stored. We never share your personal information with third parties." }
+      ],
+      others: [
+        { q: "Do you deliver on holidays?", a: "Yes, we operate 365 days a year, though kitchen availability may vary on festivals." }
+      ]
+    }
+  },
+  safety: {
+    tabs: ["Food Safety", "Data Privacy", "Support"],
+    data: {
+      food: [
+        { q: "Are kitchens verified?", a: "Yes, all kitchens undergo strict hygiene and quality checks before they can sell on our platform." }
+      ],
+      data: [
+        { q: "Is my payment information safe?", a: "We use Razorpay for secure payments. We do not store your credit card details." }
+      ],
+      support: [
+        { q: "How to report a safety concern?", a: "Use the 'Contact Support' button below or call our 24/7 emergency hotline." }
+      ]
+    }
+  },
+  account: {
+    tabs: ["Profile", "Settings", "Security"],
+    data: {
+      profile: [
+        { q: "How to edit profile?", a: "Go to Account > Profile to update your name and email address." }
+      ],
+      settings: [
+        { q: "How to manage notifications?", a: "You can toggle push notifications and emails from Account > Settings." }
+      ],
+      security: [
+        { q: "How to log out of all devices?", a: "Changing your password will automatically log you out of all active sessions." }
+      ]
+    }
+  }
 };
 
 const SIDEBAR_TOPICS = [
@@ -71,13 +178,47 @@ export default function HelpPage() {
   const actions = useHelpActions();
   const openChat = useLiveChatStore((state) => state.openChat);
 
+  const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebouncedValue(searchQuery, 300);
+
+  const { data: searchResults, isLoading: isSearching } = useQuery({
+    queryKey: ["helpSearch", debouncedSearch],
+    queryFn: async () => {
+      if (!debouncedSearch.trim()) return null;
+      
+      await new Promise(resolve => setTimeout(resolve, 400));
+      
+      const query = debouncedSearch.toLowerCase().trim();
+      const results: { categoryId: string; categoryTitle: string; tab: string; q: string; a: string }[] = [];
+      
+      Object.entries(HELP_CONTENT).forEach(([catId, catData]) => {
+        const category = CATEGORIES.find(c => c.id === catId);
+        if (!category) return;
+        
+        Object.entries(catData.data).forEach(([tabKey, faqs]) => {
+          faqs.forEach(faq => {
+            if (faq.q.toLowerCase().includes(query) || faq.a.toLowerCase().includes(query)) {
+              results.push({
+                categoryId: catId,
+                categoryTitle: category.title,
+                tab: tabKey,
+                q: faq.q,
+                a: faq.a
+              });
+            }
+          });
+        });
+      });
+      
+      return results;
+    },
+    enabled: debouncedSearch.trim().length > 0,
+  });
+
   const activeCategoryInfo = CATEGORIES.find((c) => c.id === activeCategory) ?? CATEGORIES[0];
 
   return (
      <div className="min-h-screen bg-gray-50/40 flex flex-col items-center">
-       <div className="w-full">
-         <SiteHeader />
-       </div>
        {/* Hero Section */}
        <div className="w-full max-w-[1200px] px-4 md:px-8 pt-12 pb-16 flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="max-w-xl">
@@ -91,6 +232,8 @@ export default function HelpPage() {
              <div className="relative w-full max-w-md shadow-sm">
                 <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <Input 
+                   value={searchQuery}
+                   onChange={(e) => setSearchQuery(e.target.value)}
                    placeholder="Search for help articles..." 
                    className="pl-14 pr-16 h-14 rounded-full border-gray-200 text-base shadow-sm focus-visible:ring-1 focus-visible:ring-emerald-500"
                 />
@@ -177,84 +320,148 @@ export default function HelpPage() {
           {/* Right Content */}
           <div className="flex-1 bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden flex flex-col relative">
              {/* Fancy Header */}
-             <div className="p-6 md:p-8 border-b border-gray-100 bg-gradient-to-r from-orange-50/80 to-white relative overflow-hidden">
-                <div className="flex items-center gap-4 relative z-10">
-                   <div className="p-3.5 bg-white rounded-xl shadow-sm border border-orange-100 flex items-center justify-center">
-                      <activeCategoryInfo.icon className={`h-6 w-6 ${activeCategoryInfo.color} stroke-[2.5]`} />
-                   </div>
-                   <div>
-                      <h2 className="text-[22px] font-bold text-gray-900 tracking-tight">{activeCategoryInfo.title}</h2>
-                      <p className="text-[13px] text-gray-500 mt-1 font-medium">{activeCategoryInfo.subtitle}</p>
-                   </div>
-                </div>
-             </div>
+             {!debouncedSearch.trim() && (
+               <div className="p-6 md:p-8 border-b border-gray-100 bg-gradient-to-r from-orange-50/80 to-white relative overflow-hidden">
+                  <div className="flex items-center gap-4 relative z-10">
+                     <div className="p-3.5 bg-white rounded-xl shadow-sm border border-orange-100 flex items-center justify-center">
+                        <activeCategoryInfo.icon className={`h-6 w-6 ${activeCategoryInfo.color} stroke-[2.5]`} />
+                     </div>
+                     <div>
+                        <h2 className="text-[22px] font-bold text-gray-900 tracking-tight">{activeCategoryInfo.title}</h2>
+                        <p className="text-[13px] text-gray-500 mt-1 font-medium">{activeCategoryInfo.subtitle}</p>
+                     </div>
+                  </div>
+               </div>
+             )}
 
              <div className="p-6 md:p-8 flex-1 bg-white">
-                {/* Sub-tabs */}
-                <div className="flex flex-wrap gap-2 md:gap-3 mb-8">
-                   {["Placing an Order", "Tracking Orders", "Cancel / Modify", "Returns & Refunds", "Others"].map((tab) => {
-                      const tabKey = tab.toLowerCase().split(' ')[0];
-                      return (
-                        <div 
-                           key={tab}
-                           onClick={() => actions.setActiveTab(tabKey)}
-                           className={`px-4 py-2 text-[13px] font-bold rounded-md border cursor-pointer transition-colors ${
-                              activeTab === tabKey
-                              ? "bg-[#0D3025] text-white border-[#0D3025]"
-                              : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
-                           }`}
-                        >
-                           {tab}
+                {debouncedSearch.trim() ? (
+                  <div className="space-y-6">
+                    <div className="flex items-center justify-between mb-4">
+                       <h3 className="text-xl font-bold text-gray-900">
+                         {isSearching ? "Searching..." : `Search Results for "${debouncedSearch}"`}
+                       </h3>
+                       {!isSearching && searchResults && (
+                         <span className="text-sm font-medium text-gray-500">{searchResults.length} results found</span>
+                       )}
+                    </div>
+                    
+                    {isSearching ? (
+                      <div className="flex flex-col items-center justify-center py-12 space-y-4">
+                        <div className="h-8 w-8 rounded-full border-4 border-emerald-500 border-t-transparent animate-spin" />
+                        <p className="text-gray-500 font-medium text-sm">Searching our knowledge base...</p>
+                      </div>
+                    ) : searchResults && searchResults.length > 0 ? (
+                      <Accordion type="single" collapsible className="w-full space-y-3">
+                        {searchResults.map((result, i) => (
+                           <AccordionItem key={i} value={`search-item-${i}`} className="border border-gray-100 rounded-lg bg-gray-50/30 overflow-hidden px-1 hover:border-gray-200 transition-all data-[state=open]:bg-white data-[state=open]:border-emerald-100 data-[state=open]:shadow-sm">
+                              <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-gray-50/50 transition-colors text-left">
+                                 <div className="flex items-start gap-3">
+                                    <HelpCircle className="h-5 w-5 text-emerald-600 shrink-0 stroke-[2] mt-0.5" />
+                                    <div>
+                                       <span className="font-bold text-gray-900 text-[15px] block leading-tight mb-1">{result.q}</span>
+                                       <span className="text-[12px] font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md inline-block">{result.categoryTitle}</span>
+                                    </div>
+                                 </div>
+                              </AccordionTrigger>
+                              <AccordionContent className="px-4 pb-5 pt-0 text-left">
+                                 <div className="pl-8 text-gray-600 leading-relaxed text-[14px]">
+                                    {result.a}
+                                 </div>
+                              </AccordionContent>
+                           </AccordionItem>
+                        ))}
+                      </Accordion>
+                    ) : (
+                      <div className="text-center py-12">
+                        <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-gray-50 mb-4">
+                          <Search className="h-8 w-8 text-gray-400" />
                         </div>
-                      );
-                   })}
-                </div>
+                        <h4 className="text-lg font-bold text-gray-900 mb-2">No results found</h4>
+                        <p className="text-gray-500 text-sm max-w-sm mx-auto">
+                          We couldn&apos;t find any articles matching &quot;{debouncedSearch}&quot;. Try using different keywords or browse our categories.
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <>
+                    {/* Sub-tabs */}
+                    <div className="flex flex-wrap gap-2 md:gap-3 mb-8">
+                       {HELP_CONTENT[activeCategory]?.tabs?.map((tab) => {
+                          const tabKey = tab.toLowerCase().split(' ')[0];
+                          return (
+                            <div 
+                               key={tab}
+                               onClick={() => actions.setActiveTab(tabKey)}
+                               className={`px-4 py-2 text-[13px] font-bold rounded-md border cursor-pointer transition-colors ${
+                                  activeTab === tabKey
+                                  ? "bg-[#0D3025] text-white border-[#0D3025]"
+                                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                               }`}
+                            >
+                               {tab}
+                            </div>
+                          );
+                       })}
+                    </div>
 
-                 {/* Accordions */}
-                 <Accordion type="single" collapsible className="w-full space-y-3">
-                    {(() => {
-                       const faqs = FAQ_DATA[activeTab as keyof typeof FAQ_DATA] || FAQ_DATA.placing;
-                       return faqs.map((faq, i) => (
-                          <AccordionItem key={i} value={`item-${i}`} className="border border-gray-100 rounded-lg bg-gray-50/30 overflow-hidden px-1 hover:border-gray-200 transition-all data-[state=open]:bg-white data-[state=open]:border-emerald-100 data-[state=open]:shadow-sm">
-                             <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-gray-50/50 transition-colors text-left">
-                                <div className="flex items-center gap-3">
-                                   <HelpCircle className="h-5 w-5 text-emerald-600 shrink-0 stroke-[2]" />
-                                   <span className="font-bold text-gray-900 text-[15px]">{faq.q}</span>
-                                </div>
-                             </AccordionTrigger>
-                             <AccordionContent className="px-4 pb-5 pt-0 text-left">
-                                <div className="pl-8 text-gray-600 leading-relaxed text-[14px]">
-                                   {faq.a}
-                                </div>
-                             </AccordionContent>
-                          </AccordionItem>
-                       ));
-                    })()}
-                 </Accordion>
+                     {/* Accordions */}
+                     <Accordion type="single" collapsible className="w-full space-y-3">
+                        {(() => {
+                           const categoryData = HELP_CONTENT[activeCategory]?.data || {};
+                           const firstTabKey = HELP_CONTENT[activeCategory]?.tabs[0]?.toLowerCase().split(' ')[0] || "placing";
+                           const currentTab = categoryData[activeTab] ? activeTab : firstTabKey;
+                           
+                           const faqs = categoryData[currentTab] || [];
+                           
+                           if (faqs.length === 0) {
+                             return <div className="text-center py-8 text-gray-500 font-medium">No FAQs available for this section.</div>
+                           }
+
+                           return faqs.map((faq, i) => (
+                              <AccordionItem key={i} value={`item-${i}`} className="border border-gray-100 rounded-lg bg-gray-50/30 overflow-hidden px-1 hover:border-gray-200 transition-all data-[state=open]:bg-white data-[state=open]:border-emerald-100 data-[state=open]:shadow-sm">
+                                 <AccordionTrigger className="px-4 py-4 hover:no-underline hover:bg-gray-50/50 transition-colors text-left">
+                                    <div className="flex items-center gap-3">
+                                       <HelpCircle className="h-5 w-5 text-emerald-600 shrink-0 stroke-[2]" />
+                                       <span className="font-bold text-gray-900 text-[15px]">{faq.q}</span>
+                                    </div>
+                                 </AccordionTrigger>
+                                 <AccordionContent className="px-4 pb-5 pt-0 text-left">
+                                    <div className="pl-8 text-gray-600 leading-relaxed text-[14px]">
+                                       {faq.a}
+                                    </div>
+                                 </AccordionContent>
+                              </AccordionItem>
+                           ));
+                        })()}
+                     </Accordion>
+                  </>
+                )}
               </div>
 
              {/* Bottom Contact Banner */}
-             <div className="bg-gray-50/80 border border-emerald-100/50 p-6 flex flex-col md:flex-row items-center justify-between gap-6 m-6 mt-0 rounded-xl">
-                <div className="flex items-center gap-4">
-                   <div className="p-3 bg-white rounded-xl shadow-sm border border-emerald-100">
+             <div className="bg-gray-50/80 border border-emerald-100/50 p-4 md:p-6 flex flex-col lg:flex-row items-center justify-between gap-5 mx-4 mb-4 md:mx-6 md:mb-6 rounded-xl">
+                <div className="flex items-center gap-3 md:gap-4 w-full lg:w-auto">
+                   <div className="p-3 bg-white rounded-xl shadow-sm border border-emerald-100 shrink-0">
                       <ShieldCheck className="h-6 w-6 text-emerald-600 stroke-[2]" />
                    </div>
-                   <div>
+                   <div className="flex-1">
                       <h4 className="font-bold text-gray-900 text-[15px]">Need more help?</h4>
                       <p className="text-sm text-gray-500 font-medium">We&apos;re here for you 24/7</p>
                    </div>
                 </div>
-                <div className="flex gap-3 w-full md:w-auto">
+                <div className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto">
                    <Button 
                       variant="outline" 
-                      className="flex-1 md:flex-none border-gray-200 text-gray-700 font-bold bg-white hover:bg-gray-50 h-11 px-6 shadow-sm"
+                      className="flex-1 border-gray-200 text-gray-700 font-bold bg-white hover:bg-gray-50 h-11 px-4 shadow-sm"
                       onClick={openChat}
                    >
-                      <MessageSquare className="mr-2 h-4 w-4 text-emerald-600 stroke-[2.5]" />
+                      <MessageSquare className="mr-2 h-4 w-4 text-emerald-600 stroke-[2.5] shrink-0" />
                       Chat with Us
                    </Button>
-                   <Button variant="outline" className="flex-1 md:flex-none border-orange-200 text-[#FF5722] font-bold bg-white hover:bg-orange-50 h-11 px-6 shadow-sm">
-                      <PhoneCall className="mr-2 h-4 w-4 text-[#FF5722] stroke-[2.5]" />
+                   <Button variant="outline" className="flex-1 border-orange-200 text-[#FF5722] font-bold bg-white hover:bg-orange-50 h-11 px-4 shadow-sm">
+                      <PhoneCall className="mr-2 h-4 w-4 text-[#FF5722] stroke-[2.5] shrink-0" />
                       Call Support
                    </Button>
                 </div>

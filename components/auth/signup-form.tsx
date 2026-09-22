@@ -236,17 +236,17 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
         {step === "phone" && (
           <div className="bg-[#F6FAF7] rounded-xl p-4 sm:p-5 grid grid-cols-3 gap-0 divide-x divide-gray-200">
             <div className="flex flex-col items-center text-center gap-1 sm:gap-1.5 px-1 sm:px-2">
-              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-[#087A35]" fill="none" strokeWidth={1.5} />
+              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-[#087A35] fill-transparent" strokeWidth={1.5} />
               <h4 className="text-[10px] sm:text-[13px] font-bold text-gray-900 leading-tight">Secure Login</h4>
               <p className="text-[9px] sm:text-[11px] text-muted-foreground leading-tight hidden sm:block">Your data is safe with us</p>
             </div>
             <div className="flex flex-col items-center text-center gap-1 sm:gap-1.5 px-1 sm:px-2">
-              <RotateCw className="h-5 w-5 sm:h-6 sm:w-6 text-[#087A35]" fill="none" strokeWidth={1.5} />
+              <RotateCw className="h-5 w-5 sm:h-6 sm:w-6 text-[#087A35] fill-transparent" strokeWidth={1.5} />
               <h4 className="text-[10px] sm:text-[13px] font-bold text-gray-900 leading-tight">Quick Access</h4>
               <p className="text-[9px] sm:text-[11px] text-muted-foreground leading-tight hidden sm:block">Login in seconds with OTP</p>
             </div>
             <div className="flex flex-col items-center text-center gap-1 sm:gap-1.5 px-1 sm:px-2">
-              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-[#087A35]" fill="none" strokeWidth={1.5} />
+              <ShieldCheck className="h-5 w-5 sm:h-6 sm:w-6 text-[#087A35] fill-transparent" strokeWidth={1.5} />
               <h4 className="text-[10px] sm:text-[13px] font-bold text-gray-900 leading-tight">Trusted Support</h4>
               <p className="text-[9px] sm:text-[11px] text-muted-foreground leading-tight hidden sm:block">Real people, real support</p>
             </div>
