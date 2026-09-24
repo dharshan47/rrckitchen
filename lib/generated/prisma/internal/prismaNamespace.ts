@@ -6407,6 +6407,8 @@ export const KitchenAliasScalarFieldEnum = {
   imageUrl: 'imageUrl',
   coverImageUrl: 'coverImageUrl',
   description: 'description',
+  story: 'story',
+  experienceYears: 'experienceYears',
   customOfferText: 'customOfferText',
   createdAt: 'createdAt'
 } as const

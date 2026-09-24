@@ -79,6 +79,8 @@ export interface KitchenDetail {
   timeOnPlatform?: string;
   kitchenCreatedAt?: string;
   description?: string | null;
+  story?: string | null;
+  experienceYears?: number | null;
   fssaiNumber?: string | null;
   fssaiValidTill?: string | null;
   gstNumber?: string | null;

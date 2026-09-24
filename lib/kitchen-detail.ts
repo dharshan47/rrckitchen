@@ -93,6 +93,8 @@ export async function queryKitchenDetail(kitchenSlug: string): Promise<KitchenDe
     timeOnPlatform,
     address: kitchen.kitchenAddress,
     description: kitchen.kitchenAlias?.description,
+    story: kitchen.kitchenAlias?.story,
+    experienceYears: kitchen.kitchenAlias?.experienceYears,
     fssaiNumber: kitchen.kitchenKyc?.fssaiNumber ?? null,
     fssaiValidTill: kitchen.kitchenKyc?.fssaiValidTill?.toISOString() ?? null,
     gstNumber: kitchen.kitchenKyc?.gstNumber ?? null,

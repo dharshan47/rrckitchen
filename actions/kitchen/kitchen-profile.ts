@@ -33,6 +33,8 @@ export async function getKitchenProfileData() {
     displayName: kitchen.kitchenAlias?.displayName,
     imageUrl: kitchen.kitchenAlias?.imageUrl,
     description: kitchen.kitchenAlias?.description,
+    story: kitchen.kitchenAlias?.story,
+    experienceYears: kitchen.kitchenAlias?.experienceYears,
     operatingHours: kitchen.operatingHours as Record<string, { open: string; close: string }> | null,
     estimatedPrepTime: kitchen.estimatedPrepTime,
     cuisineIds: kitchen.kitchenCategories.map((kc) => kc.categoryId),
@@ -207,5 +209,32 @@ export async function updateKitchenCuisines(categoryIds: string[]) {
     return { success: true }
   } catch {
     return { success: false, error: "Failed to update cuisines" }
+  }
+}
+
+export async function updateKitchenStoryAndExperience(story: string | null, experienceYears: number | null) {
+  const session = await getSession()
+  if (!session?.user) return { success: false, error: "Unauthorized" }
+
+  const kitchen = await prisma.kitchenPartner.findUnique({
+    where: { userId: session.user.id },
+  })
+  if (!kitchen) return { success: false, error: "Kitchen not found" }
+
+  try {
+    await prisma.kitchenAlias.upsert({
+      where: { kitchenPartnerId: kitchen.id },
+      update: { story, experienceYears },
+      create: {
+        kitchenPartnerId: kitchen.id,
+        displayName: kitchen.slug,
+        sequenceNumber: 0,
+        story,
+        experienceYears,
+      },
+    })
+    return { success: true }
+  } catch {
+    return { success: false, error: "Failed to update story and experience" }
   }
 }

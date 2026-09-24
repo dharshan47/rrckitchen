@@ -117,39 +117,7 @@ export function SiteHeader() {
     );
   }
 
-  if (isHelpPage) {
-    return (
-      <>
-        <header className="sticky top-0 z-50 border-b border-[#E7E7E7] bg-white shadow-sm md:hidden">
-          <div className="flex items-center justify-between px-4 h-14">
-            <Link href="/" className="flex flex-col items-start leading-none group">
-              <Image src="/logo.webp" alt="RRC Kitchen" width={120} height={40} className="h-9 w-auto group-hover:opacity-90 transition-opacity" priority />
-            </Link>
-            {isLoggedIn ? (
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <button aria-label="User menu" className="h-9 w-9 flex items-center justify-center rounded-full border border-[#E7E7E7] text-[#4B5563] hover:bg-[#FEFEFE] transition-colors">
-                    <User className="h-5 w-5" />
-                  </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="min-w-40 font-medium">
-                  <DropdownMenuItem asChild><Link href="/account/profile" className="flex items-center gap-2 cursor-pointer text-[#4B5563]"><User className="h-4 w-4" />Profile</Link></DropdownMenuItem>
-                  <DropdownMenuItem asChild><Link href="/account/orders" className="flex items-center gap-2 cursor-pointer text-[#4B5563]"><Package className="h-4 w-4" />My Orders</Link></DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOut()} className="flex items-center gap-2 cursor-pointer text-[#DC2626] focus:text-[#B91C1C]"><LogOut className="h-4 w-4" />Sign Out</DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : (
-              <Link href="/login" className="flex items-center gap-1.5 rounded-full border border-[#E7E7E7] px-4 py-1.5 text-xs font-bold text-[#4B5563] hover:border-[#FFB18D] hover:text-[#c03a00] transition-colors">
-                <User className="h-4 w-4" />
-                Login
-              </Link>
-            )}
-          </div>
-        </header>
-      </>
-    );
-  }
+
 
   return (
     <>
@@ -267,6 +235,35 @@ export function SiteHeader() {
             </div>
           </div>
         </div>
+
+        {/* Help Page Mobile Header */}
+        {isHelpPage && (
+          <div className="lg:hidden flex items-center justify-between px-4 h-14">
+            <Link href="/" className="flex flex-col items-start leading-none group">
+              <Image src="/logo.webp" alt="RRC Kitchen" width={120} height={40} className="h-9 w-auto group-hover:opacity-90 transition-opacity" priority />
+            </Link>
+            {isLoggedIn ? (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button aria-label="User menu" className="h-9 w-9 flex items-center justify-center rounded-full border border-[#E7E7E7] text-[#4B5563] hover:bg-[#FEFEFE] transition-colors">
+                    <User className="h-5 w-5" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="min-w-40 font-medium">
+                  <DropdownMenuItem asChild><Link href="/account/profile" className="flex items-center gap-2 cursor-pointer text-[#4B5563]"><User className="h-4 w-4" />Profile</Link></DropdownMenuItem>
+                  <DropdownMenuItem asChild><Link href="/account/orders" className="flex items-center gap-2 cursor-pointer text-[#4B5563]"><Package className="h-4 w-4" />My Orders</Link></DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut()} className="flex items-center gap-2 cursor-pointer text-[#DC2626] focus:text-[#B91C1C]"><LogOut className="h-4 w-4" />Sign Out</DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <Link href="/login" className="flex items-center gap-1.5 rounded-full border border-[#E7E7E7] px-4 py-1.5 text-xs font-bold text-[#4B5563] hover:border-[#FFB18D] hover:text-[#c03a00] transition-colors">
+                <User className="h-4 w-4" />
+                Login
+              </Link>
+            )}
+          </div>
+        )}
 
         {/* Mobile navbar top row */}
         {!hideNav && (

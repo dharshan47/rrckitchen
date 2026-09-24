@@ -2,7 +2,6 @@
 
 import { useState } from "react"
 import Image from "next/image"
-import Link from "next/link"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -93,6 +92,12 @@ export default function SupportPageClient() {
   const [uploadedImages, setUploadedImages] = useState<string[]>([])
   const [activeTab, setActiveTab] = useState("All")
   const openChat = useLiveChatStore((state) => state.openChat)
+  const setActiveTicket = useLiveChatStore((state) => state.setActiveTicket)
+
+  const handleTicketClick = (ticketId: string) => {
+    setActiveTicket(ticketId)
+    openChat()
+  }
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<TicketForm>({
     resolver: zodResolver(ticketFormSchema),
@@ -377,7 +382,7 @@ export default function SupportPageClient() {
                       const CatIcon = catInfo.icon
 
                       return (
-                        <Link href={`/support?ticket=${ticket.publicCode ?? ticket.id}`} key={ticket.id} className="block group">
+                        <button onClick={() => handleTicketClick(ticket.publicCode ?? ticket.id)} key={ticket.id} className="block group w-full text-left">
                           <div className="rounded-[12px] border border-[#E5E7EB] p-4 sm:p-5 transition-all hover:border-[#DCE8DF] bg-[#FFFFFF] relative overflow-hidden">
                             <div className="flex gap-4">
                               <div className={cn("h-12 w-12 rounded-full flex items-center justify-center shrink-0", catInfo.bg)}>
@@ -407,7 +412,7 @@ export default function SupportPageClient() {
                               <ChevronRight className="h-5 w-5 text-[#9CA3AF] group-hover:text-[#087A3D] transition-colors" />
                             </div>
                           </div>
-                        </Link>
+                        </button>
                       )
                     })}
                   </div>

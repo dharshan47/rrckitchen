@@ -374,7 +374,7 @@ export default function ReviewsPageClient() {
       </div>
 
       {/* Tabs */}
-      <Tabs value={activeTab} onValueChange={(val: string) => resetPage(() => setActiveTab(val as (typeof TABS)[number]["id"]))} className="w-full">
+      <Tabs value={activeTab} onValueChange={(val: string) => resetPage(() => setActiveTab(val as (typeof TABS)[number]["id"]))} className="w-full mt-6 sm:mt-0">
         <ScrollArea className="w-full border-b border-[#EEF0F2]">
           <TabsList className="flex items-center justify-start gap-8 w-max pb-0 bg-transparent h-auto p-0 rounded-none border-none">
             {TABS.map((tab) => (

@@ -461,7 +461,7 @@ export function CartContent() {
                   Your Cart ({itemCounts} Items)
                 </h1>
                 <Link href="/kitchens">
-                  <Button variant="outline" size="sm" className="text-[#FE4D02] border-[#FE4D02] hover:bg-[#FFF7F0] h-8 px-3 rounded-full text-[13px] font-bold transition-colors">
+                  <Button variant="outline" size="sm" className="text-[#FE4D02] border-[#FE4D02] hover:bg-[#FFF7F0] h-8 px-3 rounded-[7px] text-[13px] font-bold transition-colors">
                     + Add Items
                   </Button>
                 </Link>

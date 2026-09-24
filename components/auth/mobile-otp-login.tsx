@@ -67,7 +67,7 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
             className="absolute left-6 top-10 inline-flex items-center justify-center rounded-lg p-1.5 hover:bg-muted transition-colors text-muted-foreground"
             aria-label="Go back"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-5 w-5 fill-transparent" />
           </button>
         )}
         <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
@@ -109,7 +109,7 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
             {errorMessage && <p className="text-xs text-red-500">{errorMessage}</p>}
             
             <Button type="submit" className="w-full h-14 text-base font-semibold bg-[#FF5722] hover:bg-[#E64A19] text-white rounded-xl flex items-center justify-center gap-2" disabled={isLoading}>
-              {isLoading ? <><Spinner className="h-5 w-5 text-white" /> Sending...</> : <>Continue <ArrowRight className="h-5 w-5" /></>}
+              {isLoading ? <><Spinner className="h-5 w-5 text-white" /> Sending...</> : <>Continue <ArrowRight className="h-5 w-5 fill-transparent" /></>}
             </Button>
           </form>
         )}
@@ -132,7 +132,7 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
             </div>
             {errorMessage && <p className="text-xs text-red-500 text-center">{errorMessage}</p>}
             <Button type="submit" className="w-full h-14 text-base font-semibold bg-[#FF5722] hover:bg-[#E64A19] text-white rounded-xl flex items-center justify-center gap-2" disabled={isLoading}>
-              {isLoading ? <><Spinner className="h-5 w-5 text-white" /> Verifying...</> : <>Verify OTP <ArrowRight className="h-5 w-5" /></>}
+              {isLoading ? <><Spinner className="h-5 w-5 text-white" /> Verifying...</> : <>Verify OTP <ArrowRight className="h-5 w-5 fill-transparent" /></>}
             </Button>
           </form>
         )}
@@ -141,7 +141,7 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
         {verified && (
           <div className="flex flex-col items-center gap-6 py-6">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-green-50 border-4 border-green-100">
-              <CheckCircle className="h-10 w-10 text-green-600" />
+              <CheckCircle className="h-10 w-10 text-green-600 fill-transparent" />
             </div>
             <div className="text-center">
               <p className="text-xl font-bold text-gray-900">Phone Verified!</p>
@@ -153,7 +153,7 @@ function MobileOtpLoginInner({ role = "customer", noAccountHref, noAccountLabel 
               onClick={handleLogin}
               className="w-full h-14 text-base font-semibold bg-green-600 hover:bg-green-700 text-white rounded-xl flex items-center justify-center gap-2 mt-4"
             >
-              <LogIn className="h-5 w-5" />
+              <LogIn className="h-5 w-5 fill-transparent" />
               Login 
             </Button>
           </div>

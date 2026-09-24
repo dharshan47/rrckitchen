@@ -7,16 +7,12 @@ import { subscribeAbly, unsubscribeAbly } from "@/lib/ably/client"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { X, MoreVertical, Paperclip, Send, Smile } from "lucide-react"
+import { X, MoreVertical, Paperclip, Send } from "lucide-react"
 import { CloudinaryUpload } from "@/components/patterns/cloudinary-upload"
 import { toast } from "sonner"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import dynamic from "next/dynamic"
-
-const EmojiPicker = dynamic(() => import("emoji-picker-react"), { ssr: false })
-import { Theme, EmojiStyle } from "emoji-picker-react"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 const DEFAULT_QUICK_REPLIES = ["Track my order", "Report an issue", "Payment help"]
 
@@ -41,7 +37,6 @@ export function LiveChatWidget() {
     }))
   )
   const [message, setMessage] = useState("")
-  const [isEmojiOpen, setIsEmojiOpen] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   // Fetch active session on mount if open
@@ -104,7 +99,6 @@ export function LiveChatWidget() {
     }
     const textToSend = message
     setMessage("")
-    setIsEmojiOpen(false)
     setTimeout(scrollToBottom, 50)
     await sendMessage(ticketId, textToSend)
   }
@@ -173,8 +167,9 @@ export function LiveChatWidget() {
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 bg-[#FEFEFE] space-y-4 sm:min-h-[350px] sm:max-h-[400px]">
-        {/* Welcome Message (Static) */}
+      <ScrollArea className="flex-1 bg-[#FEFEFE] sm:min-h-[350px] sm:max-h-[400px]">
+        <div className="p-4 space-y-4 outline-none" tabIndex={0}>
+          {/* Welcome Message (Static) */}
         <div className="flex items-start gap-2">
           <Image src="https://api.dicebear.com/7.x/avataaars/svg?seed=Support1" alt="Support" width={32} height={32} className="w-8 h-8 rounded-full bg-white shadow-sm" />
           <div className="bg-[#F5F7F6] text-[#1F2937] p-3 rounded-2xl rounded-tl-none max-w-[85%] text-sm">
@@ -209,8 +204,9 @@ export function LiveChatWidget() {
             </div>
           )
         })}
-        <div ref={messagesEndRef} />
-      </div>
+          <div ref={messagesEndRef} />
+        </div>
+      </ScrollArea>
 
       {/* Quick Replies */}
       {dynamicQuickReplies.length > 0 && (
@@ -242,24 +238,6 @@ export function LiveChatWidget() {
             className="border-0 bg-transparent shadow-none focus-visible:ring-0 px-1 py-4 h-9"
           />
           <div className="flex items-center gap-1 text-[#64748B]">
-            <Popover open={isEmojiOpen} onOpenChange={setIsEmojiOpen}>
-              <PopoverTrigger asChild>
-                <button type="button" className="p-1.5 hover:text-[#087A36] transition-colors"><Smile className="w-4 h-4" /></button>
-              </PopoverTrigger>
-              <PopoverContent side="top" className="w-fit p-0 border-none shadow-none mb-2 bg-transparent z-[60]">
-                <EmojiPicker 
-                  onEmojiClick={(emojiData) => {
-                    setMessage((m) => m + emojiData.emoji)
-                    setIsEmojiOpen(false)
-                  }}
-                  theme={Theme.LIGHT}
-                  emojiStyle={EmojiStyle.APPLE}
-                  width={300}
-                  height={400}
-                />
-              </PopoverContent>
-            </Popover>
-
             <CloudinaryUpload
               onUpload={async (result) => {
                 let ticketId = activeTicketId

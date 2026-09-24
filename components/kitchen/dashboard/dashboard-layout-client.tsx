@@ -146,8 +146,6 @@ export default function DashboardLayoutClient({
   }
 
   const isVerified = kitchen.status === "APPROVED" || kitchen.status === "ACTIVE"
-  const ordersBadge = data.stats.todayPending
-
   const pendingOrders = (data.orders ?? []).filter(
     (o) =>
       (o.status || "").toLowerCase().includes("confirm") ||
@@ -156,7 +154,9 @@ export default function DashboardLayoutClient({
   const openTickets = (data.supportTickets ?? []).filter(
     (t) => t.status === "OPEN"
   )
-  const notificationCount = ordersBadge + openTickets.length
+  
+  const ordersBadge = pendingOrders.length
+  const notificationCount = pendingOrders.length + openTickets.length
 
   const orderStatusColor = (status: string) => {
     const s = (status || "").toLowerCase()
@@ -300,8 +300,8 @@ export default function DashboardLayoutClient({
                       )}
                     </div>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[340px] max-w-[calc(100vw-2rem)] bg-[#FFFDFC] border-[#ECE9E5] p-0">
-                    <DropdownMenuLabel className="font-semibold text-[13px] text-[#17191C] px-4 py-3 flex items-center justify-between">
+                  <DropdownMenuContent align="end" className="w-[340px] max-w-[calc(100vw-2rem)] bg-[#FFFDFC] border-[#ECE9E5] p-0 flex flex-col max-h-[85vh]">
+                    <DropdownMenuLabel className="font-semibold text-[13px] text-[#17191C] px-4 py-3 flex items-center justify-between shrink-0">
                       <span>Notifications</span>
                       {notificationCount > 0 && (
                         <Badge className="bg-[#FFF0EA] text-[#F4511E] hover:bg-[#FFF0EA] border-none h-[20px] px-2 flex items-center justify-center text-[11px] font-medium rounded-full">
@@ -309,59 +309,61 @@ export default function DashboardLayoutClient({
                         </Badge>
                       )}
                     </DropdownMenuLabel>
-                    <DropdownMenuSeparator className="bg-[#F0ECE7]" />
+                    <DropdownMenuSeparator className="bg-[#F0ECE7] shrink-0 m-0" />
 
-                    {pendingOrders.length > 0 && (
-                      <div className="px-4 pt-2">
-                        <p className="text-[10px] font-semibold uppercase tracking-wide text-[#686A6D] mb-1">New Orders</p>
-                        {pendingOrders.slice(0, 5).map((o) => (
-                          <DropdownMenuItem key={o.id} asChild className="hover:bg-[#F1F6F0] focus:bg-[#F1F6F0] px-0 py-2">
-                            <Link href="/kitchen/dashboard/orders" className="flex items-start justify-between gap-3 w-full">
-                              <div className="min-w-0">
-                                <p className="text-[12px] font-medium text-[#17191C] truncate">{o.itemName} <span className="text-[#686A6D] font-normal">x{o.quantity}</span></p>
-                                <p className="text-[11px] text-[#686A6D] truncate">{o.customerName || "Customer"} · {o.time}</p>
-                              </div>
-                              <span className={`shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full ${orderStatusColor(o.status)}`}>{o.status}</span>
-                            </Link>
-                          </DropdownMenuItem>
-                        ))}
-                        <DropdownMenuItem asChild className="hover:bg-transparent focus:bg-transparent px-0 py-1">
-                          <Link href="/kitchen/dashboard/orders" className="text-[11px] font-medium text-[#086B2F] w-full">
-                            View all orders →
-                          </Link>
-                        </DropdownMenuItem>
-                      </div>
-                    )}
-
-                    {openTickets.length > 0 && (
-                      <>
-                        {pendingOrders.length > 0 && <DropdownMenuSeparator className="bg-[#F0ECE7]" />}
+                    <div className="overflow-y-auto flex-1">
+                      {pendingOrders.length > 0 && (
                         <div className="px-4 pt-2">
-                          <p className="text-[10px] font-semibold uppercase tracking-wide text-[#686A6D] mb-1">Support Tickets</p>
-                          {openTickets.slice(0, 3).map((t) => (
-                            <DropdownMenuItem key={t.id} asChild className="hover:bg-[#F1F6F0] focus:bg-[#F1F6F0] px-0 py-2">
-                              <Link href="/kitchen/dashboard/support" className="flex items-start justify-between gap-3 w-full">
-                                <p className="text-[12px] font-medium text-[#17191C] truncate">{t.subject}</p>
-                                <span className="shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full text-[#D83A20] bg-[#FFF0ED]">{t.priority}</span>
+                          <p className="text-[10px] font-semibold uppercase tracking-wide text-[#686A6D] mb-1">New Orders</p>
+                          {pendingOrders.slice(0, 10).map((o) => (
+                            <DropdownMenuItem key={o.id} asChild className="hover:bg-[#F1F6F0] focus:bg-[#F1F6F0] px-0 py-2">
+                              <Link href="/kitchen/dashboard/orders" className="flex items-start justify-between gap-3 w-full">
+                                <div className="min-w-0">
+                                  <p className="text-[12px] font-medium text-[#17191C] truncate">{o.itemName} <span className="text-[#686A6D] font-normal">x{o.quantity}</span></p>
+                                  <p className="text-[11px] text-[#686A6D] truncate">{o.customerName || "Customer"} · {o.time}</p>
+                                </div>
+                                <span className={`shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full ${orderStatusColor(o.status)}`}>{o.status}</span>
                               </Link>
                             </DropdownMenuItem>
                           ))}
-                          <DropdownMenuItem asChild className="hover:bg-transparent focus:bg-transparent px-0 py-1">
-                            <Link href="/kitchen/dashboard/support" className="text-[11px] font-medium text-[#086B2F] w-full">
-                              View all tickets →
+                          <DropdownMenuItem asChild className="hover:bg-transparent focus:bg-transparent px-0 py-1 mb-1">
+                            <Link href="/kitchen/dashboard/orders" className="text-[11px] font-medium text-[#086B2F] w-full">
+                              View all orders →
                             </Link>
                           </DropdownMenuItem>
                         </div>
-                      </>
-                    )}
+                      )}
 
-                    {notificationCount === 0 && (
-                      <div className="px-4 py-8 flex flex-col items-center text-center gap-2">
-                        <CheckCircle2 className="h-6 w-6 text-[#086B2F] stroke-[1.8px]" />
-                        <p className="text-[13px] font-medium text-[#17191C]">You&apos;re all caught up</p>
-                        <p className="text-[11px] text-[#686A6D]">No new orders or open tickets right now</p>
-                      </div>
-                    )}
+                      {openTickets.length > 0 && (
+                        <>
+                          {pendingOrders.length > 0 && <DropdownMenuSeparator className="bg-[#F0ECE7]" />}
+                          <div className="px-4 pt-2 pb-2">
+                            <p className="text-[10px] font-semibold uppercase tracking-wide text-[#686A6D] mb-1">Support Tickets</p>
+                            {openTickets.slice(0, 5).map((t) => (
+                              <DropdownMenuItem key={t.id} asChild className="hover:bg-[#F1F6F0] focus:bg-[#F1F6F0] px-0 py-2">
+                                <Link href="/kitchen/dashboard/support" className="flex items-start justify-between gap-3 w-full">
+                                  <p className="text-[12px] font-medium text-[#17191C] truncate">{t.subject}</p>
+                                  <span className="shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full text-[#D83A20] bg-[#FFF0ED]">{t.priority}</span>
+                                </Link>
+                              </DropdownMenuItem>
+                            ))}
+                            <DropdownMenuItem asChild className="hover:bg-transparent focus:bg-transparent px-0 py-1">
+                              <Link href="/kitchen/dashboard/support" className="text-[11px] font-medium text-[#086B2F] w-full">
+                                View all tickets →
+                              </Link>
+                            </DropdownMenuItem>
+                          </div>
+                        </>
+                      )}
+
+                      {notificationCount === 0 && (
+                        <div className="px-4 py-8 flex flex-col items-center text-center gap-2">
+                          <CheckCircle2 className="h-6 w-6 text-[#086B2F] stroke-[1.8px]" />
+                          <p className="text-[13px] font-medium text-[#17191C]">You&apos;re all caught up</p>
+                          <p className="text-[11px] text-[#686A6D]">No new orders or open tickets right now</p>
+                        </div>
+                      )}
+                    </div>
                   </DropdownMenuContent>
                 </DropdownMenu>
 

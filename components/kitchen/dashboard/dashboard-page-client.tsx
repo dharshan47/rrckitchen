@@ -485,8 +485,8 @@ export default function DashboardPageClient() {
               <h2 className="text-[14px] font-semibold" style={{ color: COLORS.text }}>Menu Performance</h2>
               <button className="text-[10px] font-semibold hover:underline" style={{ color: COLORS.green }} onClick={() => router.push("/kitchen/dashboard/menu")}>View All</button>
             </div>
-            <div className="px-5 pb-5 flex items-center justify-between gap-2">
-              <div className="relative h-[120px] w-[120px]">
+            <div className="px-5 pb-5 flex flex-col sm:flex-row items-center justify-start sm:justify-between gap-4 sm:gap-2">
+              <div className="relative h-[120px] w-[120px] shrink-0">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -509,7 +509,7 @@ export default function DashboardPageClient() {
                   <span className="text-[9px]" style={{ color: COLORS.textMuted }}>Total Items</span>
                 </div>
               </div>
-              <div className="flex-1 space-y-2.5 ml-4">
+              <div className="w-full sm:flex-1 space-y-2.5 ml-0 sm:ml-4">
                 {donutData.map((item, idx) => (
                   <div key={idx} className="flex items-center justify-between text-[10px]">
                     <div className="flex items-center gap-1.5">
@@ -538,13 +538,13 @@ export default function DashboardPageClient() {
                 const avgRating = review.tasteRating ?? review.rating ?? 0
                 return (
                   <div key={review.id}>
-                    <div className="flex gap-3">
-                      <Avatar className="h-[42px] w-[42px]" style={{ backgroundColor: COLORS.greenSoft, color: COLORS.green }}>
+                    <div className="flex gap-3 min-w-0">
+                      <Avatar className="h-[42px] w-[42px] shrink-0" style={{ backgroundColor: COLORS.greenSoft, color: COLORS.green }}>
                         <AvatarFallback className="font-semibold text-sm bg-transparent">
                           {review.customerName?.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         {avgRating > 0 && (
                           <div className="flex items-center gap-1.5 text-[11px] font-bold" style={{ color: COLORS.textSecondary }}>
                             {Array.from({ length: 5 }, (_, i) => (
@@ -582,45 +582,45 @@ export default function DashboardPageClient() {
               <h2 className="text-[14px] font-semibold" style={{ color: COLORS.text }}>Today at a Glance</h2>
             </div>
             <div className="px-5 pb-5">
-              <div className="grid grid-cols-2 gap-[14px]">
-                <div className="rounded-[10px] p-4 flex items-center gap-4 bg-white border" style={{ borderColor: COLORS.border }}>
-                  <div className="h-[44px] w-[44px] rounded-full flex items-center justify-center" style={{ backgroundColor: COLORS.orangeSoft }}>
-                    <ChefHat className="h-[22px] w-[22px]" style={{ color: COLORS.orange }} strokeWidth={1.8} />
+              <div className="grid grid-cols-2 gap-3 sm:gap-[14px]">
+                <div className="rounded-[10px] p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 bg-white border overflow-hidden" style={{ borderColor: COLORS.border }}>
+                  <div className="h-[36px] w-[36px] sm:h-[44px] sm:w-[44px] shrink-0 rounded-full flex items-center justify-center" style={{ backgroundColor: COLORS.orangeSoft }}>
+                    <ChefHat className="h-[18px] w-[18px] sm:h-[22px] sm:w-[22px]" style={{ color: COLORS.orange }} strokeWidth={1.8} />
                   </div>
-                  <div>
-                    <p className="text-[11px] font-semibold mb-0.5" style={{ color: COLORS.text }}>Preparing</p>
-                    <div className="text-[18px] font-bold leading-none" style={{ color: COLORS.text }}>{preparingCount}</div>
-                    <p className="text-[10px] mt-1" style={{ color: COLORS.textMuted }}>Orders</p>
-                  </div>
-                </div>
-                <div className="rounded-[10px] p-4 flex items-center gap-4 bg-white border" style={{ borderColor: COLORS.border }}>
-                  <div className="h-[44px] w-[44px] rounded-full flex items-center justify-center" style={{ backgroundColor: COLORS.greenSoft }}>
-                    <ShoppingBag className="h-[22px] w-[22px]" style={{ color: COLORS.green }} strokeWidth={1.8} />
-                  </div>
-                  <div>
-                    <p className="text-[11px] font-semibold mb-0.5" style={{ color: COLORS.text }}>Ready to Pickup</p>
-                    <div className="text-[18px] font-bold leading-none" style={{ color: COLORS.text }}>{readyCount}</div>
-                    <p className="text-[10px] mt-1" style={{ color: COLORS.textMuted }}>Orders</p>
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-[11px] font-semibold mb-0.5 truncate" style={{ color: COLORS.text }}>Preparing</p>
+                    <div className="text-[16px] sm:text-[18px] font-bold leading-none" style={{ color: COLORS.text }}>{preparingCount}</div>
+                    <p className="text-[9px] sm:text-[10px] mt-1 truncate" style={{ color: COLORS.textMuted }}>Orders</p>
                   </div>
                 </div>
-                <div className="rounded-[10px] p-4 flex items-center gap-4 bg-white border" style={{ borderColor: COLORS.border }}>
-                  <div className="h-[44px] w-[44px] rounded-full flex items-center justify-center" style={{ backgroundColor: COLORS.blueSoft }}>
-                    <Bike className="h-[22px] w-[22px]" style={{ color: COLORS.blue }} strokeWidth={1.8} />
+                <div className="rounded-[10px] p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 bg-white border overflow-hidden" style={{ borderColor: COLORS.border }}>
+                  <div className="h-[36px] w-[36px] sm:h-[44px] sm:w-[44px] shrink-0 rounded-full flex items-center justify-center" style={{ backgroundColor: COLORS.greenSoft }}>
+                    <ShoppingBag className="h-[18px] w-[18px] sm:h-[22px] sm:w-[22px]" style={{ color: COLORS.green }} strokeWidth={1.8} />
                   </div>
-                  <div>
-                    <p className="text-[11px] font-semibold mb-0.5" style={{ color: COLORS.text }}>Out for Delivery</p>
-                    <div className="text-[18px] font-bold leading-none" style={{ color: COLORS.text }}>{outCount}</div>
-                    <p className="text-[10px] mt-1" style={{ color: COLORS.textMuted }}>Orders</p>
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-[11px] font-semibold mb-0.5 truncate" style={{ color: COLORS.text }}>Ready to Pickup</p>
+                    <div className="text-[16px] sm:text-[18px] font-bold leading-none" style={{ color: COLORS.text }}>{readyCount}</div>
+                    <p className="text-[9px] sm:text-[10px] mt-1 truncate" style={{ color: COLORS.textMuted }}>Orders</p>
                   </div>
                 </div>
-                <div className="rounded-[10px] p-4 flex items-center gap-4 bg-white border" style={{ borderColor: COLORS.border }}>
-                  <div className="h-[44px] w-[44px] rounded-full flex items-center justify-center" style={{ backgroundColor: COLORS.greenSoft }}>
-                    <CircleCheck className="h-[22px] w-[22px]" style={{ color: COLORS.green }} strokeWidth={1.8} />
+                <div className="rounded-[10px] p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 bg-white border overflow-hidden" style={{ borderColor: COLORS.border }}>
+                  <div className="h-[36px] w-[36px] sm:h-[44px] sm:w-[44px] shrink-0 rounded-full flex items-center justify-center" style={{ backgroundColor: COLORS.blueSoft }}>
+                    <Bike className="h-[18px] w-[18px] sm:h-[22px] sm:w-[22px]" style={{ color: COLORS.blue }} strokeWidth={1.8} />
                   </div>
-                  <div>
-                    <p className="text-[11px] font-semibold mb-0.5" style={{ color: COLORS.text }}>Delivered</p>
-                    <div className="text-[18px] font-bold leading-none" style={{ color: COLORS.text }}>{deliveredCount}</div>
-                    <p className="text-[10px] mt-1" style={{ color: COLORS.textMuted }}>Orders</p>
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-[11px] font-semibold mb-0.5 truncate" style={{ color: COLORS.text }}>Out for Delivery</p>
+                    <div className="text-[16px] sm:text-[18px] font-bold leading-none" style={{ color: COLORS.text }}>{outCount}</div>
+                    <p className="text-[9px] sm:text-[10px] mt-1 truncate" style={{ color: COLORS.textMuted }}>Orders</p>
+                  </div>
+                </div>
+                <div className="rounded-[10px] p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 bg-white border overflow-hidden" style={{ borderColor: COLORS.border }}>
+                  <div className="h-[36px] w-[36px] sm:h-[44px] sm:w-[44px] shrink-0 rounded-full flex items-center justify-center" style={{ backgroundColor: COLORS.greenSoft }}>
+                    <CircleCheck className="h-[18px] w-[18px] sm:h-[22px] sm:w-[22px]" style={{ color: COLORS.green }} strokeWidth={1.8} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[10px] sm:text-[11px] font-semibold mb-0.5 truncate" style={{ color: COLORS.text }}>Delivered</p>
+                    <div className="text-[16px] sm:text-[18px] font-bold leading-none" style={{ color: COLORS.text }}>{deliveredCount}</div>
+                    <p className="text-[9px] sm:text-[10px] mt-1 truncate" style={{ color: COLORS.textMuted }}>Orders</p>
                   </div>
                 </div>
               </div>
@@ -659,25 +659,25 @@ export default function DashboardPageClient() {
                   }
 
                   return (
-                    <div key={order.id} className="flex items-center justify-between gap-3 text-[12px] pb-[10px]" style={{ borderBottom: `1px solid ${COLORS.borderSoft}` }}>
-                      <div className="w-16" style={{ color: COLORS.textMuted }}>
+                    <div key={order.id} className="flex items-center justify-between gap-2 sm:gap-3 text-[12px] pb-[10px]" style={{ borderBottom: `1px solid ${COLORS.borderSoft}` }}>
+                      <div className="shrink-0 w-10 sm:w-16 truncate" style={{ color: COLORS.textMuted }}>
                         {order.publicCode ?? `#${order.id.slice(0, 6)}`}
                       </div>
-                      <div className="w-20 truncate font-medium" style={{ color: COLORS.text }}>
+                      <div className="flex-1 min-w-0 truncate font-medium" style={{ color: COLORS.text }}>
                         {order.customerName?.split(' ')[0]}
                       </div>
-                      <div className="w-28 flex justify-center">
+                      <div className="shrink-0 flex justify-center">
                         <span className={`text-[9px] h-[20px] px-2 rounded-[6px] flex items-center justify-center font-medium ${badgeClass}`}>
                           {displayStatus}
                         </span>
                       </div>
-                      <div className="w-16 text-right hidden sm:block" style={{ color: COLORS.textMuted }}>
+                      <div className="w-16 text-right hidden sm:block shrink-0" style={{ color: COLORS.textMuted }}>
                         {order.time}
                       </div>
-                      <div className="w-12 text-right font-medium" style={{ color: COLORS.textSecondary }}>
+                      <div className="shrink-0 text-right font-medium" style={{ color: COLORS.textSecondary }}>
                         ₹{order.amount}
                       </div>
-                      <ChevronRight className="h-4 w-4" style={{ color: COLORS.textLight }} />
+                      <ChevronRight className="h-4 w-4 shrink-0 hidden sm:block" style={{ color: COLORS.textLight }} />
                     </div>
                   )
                 })}
@@ -693,30 +693,30 @@ export default function DashboardPageClient() {
               <h2 className="text-[14px] font-semibold" style={{ color: COLORS.text }}>Quick Actions</h2>
             </div>
             <div className="px-5 pb-5">
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-[14px]">
-                <button className="flex items-center justify-start gap-3 h-[46px] rounded-[10px] bg-white border hover:bg-gray-50 transition-colors px-3" style={{ borderColor: COLORS.border }} onClick={() => router.push("/kitchen/dashboard/menu")}>
-                  <div className="flex items-center justify-center h-[26px] w-[26px] rounded-[6px]" style={{ backgroundColor: COLORS.greenSoft, color: COLORS.green }}><Plus className="h-[14px] w-[14px]" /></div>
-                  <span className="text-[11px] font-medium" style={{ color: COLORS.textSecondary }}>Add Menu Item</span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-[14px]">
+                <button className="flex items-center justify-start gap-2 h-[46px] rounded-[10px] bg-white border hover:bg-gray-50 transition-colors px-2 sm:px-3 overflow-hidden" style={{ borderColor: COLORS.border }} onClick={() => router.push("/kitchen/dashboard/menu")}>
+                  <div className="shrink-0 flex items-center justify-center h-[26px] w-[26px] rounded-[6px]" style={{ backgroundColor: COLORS.greenSoft, color: COLORS.green }}><Plus className="h-[14px] w-[14px]" /></div>
+                  <span className="text-[10px] sm:text-[11px] font-medium truncate flex-1 text-left" style={{ color: COLORS.textSecondary }}>Add Menu Item</span>
                 </button>
-                <button className="flex items-center justify-start gap-3 h-[46px] rounded-[10px] bg-white border hover:bg-gray-50 transition-colors px-3" style={{ borderColor: COLORS.border }} onClick={() => router.push("/kitchen/dashboard/menu")}>
-                  <div className="flex items-center justify-center h-[26px] w-[26px] rounded-[6px]" style={{ backgroundColor: COLORS.orangeSoft, color: COLORS.orange }}><Edit className="h-[14px] w-[14px]" /></div>
-                  <span className="text-[11px] font-medium" style={{ color: COLORS.textSecondary }}>Manage Menu</span>
+                <button className="flex items-center justify-start gap-2 h-[46px] rounded-[10px] bg-white border hover:bg-gray-50 transition-colors px-2 sm:px-3 overflow-hidden" style={{ borderColor: COLORS.border }} onClick={() => router.push("/kitchen/dashboard/menu")}>
+                  <div className="shrink-0 flex items-center justify-center h-[26px] w-[26px] rounded-[6px]" style={{ backgroundColor: COLORS.orangeSoft, color: COLORS.orange }}><Edit className="h-[14px] w-[14px]" /></div>
+                  <span className="text-[10px] sm:text-[11px] font-medium truncate flex-1 text-left" style={{ color: COLORS.textSecondary }}>Manage Menu</span>
                 </button>
-                <button className="flex items-center justify-start gap-3 h-[46px] rounded-[10px] bg-white border hover:bg-gray-50 transition-colors px-3" style={{ borderColor: COLORS.border }} onClick={() => router.push("/kitchen/dashboard/orders")}>
-                  <div className="flex items-center justify-center h-[26px] w-[26px] rounded-[6px]" style={{ backgroundColor: COLORS.blueSoft, color: COLORS.blue }}><ShoppingBag className="h-[14px] w-[14px]" /></div>
-                  <span className="text-[11px] font-medium" style={{ color: COLORS.textSecondary }}>View Orders</span>
+                <button className="flex items-center justify-start gap-2 h-[46px] rounded-[10px] bg-white border hover:bg-gray-50 transition-colors px-2 sm:px-3 overflow-hidden" style={{ borderColor: COLORS.border }} onClick={() => router.push("/kitchen/dashboard/orders")}>
+                  <div className="shrink-0 flex items-center justify-center h-[26px] w-[26px] rounded-[6px]" style={{ backgroundColor: COLORS.blueSoft, color: COLORS.blue }}><ShoppingBag className="h-[14px] w-[14px]" /></div>
+                  <span className="text-[10px] sm:text-[11px] font-medium truncate flex-1 text-left" style={{ color: COLORS.textSecondary }}>View Orders</span>
                 </button>
-                <button className="flex items-center justify-start gap-3 h-[46px] rounded-[10px] bg-white border hover:bg-gray-50 transition-colors px-3" style={{ borderColor: COLORS.border }} onClick={() => router.push("/kitchen/dashboard/profile")}>
-                  <div className="flex items-center justify-center h-[26px] w-[26px] rounded-[6px]" style={{ backgroundColor: COLORS.greenSoft, color: COLORS.green }}><Timer className="h-[14px] w-[14px]" /></div>
-                  <span className="text-[11px] font-medium" style={{ color: COLORS.textSecondary }}>Update Timings</span>
+                <button className="flex items-center justify-start gap-2 h-[46px] rounded-[10px] bg-white border hover:bg-gray-50 transition-colors px-2 sm:px-3 overflow-hidden" style={{ borderColor: COLORS.border }} onClick={() => router.push("/kitchen/dashboard/profile")}>
+                  <div className="shrink-0 flex items-center justify-center h-[26px] w-[26px] rounded-[6px]" style={{ backgroundColor: COLORS.greenSoft, color: COLORS.green }}><Timer className="h-[14px] w-[14px]" /></div>
+                  <span className="text-[10px] sm:text-[11px] font-medium truncate flex-1 text-left" style={{ color: COLORS.textSecondary }}>Update Timings</span>
                 </button>
-                <button className="flex items-center justify-start gap-3 h-[46px] rounded-[10px] bg-white border hover:bg-gray-50 transition-colors px-3" style={{ borderColor: COLORS.border }} onClick={() => router.push("/kitchen/dashboard/payments")}>
-                  <div className="flex items-center justify-center h-[26px] w-[26px] rounded-[6px]" style={{ backgroundColor: COLORS.greenSoft, color: COLORS.green }}><Building2 className="h-[14px] w-[14px]" /></div>
-                  <span className="text-[11px] font-medium" style={{ color: COLORS.textSecondary }}>Bank Details</span>
+                <button className="flex items-center justify-start gap-2 h-[46px] rounded-[10px] bg-white border hover:bg-gray-50 transition-colors px-2 sm:px-3 overflow-hidden" style={{ borderColor: COLORS.border }} onClick={() => router.push("/kitchen/dashboard/payments")}>
+                  <div className="shrink-0 flex items-center justify-center h-[26px] w-[26px] rounded-[6px]" style={{ backgroundColor: COLORS.greenSoft, color: COLORS.green }}><Building2 className="h-[14px] w-[14px]" /></div>
+                  <span className="text-[10px] sm:text-[11px] font-medium truncate flex-1 text-left" style={{ color: COLORS.textSecondary }}>Bank Details</span>
                 </button>
-                <button className="flex items-center justify-start gap-3 h-[46px] rounded-[10px] bg-white border hover:bg-gray-50 transition-colors px-3" style={{ borderColor: COLORS.border }} onClick={() => router.push("/kitchen/dashboard/profile")}>
-                  <div className="flex items-center justify-center h-[26px] w-[26px] rounded-[6px]" style={{ backgroundColor: COLORS.purpleSoft, color: COLORS.purple }}><UserRound className="h-[14px] w-[14px]" /></div>
-                  <span className="text-[11px] font-medium" style={{ color: COLORS.textSecondary }}>Kitchen Profile</span>
+                <button className="flex items-center justify-start gap-2 h-[46px] rounded-[10px] bg-white border hover:bg-gray-50 transition-colors px-2 sm:px-3 overflow-hidden" style={{ borderColor: COLORS.border }} onClick={() => router.push("/kitchen/dashboard/profile")}>
+                  <div className="shrink-0 flex items-center justify-center h-[26px] w-[26px] rounded-[6px]" style={{ backgroundColor: COLORS.purpleSoft, color: COLORS.purple }}><UserRound className="h-[14px] w-[14px]" /></div>
+                  <span className="text-[10px] sm:text-[11px] font-medium truncate flex-1 text-left" style={{ color: COLORS.textSecondary }}>Kitchen Profile</span>
                 </button>
               </div>
             </div>

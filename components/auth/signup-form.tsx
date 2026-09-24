@@ -73,7 +73,7 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
             className="absolute left-6 top-10 inline-flex items-center justify-center rounded-lg p-1.5 hover:bg-muted transition-colors text-muted-foreground"
             aria-label="Go back"
           >
-            <ArrowLeft className="h-5 w-5" />
+            <ArrowLeft className="h-5 w-5 fill-transparent" />
           </button>
         )}
         <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">
@@ -116,7 +116,7 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
             {errorMessage && <p className="text-xs text-red-500">{errorMessage}</p>}
             
             <Button type="submit" className="w-full h-14 text-base font-semibold bg-[#FF5722] hover:bg-[#E64A19] text-white rounded-xl flex items-center justify-center gap-2" disabled={isLoading}>
-              {isLoading ? <><Spinner className="h-5 w-5 text-white" /> Sending...</> : <>Continue <ArrowRight className="h-5 w-5" /></>}
+              {isLoading ? <><Spinner className="h-5 w-5 text-white" /> Sending...</> : <>Continue <ArrowRight className="h-5 w-5 fill-transparent" /></>}
             </Button>
           </form>
         )}
@@ -139,7 +139,7 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
             </div>
             {errorMessage && <p className="text-xs text-red-500 text-center">{errorMessage}</p>}
             <Button type="submit" className="w-full h-14 text-base font-semibold bg-[#FF5722] hover:bg-[#E64A19] text-white rounded-xl flex items-center justify-center gap-2" disabled={isLoading}>
-              {isLoading ? <><Spinner className="h-5 w-5 text-white" /> Verifying...</> : <>Verify OTP <ArrowRight className="h-5 w-5" /></>}
+              {isLoading ? <><Spinner className="h-5 w-5 text-white" /> Verifying...</> : <>Verify OTP <ArrowRight className="h-5 w-5 fill-transparent" /></>}
             </Button>
           </form>
         )}
@@ -150,7 +150,7 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
               <Label htmlFor="name" className="text-sm font-semibold text-gray-900">{nameLabel}</Label>
                 <div className="relative flex border border-border rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-green-700/20 focus-within:border-green-700 transition-all bg-white">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <User className="h-5 w-5 text-muted-foreground" />
+                  <User className="h-5 w-5 text-muted-foreground fill-transparent" />
                 </div>
                 <Input
                   id="name"
@@ -170,7 +170,7 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
               <Label htmlFor="email" className="text-sm font-semibold text-gray-900">Email</Label>
                 <div className="relative flex border border-border rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-green-700/20 focus-within:border-green-700 transition-all bg-white">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-muted-foreground" />
+                  <Mail className="h-5 w-5 text-muted-foreground fill-transparent" />
                 </div>
                 <Input
                   id="email"
@@ -191,7 +191,7 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
                 <Label htmlFor="kitchenName" className="text-sm font-semibold text-gray-900">Kitchen Name</Label>
                 <div className="relative flex border border-border rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-green-700/20 focus-within:border-green-700 transition-all bg-white">
                   <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Store className="h-5 w-5 text-muted-foreground" />
+                    <Store className="h-5 w-5 text-muted-foreground fill-transparent" />
                   </div>
                   <Input
                     id="kitchenName"
@@ -206,7 +206,7 @@ function SignupFormInner({ role = "customer", subtitle, nameLabel = "Full Name",
 
             {errorMessage && <p className="text-xs text-red-500 text-center">{errorMessage}</p>}
             <Button type="submit" className="w-full h-14 text-base font-semibold bg-[#FF5722] hover:bg-[#E64A19] text-white rounded-xl flex items-center justify-center gap-2" disabled={isLoading}>
-              {isLoading ? <><Spinner className="h-5 w-5 text-white" /> Creating account...</> : <>Create Account <ArrowRight className="h-5 w-5" /></>}
+              {isLoading ? <><Spinner className="h-5 w-5 text-white" /> Creating account...</> : <>Create Account <ArrowRight className="h-5 w-5 fill-transparent" /></>}
             </Button>
           </form>
         )}

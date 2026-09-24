@@ -116,7 +116,7 @@ function ReviewStars({ rating }: { rating: number }) {
   );
 }
 
-function MenuItemDetailSkeleton() {
+export function MenuItemDetailSkeleton() {
   return (
     <div className="min-h-screen bg-[#FDFDFD] pb-24 md:pb-10 font-sans">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">

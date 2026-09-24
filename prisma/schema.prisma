@@ -269,6 +269,8 @@ model KitchenAlias {
   imageUrl         String?
   coverImageUrl    String?
   description      String?
+  story            String?
+  experienceYears  Int?
   customOfferText  String?
   createdAt        DateTime @default(now())
 

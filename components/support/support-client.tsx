@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { 
   Search, ArrowRight, CheckCircle2, Ticket, ShieldCheck, Mail, Phone, 
   MessageSquare, FileText, ChevronRight, HelpCircle, Package, User, 
@@ -9,8 +10,9 @@ import {
 import { cn } from "@/lib/utils";
 import { useLiveChatStore } from "@/stores";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useSearchParams } from "next/navigation";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 const LiveChatWidget = dynamic(() => import("@/components/chat/live-chat-widget").then(mod => mod.LiveChatWidget), { ssr: false });
 
@@ -30,8 +32,18 @@ const helpTopics = [
   { id: "other", label: "General Support", desc: "Other issues, app bugs, feature requests", icon: HelpCircle, iconColor: "text-[#087A36]", bg: "bg-[#EAF7EF]" },
 ];
 
-export function SupportClient() {
+function SupportContent() {
   const openChat = useLiveChatStore((state) => state.openChat);
+  const setActiveTicket = useLiveChatStore((state) => state.setActiveTicket);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const ticketId = searchParams.get("ticket");
+    if (ticketId) {
+      setActiveTicket(ticketId);
+      openChat();
+    }
+  }, [searchParams, setActiveTicket, openChat]);
 
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebouncedValue(searchQuery, 300);
@@ -133,7 +145,7 @@ export function SupportClient() {
                   {searchResults.map(topic => {
                     const Icon = topic.icon;
                     return (
-                      <button key={topic.id} className="group p-5 bg-white border border-[#E5E7EB] hover:border-[#E5E7EB] hover:bg-[#FAFFFC] hover:shadow-[0_6px_18px_rgba(15,23,42,0.07)] rounded-[12px] transition-all text-left flex items-start gap-4 h-full">
+                      <button onClick={openChat} key={topic.id} className="group p-5 bg-white border border-[#E5E7EB] hover:border-[#E5E7EB] hover:bg-[#FAFFFC] hover:shadow-[0_6px_18px_rgba(15,23,42,0.07)] rounded-[12px] transition-all text-left flex items-start gap-4 h-full">
                         <div className={cn("w-12 h-12 rounded-full flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform", topic.bg, topic.iconColor)}>
                           <Icon className="w-5 h-5" />
                         </div>
@@ -170,7 +182,7 @@ export function SupportClient() {
               <p className="text-[#475569] mb-8 text-[15px]">Select an option to get personalized support</p>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left">
-                <button className="group p-5 bg-white border border-[#E5E7EB] hover:border-[#087A36] hover:shadow-[0_6px_18px_rgba(15,23,42,0.07)] rounded-[14px] transition-all flex items-start gap-4">
+                <Link href="/account/support" className="group p-5 bg-white border border-[#E5E7EB] hover:border-[#087A36] hover:shadow-[0_6px_18px_rgba(15,23,42,0.07)] rounded-[14px] transition-all flex items-start gap-4">
                   <div className="w-14 h-14 rounded-full bg-[#EAF7EF] text-[#087A36] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                     <User className="w-7 h-7" />
                   </div>
@@ -181,9 +193,9 @@ export function SupportClient() {
                       <ArrowRight className="w-5 h-5 text-[#0F172A] group-hover:text-[#087A36] transition-colors" />
                     </div>
                   </div>
-                </button>
+                </Link>
 
-                <button className="group p-5 bg-white border border-[#E5E7EB] hover:border-[#E5E7EB] hover:shadow-[0_6px_18px_rgba(15,23,42,0.07)] rounded-[14px] transition-all flex items-start gap-4">
+                <Link href="/kitchen/dashboard?tab=support" className="group p-5 bg-white border border-[#E5E7EB] hover:border-[#FF731A] hover:shadow-[0_6px_18px_rgba(15,23,42,0.07)] rounded-[14px] transition-all flex items-start gap-4">
                   <div className="w-14 h-14 rounded-full bg-[#FFF1E7] text-[#FF731A] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                     <ChefHat className="w-7 h-7" />
                   </div>
@@ -191,12 +203,12 @@ export function SupportClient() {
                     <h3 className="font-bold text-[#0F172A] text-[17px] mb-1.5">I&apos;m a Kitchen Partner</h3>
                     <p className="text-sm text-[#475569] leading-relaxed mb-3">Get support for kitchen dashboard, orders, payouts & more</p>
                     <div className="flex justify-end w-full">
-                      <ArrowRight className="w-5 h-5 text-[#0F172A] transition-colors" />
+                      <ArrowRight className="w-5 h-5 text-[#0F172A] group-hover:text-[#FF731A] transition-colors" />
                     </div>
                   </div>
-                </button>
+                </Link>
 
-                <button className="group p-5 bg-white border border-[#E5E7EB] hover:border-[#E5E7EB] hover:shadow-[0_6px_18px_rgba(15,23,42,0.07)] rounded-[14px] transition-all flex items-start gap-4">
+                <Link href="/delivery-partner/dashboard?tab=support" className="group p-5 bg-white border border-[#E5E7EB] hover:border-[#7C3AED] hover:shadow-[0_6px_18px_rgba(15,23,42,0.07)] rounded-[14px] transition-all flex items-start gap-4">
                   <div className="w-14 h-14 rounded-full bg-[#F4EEFF] text-[#7C3AED] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
                     <Truck className="w-7 h-7" />
                   </div>
@@ -204,10 +216,10 @@ export function SupportClient() {
                     <h3 className="font-bold text-[#0F172A] text-[17px] mb-1.5">I&apos;m a Delivery Partner</h3>
                     <p className="text-sm text-[#475569] leading-relaxed mb-3">Get help with deliveries, earnings, app issues & more</p>
                     <div className="flex justify-end w-full">
-                      <ArrowRight className="w-5 h-5 text-[#0F172A] transition-colors" />
+                      <ArrowRight className="w-5 h-5 text-[#0F172A] group-hover:text-[#7C3AED] transition-colors" />
                     </div>
                   </div>
-                </button>
+                </Link>
               </div>
             </section>
 
@@ -224,7 +236,7 @@ export function SupportClient() {
                 {helpTopics.map(topic => {
                   const Icon = topic.icon;
                   return (
-                    <button key={topic.id} className="group p-5 bg-white border border-[#E5E7EB] hover:border-[#E5E7EB] hover:bg-[#FAFFFC] hover:shadow-[0_6px_18px_rgba(15,23,42,0.07)] rounded-[12px] transition-all text-left flex items-start gap-4 h-full">
+                    <button onClick={openChat} key={topic.id} className="group p-5 bg-white border border-[#E5E7EB] hover:border-[#E5E7EB] hover:bg-[#FAFFFC] hover:shadow-[0_6px_18px_rgba(15,23,42,0.07)] rounded-[12px] transition-all text-left flex items-start gap-4 h-full">
                       <div className={cn("w-12 h-12 rounded-full flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform", topic.bg, topic.iconColor)}>
                         <Icon className="w-5 h-5" />
                       </div>
@@ -339,7 +351,7 @@ export function SupportClient() {
                   { icon: FileText, title: "Terms & Policies", desc: "Read our policies", color: "text-[#2563EB]", bg: "bg-[#EFF6FF]" },
                   { icon: Package, title: "App & Features", desc: "Learn more about app", color: "text-[#087A36]", bg: "bg-[#EAF7EF]" },
                 ].map((q, i) => (
-                  <button key={i} className="bg-white border border-[#E5E7EB] hover:shadow-[0_4px_16px_rgba(15,23,42,0.05)] rounded-[12px] p-4 flex flex-col gap-3 items-start transition-all text-left">
+                  <button onClick={openChat} key={i} className="bg-white border border-[#E5E7EB] hover:shadow-[0_4px_16px_rgba(15,23,42,0.05)] rounded-[12px] p-4 flex flex-col gap-3 items-start transition-all text-left">
                      <div className={cn("w-9 h-9 rounded-full flex items-center justify-center shrink-0", q.bg, q.color)}>
                        <q.icon className="w-4 h-4" />
                      </div>
@@ -365,7 +377,7 @@ export function SupportClient() {
                <p className="text-sm text-[#475569]">If you don&apos;t find the answer you&apos;re looking for, our support team will help you personally.</p>
              </div>
            </div>
-           <button className="bg-white border border-[#087A36] text-[#087A36] hover:bg-[#F3FAF5] px-6 py-2.5 rounded-lg font-semibold text-sm transition-colors whitespace-nowrap w-full md:w-auto shadow-sm">
+           <button onClick={openChat} className="bg-white border border-[#087A36] text-[#087A36] hover:bg-[#F3FAF5] px-6 py-2.5 rounded-lg font-semibold text-sm transition-colors whitespace-nowrap w-full md:w-auto shadow-sm">
              Contact Support
            </button>
         </section>
@@ -373,5 +385,13 @@ export function SupportClient() {
       </div>
       <LiveChatWidget />
     </div>
+  );
+}
+
+export function SupportClient() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#FEFEFE] flex items-center justify-center"><div className="w-8 h-8 rounded-full border-4 border-[#087A36] border-t-transparent animate-spin"></div></div>}>
+      <SupportContent />
+    </Suspense>
   );
 }

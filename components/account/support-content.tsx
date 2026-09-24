@@ -76,6 +76,13 @@ export function SupportContent() {
   const activeTab = useSupportActiveTab();
   const selectedCategory = useSupportCategory();
   const openChat = useLiveChatStore((state) => state.openChat);
+  const setActiveTicket = useLiveChatStore((state) => state.setActiveTicket);
+  
+  const handleTicketClick = (ticketId: string) => {
+    setActiveTicket(ticketId);
+    openChat();
+  };
+
   const priority = useSupportPriority();
   const uploadedImages = useSupportUploadedImages();
   const {
@@ -309,7 +316,7 @@ export function SupportContent() {
                       const CatIcon = catInfo.icon;
                       
                       return (
-                        <Link href={`/support?ticket=${ticket.publicCode ?? ticket.id}`} key={ticket.id} className="block group">
+                        <button onClick={() => handleTicketClick(ticket.publicCode ?? ticket.id)} key={ticket.id} className="block group w-full text-left">
                           <div className="rounded-[10px] border border-[#E9ECEF] p-4 transition-all hover:border-[#D1D5DB] hover:shadow-[0_2px_8px_rgba(17,24,39,0.04)] bg-[#FFFFFF]">
                             <div className="flex gap-4">
                               <div className={cn("h-[52px] w-[52px] rounded-full flex items-center justify-center shrink-0", catInfo.bg)}>
@@ -339,7 +346,7 @@ export function SupportContent() {
                               </div>
                             </div>
                           </div>
-                        </Link>
+                        </button>
                       );
                     })
                   )}

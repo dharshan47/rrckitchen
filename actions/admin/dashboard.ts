@@ -393,7 +393,7 @@ export async function getKitchenDashboardData() {
       kitchenCategories: {
         include: { category: { select: { id: true, name: true } } },
       },
-      user: { select: { name: true, email: true } },
+      user: { select: { name: true, email: true, phoneNumber: true } },
     },
   })
 
@@ -419,7 +419,7 @@ export async function getKitchenDashboardData() {
           kitchenCategories: {
             include: { category: { select: { id: true, name: true } } },
           },
-          user: { select: { name: true, email: true } },
+          user: { select: { name: true, email: true, phoneNumber: true } },
         },
       })
       return created
@@ -718,6 +718,8 @@ export async function getKitchenDashboardData() {
       imageUrl: kitchenPartner.kitchenAlias?.imageUrl,
       coverImageUrl: kitchenPartner.kitchenAlias?.coverImageUrl,
       description: kitchenPartner.kitchenAlias?.description,
+      story: kitchenPartner.kitchenAlias?.story,
+      experienceYears: kitchenPartner.kitchenAlias?.experienceYears,
       status: kitchenPartner.status,
       avgRating: "avgRating" in kitchenPartner && typeof (kitchenPartner as Record<string, unknown>).avgRating === "number"
         ? Math.round(Number((kitchenPartner as Record<string, unknown>).avgRating) * 10) / 10
@@ -729,7 +731,7 @@ export async function getKitchenDashboardData() {
       accountHolderName: kitchenPartner.kitchenKyc?.accountHolderName,
       upiId: kitchenPartner.kitchenKyc?.upiId,
       gpayNumber: kitchenPartner.kitchenKyc?.gpayNumber,
-      phoneNumber: kitchenPartner.kitchenKyc?.phoneNumber,
+      phoneNumber: kitchenPartner.user?.phoneNumber || kitchenPartner.kitchenKyc?.phoneNumber,
       userName: kitchenPartner.user?.name,
       email: kitchenPartner.user?.email,
       operatingHours: kitchenPartner.operatingHours as Record<string, { open: string; close: string }> | null,

@@ -61,10 +61,12 @@ import {
   updateKitchenDisplayName,
   updateKitchenOperatingHours,
   updateKitchenPrepTime,
+  updateKitchenStoryAndExperience,
 } from "@/actions/kitchen/kitchen-profile"
 import { useKitchenDashboardData } from "@/stores/kitchenDashboardStore"
 import { CloudinaryUpload } from "@/components/patterns/cloudinary-upload"
 import { getKitchenStatus } from "@/components/kitchen/kitchen-timing-display"
+import { ThanjavurMap } from "@/components/map/thanjavur-map"
 
 const DAY_KEYS = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"] as const
 
@@ -167,12 +169,14 @@ export default function ProfilePageClient() {
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState<string>("Profile")
   const [editing, setEditing] = useState<
-    null | "name" | "description" | "cuisines" | "address" | "hours" | "preptime"
+    null | "name" | "description" | "cuisines" | "address" | "hours" | "preptime" | "story"
   >(null)
   const data = useKitchenDashboardData()
 
   const [nameValue, setNameValue] = useState("")
   const [descriptionValue, setDescriptionValue] = useState("")
+  const [storyValue, setStoryValue] = useState("")
+  const [experienceValue, setExperienceValue] = useState("")
   const [selectedCuisineIds, setSelectedCuisineIds] = useState<string[]>([])
   const [prepTimeValue, setPrepTimeValue] = useState("")
   const [addressForm, setAddressForm] = useState({
@@ -241,6 +245,21 @@ export default function ProfilePageClient() {
         invalidate()
       } else {
         toast.error(result.error ?? "Failed to update description")
+      }
+    },
+    onError: () => toast.error("Something went wrong"),
+  })
+
+  const saveStoryMutation = useMutation({
+    mutationFn: (data: { story: string | null; experience: number | null }) =>
+      updateKitchenStoryAndExperience(data.story, data.experience),
+    onSuccess: (result) => {
+      if (result.success) {
+        toast.success("Story and experience updated")
+        setEditing(null)
+        invalidate()
+      } else {
+        toast.error(result.error ?? "Failed to update story and experience")
       }
     },
     onError: () => toast.error("Something went wrong"),
@@ -324,6 +343,8 @@ export default function ProfilePageClient() {
     const k = data.kitchen
     setNameValue(k.displayName || "Your Kitchen")
     setDescriptionValue(k.description ?? "")
+    setStoryValue(k.story ?? "")
+    setExperienceValue(k.experienceYears != null ? String(k.experienceYears) : "")
     setSelectedCuisineIds(k.cuisineIds ?? [])
     setPrepTimeValue(k.estimatedPrepTime != null ? String(k.estimatedPrepTime) : "")
     setAddressForm({
@@ -402,6 +423,16 @@ export default function ProfilePageClient() {
       saveNameMutation.mutate(nameValue.trim())
     } else if (editing === "description") {
       saveDescriptionMutation.mutate(descriptionValue.trim() || null)
+    } else if (editing === "story") {
+      const exp = parseInt(experienceValue, 10)
+      if (experienceValue.trim() && (Number.isNaN(exp) || exp < 0)) {
+        toast.error("Please enter a valid number of years for experience")
+        return
+      }
+      saveStoryMutation.mutate({
+        story: storyValue.trim() || null,
+        experience: experienceValue.trim() ? exp : null,
+      })
     } else if (editing === "cuisines") {
       saveCuisinesMutation.mutate(selectedCuisineIds)
     } else if (editing === "address") {
@@ -446,6 +477,10 @@ export default function ProfilePageClient() {
   const openEdit = (field: NonNullable<typeof editing>) => {
     if (field === "name") setNameValue(displayName)
     if (field === "description") setDescriptionValue(description ?? "")
+    if (field === "story") {
+      setStoryValue(kitchen.story ?? "")
+      setExperienceValue(kitchen.experienceYears != null ? String(kitchen.experienceYears) : "")
+    }
     if (field === "cuisines") setSelectedCuisineIds(kitchen.cuisineIds ?? [])
     if (field === "preptime") setPrepTimeValue(prepTime != null ? String(prepTime) : "")
     if (field === "address") {
@@ -743,16 +778,16 @@ export default function ProfilePageClient() {
 
                   {/* Email */}
                   <div className="flex items-start justify-between gap-4 p-4 rounded-[10px] border border-[#EEF0F2]">
-                    <div className="flex items-start gap-3">
+                    <div className="flex items-start gap-3 min-w-0">
                       <div className="h-8 w-8 rounded-[8px] bg-[#F3F4F6] flex items-center justify-center shrink-0">
                         <Mail className="h-4 w-4 text-[#4B5563]" />
                       </div>
-                      <div>
+                      <div className="min-w-0">
                         <p className="text-[11px] font-medium text-[#6B7280] mb-0.5">Email Address</p>
-                        <p className="text-[14px] font-bold text-[#111827]">{kitchen.email || "—"}</p>
+                        <p className="text-[14px] font-bold text-[#111827] truncate">{kitchen.email || "—"}</p>
                       </div>
                     </div>
-                    <Badge variant="outline" className="bg-[#EEF8F1] hover:bg-[#EEF8F1] text-[#176B3B] border-none font-medium px-2.5 py-1 rounded-[999px] text-[10px]">
+                    <Badge variant="outline" className="shrink-0 bg-[#EEF8F1] hover:bg-[#EEF8F1] text-[#176B3B] border-none font-medium px-2.5 py-1 rounded-[999px] text-[10px]">
                       <Check className="h-3 w-3 mr-1" /> Verified
                     </Badge>
                   </div>
@@ -782,6 +817,29 @@ export default function ProfilePageClient() {
                       </div>
                     </div>
                     <Button variant="outline" size="sm" onClick={() => openEdit("description")} className="h-[30px] px-3 rounded-[7px] border-[#D9DEE3] text-[#374151] text-[12px] font-medium bg-[#FFFFFF] hover:bg-gray-50 shrink-0">
+                      <Pencil className="h-3 w-3 mr-1.5" /> Edit
+                    </Button>
+                  </div>
+
+                  {/* Story and Experience */}
+                  <div className="flex items-start justify-between gap-4 p-4 rounded-[10px] border border-[#EEF0F2]">
+                    <div className="flex items-start gap-3 flex-1">
+                      <div className="h-8 w-8 rounded-[8px] bg-[#F3F4F6] flex items-center justify-center shrink-0">
+                        <ChefHat className="h-4 w-4 text-[#4B5563]" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="text-[11px] font-medium text-[#6B7280] mb-0.5">Our Story & Experience</p>
+                        {kitchen.experienceYears != null && (
+                          <p className="text-[13px] text-[#111827] font-semibold mb-2">
+                            {kitchen.experienceYears}+ Years of Experience
+                          </p>
+                        )}
+                        <p className="text-[14px] text-[#374151] leading-relaxed">
+                          {kitchen.story || "No story added yet."}
+                        </p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={() => openEdit("story")} className="h-[30px] px-3 rounded-[7px] border-[#D9DEE3] text-[#374151] text-[12px] font-medium bg-[#FFFFFF] hover:bg-gray-50 shrink-0">
                       <Pencil className="h-3 w-3 mr-1.5" /> Edit
                     </Button>
                   </div>
@@ -857,12 +915,23 @@ export default function ProfilePageClient() {
                 </div>
 
                 {addressString ? (
-                  <div className="flex gap-3 p-4 rounded-[10px] border border-[#EEF0F2]">
-                    <MapPin className="h-5 w-5 text-[#087A3E] shrink-0 mt-0.5" strokeWidth={1.8} />
-                    <div>
-                      <p className="text-[13px] text-[#374151] leading-relaxed">{addressString}</p>
-                      <p className="text-[12px] text-[#6B7280] mt-2">Pincode: <span className="font-semibold text-[#374151]">{address?.pincode}</span></p>
+                  <div className="flex flex-col gap-4">
+                    <div className="flex gap-3 p-4 rounded-[10px] border border-[#EEF0F2]">
+                      <MapPin className="h-5 w-5 text-[#087A3E] shrink-0 mt-0.5" strokeWidth={1.8} />
+                      <div>
+                        <p className="text-[13px] text-[#374151] leading-relaxed">{addressString}</p>
+                        <p className="text-[12px] text-[#6B7280] mt-2">Pincode: <span className="font-semibold text-[#374151]">{address?.pincode}</span></p>
+                      </div>
                     </div>
+                    {address?.latitude != null && address?.longitude != null && !Number.isNaN(Number(address.latitude)) && !Number.isNaN(Number(address.longitude)) && (
+                      <div className="h-[250px] w-full rounded-[10px] overflow-hidden border border-[#EEF0F2] relative z-0">
+                        <ThanjavurMap
+                          height="250px"
+                          markerPosition={[Number(address.latitude), Number(address.longitude)]}
+                          interactive={false}
+                        />
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <div className="flex flex-col items-center text-center py-8 px-4 border border-dashed border-[#E5E7EB] rounded-[10px]">
@@ -1124,15 +1193,28 @@ export default function ProfilePageClient() {
                     <Input value={addressForm.landmark} onChange={(e) => setAddressForm({ ...addressForm, landmark: e.target.value })} placeholder="Near temple" className="h-[38px] rounded-[7px] border-[#D9DEE3] text-[13px]" />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="space-y-1.5">
-                    <Label className="text-[12px] font-semibold text-[#374151]">Latitude <span className="text-[#EF4444]">*</span></Label>
-                    <Input value={addressForm.latitude} onChange={(e) => setAddressForm({ ...addressForm, latitude: e.target.value })} placeholder="13.0827" className="h-[38px] rounded-[7px] border-[#D9DEE3] text-[13px]" />
+                <div className="space-y-1.5 mt-2">
+                  <Label className="text-[12px] font-semibold text-[#374151]">Pin Location <span className="text-[#EF4444]">*</span></Label>
+                  <div className="h-[200px] w-full rounded-[7px] overflow-hidden border border-[#D9DEE3] relative z-0">
+                    <ThanjavurMap
+                      height="200px"
+                      markerPosition={
+                        addressForm.latitude && addressForm.longitude && !Number.isNaN(Number(addressForm.latitude)) && !Number.isNaN(Number(addressForm.longitude))
+                          ? [Number(addressForm.latitude), Number(addressForm.longitude)]
+                          : undefined
+                      }
+                      onLocationSelect={(lat, lng) => {
+                        setAddressForm((prev) => ({
+                          ...prev,
+                          latitude: String(lat),
+                          longitude: String(lng),
+                        }))
+                      }}
+                    />
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-[12px] font-semibold text-[#374151]">Longitude <span className="text-[#EF4444]">*</span></Label>
-                    <Input value={addressForm.longitude} onChange={(e) => setAddressForm({ ...addressForm, longitude: e.target.value })} placeholder="80.2707" className="h-[38px] rounded-[7px] border-[#D9DEE3] text-[13px]" />
-                  </div>
+                  {(!addressForm.latitude || !addressForm.longitude) && (
+                    <p className="text-[11px] text-[#EF4444] mt-1">Please select a location on the map.</p>
+                  )}
                 </div>
               </div>
             </EditDialog>
@@ -1161,6 +1243,20 @@ export default function ProfilePageClient() {
                 ))}
               </div>
               <p className="text-[11px] text-[#9CA3AF] mt-2">Tip: Leave open and close empty for a day you don&apos;t serve.</p>
+            </EditDialog>
+          )}
+          {editing === "story" && (
+            <EditDialog open onOpenChange={(o) => !o && setEditing(null)} title="Our Story & Experience" description="Share your culinary journey and experience with customers." saving={saveStoryMutation.isPending} onSave={submitEdit}>
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label className="text-[13px] font-semibold text-[#374151]">Years of Experience</Label>
+                  <Input type="number" min="0" value={experienceValue} onChange={(e) => setExperienceValue(e.target.value)} placeholder="e.g. 5" className="h-[38px] rounded-[7px] border-[#D9DEE3] text-[13px]" />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[13px] font-semibold text-[#374151]">Our Story</Label>
+                  <Textarea value={storyValue} onChange={(e) => setStoryValue(e.target.value)} placeholder="Tell customers about your kitchen..." className="min-h-[120px] rounded-[7px] border-[#D9DEE3] text-[13px]" />
+                </div>
+              </div>
             </EditDialog>
           )}
 

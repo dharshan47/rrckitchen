@@ -139,7 +139,7 @@ export function AboutKitchenTab({ kitchen: propKitchen }: Props) {
                <div className="w-10 h-10 rounded-full bg-[#F0F8F3] flex items-center justify-center border border-[#D9EBDD]">
                  <ChefHat className="w-5 h-5 text-[#087A36]" strokeWidth={1.5} />
                </div>
-               <span className="text-[10px] font-bold text-[#171717] leading-[1.4]">{"15+ Years"}<br/>of Experience</span>
+               <span className="text-[10px] font-bold text-[#171717] leading-[1.4]">{kitchen.experienceYears != null ? `${kitchen.experienceYears}+ Years` : "15+ Years"}<br/>of Experience</span>
              </div>
              <div className="flex flex-col items-center text-center gap-2 px-2 pt-4 md:pt-0">
                <div className="w-10 h-10 rounded-full bg-[#F0F8F3] flex items-center justify-center border border-[#D9EBDD]">
@@ -172,8 +172,8 @@ export function AboutKitchenTab({ kitchen: propKitchen }: Props) {
               <Image src="/kitchen/bowl.webp" alt="Our Story" fill sizes="140px" className="object-contain" />
             </div>
             <div className="flex-1">
-              <p className="text-[#555555] text-[11px] md:text-[12px] leading-[1.8] font-medium">
-                {chefName}&apos;s Kitchen began with a heartfelt mission – to serve homemade meals that are healthy, delicious and bring comfort like home. Every recipe reflects tradition, care and a promise of quality in every bite.
+              <p className="text-[#555555] text-[11px] md:text-[12px] leading-[1.8] font-medium whitespace-pre-wrap">
+                {kitchen.story || `${chefName}'s Kitchen began with a heartfelt mission – to serve homemade meals that are healthy, delicious and bring comfort like home. Every recipe reflects tradition, care and a promise of quality in every bite.`}
               </p>
               <p className="text-[#087A36] font-bold text-[12px] mt-4 text-right">
                 – {chefName}

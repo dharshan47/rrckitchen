@@ -31,6 +31,17 @@ export async function assignUserRole(roleName: AllowedRole) {
     update: {},
   })
 
+  const legacyRoleMap: Record<AllowedRole, string> = {
+    CUSTOMER: "customer",
+    KITCHENPARTNER: "kitchen",
+    DELIVERYPARTNER: "delivery-partner"
+  }
+
+  await prisma.user.update({
+    where: { id: session.user.id },
+    data: { role: legacyRoleMap[roleName] }
+  })
+
   if (roleName === "KITCHENPARTNER") {
     const existingSlugs = new Set(
       (await prisma.kitchenPartner.findMany({ select: { slug: true } }))

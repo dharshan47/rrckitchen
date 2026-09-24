@@ -102,6 +102,12 @@ export default function SupportPageClient() {
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([])
   const [activeTab, setActiveTab] = useState("All")
   const openChat = useLiveChatStore((state) => state.openChat)
+  const setActiveTicket = useLiveChatStore((state) => state.setActiveTicket)
+
+  const handleTicketClick = (ticketId: string) => {
+    setActiveTicket(ticketId)
+    openChat()
+  }
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<TicketForm>({
     resolver: zodResolver(ticketFormSchema),
@@ -538,7 +544,7 @@ export default function SupportPageClient() {
                       const CatIcon = catObj.icon
                       
                       return (
-                         <div key={ticket.id} className={cn("rounded-[10px] border border-[#EDEEEF] bg-[#FFFFFF] p-4 flex flex-col gap-3 relative cursor-pointer hover:shadow-sm transition-all")}>
+                        <button onClick={() => handleTicketClick(ticket.publicCode ?? ticket.id)} key={ticket.id} className={cn("rounded-[10px] border border-[#EDEEEF] bg-[#FFFFFF] p-4 flex flex-col gap-3 relative cursor-pointer hover:shadow-sm transition-all text-left w-full block group")}>
                             <div className="flex justify-between items-start gap-4">
                                <div className="flex items-start gap-3.5 flex-1 min-w-0">
                                   <div className={cn("h-11 w-11 rounded-full flex items-center justify-center shrink-0 shadow-sm", iconBg)}>
@@ -562,7 +568,7 @@ export default function SupportPageClient() {
                                </div>
                             </div>
                             
-                            <div className="flex items-center justify-between border-t border-[#F0F1F2] pt-3.5 mt-1.5">
+                            <div className="flex items-center justify-between border-t border-[#F0F1F2] pt-3.5 mt-1.5 w-full">
                                <div className="flex items-center gap-2.5 flex-wrap">
                                   <div className="bg-[#F7F8F9] px-2.5 py-1 rounded-full text-[11px] text-[#747780] font-[600]">Order: {ticket.order?.publicCode ?? ticket.publicCode ?? ticket.orderId ?? "-"}</div>
                                   <div className="bg-[#F7F8F9] px-2.5 py-1 rounded-full text-[11px] text-[#747780] font-[600]">Created: {formatFullDate(ticket.createdAt)}</div>
@@ -581,10 +587,10 @@ export default function SupportPageClient() {
                                   <div className="text-[11px] text-[#747780] text-right font-[500] leading-tight">
                                      Updated<br/>{formatRelativeTime(ticket.updatedAt)}
                                   </div>
-                                  <ChevronRight className="h-4 w-4 text-[#A4A7AE]" strokeWidth={2.5} />
+                                  <ChevronRight className="h-4 w-4 text-[#A4A7AE] group-hover:text-[#0D6C2B] transition-colors" strokeWidth={2.5} />
                                </div>
                             </div>
-                         </div>
+                         </button>
                       )
                    })}
                  </TabsContent>

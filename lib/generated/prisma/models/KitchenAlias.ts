@@ -28,10 +28,12 @@ export type AggregateKitchenAlias = {
 
 export type KitchenAliasAvgAggregateOutputType = {
   sequenceNumber: number | null
+  experienceYears: number | null
 }
 
 export type KitchenAliasSumAggregateOutputType = {
   sequenceNumber: number | null
+  experienceYears: number | null
 }
 
 export type KitchenAliasMinAggregateOutputType = {
@@ -42,6 +44,8 @@ export type KitchenAliasMinAggregateOutputType = {
   imageUrl: string | null
   coverImageUrl: string | null
   description: string | null
+  story: string | null
+  experienceYears: number | null
   customOfferText: string | null
   createdAt: Date | null
 }
@@ -54,6 +58,8 @@ export type KitchenAliasMaxAggregateOutputType = {
   imageUrl: string | null
   coverImageUrl: string | null
   description: string | null
+  story: string | null
+  experienceYears: number | null
   customOfferText: string | null
   createdAt: Date | null
 }
@@ -66,6 +72,8 @@ export type KitchenAliasCountAggregateOutputType = {
   imageUrl: number
   coverImageUrl: number
   description: number
+  story: number
+  experienceYears: number
   customOfferText: number
   createdAt: number
   _all: number
@@ -74,10 +82,12 @@ export type KitchenAliasCountAggregateOutputType = {
 
 export type KitchenAliasAvgAggregateInputType = {
   sequenceNumber?: true
+  experienceYears?: true
 }
 
 export type KitchenAliasSumAggregateInputType = {
   sequenceNumber?: true
+  experienceYears?: true
 }
 
 export type KitchenAliasMinAggregateInputType = {
@@ -88,6 +98,8 @@ export type KitchenAliasMinAggregateInputType = {
   imageUrl?: true
   coverImageUrl?: true
   description?: true
+  story?: true
+  experienceYears?: true
   customOfferText?: true
   createdAt?: true
 }
@@ -100,6 +112,8 @@ export type KitchenAliasMaxAggregateInputType = {
   imageUrl?: true
   coverImageUrl?: true
   description?: true
+  story?: true
+  experienceYears?: true
   customOfferText?: true
   createdAt?: true
 }
@@ -112,6 +126,8 @@ export type KitchenAliasCountAggregateInputType = {
   imageUrl?: true
   coverImageUrl?: true
   description?: true
+  story?: true
+  experienceYears?: true
   customOfferText?: true
   createdAt?: true
   _all?: true
@@ -211,6 +227,8 @@ export type KitchenAliasGroupByOutputType = {
   imageUrl: string | null
   coverImageUrl: string | null
   description: string | null
+  story: string | null
+  experienceYears: number | null
   customOfferText: string | null
   createdAt: Date
   _count: KitchenAliasCountAggregateOutputType | null
@@ -246,6 +264,8 @@ export type KitchenAliasWhereInput = {
   imageUrl?: Prisma.StringNullableFilter<"KitchenAlias"> | string | null
   coverImageUrl?: Prisma.StringNullableFilter<"KitchenAlias"> | string | null
   description?: Prisma.StringNullableFilter<"KitchenAlias"> | string | null
+  story?: Prisma.StringNullableFilter<"KitchenAlias"> | string | null
+  experienceYears?: Prisma.IntNullableFilter<"KitchenAlias"> | number | null
   customOfferText?: Prisma.StringNullableFilter<"KitchenAlias"> | string | null
   createdAt?: Prisma.DateTimeFilter<"KitchenAlias"> | Date | string
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerScalarRelationFilter, Prisma.KitchenPartnerWhereInput>
@@ -259,6 +279,8 @@ export type KitchenAliasOrderByWithRelationInput = {
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   coverImageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  story?: Prisma.SortOrderInput | Prisma.SortOrder
+  experienceYears?: Prisma.SortOrderInput | Prisma.SortOrder
   customOfferText?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   kitchenPartner?: Prisma.KitchenPartnerOrderByWithRelationInput
@@ -275,6 +297,8 @@ export type KitchenAliasWhereUniqueInput = Prisma.AtLeast<{
   imageUrl?: Prisma.StringNullableFilter<"KitchenAlias"> | string | null
   coverImageUrl?: Prisma.StringNullableFilter<"KitchenAlias"> | string | null
   description?: Prisma.StringNullableFilter<"KitchenAlias"> | string | null
+  story?: Prisma.StringNullableFilter<"KitchenAlias"> | string | null
+  experienceYears?: Prisma.IntNullableFilter<"KitchenAlias"> | number | null
   customOfferText?: Prisma.StringNullableFilter<"KitchenAlias"> | string | null
   createdAt?: Prisma.DateTimeFilter<"KitchenAlias"> | Date | string
   kitchenPartner?: Prisma.XOR<Prisma.KitchenPartnerScalarRelationFilter, Prisma.KitchenPartnerWhereInput>
@@ -288,6 +312,8 @@ export type KitchenAliasOrderByWithAggregationInput = {
   imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   coverImageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   description?: Prisma.SortOrderInput | Prisma.SortOrder
+  story?: Prisma.SortOrderInput | Prisma.SortOrder
+  experienceYears?: Prisma.SortOrderInput | Prisma.SortOrder
   customOfferText?: Prisma.SortOrderInput | Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.KitchenAliasCountOrderByAggregateInput
@@ -308,6 +334,8 @@ export type KitchenAliasScalarWhereWithAggregatesInput = {
   imageUrl?: Prisma.StringNullableWithAggregatesFilter<"KitchenAlias"> | string | null
   coverImageUrl?: Prisma.StringNullableWithAggregatesFilter<"KitchenAlias"> | string | null
   description?: Prisma.StringNullableWithAggregatesFilter<"KitchenAlias"> | string | null
+  story?: Prisma.StringNullableWithAggregatesFilter<"KitchenAlias"> | string | null
+  experienceYears?: Prisma.IntNullableWithAggregatesFilter<"KitchenAlias"> | number | null
   customOfferText?: Prisma.StringNullableWithAggregatesFilter<"KitchenAlias"> | string | null
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"KitchenAlias"> | Date | string
 }
@@ -319,6 +347,8 @@ export type KitchenAliasCreateInput = {
   imageUrl?: string | null
   coverImageUrl?: string | null
   description?: string | null
+  story?: string | null
+  experienceYears?: number | null
   customOfferText?: string | null
   createdAt?: Date | string
   kitchenPartner: Prisma.KitchenPartnerCreateNestedOneWithoutKitchenAliasInput
@@ -332,6 +362,8 @@ export type KitchenAliasUncheckedCreateInput = {
   imageUrl?: string | null
   coverImageUrl?: string | null
   description?: string | null
+  story?: string | null
+  experienceYears?: number | null
   customOfferText?: string | null
   createdAt?: Date | string
 }
@@ -343,6 +375,8 @@ export type KitchenAliasUpdateInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  story?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceYears?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customOfferText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   kitchenPartner?: Prisma.KitchenPartnerUpdateOneRequiredWithoutKitchenAliasNestedInput
@@ -356,6 +390,8 @@ export type KitchenAliasUncheckedUpdateInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  story?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceYears?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customOfferText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -368,6 +404,8 @@ export type KitchenAliasCreateManyInput = {
   imageUrl?: string | null
   coverImageUrl?: string | null
   description?: string | null
+  story?: string | null
+  experienceYears?: number | null
   customOfferText?: string | null
   createdAt?: Date | string
 }
@@ -379,6 +417,8 @@ export type KitchenAliasUpdateManyMutationInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  story?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceYears?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customOfferText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -391,6 +431,8 @@ export type KitchenAliasUncheckedUpdateManyInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  story?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceYears?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customOfferText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -408,12 +450,15 @@ export type KitchenAliasCountOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   coverImageUrl?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  story?: Prisma.SortOrder
+  experienceYears?: Prisma.SortOrder
   customOfferText?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type KitchenAliasAvgOrderByAggregateInput = {
   sequenceNumber?: Prisma.SortOrder
+  experienceYears?: Prisma.SortOrder
 }
 
 export type KitchenAliasMaxOrderByAggregateInput = {
@@ -424,6 +469,8 @@ export type KitchenAliasMaxOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   coverImageUrl?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  story?: Prisma.SortOrder
+  experienceYears?: Prisma.SortOrder
   customOfferText?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
@@ -436,12 +483,15 @@ export type KitchenAliasMinOrderByAggregateInput = {
   imageUrl?: Prisma.SortOrder
   coverImageUrl?: Prisma.SortOrder
   description?: Prisma.SortOrder
+  story?: Prisma.SortOrder
+  experienceYears?: Prisma.SortOrder
   customOfferText?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
 export type KitchenAliasSumOrderByAggregateInput = {
   sequenceNumber?: Prisma.SortOrder
+  experienceYears?: Prisma.SortOrder
 }
 
 export type KitchenAliasCreateNestedOneWithoutKitchenPartnerInput = {
@@ -483,6 +533,8 @@ export type KitchenAliasCreateWithoutKitchenPartnerInput = {
   imageUrl?: string | null
   coverImageUrl?: string | null
   description?: string | null
+  story?: string | null
+  experienceYears?: number | null
   customOfferText?: string | null
   createdAt?: Date | string
 }
@@ -494,6 +546,8 @@ export type KitchenAliasUncheckedCreateWithoutKitchenPartnerInput = {
   imageUrl?: string | null
   coverImageUrl?: string | null
   description?: string | null
+  story?: string | null
+  experienceYears?: number | null
   customOfferText?: string | null
   createdAt?: Date | string
 }
@@ -521,6 +575,8 @@ export type KitchenAliasUpdateWithoutKitchenPartnerInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  story?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceYears?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customOfferText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -532,6 +588,8 @@ export type KitchenAliasUncheckedUpdateWithoutKitchenPartnerInput = {
   imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coverImageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  story?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  experienceYears?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   customOfferText?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -546,6 +604,8 @@ export type KitchenAliasSelect<ExtArgs extends runtime.Types.Extensions.Internal
   imageUrl?: boolean
   coverImageUrl?: boolean
   description?: boolean
+  story?: boolean
+  experienceYears?: boolean
   customOfferText?: boolean
   createdAt?: boolean
   kitchenPartner?: boolean | Prisma.KitchenPartnerDefaultArgs<ExtArgs>
@@ -559,6 +619,8 @@ export type KitchenAliasSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   imageUrl?: boolean
   coverImageUrl?: boolean
   description?: boolean
+  story?: boolean
+  experienceYears?: boolean
   customOfferText?: boolean
   createdAt?: boolean
   kitchenPartner?: boolean | Prisma.KitchenPartnerDefaultArgs<ExtArgs>
@@ -572,6 +634,8 @@ export type KitchenAliasSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   imageUrl?: boolean
   coverImageUrl?: boolean
   description?: boolean
+  story?: boolean
+  experienceYears?: boolean
   customOfferText?: boolean
   createdAt?: boolean
   kitchenPartner?: boolean | Prisma.KitchenPartnerDefaultArgs<ExtArgs>
@@ -585,11 +649,13 @@ export type KitchenAliasSelectScalar = {
   imageUrl?: boolean
   coverImageUrl?: boolean
   description?: boolean
+  story?: boolean
+  experienceYears?: boolean
   customOfferText?: boolean
   createdAt?: boolean
 }
 
-export type KitchenAliasOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kitchenPartnerId" | "displayName" | "sequenceNumber" | "imageUrl" | "coverImageUrl" | "description" | "customOfferText" | "createdAt", ExtArgs["result"]["kitchenAlias"]>
+export type KitchenAliasOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "kitchenPartnerId" | "displayName" | "sequenceNumber" | "imageUrl" | "coverImageUrl" | "description" | "story" | "experienceYears" | "customOfferText" | "createdAt", ExtArgs["result"]["kitchenAlias"]>
 export type KitchenAliasInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   kitchenPartner?: boolean | Prisma.KitchenPartnerDefaultArgs<ExtArgs>
 }
@@ -613,6 +679,8 @@ export type $KitchenAliasPayload<ExtArgs extends runtime.Types.Extensions.Intern
     imageUrl: string | null
     coverImageUrl: string | null
     description: string | null
+    story: string | null
+    experienceYears: number | null
     customOfferText: string | null
     createdAt: Date
   }, ExtArgs["result"]["kitchenAlias"]>
@@ -1046,6 +1114,8 @@ export interface KitchenAliasFieldRefs {
   readonly imageUrl: Prisma.FieldRef<"KitchenAlias", 'String'>
   readonly coverImageUrl: Prisma.FieldRef<"KitchenAlias", 'String'>
   readonly description: Prisma.FieldRef<"KitchenAlias", 'String'>
+  readonly story: Prisma.FieldRef<"KitchenAlias", 'String'>
+  readonly experienceYears: Prisma.FieldRef<"KitchenAlias", 'Int'>
   readonly customOfferText: Prisma.FieldRef<"KitchenAlias", 'String'>
   readonly createdAt: Prisma.FieldRef<"KitchenAlias", 'DateTime'>
 }
