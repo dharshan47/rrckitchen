@@ -402,23 +402,41 @@ export default function OrdersPageClient() {
                           </div>
                         </div>
 
-                        {/* Column 4: Customer */}
-                        <div className="flex-none lg:w-[180px] flex gap-3 items-center border-b lg:border-b-0 lg:border-r border-[#EEF0F2] pb-3 lg:pb-0 lg:px-4">
-                          <Avatar className="h-[32px] w-[32px] bg-[#E8F2EA] text-[#176B2F] shrink-0">
-                            <AvatarFallback className="font-[600] text-xs bg-[#E8F2EA]">
-                              {order.customerName?.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div className="min-w-0">
-                            <h4 className="text-[13px] font-[600] text-[#18212B] truncate">{order.customerName}</h4>
-                            <div className="text-[12px] text-[#4B5563] mt-0.5 truncate">
-                              {order.customerPhone}
-                            </div>
-                            <div className="text-[11px] text-[#5F6975] flex items-start gap-1 mt-1">
-                              <MapPin className="h-[12px] w-[12px] shrink-0 text-[#68727D] mt-[2px]" /> 
-                              <span className="truncate whitespace-normal line-clamp-2">{order.customerAddress}</span>
+                        {/* Column 4: Customer & Delivery */}
+                        <div className="flex-none lg:w-[200px] flex flex-col justify-center gap-3 border-b lg:border-b-0 lg:border-r border-[#EEF0F2] pb-3 lg:pb-0 lg:px-4">
+                          <div className="flex gap-3 items-center">
+                            <Avatar className="h-[32px] w-[32px] bg-[#E8F2EA] text-[#176B2F] shrink-0">
+                              <AvatarFallback className="font-[600] text-xs bg-[#E8F2EA]">
+                                {order.customerName?.charAt(0).toUpperCase()}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div className="min-w-0">
+                              <h4 className="text-[13px] font-[600] text-[#18212B] truncate">{order.customerName}</h4>
+                              <div className="text-[12px] text-[#4B5563] mt-0.5 truncate">
+                                {order.customerPhone}
+                              </div>
+                              <div className="text-[11px] text-[#5F6975] flex items-start gap-1 mt-1">
+                                <MapPin className="h-[12px] w-[12px] shrink-0 text-[#68727D] mt-[2px]" /> 
+                                <span className="truncate whitespace-normal line-clamp-2">{order.customerAddress}</span>
+                              </div>
                             </div>
                           </div>
+                          
+                          {order.deliveryPartner?.name && (
+                            <div className="flex gap-3 items-center border-t border-[#EEF0F2] pt-2">
+                              <Avatar className="h-[32px] w-[32px] bg-[#F4F4F5] text-[#52525B] shrink-0">
+                                <AvatarFallback className="font-[600] text-xs bg-[#F4F4F5]">
+                                  {order.deliveryPartner.name.charAt(0).toUpperCase()}
+                                </AvatarFallback>
+                              </Avatar>
+                              <div className="min-w-0">
+                                <h4 className="text-[12px] font-[600] text-[#18212B] truncate">Delivery: {order.deliveryPartner.name}</h4>
+                                <div className="text-[11px] text-[#4B5563] mt-0.5 truncate">
+                                  {order.deliveryPartner.phone}
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
 
                         {/* Column 5: Status & Actions */}

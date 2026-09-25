@@ -1121,9 +1121,9 @@ export async function getDeliveryDashboardData() {
     include: {
       user: { select: { name: true, phoneNumber: true, email: true, image: true } },
       kyc: true,
-      kitchenAssignments: {
+      deliveryAssignments: {
         include: {
-          kitchenPartner: { include: { kitchenAlias: true } },
+          order: { include: { orderItems: { take: 1, include: { kitchenPartner: { include: { kitchenAlias: true } } } } } }
         },
         orderBy: { createdAt: "desc" },
       },
@@ -1143,13 +1143,14 @@ export async function getDeliveryDashboardData() {
         data: {
           publicCode: await allocatePublicCode(tx, PUBLIC_ID_SPECS.DELIVERY_PARTNER),
           userId: session.user.id,
+          status: "APPROVED",
         },
         include: {
           user: { select: { name: true, phoneNumber: true, email: true, image: true } },
           kyc: true,
-          kitchenAssignments: {
+          deliveryAssignments: {
             include: {
-              kitchenPartner: { include: { kitchenAlias: true } },
+              order: { include: { orderItems: { take: 1, include: { kitchenPartner: { include: { kitchenAlias: true } } } } } }
             },
             orderBy: { createdAt: "desc" },
           },
@@ -1166,10 +1167,10 @@ export async function getDeliveryDashboardData() {
     })
   }
 
-  const totalAssignments = deliveryPartner.kitchenAssignments.length
-  const completedAssignments = deliveryPartner.kitchenAssignments.filter((a) => a.status === "DELIVERED").length
-  const pendingAssignments = deliveryPartner.kitchenAssignments.filter((a) => a.status === "PENDING").length
-  const cancelledAssignments = deliveryPartner.kitchenAssignments.filter((a) => a.status === "CANCELLED").length
+  const totalAssignments = deliveryPartner.deliveryAssignments.length
+  const completedAssignments = deliveryPartner.deliveryAssignments.filter((a) => a.status === "DELIVERED").length
+  const pendingAssignments = deliveryPartner.deliveryAssignments.filter((a) => a.status === "PENDING").length
+  const cancelledAssignments = deliveryPartner.deliveryAssignments.filter((a) => a.status === "CANCELLED").length
 
   const avgRating =
     deliveryPartner.reviews.length > 0
@@ -1256,7 +1257,7 @@ export async function getDeliveryDashboardData() {
     }
   }
 
-  const weeklyTrips = deliveryPartner.kitchenAssignments.filter((a) => a.createdAt >= weekStart).length
+  const weeklyTrips = deliveryPartner.deliveryAssignments.filter((a) => a.createdAt >= weekStart).length
 
   const ratingDistMap: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 }
   for (const row of ratingDist) {
@@ -1267,21 +1268,21 @@ export async function getDeliveryDashboardData() {
     count: ratingDistMap[stars],
   }))
 
-  const recentAssignments = deliveryPartner.kitchenAssignments.slice(0, 10).map((a) => ({
+  const recentAssignments = deliveryPartner.deliveryAssignments.slice(0, 10).map((a) => ({
     id: a.id,
-    kitchen: a.kitchenPartner?.kitchenAlias?.displayName,
+    kitchen: a.order?.orderItems[0]?.kitchenPartner?.kitchenAlias?.displayName,
     status: a.status === "DELIVERED" ? "Delivered" : a.status === "PENDING" ? "Pending" : "Cancelled",
     date: format(a.createdAt, "dd MMM yyyy"),
   }))
 
-  const assignedKitchenIds = deliveryPartner.kitchenAssignments
-    .map((a) => a.kitchenPartnerId)
+  const assignedOrderIds = deliveryPartner.deliveryAssignments
+    .map((a) => a.orderId)
     .filter((id): id is string => id !== null)
 
-  const deliveryOrders = assignedKitchenIds.length > 0
+  const deliveryOrders = assignedOrderIds.length > 0
     ? await prisma.orderItem.findMany({
         where: {
-          kitchenPartnerId: { in: assignedKitchenIds },
+          orderId: { in: assignedOrderIds },
         },
         take: 20,
         orderBy: { order: { createdAt: "desc" } },
