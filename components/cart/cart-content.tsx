@@ -365,7 +365,7 @@ export function CartContent() {
           <div>
             <h1 className="text-2xl font-bold">Order Placed!</h1>
             <p className="mt-2 text-sm text-muted-foreground">Your order has been placed successfully.</p>
-            <p className="mt-1 text-xs text-muted-foreground font-mono">Order ID: {paymentResult.orderId}</p>
+            <p className="mt-1 text-xs text-muted-foreground font-mono">Order ID: {paymentResult.publicCode}</p>
           </div>
           <div className="flex gap-3">
             <Button asChild variant="outline" onClick={resetPayment}>

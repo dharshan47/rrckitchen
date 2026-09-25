@@ -634,9 +634,21 @@ export async function getKitchenDashboardData() {
     orders: i._count.id,
   }))
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const orderList = recentOrderItems.map((oi: any) => ({
-    id: oi.order.id,
+  const orderList = recentOrderItems
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .filter((oi: any) => {
+      // Exclude CANCELLED orders where payment is not successful/refunded
+      if (oi.order.status === "CANCELLED") {
+        const pStatus = oi.order.payment?.status;
+        if (pStatus !== "SUCCESS" && pStatus !== "REFUNDED" && pStatus !== "PARTIAL_REFUND") {
+          return false;
+        }
+      }
+      return true;
+    })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    .map((oi: any) => ({
+      id: oi.order.id,
     publicCode: oi.order.publicCode,
     itemName: oi.menuItem.name,
     timeSlot: formatTimeSlot(oi.menuItem.timeSlot),

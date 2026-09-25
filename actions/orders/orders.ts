@@ -274,47 +274,53 @@ export async function updateOrderStatus(orderId: string, status: string) {
 
           // Step 1: Try nearby delivery partners (within 5km of kitchen)
           if (kitchenLat != null && kitchenLng != null) {
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const geoMembers = await (redis as any).geosearch(
-              "deliveryPersons:live",
-              { type: "FROMLONLAT", coordinate: { lon: kitchenLng, lat: kitchenLat } },
-              { type: "BYRADIUS", radius: 5, radiusType: "KM" },
-              "ASC",
-              { count: { limit: 20 } },
-            )
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const nearbyMembers = Array.isArray(geoMembers) ? geoMembers.map((r: any) => String(r.member ?? r)) : []
+            try {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const geoMembers = await (redis as any).geosearch(
+                "deliveryPersons:live",
+                { type: "FROMLONLAT", coordinate: { lon: kitchenLng, lat: kitchenLat } },
+                { type: "BYRADIUS", radius: 5, radiusType: "KM" },
+                "ASC",
+                { count: { limit: 20 } },
+              )
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const nearbyMembers = Array.isArray(geoMembers) ? geoMembers.map((r: any) => String(r.member ?? r)) : []
 
-            for (const member of nearbyMembers) {
-              const deliveryPersonId = typeof member === "string" ? member : String(member)
-              const person = await prisma.deliveryPartner.findUnique({
-                where: { id: deliveryPersonId },
-                select: { id: true, isOnline: true },
-              })
-              if (!person?.isOnline) continue
+              for (const member of nearbyMembers) {
+                const deliveryPersonId = typeof member === "string" ? member : String(member)
+                const person = await prisma.deliveryPartner.findUnique({
+                  where: { id: deliveryPersonId },
+                  select: { id: true, isOnline: true },
+                })
+                if (!person?.isOnline) continue
 
-              const existing = await prisma.deliveryAssignment.findFirst({
-                where: { deliveryPartnerId: deliveryPersonId, status: "PENDING" },
-              })
-              if (existing) continue
+                const existing = await prisma.deliveryAssignment.findFirst({
+                  where: { deliveryPartnerId: deliveryPersonId, status: "PENDING" },
+                })
+                if (existing) continue
 
-              await prisma.deliveryAssignment.create({
-                data: { orderId, deliveryPartnerId: deliveryPersonId, assignedByAdminId: "system", status: "PENDING" },
-              })
-              await prisma.order.update({
-                where: { id: orderId },
-                data: { deliveryPartnerId: deliveryPersonId, deliveryStatus: "ASSIGNED" },
-              })
+                await prisma.deliveryAssignment.create({
+                  data: { orderId, deliveryPartnerId: deliveryPersonId, assignedByAdminId: "system", status: "PENDING" },
+                })
+                await prisma.order.update({
+                  where: { id: orderId },
+                  data: { deliveryPartnerId: deliveryPersonId, deliveryStatus: "ASSIGNED" },
+                })
 
-              const ablyAssign = getAblyRest()
-              await Promise.all([
-                ablyAssign.channels.get(`deliveryPartner:${deliveryPersonId}`).publish("delivery:offer", { orderId, kitchenLat, kitchenLng }),
-                ablyAssign.channels.get(`order:${orderId}`).publish("order:status", { status: "DELIVERY_ASSIGNED" }),
-              ])
-              assigned = true
-              break
+                const ablyAssign = getAblyRest()
+                await Promise.all([
+                  ablyAssign.channels.get(`deliveryPartner:${deliveryPersonId}`).publish("delivery:offer", { orderId, kitchenLat, kitchenLng }),
+                  ablyAssign.channels.get(`order:${orderId}`).publish("order:status", { status: "DELIVERY_ASSIGNED" }),
+                ])
+                assigned = true
+                break
+              }
+            } catch (redisErr) {
+              console.error("Redis geosearch failed, skipping to Step 2:", redisErr)
             }
           }
+
+
 
           // Step 2: If no nearby partner found, try ANY available online partner
           if (!assigned) {

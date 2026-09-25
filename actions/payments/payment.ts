@@ -222,6 +222,7 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
     amount: razorpayOrder.amount,
     currency: razorpayOrder.currency,
     localOrderId: order.id,
+    publicCode: order.publicCode ?? undefined,
     idempotent: false,
   };
 }
@@ -381,7 +382,7 @@ export async function confirmPayment(
     timestamp: Date.now().toString(),
   });
 
-  return { orderId: payment.orderId };
+  return { orderId: payment.orderId, publicCode: order.publicCode ?? undefined };
 }
 
 export async function failPayment(razorpayOrderId: string) {

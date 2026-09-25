@@ -20,6 +20,7 @@ interface CreateOrderResponse {
   amount: number;
   currency: string;
   localOrderId: string;
+  publicCode?: string;
 }
 
 interface VerifyPaymentInput {
@@ -32,6 +33,7 @@ interface VerifyPaymentInput {
 
 interface VerifyPaymentResponse {
   orderId: string;
+  publicCode?: string;
 }
 
 interface RazorpayMethodBlock {
@@ -288,9 +290,9 @@ export function useRazorpay() {
     verifyPaymentMutation.isPending ||
     modalOpen;
 
-  const paymentResult: { success: boolean; orderId?: string; error?: string } | null = (() => {
+  const paymentResult: { success: boolean; orderId?: string; publicCode?: string; error?: string } | null = (() => {
     if (verifyPaymentMutation.isSuccess) {
-      return { success: true, orderId: verifyPaymentMutation.data.orderId };
+      return { success: true, orderId: verifyPaymentMutation.data.orderId, publicCode: verifyPaymentMutation.data.publicCode };
     }
     if (verifyPaymentMutation.isError) {
       return { success: false, error: verifyPaymentMutation.error.message };

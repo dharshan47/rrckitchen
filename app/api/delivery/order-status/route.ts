@@ -57,6 +57,7 @@ export async function POST(req: Request) {
       // DeliveryAssignment.status is an AssignmentStatus enum (PENDING/DELIVERED/CANCELLED);
       // only persist values it can hold.
       if (status === "DELIVERED") assignmentData.status = "DELIVERED";
+      if (status === "FAILED") assignmentData.status = "CANCELLED";
       await prisma.deliveryAssignment.update({
         where: { id: assignment.id },
         data: assignmentData,
