@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ScrollArea } from "@/components/ui/scroll-area"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Textarea } from "@/components/ui/textarea"
 import {
   Table,
@@ -263,23 +263,17 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
 
   return (
     <>
-      <div className="flex flex-col flex-1 overflow-hidden">
+      <div className="flex flex-col flex-1 overflow-hidden min-h-0">
         {/* Header section */}
         <div className="p-6 pb-0">
-          <div className="flex items-start justify-between mb-6">
+          <div className="flex items-start justify-between mb-6 mr-8">
             <div>
               <h2 className="text-[20px] font-bold text-[#111827]">Edit Kitchen Details</h2>
               <p className="text-[13px] text-[#475569] mt-1">Update all information for this kitchen partner</p>
             </div>
-            <button 
-              onClick={onClose}
-              className="h-8 w-8 flex items-center justify-center rounded-full text-[#475569] hover:bg-[#F8FAFC] transition-colors"
-            >
-              <X className="h-[18px] w-[18px]" />
-            </button>
           </div>
 
-          <div className="flex items-start gap-5 mb-6">
+          <div className="flex flex-col sm:flex-row items-start gap-5 mb-6">
             <div className="relative w-[140px] h-[140px] rounded-[8px] overflow-hidden shrink-0 border border-[#E2E8F0]">
               {kitchen.coverImageUrl ? (
                 <Image src={kitchen.coverImageUrl} alt="Banner" fill className="object-cover" sizes="140px" />
@@ -362,7 +356,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
                 <span className="text-[12px] text-[#64748B]">({(kitchen.orders ?? 0).toLocaleString()} orders)</span>
               </div>
 
-              <div className="flex items-center gap-8">
+              <div className="flex items-center gap-4 sm:gap-8 flex-wrap">
                 <div className="flex flex-col">
                   <span className="text-[14px] font-bold text-[#111827]">{prepTime}-{parseInt(prepTime, 10) + 15} mins</span>
                   <span className="text-[12px] text-[#64748B]">Prep Time</span>
@@ -380,16 +374,19 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
           </div>
         </div>
 
-        <Tabs defaultValue="general" className="w-full flex-1 flex flex-col">
+        <Tabs defaultValue="general" className="w-full flex-1 flex flex-col min-h-0">
           <div className="px-6 border-b border-[#EEF2F6]">
-            <TabsList className="w-full justify-start rounded-none h-12 bg-transparent p-0 space-x-6 overflow-x-auto custom-scrollbar flex-nowrap">
-              <TabsTrigger value="general" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">General</TabsTrigger>
-              <TabsTrigger value="menu" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Menu & Cuisines</TabsTrigger>
-              <TabsTrigger value="location" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Location</TabsTrigger>
-              <TabsTrigger value="timings" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Timings</TabsTrigger>
-              <TabsTrigger value="documents" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Documents</TabsTrigger>
-              <TabsTrigger value="settings" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Settings</TabsTrigger>
-            </TabsList>
+            <ScrollArea className="w-full">
+              <TabsList className="w-full justify-start rounded-none h-12 bg-transparent p-0 space-x-6 flex-nowrap">
+                <TabsTrigger value="general" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">General</TabsTrigger>
+                <TabsTrigger value="menu" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Menu & Cuisines</TabsTrigger>
+                <TabsTrigger value="location" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Location</TabsTrigger>
+                <TabsTrigger value="timings" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Timings</TabsTrigger>
+                <TabsTrigger value="documents" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Documents</TabsTrigger>
+                <TabsTrigger value="settings" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Settings</TabsTrigger>
+              </TabsList>
+              <ScrollBar orientation="horizontal" className="h-1.5" />
+            </ScrollArea>
           </div>
 
           <ScrollArea className="flex-1 px-6">

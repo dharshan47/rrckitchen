@@ -52,29 +52,8 @@ export const columns = (
           </Avatar>
           <div className="flex flex-col gap-0.5">
             <span className="font-semibold text-[13px] text-[#111827] truncate max-w-[150px]">{name}</span>
+            <span className="text-[11px] text-[#64748B] truncate max-w-[150px]">{kitchen.phoneNumber ?? "No phone"}</span>
             <span className="text-[11px] text-[#64748B] truncate max-w-[150px]">{kitchen.email ?? "No email"}</span>
-          </div>
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: "owner",
-    header: "Owner",
-    cell: ({ row }) => {
-      const kitchen = row.original
-      const ownerName = kitchen.name ?? "—"
-      return (
-        <div className="flex items-center gap-2.5">
-          <Avatar className="h-[32px] w-[32px] rounded-full border border-[#E2E8F0]">
-            <AvatarImage src={kitchen.ownerImage ?? ""} alt={ownerName} className="object-cover" />
-            <AvatarFallback className="bg-[#F1F5F9] text-[#64748B] text-[10px] font-bold">
-              {ownerName !== "—" ? ownerName.substring(0, 2).toUpperCase() : "??"}
-            </AvatarFallback>
-          </Avatar>
-          <div className="flex flex-col gap-0.5">
-            <span className="text-[13px] font-medium text-[#111827] truncate max-w-[120px]">{ownerName}</span>
-            <span className="text-[11px] text-[#64748B]">{kitchen.phoneNumber ?? "No phone"}</span>
           </div>
         </div>
       )

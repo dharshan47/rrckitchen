@@ -28,7 +28,7 @@ import {
 
 const statusFlow: { key: string; label: string; icon: typeof Check, desc: string }[] = [
   { key: "CONFIRMED", label: "Order Confirmed", icon: Check, desc: "Your order has been confirmed." },
-  { key: "PREPARING", label: "Preparing Your Order", icon: ChefHat, desc: "Shanthi's Kitchen is preparing your delicious meal." },
+  { key: "PREPARING", label: "Preparing Your Order", icon: ChefHat, desc: "The kitchen is preparing your delicious meal." },
   { key: "READYFORPICKUP", label: "Out for Delivery", icon: Bike, desc: "Your order is on the way." },
   { key: "COMPLETED", label: "Delivered", icon: Package, desc: "Enjoy your meal!" },
 ]
@@ -438,7 +438,11 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
                         {isCancelled && idx === 1 && (
                           <p className="text-[13px] text-[#DC2626] font-medium mt-1">Reason: {cancelledHistory?.note || "Order cancelled"}</p>
                         )}
-                        <p className={cn("text-[13px] mt-1 leading-[1.5]", isFuture ? "text-[#9CA3AF]" : "text-[#6B7280]")}>{step.desc}</p>
+                        <p className={cn("text-[13px] mt-1 leading-[1.5]", isFuture ? "text-[#9CA3AF]" : "text-[#6B7280]")}>
+                          {step.key === "PREPARING" 
+                            ? `${order.items?.[0]?.kitchenName || "The kitchen"} is preparing your delicious meal.`
+                            : step.desc}
+                        </p>
                       </div>
                     </div>
                   );
