@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -521,15 +522,16 @@ export default function SupportPageClient() {
             <Card className="rounded-[14px] border-[#EDEEEF] bg-[#FFFFFF] shadow-[0_2px_12px_rgba(16,24,40,0.035)] flex-1 overflow-hidden flex flex-col">
                <Tabs value={activeTab} onValueChange={setActiveTab} className="flex flex-col h-full">
                  <div className="px-5 border-b border-[#F0F1F2] flex items-center justify-between gap-4">
-                   <div className="flex-1 overflow-x-auto no-scrollbar outline-none border-none">
+                   <ScrollArea className="flex-1 w-full max-w-[calc(100vw-120px)] md:max-w-none">
                      <TabsList className="bg-transparent h-[52px] p-0 flex justify-start gap-4 lg:gap-6 w-max border-none outline-none">
                        {["All", "Open", "In Progress", "Waiting for Reply", "Resolved", "Closed"].map(tab => (
-                          <TabsTrigger key={tab} value={tab} className="rounded-none px-0 py-4 h-full border-b-[2px] border-transparent bg-transparent shadow-none outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-[#0D6C2B] data-[state=active]:text-[#0D6C2B] data-[state=active]:outline-none text-[#454951] font-[700] text-[13px] hover:text-[#0D6C2B] whitespace-nowrap transition-none">
+                          <TabsTrigger key={tab} value={tab} className="rounded-none px-1 py-4 h-full border-b-[2px] border-transparent bg-transparent shadow-none outline-none focus:outline-none focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[#0D6C2B] data-[state=active]:text-[#0D6C2B] data-[state=active]:outline-none text-[#454951] font-[700] text-[13px] hover:text-[#0D6C2B] whitespace-nowrap transition-none">
                             {tab}
                           </TabsTrigger>
                        ))}
                      </TabsList>
-                   </div>
+                     <ScrollBar orientation="horizontal" className="hidden" />
+                   </ScrollArea>
                    <button className="hidden md:flex shrink-0 items-center text-[12px] font-[700] text-[#FA4A05] whitespace-nowrap hover:underline">
                      View All Tickets <ChevronRight className="h-3.5 w-3.5 ml-0.5" strokeWidth={2.5} />
                    </button>
@@ -552,7 +554,7 @@ export default function SupportPageClient() {
                                   </div>
                                   <div className="flex flex-col min-w-0">
                                      <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
-                                       <span className="text-[12px] font-[700] text-[#252830]">#TK-{ticket.id.slice(0,5)}</span>
+                                       <span className="text-[12px] font-[700] text-[#252830]">#{ticket.publicCode ?? `TK-${ticket.id.slice(0,5)}`}</span>
                                        <span className={cn("text-[10px] font-[700] px-1.5 py-0.5 rounded-[6px]", prioConf.text, prioConf.bg)}>{prioConf.label}</span>
                                      </div>
                                      <h3 className="text-[15px] font-[700] text-[#111318] truncate">{ticket.subject}</h3>

@@ -353,7 +353,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
               </div>
               
               <p className="text-[12px] text-[#64748B] mb-3">
-                ID: KITCHEN_{kitchen.id.substring(0, 5).toUpperCase()} • Joined on {kitchen.createdAt ? new Date(kitchen.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : "New"}
+                ID: {kitchen.publicCode ?? `KITCHEN_${kitchen.id.substring(0, 5).toUpperCase()}`} • Joined on {kitchen.createdAt ? new Date(kitchen.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : "New"}
               </p>
 
               <div className="flex items-center gap-1.5 mb-5">

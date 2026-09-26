@@ -1,6 +1,9 @@
 "use client"
 
 import { useState, useMemo, useCallback } from "react"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
+import Image from "next/image"
+import { getOnlineDeliveryPartners, adminAssignDeliveryPartner } from "@/actions/dispatch/dispatch-actions"
 import {
   Search, Download, RefreshCw, CheckCircle2, ChefHat,
   Wallet, Eye, Pencil, MoreVertical, Bike, User, Phone, Mail, MapPin, Loader2,
@@ -633,12 +636,33 @@ function OrderSheet({
 
   const itemCount = order.items.reduce((s, item) => s + item.quantity, 0)
 
+  const queryClient = useQueryClient()
+  
+  const { data: onlinePartners, isLoading: isLoadingPartners } = useQuery({
+    queryKey: ["online-delivery-partners"],
+    queryFn: () => getOnlineDeliveryPartners(),
+    enabled: tab === "assign-partner",
+  })
+
+  const assignMutation = useMutation({
+    mutationFn: (partnerId: string) => adminAssignDeliveryPartner(order.id, partnerId),
+    onSuccess: () => {
+      toast.success("Delivery partner assigned successfully")
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] })
+      setTab("delivery")
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to assign partner")
+    }
+  })
+
   const tabs = [
     { id: "overview", label: "Overview" },
     { id: "items", label: `Items (${itemCount})` },
     { id: "timeline", label: "Timeline" },
     { id: "payment", label: "Payment" },
     { id: "delivery", label: "Delivery" },
+    ...((!order.deliveryPartner && !order.deliveryStatus && !isTerminal) ? [{ id: "assign-partner", label: "Assign Partner" }] : []),
     { id: "notes", label: "Notes" },
   ]
 
@@ -675,21 +699,21 @@ function OrderSheet({
         {tab === "overview" && (
         <>
         {/* Top Summary Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <div className="bg-[#FFF7ED] p-4 rounded-[16px] flex flex-col justify-between h-[96px] border border-[#FED7AA]/30">
-            <div className="flex items-center gap-2 text-[#374151] text-[11px] font-bold">
+        <div className="flex flex-wrap gap-3">
+          <div className="flex-1 min-w-[140px] bg-[#FFF7ED] p-3.5 rounded-[16px] flex flex-col justify-between h-[96px] border border-[#FED7AA]/30">
+            <div className="flex items-center gap-1.5 text-[#374151] text-[11px] font-bold">
               <div className="h-6 w-6 rounded-full bg-[#FDE68A] flex items-center justify-center shrink-0"><ShoppingBag className="h-3 w-3 text-[#F59E0B]" /></div> Order Amount
             </div>
             <span className="font-extrabold text-[18px] text-[#111827]">{formatCurrency(order.amount)}</span>
           </div>
-          <div className="bg-[#F9FAFB] p-4 rounded-[16px] flex flex-col justify-between h-[96px] border border-[#E5E7EB]">
-            <div className="flex items-center gap-2 text-[#374151] text-[11px] font-bold">
-              <div className="h-6 w-6 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center shrink-0"><span className="text-[9px] font-extrabold text-[#374151]">UPI</span></div> Payment Method
+          <div className="flex-1 min-w-[140px] bg-[#F9FAFB] p-3.5 rounded-[16px] flex flex-col justify-between h-[96px] border border-[#E5E7EB]">
+            <div className="flex items-center gap-1.5 text-[#374151] text-[11px] font-bold whitespace-nowrap">
+              <div className="h-6 w-6 rounded-full bg-white border border-[#E5E7EB] flex items-center justify-center shrink-0"><span className="text-[9px] font-extrabold text-[#374151]">UPI</span></div> Payment
             </div>
             <span className="font-extrabold text-[15px] text-[#111827] uppercase">{order.paymentMethod ?? "UPI"}</span>
           </div>
-          <div className="bg-[#FFF7ED] p-4 rounded-[16px] flex flex-col justify-between h-[96px] border border-[#FED7AA]/30">
-            <div className="flex items-center gap-2 text-[#374151] text-[11px] font-bold">
+          <div className="flex-1 min-w-[140px] bg-[#FFF7ED] p-3.5 rounded-[16px] flex flex-col justify-between h-[96px] border border-[#FED7AA]/30">
+            <div className="flex items-center gap-1.5 text-[#374151] text-[11px] font-bold whitespace-nowrap">
               <div className="h-6 w-6 rounded-full bg-[#FEE2E2] flex items-center justify-center shrink-0"><Clock3 className="h-3 w-3 text-[#DC2626]" /></div> Order Time
             </div>
             <span className="font-extrabold text-[13px] text-[#111827] leading-tight">{formatOrderDate(order.date)}</span>
@@ -709,12 +733,18 @@ function OrderSheet({
           </div>
           <div className="bg-white p-5 rounded-[18px] border border-[#E5E7EB] flex flex-col gap-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
             <h4 className="text-[13px] font-extrabold text-[#111827] flex items-center gap-2.5">
-              <div className="h-6 w-6 rounded-full bg-[#111827] text-[#F59E0B] flex items-center justify-center text-[10px] font-bold shrink-0">{(order.kitchen.name ?? "??").substring(0, 2).toUpperCase()}</div>
+              {order.kitchen.image ? (
+                <Image src={order.kitchen.image} alt={order.kitchen.name ?? "Kitchen"} width={24} height={24} className="rounded-full object-cover shrink-0 border border-[#E5E7EB]" />
+              ) : (
+                <div className="h-6 w-6 rounded-full bg-[#111827] text-[#F59E0B] flex items-center justify-center text-[10px] font-bold shrink-0">
+                  {(order.kitchen.name ?? "??").substring(0, 2).toUpperCase()}
+                </div>
+              )}
               Kitchen Details
             </h4>
             <div className="flex flex-col gap-3">
               <span className="text-[13px] font-extrabold text-[#111827]">{order.kitchen.name ?? "Unknown Kitchen"}</span>
-              <span className="text-[13px] font-medium text-[#6B7280] flex items-start gap-2.5"><MapPin className="h-4 w-4 shrink-0 mt-0.5 text-[#6B7280]" /> <span className="line-clamp-2 leading-tight">{order.kitchen.address ?? "Thanjavur, Tamil Nadu"}</span></span>
+              <span className="text-[13px] font-medium text-[#6B7280] flex items-start gap-2.5"><MapPin className="h-4 w-4 shrink-0 mt-0.5 text-[#6B7280]" /> <span className="line-clamp-2 leading-tight">{order.kitchen.address || "Address not provided"}</span></span>
               <span className="text-[13px] font-medium text-[#6B7280] flex items-center gap-2.5"><Phone className="h-4 w-4 text-[#6B7280] shrink-0" /> {order.kitchen.phone ?? "+91 98765 43210"}</span>
             </div>
             <a href="/admin/kitchens" className="text-[#2563EB] font-semibold text-[13px] mt-2">View kitchens &rarr;</a>
@@ -849,19 +879,22 @@ function OrderSheet({
           <h4 className="text-[14px] font-extrabold text-[#111827] flex items-center gap-2"><History className="h-4 w-4 text-[#6B7280]" /> Status Timeline</h4>
           {order.statusHistory.length > 0 ? (
             <div className="flex flex-col">
-              {order.statusHistory.map((h, idx) => (
-                <div key={h.id} className="relative flex gap-4 pb-6 last:pb-0">
-                  {idx < order.statusHistory.length - 1 && <span className="absolute left-[11px] top-7 bottom-0 w-[2px] bg-[#E5E7EB]" />}
-                  <div className="h-6 w-6 rounded-full border-2 border-[#F97316] bg-white flex items-center justify-center shrink-0 z-10">
-                    <div className="h-2 w-2 bg-[#F97316] rounded-full" />
+              {(() => {
+                const uniqueHistory = order.statusHistory.filter((h, i, arr) => i === 0 || h.status !== arr[i - 1].status);
+                return uniqueHistory.map((h, idx) => (
+                  <div key={h.id} className="relative flex gap-4 pb-6 last:pb-0">
+                    {idx < uniqueHistory.length - 1 && <span className="absolute left-[11px] top-7 bottom-0 w-[2px] bg-[#E5E7EB]" />}
+                    <div className="h-6 w-6 rounded-full border-2 border-[#F97316] bg-white flex items-center justify-center shrink-0 z-10">
+                      <div className="h-2 w-2 bg-[#F97316] rounded-full" />
+                    </div>
+                    <div className="flex flex-col gap-1 pt-0.5">
+                      <span className="text-[13px] font-extrabold text-[#111827] uppercase">{STATUS_LABELS[h.status.toUpperCase()] ?? h.status}</span>
+                      <span className="text-[12px] font-medium text-[#6B7280]">{new Date(h.changedAt).toLocaleString("en-IN", { day: "2-digit", month: "short", hour: "numeric", minute: "2-digit", hour12: true })}</span>
+                      {h.note && <span className="text-[12px] font-medium text-[#374151] italic">&ldquo;{h.note}&rdquo;</span>}
+                    </div>
                   </div>
-                  <div className="flex flex-col gap-1 pt-0.5">
-                    <span className="text-[13px] font-extrabold text-[#111827] uppercase">{STATUS_LABELS[h.status.toUpperCase()] ?? h.status}</span>
-                    <span className="text-[12px] font-medium text-[#6B7280]">{new Date(h.changedAt).toLocaleString("en-IN", { day: "2-digit", month: "short", hour: "numeric", minute: "2-digit", hour12: true })}</span>
-                    {h.note && <span className="text-[12px] font-medium text-[#374151] italic">&ldquo;{h.note}&rdquo;</span>}
-                  </div>
-                </div>
-              ))}
+                ));
+              })()}
             </div>
           ) : (
             <p className="text-[13px] font-medium text-[#6B7280]">No status history recorded yet.</p>
@@ -961,9 +994,41 @@ function OrderSheet({
             <span className="text-[11px] font-bold text-[#6B7280]">Kitchen Address</span>
             <span className="text-[13px] font-medium text-[#374151] flex items-start gap-2.5">
               <MapPin className="h-4 w-4 shrink-0 mt-0.5 text-[#6B7280]" />
-              <span className="leading-relaxed">{order.kitchen.address ?? "—"}</span>
+              <span className="leading-relaxed">{order.kitchen.address || "Address not provided"}</span>
             </span>
           </div>
+        </div>
+        </>
+        )}
+
+        {tab === "assign-partner" && (
+        <>
+        <div className="bg-white p-5 rounded-[18px] border border-[#E5E7EB] flex flex-col gap-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+          <h4 className="text-[14px] font-extrabold text-[#111827] flex items-center gap-2"><Bike className="h-4 w-4 text-[#6B7280]" /> Assign Delivery Partner</h4>
+          {isLoadingPartners ? (
+            <div className="flex items-center justify-center p-8"><Loader2 className="h-6 w-6 animate-spin text-[#6B7280]" /></div>
+          ) : onlinePartners?.length === 0 ? (
+            <p className="text-[13px] font-medium text-[#6B7280]">No active delivery partners are currently online.</p>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {onlinePartners?.map((p) => (
+                <div key={p.id} className="flex items-center justify-between p-4 border border-[#E5E7EB] rounded-xl hover:border-[#FED7AA] transition-colors">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[13px] font-extrabold text-[#111827]">{p.user?.name ?? "Unknown"}</span>
+                    <span className="text-[12px] font-medium text-[#6B7280]">{p.user?.phoneNumber ?? "No phone"}</span>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    className="bg-[#F97316] hover:bg-[#EA580C] text-white rounded-lg text-[12px] font-bold h-8 px-4"
+                    disabled={assignMutation.isPending}
+                    onClick={() => assignMutation.mutate(p.id)}
+                  >
+                    {assignMutation.isPending && assignMutation.variables === p.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Assign"}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
         </>
         )}
@@ -975,13 +1040,18 @@ function OrderSheet({
           <h4 className="text-[14px] font-extrabold text-[#111827] flex items-center gap-2"><StickyNote className="h-4 w-4 text-[#6B7280]" /> Notes</h4>
           {order.statusHistory.some((h) => h.note) ? (
             <div className="flex flex-col gap-4">
-              {order.statusHistory.filter((h) => h.note).map((h) => (
-                <div key={h.id} className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-[12px] p-4 flex flex-col gap-1.5">
-                  <span className="text-[12px] font-bold text-[#111827]">{STATUS_LABELS[h.status.toUpperCase()] ?? h.status}</span>
-                  <span className="text-[13px] font-medium text-[#374151]">{h.note}</span>
-                  <span className="text-[11px] font-medium text-[#6B7280]">{new Date(h.changedAt).toLocaleString("en-IN", { day: "2-digit", month: "short", hour: "numeric", minute: "2-digit", hour12: true })}</span>
-                </div>
-              ))}
+              {(() => {
+                const uniqueNotes = order.statusHistory
+                  .filter((h) => h.note)
+                  .filter((h, i, arr) => i === 0 || h.note !== arr[i - 1].note);
+                return uniqueNotes.map((h) => (
+                  <div key={h.id} className="bg-[#F9FAFB] border border-[#E5E7EB] rounded-[12px] p-4 flex flex-col gap-1.5">
+                    <span className="text-[12px] font-bold text-[#111827]">{STATUS_LABELS[h.status.toUpperCase()] ?? h.status}</span>
+                    <span className="text-[13px] font-medium text-[#374151]">{h.note}</span>
+                    <span className="text-[11px] font-medium text-[#6B7280]">{new Date(h.changedAt).toLocaleString("en-IN", { day: "2-digit", month: "short", hour: "numeric", minute: "2-digit", hour12: true })}</span>
+                  </div>
+                ));
+              })()}
             </div>
           ) : (
             <p className="text-[13px] font-medium text-[#6B7280]">No notes recorded for this order yet.</p>

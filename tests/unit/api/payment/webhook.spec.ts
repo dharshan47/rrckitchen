@@ -53,7 +53,7 @@ describe('POST /api/auth/razorpay/webhook', () => {
 
   it('handles payment.captured event with valid signature', async () => {
     const { confirmPayment } = await import('@/actions/payments/payment');
-    vi.mocked(confirmPayment).mockResolvedValue({ orderId: 'order_123' });
+    vi.mocked(confirmPayment).mockResolvedValue({ orderId: 'order_123', publicCode: undefined });
 
     const crypto = await import('crypto');
     const payload = { event: 'payment.captured', payload: { payment: { entity: { order_id: 'order_123', id: 'pay_456', method: 'upi' } } } };

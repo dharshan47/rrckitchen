@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { useAblyOrderChannel } from "@/hooks/useAblySubscribe";
 import { useCartActions, useCartCount, useCartItems, useCartTotal, useCravingsRecommendationsQuery } from "@/stores";
@@ -204,7 +205,8 @@ export function AddToCartPopup({ item, qty = 1, open, onOpenChange, orderId }: A
         </button>
 
         <div className="flex flex-col max-h-[85vh]">
-          <div className="overflow-y-auto flex-1 p-5 md:p-8 pb-2 md:pb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <ScrollArea className="flex-1 max-h-[calc(85vh-90px)] w-full">
+            <div className="p-5 md:p-8 pb-2 md:pb-4">
             {/* Header / Success Icon */}
           <DialogHeader className="mb-6 mt-2 items-center text-center">
             <div className="relative mb-3 flex items-center justify-center">
@@ -470,7 +472,8 @@ export function AddToCartPopup({ item, qty = 1, open, onOpenChange, orderId }: A
             </div>
           )}
 
-          </div>
+            </div>
+          </ScrollArea>
 
           {/* Footer Buttons - Sticky at bottom */}
           <div className="flex flex-row gap-2 sm:gap-3 p-4 sm:p-5 md:p-8 pt-4 md:pt-5 border-t border-gray-100 bg-white flex-shrink-0">

@@ -556,14 +556,18 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
                 </div>
                 <div>
                   <p className="text-[15px] font-semibold text-[#111827] mb-0.5">
-                    {assignError
-                      ? "No delivery partner yet"
-                      : assignMutation.isPending
-                        ? "Assigning partner..."
-                        : "Finding a delivery partner"}
+                    {order.status === "READYFORPICKUP" 
+                      ? (assignError
+                        ? "No delivery partner yet"
+                        : assignMutation.isPending
+                          ? "Assigning partner..."
+                          : "Finding a delivery partner")
+                      : "Awaiting Order Preparation"}
                   </p>
                   <p className="text-[13px] text-[#6B7280]">
-                    {assignError ?? "We'll assign the nearest available partner as soon as one is online"}
+                    {order.status === "READYFORPICKUP"
+                      ? (assignError ?? "We'll assign the nearest available partner as soon as one is online")
+                      : "A delivery partner will be assigned when your order is ready for pickup"}
                   </p>
                 </div>
               </div>

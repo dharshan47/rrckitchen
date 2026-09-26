@@ -48,7 +48,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { toast } from "sonner"
@@ -246,11 +246,12 @@ export default function AdminDeliveryPage() {
       cell: ({ row }) => (
         <div className="flex items-center gap-4 min-w-[200px]">
           <Avatar className="h-10 w-10 border border-[#E5E7EB]">
+            <AvatarImage src={row.original.image ?? ""} alt={partnerName(row.original)} className="object-cover" />
             <AvatarFallback className="bg-green-100 text-[#15803D] font-bold text-sm">{partnerInitials(row.original)}</AvatarFallback>
           </Avatar>
           <div className="flex flex-col gap-0.5">
             <span className="font-bold text-[14px] text-[#111827]">{partnerName(row.original)}</span>
-            <span className="text-[12px] text-[#6B7280] uppercase tracking-tight">ID: {row.original.userId.slice(0, 8)}</span>
+            <span className="text-[12px] text-[#6B7280] uppercase tracking-tight">ID: {row.original.publicCode ?? row.original.id.slice(0, 8)}</span>
           </div>
         </div>
       ),
@@ -577,6 +578,7 @@ export default function AdminDeliveryPage() {
 
                 <div className="flex items-center gap-5 mb-6">
                   <Avatar className="h-[72px] w-[72px] rounded-full border border-[#E5E7EB] shadow-sm">
+                    <AvatarImage src={selectedPartner.image ?? ""} alt={partnerName(selectedPartner)} className="object-cover" />
                     <AvatarFallback className="bg-[#DCFCE7] text-[#15803D] font-bold text-2xl">{partnerInitials(selectedPartner)}</AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col gap-1">
@@ -584,7 +586,7 @@ export default function AdminDeliveryPage() {
                       {partnerName(selectedPartner)}
                       {ACTIVE_STATUSES.includes(selectedPartner.status.toUpperCase()) && <CheckCircle className="h-5 w-5 text-[#2563EB] fill-[#EFF6FF]" />}
                     </h3>
-                    <span className="text-[13px] text-[#6B7280] font-medium">ID: {selectedPartner.userId.slice(0, 8).toUpperCase()}</span>
+                    <span className="text-[13px] text-[#6B7280] font-medium">ID: {selectedPartner.publicCode ?? selectedPartner.id.slice(0, 8).toUpperCase()}</span>
                   </div>
                 </div>
 
@@ -627,19 +629,15 @@ export default function AdminDeliveryPage() {
                       onClick={() => setActiveTab("performance")}
                       className={`pb-4 text-[14px] font-bold shrink-0 transition-colors ${activeTab === "performance" ? "text-[#15803D] border-b-[3px] border-[#15803D]" : "text-[#6B7280] hover:text-[#111827]"}`}
                     >Performance</button>
-                    <button
-                      onClick={() => setActiveTab("history")}
-                      className={`pb-4 text-[14px] font-bold shrink-0 transition-colors ${activeTab === "history" ? "text-[#15803D] border-b-[3px] border-[#15803D]" : "text-[#6B7280] hover:text-[#111827]"}`}
-                    >History</button>
                   </div>
                   <ScrollBar orientation="horizontal" />
                 </ScrollArea>
               </SheetHeader>
 
               <ScrollArea className="flex-1 bg-[#F9FAFB] w-full">
-                <div className="p-4 sm:p-8 space-y-6 min-w-[320px]">
-                {(activeTab === "overview" || activeTab === "kyc") && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="p-4 sm:p-8 space-y-6">
+                {activeTab === "overview" && (
+                  <div className="flex flex-col gap-6">
                     {/* Contact Information */}
                     <Card className="rounded-[16px] border border-[#E5E7EB] shadow-none bg-white">
                       <CardContent className="p-5 flex flex-col gap-4">
@@ -666,6 +664,11 @@ export default function AdminDeliveryPage() {
                       </CardContent>
                     </Card>
 
+                  </div>
+                )}
+
+                {activeTab === "kyc" && (
+                  <div className="flex flex-col gap-6">
                     {/* Payment Details */}
                     <Card className="rounded-[16px] border border-[#E5E7EB] shadow-none bg-white">
                       <CardContent className="p-5 flex flex-col gap-4">
@@ -677,11 +680,7 @@ export default function AdminDeliveryPage() {
                         </div>
                       </CardContent>
                     </Card>
-                  </div>
-                )}
 
-                {(activeTab === "overview" || activeTab === "kyc") && (
-                  <>
                     {/* KYC Status */}
                     <Card className="rounded-[16px] border border-[#E5E7EB] shadow-none bg-white">
                       <CardContent className="p-5 flex flex-col gap-4">
@@ -730,7 +729,7 @@ export default function AdminDeliveryPage() {
                         )}
                       </CardContent>
                     </Card>
-                  </>
+                  </div>
                 )}
 
                 {activeTab === "overview" && (
@@ -761,7 +760,7 @@ export default function AdminDeliveryPage() {
                   </Card>
                 )}
 
-                {(activeTab === "performance" || activeTab === "history") && (
+                {activeTab === "performance" && (
                   <div className="flex flex-col gap-4 pb-6">
                     <div className="flex items-center justify-between">
                       <h4 className="text-[14px] font-bold text-[#1F2937]">Recent Deliveries</h4>
@@ -777,7 +776,7 @@ export default function AdminDeliveryPage() {
                             <div className="flex items-start gap-4">
                               <ShoppingBag className="h-5 w-5 text-[#6B7280] mt-0.5" />
                               <div className="flex flex-col gap-1">
-                                <span className="text-[13px] font-bold text-[#1F2937]">{d.id}</span>
+                                <span className="text-[13px] font-bold text-[#1F2937]">{d.publicCode ?? d.id}</span>
                                 <span className="text-[12px] font-medium text-[#6B7280]">{formatDateTime(d.createdAt)}</span>
                               </div>
                             </div>
@@ -794,7 +793,6 @@ export default function AdminDeliveryPage() {
                   </div>
                 )}
                 </div>
-                <ScrollBar orientation="horizontal" />
               </ScrollArea>
             </>
           )}

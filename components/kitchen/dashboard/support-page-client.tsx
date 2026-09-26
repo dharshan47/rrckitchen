@@ -19,6 +19,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -354,18 +355,21 @@ export default function SupportPageClient() {
           <Card className="rounded-[16px] border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_2px_10px_rgba(15,23,42,0.04)] flex-1 overflow-hidden flex flex-col">
             <h2 className="text-[16px] font-bold text-[#111827] px-6 pt-6 pb-2">My Tickets</h2>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col">
-              <div className="px-6 border-b border-[#EEF0F2] overflow-x-auto hide-scrollbar">
-                <TabsList className="w-max h-auto p-0 bg-transparent flex gap-6 border-none rounded-none">
-                  {["All", "Open", "In Progress", "Resolved", "Closed"].map((tab) => (
-                    <TabsTrigger
-                      key={tab}
-                      value={tab}
-                      className="rounded-none px-0 py-3 border-0 border-b-[2px] border-b-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[#087A3D] data-[state=active]:text-[#087A3D] text-[#374151] font-bold text-[13px] transition-none whitespace-nowrap shadow-none outline-none focus-visible:ring-0 focus:outline-none"
-                    >
-                      {tab}
-                    </TabsTrigger>
-                  ))}
-                </TabsList>
+              <div className="px-6 border-b border-[#EEF0F2]">
+                <ScrollArea className="w-full">
+                  <TabsList className="w-max h-auto p-0 bg-transparent flex gap-6 border-none rounded-none">
+                    {["All", "Open", "In Progress", "Resolved", "Closed"].map((tab) => (
+                      <TabsTrigger
+                        key={tab}
+                        value={tab}
+                        className="rounded-none px-0 py-3 border-0 border-b-[2px] border-b-transparent data-[state=active]:bg-transparent data-[state=active]:shadow-none data-[state=active]:border-b-[#087A3D] data-[state=active]:text-[#087A3D] text-[#374151] font-bold text-[13px] transition-none whitespace-nowrap shadow-none outline-none focus-visible:ring-0 focus:outline-none"
+                      >
+                        {tab}
+                      </TabsTrigger>
+                    ))}
+                  </TabsList>
+                  <ScrollBar orientation="horizontal" className="hidden" />
+                </ScrollArea>
               </div>
 
               <TabsContent value={activeTab} className="p-6 m-0 space-y-4 flex-1">
@@ -391,14 +395,14 @@ export default function SupportPageClient() {
                               <div className="flex-1 min-w-0 pr-6">
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1.5">
                                   <h3 className="font-bold text-[14px] text-[#111827] truncate pr-2">
-                                    {ticket.publicCode ?? `#${ticket.id.slice(-6).toUpperCase()}`} - {ticket.subject}
+                                    #{ticket.publicCode ?? `TK-${ticket.id.slice(0, 5)}`} - {ticket.subject}
                                   </h3>
                                   <Badge variant="outline" className={cn("text-[10px] font-bold px-2 py-0.5 border w-fit shrink-0 rounded-[8px] uppercase", statusInfo.color)}>
                                     {statusInfo.label}
                                   </Badge>
                                 </div>
                                 <div className="flex flex-wrap items-center text-[12px] text-[#6B7280] font-medium mb-2 gap-2">
-                                  {ticket.orderId && <span>Order ID: {ticket.orderId}</span>}
+                                  {ticket.orderId && <span>Order: {ticket.order?.publicCode ?? ticket.orderId}</span>}
                                   {ticket.orderId && <span className="hidden sm:inline">•</span>}
                                   <span>{new Date(ticket.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                                 </div>

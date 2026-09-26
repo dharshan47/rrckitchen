@@ -338,11 +338,11 @@ export async function confirmPayment(
 
   await prisma.order.update({
     where: { id: payment.orderId },
-    data: { status: "PREPARING" },
+    data: { status: "CONFIRMED" },
   });
 
   await prisma.orderStatusHistory.create({
-    data: { orderId: payment.orderId, status: "PREPARING", note: "Payment confirmed" },
+    data: { orderId: payment.orderId, status: "CONFIRMED", note: "Payment confirmed" },
   });
 
   const { createKitchenPayout } = await import("@/actions/payouts/kitchen-payout");
@@ -352,7 +352,7 @@ export async function confirmPayment(
   await awardPoints(payment.orderId).catch(() => {});
 
   const ably = getAblyRest();
-  await ably.channels.get(`order:${payment.orderId}`).publish("order:status", { status: "PREPARING" });
+  await ably.channels.get(`order:${payment.orderId}`).publish("order:status", { status: "CONFIRMED" });
 
   const kitchenPartnerIds = [...new Set(order.orderItems.map((i) => i.menuItem.menu.kitchenPartnerId))]
   for (const kitchenPartnerId of kitchenPartnerIds) {

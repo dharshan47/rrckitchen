@@ -18,6 +18,7 @@ async function adminGuard(): Promise<{ actorUserId: string }> {
 
 export interface AdminCustomerRow {
   id: string
+  publicCode?: string | null
   userId: string
   name: string
   email: string
@@ -130,7 +131,8 @@ export async function getAdminCustomers() {
   const customers: AdminCustomerRow[] = users.map((u) => {
     const name = u.name ?? u.fullName ?? u.phoneNumber ?? "Customer"
     return {
-      id: `CUS${u.id.slice(-4).toUpperCase()}`,
+      id: u.publicCode ?? `CUS${u.id.slice(-4).toUpperCase()}`,
+      publicCode: u.publicCode,
       userId: u.id,
       name,
       email: u.email ?? "",

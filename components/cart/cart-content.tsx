@@ -37,7 +37,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { AddToCartPopup, type AddPopupItem } from "@/components/menu/add-to-cart-popup";
+
 import { CartSkeleton } from "@/components/cart/cart-skeleton";
 
 const addressIconMap: Record<string, { icon: typeof Home; color: string }> = {
@@ -228,7 +228,7 @@ export function CartContent() {
   const { data: session, isPending } = useSession();
   const deliveryAddress = useMenuDeliveryAddress();
   const appliedCoupon = useCartCoupon();
-  const { applyCoupon, removeCoupon } = useCartActions();
+  const { applyCoupon, removeCoupon, clearCart } = useCartActions();
 
   const [addressSheetOpen, setAddressSheetOpen] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
@@ -241,14 +241,15 @@ export function CartContent() {
   const [deliverySlot, setDeliverySlot] = useState<string>("");
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [slotPickerOpen, setSlotPickerOpen] = useState(false);
-  const [cravingsOpen, setCravingsOpen] = useState(true);
   const [couponInput, setCouponInput] = useState("");
 
   useEffect(() => {
-    if (paymentResult && !paymentResult.success) {
+    if (paymentResult?.success) {
+      clearCart();
+    } else if (paymentResult && !paymentResult.success) {
       toast.error(paymentResult.error || "Payment failed. Please try again.");
     }
-  }, [paymentResult]);
+  }, [paymentResult, clearCart]);
 
   const { isLoading: addressesLoading } = useCartAddressesQuery(!!session?.user);
   const { isLoading: cartConfigLoading } = useCartConfigQuery();
@@ -343,19 +344,6 @@ export function CartContent() {
   });
 
   if (paymentResult?.success) {
-    const firstCartItem: AddPopupItem | null = cart[0]
-      ? {
-          id: cart[0].id,
-          name: cart[0].name,
-          price: cart[0].price,
-          foodType: cart[0].foodType,
-          imageUrl: cart[0].imageUrl ?? null,
-          kitchenName: cart[0].kitchenName,
-          timeSlot: cart[0].timeSlot,
-          isBestseller: false,
-        }
-      : null;
-
     return (
       <main className="min-h-screen bg-background text-foreground">
         <div className="mx-auto flex max-w-2xl flex-col items-center justify-center gap-6 px-4 py-24 text-center">
@@ -376,14 +364,6 @@ export function CartContent() {
             </Button>
           </div>
         </div>
-        {firstCartItem && paymentResult.orderId && (
-          <AddToCartPopup
-            item={firstCartItem}
-            open={cravingsOpen}
-            onOpenChange={setCravingsOpen}
-            orderId={paymentResult.orderId}
-          />
-        )}
       </main>
     );
   }

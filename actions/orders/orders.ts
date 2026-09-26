@@ -129,6 +129,7 @@ export async function getAdminOrders() {
           kitchenPartner: { 
             include: { 
               kitchenAlias: true,
+              user: { select: { image: true, phoneNumber: true } },
               kitchenAddress: {
                 select: { lineOne: true, area: true, landmark: true, pincode: true }
               }
@@ -161,8 +162,10 @@ export async function getAdminOrders() {
       kitchen: {
         name: firstKitchen?.kitchenAlias?.displayName,
         address: address 
-          ? `${address.lineOne}${address.area ? `, ${address.area}` : ""}, ${address.pincode}` 
+          ? [address.lineOne, address.area, address.landmark, address.pincode].filter(Boolean).join(", ") || undefined
           : undefined,
+        phone: firstKitchen?.user?.phoneNumber,
+        image: firstKitchen?.user?.image,
       },
       items: o.orderItems.map((i) => ({
         id: i.id,
@@ -294,11 +297,6 @@ export async function updateOrderStatus(orderId: string, status: string) {
                 })
                 if (!person?.isOnline) continue
 
-                const existing = await prisma.deliveryAssignment.findFirst({
-                  where: { deliveryPartnerId: deliveryPersonId, status: "PENDING" },
-                })
-                if (existing) continue
-
                 await prisma.deliveryAssignment.create({
                   data: { orderId, deliveryPartnerId: deliveryPersonId, assignedByAdminId: "system", status: "PENDING" },
                 })
@@ -325,16 +323,11 @@ export async function updateOrderStatus(orderId: string, status: string) {
           // Step 2: If no nearby partner found, try ANY available online partner
           if (!assigned) {
             const allOnline = await prisma.deliveryPartner.findMany({
-              where: { isOnline: true, status: { in: ["APPROVED", "ACTIVE"] } },
+              where: { isOnline: true },
               select: { id: true },
             })
 
             for (const person of allOnline) {
-              const existing = await prisma.deliveryAssignment.findFirst({
-                where: { deliveryPartnerId: person.id, status: "PENDING" },
-              })
-              if (existing) continue
-
               await prisma.deliveryAssignment.create({
                 data: { orderId, deliveryPartnerId: person.id, assignedByAdminId: "system", status: "PENDING" },
               })

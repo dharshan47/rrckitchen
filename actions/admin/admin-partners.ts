@@ -10,23 +10,13 @@ export async function getAdminKitchenPartners() {
 
   const partners = await prisma.kitchenPartner.findMany({
     orderBy: { createdAt: "desc" },
-    where: {
-      user: {
-        userRoles: {
-          none: {
-            role: {
-              name: "ADMIN",
-            },
-          },
-        },
-      },
-    },
+    // removed where clause to allow fetching all kitchens even if they have ADMIN role
     include: {
       kitchenAlias: true,
       kitchenKyc: true,
       kitchenAddress: true,
       kitchenCategories: { include: { category: true } },
-      user: { select: { name: true, phoneNumber: true, email: true } },
+      user: { select: { name: true, phoneNumber: true, email: true, image: true } },
       _count: { select: { orderItems: true, menus: true } },
       orderItems: { select: { unitPrice: true, quantity: true } },
     },
@@ -38,6 +28,7 @@ export async function getAdminKitchenPartners() {
     name: p.kitchenAlias?.displayName ?? p.user?.name,
     phoneNumber: p.user?.phoneNumber,
     email: p.user?.email,
+    ownerImage: p.user?.image,
     imageUrl: p.kitchenAlias?.imageUrl,
     coverImageUrl: p.kitchenAlias?.coverImageUrl,
     customOfferText: p.kitchenAlias?.customOfferText,
@@ -81,7 +72,7 @@ export async function getAdminDeliveryPartners() {
   const partners = await prisma.deliveryPartner.findMany({
     orderBy: { createdAt: "desc" },
     include: {
-      user: { select: { name: true, phoneNumber: true, email: true } },
+      user: { select: { name: true, phoneNumber: true, email: true, image: true } },
       kyc: true,
       _count: { select: { kitchenAssignments: true } },
     },
@@ -97,7 +88,7 @@ export async function getAdminDeliveryPartners() {
           deliveryPartnerId: true,
           status: true,
           createdAt: true,
-          order: { select: { id: true, status: true, createdAt: true } },
+          order: { select: { id: true, publicCode: true, status: true, createdAt: true } },
         },
       })
     : []
@@ -113,10 +104,12 @@ export async function getAdminDeliveryPartners() {
     const deliveredCount = partnerAssignments.filter((a) => a.status === "DELIVERED").length
     return {
       id: p.id,
+      publicCode: p.publicCode,
       userId: p.userId,
       name: p.user?.name ?? "",
       phoneNumber: p.user?.phoneNumber ?? null,
       email: p.user?.email ?? null,
+      image: p.user?.image ?? null,
       status: p.status,
       orders: p._count.kitchenAssignments,
       totalAssignments: partnerAssignments.length,
@@ -138,6 +131,7 @@ export async function getAdminDeliveryPartners() {
         : null,
       recentDeliveries: partnerAssignments.slice(0, 3).map((a) => ({
         id: a.order.id,
+        publicCode: a.order.publicCode,
         status: a.order.status,
         createdAt: a.order.createdAt,
       })),

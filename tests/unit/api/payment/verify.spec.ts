@@ -25,6 +25,7 @@ describe('POST /api/payment/verify', () => {
     vi.mocked(verifyPaymentSignature).mockReturnValue(true);
     vi.mocked(confirmPayment).mockResolvedValue({
       orderId: 'local_1',
+      publicCode: undefined,
     });
 
     const req = mockRequest({

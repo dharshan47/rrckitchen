@@ -283,9 +283,11 @@ export function useRazorpay() {
   // ── Derived state ──────────────────────────────────────────────────────────
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(false);
 
   /** True while creating the order OR while the Razorpay modal is open (verifying) */
   const isProcessing =
+    isInitializing ||
     createOrderMutation.isPending ||
     verifyPaymentMutation.isPending ||
     modalOpen;
@@ -319,12 +321,14 @@ export function useRazorpay() {
     addressId?: string,
     prefill?: { name?: string; email?: string },
   ) => {
+    setIsInitializing(true);
     const razorpayKeyId = await resolveRazorpayKeyId();
     if (!razorpayKeyId) {
       verifyPaymentMutation.reset();
       createOrderMutation.reset();
       setCheckoutError("Online payment is temporarily unavailable.");
       console.error("[Razorpay] Razorpay key id is not configured.");
+      setIsInitializing(false);
       return;
     }
 
@@ -349,6 +353,8 @@ export function useRazorpay() {
         }
       }
       if (!sdkReady) throw new Error("Payment service could not be loaded. Please check your connection and try again.");
+
+      setIsInitializing(false);
 
       // Create the Razorpay order via mutation
       const order = await createOrderMutation.mutateAsync({
@@ -417,6 +423,7 @@ export function useRazorpay() {
     } catch (error) {
       // Errors surface automatically via createOrderMutation.error,
       // verifyPaymentMutation.error, or checkoutError below.
+      setIsInitializing(false);
       setCheckoutError(error instanceof Error ? error.message : "Payment could not be completed. Please try again.");
       console.error("[Razorpay] Checkout failed:", error);
     }

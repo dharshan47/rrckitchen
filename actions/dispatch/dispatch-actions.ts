@@ -33,14 +33,6 @@ async function tryAssignDeliveryPerson(
   })
   if (!person?.isOnline) return null
 
-  const existing = await prisma.deliveryAssignment.findFirst({
-    where: {
-      deliveryPartnerId: deliveryPersonId,
-      status: "PENDING",
-    },
-  })
-  if (existing) return null
-
   const assignment = await prisma.deliveryAssignment.create({
     data: {
       orderId,
@@ -92,7 +84,7 @@ export async function assignNearestDeliveryPerson(
 
   // Step 2: fall back to ANY available online partner when no one is nearby
   const allOnline = await prisma.deliveryPartner.findMany({
-    where: { isOnline: true, status: { in: ["APPROVED", "ACTIVE"] } },
+    where: { isOnline: true },
     select: { id: true },
   })
   for (const person of allOnline) {
@@ -172,4 +164,33 @@ export async function setDeliveryPersonOnline(isOnline: boolean) {
   }
 
   return { success: true, isOnline }
+}
+
+export async function getOnlineDeliveryPartners() {
+  const session = await getSession()
+  if (!session?.user) throw new Error("Unauthorized")
+
+  return await prisma.deliveryPartner.findMany({
+    where: { isOnline: true, status: { in: ["APPROVED", "ACTIVE"] } },
+    include: { user: { select: { name: true, phoneNumber: true } } },
+  })
+}
+
+export async function adminAssignDeliveryPartner(orderId: string, deliveryPartnerId: string) {
+  const session = await getSession()
+  if (!session?.user) throw new Error("Unauthorized")
+
+  const existingAssignment = await prisma.deliveryAssignment.findFirst({
+    where: { orderId },
+  })
+  if (existingAssignment) {
+    throw new Error("Order already has a delivery assignment")
+  }
+
+  const assignment = await tryAssignDeliveryPerson(orderId, deliveryPartnerId)
+  if (!assignment) {
+    throw new Error("Failed to assign delivery partner")
+  }
+  
+  return { success: true }
 }

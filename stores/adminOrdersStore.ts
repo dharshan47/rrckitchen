@@ -9,7 +9,7 @@ export interface AdminOrder {
   id: string;
   publicCode: string | null;
   customer: { name?: string | null; phone?: string | null; email?: string | null };
-  kitchen: { name?: string | null; address?: string; phone?: string | null };
+  kitchen: { name?: string | null; address?: string; phone?: string | null; image?: string | null };
   items: { id: string; name: string; price: number; quantity: number; imageUrl?: string }[];
   date: string;
   amount: number;
