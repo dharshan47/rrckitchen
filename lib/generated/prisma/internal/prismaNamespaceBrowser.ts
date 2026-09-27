@@ -127,7 +127,8 @@ export const ModelName = {
   KitchenSearchRecommendedItem: 'KitchenSearchRecommendedItem',
   CravingsRule: 'CravingsRule',
   CravingsRuleItem: 'CravingsRuleItem',
-  PublicIdCounter: 'PublicIdCounter'
+  PublicIdCounter: 'PublicIdCounter',
+  TiffinPickup: 'TiffinPickup'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1318,6 +1319,23 @@ export const PublicIdCounterScalarFieldEnum = {
 } as const
 
 export type PublicIdCounterScalarFieldEnum = (typeof PublicIdCounterScalarFieldEnum)[keyof typeof PublicIdCounterScalarFieldEnum]
+
+
+export const TiffinPickupScalarFieldEnum = {
+  id: 'id',
+  publicCode: 'publicCode',
+  orderId: 'orderId',
+  customerId: 'customerId',
+  kitchenId: 'kitchenId',
+  deliveryPartnerId: 'deliveryPartnerId',
+  pickupAddressId: 'pickupAddressId',
+  status: 'status',
+  scheduledDate: 'scheduledDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TiffinPickupScalarFieldEnum = (typeof TiffinPickupScalarFieldEnum)[keyof typeof TiffinPickupScalarFieldEnum]
 
 
 export const SortOrder = {

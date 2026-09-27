@@ -33,6 +33,9 @@ interface LiveOrderTrackingMapProps {
   broadcastLocation?: boolean
   height?: string
   showFooter?: boolean
+  orderStatus?: string
+  deliveryStatus?: string
+  assignmentStatus?: string
 }
 
 function haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -57,6 +60,9 @@ export function LiveOrderTrackingMap({
   broadcastLocation,
   height = "250px",
   showFooter = true,
+  orderStatus,
+  deliveryStatus,
+  assignmentStatus,
 }: LiveOrderTrackingMapProps) {
   const livePosition = useOrderTrackingLivePosition()
   const routeCoords = useOrderTrackingRouteCoords()
@@ -73,20 +79,36 @@ export function LiveOrderTrackingMap({
     return () => actions.resetTracking()
   }, [orderId, actions])
 
-  const destLat = customerLat ?? kitchenLat ?? THANJAVUR_CENTER[0]
-  const destLng = customerLng ?? kitchenLng ?? THANJAVUR_CENTER[1]
-
-  const kitchenPosition =
-    kitchenLat != null && kitchenLng != null ? ([kitchenLat, kitchenLng] as [number, number]) : undefined
-
   const { data: lastKnownLocation } = useRiderLastLocationQuery(
     orderId,
     !deliveryPersonLat && !deliveryPersonLng
   )
 
   const deliveryPos = livePosition ?? lastKnownLocation ?? null
+  const kitchenPosition =
+    kitchenLat != null && kitchenLng != null ? ([kitchenLat, kitchenLng] as [number, number]) : undefined
 
-  const { data: eta, isFetching: etaLoading } = useRouteEtaQuery(deliveryPos, destLat, destLng)
+  let originForRoute = deliveryPos
+  let destLatForRoute = customerLat ?? kitchenLat ?? THANJAVUR_CENTER[0]
+  let destLngForRoute = customerLng ?? kitchenLng ?? THANJAVUR_CENTER[1]
+
+  if (!deliveryPos && kitchenLat && kitchenLng) {
+    originForRoute = { lat: kitchenLat, lng: kitchenLng }
+    destLatForRoute = customerLat ?? THANJAVUR_CENTER[0]
+    destLngForRoute = customerLng ?? THANJAVUR_CENTER[1]
+  } else if (deliveryPos) {
+    if (assignmentStatus === "ACCEPTED" && deliveryStatus !== "PICKEDUP" && deliveryStatus !== "INTRANSIT" && orderStatus !== "COMPLETED" && kitchenLat && kitchenLng) {
+      // Delivery partner is going to the kitchen
+      destLatForRoute = kitchenLat
+      destLngForRoute = kitchenLng
+    } else {
+      // Default: Delivery partner is going to the customer
+      destLatForRoute = customerLat ?? THANJAVUR_CENTER[0]
+      destLngForRoute = customerLng ?? THANJAVUR_CENTER[1]
+    }
+  }
+
+  const { data: eta, isFetching: etaLoading } = useRouteEtaQuery(originForRoute, destLatForRoute, destLngForRoute)
 
   useAblyOrderChannel(
     orderId,
@@ -101,8 +123,8 @@ export function LiveOrderTrackingMap({
     true
   )
 
-  const distance = deliveryPos
-    ? haversineKm(deliveryPos.lat, deliveryPos.lng, destLat, destLng)
+  const distance = originForRoute
+    ? haversineKm(originForRoute.lat, originForRoute.lng, destLatForRoute, destLngForRoute)
     : null
 
   const roadDistance = useMemo(() => {
@@ -129,7 +151,7 @@ export function LiveOrderTrackingMap({
         <ThanjavurMap
           markerPosition={deliveryPos ? [deliveryPos.lat, deliveryPos.lng] : undefined}
           kitchenPosition={kitchenPosition}
-          destinationPosition={[destLat, destLng]}
+          destinationPosition={[destLatForRoute, destLngForRoute]}
           routeCoords={routeCoords.length > 0 ? routeCoords : undefined}
           height={height}
         />

@@ -90,4 +90,88 @@ describe("DeliveryPersonLocationBroadcaster", () => {
       <DeliveryPersonLocationBroadcaster deliveryPersonId="dp1" orderId="order1" enabled={true} />,
       { wrapper: createWrapper() }
     )
-  })})
+  })
+
+  it("ignores locations with poor accuracy", async () => {
+    const fetchMock = vi.spyOn(global, "fetch").mockResolvedValue(new Response(JSON.stringify({ ok: true })))
+    const { watchPosition } = mockGeolocation()
+    
+    let triggerSuccess!: (pos: GeolocationPosition) => void
+    watchPosition.mockImplementation((success) => {
+      triggerSuccess = success
+      return 1
+    })
+
+    render(
+      <DeliveryPersonLocationBroadcaster deliveryPersonId="dp1" orderId="order1" enabled={true} />,
+      { wrapper: createWrapper() }
+    )
+
+    // Trigger high accuracy
+    triggerSuccess({
+      coords: { latitude: 10, longitude: 20, accuracy: 50, speed: null, heading: null, altitude: null, altitudeAccuracy: null },
+      timestamp: Date.now()
+    } as GeolocationPosition)
+
+    await Promise.resolve() // flush microtasks
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+
+    // Trigger poor accuracy > 150
+    triggerSuccess({
+      coords: { latitude: 10.01, longitude: 20.01, accuracy: 200, speed: null, heading: null, altitude: null, altitudeAccuracy: null },
+      timestamp: Date.now()
+    } as GeolocationPosition)
+
+    // Should not have been called again
+    await Promise.resolve()
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+  })
+
+  it("ignores small movements within throttle interval", async () => {
+    const fetchMock = vi.spyOn(global, "fetch").mockResolvedValue(new Response(JSON.stringify({ ok: true })))
+    const { watchPosition } = mockGeolocation()
+    
+    let triggerSuccess!: (pos: GeolocationPosition) => void
+    watchPosition.mockImplementation((success) => {
+      triggerSuccess = success
+      return 1
+    })
+
+    render(
+      <DeliveryPersonLocationBroadcaster deliveryPersonId="dp1" orderId="order1" enabled={true} />,
+      { wrapper: createWrapper() }
+    )
+
+    // First location
+    triggerSuccess({
+      coords: { latitude: 10, longitude: 20, accuracy: 50, speed: null, heading: null, altitude: null, altitudeAccuracy: null },
+      timestamp: Date.now()
+    } as GeolocationPosition)
+
+    await Promise.resolve() // flush microtasks
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+
+    vi.advanceTimersByTime(2000)
+
+    // Second location very close (< 15 meters)
+    triggerSuccess({
+      coords: { latitude: 10.00001, longitude: 20, accuracy: 50, speed: null, heading: null, altitude: null, altitudeAccuracy: null },
+      timestamp: Date.now()
+    } as GeolocationPosition)
+
+    // Should not have been called again due to throttle and small distance
+    await Promise.resolve()
+    expect(fetchMock).toHaveBeenCalledTimes(1)
+    
+    vi.advanceTimersByTime(5000)
+    
+    // Now even if small movement, it should trigger if time has passed
+    triggerSuccess({
+      coords: { latitude: 10.00001, longitude: 20, accuracy: 50, speed: null, heading: null, altitude: null, altitudeAccuracy: null },
+      timestamp: Date.now()
+    } as GeolocationPosition)
+    
+    await Promise.resolve()
+    expect(fetchMock).toHaveBeenCalledTimes(2)
+  })
+})

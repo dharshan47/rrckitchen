@@ -29,32 +29,33 @@ model User {
   updatedAt           DateTime  @updatedAt
   deletedAt           DateTime?
 
-  customer            Customer?
-  userRoles           UserRole[]
-  sessions            Session[]
-  accounts            Account[]
-  otpCodes            OtpCode[]
-  addresses           Address[]
-  orders              Order[]
-  reviews             Review[]
-  deliveryReviews     DeliveryReview[]
-  kitchenPartner      KitchenPartner?
-  deliveryPartner     DeliveryPartner?
-  pushSubscriptions   PushSubscription[]
-  menuItemFeedbacks   MenuItemFeedback[]
-  menuItemReviews     MenuItemReview[]
-  supportTickets      SupportTicket[]
-  referralsMade       Referral[]           @relation("referrer")
-  referralsUsed       Referral[]           @relation("referred")
-  loyaltyPoints       LoyaltyPoints?
-  loyaltyTransactions LoyaltyTransaction[]
+  customer               Customer?
+  userRoles              UserRole[]
+  sessions               Session[]
+  accounts               Account[]
+  otpCodes               OtpCode[]
+  addresses              Address[]
+  orders                 Order[]
+  reviews                Review[]
+  deliveryReviews        DeliveryReview[]
+  kitchenPartner         KitchenPartner?
+  deliveryPartner        DeliveryPartner?
+  pushSubscriptions      PushSubscription[]
+  menuItemFeedbacks      MenuItemFeedback[]
+  menuItemReviews        MenuItemReview[]
+  supportTickets         SupportTicket[]
+  referralsMade          Referral[]              @relation("referrer")
+  referralsUsed          Referral[]              @relation("referred")
+  loyaltyPoints          LoyaltyPoints?
+  loyaltyTransactions    LoyaltyTransaction[]
   loyaltyCouponPurchases LoyaltyCouponPurchase[]
-  notificationLogs    NotificationLog[]
-  twoFactorEnabled    Boolean?
-  twoFactors          TwoFactor[]
-  adminProfile        AdminProfile?
-  wishlistItems       WishlistItem[]
-  kitchenWishlists    KitchenWishlist[]
+  notificationLogs       NotificationLog[]
+  twoFactorEnabled       Boolean?
+  twoFactors             TwoFactor[]
+  adminProfile           AdminProfile?
+  wishlistItems          WishlistItem[]
+  kitchenWishlists       KitchenWishlist[]
+  tiffinPickups          TiffinPickup[]
 
   @@index([phoneNumber])
   @@map("user")
@@ -180,9 +181,10 @@ model Address {
   isDefault     Boolean  @default(false)
   createdAt     DateTime @default(now())
 
-  user        User        @relation(fields: [userId], references: [id])
-  serviceZone ServiceZone @relation(fields: [serviceZoneId], references: [id])
-  orders      Order[]
+  user          User           @relation(fields: [userId], references: [id])
+  serviceZone   ServiceZone    @relation(fields: [serviceZoneId], references: [id])
+  orders        Order[]
+  tiffinPickups TiffinPickup[]
 
   @@index([userId])
   @@index([serviceZoneId])
@@ -191,23 +193,23 @@ model Address {
 // ============ KITCHEN PARTNER DOMAIN ============
 
 model KitchenPartner {
-  id             String        @id @default(cuid())
-  publicCode     String?       @unique
-  slug           String        @unique
-  userId         String        @unique
-  status         PartnerStatus @default(PENDINGAPPROVAL)
-  approvedAt     DateTime?
-  rejectedReason String?
-  serviceZoneId  String?
-  avgRating      Decimal       @default(0)
-  totalReviews   Int           @default(0)
-  operatingHours Json?
+  id                String        @id @default(cuid())
+  publicCode        String?       @unique
+  slug              String        @unique
+  userId            String        @unique
+  status            PartnerStatus @default(PENDINGAPPROVAL)
+  approvedAt        DateTime?
+  rejectedReason    String?
+  serviceZoneId     String?
+  avgRating         Decimal       @default(0)
+  totalReviews      Int           @default(0)
+  operatingHours    Json?
   createdAt         DateTime      @default(now())
   estimatedPrepTime Int?          @default(25)
   minOrder          Int?          @default(99)
   deliveryRadiusKm  Float?        @default(2.1)
   updatedAt         DateTime      @updatedAt
-  deletedAt      DateTime?
+  deletedAt         DateTime?
 
   user                       User                               @relation(fields: [userId], references: [id])
   kitchenAlias               KitchenAlias?
@@ -224,7 +226,8 @@ model KitchenPartner {
   coupons                    Coupon[]
   kitchenPayouts             KitchenPayout[]
   kitchenWishlists           KitchenWishlist[]
-  cravingsTriggerRules       CravingsRule[]      @relation("cravingsTriggerKitchen")
+  cravingsTriggerRules       CravingsRule[]                     @relation("cravingsTriggerKitchen")
+  tiffinPickups              TiffinPickup[]
 
   @@index([status, createdAt])
   @@index([serviceZoneId])
@@ -317,9 +320,9 @@ model Menu {
 }
 
 model MenuItem {
-  id             String    @id @default(cuid())
-  publicCode     String?   @unique
-  slug           String?   @unique
+  id             String       @id @default(cuid())
+  publicCode     String?      @unique
+  slug           String?      @unique
   menuId         String
   name           String
   description    String?
@@ -327,10 +330,10 @@ model MenuItem {
   compareAtPrice Decimal?
   foodType       FoodType
   timeSlot       TimeSlot
-  isAvailable    Boolean   @default(true)
+  isAvailable    Boolean      @default(true)
   availableFor   AvailableFor @default(BOTH)
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   deletedAt      DateTime?
 
   // CMS / menu-detail management fields
@@ -353,16 +356,16 @@ model MenuItem {
   packagingType    String?
   relatedItemIds   String[] @default([])
 
-  menu              Menu                 @relation(fields: [menuId], references: [id])
-  category          Category?            @relation(fields: [categoryId], references: [id])
+  menu              Menu               @relation(fields: [menuId], references: [id])
+  category          Category?          @relation(fields: [categoryId], references: [id])
   photos            MenuItemPhoto[]
   orderItems        OrderItem[]
   menuItemFeedbacks MenuItemFeedback[]
   menuItemReviews   MenuItemReview[]
   wishlistItems     WishlistItem[]
-  avgRating         Decimal              @default(0)
-  totalReviews      Int                  @default(0)
-  cravingsTriggers  CravingsRule[]       @relation("cravingsTriggerItem")
+  avgRating         Decimal            @default(0)
+  totalReviews      Int                @default(0)
+  cravingsTriggers  CravingsRule[]     @relation("cravingsTriggerItem")
   cravingsRuleItems CravingsRuleItem[]
 
   @@index([menuId, timeSlot, foodType])
@@ -425,6 +428,7 @@ model DeliveryPartner {
   deliveryAssignments DeliveryAssignment[]
   deliveryLocations   DeliveryLocation[]
   deliveryPayouts     DeliveryPartnerPayout[]
+  tiffinPickups       TiffinPickup[]
 
   @@index([status])
 }
@@ -481,15 +485,15 @@ enum AssignmentStatus {
 // ============ CATALOGUE / REFERENCE ============
 
 model Category {
-  id          String  @id @default(cuid())
-  name        String  @unique
+  id          String   @id @default(cuid())
+  name        String   @unique
   description String?
   imageUrl    String?
-  isActive    Boolean @default(true)
+  isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
 
-  kitchenCategories  KitchenCategory[]
-  menuItems          MenuItem[]
+  kitchenCategories   KitchenCategory[]
+  menuItems           MenuItem[]
   categoryPageContent CategoryPageContent?
 
   @@index([isActive])
@@ -544,6 +548,7 @@ model Order {
   deliveryPartnerPayouts DeliveryPartnerPayout[]
   supportTickets         SupportTicket[]
   upiCollectRequest      UpiCollectRequest?
+  tiffinPickup           TiffinPickup?
 
   @@index([userId])
   @@index([serviceDate, timeSlot])
@@ -590,10 +595,10 @@ model OrderItem {
   packagingFee     Decimal         @default(0)
   status           OrderItemStatus @default(CONFIRMED)
 
-  order            Order            @relation(fields: [orderId], references: [id])
-  menuItem         MenuItem         @relation(fields: [menuItemId], references: [id])
-  kitchenPartner   KitchenPartner   @relation(fields: [kitchenPartnerId], references: [id])
-  menuItemReviews  MenuItemReview[]
+  order           Order            @relation(fields: [orderId], references: [id])
+  menuItem        MenuItem         @relation(fields: [menuItemId], references: [id])
+  kitchenPartner  KitchenPartner   @relation(fields: [kitchenPartnerId], references: [id])
+  menuItemReviews MenuItemReview[]
 
   @@index([orderId])
   @@index([kitchenPartnerId])
@@ -663,13 +668,13 @@ model DeliveryReview {
 // ============ RRC KITCHEN PLATFORM REVIEWS ============
 
 model RrcKitchenReview {
-  id               String    @id @default(cuid())
-  kitchenPartnerId String    @unique
+  id               String   @id @default(cuid())
+  kitchenPartnerId String   @unique
   rating           Int
   recommendation   Boolean?
   comment          String?
-  createdAt        DateTime  @default(now())
-  updatedAt        DateTime  @updatedAt
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   kitchenPartner KitchenPartner @relation(fields: [kitchenPartnerId], references: [id])
 
@@ -763,16 +768,16 @@ model Payment {
   providerOrderId     String?
   providerPaymentId   String?
   paymentMethod       String?
-  paymentMethodDetail Json?           // { method, app, vpa, bank, wallet, card_brand }
+  paymentMethodDetail Json? // { method, app, vpa, bank, wallet, card_brand }
   amount              Decimal
   status              PaymentStatus   @default(PENDING)
   idempotencyKey      String?         @unique
   paidAt              DateTime?
   createdAt           DateTime        @default(now())
 
-  order              Order               @relation(fields: [orderId], references: [id])
-  refunds            Refund[]
-  upiCollectRequest  UpiCollectRequest?
+  order             Order              @relation(fields: [orderId], references: [id])
+  refunds           Refund[]
+  upiCollectRequest UpiCollectRequest?
 
   @@index([status])
   @@index([idempotencyKey])
@@ -981,17 +986,17 @@ model LoyaltyCoupon {
 }
 
 model LoyaltyCouponPurchase {
-  id              String   @id @default(cuid())
+  id              String       @id @default(cuid())
   userId          String
   loyaltyCouponId String
-  couponCode      String   @unique
+  couponCode      String       @unique
   discountType    DiscountType
   discountValue   Decimal
   maxDiscount     Decimal?
   minOrderValue   Decimal?
-  used            Boolean  @default(false)
+  used            Boolean      @default(false)
   expiresAt       DateTime
-  createdAt       DateTime @default(now())
+  createdAt       DateTime     @default(now())
 
   user          User          @relation(fields: [userId], references: [id])
   loyaltyCoupon LoyaltyCoupon @relation(fields: [loyaltyCouponId], references: [id])
@@ -1079,15 +1084,15 @@ model PaymentOffer {
 // ============ UPI SMART COLLECT ============
 
 model UpiCollectRequest {
-  id             String           @id @default(cuid())
-  orderId        String           @unique
-  paymentId      String           @unique
-  vpa            String           // Virtual Payment Address e.g. rrc.order123@razorpay
-  razorpayVpaId  String?          @unique
-  status         UpiCollectStatus @default(PENDING)
-  expiresAt      DateTime
-  createdAt      DateTime         @default(now())
-  updatedAt      DateTime         @updatedAt
+  id            String           @id @default(cuid())
+  orderId       String           @unique
+  paymentId     String           @unique
+  vpa           String // Virtual Payment Address e.g. rrc.order123@razorpay
+  razorpayVpaId String?          @unique
+  status        UpiCollectStatus @default(PENDING)
+  expiresAt     DateTime
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
 
   order   Order   @relation(fields: [orderId], references: [id])
   payment Payment @relation(fields: [paymentId], references: [id])
@@ -1323,10 +1328,10 @@ model WishlistItem {
 }
 
 model KitchenWishlist {
-  id              String   @id @default(cuid())
-  userId          String
+  id               String   @id @default(cuid())
+  userId           String
   kitchenPartnerId String
-  createdAt       DateTime @default(now())
+  createdAt        DateTime @default(now())
 
   user           User           @relation(fields: [userId], references: [id])
   kitchenPartner KitchenPartner @relation(fields: [kitchenPartnerId], references: [id])
@@ -1393,7 +1398,7 @@ model SearchPageKitchenCard {
 }
 
 model SearchPageFilter {
-  id                  String  @id @default(cuid())
+  id                  String   @id @default(cuid())
   searchPageContentId String
   name                String
   options             String[] @default([])
@@ -1509,11 +1514,11 @@ model CategoryPageOffer {
 }
 
 model CategoryPageFaq {
-  id                    String  @id @default(cuid())
+  id                    String @id @default(cuid())
   categoryPageContentId String
   question              String
-  answer                String  @default("")
-  sortOrder             Int     @default(0)
+  answer                String @default("")
+  sortOrder             Int    @default(0)
 
   categoryPageContent CategoryPageContent @relation(fields: [categoryPageContentId], references: [id], onDelete: Cascade)
 
@@ -1526,33 +1531,33 @@ model CategoryPageFaq {
 // shown when a customer clicks "View Menu" on a kitchen from search results.
 
 model KitchenSearchPageContent {
-  id                   String   @id @default(cuid())
-  keyword              String   @unique
-  isActive             Boolean  @default(true)
-  desktopBannerUrl     String   @default("")
-  mobileBannerUrl      String   @default("")
-  searchTitle          String   @default("")
-  badgeText            String   @default("")
-  description          String   @default("")
-  showHero             Boolean  @default(true)
-  defaultSort          String   @default("Popularity")
-  showRatings          Boolean  @default(true)
-  showDeliveryTime     Boolean  @default(true)
-  showDistance         Boolean  @default(true)
-  showPureVegBadge     Boolean  @default(true)
-  showHygienicBadge    Boolean  @default(true)
-  showKitchenStory     Boolean  @default(true)
-  showInternalNotes    Boolean  @default(false)
-  showKitchenTiming    Boolean  @default(true)
-  showFreshIngredients Boolean  @default(true)
-  showPackaging        Boolean  @default(true)
-  showSupportLocalWomen Boolean @default(true)
-  kitchensCount        Int      @default(0)
-  menuItemsCount       Int      @default(0)
-  version              Int      @default(1)
-  updatedBy            String?
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
+  id                    String   @id @default(cuid())
+  keyword               String   @unique
+  isActive              Boolean  @default(true)
+  desktopBannerUrl      String   @default("")
+  mobileBannerUrl       String   @default("")
+  searchTitle           String   @default("")
+  badgeText             String   @default("")
+  description           String   @default("")
+  showHero              Boolean  @default(true)
+  defaultSort           String   @default("Popularity")
+  showRatings           Boolean  @default(true)
+  showDeliveryTime      Boolean  @default(true)
+  showDistance          Boolean  @default(true)
+  showPureVegBadge      Boolean  @default(true)
+  showHygienicBadge     Boolean  @default(true)
+  showKitchenStory      Boolean  @default(true)
+  showInternalNotes     Boolean  @default(false)
+  showKitchenTiming     Boolean  @default(true)
+  showFreshIngredients  Boolean  @default(true)
+  showPackaging         Boolean  @default(true)
+  showSupportLocalWomen Boolean  @default(true)
+  kitchensCount         Int      @default(0)
+  menuItemsCount        Int      @default(0)
+  version               Int      @default(1)
+  updatedBy             String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
 
   chips            KitchenSearchChip[]
   filters          KitchenSearchFilter[]
@@ -1591,10 +1596,10 @@ model KitchenSearchFilter {
 }
 
 model KitchenSearchMenuCategory {
-  id                         String  @id @default(cuid())
+  id                         String @id @default(cuid())
   kitchenSearchPageContentId String
   name                       String
-  sortOrder                  Int     @default(0)
+  sortOrder                  Int    @default(0)
 
   kitchenSearchPageContent KitchenSearchPageContent @relation(fields: [kitchenSearchPageContentId], references: [id], onDelete: Cascade)
 
@@ -1603,10 +1608,10 @@ model KitchenSearchMenuCategory {
 }
 
 model KitchenSearchRecommendedItem {
-  id                         String  @id @default(cuid())
+  id                         String @id @default(cuid())
   kitchenSearchPageContentId String
   name                       String
-  sortOrder                  Int     @default(0)
+  sortOrder                  Int    @default(0)
 
   kitchenSearchPageContent KitchenSearchPageContent @relation(fields: [kitchenSearchPageContentId], references: [id], onDelete: Cascade)
 
@@ -1637,8 +1642,8 @@ model CravingsRule {
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
 
-  triggerItem MenuItem         @relation("cravingsTriggerItem", fields: [triggerItemId], references: [id])
-  kitchen     KitchenPartner   @relation("cravingsTriggerKitchen", fields: [kitchenId], references: [id])
+  triggerItem MenuItem           @relation("cravingsTriggerItem", fields: [triggerItemId], references: [id])
+  kitchen     KitchenPartner     @relation("cravingsTriggerKitchen", fields: [kitchenId], references: [id])
   items       CravingsRuleItem[]
 
   @@index([triggerItemId])
@@ -1671,4 +1676,42 @@ model PublicIdCounter {
   digits   Int
 
   @@map("public_id_counter")
+}
+
+model TiffinPickup {
+  id                String             @id @default(cuid())
+  publicCode        String?            @unique
+  orderId           String             @unique
+  customerId        String
+  kitchenId         String
+  deliveryPartnerId String?
+  pickupAddressId   String
+  status            TiffinPickupStatus @default(SCHEDULED)
+  scheduledDate     DateTime
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  order           Order            @relation(fields: [orderId], references: [id])
+  customer        User             @relation(fields: [customerId], references: [id])
+  kitchen         KitchenPartner   @relation(fields: [kitchenId], references: [id])
+  deliveryPartner DeliveryPartner? @relation(fields: [deliveryPartnerId], references: [id])
+  pickupAddress   Address          @relation(fields: [pickupAddressId], references: [id])
+
+  @@index([customerId])
+  @@index([kitchenId])
+  @@index([deliveryPartnerId])
+  @@index([status])
+  @@map("tiffin_pickup")
+}
+
+enum TiffinPickupStatus {
+  SCHEDULED
+  ASSIGNED
+  ACCEPTED
+  STARTED
+  ARRIVED
+  COLLECTED
+  COMPLETED
+  FAILED
 }

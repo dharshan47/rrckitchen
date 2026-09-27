@@ -344,6 +344,7 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
           foodType: menuItem.foodType,
           timeSlot: menuItem.timeSlot,
           kitchenName: menuItem.kitchenName,
+          imageUrl: menuItem.imageUrl || (menuItem as KitchenItem).photos?.[0]?.imageUrl || undefined,
         });
       }
       setPopupItem({

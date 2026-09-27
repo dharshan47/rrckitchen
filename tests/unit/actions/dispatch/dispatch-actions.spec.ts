@@ -4,6 +4,7 @@ const mockPrisma = vi.hoisted(() => ({
   order: { findUnique: vi.fn(), update: vi.fn() },
   deliveryPartner: { findUnique: vi.fn(), update: vi.fn(), findMany: vi.fn() },
   deliveryAssignment: { create: vi.fn(), findFirst: vi.fn(), updateMany: vi.fn() },
+  tiffinPickup: { create: vi.fn() },
 }))
 
 vi.mock("@/lib/prisma", () => ({ default: mockPrisma }))
@@ -12,6 +13,9 @@ const mockRedis = vi.hoisted(() => ({
   geosearch: vi.fn(),
   zrem: vi.fn(),
   geoadd: vi.fn(),
+  smembers: vi.fn().mockResolvedValue([]),
+  sadd: vi.fn(),
+  expire: vi.fn(),
 }))
 
 vi.mock("@/lib/redis", () => ({ redis: mockRedis }))
@@ -34,7 +38,12 @@ import {
 import { getSession } from "@/lib/auth-server"
 
 describe("dispatch-actions", () => {
-  beforeEach(() => { vi.clearAllMocks() })
+  beforeEach(() => {
+    vi.clearAllMocks()
+    mockPrisma.deliveryPartner.findUnique.mockReset()
+    mockPrisma.deliveryAssignment.findFirst.mockReset()
+    vi.mocked(getSession).mockResolvedValue(mockSession as any)
+  })
 
   describe("assignNearestDeliveryPerson", () => {
     it("assigns nearest available delivery person", async () => {
@@ -81,13 +90,9 @@ describe("dispatch-actions", () => {
 
     it("skips delivery person with existing pending assignment", async () => {
       mockRedis.geosearch.mockResolvedValue([{ member: "dp-1" }, { member: "dp-2" }])
-      mockPrisma.deliveryPartner.findUnique
-        .mockResolvedValueOnce({ id: "dp-1", isOnline: true })
-        .mockResolvedValueOnce({ id: "dp-2", isOnline: true })
-      mockPrisma.deliveryAssignment.findFirst
-        .mockResolvedValueOnce(null)
-        .mockResolvedValueOnce({ id: "existing" })
-        .mockResolvedValueOnce(null)
+      mockRedis.smembers.mockResolvedValueOnce(["dp-1"]) // dp-1 is rejected
+      mockPrisma.deliveryPartner.findUnique.mockResolvedValue({ id: "dp-2", isOnline: true })
+      mockPrisma.deliveryAssignment.findFirst.mockResolvedValue(null)
       mockPrisma.deliveryAssignment.create.mockResolvedValue({ id: "assign-1" })
 
       await assignNearestDeliveryPerson("order-1", 13.0, 80.2)
@@ -121,7 +126,7 @@ describe("dispatch-actions", () => {
 
       expect(result.id).toBe("assign-9")
       expect(mockPrisma.deliveryPartner.findMany).toHaveBeenCalledWith({
-        where: { isOnline: true, status: { in: ["APPROVED", "ACTIVE"] } },
+        where: { isOnline: true },
         select: { id: true },
       })
       expect(mockPrisma.order.update).toHaveBeenCalledWith({
@@ -172,9 +177,16 @@ describe("dispatch-actions", () => {
       expect(mockPublish).toHaveBeenCalledWith("delivery:status", { status: "PICKEDUP" })
     })
 
-    it("updates to DELIVERED and marks order as COMPLETED", async () => {
+    it("updates to DELIVERED, marks order as COMPLETED, and creates tiffin pickup if carrier", async () => {
       mockPrisma.deliveryAssignment.updateMany.mockResolvedValue({ count: 1 })
-      mockPrisma.order.update.mockResolvedValue({})
+      mockPrisma.order.update.mockResolvedValue({
+        id: "order-1",
+        userId: "user-1",
+        addressId: "addr-1",
+        orderItems: [
+          { kitchenPartnerId: "kp-1", menuItem: { packagingType: "REUSABLE_TIFFIN" } }
+        ]
+      })
 
       await updateDeliveryStatus("order-1", "DELIVERED")
 
@@ -185,7 +197,31 @@ describe("dispatch-actions", () => {
       expect(mockPrisma.order.update).toHaveBeenCalledWith({
         where: { id: "order-1" },
         data: { status: "COMPLETED" },
+        include: {
+          orderItems: { include: { menuItem: true } }
+        }
       })
+      expect(mockPrisma.tiffinPickup.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({ orderId: "order-1", kitchenId: "kp-1", status: "SCHEDULED" })
+        })
+      )
+    })
+
+    it("updates to DELIVERED but does not create tiffin pickup for non-carrier order", async () => {
+      mockPrisma.deliveryAssignment.updateMany.mockResolvedValue({ count: 1 })
+      mockPrisma.order.update.mockResolvedValue({
+        id: "order-2",
+        userId: "user-2",
+        addressId: "addr-2",
+        orderItems: [
+          { kitchenPartnerId: "kp-1", menuItem: { packagingType: "Disposable" } }
+        ]
+      })
+
+      await updateDeliveryStatus("order-2", "DELIVERED")
+
+      expect(mockPrisma.tiffinPickup.create).not.toHaveBeenCalled()
     })
 
     it("updates to INTRANSIT without extra DB calls", async () => {

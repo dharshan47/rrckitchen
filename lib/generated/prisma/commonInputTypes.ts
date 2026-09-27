@@ -850,6 +850,23 @@ export type EnumCravingsPriorityWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumCravingsPriorityFilter<$PrismaModel>
 }
 
+export type EnumTiffinPickupStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.TiffinPickupStatus | Prisma.EnumTiffinPickupStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.TiffinPickupStatus[] | Prisma.ListEnumTiffinPickupStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TiffinPickupStatus[] | Prisma.ListEnumTiffinPickupStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTiffinPickupStatusFilter<$PrismaModel> | $Enums.TiffinPickupStatus
+}
+
+export type EnumTiffinPickupStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TiffinPickupStatus | Prisma.EnumTiffinPickupStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.TiffinPickupStatus[] | Prisma.ListEnumTiffinPickupStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TiffinPickupStatus[] | Prisma.ListEnumTiffinPickupStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTiffinPickupStatusWithAggregatesFilter<$PrismaModel> | $Enums.TiffinPickupStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTiffinPickupStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTiffinPickupStatusFilter<$PrismaModel>
+}
+
 export type NestedStringFilter<$PrismaModel = never> = {
   equals?: string | Prisma.StringFieldRefInput<$PrismaModel>
   in?: string[] | Prisma.ListStringFieldRefInput<$PrismaModel>
@@ -1621,6 +1638,23 @@ export type NestedEnumCravingsPriorityWithAggregatesFilter<$PrismaModel = never>
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumCravingsPriorityFilter<$PrismaModel>
   _max?: Prisma.NestedEnumCravingsPriorityFilter<$PrismaModel>
+}
+
+export type NestedEnumTiffinPickupStatusFilter<$PrismaModel = never> = {
+  equals?: $Enums.TiffinPickupStatus | Prisma.EnumTiffinPickupStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.TiffinPickupStatus[] | Prisma.ListEnumTiffinPickupStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TiffinPickupStatus[] | Prisma.ListEnumTiffinPickupStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTiffinPickupStatusFilter<$PrismaModel> | $Enums.TiffinPickupStatus
+}
+
+export type NestedEnumTiffinPickupStatusWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.TiffinPickupStatus | Prisma.EnumTiffinPickupStatusFieldRefInput<$PrismaModel>
+  in?: $Enums.TiffinPickupStatus[] | Prisma.ListEnumTiffinPickupStatusFieldRefInput<$PrismaModel>
+  notIn?: $Enums.TiffinPickupStatus[] | Prisma.ListEnumTiffinPickupStatusFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumTiffinPickupStatusWithAggregatesFilter<$PrismaModel> | $Enums.TiffinPickupStatus
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumTiffinPickupStatusFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumTiffinPickupStatusFilter<$PrismaModel>
 }
 
 

@@ -73,11 +73,32 @@ export async function assignNearestDeliveryPerson(
   const existingAssignment = await prisma.deliveryAssignment.findFirst({
     where: { orderId },
   })
-  if (existingAssignment) return existingAssignment
+  
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const redisRaw = redis as any
+  if (existingAssignment) {
+    // If it's pending for more than 60 seconds, expire it
+    if (existingAssignment.status === "PENDING" && Date.now() - existingAssignment.createdAt.getTime() > 60_000) {
+      await redisRaw.sadd(`order:${orderId}:rejected`, existingAssignment.deliveryPartnerId)
+      await redisRaw.expire(`order:${orderId}:rejected`, 86400) // 1 day expiry
+      await prisma.$transaction(async (tx) => {
+        await tx.order.update({
+          where: { id: orderId },
+          data: { deliveryPartnerId: null, deliveryStatus: null },
+        })
+        await tx.deliveryAssignment.delete({ where: { id: existingAssignment.id } })
+      })
+    } else {
+      return existingAssignment
+    }
+  }
 
   // Step 1: try nearby online delivery partners (within 5km of the kitchen)
   const nearbyMemberIds = await findNearbyOnlineMemberIds(kitchenLat, kitchenLng)
+  const rejectedDrivers = await redisRaw.smembers(`order:${orderId}:rejected`) || []
+
   for (const member of nearbyMemberIds) {
+    if (rejectedDrivers.includes(member)) continue
     const assignment = await tryAssignDeliveryPerson(orderId, member, kitchenLat, kitchenLng)
     if (assignment) return assignment
   }
@@ -88,6 +109,7 @@ export async function assignNearestDeliveryPerson(
     select: { id: true },
   })
   for (const person of allOnline) {
+    if (rejectedDrivers.includes(person.id)) continue
     const assignment = await tryAssignDeliveryPerson(orderId, person.id, kitchenLat, kitchenLng)
     if (assignment) return assignment
   }
@@ -134,10 +156,42 @@ export async function updateDeliveryStatus(orderId: string, status: string) {
       where: { orderId },
       data: { deliveredAt: new Date() },
     })
-    await prisma.order.update({
+    const updatedOrder = await prisma.order.update({
       where: { id: orderId },
       data: { status: "COMPLETED" },
+      include: {
+        orderItems: {
+          include: { menuItem: true }
+        }
+      }
     })
+
+    const hasReusableCarrier = updatedOrder.orderItems.some(item =>
+      item.menuItem.packagingType === "REUSABLE_TIFFIN" || 
+      item.menuItem.packagingType === "Reusable Tiffin" ||
+      item.menuItem.packagingType === "Tiffin Carrier"
+    )
+
+    if (hasReusableCarrier) {
+      const tomorrow = new Date()
+      tomorrow.setDate(tomorrow.getDate() + 1)
+      tomorrow.setHours(10, 0, 0, 0) // Schedule for 10 AM next day
+
+      const kitchenId = updatedOrder.orderItems[0]?.kitchenPartnerId
+      if (kitchenId && updatedOrder.addressId) {
+        await prisma.tiffinPickup.create({
+          data: {
+            publicCode: `TFP-${updatedOrder.id.slice(-6)}`,
+            orderId: updatedOrder.id,
+            customerId: updatedOrder.userId,
+            kitchenId: kitchenId,
+            pickupAddressId: updatedOrder.addressId,
+            scheduledDate: tomorrow,
+            status: "SCHEDULED"
+          }
+        })
+      }
+    }
   }
 
   const ably = getAblyRest()
@@ -176,15 +230,61 @@ export async function getOnlineDeliveryPartners() {
   })
 }
 
-export async function adminAssignDeliveryPartner(orderId: string, deliveryPartnerId: string) {
+export async function adminWithdrawDeliveryPartner(orderId: string) {
   const session = await getSession()
   if (!session?.user) throw new Error("Unauthorized")
+
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: { deliveryStatus: true }
+  })
+
+  if (order?.deliveryStatus && ["PICKEDUP", "INTRANSIT", "DELIVERED", "COMPLETED"].includes(order.deliveryStatus)) {
+    throw new Error("Order has already been picked up and cannot be withdrawn")
+  }
 
   const existingAssignment = await prisma.deliveryAssignment.findFirst({
     where: { orderId },
   })
+
   if (existingAssignment) {
-    throw new Error("Order already has a delivery assignment")
+    await prisma.deliveryAssignment.delete({ where: { id: existingAssignment.id } })
+    await prisma.order.update({
+      where: { id: orderId },
+      data: { deliveryPartnerId: null, deliveryStatus: null }
+    })
+    const ably = getAblyRest()
+    await ably.channels.get(`deliveryPartner:${existingAssignment.deliveryPartnerId}`).publish("delivery:withdrawn", { orderId })
+    await ably.channels.get(`order:${orderId}`).publish("order:status", { status: "DELIVERY_WITHDRAWN" })
+  }
+
+  return { success: true }
+}
+
+export async function adminAssignDeliveryPartner(orderId: string, deliveryPartnerId: string) {
+  const session = await getSession()
+  if (!session?.user) throw new Error("Unauthorized")
+
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    select: { deliveryStatus: true }
+  })
+
+  if (order?.deliveryStatus && ["PICKEDUP", "INTRANSIT", "DELIVERED", "COMPLETED"].includes(order.deliveryStatus)) {
+    throw new Error("Order has already been picked up and cannot be reassigned")
+  }
+
+  const existingAssignment = await prisma.deliveryAssignment.findFirst({
+    where: { orderId },
+  })
+  
+  if (existingAssignment) {
+    if (existingAssignment.deliveryPartnerId === deliveryPartnerId) {
+      throw new Error("Delivery partner is already assigned to this order")
+    }
+    await prisma.deliveryAssignment.delete({ where: { id: existingAssignment.id } })
+    const ably = getAblyRest()
+    await ably.channels.get(`deliveryPartner:${existingAssignment.deliveryPartnerId}`).publish("delivery:withdrawn", { orderId })
   }
 
   const assignment = await tryAssignDeliveryPerson(orderId, deliveryPartnerId)

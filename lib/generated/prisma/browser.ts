@@ -402,3 +402,8 @@ export type CravingsRuleItem = Prisma.CravingsRuleItemModel
  * 
  */
 export type PublicIdCounter = Prisma.PublicIdCounterModel
+/**
+ * Model TiffinPickup
+ * 
+ */
+export type TiffinPickup = Prisma.TiffinPickupModel

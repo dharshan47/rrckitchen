@@ -340,6 +340,7 @@ export type KitchenPartnerWhereInput = {
   kitchenPayouts?: Prisma.KitchenPayoutListRelationFilter
   kitchenWishlists?: Prisma.KitchenWishlistListRelationFilter
   cravingsTriggerRules?: Prisma.CravingsRuleListRelationFilter
+  tiffinPickups?: Prisma.TiffinPickupListRelationFilter
 }
 
 export type KitchenPartnerOrderByWithRelationInput = {
@@ -376,6 +377,7 @@ export type KitchenPartnerOrderByWithRelationInput = {
   kitchenPayouts?: Prisma.KitchenPayoutOrderByRelationAggregateInput
   kitchenWishlists?: Prisma.KitchenWishlistOrderByRelationAggregateInput
   cravingsTriggerRules?: Prisma.CravingsRuleOrderByRelationAggregateInput
+  tiffinPickups?: Prisma.TiffinPickupOrderByRelationAggregateInput
 }
 
 export type KitchenPartnerWhereUniqueInput = Prisma.AtLeast<{
@@ -415,6 +417,7 @@ export type KitchenPartnerWhereUniqueInput = Prisma.AtLeast<{
   kitchenPayouts?: Prisma.KitchenPayoutListRelationFilter
   kitchenWishlists?: Prisma.KitchenWishlistListRelationFilter
   cravingsTriggerRules?: Prisma.CravingsRuleListRelationFilter
+  tiffinPickups?: Prisma.TiffinPickupListRelationFilter
 }, "id" | "publicCode" | "slug" | "userId">
 
 export type KitchenPartnerOrderByWithAggregationInput = {
@@ -497,6 +500,7 @@ export type KitchenPartnerCreateInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateInput = {
@@ -531,6 +535,7 @@ export type KitchenPartnerUncheckedCreateInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUpdateInput = {
@@ -565,6 +570,7 @@ export type KitchenPartnerUpdateInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateInput = {
@@ -599,6 +605,7 @@ export type KitchenPartnerUncheckedUpdateInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateManyInput = {
@@ -1045,6 +1052,20 @@ export type KitchenPartnerUpdateOneRequiredWithoutCravingsTriggerRulesNestedInpu
   update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenPartnerUpdateToOneWithWhereWithoutCravingsTriggerRulesInput, Prisma.KitchenPartnerUpdateWithoutCravingsTriggerRulesInput>, Prisma.KitchenPartnerUncheckedUpdateWithoutCravingsTriggerRulesInput>
 }
 
+export type KitchenPartnerCreateNestedOneWithoutTiffinPickupsInput = {
+  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutTiffinPickupsInput, Prisma.KitchenPartnerUncheckedCreateWithoutTiffinPickupsInput>
+  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutTiffinPickupsInput
+  connect?: Prisma.KitchenPartnerWhereUniqueInput
+}
+
+export type KitchenPartnerUpdateOneRequiredWithoutTiffinPickupsNestedInput = {
+  create?: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutTiffinPickupsInput, Prisma.KitchenPartnerUncheckedCreateWithoutTiffinPickupsInput>
+  connectOrCreate?: Prisma.KitchenPartnerCreateOrConnectWithoutTiffinPickupsInput
+  upsert?: Prisma.KitchenPartnerUpsertWithoutTiffinPickupsInput
+  connect?: Prisma.KitchenPartnerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.KitchenPartnerUpdateToOneWithWhereWithoutTiffinPickupsInput, Prisma.KitchenPartnerUpdateWithoutTiffinPickupsInput>, Prisma.KitchenPartnerUncheckedUpdateWithoutTiffinPickupsInput>
+}
+
 export type KitchenPartnerCreateWithoutUserInput = {
   id?: string
   publicCode?: string | null
@@ -1076,6 +1097,7 @@ export type KitchenPartnerCreateWithoutUserInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutUserInput = {
@@ -1109,6 +1131,7 @@ export type KitchenPartnerUncheckedCreateWithoutUserInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutUserInput = {
@@ -1158,6 +1181,7 @@ export type KitchenPartnerUpdateWithoutUserInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutUserInput = {
@@ -1191,6 +1215,7 @@ export type KitchenPartnerUncheckedUpdateWithoutUserInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenKycInput = {
@@ -1224,6 +1249,7 @@ export type KitchenPartnerCreateWithoutKitchenKycInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenKycInput = {
@@ -1257,6 +1283,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenKycInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenKycInput = {
@@ -1306,6 +1333,7 @@ export type KitchenPartnerUpdateWithoutKitchenKycInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenKycInput = {
@@ -1339,6 +1367,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenKycInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenAliasInput = {
@@ -1372,6 +1401,7 @@ export type KitchenPartnerCreateWithoutKitchenAliasInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenAliasInput = {
@@ -1405,6 +1435,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAliasInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenAliasInput = {
@@ -1454,6 +1485,7 @@ export type KitchenPartnerUpdateWithoutKitchenAliasInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenAliasInput = {
@@ -1487,6 +1519,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAliasInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenCategoriesInput = {
@@ -1520,6 +1553,7 @@ export type KitchenPartnerCreateWithoutKitchenCategoriesInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenCategoriesInput = {
@@ -1553,6 +1587,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenCategoriesInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenCategoriesInput = {
@@ -1602,6 +1637,7 @@ export type KitchenPartnerUpdateWithoutKitchenCategoriesInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenCategoriesInput = {
@@ -1635,6 +1671,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenCategoriesInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenAvailabilityInput = {
@@ -1668,6 +1705,7 @@ export type KitchenPartnerCreateWithoutKitchenAvailabilityInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenAvailabilityInput = {
@@ -1701,6 +1739,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAvailabilityInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenAvailabilityInput = {
@@ -1750,6 +1789,7 @@ export type KitchenPartnerUpdateWithoutKitchenAvailabilityInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenAvailabilityInput = {
@@ -1783,6 +1823,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAvailabilityInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutMenusInput = {
@@ -1816,6 +1857,7 @@ export type KitchenPartnerCreateWithoutMenusInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutMenusInput = {
@@ -1849,6 +1891,7 @@ export type KitchenPartnerUncheckedCreateWithoutMenusInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutMenusInput = {
@@ -1898,6 +1941,7 @@ export type KitchenPartnerUpdateWithoutMenusInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutMenusInput = {
@@ -1931,6 +1975,7 @@ export type KitchenPartnerUncheckedUpdateWithoutMenusInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutDeliveryPartnerAssignmentsInput = {
@@ -1964,6 +2009,7 @@ export type KitchenPartnerCreateWithoutDeliveryPartnerAssignmentsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutDeliveryPartnerAssignmentsInput = {
@@ -1997,6 +2043,7 @@ export type KitchenPartnerUncheckedCreateWithoutDeliveryPartnerAssignmentsInput 
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutDeliveryPartnerAssignmentsInput = {
@@ -2046,6 +2093,7 @@ export type KitchenPartnerUpdateWithoutDeliveryPartnerAssignmentsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutDeliveryPartnerAssignmentsInput = {
@@ -2079,6 +2127,7 @@ export type KitchenPartnerUncheckedUpdateWithoutDeliveryPartnerAssignmentsInput 
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutServiceZoneInput = {
@@ -2112,6 +2161,7 @@ export type KitchenPartnerCreateWithoutServiceZoneInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutServiceZoneInput = {
@@ -2145,6 +2195,7 @@ export type KitchenPartnerUncheckedCreateWithoutServiceZoneInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutServiceZoneInput = {
@@ -2227,6 +2278,7 @@ export type KitchenPartnerCreateWithoutOrderItemsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutOrderItemsInput = {
@@ -2260,6 +2312,7 @@ export type KitchenPartnerUncheckedCreateWithoutOrderItemsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutOrderItemsInput = {
@@ -2309,6 +2362,7 @@ export type KitchenPartnerUpdateWithoutOrderItemsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutOrderItemsInput = {
@@ -2342,6 +2396,7 @@ export type KitchenPartnerUncheckedUpdateWithoutOrderItemsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutReviewsInput = {
@@ -2375,6 +2430,7 @@ export type KitchenPartnerCreateWithoutReviewsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutReviewsInput = {
@@ -2408,6 +2464,7 @@ export type KitchenPartnerUncheckedCreateWithoutReviewsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutReviewsInput = {
@@ -2457,6 +2514,7 @@ export type KitchenPartnerUpdateWithoutReviewsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutReviewsInput = {
@@ -2490,6 +2548,7 @@ export type KitchenPartnerUncheckedUpdateWithoutReviewsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutRrcKitchenReviewInput = {
@@ -2523,6 +2582,7 @@ export type KitchenPartnerCreateWithoutRrcKitchenReviewInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutRrcKitchenReviewInput = {
@@ -2556,6 +2616,7 @@ export type KitchenPartnerUncheckedCreateWithoutRrcKitchenReviewInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutRrcKitchenReviewInput = {
@@ -2605,6 +2666,7 @@ export type KitchenPartnerUpdateWithoutRrcKitchenReviewInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutRrcKitchenReviewInput = {
@@ -2638,6 +2700,7 @@ export type KitchenPartnerUncheckedUpdateWithoutRrcKitchenReviewInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutCouponsInput = {
@@ -2671,6 +2734,7 @@ export type KitchenPartnerCreateWithoutCouponsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutCouponsInput = {
@@ -2704,6 +2768,7 @@ export type KitchenPartnerUncheckedCreateWithoutCouponsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutCouponsInput = {
@@ -2753,6 +2818,7 @@ export type KitchenPartnerUpdateWithoutCouponsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutCouponsInput = {
@@ -2786,6 +2852,7 @@ export type KitchenPartnerUncheckedUpdateWithoutCouponsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenPayoutsInput = {
@@ -2819,6 +2886,7 @@ export type KitchenPartnerCreateWithoutKitchenPayoutsInput = {
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenPayoutsInput = {
@@ -2852,6 +2920,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenPayoutsInput = {
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenPayoutsInput = {
@@ -2901,6 +2970,7 @@ export type KitchenPartnerUpdateWithoutKitchenPayoutsInput = {
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenPayoutsInput = {
@@ -2934,6 +3004,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenPayoutsInput = {
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenAddressInput = {
@@ -2967,6 +3038,7 @@ export type KitchenPartnerCreateWithoutKitchenAddressInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenAddressInput = {
@@ -3000,6 +3072,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenAddressInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenAddressInput = {
@@ -3049,6 +3122,7 @@ export type KitchenPartnerUpdateWithoutKitchenAddressInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenAddressInput = {
@@ -3082,6 +3156,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenAddressInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutKitchenWishlistsInput = {
@@ -3115,6 +3190,7 @@ export type KitchenPartnerCreateWithoutKitchenWishlistsInput = {
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutKitchenWishlistsInput = {
@@ -3148,6 +3224,7 @@ export type KitchenPartnerUncheckedCreateWithoutKitchenWishlistsInput = {
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutKitchenWishlistsInput = {
@@ -3197,6 +3274,7 @@ export type KitchenPartnerUpdateWithoutKitchenWishlistsInput = {
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutKitchenWishlistsInput = {
@@ -3230,6 +3308,7 @@ export type KitchenPartnerUncheckedUpdateWithoutKitchenWishlistsInput = {
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateWithoutCravingsTriggerRulesInput = {
@@ -3263,6 +3342,7 @@ export type KitchenPartnerCreateWithoutCravingsTriggerRulesInput = {
   coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerUncheckedCreateWithoutCravingsTriggerRulesInput = {
@@ -3296,6 +3376,7 @@ export type KitchenPartnerUncheckedCreateWithoutCravingsTriggerRulesInput = {
   coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutKitchenInput
 }
 
 export type KitchenPartnerCreateOrConnectWithoutCravingsTriggerRulesInput = {
@@ -3345,6 +3426,7 @@ export type KitchenPartnerUpdateWithoutCravingsTriggerRulesInput = {
   coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutCravingsTriggerRulesInput = {
@@ -3378,6 +3460,159 @@ export type KitchenPartnerUncheckedUpdateWithoutCravingsTriggerRulesInput = {
   coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
+}
+
+export type KitchenPartnerCreateWithoutTiffinPickupsInput = {
+  id?: string
+  publicCode?: string | null
+  slug: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  rejectedReason?: string | null
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  user: Prisma.UserCreateNestedOneWithoutKitchenPartnerInput
+  kitchenAlias?: Prisma.KitchenAliasCreateNestedOneWithoutKitchenPartnerInput
+  kitchenKyc?: Prisma.KitchenPartnerKycCreateNestedOneWithoutKitchenPartnerInput
+  kitchenAddress?: Prisma.KitchenAddressCreateNestedOneWithoutKitchenPartnerInput
+  kitchenCategories?: Prisma.KitchenCategoryCreateNestedManyWithoutKitchenPartnerInput
+  kitchenAvailability?: Prisma.KitchenAvailabilityCreateNestedManyWithoutKitchenPartnerInput
+  menus?: Prisma.MenuCreateNestedManyWithoutKitchenPartnerInput
+  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutKitchenPartnerInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutKitchenPartnerInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewCreateNestedOneWithoutKitchenPartnerInput
+  serviceZone?: Prisma.ServiceZoneCreateNestedOneWithoutKitchenPartnersInput
+  coupons?: Prisma.CouponCreateNestedManyWithoutKitchenPartnerInput
+  kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutKitchenPartnerInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleCreateNestedManyWithoutKitchenInput
+}
+
+export type KitchenPartnerUncheckedCreateWithoutTiffinPickupsInput = {
+  id?: string
+  publicCode?: string | null
+  slug: string
+  userId: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  rejectedReason?: string | null
+  serviceZoneId?: string | null
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Date | string
+  estimatedPrepTime?: number | null
+  minOrder?: number | null
+  deliveryRadiusKm?: number | null
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  kitchenAlias?: Prisma.KitchenAliasUncheckedCreateNestedOneWithoutKitchenPartnerInput
+  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedCreateNestedOneWithoutKitchenPartnerInput
+  kitchenAddress?: Prisma.KitchenAddressUncheckedCreateNestedOneWithoutKitchenPartnerInput
+  kitchenCategories?: Prisma.KitchenCategoryUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  menus?: Prisma.MenuUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedCreateNestedOneWithoutKitchenPartnerInput
+  coupons?: Prisma.CouponUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutKitchenPartnerInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedCreateNestedManyWithoutKitchenInput
+}
+
+export type KitchenPartnerCreateOrConnectWithoutTiffinPickupsInput = {
+  where: Prisma.KitchenPartnerWhereUniqueInput
+  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutTiffinPickupsInput, Prisma.KitchenPartnerUncheckedCreateWithoutTiffinPickupsInput>
+}
+
+export type KitchenPartnerUpsertWithoutTiffinPickupsInput = {
+  update: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutTiffinPickupsInput, Prisma.KitchenPartnerUncheckedUpdateWithoutTiffinPickupsInput>
+  create: Prisma.XOR<Prisma.KitchenPartnerCreateWithoutTiffinPickupsInput, Prisma.KitchenPartnerUncheckedCreateWithoutTiffinPickupsInput>
+  where?: Prisma.KitchenPartnerWhereInput
+}
+
+export type KitchenPartnerUpdateToOneWithWhereWithoutTiffinPickupsInput = {
+  where?: Prisma.KitchenPartnerWhereInput
+  data: Prisma.XOR<Prisma.KitchenPartnerUpdateWithoutTiffinPickupsInput, Prisma.KitchenPartnerUncheckedUpdateWithoutTiffinPickupsInput>
+}
+
+export type KitchenPartnerUpdateWithoutTiffinPickupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutKitchenPartnerNestedInput
+  kitchenAlias?: Prisma.KitchenAliasUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenKyc?: Prisma.KitchenPartnerKycUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenAddress?: Prisma.KitchenAddressUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenCategories?: Prisma.KitchenCategoryUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenAvailability?: Prisma.KitchenAvailabilityUpdateManyWithoutKitchenPartnerNestedInput
+  menus?: Prisma.MenuUpdateManyWithoutKitchenPartnerNestedInput
+  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutKitchenPartnerNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutKitchenPartnerNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUpdateOneWithoutKitchenPartnerNestedInput
+  serviceZone?: Prisma.ServiceZoneUpdateOneWithoutKitchenPartnersNestedInput
+  coupons?: Prisma.CouponUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+}
+
+export type KitchenPartnerUncheckedUpdateWithoutTiffinPickupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  slug?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  rejectedReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceZoneId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  operatingHours?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  estimatedPrepTime?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  minOrder?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  deliveryRadiusKm?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  kitchenAlias?: Prisma.KitchenAliasUncheckedUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenKyc?: Prisma.KitchenPartnerKycUncheckedUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenAddress?: Prisma.KitchenAddressUncheckedUpdateOneWithoutKitchenPartnerNestedInput
+  kitchenCategories?: Prisma.KitchenCategoryUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenAvailability?: Prisma.KitchenAvailabilityUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  menus?: Prisma.MenuUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  deliveryPartnerAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  rrcKitchenReview?: Prisma.RrcKitchenReviewUncheckedUpdateOneWithoutKitchenPartnerNestedInput
+  coupons?: Prisma.CouponUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
+  cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerCreateManyServiceZoneInput = {
@@ -3430,6 +3665,7 @@ export type KitchenPartnerUpdateWithoutServiceZoneInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateWithoutServiceZoneInput = {
@@ -3463,6 +3699,7 @@ export type KitchenPartnerUncheckedUpdateWithoutServiceZoneInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutKitchenPartnerNestedInput
   cravingsTriggerRules?: Prisma.CravingsRuleUncheckedUpdateManyWithoutKitchenNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutKitchenNestedInput
 }
 
 export type KitchenPartnerUncheckedUpdateManyWithoutServiceZoneInput = {
@@ -3500,6 +3737,7 @@ export type KitchenPartnerCountOutputType = {
   kitchenPayouts: number
   kitchenWishlists: number
   cravingsTriggerRules: number
+  tiffinPickups: number
 }
 
 export type KitchenPartnerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3513,6 +3751,7 @@ export type KitchenPartnerCountOutputTypeSelect<ExtArgs extends runtime.Types.Ex
   kitchenPayouts?: boolean | KitchenPartnerCountOutputTypeCountKitchenPayoutsArgs
   kitchenWishlists?: boolean | KitchenPartnerCountOutputTypeCountKitchenWishlistsArgs
   cravingsTriggerRules?: boolean | KitchenPartnerCountOutputTypeCountCravingsTriggerRulesArgs
+  tiffinPickups?: boolean | KitchenPartnerCountOutputTypeCountTiffinPickupsArgs
 }
 
 /**
@@ -3595,6 +3834,13 @@ export type KitchenPartnerCountOutputTypeCountCravingsTriggerRulesArgs<ExtArgs e
   where?: Prisma.CravingsRuleWhereInput
 }
 
+/**
+ * KitchenPartnerCountOutputType without action
+ */
+export type KitchenPartnerCountOutputTypeCountTiffinPickupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TiffinPickupWhereInput
+}
+
 
 export type KitchenPartnerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -3630,6 +3876,7 @@ export type KitchenPartnerSelect<ExtArgs extends runtime.Types.Extensions.Intern
   kitchenPayouts?: boolean | Prisma.KitchenPartner$kitchenPayoutsArgs<ExtArgs>
   kitchenWishlists?: boolean | Prisma.KitchenPartner$kitchenWishlistsArgs<ExtArgs>
   cravingsTriggerRules?: boolean | Prisma.KitchenPartner$cravingsTriggerRulesArgs<ExtArgs>
+  tiffinPickups?: boolean | Prisma.KitchenPartner$tiffinPickupsArgs<ExtArgs>
   _count?: boolean | Prisma.KitchenPartnerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["kitchenPartner"]>
 
@@ -3715,6 +3962,7 @@ export type KitchenPartnerInclude<ExtArgs extends runtime.Types.Extensions.Inter
   kitchenPayouts?: boolean | Prisma.KitchenPartner$kitchenPayoutsArgs<ExtArgs>
   kitchenWishlists?: boolean | Prisma.KitchenPartner$kitchenWishlistsArgs<ExtArgs>
   cravingsTriggerRules?: boolean | Prisma.KitchenPartner$cravingsTriggerRulesArgs<ExtArgs>
+  tiffinPickups?: boolean | Prisma.KitchenPartner$tiffinPickupsArgs<ExtArgs>
   _count?: boolean | Prisma.KitchenPartnerCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type KitchenPartnerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3745,6 +3993,7 @@ export type $KitchenPartnerPayload<ExtArgs extends runtime.Types.Extensions.Inte
     kitchenPayouts: Prisma.$KitchenPayoutPayload<ExtArgs>[]
     kitchenWishlists: Prisma.$KitchenWishlistPayload<ExtArgs>[]
     cravingsTriggerRules: Prisma.$CravingsRulePayload<ExtArgs>[]
+    tiffinPickups: Prisma.$TiffinPickupPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4174,6 +4423,7 @@ export interface Prisma__KitchenPartnerClient<T, Null = never, ExtArgs extends r
   kitchenPayouts<T extends Prisma.KitchenPartner$kitchenPayoutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$kitchenPayoutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenPayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitchenWishlists<T extends Prisma.KitchenPartner$kitchenWishlistsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$kitchenWishlistsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenWishlistPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   cravingsTriggerRules<T extends Prisma.KitchenPartner$cravingsTriggerRulesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$cravingsTriggerRulesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$CravingsRulePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tiffinPickups<T extends Prisma.KitchenPartner$tiffinPickupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.KitchenPartner$tiffinPickupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TiffinPickupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4953,6 +5203,30 @@ export type KitchenPartner$cravingsTriggerRulesArgs<ExtArgs extends runtime.Type
   take?: number
   skip?: number
   distinct?: Prisma.CravingsRuleScalarFieldEnum | Prisma.CravingsRuleScalarFieldEnum[]
+}
+
+/**
+ * KitchenPartner.tiffinPickups
+ */
+export type KitchenPartner$tiffinPickupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TiffinPickup
+   */
+  select?: Prisma.TiffinPickupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TiffinPickup
+   */
+  omit?: Prisma.TiffinPickupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TiffinPickupInclude<ExtArgs> | null
+  where?: Prisma.TiffinPickupWhereInput
+  orderBy?: Prisma.TiffinPickupOrderByWithRelationInput | Prisma.TiffinPickupOrderByWithRelationInput[]
+  cursor?: Prisma.TiffinPickupWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TiffinPickupScalarFieldEnum | Prisma.TiffinPickupScalarFieldEnum[]
 }
 
 /**

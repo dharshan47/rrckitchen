@@ -11,6 +11,8 @@ const mockPrisma = vi.hoisted(() => ({
   deliveryPartner: { findMany: vi.fn(), findFirst: vi.fn(), update: vi.fn() },
   orderItem: { findMany: vi.fn() },
   orderStatusHistory: { create: vi.fn() },
+  kitchenPartner: { findUnique: vi.fn() },
+  deliveryAssignment: { create: vi.fn() },
   $transaction: vi.fn(),
 }))
 
@@ -20,6 +22,7 @@ vi.mock("@/lib/ably/server", () => ({ getAblyRest: () => ({ channels: { get: () 
 
 const mockSession = { user: { id: "user-1", role: "CUSTOMER" } }
 vi.mock("@/lib/auth-server", () => ({ getSession: vi.fn(() => mockSession) }))
+vi.mock("next/cache", () => ({ revalidatePath: vi.fn() }))
 
 import { getUserOrders, getOrderForTracking, updateOrderStatus } from "@/actions/orders/orders"
 
@@ -72,7 +75,7 @@ describe("orders", () => {
 
   describe("getOrderForTracking", () => {
     it("returns order with delivery partner and location data", async () => {
-      mockPrisma.order.findUnique.mockResolvedValue({
+      mockPrisma.order.findFirst.mockResolvedValue({
         id: "order-1", status: "READYFORPICKUP", totalAmount: 500,
         discountAmount: 0,
         deliveryStatus: null,
@@ -106,13 +109,13 @@ describe("orders", () => {
     })
 
     it("throws for non-existent order", async () => {
-      mockPrisma.order.findUnique.mockResolvedValue(null)
+      mockPrisma.order.findFirst.mockResolvedValue(null)
       await expect(getOrderForTracking("missing")).rejects.toThrow("Order not found")
     })
   })
 
   describe("updateOrderStatus", () => {
-    it("updates order status and creates history", async () => {
+    it("updates order status and creates history to PREPARING", async () => {
       mockPrisma.order.findUnique.mockResolvedValue({
         id: "order-1", status: "CONFIRMED",
         orderItems: [{ id: "oi1", kitchenPartnerId: "kp1", menuItem: { name: "Dosa" }, quantity: 2 }],
@@ -125,7 +128,77 @@ describe("orders", () => {
       const result = await updateOrderStatus("order-1", "PREPARING")
 
       expect(result.success).toBe(true)
-      expect(mockPrisma.order.update).toHaveBeenCalled()
+      expect(mockPrisma.order.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: { status: "PREPARING" } })
+      )
+    })
+
+    it("rejects order correctly", async () => {
+      mockPrisma.order.findUnique.mockResolvedValue({
+        id: "order-2", status: "CONFIRMED",
+        orderItems: [{ id: "oi1", kitchenPartnerId: "kp1", menuItem: { name: "Dosa" }, quantity: 2 }],
+        user: { phoneNumber: "8888888888" },
+      })
+
+      const result = await updateOrderStatus("order-2", "CANCELLED")
+      if (!result.success) console.error("TEST ERROR:", result.error)
+
+      expect(result.success).toBe(true)
+      expect(mockPrisma.order.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: { status: "CANCELLED" } })
+      )
+    })
+
+    it("updates status to READYFORPICKUP and triggers delivery assignment", async () => {
+      mockPrisma.order.findUnique.mockResolvedValue({
+        id: "order-3", status: "PREPARING",
+        orderItems: [{ id: "oi1", kitchenPartnerId: "kp1", menuItem: { name: "Dosa" }, quantity: 2 }],
+        user: { phoneNumber: "8888888888" },
+      })
+      mockPrisma.orderItem.findMany.mockResolvedValue([
+        { kitchenPartnerId: "kp1" },
+      ])
+      mockPrisma.kitchenPartner.findUnique.mockResolvedValue({
+        kitchenAddress: { latitude: 12.0, longitude: 12.0 }
+      })
+      mockPrisma.deliveryPartner.findMany.mockResolvedValue([
+        { id: "dp1" }
+      ])
+
+      const result = await updateOrderStatus("order-3", "READYFORPICKUP")
+
+      expect(result.success).toBe(true)
+      expect(mockPrisma.order.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: { status: "READYFORPICKUP" } })
+      )
+    })
+
+    it("updates status to COMPLETED", async () => {
+      mockPrisma.order.findUnique.mockResolvedValue({
+        id: "order-4", status: "READYFORPICKUP",
+        orderItems: [{ id: "oi1", kitchenPartnerId: "kp1", menuItem: { name: "Dosa" }, quantity: 2 }],
+        user: { phoneNumber: "8888888888" },
+      })
+
+      const result = await updateOrderStatus("order-4", "COMPLETED")
+
+      expect(result.success).toBe(true)
+      expect(mockPrisma.order.update).toHaveBeenCalledWith(
+        expect.objectContaining({ data: { status: "COMPLETED" } })
+      )
+    })
+
+    it("prevents updating backward", async () => {
+      mockPrisma.order.findUnique.mockResolvedValue({
+        id: "order-5", status: "COMPLETED",
+        orderItems: [{ id: "oi1", kitchenPartnerId: "kp1", menuItem: { name: "Dosa" }, quantity: 2 }],
+        user: { phoneNumber: "8888888888" },
+      })
+
+      const result = await updateOrderStatus("order-5", "PREPARING")
+
+      expect(result.success).toBe(false)
+      expect(result.error).toBe("Cannot move order backwards")
     })
   })
 })

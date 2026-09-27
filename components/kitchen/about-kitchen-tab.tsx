@@ -124,13 +124,7 @@ export function AboutKitchenTab({ kitchen: propKitchen }: Props) {
               <div className="absolute -right-6 bottom-4 z-20">
                 <Leaf className="w-12 h-12 text-[#D9EBDD] rotate-45" strokeWidth={1.5} />
               </div>
-              {kitchen.imageUrl ? (
-                <Image src={kitchen.imageUrl} alt={chefName} fill sizes="200px" className="object-cover rounded-full z-10" />
-              ) : (
-                <div className="w-full h-full bg-[#FAFAFA] rounded-full flex items-center justify-center z-10 border-4 border-[#FFFFFF] shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
-                  <ChefHat className="w-16 h-16 text-[#555555]" />
-                </div>
-              )}
+              <Image src={kitchen.kpProfileImageUrl || "/kitchen/profile.webp"} alt={chefName} fill sizes="200px" className="object-cover rounded-full z-10" />
             </div>
           </div>
           

@@ -319,6 +319,7 @@ export type UserWhereInput = {
   adminProfile?: Prisma.XOR<Prisma.AdminProfileNullableScalarRelationFilter, Prisma.AdminProfileWhereInput> | null
   wishlistItems?: Prisma.WishlistItemListRelationFilter
   kitchenWishlists?: Prisma.KitchenWishlistListRelationFilter
+  tiffinPickups?: Prisma.TiffinPickupListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -366,6 +367,7 @@ export type UserOrderByWithRelationInput = {
   adminProfile?: Prisma.AdminProfileOrderByWithRelationInput
   wishlistItems?: Prisma.WishlistItemOrderByRelationAggregateInput
   kitchenWishlists?: Prisma.KitchenWishlistOrderByRelationAggregateInput
+  tiffinPickups?: Prisma.TiffinPickupOrderByRelationAggregateInput
 }
 
 export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -416,6 +418,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   adminProfile?: Prisma.XOR<Prisma.AdminProfileNullableScalarRelationFilter, Prisma.AdminProfileWhereInput> | null
   wishlistItems?: Prisma.WishlistItemListRelationFilter
   kitchenWishlists?: Prisma.KitchenWishlistListRelationFilter
+  tiffinPickups?: Prisma.TiffinPickupListRelationFilter
 }, "id" | "publicCode" | "phoneNumber" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -513,6 +516,7 @@ export type UserCreateInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -560,6 +564,7 @@ export type UserUncheckedCreateInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUpdateInput = {
@@ -607,6 +612,7 @@ export type UserUpdateInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -654,6 +660,7 @@ export type UserUncheckedUpdateInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -1178,6 +1185,20 @@ export type UserUpdateOneRequiredWithoutKitchenWishlistsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutKitchenWishlistsInput, Prisma.UserUpdateWithoutKitchenWishlistsInput>, Prisma.UserUncheckedUpdateWithoutKitchenWishlistsInput>
 }
 
+export type UserCreateNestedOneWithoutTiffinPickupsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTiffinPickupsInput, Prisma.UserUncheckedCreateWithoutTiffinPickupsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTiffinPickupsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutTiffinPickupsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutTiffinPickupsInput, Prisma.UserUncheckedCreateWithoutTiffinPickupsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutTiffinPickupsInput
+  upsert?: Prisma.UserUpsertWithoutTiffinPickupsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutTiffinPickupsInput, Prisma.UserUpdateWithoutTiffinPickupsInput>, Prisma.UserUncheckedUpdateWithoutTiffinPickupsInput>
+}
+
 export type UserCreateWithoutCustomerInput = {
   id?: string
   publicCode?: string | null
@@ -1222,6 +1243,7 @@ export type UserCreateWithoutCustomerInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutCustomerInput = {
@@ -1268,6 +1290,7 @@ export type UserUncheckedCreateWithoutCustomerInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutCustomerInput = {
@@ -1330,6 +1353,7 @@ export type UserUpdateWithoutCustomerInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutCustomerInput = {
@@ -1376,6 +1400,7 @@ export type UserUncheckedUpdateWithoutCustomerInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutUserRolesInput = {
@@ -1422,6 +1447,7 @@ export type UserCreateWithoutUserRolesInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutUserRolesInput = {
@@ -1468,6 +1494,7 @@ export type UserUncheckedCreateWithoutUserRolesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutUserRolesInput = {
@@ -1530,6 +1557,7 @@ export type UserUpdateWithoutUserRolesInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserRolesInput = {
@@ -1576,6 +1604,7 @@ export type UserUncheckedUpdateWithoutUserRolesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1622,6 +1651,7 @@ export type UserCreateWithoutSessionsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1668,6 +1698,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1730,6 +1761,7 @@ export type UserUpdateWithoutSessionsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1776,6 +1808,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutAccountsInput = {
@@ -1822,6 +1855,7 @@ export type UserCreateWithoutAccountsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutAccountsInput = {
@@ -1868,6 +1902,7 @@ export type UserUncheckedCreateWithoutAccountsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutAccountsInput = {
@@ -1930,6 +1965,7 @@ export type UserUpdateWithoutAccountsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAccountsInput = {
@@ -1976,6 +2012,7 @@ export type UserUncheckedUpdateWithoutAccountsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutOtpCodesInput = {
@@ -2022,6 +2059,7 @@ export type UserCreateWithoutOtpCodesInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutOtpCodesInput = {
@@ -2068,6 +2106,7 @@ export type UserUncheckedCreateWithoutOtpCodesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutOtpCodesInput = {
@@ -2130,6 +2169,7 @@ export type UserUpdateWithoutOtpCodesInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOtpCodesInput = {
@@ -2176,6 +2216,7 @@ export type UserUncheckedUpdateWithoutOtpCodesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutAddressesInput = {
@@ -2222,6 +2263,7 @@ export type UserCreateWithoutAddressesInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutAddressesInput = {
@@ -2268,6 +2310,7 @@ export type UserUncheckedCreateWithoutAddressesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutAddressesInput = {
@@ -2330,6 +2373,7 @@ export type UserUpdateWithoutAddressesInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAddressesInput = {
@@ -2376,6 +2420,7 @@ export type UserUncheckedUpdateWithoutAddressesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutKitchenPartnerInput = {
@@ -2422,6 +2467,7 @@ export type UserCreateWithoutKitchenPartnerInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutKitchenPartnerInput = {
@@ -2468,6 +2514,7 @@ export type UserUncheckedCreateWithoutKitchenPartnerInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutKitchenPartnerInput = {
@@ -2530,6 +2577,7 @@ export type UserUpdateWithoutKitchenPartnerInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
@@ -2576,6 +2624,7 @@ export type UserUncheckedUpdateWithoutKitchenPartnerInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutDeliveryPartnerInput = {
@@ -2622,6 +2671,7 @@ export type UserCreateWithoutDeliveryPartnerInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
@@ -2668,6 +2718,7 @@ export type UserUncheckedCreateWithoutDeliveryPartnerInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutDeliveryPartnerInput = {
@@ -2730,6 +2781,7 @@ export type UserUpdateWithoutDeliveryPartnerInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
@@ -2776,6 +2828,7 @@ export type UserUncheckedUpdateWithoutDeliveryPartnerInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutOrdersInput = {
@@ -2822,6 +2875,7 @@ export type UserCreateWithoutOrdersInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutOrdersInput = {
@@ -2868,6 +2922,7 @@ export type UserUncheckedCreateWithoutOrdersInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutOrdersInput = {
@@ -2930,6 +2985,7 @@ export type UserUpdateWithoutOrdersInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutOrdersInput = {
@@ -2976,6 +3032,7 @@ export type UserUncheckedUpdateWithoutOrdersInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutReviewsInput = {
@@ -3022,6 +3079,7 @@ export type UserCreateWithoutReviewsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutReviewsInput = {
@@ -3068,6 +3126,7 @@ export type UserUncheckedCreateWithoutReviewsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutReviewsInput = {
@@ -3130,6 +3189,7 @@ export type UserUpdateWithoutReviewsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReviewsInput = {
@@ -3176,6 +3236,7 @@ export type UserUncheckedUpdateWithoutReviewsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutDeliveryReviewsInput = {
@@ -3222,6 +3283,7 @@ export type UserCreateWithoutDeliveryReviewsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutDeliveryReviewsInput = {
@@ -3268,6 +3330,7 @@ export type UserUncheckedCreateWithoutDeliveryReviewsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutDeliveryReviewsInput = {
@@ -3330,6 +3393,7 @@ export type UserUpdateWithoutDeliveryReviewsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutDeliveryReviewsInput = {
@@ -3376,6 +3440,7 @@ export type UserUncheckedUpdateWithoutDeliveryReviewsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutMenuItemFeedbacksInput = {
@@ -3422,6 +3487,7 @@ export type UserCreateWithoutMenuItemFeedbacksInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutMenuItemFeedbacksInput = {
@@ -3468,6 +3534,7 @@ export type UserUncheckedCreateWithoutMenuItemFeedbacksInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutMenuItemFeedbacksInput = {
@@ -3530,6 +3597,7 @@ export type UserUpdateWithoutMenuItemFeedbacksInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMenuItemFeedbacksInput = {
@@ -3576,6 +3644,7 @@ export type UserUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutMenuItemReviewsInput = {
@@ -3622,6 +3691,7 @@ export type UserCreateWithoutMenuItemReviewsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutMenuItemReviewsInput = {
@@ -3668,6 +3738,7 @@ export type UserUncheckedCreateWithoutMenuItemReviewsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutMenuItemReviewsInput = {
@@ -3730,6 +3801,7 @@ export type UserUpdateWithoutMenuItemReviewsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutMenuItemReviewsInput = {
@@ -3776,6 +3848,7 @@ export type UserUncheckedUpdateWithoutMenuItemReviewsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutPushSubscriptionsInput = {
@@ -3822,6 +3895,7 @@ export type UserCreateWithoutPushSubscriptionsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
@@ -3868,6 +3942,7 @@ export type UserUncheckedCreateWithoutPushSubscriptionsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutPushSubscriptionsInput = {
@@ -3930,6 +4005,7 @@ export type UserUpdateWithoutPushSubscriptionsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
@@ -3976,6 +4052,7 @@ export type UserUncheckedUpdateWithoutPushSubscriptionsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutNotificationLogsInput = {
@@ -4022,6 +4099,7 @@ export type UserCreateWithoutNotificationLogsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutNotificationLogsInput = {
@@ -4068,6 +4146,7 @@ export type UserUncheckedCreateWithoutNotificationLogsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutNotificationLogsInput = {
@@ -4130,6 +4209,7 @@ export type UserUpdateWithoutNotificationLogsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutNotificationLogsInput = {
@@ -4176,6 +4256,7 @@ export type UserUncheckedUpdateWithoutNotificationLogsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutSupportTicketsInput = {
@@ -4222,6 +4303,7 @@ export type UserCreateWithoutSupportTicketsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutSupportTicketsInput = {
@@ -4268,6 +4350,7 @@ export type UserUncheckedCreateWithoutSupportTicketsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutSupportTicketsInput = {
@@ -4330,6 +4413,7 @@ export type UserUpdateWithoutSupportTicketsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSupportTicketsInput = {
@@ -4376,6 +4460,7 @@ export type UserUncheckedUpdateWithoutSupportTicketsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutReferralsMadeInput = {
@@ -4422,6 +4507,7 @@ export type UserCreateWithoutReferralsMadeInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutReferralsMadeInput = {
@@ -4468,6 +4554,7 @@ export type UserUncheckedCreateWithoutReferralsMadeInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutReferralsMadeInput = {
@@ -4519,6 +4606,7 @@ export type UserCreateWithoutReferralsUsedInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutReferralsUsedInput = {
@@ -4565,6 +4653,7 @@ export type UserUncheckedCreateWithoutReferralsUsedInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutReferralsUsedInput = {
@@ -4627,6 +4716,7 @@ export type UserUpdateWithoutReferralsMadeInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferralsMadeInput = {
@@ -4673,6 +4763,7 @@ export type UserUncheckedUpdateWithoutReferralsMadeInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUpsertWithoutReferralsUsedInput = {
@@ -4730,6 +4821,7 @@ export type UserUpdateWithoutReferralsUsedInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutReferralsUsedInput = {
@@ -4776,6 +4868,7 @@ export type UserUncheckedUpdateWithoutReferralsUsedInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutLoyaltyPointsInput = {
@@ -4822,6 +4915,7 @@ export type UserCreateWithoutLoyaltyPointsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutLoyaltyPointsInput = {
@@ -4868,6 +4962,7 @@ export type UserUncheckedCreateWithoutLoyaltyPointsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutLoyaltyPointsInput = {
@@ -4930,6 +5025,7 @@ export type UserUpdateWithoutLoyaltyPointsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLoyaltyPointsInput = {
@@ -4976,6 +5072,7 @@ export type UserUncheckedUpdateWithoutLoyaltyPointsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutLoyaltyTransactionsInput = {
@@ -5022,6 +5119,7 @@ export type UserCreateWithoutLoyaltyTransactionsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutLoyaltyTransactionsInput = {
@@ -5068,6 +5166,7 @@ export type UserUncheckedCreateWithoutLoyaltyTransactionsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutLoyaltyTransactionsInput = {
@@ -5130,6 +5229,7 @@ export type UserUpdateWithoutLoyaltyTransactionsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLoyaltyTransactionsInput = {
@@ -5176,6 +5276,7 @@ export type UserUncheckedUpdateWithoutLoyaltyTransactionsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutLoyaltyCouponPurchasesInput = {
@@ -5222,6 +5323,7 @@ export type UserCreateWithoutLoyaltyCouponPurchasesInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutLoyaltyCouponPurchasesInput = {
@@ -5268,6 +5370,7 @@ export type UserUncheckedCreateWithoutLoyaltyCouponPurchasesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutLoyaltyCouponPurchasesInput = {
@@ -5330,6 +5433,7 @@ export type UserUpdateWithoutLoyaltyCouponPurchasesInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutLoyaltyCouponPurchasesInput = {
@@ -5376,6 +5480,7 @@ export type UserUncheckedUpdateWithoutLoyaltyCouponPurchasesInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutAdminProfileInput = {
@@ -5422,6 +5527,7 @@ export type UserCreateWithoutAdminProfileInput = {
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutAdminProfileInput = {
@@ -5468,6 +5574,7 @@ export type UserUncheckedCreateWithoutAdminProfileInput = {
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutAdminProfileInput = {
@@ -5530,6 +5637,7 @@ export type UserUpdateWithoutAdminProfileInput = {
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutAdminProfileInput = {
@@ -5576,6 +5684,7 @@ export type UserUncheckedUpdateWithoutAdminProfileInput = {
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutTwoFactorsInput = {
@@ -5622,6 +5731,7 @@ export type UserCreateWithoutTwoFactorsInput = {
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutTwoFactorsInput = {
@@ -5668,6 +5778,7 @@ export type UserUncheckedCreateWithoutTwoFactorsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutTwoFactorsInput = {
@@ -5730,6 +5841,7 @@ export type UserUpdateWithoutTwoFactorsInput = {
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutTwoFactorsInput = {
@@ -5776,6 +5888,7 @@ export type UserUncheckedUpdateWithoutTwoFactorsInput = {
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutWishlistItemsInput = {
@@ -5822,6 +5935,7 @@ export type UserCreateWithoutWishlistItemsInput = {
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutWishlistItemsInput = {
@@ -5868,6 +5982,7 @@ export type UserUncheckedCreateWithoutWishlistItemsInput = {
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutWishlistItemsInput = {
@@ -5930,6 +6045,7 @@ export type UserUpdateWithoutWishlistItemsInput = {
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutWishlistItemsInput = {
@@ -5976,6 +6092,7 @@ export type UserUncheckedUpdateWithoutWishlistItemsInput = {
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserCreateWithoutKitchenWishlistsInput = {
@@ -6022,6 +6139,7 @@ export type UserCreateWithoutKitchenWishlistsInput = {
   twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutCustomerInput
 }
 
 export type UserUncheckedCreateWithoutKitchenWishlistsInput = {
@@ -6068,6 +6186,7 @@ export type UserUncheckedCreateWithoutKitchenWishlistsInput = {
   twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
   adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
   wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutCustomerInput
 }
 
 export type UserCreateOrConnectWithoutKitchenWishlistsInput = {
@@ -6130,6 +6249,7 @@ export type UserUpdateWithoutKitchenWishlistsInput = {
   twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutCustomerNestedInput
 }
 
 export type UserUncheckedUpdateWithoutKitchenWishlistsInput = {
@@ -6176,6 +6296,211 @@ export type UserUncheckedUpdateWithoutKitchenWishlistsInput = {
   twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
   adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
   wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutCustomerNestedInput
+}
+
+export type UserCreateWithoutTiffinPickupsInput = {
+  id?: string
+  publicCode?: string | null
+  phoneNumber?: string | null
+  phoneNumberVerified?: boolean
+  role?: string
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  name?: string | null
+  fullName?: string | null
+  email?: string | null
+  emailVerified?: boolean
+  image?: string | null
+  isActive?: boolean
+  razorpayCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerCreateNestedOneWithoutUserInput
+  userRoles?: Prisma.UserRoleCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountCreateNestedManyWithoutUserInput
+  otpCodes?: Prisma.OtpCodeCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewCreateNestedManyWithoutUserInput
+  deliveryReviews?: Prisma.DeliveryReviewCreateNestedManyWithoutUserInput
+  kitchenPartner?: Prisma.KitchenPartnerCreateNestedOneWithoutUserInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionCreateNestedManyWithoutUserInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutUserInput
+  referralsMade?: Prisma.ReferralCreateNestedManyWithoutReferrerInput
+  referralsUsed?: Prisma.ReferralCreateNestedManyWithoutReferredInput
+  loyaltyPoints?: Prisma.LoyaltyPointsCreateNestedOneWithoutUserInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseCreateNestedManyWithoutUserInput
+  notificationLogs?: Prisma.NotificationLogCreateNestedManyWithoutUserInput
+  twoFactors?: Prisma.TwoFactorCreateNestedManyWithoutUserInput
+  adminProfile?: Prisma.AdminProfileCreateNestedOneWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutTiffinPickupsInput = {
+  id?: string
+  publicCode?: string | null
+  phoneNumber?: string | null
+  phoneNumberVerified?: boolean
+  role?: string
+  banned?: boolean
+  banReason?: string | null
+  banExpires?: Date | string | null
+  name?: string | null
+  fullName?: string | null
+  email?: string | null
+  emailVerified?: boolean
+  image?: string | null
+  isActive?: boolean
+  razorpayCustomerId?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  deletedAt?: Date | string | null
+  twoFactorEnabled?: boolean | null
+  customer?: Prisma.CustomerUncheckedCreateNestedOneWithoutUserInput
+  userRoles?: Prisma.UserRoleUncheckedCreateNestedManyWithoutUserInput
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  accounts?: Prisma.AccountUncheckedCreateNestedManyWithoutUserInput
+  otpCodes?: Prisma.OtpCodeUncheckedCreateNestedManyWithoutUserInput
+  addresses?: Prisma.AddressUncheckedCreateNestedManyWithoutUserInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutUserInput
+  reviews?: Prisma.ReviewUncheckedCreateNestedManyWithoutUserInput
+  deliveryReviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutUserInput
+  kitchenPartner?: Prisma.KitchenPartnerUncheckedCreateNestedOneWithoutUserInput
+  deliveryPartner?: Prisma.DeliveryPartnerUncheckedCreateNestedOneWithoutUserInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedCreateNestedManyWithoutUserInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutUserInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutUserInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutUserInput
+  referralsMade?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferrerInput
+  referralsUsed?: Prisma.ReferralUncheckedCreateNestedManyWithoutReferredInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUncheckedCreateNestedOneWithoutUserInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedCreateNestedManyWithoutUserInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedCreateNestedManyWithoutUserInput
+  notificationLogs?: Prisma.NotificationLogUncheckedCreateNestedManyWithoutUserInput
+  twoFactors?: Prisma.TwoFactorUncheckedCreateNestedManyWithoutUserInput
+  adminProfile?: Prisma.AdminProfileUncheckedCreateNestedOneWithoutUserInput
+  wishlistItems?: Prisma.WishlistItemUncheckedCreateNestedManyWithoutUserInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutTiffinPickupsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutTiffinPickupsInput, Prisma.UserUncheckedCreateWithoutTiffinPickupsInput>
+}
+
+export type UserUpsertWithoutTiffinPickupsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutTiffinPickupsInput, Prisma.UserUncheckedUpdateWithoutTiffinPickupsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutTiffinPickupsInput, Prisma.UserUncheckedCreateWithoutTiffinPickupsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutTiffinPickupsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutTiffinPickupsInput, Prisma.UserUncheckedUpdateWithoutTiffinPickupsInput>
+}
+
+export type UserUpdateWithoutTiffinPickupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUpdateOneWithoutUserNestedInput
+  userRoles?: Prisma.UserRoleUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUpdateManyWithoutUserNestedInput
+  otpCodes?: Prisma.OtpCodeUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUpdateManyWithoutUserNestedInput
+  deliveryReviews?: Prisma.DeliveryReviewUpdateManyWithoutUserNestedInput
+  kitchenPartner?: Prisma.KitchenPartnerUpdateOneWithoutUserNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUpdateManyWithoutUserNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutUserNestedInput
+  referralsMade?: Prisma.ReferralUpdateManyWithoutReferrerNestedInput
+  referralsUsed?: Prisma.ReferralUpdateManyWithoutReferredNestedInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUpdateOneWithoutUserNestedInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUpdateManyWithoutUserNestedInput
+  notificationLogs?: Prisma.NotificationLogUpdateManyWithoutUserNestedInput
+  twoFactors?: Prisma.TwoFactorUpdateManyWithoutUserNestedInput
+  adminProfile?: Prisma.AdminProfileUpdateOneWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutTiffinPickupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phoneNumberVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  role?: Prisma.StringFieldUpdateOperationsInput | string
+  banned?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  banReason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  banExpires?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  name?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullName?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emailVerified?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  image?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  isActive?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  razorpayCustomerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  twoFactorEnabled?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  customer?: Prisma.CustomerUncheckedUpdateOneWithoutUserNestedInput
+  userRoles?: Prisma.UserRoleUncheckedUpdateManyWithoutUserNestedInput
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  accounts?: Prisma.AccountUncheckedUpdateManyWithoutUserNestedInput
+  otpCodes?: Prisma.OtpCodeUncheckedUpdateManyWithoutUserNestedInput
+  addresses?: Prisma.AddressUncheckedUpdateManyWithoutUserNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutUserNestedInput
+  reviews?: Prisma.ReviewUncheckedUpdateManyWithoutUserNestedInput
+  deliveryReviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutUserNestedInput
+  kitchenPartner?: Prisma.KitchenPartnerUncheckedUpdateOneWithoutUserNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUncheckedUpdateOneWithoutUserNestedInput
+  pushSubscriptions?: Prisma.PushSubscriptionUncheckedUpdateManyWithoutUserNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutUserNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutUserNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutUserNestedInput
+  referralsMade?: Prisma.ReferralUncheckedUpdateManyWithoutReferrerNestedInput
+  referralsUsed?: Prisma.ReferralUncheckedUpdateManyWithoutReferredNestedInput
+  loyaltyPoints?: Prisma.LoyaltyPointsUncheckedUpdateOneWithoutUserNestedInput
+  loyaltyTransactions?: Prisma.LoyaltyTransactionUncheckedUpdateManyWithoutUserNestedInput
+  loyaltyCouponPurchases?: Prisma.LoyaltyCouponPurchaseUncheckedUpdateManyWithoutUserNestedInput
+  notificationLogs?: Prisma.NotificationLogUncheckedUpdateManyWithoutUserNestedInput
+  twoFactors?: Prisma.TwoFactorUncheckedUpdateManyWithoutUserNestedInput
+  adminProfile?: Prisma.AdminProfileUncheckedUpdateOneWithoutUserNestedInput
+  wishlistItems?: Prisma.WishlistItemUncheckedUpdateManyWithoutUserNestedInput
+  kitchenWishlists?: Prisma.KitchenWishlistUncheckedUpdateManyWithoutUserNestedInput
 }
 
 
@@ -6204,6 +6529,7 @@ export type UserCountOutputType = {
   twoFactors: number
   wishlistItems: number
   kitchenWishlists: number
+  tiffinPickups: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -6227,6 +6553,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   twoFactors?: boolean | UserCountOutputTypeCountTwoFactorsArgs
   wishlistItems?: boolean | UserCountOutputTypeCountWishlistItemsArgs
   kitchenWishlists?: boolean | UserCountOutputTypeCountKitchenWishlistsArgs
+  tiffinPickups?: boolean | UserCountOutputTypeCountTiffinPickupsArgs
 }
 
 /**
@@ -6379,6 +6706,13 @@ export type UserCountOutputTypeCountKitchenWishlistsArgs<ExtArgs extends runtime
   where?: Prisma.KitchenWishlistWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountTiffinPickupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TiffinPickupWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -6425,6 +6759,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   adminProfile?: boolean | Prisma.User$adminProfileArgs<ExtArgs>
   wishlistItems?: boolean | Prisma.User$wishlistItemsArgs<ExtArgs>
   kitchenWishlists?: boolean | Prisma.User$kitchenWishlistsArgs<ExtArgs>
+  tiffinPickups?: boolean | Prisma.User$tiffinPickupsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -6521,6 +6856,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   adminProfile?: boolean | Prisma.User$adminProfileArgs<ExtArgs>
   wishlistItems?: boolean | Prisma.User$wishlistItemsArgs<ExtArgs>
   kitchenWishlists?: boolean | Prisma.User$kitchenWishlistsArgs<ExtArgs>
+  tiffinPickups?: boolean | Prisma.User$tiffinPickupsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type UserIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -6554,6 +6890,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     adminProfile: Prisma.$AdminProfilePayload<ExtArgs> | null
     wishlistItems: Prisma.$WishlistItemPayload<ExtArgs>[]
     kitchenWishlists: Prisma.$KitchenWishlistPayload<ExtArgs>[]
+    tiffinPickups: Prisma.$TiffinPickupPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -6994,6 +7331,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   adminProfile<T extends Prisma.User$adminProfileArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$adminProfileArgs<ExtArgs>>): Prisma.Prisma__AdminProfileClient<runtime.Types.Result.GetResult<Prisma.$AdminProfilePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   wishlistItems<T extends Prisma.User$wishlistItemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$wishlistItemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$WishlistItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   kitchenWishlists<T extends Prisma.User$kitchenWishlistsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$kitchenWishlistsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$KitchenWishlistPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tiffinPickups<T extends Prisma.User$tiffinPickupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$tiffinPickupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TiffinPickupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -8007,6 +8345,30 @@ export type User$kitchenWishlistsArgs<ExtArgs extends runtime.Types.Extensions.I
   take?: number
   skip?: number
   distinct?: Prisma.KitchenWishlistScalarFieldEnum | Prisma.KitchenWishlistScalarFieldEnum[]
+}
+
+/**
+ * User.tiffinPickups
+ */
+export type User$tiffinPickupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TiffinPickup
+   */
+  select?: Prisma.TiffinPickupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TiffinPickup
+   */
+  omit?: Prisma.TiffinPickupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TiffinPickupInclude<ExtArgs> | null
+  where?: Prisma.TiffinPickupWhereInput
+  orderBy?: Prisma.TiffinPickupOrderByWithRelationInput | Prisma.TiffinPickupOrderByWithRelationInput[]
+  cursor?: Prisma.TiffinPickupWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TiffinPickupScalarFieldEnum | Prisma.TiffinPickupScalarFieldEnum[]
 }
 
 /**

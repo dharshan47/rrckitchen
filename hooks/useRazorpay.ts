@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState, useMemo } from "react";
+import { useCallback, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CartItem } from "@/stores/cartStore";
 
@@ -292,7 +292,7 @@ export function useRazorpay() {
     verifyPaymentMutation.isPending ||
     modalOpen;
 
-  const paymentResult = useMemo<{ success: boolean; orderId?: string; publicCode?: string; error?: string } | null>(() => {
+  const paymentResult = (() => {
     if (verifyPaymentMutation.isSuccess) {
       return { success: true, orderId: verifyPaymentMutation.data.orderId, publicCode: verifyPaymentMutation.data.publicCode };
     }
@@ -306,16 +306,7 @@ export function useRazorpay() {
       return { success: false, error: checkoutError };
     }
     return null;
-  }, [
-    verifyPaymentMutation.isSuccess,
-    verifyPaymentMutation.data?.orderId,
-    verifyPaymentMutation.data?.publicCode,
-    verifyPaymentMutation.isError,
-    verifyPaymentMutation.error?.message,
-    createOrderMutation.isError,
-    createOrderMutation.error?.message,
-    checkoutError,
-  ]);
+  })();
 
   // ── Main checkout action ───────────────────────────────────────────────────
 

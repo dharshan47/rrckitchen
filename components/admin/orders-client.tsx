@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import Image from "next/image"
-import { getOnlineDeliveryPartners, adminAssignDeliveryPartner } from "@/actions/dispatch/dispatch-actions"
+import { getOnlineDeliveryPartners, adminAssignDeliveryPartner, adminWithdrawDeliveryPartner } from "@/actions/dispatch/dispatch-actions"
 import {
   Search, Download, RefreshCw, CheckCircle2, ChefHat,
   Wallet, Eye, Pencil, MoreVertical, Bike, User, Phone, Mail, MapPin, Loader2,
@@ -656,13 +656,24 @@ function OrderSheet({
     }
   })
 
+  const withdrawMutation = useMutation({
+    mutationFn: () => adminWithdrawDeliveryPartner(order.id),
+    onSuccess: () => {
+      toast.success("Delivery partner withdrawn successfully")
+      queryClient.invalidateQueries({ queryKey: ["admin-orders"] })
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to withdraw partner")
+    }
+  })
+
   const tabs = [
     { id: "overview", label: "Overview" },
     { id: "items", label: `Items (${itemCount})` },
     { id: "timeline", label: "Timeline" },
     { id: "payment", label: "Payment" },
     { id: "delivery", label: "Delivery" },
-    ...((!order.deliveryPartner && !order.deliveryStatus && !isTerminal) ? [{ id: "assign-partner", label: "Assign Partner" }] : []),
+    ...((!order.deliveryStatus || ['ASSIGNED', 'ACCEPTED'].includes(order.deliveryStatus)) && !isTerminal ? [{ id: "assign-partner", label: order.deliveryPartner ? "Reassign Partner" : "Assign Partner" }] : []),
     { id: "notes", label: "Notes" },
   ]
 
@@ -997,6 +1008,19 @@ function OrderSheet({
               <span className="leading-relaxed">{order.kitchen.address || "Address not provided"}</span>
             </span>
           </div>
+          {order.deliveryPartner && (!order.deliveryStatus || ['ASSIGNED', 'ACCEPTED'].includes(order.deliveryStatus)) && !isTerminal && (
+            <div className="flex flex-col gap-3 pt-4 mt-2 border-t border-[#F3F4F6]">
+              <Button 
+                variant="outline" 
+                className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 font-bold"
+                onClick={() => withdrawMutation.mutate()}
+                disabled={withdrawMutation.isPending}
+              >
+                {withdrawMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                Withdraw Assignment
+              </Button>
+            </div>
+          )}
         </div>
         </>
         )}
@@ -1004,7 +1028,7 @@ function OrderSheet({
         {tab === "assign-partner" && (
         <>
         <div className="bg-white p-5 rounded-[18px] border border-[#E5E7EB] flex flex-col gap-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
-          <h4 className="text-[14px] font-extrabold text-[#111827] flex items-center gap-2"><Bike className="h-4 w-4 text-[#6B7280]" /> Assign Delivery Partner</h4>
+          <h4 className="text-[14px] font-extrabold text-[#111827] flex items-center gap-2"><Bike className="h-4 w-4 text-[#6B7280]" /> {order.deliveryPartner ? "Reassign Delivery Partner" : "Assign Delivery Partner"}</h4>
           {isLoadingPartners ? (
             <div className="flex items-center justify-center p-8"><Loader2 className="h-6 w-6 animate-spin text-[#6B7280]" /></div>
           ) : onlinePartners?.length === 0 ? (
@@ -1020,10 +1044,10 @@ function OrderSheet({
                   <Button 
                     size="sm" 
                     className="bg-[#F97316] hover:bg-[#EA580C] text-white rounded-lg text-[12px] font-bold h-8 px-4"
-                    disabled={assignMutation.isPending}
+                    disabled={assignMutation.isPending || p.id === order.deliveryPartner?.id}
                     onClick={() => assignMutation.mutate(p.id)}
                   >
-                    {assignMutation.isPending && assignMutation.variables === p.id ? <Loader2 className="w-4 h-4 animate-spin" /> : "Assign"}
+                    {assignMutation.isPending && assignMutation.variables === p.id ? <Loader2 className="w-4 h-4 animate-spin" /> : p.id === order.deliveryPartner?.id ? "Assigned" : order.deliveryPartner ? "Reassign" : "Assign"}
                   </Button>
                 </div>
               ))}

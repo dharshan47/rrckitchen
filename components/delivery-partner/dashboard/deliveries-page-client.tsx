@@ -19,13 +19,16 @@ import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { toast } from "sonner"
+import { getMyTiffinPickups, updateTiffinPickupStatus } from "@/actions/dispatch/tiffin-actions"
+import { useQuery } from "@tanstack/react-query"
+
 
 const KITCHEN_FALLBACK_IMAGE = "/kitchen/profile.webp"
 
 type DeliveryOrderData = Omit<
   NonNullable<Awaited<ReturnType<typeof getDeliveryDashboardData>>>["deliveryOrders"][number],
-  "orderStatus"
-> & { orderStatus: string }
+  "orderStatus" | "deliveryStatus" | "assignmentStatus"
+> & { orderStatus: string; deliveryStatus?: string | null; assignmentStatus?: string | null }
 
 interface MergedDeliveryOrder extends DeliveryOrderData {
   itemList: string[]
@@ -53,8 +56,26 @@ function getPaymentDisplay(status: unknown): string {
 export default function DeliveriesPageClient() {
   const data = useDeliveryData()
   const queryClient = useQueryClient()
-  const [activeTab, setActiveTab] = useState<"active" | "completed">("active")
+  const [activeTab, setActiveTab] = useState<"active" | "completed" | "tiffin">("active")
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+
+  const { data: tiffinPickups, isLoading: tiffinLoading, refetch: refetchTiffin } = useQuery({
+    queryKey: ["my-tiffin-pickups"],
+    queryFn: getMyTiffinPickups
+  })
+
+  const tiffinStatusMutation = useMutation({
+    mutationFn: async ({ pickupId, status }: { pickupId: string; status: string }) => {
+      await updateTiffinPickupStatus(pickupId, status)
+    },
+    onSuccess: () => {
+      refetchTiffin()
+      toast.success("Pickup status updated")
+    },
+    onError: (err) => {
+      toast.error(err.message || "Failed to update pickup status")
+    }
+  })
 
   const statusMutation = useMutation({
     mutationFn: async ({ orderId, status }: { orderId: string; status: string }) => {
@@ -68,11 +89,31 @@ export default function DeliveriesPageClient() {
         throw new Error(err.error || "Failed to update order status")
       }
     },
+    onMutate: async ({ orderId, status }) => {
+      await queryClient.cancelQueries({ queryKey: ["delivery-dashboard"] })
+      const previousData = queryClient.getQueryData<{ deliveryOrders: DeliveryOrderData[] }>(["delivery-dashboard"])
+      if (previousData) {
+        queryClient.setQueryData(["delivery-dashboard"], {
+          ...previousData,
+          deliveryOrders: previousData.deliveryOrders.map((o: DeliveryOrderData) => {
+            if (o.id === orderId) {
+              // Optmistic update: exactly match the server's uppercase enum values
+              return { ...o, deliveryStatus: status }
+            }
+            return o
+          })
+        })
+      }
+      return { previousData }
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["delivery-dashboard"] })
       toast.success("Order status updated")
     },
-    onError: (err) => {
+    onError: (err, variables, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(["delivery-dashboard"], context.previousData)
+      }
       toast.error(err.message)
     },
   })
@@ -363,6 +404,17 @@ export default function DeliveriesPageClient() {
           >
             Completed Deliveries
           </button>
+          <button
+            onClick={() => setActiveTab("tiffin")}
+            className={cn(
+              "px-5 py-3 text-[14px] font-bold transition-colors border-b-2",
+              activeTab === "tiffin"
+                ? "text-[#087B2B] bg-[#EEF8F0] rounded-t-[7px] border-[#087B2B]"
+                : "text-[#374151] border-transparent hover:text-[#111827]"
+            )}
+          >
+            Tiffin Returns ({tiffinPickups?.length || 0})
+          </button>
         </div>
         <div className="flex items-center gap-3 pb-3 sm:pb-0">
           <Button onClick={handleRefresh} variant="outline" className="bg-[#FFFFFF] border-[#E6EAEC] text-[#111827] hover:bg-[#F7FAF8] h-9 rounded-[6px] px-4 shadow-none text-[13px] font-medium">
@@ -372,9 +424,65 @@ export default function DeliveriesPageClient() {
       </div>
 
 
-      <div className={cn("grid gap-6 items-start", selectedOrder ? "xl:grid-cols-[1fr_400px] 2xl:grid-cols-[1fr_420px]" : "grid-cols-1")}>
-        {/* Orders List */}
-        <div className="space-y-4">
+      <div className={cn("grid gap-6 items-start", (selectedOrder && activeTab !== "tiffin") ? "xl:grid-cols-[1fr_400px] 2xl:grid-cols-[1fr_420px]" : "grid-cols-1")}>
+        {activeTab === "tiffin" ? (
+          <div className="space-y-4">
+            {tiffinLoading && <Skeleton className="h-[200px] w-full" />}
+            {!tiffinLoading && tiffinPickups?.length === 0 && (
+              <Card className="bg-[#FFFFFF] rounded-[10px] p-12 text-center border border-[#E6EAEC] shadow-[0_1px_3px_rgba(17,24,39,0.025)]">
+                <PackageCheck className="h-12 w-12 text-[#6B7280] mx-auto mb-4" strokeWidth={1.5} />
+                <p className="text-[#374151] font-medium text-[14px]">No Tiffin Pickups assigned.</p>
+              </Card>
+            )}
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {tiffinPickups?.map((pickup: any) => (
+              <Card key={pickup.id} className="bg-white border border-[#E9ECEF] p-5 shadow-sm rounded-xl">
+                <div className="flex justify-between items-start mb-4">
+                  <div>
+                    <h4 className="font-bold text-[#111827] flex items-center gap-2">
+                      <PackageCheck className="w-5 h-5 text-[#FF8500]" /> 
+                      {pickup.publicCode}
+                    </h4>
+                    <p className="text-sm text-[#6B7280]">For Order {pickup.order.publicCode || "N/A"}</p>
+                  </div>
+                  <Badge className="bg-[#FFF1DF] text-[#FF8500] hover:bg-[#FFF1DF]">{pickup.status}</Badge>
+                </div>
+                <div className="grid md:grid-cols-2 gap-4 mb-5">
+                  <div className="bg-[#F8FAFC] p-4 rounded-[10px] border border-[#F1F5F9]">
+                    <p className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Pickup From Customer</p>
+                    <p className="font-bold text-[#111827] text-[15px]">{pickup.customer.name}</p>
+                    <p className="text-[13px] text-[#6B7280]">{pickup.customer.phoneNumber}</p>
+                    <p className="text-[13px] text-[#4B5563] mt-2 leading-relaxed">{pickup.pickupAddress.streetAddress}</p>
+                  </div>
+                  <div className="bg-[#F8FAFC] p-4 rounded-[10px] border border-[#F1F5F9]">
+                    <p className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Return To Kitchen</p>
+                    <p className="font-bold text-[#111827] text-[15px]">{pickup.kitchen.kitchenAlias?.name || "Kitchen"}</p>
+                    <p className="text-[13px] text-[#4B5563] mt-2 leading-relaxed">{pickup.kitchen.kitchenAddress?.streetAddress || "Kitchen Address"}</p>
+                  </div>
+                </div>
+                <div className="flex justify-end gap-3 border-t border-[#E9ECEF] pt-4 mt-2">
+                  {pickup.status === "ASSIGNED" && (
+                    <Button onClick={() => tiffinStatusMutation.mutate({ pickupId: pickup.id, status: "ACCEPTED" })}>Accept</Button>
+                  )}
+                  {pickup.status === "ACCEPTED" && (
+                    <Button onClick={() => tiffinStatusMutation.mutate({ pickupId: pickup.id, status: "STARTED" })}>Start Journey</Button>
+                  )}
+                  {pickup.status === "STARTED" && (
+                    <Button onClick={() => tiffinStatusMutation.mutate({ pickupId: pickup.id, status: "ARRIVED" })}>Arrived</Button>
+                  )}
+                  {pickup.status === "ARRIVED" && (
+                    <Button onClick={() => tiffinStatusMutation.mutate({ pickupId: pickup.id, status: "COLLECTED" })}>Collected</Button>
+                  )}
+                  {pickup.status === "COLLECTED" && (
+                    <Button onClick={() => tiffinStatusMutation.mutate({ pickupId: pickup.id, status: "COMPLETED" })}>Complete</Button>
+                  )}
+                </div>
+              </Card>
+            ))}
+          </div>
+        ) : (
+          <>
+          <div className="space-y-4">
           {displayOrders.length === 0 ? (
             <Card className="bg-[#FFFFFF] rounded-[10px] p-12 text-center border border-[#E6EAEC] shadow-[0_1px_3px_rgba(17,24,39,0.025)]">
               <PackageCheck className="h-12 w-12 text-[#6B7280] mx-auto mb-4" strokeWidth={1.5} />
@@ -422,7 +530,7 @@ export default function DeliveriesPageClient() {
                     <div className="flex gap-4 items-center">
                       <Avatar className="h-[52px] w-[52px] rounded-full border border-[#E6EAEC] shadow-sm shrink-0">
                         <AvatarImage src={(d.kitchenImageUrl as string) || KITCHEN_FALLBACK_IMAGE} alt={d.kitchenName as string} />
-                        <AvatarFallback className="bg-[#EEF8F0] text-[#087B2B] font-bold text-lg">{(d.kitchenName as string).charAt(0).toUpperCase() || "K"}</AvatarFallback>
+                        <AvatarFallback className="bg-[#EEF8F0] text-[#087B2B] font-bold text-lg">{((d.kitchenName as string) || "K").charAt(0).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <div className="min-w-0">
                         <div className="font-bold text-[#111827] text-[15px] mb-1 truncate">{d.kitchenName as string}</div>
@@ -467,30 +575,30 @@ export default function DeliveriesPageClient() {
                     
                     <div className="flex items-center gap-3 shrink-0 self-end xl:self-auto">
                        {/* Buttons */}
-                       {d.orderStatus === "READYFORPICKUP" && (
+                       {d.deliveryStatus === "ASSIGNED" && (
+                         <>
+                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "ACCEPTED" })}} className="bg-[#F5FBF6] border border-[#B9DDBF] text-[#087B2B] hover:bg-[#EEF8F0] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
+                             <Check className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Accept Order
+                           </Button>
+                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "REJECTED" })}} className="bg-[#FFF5F5] border border-[#FFCACA] text-[#EF2020] hover:bg-[#FFE8E8] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
+                             <X className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Reject
+                           </Button>
+                         </>
+                       )}
+                       {d.deliveryStatus === "ACCEPTED" && (
                          <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "PICKEDUP" })}} className="bg-[#FFFDFC] border border-[#FFD39E] text-[#FF8500] hover:bg-[#FFF1DF] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
-                           Picked Up
+                           <PackageCheck className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Picked Up
                          </Button>
                        )}
-                       {d.orderStatus === "PICKEDUP" && (
-                         <>
-                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "INTRANSIT" })}} className="bg-[#F5FBF6] border border-[#B9DDBF] text-[#087B2B] hover:bg-[#EEF8F0] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
-                             <Truck className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> In Transit
-                           </Button>
-                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "FAILED" })}} className="bg-[#FFF5F5] border border-[#FFCACA] text-[#EF2020] hover:bg-[#FFE8E8] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
-                             <X className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Failed
-                           </Button>
-                         </>
+                       {d.deliveryStatus === "PICKEDUP" && (
+                         <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "INTRANSIT" })}} className="bg-[#F5FBF6] border border-[#B9DDBF] text-[#087B2B] hover:bg-[#EEF8F0] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
+                           <Truck className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Start Navigating
+                         </Button>
                        )}
-                       {d.orderStatus === "INTRANSIT" && (
-                         <>
-                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "DELIVERED" })}} className="bg-[#F5FBF6] border border-[#B9DDBF] text-[#087B2B] hover:bg-[#EEF8F0] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
-                             <CircleCheck className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Delivered
-                           </Button>
-                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "FAILED" })}} className="bg-[#FFF5F5] border border-[#FFCACA] text-[#EF2020] hover:bg-[#FFE8E8] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
-                             <X className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Failed
-                           </Button>
-                         </>
+                       {d.deliveryStatus === "INTRANSIT" && (
+                         <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "DELIVERED" })}} className="bg-[#F5FBF6] border border-[#B9DDBF] text-[#087B2B] hover:bg-[#EEF8F0] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
+                           <CircleCheck className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Mark Delivered
+                         </Button>
                        )}
                     </div>
                   </div>
@@ -649,15 +757,19 @@ export default function DeliveriesPageClient() {
                     customerLat={hasCustomerCoords ? selectedCustomerLat : undefined}
                     customerLng={hasCustomerCoords ? selectedCustomerLng : undefined}
                     deliveryPersonId={data.profile.id}
+                    orderStatus={selectedOrder.orderStatus}
+                    deliveryStatus={selectedOrder.deliveryStatus ?? undefined}
+                    assignmentStatus={selectedOrder.assignmentStatus ?? undefined}
                     broadcastLocation
                   />
                 </div>
               </Card>
             )}
           </div>
+          )}
+          </>
         )}
       </div>
-
     </div>
   )
 }

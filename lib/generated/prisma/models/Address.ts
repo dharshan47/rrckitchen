@@ -271,6 +271,7 @@ export type AddressWhereInput = {
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   serviceZone?: Prisma.XOR<Prisma.ServiceZoneScalarRelationFilter, Prisma.ServiceZoneWhereInput>
   orders?: Prisma.OrderListRelationFilter
+  tiffinPickups?: Prisma.TiffinPickupListRelationFilter
 }
 
 export type AddressOrderByWithRelationInput = {
@@ -288,6 +289,7 @@ export type AddressOrderByWithRelationInput = {
   user?: Prisma.UserOrderByWithRelationInput
   serviceZone?: Prisma.ServiceZoneOrderByWithRelationInput
   orders?: Prisma.OrderOrderByRelationAggregateInput
+  tiffinPickups?: Prisma.TiffinPickupOrderByRelationAggregateInput
 }
 
 export type AddressWhereUniqueInput = Prisma.AtLeast<{
@@ -308,6 +310,7 @@ export type AddressWhereUniqueInput = Prisma.AtLeast<{
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   serviceZone?: Prisma.XOR<Prisma.ServiceZoneScalarRelationFilter, Prisma.ServiceZoneWhereInput>
   orders?: Prisma.OrderListRelationFilter
+  tiffinPickups?: Prisma.TiffinPickupListRelationFilter
 }, "id">
 
 export type AddressOrderByWithAggregationInput = {
@@ -359,6 +362,7 @@ export type AddressCreateInput = {
   user: Prisma.UserCreateNestedOneWithoutAddressesInput
   serviceZone: Prisma.ServiceZoneCreateNestedOneWithoutAddressesInput
   orders?: Prisma.OrderCreateNestedManyWithoutAddressInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutPickupAddressInput
 }
 
 export type AddressUncheckedCreateInput = {
@@ -374,6 +378,7 @@ export type AddressUncheckedCreateInput = {
   isDefault?: boolean
   createdAt?: Date | string
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutAddressInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutPickupAddressInput
 }
 
 export type AddressUpdateInput = {
@@ -389,6 +394,7 @@ export type AddressUpdateInput = {
   user?: Prisma.UserUpdateOneRequiredWithoutAddressesNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneRequiredWithoutAddressesNestedInput
   orders?: Prisma.OrderUpdateManyWithoutAddressNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutPickupAddressNestedInput
 }
 
 export type AddressUncheckedUpdateInput = {
@@ -404,6 +410,7 @@ export type AddressUncheckedUpdateInput = {
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUncheckedUpdateManyWithoutAddressNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutPickupAddressNestedInput
 }
 
 export type AddressCreateManyInput = {
@@ -511,6 +518,11 @@ export type AddressSumOrderByAggregateInput = {
 export type AddressNullableScalarRelationFilter = {
   is?: Prisma.AddressWhereInput | null
   isNot?: Prisma.AddressWhereInput | null
+}
+
+export type AddressScalarRelationFilter = {
+  is?: Prisma.AddressWhereInput
+  isNot?: Prisma.AddressWhereInput
 }
 
 export type AddressCreateNestedManyWithoutUserInput = {
@@ -621,6 +633,20 @@ export type AddressUpdateOneWithoutOrdersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.AddressUpdateToOneWithWhereWithoutOrdersInput, Prisma.AddressUpdateWithoutOrdersInput>, Prisma.AddressUncheckedUpdateWithoutOrdersInput>
 }
 
+export type AddressCreateNestedOneWithoutTiffinPickupsInput = {
+  create?: Prisma.XOR<Prisma.AddressCreateWithoutTiffinPickupsInput, Prisma.AddressUncheckedCreateWithoutTiffinPickupsInput>
+  connectOrCreate?: Prisma.AddressCreateOrConnectWithoutTiffinPickupsInput
+  connect?: Prisma.AddressWhereUniqueInput
+}
+
+export type AddressUpdateOneRequiredWithoutTiffinPickupsNestedInput = {
+  create?: Prisma.XOR<Prisma.AddressCreateWithoutTiffinPickupsInput, Prisma.AddressUncheckedCreateWithoutTiffinPickupsInput>
+  connectOrCreate?: Prisma.AddressCreateOrConnectWithoutTiffinPickupsInput
+  upsert?: Prisma.AddressUpsertWithoutTiffinPickupsInput
+  connect?: Prisma.AddressWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.AddressUpdateToOneWithWhereWithoutTiffinPickupsInput, Prisma.AddressUpdateWithoutTiffinPickupsInput>, Prisma.AddressUncheckedUpdateWithoutTiffinPickupsInput>
+}
+
 export type AddressCreateWithoutUserInput = {
   id?: string
   label?: string | null
@@ -633,6 +659,7 @@ export type AddressCreateWithoutUserInput = {
   createdAt?: Date | string
   serviceZone: Prisma.ServiceZoneCreateNestedOneWithoutAddressesInput
   orders?: Prisma.OrderCreateNestedManyWithoutAddressInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutPickupAddressInput
 }
 
 export type AddressUncheckedCreateWithoutUserInput = {
@@ -647,6 +674,7 @@ export type AddressUncheckedCreateWithoutUserInput = {
   isDefault?: boolean
   createdAt?: Date | string
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutAddressInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutPickupAddressInput
 }
 
 export type AddressCreateOrConnectWithoutUserInput = {
@@ -704,6 +732,7 @@ export type AddressCreateWithoutServiceZoneInput = {
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutAddressesInput
   orders?: Prisma.OrderCreateNestedManyWithoutAddressInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutPickupAddressInput
 }
 
 export type AddressUncheckedCreateWithoutServiceZoneInput = {
@@ -718,6 +747,7 @@ export type AddressUncheckedCreateWithoutServiceZoneInput = {
   isDefault?: boolean
   createdAt?: Date | string
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutAddressInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutPickupAddressInput
 }
 
 export type AddressCreateOrConnectWithoutServiceZoneInput = {
@@ -758,6 +788,7 @@ export type AddressCreateWithoutOrdersInput = {
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutAddressesInput
   serviceZone: Prisma.ServiceZoneCreateNestedOneWithoutAddressesInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutPickupAddressInput
 }
 
 export type AddressUncheckedCreateWithoutOrdersInput = {
@@ -772,6 +803,7 @@ export type AddressUncheckedCreateWithoutOrdersInput = {
   longitude?: number | null
   isDefault?: boolean
   createdAt?: Date | string
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutPickupAddressInput
 }
 
 export type AddressCreateOrConnectWithoutOrdersInput = {
@@ -802,6 +834,7 @@ export type AddressUpdateWithoutOrdersInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutAddressesNestedInput
   serviceZone?: Prisma.ServiceZoneUpdateOneRequiredWithoutAddressesNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutPickupAddressNestedInput
 }
 
 export type AddressUncheckedUpdateWithoutOrdersInput = {
@@ -816,6 +849,83 @@ export type AddressUncheckedUpdateWithoutOrdersInput = {
   longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutPickupAddressNestedInput
+}
+
+export type AddressCreateWithoutTiffinPickupsInput = {
+  id?: string
+  label?: string | null
+  lineOne: string
+  lineTwo?: string | null
+  pincode: string
+  latitude?: number | null
+  longitude?: number | null
+  isDefault?: boolean
+  createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutAddressesInput
+  serviceZone: Prisma.ServiceZoneCreateNestedOneWithoutAddressesInput
+  orders?: Prisma.OrderCreateNestedManyWithoutAddressInput
+}
+
+export type AddressUncheckedCreateWithoutTiffinPickupsInput = {
+  id?: string
+  userId: string
+  label?: string | null
+  lineOne: string
+  lineTwo?: string | null
+  pincode: string
+  serviceZoneId: string
+  latitude?: number | null
+  longitude?: number | null
+  isDefault?: boolean
+  createdAt?: Date | string
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutAddressInput
+}
+
+export type AddressCreateOrConnectWithoutTiffinPickupsInput = {
+  where: Prisma.AddressWhereUniqueInput
+  create: Prisma.XOR<Prisma.AddressCreateWithoutTiffinPickupsInput, Prisma.AddressUncheckedCreateWithoutTiffinPickupsInput>
+}
+
+export type AddressUpsertWithoutTiffinPickupsInput = {
+  update: Prisma.XOR<Prisma.AddressUpdateWithoutTiffinPickupsInput, Prisma.AddressUncheckedUpdateWithoutTiffinPickupsInput>
+  create: Prisma.XOR<Prisma.AddressCreateWithoutTiffinPickupsInput, Prisma.AddressUncheckedCreateWithoutTiffinPickupsInput>
+  where?: Prisma.AddressWhereInput
+}
+
+export type AddressUpdateToOneWithWhereWithoutTiffinPickupsInput = {
+  where?: Prisma.AddressWhereInput
+  data: Prisma.XOR<Prisma.AddressUpdateWithoutTiffinPickupsInput, Prisma.AddressUncheckedUpdateWithoutTiffinPickupsInput>
+}
+
+export type AddressUpdateWithoutTiffinPickupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineOne?: Prisma.StringFieldUpdateOperationsInput | string
+  lineTwo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pincode?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutAddressesNestedInput
+  serviceZone?: Prisma.ServiceZoneUpdateOneRequiredWithoutAddressesNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutAddressNestedInput
+}
+
+export type AddressUncheckedUpdateWithoutTiffinPickupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  label?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  lineOne?: Prisma.StringFieldUpdateOperationsInput | string
+  lineTwo?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pincode?: Prisma.StringFieldUpdateOperationsInput | string
+  serviceZoneId?: Prisma.StringFieldUpdateOperationsInput | string
+  latitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  longitude?: Prisma.NullableFloatFieldUpdateOperationsInput | number | null
+  isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutAddressNestedInput
 }
 
 export type AddressCreateManyUserInput = {
@@ -843,6 +953,7 @@ export type AddressUpdateWithoutUserInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   serviceZone?: Prisma.ServiceZoneUpdateOneRequiredWithoutAddressesNestedInput
   orders?: Prisma.OrderUpdateManyWithoutAddressNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutPickupAddressNestedInput
 }
 
 export type AddressUncheckedUpdateWithoutUserInput = {
@@ -857,6 +968,7 @@ export type AddressUncheckedUpdateWithoutUserInput = {
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUncheckedUpdateManyWithoutAddressNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutPickupAddressNestedInput
 }
 
 export type AddressUncheckedUpdateManyWithoutUserInput = {
@@ -897,6 +1009,7 @@ export type AddressUpdateWithoutServiceZoneInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutAddressesNestedInput
   orders?: Prisma.OrderUpdateManyWithoutAddressNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutPickupAddressNestedInput
 }
 
 export type AddressUncheckedUpdateWithoutServiceZoneInput = {
@@ -911,6 +1024,7 @@ export type AddressUncheckedUpdateWithoutServiceZoneInput = {
   isDefault?: Prisma.BoolFieldUpdateOperationsInput | boolean
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   orders?: Prisma.OrderUncheckedUpdateManyWithoutAddressNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutPickupAddressNestedInput
 }
 
 export type AddressUncheckedUpdateManyWithoutServiceZoneInput = {
@@ -933,10 +1047,12 @@ export type AddressUncheckedUpdateManyWithoutServiceZoneInput = {
 
 export type AddressCountOutputType = {
   orders: number
+  tiffinPickups: number
 }
 
 export type AddressCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   orders?: boolean | AddressCountOutputTypeCountOrdersArgs
+  tiffinPickups?: boolean | AddressCountOutputTypeCountTiffinPickupsArgs
 }
 
 /**
@@ -956,6 +1072,13 @@ export type AddressCountOutputTypeCountOrdersArgs<ExtArgs extends runtime.Types.
   where?: Prisma.OrderWhereInput
 }
 
+/**
+ * AddressCountOutputType without action
+ */
+export type AddressCountOutputTypeCountTiffinPickupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TiffinPickupWhereInput
+}
+
 
 export type AddressSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -972,6 +1095,7 @@ export type AddressSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   serviceZone?: boolean | Prisma.ServiceZoneDefaultArgs<ExtArgs>
   orders?: boolean | Prisma.Address$ordersArgs<ExtArgs>
+  tiffinPickups?: boolean | Prisma.Address$tiffinPickupsArgs<ExtArgs>
   _count?: boolean | Prisma.AddressCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["address"]>
 
@@ -1026,6 +1150,7 @@ export type AddressInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   serviceZone?: boolean | Prisma.ServiceZoneDefaultArgs<ExtArgs>
   orders?: boolean | Prisma.Address$ordersArgs<ExtArgs>
+  tiffinPickups?: boolean | Prisma.Address$tiffinPickupsArgs<ExtArgs>
   _count?: boolean | Prisma.AddressCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type AddressIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1043,6 +1168,7 @@ export type $AddressPayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     user: Prisma.$UserPayload<ExtArgs>
     serviceZone: Prisma.$ServiceZonePayload<ExtArgs>
     orders: Prisma.$OrderPayload<ExtArgs>[]
+    tiffinPickups: Prisma.$TiffinPickupPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1453,6 +1579,7 @@ export interface Prisma__AddressClient<T, Null = never, ExtArgs extends runtime.
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   serviceZone<T extends Prisma.ServiceZoneDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ServiceZoneDefaultArgs<ExtArgs>>): Prisma.Prisma__ServiceZoneClient<runtime.Types.Result.GetResult<Prisma.$ServiceZonePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   orders<T extends Prisma.Address$ordersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Address$ordersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$OrderPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tiffinPickups<T extends Prisma.Address$tiffinPickupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Address$tiffinPickupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TiffinPickupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1915,6 +2042,30 @@ export type Address$ordersArgs<ExtArgs extends runtime.Types.Extensions.Internal
   take?: number
   skip?: number
   distinct?: Prisma.OrderScalarFieldEnum | Prisma.OrderScalarFieldEnum[]
+}
+
+/**
+ * Address.tiffinPickups
+ */
+export type Address$tiffinPickupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TiffinPickup
+   */
+  select?: Prisma.TiffinPickupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TiffinPickup
+   */
+  omit?: Prisma.TiffinPickupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TiffinPickupInclude<ExtArgs> | null
+  where?: Prisma.TiffinPickupWhereInput
+  orderBy?: Prisma.TiffinPickupOrderByWithRelationInput | Prisma.TiffinPickupOrderByWithRelationInput[]
+  cursor?: Prisma.TiffinPickupWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TiffinPickupScalarFieldEnum | Prisma.TiffinPickupScalarFieldEnum[]
 }
 
 /**

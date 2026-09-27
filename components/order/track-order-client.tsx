@@ -1,12 +1,13 @@
 "use client"
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { useQueryClient, useMutation } from "@tanstack/react-query"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query"
 import { useAblyOrderChannel } from "@/hooks/useAblySubscribe"
 import { LiveOrderTrackingMap } from "@/components/map/live-order-tracking-map"
 import { TrackOrderSkeleton } from "@/components/order/track-order-skeleton"
 import { useSession } from "@/lib/auth-client"
 import { assignNearestDeliveryPerson } from "@/actions/dispatch/dispatch-actions"
+import { getTiffinPickupByOrderId } from "@/actions/dispatch/tiffin-actions"
 import Image from "next/image"
 import Link from "next/link"
 import {
@@ -25,6 +26,10 @@ import {
   useOrderTrackingQuery,
   useOrderTracking,
 } from "@/stores/orderTrackingStore"
+import {
+  useOrderTrackingEtaMinutes,
+  useOrderTrackingMapActions
+} from "@/stores/orderTrackingMapStore"
 
 const statusFlow: { key: string; label: string; icon: typeof Check, desc: string }[] = [
   { key: "CONFIRMED", label: "Order Confirmed", icon: Check, desc: "Your order has been confirmed." },
@@ -80,18 +85,6 @@ function formatDateOnly(iso: string) {
   })
 }
 
-function haversineKm(lat1: number, lon1: number, lat2: number, lon2: number) {
-  const R = 6371
-  const dLat = ((lat2 - lat1) * Math.PI) / 180
-  const dLon = ((lon2 - lon1) * Math.PI) / 180
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos((lat1 * Math.PI) / 180) *
-      Math.cos((lat2 * Math.PI) / 180) *
-      Math.sin(dLon / 2) ** 2
-  return 2 * R * Math.asin(Math.sqrt(a))
-}
-
 function getInitials(name?: string | null) {
   return (
     name
@@ -115,75 +108,12 @@ function useNow(intervalMs = 60_000) {
   return now
 }
 
-function useLiveEta({
-  enabled,
-  personLat,
-  personLng,
-  customerLat,
-  customerLng,
-}: {
-  enabled: boolean
-  personLat: number | null | undefined
-  personLng: number | null | undefined
-  customerLat: number | null | undefined
-  customerLng: number | null | undefined
-}) {
-  const coordsValid =
-    enabled &&
-    personLat != null &&
-    personLng != null &&
-    customerLat != null &&
-    customerLng != null
 
-  const coordsKey = coordsValid
-    ? `${personLat},${personLng},${customerLat},${customerLng}`
-    : null
-
-  const etaSec = useMemo(() => {
-    if (!coordsValid) return null
-    const km = haversineKm(personLat as number, personLng as number, customerLat as number, customerLng as number)
-    return Math.max(Math.round((km / 20) * 60), 10)
-  }, [coordsValid, personLat, personLng, customerLat, customerLng])
-
-  const [now, setNow] = useState(() => Date.now())
-  const [etaInfo, setEtaInfo] = useState<{ target: number; etaSec: number; coordsKey: string } | null>(null)
-
-  useEffect(() => {
-    if (!coordsValid || etaSec == null || coordsKey == null) return
-    const t = setInterval(() => {
-      const tick = Date.now()
-      setNow(tick)
-      setEtaInfo((prev) =>
-        prev && prev.etaSec === etaSec && prev.coordsKey === coordsKey
-          ? prev
-          : { target: tick + etaSec * 1000, etaSec, coordsKey }
-      )
-    }, 1000)
-    return () => clearInterval(t)
-  }, [coordsValid, etaSec, coordsKey])
-
-  const info = coordsValid && etaSec != null ? etaInfo : null
-
-  if (!info) return null
-
-  const remainingSec = Math.max(0, Math.round((info.target - now) / 1000))
-  return {
-    minutes: Math.floor(remainingSec / 60),
-    seconds: remainingSec % 60,
-  }
-}
-
-function formatEtaText(eta: { minutes: number; seconds: number } | null) {
-  if (!eta) return null
-  if (eta.minutes === 0 && eta.seconds === 0) return "Your order is arriving now"
-  if (eta.minutes === 0) return "Your order will be delivered in less than a minute"
-  if (eta.minutes === 1) return "Your order will be delivered in 1 min"
-  return `Your order will be delivered in ~${eta.minutes} mins`
-}
 
 export function TrackOrderClient({ orderId }: { orderId: string }) {
   const { data: session, isPending: sessionLoading } = useSession()
   const queryClient = useQueryClient()
+  const { setLivePosition } = useOrderTrackingMapActions()
 
   const {
     isLoading,
@@ -193,19 +123,32 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
 
   const order = useOrderTracking()
 
+  const isDelivered = order?.status === "COMPLETED"
+
+  const { data: tiffinPickup } = useQuery({
+    queryKey: ["tiffin-pickup", orderId],
+    queryFn: () => getTiffinPickupByOrderId(orderId),
+    enabled: isDelivered && !!session?.user
+  })
+
   useAblyOrderChannel(
     order?.id ?? "",
     useCallback(
-      (msg: { name: string }) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (msg: { name: string; data?: any }) => {
+        if (msg.name === "rider:location" && msg.data && msg.data.lat !== undefined && msg.data.lng !== undefined) {
+          setLivePosition({ lat: msg.data.lat, lng: msg.data.lng })
+        }
         if (
           msg.name === "order:confirmation-code" ||
           msg.name === "order:status" ||
-          msg.name === "delivery:status"
+          msg.name === "delivery:status" ||
+          msg.name === "delivery:offer"
         ) {
           queryClient.invalidateQueries({ queryKey: ["order-tracking", orderId] })
         }
       },
-      [orderId, queryClient]
+      [orderId, queryClient, setLivePosition]
     ),
     !!session?.user && !!order?.id
   )
@@ -217,13 +160,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
     !["CANCELLED", "REFUNDED", "COMPLETED"].includes(orderStatus || "") &&
     (orderDeliveryStatus === "PICKEDUP" || orderDeliveryStatus === "INTRANSIT")
 
-  const eta = useLiveEta({
-    enabled: orderInTransit,
-    personLat: order?.deliveryPersonLat,
-    personLng: order?.deliveryPersonLng,
-    customerLat: order?.customerLat,
-    customerLng: order?.customerLng,
-  })
+  const routeEtaMinutes = useOrderTrackingEtaMinutes()
 
   const now = useNow()
 
@@ -300,7 +237,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
 
   const isCancelled = order.status === "CANCELLED" || order.status === "REFUNDED"
   const currentIdx = isCancelled ? 0 : getStatusIndex(order.status)
-  const isDelivered = order.status === "COMPLETED"
+  // isDelivered is already defined above
   const deliveryStatus = order.deliveryStatus || order.deliveryAssignmentStatus
 
   const inTransit =
@@ -315,9 +252,13 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
     new Date(order.serviceDate).getTime() > now
 
   let etaSubtitle: string | null = null
+  let mainEtaTitle: string | null = null
   if (inTransit) {
-    etaSubtitle = eta
-      ? `${formatEtaText(eta)} · ETA ${String(eta.minutes).padStart(2, "0")}:${String(eta.seconds).padStart(2, "0")}`
+    mainEtaTitle = routeEtaMinutes != null 
+      ? `Arriving in ${routeEtaMinutes} mins`
+      : "Arriving soon"
+    etaSubtitle = routeEtaMinutes != null && routeEtaMinutes > 15 
+      ? `Slight delay due to traffic · Tracking live`
       : "Tracking your delivery partner live"
   } else if (order.status === "READYFORPICKUP") {
     etaSubtitle = "Your order is packed and waiting for the delivery partner"
@@ -470,17 +411,22 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
               customerLng={order.customerLng ?? undefined}
               deliveryPersonLat={order.deliveryPersonLat ?? undefined}
               deliveryPersonLng={order.deliveryPersonLng ?? undefined}
+              orderStatus={order.status}
+              deliveryStatus={order.deliveryStatus ?? undefined}
+              assignmentStatus={order.deliveryAssignmentStatus ?? undefined}
               height="100%"
               showFooter={false}
             />
 
             {/* Map Overlay: Live Tracking */}
             {orderInTransit && (
-              <div className="absolute top-6 left-6 bg-[#FFFFFF] rounded-[16px] p-4 shadow-[0_10px_28px_rgba(15,23,42,0.05)] border border-[#eef1f5] flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-[#15803D] animate-pulse" />
+              <div className="absolute top-6 left-6 bg-[#FFFFFF]/95 backdrop-blur-md rounded-[20px] p-4 pr-6 shadow-[0_20px_40px_rgba(15,23,42,0.08)] border border-[#eef1f5] flex items-center gap-4">
+                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-50">
+                  <div className="w-3 h-3 rounded-full bg-green-600 animate-pulse ring-4 ring-green-100" />
+                </div>
                 <div>
-                  <p className="text-[15px] font-semibold text-[#111827] leading-tight mb-1">Live Tracking</p>
-                  <p className="text-[13px] text-[#6B7280]">{etaSubtitle || "Fetching location..."}</p>
+                  <p className="text-[18px] font-bold text-[#111827] leading-tight mb-1 tracking-tight">{mainEtaTitle || "Live Tracking"}</p>
+                  <p className="text-[13px] font-medium text-[#6B7280]">{etaSubtitle || "Fetching location..."}</p>
                 </div>
               </div>
             )}
@@ -495,6 +441,37 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
             )}
           </div>
         </div>
+
+        {/* Tiffin Carrier Return Section */}
+        {tiffinPickup && (
+          <div className="bg-[#FFFFFF] rounded-[26px] p-6 lg:p-8 border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] mb-6">
+            <div className="flex items-center gap-3 mb-6">
+              <Package className="w-8 h-8 text-[#F97316]" />
+              <div>
+                <h3 className="text-[20px] font-extrabold text-[#111827]">Tiffin Carrier Return</h3>
+                <p className="text-[14px] text-[#6B7280]">Your home chef&apos;s tiffin carrier needs to be returned.</p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <div className="bg-[#F8FAFC] rounded-[16px] p-5 border border-[#F1F5F9]">
+                <p className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Status</p>
+                <p className="text-[16px] font-extrabold text-[#111827]">{tiffinPickup.status}</p>
+              </div>
+              <div className="bg-[#F8FAFC] rounded-[16px] p-5 border border-[#F1F5F9]">
+                <p className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Scheduled Date</p>
+                <p className="text-[16px] font-extrabold text-[#111827]">{formatDateOnly(tiffinPickup.scheduledDate.toISOString())}</p>
+              </div>
+              <div className="bg-[#F8FAFC] rounded-[16px] p-5 border border-[#F1F5F9]">
+                <p className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Delivery Partner</p>
+                <p className="text-[16px] font-extrabold text-[#111827]">{tiffinPickup.deliveryPartner?.user.name || "Pending Assignment"}</p>
+                {tiffinPickup.deliveryPartner && (
+                  <p className="text-[13px] text-[#6B7280] mt-1">{tiffinPickup.deliveryPartner.user.phoneNumber}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Bottom Information Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 bg-[#FFFFFF] rounded-[26px] border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] overflow-hidden mb-6">

@@ -338,6 +338,7 @@ export type OrderWhereInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutListRelationFilter
   supportTickets?: Prisma.SupportTicketListRelationFilter
   upiCollectRequest?: Prisma.XOR<Prisma.UpiCollectRequestNullableScalarRelationFilter, Prisma.UpiCollectRequestWhereInput> | null
+  tiffinPickup?: Prisma.XOR<Prisma.TiffinPickupNullableScalarRelationFilter, Prisma.TiffinPickupWhereInput> | null
 }
 
 export type OrderOrderByWithRelationInput = {
@@ -376,6 +377,7 @@ export type OrderOrderByWithRelationInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutOrderByRelationAggregateInput
   supportTickets?: Prisma.SupportTicketOrderByRelationAggregateInput
   upiCollectRequest?: Prisma.UpiCollectRequestOrderByWithRelationInput
+  tiffinPickup?: Prisma.TiffinPickupOrderByWithRelationInput
 }
 
 export type OrderWhereUniqueInput = Prisma.AtLeast<{
@@ -417,6 +419,7 @@ export type OrderWhereUniqueInput = Prisma.AtLeast<{
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutListRelationFilter
   supportTickets?: Prisma.SupportTicketListRelationFilter
   upiCollectRequest?: Prisma.XOR<Prisma.UpiCollectRequestNullableScalarRelationFilter, Prisma.UpiCollectRequestWhereInput> | null
+  tiffinPickup?: Prisma.XOR<Prisma.TiffinPickupNullableScalarRelationFilter, Prisma.TiffinPickupWhereInput> | null
 }, "id" | "publicCode" | "idempotencyKey">
 
 export type OrderOrderByWithAggregationInput = {
@@ -500,6 +503,7 @@ export type OrderCreateInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateInput = {
@@ -535,6 +539,7 @@ export type OrderUncheckedCreateInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUpdateInput = {
@@ -570,6 +575,7 @@ export type OrderUpdateInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateInput = {
@@ -605,6 +611,7 @@ export type OrderUncheckedUpdateInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateManyInput = {
@@ -1110,6 +1117,20 @@ export type OrderUpdateOneRequiredWithoutDeliveryPartnerPayoutsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutDeliveryPartnerPayoutsInput, Prisma.OrderUpdateWithoutDeliveryPartnerPayoutsInput>, Prisma.OrderUncheckedUpdateWithoutDeliveryPartnerPayoutsInput>
 }
 
+export type OrderCreateNestedOneWithoutTiffinPickupInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutTiffinPickupInput, Prisma.OrderUncheckedCreateWithoutTiffinPickupInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutTiffinPickupInput
+  connect?: Prisma.OrderWhereUniqueInput
+}
+
+export type OrderUpdateOneRequiredWithoutTiffinPickupNestedInput = {
+  create?: Prisma.XOR<Prisma.OrderCreateWithoutTiffinPickupInput, Prisma.OrderUncheckedCreateWithoutTiffinPickupInput>
+  connectOrCreate?: Prisma.OrderCreateOrConnectWithoutTiffinPickupInput
+  upsert?: Prisma.OrderUpsertWithoutTiffinPickupInput
+  connect?: Prisma.OrderWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.OrderUpdateToOneWithWhereWithoutTiffinPickupInput, Prisma.OrderUpdateWithoutTiffinPickupInput>, Prisma.OrderUncheckedUpdateWithoutTiffinPickupInput>
+}
+
 export type OrderCreateWithoutUserInput = {
   id?: string
   publicCode?: string | null
@@ -1142,6 +1163,7 @@ export type OrderCreateWithoutUserInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutUserInput = {
@@ -1176,6 +1198,7 @@ export type OrderUncheckedCreateWithoutUserInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutUserInput = {
@@ -1259,6 +1282,7 @@ export type OrderCreateWithoutAddressInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutAddressInput = {
@@ -1293,6 +1317,7 @@ export type OrderUncheckedCreateWithoutAddressInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutAddressInput = {
@@ -1353,6 +1378,7 @@ export type OrderCreateWithoutDeliveryPartnerInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutDeliveryPartnerInput = {
@@ -1387,6 +1413,7 @@ export type OrderUncheckedCreateWithoutDeliveryPartnerInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutDeliveryPartnerInput = {
@@ -1447,6 +1474,7 @@ export type OrderCreateWithoutOrderItemsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutOrderItemsInput = {
@@ -1481,6 +1509,7 @@ export type OrderUncheckedCreateWithoutOrderItemsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutOrderItemsInput = {
@@ -1531,6 +1560,7 @@ export type OrderUpdateWithoutOrderItemsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutOrderItemsInput = {
@@ -1565,6 +1595,7 @@ export type OrderUncheckedUpdateWithoutOrderItemsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutStatusHistoryInput = {
@@ -1599,6 +1630,7 @@ export type OrderCreateWithoutStatusHistoryInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutStatusHistoryInput = {
@@ -1633,6 +1665,7 @@ export type OrderUncheckedCreateWithoutStatusHistoryInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutStatusHistoryInput = {
@@ -1683,6 +1716,7 @@ export type OrderUpdateWithoutStatusHistoryInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutStatusHistoryInput = {
@@ -1717,6 +1751,7 @@ export type OrderUncheckedUpdateWithoutStatusHistoryInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutReviewInput = {
@@ -1751,6 +1786,7 @@ export type OrderCreateWithoutReviewInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutReviewInput = {
@@ -1785,6 +1821,7 @@ export type OrderUncheckedCreateWithoutReviewInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutReviewInput = {
@@ -1835,6 +1872,7 @@ export type OrderUpdateWithoutReviewInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutReviewInput = {
@@ -1869,6 +1907,7 @@ export type OrderUncheckedUpdateWithoutReviewInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutDeliveryReviewInput = {
@@ -1903,6 +1942,7 @@ export type OrderCreateWithoutDeliveryReviewInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutDeliveryReviewInput = {
@@ -1937,6 +1977,7 @@ export type OrderUncheckedCreateWithoutDeliveryReviewInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutDeliveryReviewInput = {
@@ -1987,6 +2028,7 @@ export type OrderUpdateWithoutDeliveryReviewInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutDeliveryReviewInput = {
@@ -2021,6 +2063,7 @@ export type OrderUncheckedUpdateWithoutDeliveryReviewInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutMenuItemFeedbacksInput = {
@@ -2055,6 +2098,7 @@ export type OrderCreateWithoutMenuItemFeedbacksInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutMenuItemFeedbacksInput = {
@@ -2089,6 +2133,7 @@ export type OrderUncheckedCreateWithoutMenuItemFeedbacksInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutMenuItemFeedbacksInput = {
@@ -2139,6 +2184,7 @@ export type OrderUpdateWithoutMenuItemFeedbacksInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutMenuItemFeedbacksInput = {
@@ -2173,6 +2219,7 @@ export type OrderUncheckedUpdateWithoutMenuItemFeedbacksInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutMenuItemReviewsInput = {
@@ -2207,6 +2254,7 @@ export type OrderCreateWithoutMenuItemReviewsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutMenuItemReviewsInput = {
@@ -2241,6 +2289,7 @@ export type OrderUncheckedCreateWithoutMenuItemReviewsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutMenuItemReviewsInput = {
@@ -2291,6 +2340,7 @@ export type OrderUpdateWithoutMenuItemReviewsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutMenuItemReviewsInput = {
@@ -2325,6 +2375,7 @@ export type OrderUncheckedUpdateWithoutMenuItemReviewsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutDeliveryAssignmentInput = {
@@ -2359,6 +2410,7 @@ export type OrderCreateWithoutDeliveryAssignmentInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutDeliveryAssignmentInput = {
@@ -2393,6 +2445,7 @@ export type OrderUncheckedCreateWithoutDeliveryAssignmentInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutDeliveryAssignmentInput = {
@@ -2443,6 +2496,7 @@ export type OrderUpdateWithoutDeliveryAssignmentInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutDeliveryAssignmentInput = {
@@ -2477,6 +2531,7 @@ export type OrderUncheckedUpdateWithoutDeliveryAssignmentInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutDeliveryLocationsInput = {
@@ -2511,6 +2566,7 @@ export type OrderCreateWithoutDeliveryLocationsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutDeliveryLocationsInput = {
@@ -2545,6 +2601,7 @@ export type OrderUncheckedCreateWithoutDeliveryLocationsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutDeliveryLocationsInput = {
@@ -2595,6 +2652,7 @@ export type OrderUpdateWithoutDeliveryLocationsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutDeliveryLocationsInput = {
@@ -2629,6 +2687,7 @@ export type OrderUncheckedUpdateWithoutDeliveryLocationsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutPaymentInput = {
@@ -2663,6 +2722,7 @@ export type OrderCreateWithoutPaymentInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutPaymentInput = {
@@ -2697,6 +2757,7 @@ export type OrderUncheckedCreateWithoutPaymentInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutPaymentInput = {
@@ -2747,6 +2808,7 @@ export type OrderUpdateWithoutPaymentInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutPaymentInput = {
@@ -2781,6 +2843,7 @@ export type OrderUncheckedUpdateWithoutPaymentInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutSupportTicketsInput = {
@@ -2815,6 +2878,7 @@ export type OrderCreateWithoutSupportTicketsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutSupportTicketsInput = {
@@ -2849,6 +2913,7 @@ export type OrderUncheckedCreateWithoutSupportTicketsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutSupportTicketsInput = {
@@ -2899,6 +2964,7 @@ export type OrderUpdateWithoutSupportTicketsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutSupportTicketsInput = {
@@ -2933,6 +2999,7 @@ export type OrderUncheckedUpdateWithoutSupportTicketsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutCouponRedemptionInput = {
@@ -2967,6 +3034,7 @@ export type OrderCreateWithoutCouponRedemptionInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutCouponRedemptionInput = {
@@ -3001,6 +3069,7 @@ export type OrderUncheckedCreateWithoutCouponRedemptionInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutCouponRedemptionInput = {
@@ -3051,6 +3120,7 @@ export type OrderUpdateWithoutCouponRedemptionInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutCouponRedemptionInput = {
@@ -3085,6 +3155,7 @@ export type OrderUncheckedUpdateWithoutCouponRedemptionInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutUpiCollectRequestInput = {
@@ -3119,6 +3190,7 @@ export type OrderCreateWithoutUpiCollectRequestInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutUpiCollectRequestInput = {
@@ -3153,6 +3225,7 @@ export type OrderUncheckedCreateWithoutUpiCollectRequestInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutUpiCollectRequestInput = {
@@ -3203,6 +3276,7 @@ export type OrderUpdateWithoutUpiCollectRequestInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutUpiCollectRequestInput = {
@@ -3237,6 +3311,7 @@ export type OrderUncheckedUpdateWithoutUpiCollectRequestInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutRefundsInput = {
@@ -3271,6 +3346,7 @@ export type OrderCreateWithoutRefundsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutRefundsInput = {
@@ -3305,6 +3381,7 @@ export type OrderUncheckedCreateWithoutRefundsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutRefundsInput = {
@@ -3355,6 +3432,7 @@ export type OrderUpdateWithoutRefundsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutRefundsInput = {
@@ -3389,6 +3467,7 @@ export type OrderUncheckedUpdateWithoutRefundsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutKitchenPayoutsInput = {
@@ -3423,6 +3502,7 @@ export type OrderCreateWithoutKitchenPayoutsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutKitchenPayoutsInput = {
@@ -3457,6 +3537,7 @@ export type OrderUncheckedCreateWithoutKitchenPayoutsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutKitchenPayoutsInput = {
@@ -3507,6 +3588,7 @@ export type OrderUpdateWithoutKitchenPayoutsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutKitchenPayoutsInput = {
@@ -3541,6 +3623,7 @@ export type OrderUncheckedUpdateWithoutKitchenPayoutsInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderCreateWithoutDeliveryPartnerPayoutsInput = {
@@ -3575,6 +3658,7 @@ export type OrderCreateWithoutDeliveryPartnerPayoutsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupCreateNestedOneWithoutOrderInput
 }
 
 export type OrderUncheckedCreateWithoutDeliveryPartnerPayoutsInput = {
@@ -3609,6 +3693,7 @@ export type OrderUncheckedCreateWithoutDeliveryPartnerPayoutsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
   supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedCreateNestedOneWithoutOrderInput
 }
 
 export type OrderCreateOrConnectWithoutDeliveryPartnerPayoutsInput = {
@@ -3659,6 +3744,7 @@ export type OrderUpdateWithoutDeliveryPartnerPayoutsInput = {
   kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutDeliveryPartnerPayoutsInput = {
@@ -3691,6 +3777,163 @@ export type OrderUncheckedUpdateWithoutDeliveryPartnerPayoutsInput = {
   deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
   refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
   kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
+  supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
+}
+
+export type OrderCreateWithoutTiffinPickupInput = {
+  id?: string
+  publicCode?: string | null
+  serviceDate: Date | string
+  serviceDateType?: $Enums.ServiceDateType
+  timeSlot: $Enums.TimeSlot
+  status?: $Enums.OrderStatus
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  commissionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  source?: $Enums.OrderSource
+  deliveryStatus?: $Enums.DeliveryStatus | null
+  idempotencyKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutOrdersInput
+  address?: Prisma.AddressCreateNestedOneWithoutOrdersInput
+  deliveryPartner?: Prisma.DeliveryPartnerCreateNestedOneWithoutOrdersInput
+  orderItems?: Prisma.OrderItemCreateNestedManyWithoutOrderInput
+  statusHistory?: Prisma.OrderStatusHistoryCreateNestedManyWithoutOrderInput
+  payment?: Prisma.PaymentCreateNestedOneWithoutOrderInput
+  couponRedemption?: Prisma.CouponRedemptionCreateNestedOneWithoutOrderInput
+  review?: Prisma.ReviewCreateNestedOneWithoutOrderInput
+  deliveryReview?: Prisma.DeliveryReviewCreateNestedOneWithoutOrderInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewCreateNestedManyWithoutOrderInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutOrderInput
+  deliveryAssignment?: Prisma.DeliveryAssignmentCreateNestedOneWithoutOrderInput
+  refunds?: Prisma.RefundCreateNestedManyWithoutOrderInput
+  kitchenPayouts?: Prisma.KitchenPayoutCreateNestedManyWithoutOrderInput
+  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutOrderInput
+  supportTickets?: Prisma.SupportTicketCreateNestedManyWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestCreateNestedOneWithoutOrderInput
+}
+
+export type OrderUncheckedCreateWithoutTiffinPickupInput = {
+  id?: string
+  publicCode?: string | null
+  userId: string
+  addressId?: string | null
+  serviceDate: Date | string
+  serviceDateType?: $Enums.ServiceDateType
+  timeSlot: $Enums.TimeSlot
+  status?: $Enums.OrderStatus
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  commissionAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  source?: $Enums.OrderSource
+  deliveryPartnerId?: string | null
+  deliveryStatus?: $Enums.DeliveryStatus | null
+  idempotencyKey?: string | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  orderItems?: Prisma.OrderItemUncheckedCreateNestedManyWithoutOrderInput
+  statusHistory?: Prisma.OrderStatusHistoryUncheckedCreateNestedManyWithoutOrderInput
+  payment?: Prisma.PaymentUncheckedCreateNestedOneWithoutOrderInput
+  couponRedemption?: Prisma.CouponRedemptionUncheckedCreateNestedOneWithoutOrderInput
+  review?: Prisma.ReviewUncheckedCreateNestedOneWithoutOrderInput
+  deliveryReview?: Prisma.DeliveryReviewUncheckedCreateNestedOneWithoutOrderInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedCreateNestedManyWithoutOrderInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedCreateNestedManyWithoutOrderInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutOrderInput
+  deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedCreateNestedOneWithoutOrderInput
+  refunds?: Prisma.RefundUncheckedCreateNestedManyWithoutOrderInput
+  kitchenPayouts?: Prisma.KitchenPayoutUncheckedCreateNestedManyWithoutOrderInput
+  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutOrderInput
+  supportTickets?: Prisma.SupportTicketUncheckedCreateNestedManyWithoutOrderInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUncheckedCreateNestedOneWithoutOrderInput
+}
+
+export type OrderCreateOrConnectWithoutTiffinPickupInput = {
+  where: Prisma.OrderWhereUniqueInput
+  create: Prisma.XOR<Prisma.OrderCreateWithoutTiffinPickupInput, Prisma.OrderUncheckedCreateWithoutTiffinPickupInput>
+}
+
+export type OrderUpsertWithoutTiffinPickupInput = {
+  update: Prisma.XOR<Prisma.OrderUpdateWithoutTiffinPickupInput, Prisma.OrderUncheckedUpdateWithoutTiffinPickupInput>
+  create: Prisma.XOR<Prisma.OrderCreateWithoutTiffinPickupInput, Prisma.OrderUncheckedCreateWithoutTiffinPickupInput>
+  where?: Prisma.OrderWhereInput
+}
+
+export type OrderUpdateToOneWithWhereWithoutTiffinPickupInput = {
+  where?: Prisma.OrderWhereInput
+  data: Prisma.XOR<Prisma.OrderUpdateWithoutTiffinPickupInput, Prisma.OrderUncheckedUpdateWithoutTiffinPickupInput>
+}
+
+export type OrderUpdateWithoutTiffinPickupInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  commissionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutOrdersNestedInput
+  address?: Prisma.AddressUpdateOneWithoutOrdersNestedInput
+  deliveryPartner?: Prisma.DeliveryPartnerUpdateOneWithoutOrdersNestedInput
+  orderItems?: Prisma.OrderItemUpdateManyWithoutOrderNestedInput
+  statusHistory?: Prisma.OrderStatusHistoryUpdateManyWithoutOrderNestedInput
+  payment?: Prisma.PaymentUpdateOneWithoutOrderNestedInput
+  couponRedemption?: Prisma.CouponRedemptionUpdateOneWithoutOrderNestedInput
+  review?: Prisma.ReviewUpdateOneWithoutOrderNestedInput
+  deliveryReview?: Prisma.DeliveryReviewUpdateOneWithoutOrderNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUpdateManyWithoutOrderNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutOrderNestedInput
+  deliveryAssignment?: Prisma.DeliveryAssignmentUpdateOneWithoutOrderNestedInput
+  refunds?: Prisma.RefundUpdateManyWithoutOrderNestedInput
+  kitchenPayouts?: Prisma.KitchenPayoutUpdateManyWithoutOrderNestedInput
+  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
+  supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
+  upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+}
+
+export type OrderUncheckedUpdateWithoutTiffinPickupInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  addressId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serviceDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  serviceDateType?: Prisma.EnumServiceDateTypeFieldUpdateOperationsInput | $Enums.ServiceDateType
+  timeSlot?: Prisma.EnumTimeSlotFieldUpdateOperationsInput | $Enums.TimeSlot
+  status?: Prisma.EnumOrderStatusFieldUpdateOperationsInput | $Enums.OrderStatus
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  discountAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  commissionAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  source?: Prisma.EnumOrderSourceFieldUpdateOperationsInput | $Enums.OrderSource
+  deliveryPartnerId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  deliveryStatus?: Prisma.NullableEnumDeliveryStatusFieldUpdateOperationsInput | $Enums.DeliveryStatus | null
+  idempotencyKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  orderItems?: Prisma.OrderItemUncheckedUpdateManyWithoutOrderNestedInput
+  statusHistory?: Prisma.OrderStatusHistoryUncheckedUpdateManyWithoutOrderNestedInput
+  payment?: Prisma.PaymentUncheckedUpdateOneWithoutOrderNestedInput
+  couponRedemption?: Prisma.CouponRedemptionUncheckedUpdateOneWithoutOrderNestedInput
+  review?: Prisma.ReviewUncheckedUpdateOneWithoutOrderNestedInput
+  deliveryReview?: Prisma.DeliveryReviewUncheckedUpdateOneWithoutOrderNestedInput
+  menuItemFeedbacks?: Prisma.MenuItemFeedbackUncheckedUpdateManyWithoutOrderNestedInput
+  menuItemReviews?: Prisma.MenuItemReviewUncheckedUpdateManyWithoutOrderNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutOrderNestedInput
+  deliveryAssignment?: Prisma.DeliveryAssignmentUncheckedUpdateOneWithoutOrderNestedInput
+  refunds?: Prisma.RefundUncheckedUpdateManyWithoutOrderNestedInput
+  kitchenPayouts?: Prisma.KitchenPayoutUncheckedUpdateManyWithoutOrderNestedInput
+  deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
 }
@@ -3746,6 +3989,7 @@ export type OrderUpdateWithoutUserInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutUserInput = {
@@ -3780,6 +4024,7 @@ export type OrderUncheckedUpdateWithoutUserInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateManyWithoutUserInput = {
@@ -3852,6 +4097,7 @@ export type OrderUpdateWithoutAddressInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutAddressInput = {
@@ -3886,6 +4132,7 @@ export type OrderUncheckedUpdateWithoutAddressInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateManyWithoutAddressInput = {
@@ -3958,6 +4205,7 @@ export type OrderUpdateWithoutDeliveryPartnerInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateWithoutDeliveryPartnerInput = {
@@ -3992,6 +4240,7 @@ export type OrderUncheckedUpdateWithoutDeliveryPartnerInput = {
   deliveryPartnerPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutOrderNestedInput
   supportTickets?: Prisma.SupportTicketUncheckedUpdateManyWithoutOrderNestedInput
   upiCollectRequest?: Prisma.UpiCollectRequestUncheckedUpdateOneWithoutOrderNestedInput
+  tiffinPickup?: Prisma.TiffinPickupUncheckedUpdateOneWithoutOrderNestedInput
 }
 
 export type OrderUncheckedUpdateManyWithoutDeliveryPartnerInput = {
@@ -4152,6 +4401,7 @@ export type OrderSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   deliveryPartnerPayouts?: boolean | Prisma.Order$deliveryPartnerPayoutsArgs<ExtArgs>
   supportTickets?: boolean | Prisma.Order$supportTicketsArgs<ExtArgs>
   upiCollectRequest?: boolean | Prisma.Order$upiCollectRequestArgs<ExtArgs>
+  tiffinPickup?: boolean | Prisma.Order$tiffinPickupArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["order"]>
 
@@ -4241,6 +4491,7 @@ export type OrderInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   deliveryPartnerPayouts?: boolean | Prisma.Order$deliveryPartnerPayoutsArgs<ExtArgs>
   supportTickets?: boolean | Prisma.Order$supportTicketsArgs<ExtArgs>
   upiCollectRequest?: boolean | Prisma.Order$upiCollectRequestArgs<ExtArgs>
+  tiffinPickup?: boolean | Prisma.Order$tiffinPickupArgs<ExtArgs>
   _count?: boolean | Prisma.OrderCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type OrderIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -4275,6 +4526,7 @@ export type $OrderPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     deliveryPartnerPayouts: Prisma.$DeliveryPartnerPayoutPayload<ExtArgs>[]
     supportTickets: Prisma.$SupportTicketPayload<ExtArgs>[]
     upiCollectRequest: Prisma.$UpiCollectRequestPayload<ExtArgs> | null
+    tiffinPickup: Prisma.$TiffinPickupPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -4706,6 +4958,7 @@ export interface Prisma__OrderClient<T, Null = never, ExtArgs extends runtime.Ty
   deliveryPartnerPayouts<T extends Prisma.Order$deliveryPartnerPayoutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$deliveryPartnerPayoutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerPayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   supportTickets<T extends Prisma.Order$supportTicketsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$supportTicketsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SupportTicketPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   upiCollectRequest<T extends Prisma.Order$upiCollectRequestArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$upiCollectRequestArgs<ExtArgs>>): Prisma.Prisma__UpiCollectRequestClient<runtime.Types.Result.GetResult<Prisma.$UpiCollectRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  tiffinPickup<T extends Prisma.Order$tiffinPickupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Order$tiffinPickupArgs<ExtArgs>>): Prisma.Prisma__TiffinPickupClient<runtime.Types.Result.GetResult<Prisma.$TiffinPickupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -5518,6 +5771,25 @@ export type Order$upiCollectRequestArgs<ExtArgs extends runtime.Types.Extensions
    */
   include?: Prisma.UpiCollectRequestInclude<ExtArgs> | null
   where?: Prisma.UpiCollectRequestWhereInput
+}
+
+/**
+ * Order.tiffinPickup
+ */
+export type Order$tiffinPickupArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TiffinPickup
+   */
+  select?: Prisma.TiffinPickupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TiffinPickup
+   */
+  omit?: Prisma.TiffinPickupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TiffinPickupInclude<ExtArgs> | null
+  where?: Prisma.TiffinPickupWhereInput
 }
 
 /**

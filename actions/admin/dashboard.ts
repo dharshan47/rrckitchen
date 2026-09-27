@@ -1308,6 +1308,8 @@ export async function getDeliveryDashboardData() {
               address: { select: { lineOne: true, lineTwo: true, pincode: true, latitude: true, longitude: true } },
               payment: { select: { status: true, provider: true } },
               user: { select: { name: true, phoneNumber: true, id: true } },
+              deliveryStatus: true,
+              deliveryAssignment: { select: { status: true } },
             },
           },
           kitchenPartner: {
@@ -1348,6 +1350,8 @@ export async function getDeliveryDashboardData() {
       kitchenLat: ka?.latitude ? Number(ka.latitude) : null,
       kitchenLng: ka?.longitude ? Number(ka.longitude) : null,
       orderStatus: oi.order.status,
+      deliveryStatus: oi.order.deliveryStatus,
+      assignmentStatus: oi.order.deliveryAssignment?.status,
       paymentProvider: oi.order.payment?.provider,
       paymentStatus: oi.order.payment?.status,
     }

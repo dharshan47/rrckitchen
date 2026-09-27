@@ -5,6 +5,7 @@ import "./globals.css";
 import { Providers } from "@/providers/providers";
 import { AppShell } from "@/components/layout/app-shell";
 import { Toaster } from "@/components/ui/sonner"
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -106,6 +107,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col bg-background text-foreground">
+        <NextTopLoader color="#FE4D02" showSpinner={false} />
         <Providers>
           <Suspense fallback={null}>
             <AppShell>

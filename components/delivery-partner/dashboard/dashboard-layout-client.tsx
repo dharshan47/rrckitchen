@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/sidebar"
 import { SwUpdateBanner } from "@/components/patterns/sw-update-banner"
 import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init"
+import { useAblySubscribe } from "@/hooks/useAblySubscribe"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Home, User, Wallet, LogOut, Truck, Ticket, Bell, Star } from "lucide-react"
 import { toast } from "sonner"
@@ -86,6 +87,23 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
       setOnline(data.profile.isOnline)
     }
   }, [data, setData, setOnline])
+
+  useAblySubscribe(
+    data?.profile?.id ? `deliveryPartner:${data.profile.id}` : "",
+    useCallback(
+      (msg) => {
+        if (msg.name === "delivery:offer") {
+          toast.success("New Order Assigned! Please accept or reject.", {
+            duration: 10000,
+            icon: "🔔",
+          })
+          queryClient.invalidateQueries({ queryKey: ["delivery-dashboard"] })
+        }
+      },
+      [queryClient]
+    ),
+    !!data?.profile?.id
+  )
 
   const onlineMutation = useMutation({
     mutationFn: async (online: boolean) => {

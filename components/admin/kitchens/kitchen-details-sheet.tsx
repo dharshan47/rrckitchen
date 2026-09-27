@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { Loader2, Camera, Clock, ShieldCheck, X, Star, MapPin, UtensilsCrossed, Settings2 } from "lucide-react"
+import { Loader2, Camera, Clock, ShieldCheck, Star, MapPin, UtensilsCrossed, Settings2 } from "lucide-react"
 import Image from "next/image"
 
 import {

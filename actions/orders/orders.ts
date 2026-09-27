@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma"
 import { getSession } from "@/lib/auth-server"
+import { revalidatePath } from "next/cache"
 import { razorpayClient } from "@/lib/razorpay"
 import { confirmPayment } from "@/actions/payments/payment"
 import { sendPushToDeliveryPartners } from "@/lib/notification"
@@ -366,6 +367,8 @@ export async function updateOrderStatus(orderId: string, status: string) {
       }
     }
 
+    revalidatePath("/kitchen/dashboard")
+    revalidatePath("/dashboard/orders")
     return { success: true }
   } catch {
     return { success: false, error: "Failed to update order status" }

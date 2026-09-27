@@ -268,3 +268,17 @@ export const CravingsPriority = {
 } as const
 
 export type CravingsPriority = (typeof CravingsPriority)[keyof typeof CravingsPriority]
+
+
+export const TiffinPickupStatus = {
+  SCHEDULED: 'SCHEDULED',
+  ASSIGNED: 'ASSIGNED',
+  ACCEPTED: 'ACCEPTED',
+  STARTED: 'STARTED',
+  ARRIVED: 'ARRIVED',
+  COLLECTED: 'COLLECTED',
+  COMPLETED: 'COMPLETED',
+  FAILED: 'FAILED'
+} as const
+
+export type TiffinPickupStatus = (typeof TiffinPickupStatus)[keyof typeof TiffinPickupStatus]

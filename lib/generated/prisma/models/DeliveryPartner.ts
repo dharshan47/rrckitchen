@@ -269,6 +269,7 @@ export type DeliveryPartnerWhereInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentListRelationFilter
   deliveryLocations?: Prisma.DeliveryLocationListRelationFilter
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutListRelationFilter
+  tiffinPickups?: Prisma.TiffinPickupListRelationFilter
 }
 
 export type DeliveryPartnerOrderByWithRelationInput = {
@@ -291,6 +292,7 @@ export type DeliveryPartnerOrderByWithRelationInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentOrderByRelationAggregateInput
   deliveryLocations?: Prisma.DeliveryLocationOrderByRelationAggregateInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutOrderByRelationAggregateInput
+  tiffinPickups?: Prisma.TiffinPickupOrderByRelationAggregateInput
 }
 
 export type DeliveryPartnerWhereUniqueInput = Prisma.AtLeast<{
@@ -316,6 +318,7 @@ export type DeliveryPartnerWhereUniqueInput = Prisma.AtLeast<{
   deliveryAssignments?: Prisma.DeliveryAssignmentListRelationFilter
   deliveryLocations?: Prisma.DeliveryLocationListRelationFilter
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutListRelationFilter
+  tiffinPickups?: Prisma.TiffinPickupListRelationFilter
 }, "id" | "publicCode" | "userId">
 
 export type DeliveryPartnerOrderByWithAggregationInput = {
@@ -371,6 +374,7 @@ export type DeliveryPartnerCreateInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateInput = {
@@ -392,6 +396,7 @@ export type DeliveryPartnerUncheckedCreateInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUpdateInput = {
@@ -413,6 +418,7 @@ export type DeliveryPartnerUpdateInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateInput = {
@@ -434,6 +440,7 @@ export type DeliveryPartnerUncheckedUpdateInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateManyInput = {
@@ -679,6 +686,22 @@ export type DeliveryPartnerUpdateOneRequiredWithoutDeliveryPayoutsNestedInput = 
   update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutDeliveryPayoutsInput, Prisma.DeliveryPartnerUpdateWithoutDeliveryPayoutsInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutDeliveryPayoutsInput>
 }
 
+export type DeliveryPartnerCreateNestedOneWithoutTiffinPickupsInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutTiffinPickupsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutTiffinPickupsInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutTiffinPickupsInput
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+}
+
+export type DeliveryPartnerUpdateOneWithoutTiffinPickupsNestedInput = {
+  create?: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutTiffinPickupsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutTiffinPickupsInput>
+  connectOrCreate?: Prisma.DeliveryPartnerCreateOrConnectWithoutTiffinPickupsInput
+  upsert?: Prisma.DeliveryPartnerUpsertWithoutTiffinPickupsInput
+  disconnect?: Prisma.DeliveryPartnerWhereInput | boolean
+  delete?: Prisma.DeliveryPartnerWhereInput | boolean
+  connect?: Prisma.DeliveryPartnerWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.DeliveryPartnerUpdateToOneWithWhereWithoutTiffinPickupsInput, Prisma.DeliveryPartnerUpdateWithoutTiffinPickupsInput>, Prisma.DeliveryPartnerUncheckedUpdateWithoutTiffinPickupsInput>
+}
+
 export type DeliveryPartnerCreateWithoutUserInput = {
   id?: string
   publicCode?: string | null
@@ -697,6 +720,7 @@ export type DeliveryPartnerCreateWithoutUserInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutUserInput = {
@@ -717,6 +741,7 @@ export type DeliveryPartnerUncheckedCreateWithoutUserInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutUserInput = {
@@ -753,6 +778,7 @@ export type DeliveryPartnerUpdateWithoutUserInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutUserInput = {
@@ -773,6 +799,7 @@ export type DeliveryPartnerUncheckedUpdateWithoutUserInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutKycInput = {
@@ -793,6 +820,7 @@ export type DeliveryPartnerCreateWithoutKycInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutKycInput = {
@@ -813,6 +841,7 @@ export type DeliveryPartnerUncheckedCreateWithoutKycInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutKycInput = {
@@ -849,6 +878,7 @@ export type DeliveryPartnerUpdateWithoutKycInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutKycInput = {
@@ -869,6 +899,7 @@ export type DeliveryPartnerUncheckedUpdateWithoutKycInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutCatalogueItemsInput = {
@@ -889,6 +920,7 @@ export type DeliveryPartnerCreateWithoutCatalogueItemsInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutCatalogueItemsInput = {
@@ -909,6 +941,7 @@ export type DeliveryPartnerUncheckedCreateWithoutCatalogueItemsInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutCatalogueItemsInput = {
@@ -945,6 +978,7 @@ export type DeliveryPartnerUpdateWithoutCatalogueItemsInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutCatalogueItemsInput = {
@@ -965,6 +999,7 @@ export type DeliveryPartnerUncheckedUpdateWithoutCatalogueItemsInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutKitchenAssignmentsInput = {
@@ -985,6 +1020,7 @@ export type DeliveryPartnerCreateWithoutKitchenAssignmentsInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutKitchenAssignmentsInput = {
@@ -1005,6 +1041,7 @@ export type DeliveryPartnerUncheckedCreateWithoutKitchenAssignmentsInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutKitchenAssignmentsInput = {
@@ -1041,6 +1078,7 @@ export type DeliveryPartnerUpdateWithoutKitchenAssignmentsInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutKitchenAssignmentsInput = {
@@ -1061,6 +1099,7 @@ export type DeliveryPartnerUncheckedUpdateWithoutKitchenAssignmentsInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutOrdersInput = {
@@ -1081,6 +1120,7 @@ export type DeliveryPartnerCreateWithoutOrdersInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutOrdersInput = {
@@ -1101,6 +1141,7 @@ export type DeliveryPartnerUncheckedCreateWithoutOrdersInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutOrdersInput = {
@@ -1137,6 +1178,7 @@ export type DeliveryPartnerUpdateWithoutOrdersInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutOrdersInput = {
@@ -1157,6 +1199,7 @@ export type DeliveryPartnerUncheckedUpdateWithoutOrdersInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutReviewsInput = {
@@ -1177,6 +1220,7 @@ export type DeliveryPartnerCreateWithoutReviewsInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutReviewsInput = {
@@ -1197,6 +1241,7 @@ export type DeliveryPartnerUncheckedCreateWithoutReviewsInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutReviewsInput = {
@@ -1233,6 +1278,7 @@ export type DeliveryPartnerUpdateWithoutReviewsInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutReviewsInput = {
@@ -1253,6 +1299,7 @@ export type DeliveryPartnerUncheckedUpdateWithoutReviewsInput = {
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutDeliveryAssignmentsInput = {
@@ -1273,6 +1320,7 @@ export type DeliveryPartnerCreateWithoutDeliveryAssignmentsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutDeliveryAssignmentsInput = {
@@ -1293,6 +1341,7 @@ export type DeliveryPartnerUncheckedCreateWithoutDeliveryAssignmentsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutDeliveryAssignmentsInput = {
@@ -1329,6 +1378,7 @@ export type DeliveryPartnerUpdateWithoutDeliveryAssignmentsInput = {
   orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutDeliveryAssignmentsInput = {
@@ -1349,6 +1399,7 @@ export type DeliveryPartnerUncheckedUpdateWithoutDeliveryAssignmentsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutDeliveryLocationsInput = {
@@ -1369,6 +1420,7 @@ export type DeliveryPartnerCreateWithoutDeliveryLocationsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
   deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutDeliveryLocationsInput = {
@@ -1389,6 +1441,7 @@ export type DeliveryPartnerUncheckedCreateWithoutDeliveryLocationsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutDeliveryLocationsInput = {
@@ -1425,6 +1478,7 @@ export type DeliveryPartnerUpdateWithoutDeliveryLocationsInput = {
   orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutDeliveryLocationsInput = {
@@ -1445,6 +1499,7 @@ export type DeliveryPartnerUncheckedUpdateWithoutDeliveryLocationsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerCreateWithoutDeliveryPayoutsInput = {
@@ -1465,6 +1520,7 @@ export type DeliveryPartnerCreateWithoutDeliveryPayoutsInput = {
   orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
   deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerUncheckedCreateWithoutDeliveryPayoutsInput = {
@@ -1485,6 +1541,7 @@ export type DeliveryPartnerUncheckedCreateWithoutDeliveryPayoutsInput = {
   orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedCreateNestedManyWithoutDeliveryPartnerInput
 }
 
 export type DeliveryPartnerCreateOrConnectWithoutDeliveryPayoutsInput = {
@@ -1521,6 +1578,7 @@ export type DeliveryPartnerUpdateWithoutDeliveryPayoutsInput = {
   orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 export type DeliveryPartnerUncheckedUpdateWithoutDeliveryPayoutsInput = {
@@ -1541,6 +1599,107 @@ export type DeliveryPartnerUncheckedUpdateWithoutDeliveryPayoutsInput = {
   orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
   deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  tiffinPickups?: Prisma.TiffinPickupUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerCreateWithoutTiffinPickupsInput = {
+  id?: string
+  publicCode?: string | null
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  user: Prisma.UserCreateNestedOneWithoutDeliveryPartnerInput
+  kyc?: Prisma.DeliveryPartnerKycCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerUncheckedCreateWithoutTiffinPickupsInput = {
+  id?: string
+  publicCode?: string | null
+  userId: string
+  status?: $Enums.PartnerStatus
+  approvedAt?: Date | string | null
+  isOnline?: boolean
+  avgRating?: runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: number
+  createdAt?: Date | string
+  deletedAt?: Date | string | null
+  kyc?: Prisma.DeliveryPartnerKycUncheckedCreateNestedOneWithoutDeliveryPartnerInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  reviews?: Prisma.DeliveryReviewUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  orders?: Prisma.OrderUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedCreateNestedManyWithoutDeliveryPartnerInput
+}
+
+export type DeliveryPartnerCreateOrConnectWithoutTiffinPickupsInput = {
+  where: Prisma.DeliveryPartnerWhereUniqueInput
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutTiffinPickupsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutTiffinPickupsInput>
+}
+
+export type DeliveryPartnerUpsertWithoutTiffinPickupsInput = {
+  update: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutTiffinPickupsInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutTiffinPickupsInput>
+  create: Prisma.XOR<Prisma.DeliveryPartnerCreateWithoutTiffinPickupsInput, Prisma.DeliveryPartnerUncheckedCreateWithoutTiffinPickupsInput>
+  where?: Prisma.DeliveryPartnerWhereInput
+}
+
+export type DeliveryPartnerUpdateToOneWithWhereWithoutTiffinPickupsInput = {
+  where?: Prisma.DeliveryPartnerWhereInput
+  data: Prisma.XOR<Prisma.DeliveryPartnerUpdateWithoutTiffinPickupsInput, Prisma.DeliveryPartnerUncheckedUpdateWithoutTiffinPickupsInput>
+}
+
+export type DeliveryPartnerUpdateWithoutTiffinPickupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  user?: Prisma.UserUpdateOneRequiredWithoutDeliveryPartnerNestedInput
+  kyc?: Prisma.DeliveryPartnerKycUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUpdateManyWithoutDeliveryPartnerNestedInput
+}
+
+export type DeliveryPartnerUncheckedUpdateWithoutTiffinPickupsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  publicCode?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  userId?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.EnumPartnerStatusFieldUpdateOperationsInput | $Enums.PartnerStatus
+  approvedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  isOnline?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  avgRating?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  totalReviews?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deletedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  kyc?: Prisma.DeliveryPartnerKycUncheckedUpdateOneWithoutDeliveryPartnerNestedInput
+  catalogueItems?: Prisma.DeliveryPartnerCatalogueItemUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  kitchenAssignments?: Prisma.DeliveryPartnerKitchenAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  reviews?: Prisma.DeliveryReviewUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  orders?: Prisma.OrderUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryAssignments?: Prisma.DeliveryAssignmentUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryLocations?: Prisma.DeliveryLocationUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
+  deliveryPayouts?: Prisma.DeliveryPartnerPayoutUncheckedUpdateManyWithoutDeliveryPartnerNestedInput
 }
 
 
@@ -1556,6 +1715,7 @@ export type DeliveryPartnerCountOutputType = {
   deliveryAssignments: number
   deliveryLocations: number
   deliveryPayouts: number
+  tiffinPickups: number
 }
 
 export type DeliveryPartnerCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1566,6 +1726,7 @@ export type DeliveryPartnerCountOutputTypeSelect<ExtArgs extends runtime.Types.E
   deliveryAssignments?: boolean | DeliveryPartnerCountOutputTypeCountDeliveryAssignmentsArgs
   deliveryLocations?: boolean | DeliveryPartnerCountOutputTypeCountDeliveryLocationsArgs
   deliveryPayouts?: boolean | DeliveryPartnerCountOutputTypeCountDeliveryPayoutsArgs
+  tiffinPickups?: boolean | DeliveryPartnerCountOutputTypeCountTiffinPickupsArgs
 }
 
 /**
@@ -1627,6 +1788,13 @@ export type DeliveryPartnerCountOutputTypeCountDeliveryPayoutsArgs<ExtArgs exten
   where?: Prisma.DeliveryPartnerPayoutWhereInput
 }
 
+/**
+ * DeliveryPartnerCountOutputType without action
+ */
+export type DeliveryPartnerCountOutputTypeCountTiffinPickupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TiffinPickupWhereInput
+}
+
 
 export type DeliveryPartnerSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1648,6 +1816,7 @@ export type DeliveryPartnerSelect<ExtArgs extends runtime.Types.Extensions.Inter
   deliveryAssignments?: boolean | Prisma.DeliveryPartner$deliveryAssignmentsArgs<ExtArgs>
   deliveryLocations?: boolean | Prisma.DeliveryPartner$deliveryLocationsArgs<ExtArgs>
   deliveryPayouts?: boolean | Prisma.DeliveryPartner$deliveryPayoutsArgs<ExtArgs>
+  tiffinPickups?: boolean | Prisma.DeliveryPartner$tiffinPickupsArgs<ExtArgs>
   _count?: boolean | Prisma.DeliveryPartnerCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["deliveryPartner"]>
 
@@ -1703,6 +1872,7 @@ export type DeliveryPartnerInclude<ExtArgs extends runtime.Types.Extensions.Inte
   deliveryAssignments?: boolean | Prisma.DeliveryPartner$deliveryAssignmentsArgs<ExtArgs>
   deliveryLocations?: boolean | Prisma.DeliveryPartner$deliveryLocationsArgs<ExtArgs>
   deliveryPayouts?: boolean | Prisma.DeliveryPartner$deliveryPayoutsArgs<ExtArgs>
+  tiffinPickups?: boolean | Prisma.DeliveryPartner$tiffinPickupsArgs<ExtArgs>
   _count?: boolean | Prisma.DeliveryPartnerCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type DeliveryPartnerIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1724,6 +1894,7 @@ export type $DeliveryPartnerPayload<ExtArgs extends runtime.Types.Extensions.Int
     deliveryAssignments: Prisma.$DeliveryAssignmentPayload<ExtArgs>[]
     deliveryLocations: Prisma.$DeliveryLocationPayload<ExtArgs>[]
     deliveryPayouts: Prisma.$DeliveryPartnerPayoutPayload<ExtArgs>[]
+    tiffinPickups: Prisma.$TiffinPickupPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -2139,6 +2310,7 @@ export interface Prisma__DeliveryPartnerClient<T, Null = never, ExtArgs extends 
   deliveryAssignments<T extends Prisma.DeliveryPartner$deliveryAssignmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$deliveryAssignmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryAssignmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deliveryLocations<T extends Prisma.DeliveryPartner$deliveryLocationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$deliveryLocationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryLocationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   deliveryPayouts<T extends Prisma.DeliveryPartner$deliveryPayoutsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$deliveryPayoutsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$DeliveryPartnerPayoutPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  tiffinPickups<T extends Prisma.DeliveryPartner$tiffinPickupsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.DeliveryPartner$tiffinPickupsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TiffinPickupPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2763,6 +2935,30 @@ export type DeliveryPartner$deliveryPayoutsArgs<ExtArgs extends runtime.Types.Ex
   take?: number
   skip?: number
   distinct?: Prisma.DeliveryPartnerPayoutScalarFieldEnum | Prisma.DeliveryPartnerPayoutScalarFieldEnum[]
+}
+
+/**
+ * DeliveryPartner.tiffinPickups
+ */
+export type DeliveryPartner$tiffinPickupsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TiffinPickup
+   */
+  select?: Prisma.TiffinPickupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TiffinPickup
+   */
+  omit?: Prisma.TiffinPickupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TiffinPickupInclude<ExtArgs> | null
+  where?: Prisma.TiffinPickupWhereInput
+  orderBy?: Prisma.TiffinPickupOrderByWithRelationInput | Prisma.TiffinPickupOrderByWithRelationInput[]
+  cursor?: Prisma.TiffinPickupWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TiffinPickupScalarFieldEnum | Prisma.TiffinPickupScalarFieldEnum[]
 }
 
 /**

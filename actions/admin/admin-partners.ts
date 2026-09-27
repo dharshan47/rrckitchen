@@ -151,6 +151,18 @@ export async function updateKitchenPartnerStatus(id: string, status: string) {
     return { success: false, error: "Invalid status" }
   }
 
+  if (status === "SUSPENDED" || status === "REJECTED") {
+    const activeOrders = await prisma.order.count({
+      where: {
+        orderItems: { some: { kitchenPartnerId: id } },
+        status: { notIn: ["COMPLETED", "CANCELLED", "REFUNDED"] }
+      }
+    })
+    if (activeOrders > 0) {
+      return { success: false, error: "Cannot deactivate kitchen partner with active orders" }
+    }
+  }
+
   try {
     await prisma.kitchenPartner.update({
       where: { id },
@@ -433,6 +445,18 @@ export async function updateDeliveryPartnerStatus(id: string, status: string) {
   const validStatuses = ["PENDINGAPPROVAL", "APPROVED", "ACTIVE", "SUSPENDED", "REJECTED"]
   if (!validStatuses.includes(status)) {
     return { success: false, error: "Invalid status" }
+  }
+
+  if (status === "SUSPENDED" || status === "REJECTED") {
+    const activeOrders = await prisma.order.count({
+      where: {
+        deliveryPartnerId: id,
+        deliveryStatus: { in: ["ASSIGNED", "ACCEPTED", "PICKEDUP", "INTRANSIT"] }
+      }
+    })
+    if (activeOrders > 0) {
+      return { success: false, error: "Cannot deactivate delivery partner with active orders" }
+    }
   }
 
   try {

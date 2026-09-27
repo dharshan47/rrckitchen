@@ -460,7 +460,8 @@ export const ModelName = {
   KitchenSearchRecommendedItem: 'KitchenSearchRecommendedItem',
   CravingsRule: 'CravingsRule',
   CravingsRuleItem: 'CravingsRuleItem',
-  PublicIdCounter: 'PublicIdCounter'
+  PublicIdCounter: 'PublicIdCounter',
+  TiffinPickup: 'TiffinPickup'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -476,7 +477,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "role" | "customer" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "rrcKitchenReview" | "menuItemFeedback" | "menuItemReview" | "deliveryAssignment" | "deliveryLocation" | "payment" | "pushSubscription" | "deliverySlot" | "notificationLog" | "supportTicket" | "ticketMessage" | "contactMessage" | "referral" | "loyaltyPoints" | "loyaltyTransaction" | "loyaltyCoupon" | "loyaltyCouponPurchase" | "coupon" | "couponRedemption" | "paymentOffer" | "upiCollectRequest" | "refund" | "kitchenPayout" | "deliveryPartnerPayout" | "kitchenAddress" | "adminProfile" | "adminInvite" | "adminApprovalRequest" | "adminAuditLog" | "twoFactor" | "wishlistItem" | "kitchenWishlist" | "searchPageContent" | "searchPageKitchenCard" | "searchPageFilter" | "searchPageBadge" | "searchPageInfoItem" | "categoryPageContent" | "categoryPageFeature" | "categoryPageOffer" | "categoryPageFaq" | "kitchenSearchPageContent" | "kitchenSearchChip" | "kitchenSearchFilter" | "kitchenSearchMenuCategory" | "kitchenSearchRecommendedItem" | "cravingsRule" | "cravingsRuleItem" | "publicIdCounter"
+    modelProps: "user" | "role" | "customer" | "userRole" | "session" | "account" | "verification" | "otpCode" | "address" | "kitchenPartner" | "kitchenPartnerKyc" | "kitchenAlias" | "kitchenCategory" | "kitchenAvailability" | "menu" | "menuItem" | "menuItemPhoto" | "deliveryPartner" | "deliveryPartnerKyc" | "deliveryPartnerCatalogueItem" | "deliveryPartnerKitchenAssignment" | "category" | "serviceZone" | "order" | "orderItem" | "orderStatusHistory" | "review" | "deliveryReview" | "rrcKitchenReview" | "menuItemFeedback" | "menuItemReview" | "deliveryAssignment" | "deliveryLocation" | "payment" | "pushSubscription" | "deliverySlot" | "notificationLog" | "supportTicket" | "ticketMessage" | "contactMessage" | "referral" | "loyaltyPoints" | "loyaltyTransaction" | "loyaltyCoupon" | "loyaltyCouponPurchase" | "coupon" | "couponRedemption" | "paymentOffer" | "upiCollectRequest" | "refund" | "kitchenPayout" | "deliveryPartnerPayout" | "kitchenAddress" | "adminProfile" | "adminInvite" | "adminApprovalRequest" | "adminAuditLog" | "twoFactor" | "wishlistItem" | "kitchenWishlist" | "searchPageContent" | "searchPageKitchenCard" | "searchPageFilter" | "searchPageBadge" | "searchPageInfoItem" | "categoryPageContent" | "categoryPageFeature" | "categoryPageOffer" | "categoryPageFaq" | "kitchenSearchPageContent" | "kitchenSearchChip" | "kitchenSearchFilter" | "kitchenSearchMenuCategory" | "kitchenSearchRecommendedItem" | "cravingsRule" | "cravingsRuleItem" | "publicIdCounter" | "tiffinPickup"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -6178,6 +6179,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TiffinPickup: {
+      payload: Prisma.$TiffinPickupPayload<ExtArgs>
+      fields: Prisma.TiffinPickupFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TiffinPickupFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TiffinPickupPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TiffinPickupFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TiffinPickupPayload>
+        }
+        findFirst: {
+          args: Prisma.TiffinPickupFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TiffinPickupPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TiffinPickupFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TiffinPickupPayload>
+        }
+        findMany: {
+          args: Prisma.TiffinPickupFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TiffinPickupPayload>[]
+        }
+        create: {
+          args: Prisma.TiffinPickupCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TiffinPickupPayload>
+        }
+        createMany: {
+          args: Prisma.TiffinPickupCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TiffinPickupCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TiffinPickupPayload>[]
+        }
+        delete: {
+          args: Prisma.TiffinPickupDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TiffinPickupPayload>
+        }
+        update: {
+          args: Prisma.TiffinPickupUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TiffinPickupPayload>
+        }
+        deleteMany: {
+          args: Prisma.TiffinPickupDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TiffinPickupUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TiffinPickupUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TiffinPickupPayload>[]
+        }
+        upsert: {
+          args: Prisma.TiffinPickupUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TiffinPickupPayload>
+        }
+        aggregate: {
+          args: Prisma.TiffinPickupAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTiffinPickup>
+        }
+        groupBy: {
+          args: Prisma.TiffinPickupGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TiffinPickupGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TiffinPickupCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TiffinPickupCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -7391,6 +7466,23 @@ export const PublicIdCounterScalarFieldEnum = {
 export type PublicIdCounterScalarFieldEnum = (typeof PublicIdCounterScalarFieldEnum)[keyof typeof PublicIdCounterScalarFieldEnum]
 
 
+export const TiffinPickupScalarFieldEnum = {
+  id: 'id',
+  publicCode: 'publicCode',
+  orderId: 'orderId',
+  customerId: 'customerId',
+  kitchenId: 'kitchenId',
+  deliveryPartnerId: 'deliveryPartnerId',
+  pickupAddressId: 'pickupAddressId',
+  status: 'status',
+  scheduledDate: 'scheduledDate',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type TiffinPickupScalarFieldEnum = (typeof TiffinPickupScalarFieldEnum)[keyof typeof TiffinPickupScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -7899,6 +7991,20 @@ export type EnumCravingsPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<
 export type ListEnumCravingsPriorityFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'CravingsPriority[]'>
     
 
+
+/**
+ * Reference to a field of type 'TiffinPickupStatus'
+ */
+export type EnumTiffinPickupStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TiffinPickupStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'TiffinPickupStatus[]'
+ */
+export type ListEnumTiffinPickupStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TiffinPickupStatus[]'>
+    
+
 /**
  * Batch Payload for updateMany & deleteMany & createMany
  */
@@ -8086,6 +8192,7 @@ export type GlobalOmitConfig = {
   cravingsRule?: Prisma.CravingsRuleOmit
   cravingsRuleItem?: Prisma.CravingsRuleItemOmit
   publicIdCounter?: Prisma.PublicIdCounterOmit
+  tiffinPickup?: Prisma.TiffinPickupOmit
 }
 
 /* Types for Logging */

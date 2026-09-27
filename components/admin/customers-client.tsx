@@ -493,7 +493,7 @@ export default function AdminCustomersPage() {
                 alt={row.original.name}
               />
               <AvatarFallback className="bg-green-100 text-green-700 font-bold">
-                {row.original.name.charAt(0).toUpperCase()}
+                {(row.original.name || "C").charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div className="flex flex-col">
@@ -1194,7 +1194,7 @@ export default function AdminCustomersPage() {
                       alt={selectedUser.name}
                     />
                     <AvatarFallback className="text-3xl bg-primary/10 text-primary font-bold">
-                      {selectedUser.name.charAt(0).toUpperCase()}
+                      {(selectedUser.name || "C").charAt(0).toUpperCase()}
                     </AvatarFallback>
                   </Avatar>
                   <div>

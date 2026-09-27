@@ -74,21 +74,48 @@ export default function OrdersPageClient() {
 
   const statusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) => updateOrderStatus(id, status),
+    onMutate: async ({ id, status }) => {
+      await queryClient.cancelQueries({ queryKey: ["kitchen-dashboard"] })
+      const previousData = queryClient.getQueryData<{ orders: Array<{ id: string; status: string; [key: string]: unknown }> }>(["kitchen-dashboard"])
+      if (previousData) {
+        queryClient.setQueryData(["kitchen-dashboard"], {
+          ...previousData,
+          orders: previousData.orders.map((o) => {
+            if (o.id === id) {
+              let displayStatus = status
+              if (status === "PREPARING") displayStatus = "Preparing"
+              if (status === "READYFORPICKUP") displayStatus = "Ready for Pickup"
+              if (status === "COMPLETED") displayStatus = "Completed"
+              if (status === "CANCELLED") displayStatus = "Cancelled"
+              return { ...o, status: displayStatus }
+            }
+            return o
+          })
+        })
+      }
+      return { previousData }
+    },
     onSuccess: (res, { status }) => {
       if (res.success) {
         const messages: Record<string, string> = {
           PREPARING: "Order accepted and is now preparing",
           CANCELLED: "Order rejected",
           READYFORPICKUP: "Order is ready for pickup",
-          DELIVERED: "Order marked as completed",
+          COMPLETED: "Order marked as completed",
         }
         toast.success(messages[status] ?? "Order updated")
         invalidate()
       } else {
         toast.error(res.error ?? "Failed to update order")
+        invalidate()
       }
     },
-    onError: () => toast.error("Something went wrong"),
+    onError: (err, variables, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(["kitchen-dashboard"], context.previousData)
+      }
+      toast.error("Something went wrong")
+    },
   })
 
   const data = useKitchenDashboardData()
@@ -445,7 +472,7 @@ export default function OrdersPageClient() {
                             {displayStatus}
                           </Badge>
 
-                          <div className="flex flex-row lg:flex-col gap-2 w-full mt-1">
+                          <div className="flex flex-col gap-2 w-full mt-1">
                             {isConfirmed && (
                               <>
                                 <Button
@@ -480,7 +507,7 @@ export default function OrdersPageClient() {
                               <Button
                                 variant="outline"
                                 className="h-[28px] rounded-[7px] border-[#65A878] text-[#16702E] bg-[#FFFFFF] hover:bg-green-50 font-[500] text-[11px] px-3 w-full shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
-                                onClick={() => statusMutation.mutate({ id: order.id, status: "DELIVERED" })}
+                                onClick={() => statusMutation.mutate({ id: order.id, status: "COMPLETED" })}
                                 disabled={statusMutation.isPending}
                               >
                                 Mark as Completed

@@ -5,17 +5,21 @@ import { useQuery } from "@tanstack/react-query";
 interface OrderTrackingMapState {
   livePosition: { lat: number; lng: number } | null;
   routeCoords: [number, number][];
+  etaMinutes: number | null;
   setLivePosition: (livePosition: { lat: number; lng: number } | null) => void;
   setRouteCoords: (routeCoords: [number, number][]) => void;
+  setEtaMinutes: (etaMinutes: number | null) => void;
   resetTracking: () => void;
 }
 
 export const orderTrackingMapStore = create<OrderTrackingMapState>()((set) => ({
   livePosition: null,
   routeCoords: [],
+  etaMinutes: null,
   setLivePosition: (livePosition) => set({ livePosition }),
   setRouteCoords: (routeCoords) => set({ routeCoords }),
-  resetTracking: () => set({ livePosition: null, routeCoords: [] }),
+  setEtaMinutes: (etaMinutes) => set({ etaMinutes }),
+  resetTracking: () => set({ livePosition: null, routeCoords: [], etaMinutes: null }),
 }));
 
 const selectLivePosition = (s: OrderTrackingMapState) => s.livePosition;
@@ -34,9 +38,14 @@ export function useOrderTrackingMapActions() {
     useShallow((s) => ({
       setLivePosition: s.setLivePosition,
       setRouteCoords: s.setRouteCoords,
+      setEtaMinutes: s.setEtaMinutes,
       resetTracking: s.resetTracking,
     }))
   );
+}
+
+export function useOrderTrackingEtaMinutes() {
+  return orderTrackingMapStore((s) => s.etaMinutes);
 }
 
 /**
@@ -65,19 +74,19 @@ export function useRiderLastLocationQuery(orderId: string, enabled: boolean) {
  * syncs the route polyline into the store.
  */
 export function useRouteEtaQuery(
-  deliveryPos: { lat: number; lng: number } | null,
+  originPos: { lat: number; lng: number } | null,
   destLat: number,
   destLng: number
 ) {
   return useQuery<number | null>({
-    queryKey: ["route-eta", deliveryPos?.lat, deliveryPos?.lng, destLat, destLng],
+    queryKey: ["route-eta", originPos?.lat, originPos?.lng, destLat, destLng],
     queryFn: async () => {
-      if (!deliveryPos) return null
+      if (!originPos) return null
       const res = await fetch("/api/route/road-route", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          kitchenPos: [deliveryPos.lat, deliveryPos.lng],
+          kitchenPos: [originPos.lat, originPos.lng],
           customerPos: [destLat, destLng],
         }),
       })
@@ -85,9 +94,10 @@ export function useRouteEtaQuery(
       if (data.route) {
         orderTrackingMapStore.getState().setRouteCoords(data.route as [number, number][])
       }
+      orderTrackingMapStore.getState().setEtaMinutes(data.etaMinutes ?? null)
       return data.etaMinutes ?? null
     },
-    enabled: !!deliveryPos,
+    enabled: !!originPos,
     refetchInterval: 30_000,
     staleTime: 10_000,
     placeholderData: (prev) => prev,
