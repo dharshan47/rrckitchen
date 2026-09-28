@@ -1048,7 +1048,7 @@ function MenuEditMode({ item, onClose }: { item: AdminMenuItemRow; onClose: () =
         </ScrollArea>
       </SheetHeader>
 
-      <ScrollArea className="flex-1 bg-white w-full">
+      <ScrollArea className="flex-1 bg-white w-full min-h-0">
         <div className="p-6 sm:p-8 space-y-7 min-w-[280px]">
         {activeTab === "images" && (
         <>
@@ -1217,7 +1217,6 @@ function MenuEditMode({ item, onClose }: { item: AdminMenuItemRow; onClose: () =
         </>
         )}
         </div>
-        <ScrollBar orientation="horizontal" />
       </ScrollArea>
 
       <div className="p-6 border-t border-[#E5E7EB] bg-white flex flex-wrap-reverse sm:flex-nowrap justify-end gap-3 sticky bottom-0 z-20">

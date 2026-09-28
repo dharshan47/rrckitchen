@@ -245,9 +245,9 @@ export default function DashboardLayoutClient({
                 <div className="flex items-center gap-2">
                   <div className="bg-[#E7E7E5] h-[36px] w-[36px] rounded-full overflow-hidden flex items-center justify-center shrink-0">
                     <Avatar className="h-[36px] w-[36px] rounded-full bg-[#E7E7E5]">
-                      <AvatarImage src={kitchen.imageUrl ?? undefined} alt={kitchen.displayName || "Kitchen"} className="object-cover" />
+                      <AvatarImage src={kitchen.imageUrl || "/kitchen/profile.webp"} alt={kitchen.displayName || "Kitchen"} className="object-cover" />
                       <AvatarFallback className="bg-[#E7E7E5] text-[#17191C] font-bold text-sm">
-                        {kitchen.displayName?.charAt(0) || "K"}
+                        K
                       </AvatarFallback>
                     </Avatar>
                   </div>
@@ -372,9 +372,9 @@ export default function DashboardLayoutClient({
                     <div className="hidden lg:flex items-center gap-3 cursor-pointer group">
                       <div className="bg-[#E7E7E5] h-[42px] w-[42px] rounded-full overflow-hidden flex items-center justify-center shrink-0 shadow-[0_1px_3px_rgba(35,35,35,0.03)]">
                         <Avatar className="h-[42px] w-[42px] rounded-full bg-[#E7E7E5]">
-                          <AvatarImage src={kitchen.imageUrl ?? undefined} alt={kitchen.displayName || "Kitchen"} className="object-cover" />
+                          <AvatarImage src={kitchen.imageUrl || "/kitchen/profile.webp"} alt={kitchen.displayName || "Kitchen"} className="object-cover" />
                           <AvatarFallback className="bg-[#E7E7E5] text-[#17191C] font-bold text-lg">
-                            {kitchen.displayName?.charAt(0) || "K"}
+                            K
                           </AvatarFallback>
                         </Avatar>
                       </div>

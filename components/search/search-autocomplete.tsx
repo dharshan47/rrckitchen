@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { useQuery, keepPreviousData } from "@tanstack/react-query"
-import { MapPin, UtensilsCrossed, ArrowLeft, Clock, X } from "lucide-react"
+import { UtensilsCrossed, ArrowLeft, Clock, X } from "lucide-react"
 import Image from "next/image"
 import { useDebouncedValue } from "@/hooks/useDebouncedValue"
 import { cn } from "@/lib/utils"
@@ -300,7 +300,7 @@ export function SearchAutocomplete({
                         {kitchen.imageUrl ? (
                           <Image src={kitchen.imageUrl} alt={kitchen.displayName} fill className={cn("object-cover", isClosed && "grayscale")} sizes="32px" />
                         ) : (
-                          <MapPin className="h-4 w-4 text-primary" />
+                          <Image src="/kitchen/profile.webp" alt="Fallback Kitchen Profile" fill className={cn("object-cover", isClosed && "grayscale")} sizes="32px" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">

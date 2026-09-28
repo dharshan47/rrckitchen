@@ -1,12 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query"
 import Image from "next/image"
 import Link from "next/link"
 import {
   Check, CheckCircle2, Copy, Calendar, ShoppingBag,
-  ChefHat, XCircle, MapPin, Phone, Clock, Bike
+  ChefHat, XCircle, MapPin, Phone, Clock, Bike, Star, Package, CalendarDays
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -32,6 +32,7 @@ import { cancelOrder, type UserOrder } from "@/actions/orders/orders"
 import { formatTimeSlot } from "@/lib/patterns"
 import { useCartActions } from "@/stores"
 import { toast } from "sonner"
+import { getTiffinPickupByOrderId } from "@/actions/dispatch/tiffin-actions"
 
 const statusFlow = [
   { key: "CONFIRMED", label: "Order Confirmed" },
@@ -198,6 +199,12 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
   const [cancelOpen, setCancelOpen] = useState(false)
   const { addToCart } = useCartActions()
 
+  const { data: tiffinPickup } = useQuery({
+    queryKey: ["tiffin-pickup", order.id],
+    queryFn: () => getTiffinPickupByOrderId(order.id),
+    enabled: isCompleted,
+  })
+
   const cancelMutation = useMutation({
     mutationFn: () => cancelOrder(order.id),
     onSuccess: (res) => {
@@ -347,11 +354,17 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
 
           {isOngoing && (
             <>
-              <Button asChild className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white rounded-[12px] h-[48px] text-[15px] font-[600] gap-2 transition-colors shadow-[0_4px_12px_rgba(249,115,22,0.2)]">
-                <Link href={`/account/orders/${order.publicCode ?? order.id}/track`}>
+              {order.status === "READYFORPICKUP" && !!order.deliveryPartner ? (
+                <Button asChild className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white rounded-[12px] h-[48px] text-[15px] font-[600] gap-2 transition-colors shadow-[0_4px_12px_rgba(249,115,22,0.2)]">
+                  <Link href={`/account/orders/${order.publicCode ?? order.id}/track`}>
+                    <MapPin className="w-[18px] h-[18px]" /> Track Order
+                  </Link>
+                </Button>
+              ) : (
+                <Button disabled className="w-full bg-[#F3F4F6] text-[#9CA3AF] rounded-[12px] h-[48px] text-[15px] font-[600] gap-2 opacity-100 cursor-not-allowed shadow-none">
                   <MapPin className="w-[18px] h-[18px]" /> Track Order
-                </Link>
-              </Button>
+                </Button>
+              )}
               <AlertDialog open={cancelOpen} onOpenChange={setCancelOpen}>
                 <AlertDialogTrigger asChild>
                   <Button
@@ -383,6 +396,14 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
                 </AlertDialogContent>
               </AlertDialog>
             </>
+          )}
+
+          {isCompleted && (
+            <Button asChild className="w-full bg-[#15803D] hover:bg-[#166534] text-white rounded-[12px] h-[48px] text-[15px] font-[600] gap-2 transition-colors shadow-[0_4px_12px_rgba(21,128,61,0.2)] mb-3">
+              <Link href={`/account/rating?orderId=${order.id}`}>
+                <Star className="w-[18px] h-[18px]" /> Rate Order
+              </Link>
+            </Button>
           )}
 
           {(isCompleted || isCancelled || category === "refunds") && (
@@ -455,6 +476,71 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
           )}
         </div>
       </div>
+
+      {/* Row 4: Tiffin Carrier Return Timeline (If Completed) */}
+      {isCompleted && tiffinPickup && (
+        <div className="w-full border-t border-[#F3F4F6] bg-[#FFFFFF] p-5 lg:p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="h-10 w-10 rounded-full bg-[#FFF7ED] flex items-center justify-center shrink-0 border border-[#FFEDD5]">
+              <Package className="w-5 h-5 text-[#F97316]" />
+            </div>
+            <div>
+              <h4 className="text-[16px] font-bold text-[#111827]">Tiffin Carrier Return</h4>
+              <p className="text-[13px] text-[#6B7280]">We will collect the empty tiffin on {formatDateOnly(tiffinPickup.scheduledDate.toISOString())}</p>
+            </div>
+          </div>
+          
+          <div className="flex flex-col md:flex-row gap-6 md:gap-12">
+            <div className="flex-1">
+              <div className="relative flex flex-col gap-5">
+                <div className="absolute left-[15px] top-3 bottom-3 w-0.5 bg-[#F1F5F9] z-0" />
+                
+                {[
+                  { 
+                    label: "Scheduled", 
+                    desc: "Pickup scheduled",
+                    done: true, 
+                    current: tiffinPickup.status === "SCHEDULED" || tiffinPickup.status === "ASSIGNED" || tiffinPickup.status === "ACCEPTED",
+                    icon: <CalendarDays className="w-3 h-3 stroke-[2.5]" />
+                  },
+                  { 
+                    label: "Out for Pickup", 
+                    desc: tiffinPickup.deliveryPartner ? `${tiffinPickup.deliveryPartner.user.name} is on the way` : "Waiting for partner",
+                    done: tiffinPickup.status === "ARRIVED" || tiffinPickup.status === "COMPLETED", 
+                    current: tiffinPickup.status === "STARTED" || tiffinPickup.status === "ARRIVED",
+                    icon: <Bike className="w-3 h-3 stroke-[2.5]" />
+                  },
+                  { 
+                    label: "Collected", 
+                    desc: "Tiffin returned successfully",
+                    done: tiffinPickup.status === "COMPLETED", 
+                    current: tiffinPickup.status === "COMPLETED",
+                    icon: <Check className="w-3 h-3 stroke-[2.5]" />
+                  }
+                ].map((step, i) => (
+                  <div key={i} className="flex gap-3 relative z-10">
+                    <div className={cn("w-8 h-8 rounded-full flex items-center justify-center shrink-0 shadow-sm border-[2px] border-[#FFFFFF]", step.done || step.current ? "bg-[#F97316] text-white" : "bg-[#F1F5F9] text-[#9CA3AF]")}>
+                      {step.icon}
+                    </div>
+                    <div className="pt-1.5">
+                      <h4 className={cn("text-[14px] font-bold leading-none mb-1", step.done || step.current ? "text-[#111827]" : "text-[#9CA3AF]")}>{step.label}</h4>
+                      <p className={cn("text-[12px] leading-snug", step.done || step.current ? "text-[#6B7280]" : "text-[#9CA3AF]")}>{step.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            {tiffinPickup.deliveryPartner && (
+              <div className="flex-1 bg-[#F8FAFC] rounded-[16px] p-5 border border-[#F1F5F9] self-start w-full max-w-sm">
+                <p className="text-[11px] font-bold text-[#9CA3AF] uppercase tracking-wider mb-2">Pickup Partner</p>
+                <p className="text-[15px] font-extrabold text-[#111827]">{tiffinPickup.deliveryPartner.user.name}</p>
+                <p className="text-[13px] text-[#6B7280] mt-1 flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-[#9CA3AF]" /> {tiffinPickup.deliveryPartner.user.phoneNumber}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   )
 }

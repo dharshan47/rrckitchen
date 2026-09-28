@@ -63,7 +63,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -942,7 +942,7 @@ export default function AdminCustomersPage() {
       {/* Filters & Table */}
       <div className="mt-6 shadow-sm border border-gray-100 rounded-2xl bg-white overflow-hidden">
         <div className="p-4 flex flex-wrap items-center justify-between gap-4 border-b border-gray-100">
-          <div className="w-full lg:w-auto pb-2 lg:pb-0 overflow-x-auto">
+          <ScrollArea className="w-full lg:w-auto pb-2 lg:pb-0">
             <div className="flex items-center gap-3 w-max pr-4">
               <div className="relative min-w-[260px] shrink-0">
                 <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-[18px] w-[18px] text-gray-400" />
@@ -1012,10 +1012,11 @@ export default function AdminCustomersPage() {
                 <RefreshCcw className="h-4 w-4" /> Reset
               </Button>
             </div>
-          </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </div>
 
-        <div className="w-full bg-white border-b border-gray-100 overflow-x-auto">
+        <ScrollArea className="w-full bg-white border-b border-gray-100">
           <div className="flex items-center gap-3 p-3 px-6 w-max">
             <div className="flex items-center gap-4 mr-3 shrink-0">
               <Checkbox
@@ -1079,9 +1080,10 @@ export default function AdminCustomersPage() {
               <Upload className="h-4 w-4" /> Export
             </Button>
           </div>
-        </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
 
-        <div className="w-full overflow-x-auto">
+        <ScrollArea className="w-full">
           <div className="min-w-[1000px] [&_th]:text-[13px] [&_th]:font-semibold [&_th]:text-gray-500 [&_th]:bg-white [&_th]:py-4 [&_th]:border-b [&_th]:border-gray-100 [&_td]:py-4 [&_td]:border-b [&_td]:border-gray-50">
             {isLoading ? (
               <TableSkeleton />
@@ -1096,7 +1098,8 @@ export default function AdminCustomersPage() {
               />
             )}
           </div>
-        </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
 
         <div className="p-4 px-6 flex flex-col sm:flex-row items-center justify-between gap-4 bg-white">
           <p className="text-[13px] font-bold text-gray-500">

@@ -8,10 +8,10 @@ A multi-vendor tiffin/meal delivery marketplace in Thanjavur connecting customer
 - **Kitchen Detail Pages** — Dedicated `/kitchen/[slug]` pages with full menu, rating, cuisine tags, and search
 - **Cart** — Client-side cart with add/remove/quantity/clear, coupon application
 - **Ordering** — Pre-book or Instant, tracked through status flow (confirmed → preparing → ready for pickup → completed)
-- **Payments** — Razorpay (cards/UPI/netbanking) + Cash on Delivery
+- **Payments** — Razorpay (cards/UPI/netbanking)
 - **Kitchen Portal** — Menu CRUD, order management, payouts, profile/KYC
-- **Delivery Portal** — Accept deliveries, COD cash tracking, UPI/bank payout details
-- **Admin Panel** — Manage kitchens, delivery partners, customers, orders, coupons, cash reconciliation
+- **Delivery Portal** — Accept deliveries, UPI/bank payout details
+- **Admin Panel** — Manage kitchens, delivery partners, customers, orders, coupons
 - **Cravings Popup** — Admin cross-sell rules (trigger item → recommended items) with live preview; shown in the add-to-cart popup and after order payment
 - **Customer Account** — Order history, tracking (real-time via Ably), wishlist, loyalty points, addresses
 - **Reviews & Ratings** — Rate kitchens and delivery per order
@@ -27,7 +27,7 @@ A multi-vendor tiffin/meal delivery marketplace in Thanjavur connecting customer
 | Styling | Tailwind CSS v4, shadcn/ui, Radix UI |
 | Database | PostgreSQL via Prisma ORM v7 |
 | Auth | Better-Auth (phone OTP + admin 2FA) |
-| Payments | Razorpay (online) + Cash on Delivery |
+| Payments | Razorpay (online) |
 | Real-time | Ably (order tracking, live location) |
 | Storage | Cloudinary (images), Upstash Redis (cache) |
 | State | Zustand (client), TanStack Query (server) |

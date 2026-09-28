@@ -637,9 +637,11 @@ export default function AdminOverview() {
                   >
                     <div className="flex items-center gap-3 md:gap-4 min-w-0 pr-2">
                       <span className="text-[14px] md:text-[15px] font-extrabold text-[#111827] w-4 shrink-0">{idx + 1}</span>
-                      <div className="h-9 w-9 md:h-10 md:w-10 shrink-0 rounded-[999px] bg-[#111827] flex items-center justify-center text-white font-bold text-xs overflow-hidden">
-                        {kitchen.name ? kitchen.name.charAt(0) : "?"}
-                      </div>
+                      {kitchen.imageUrl ? (
+                        <Image src={kitchen.imageUrl} alt={kitchen.name ?? "Kitchen"} width={40} height={40} className="h-9 w-9 md:h-10 md:w-10 shrink-0 rounded-[999px] object-cover border border-[#E5E7EB]" />
+                      ) : (
+                        <Image src="/kitchen/profile.webp" alt="Fallback Kitchen Profile" width={40} height={40} className="h-9 w-9 md:h-10 md:w-10 shrink-0 rounded-[999px] object-cover border border-[#E5E7EB]" />
+                      )}
                       <span className="text-[14px] md:text-[15px] font-bold text-[#111827] truncate">{kitchen.name ?? "Unnamed"}</span>
                     </div>
 

@@ -582,9 +582,10 @@ export function KitchenDetailClient({ kitchen: initialKitchen, initialTimeSlot, 
                     <div className="absolute inset-0 rounded-[12px] pointer-events-none bg-[linear-gradient(to_top,rgba(0,0,0,0.5)_0%,rgba(0,0,0,0)_30%,rgba(0,0,0,0)_70%,rgba(0,0,0,0.2)_100%)]" />
                   </>
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center rounded-[12px] bg-gray-100">
-                    <UtensilsCrossed className="w-10 md:w-12 h-10 md:h-12 text-[#FF4D00] opacity-20" />
-                  </div>
+                  <>
+                    <Image src="/kitchen/profile.webp" alt="Fallback Kitchen Profile" fill sizes="(min-width: 1024px) 420px, 100vw" className="object-cover rounded-[12px]" priority />
+                    <div className="absolute inset-0 rounded-[12px] pointer-events-none bg-[linear-gradient(to_top,rgba(0,0,0,0.5)_0%,rgba(0,0,0,0)_30%,rgba(0,0,0,0)_70%,rgba(0,0,0,0.2)_100%)]" />
+                  </>
                 )}
 
                 {hasBestseller && (

@@ -39,18 +39,19 @@ export function LiveChatWidget() {
   const [message, setMessage] = useState("")
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
-  // Fetch active session on mount if open
+  // Fetch active session in the background when the app loads
   useEffect(() => {
-    if (isOpen && !activeTicketId && !sessionData && !isLoading) {
-      fetchSession().then(() => {
-        // After fetching, if no session data, start one
-        const currentSession = useLiveChatStore.getState().sessionData
-        if (!currentSession && !useLiveChatStore.getState().isLoading) {
-          startSession()
-        }
-      })
+    if (!useLiveChatStore.getState().sessionData && !useLiveChatStore.getState().activeTicketId && !useLiveChatStore.getState().isLoading) {
+      fetchSession()
     }
-  }, [isOpen, activeTicketId, sessionData, isLoading, fetchSession, startSession])
+  }, [fetchSession])
+
+  // When chat opens, if there's no session, start one immediately so it's ready
+  useEffect(() => {
+    if (isOpen && !sessionData && !activeTicketId && !isLoading) {
+      startSession()
+    }
+  }, [isOpen, sessionData, activeTicketId, isLoading, startSession])
 
   // Fetch messages
   useEffect(() => {
@@ -143,7 +144,7 @@ export function LiveChatWidget() {
 
 
   return (
-    <div className="fixed inset-0 z-[100] flex h-[100dvh] w-full flex-col bg-white sm:inset-auto sm:bottom-6 sm:right-6 sm:h-auto sm:w-[360px] sm:max-w-[calc(100vw-32px)] sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_6px_20px_rgba(8,122,54,0.22)]">
+    <div className="fixed inset-0 z-[100] flex h-[100dvh] w-full flex-col bg-white overflow-hidden sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[600px] sm:max-h-[calc(100vh-48px)] sm:w-[360px] sm:max-w-[calc(100vw-32px)] sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_6px_20px_rgba(8,122,54,0.22)]">
       {/* Header */}
       <div className="bg-[#087A36] text-white p-4 flex items-center justify-between sm:rounded-t-2xl">
         <div className="flex items-center gap-3">
@@ -167,7 +168,7 @@ export function LiveChatWidget() {
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 bg-[#FEFEFE] sm:min-h-[350px] sm:max-h-[400px]">
+      <ScrollArea className="flex-1 bg-[#FEFEFE] h-full">
         <div className="p-4 space-y-4 outline-none" tabIndex={0}>
           {/* Welcome Message (Static) */}
         <div className="flex items-start gap-2">

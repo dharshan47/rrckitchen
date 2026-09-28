@@ -593,8 +593,7 @@ sequenceDiagram
     end
 
     Delivery->>Customer: Deliver food
-    Customer->>Delivery: Provide OTP
-    Delivery->>Server: Confirm delivery (OTP)
+    Delivery->>Server: Confirm delivery
     Server->>Ably: order.{orderId} { status: "delivered" }
     Ably-->>Customer: "Order delivered! Rate your experience"
     Ably-->>Kitchen: Order completed notification

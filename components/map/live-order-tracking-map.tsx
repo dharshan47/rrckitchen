@@ -92,15 +92,17 @@ export function LiveOrderTrackingMap({
   let destLatForRoute = customerLat ?? kitchenLat ?? THANJAVUR_CENTER[0]
   let destLngForRoute = customerLng ?? kitchenLng ?? THANJAVUR_CENTER[1]
 
+  let isGoingToKitchen = false;
   if (!deliveryPos && kitchenLat && kitchenLng) {
     originForRoute = { lat: kitchenLat, lng: kitchenLng }
     destLatForRoute = customerLat ?? THANJAVUR_CENTER[0]
     destLngForRoute = customerLng ?? THANJAVUR_CENTER[1]
   } else if (deliveryPos) {
-    if (assignmentStatus === "ACCEPTED" && deliveryStatus !== "PICKEDUP" && deliveryStatus !== "INTRANSIT" && orderStatus !== "COMPLETED" && kitchenLat && kitchenLng) {
+    if ((deliveryStatus === "ACCEPTED" || assignmentStatus === "ACCEPTED") && deliveryStatus !== "PICKEDUP" && deliveryStatus !== "INTRANSIT" && orderStatus !== "COMPLETED" && kitchenLat && kitchenLng) {
       // Delivery partner is going to the kitchen
       destLatForRoute = kitchenLat
       destLngForRoute = kitchenLng
+      isGoingToKitchen = true;
     } else {
       // Default: Delivery partner is going to the customer
       destLatForRoute = customerLat ?? THANJAVUR_CENTER[0]
@@ -152,6 +154,8 @@ export function LiveOrderTrackingMap({
           markerPosition={deliveryPos ? [deliveryPos.lat, deliveryPos.lng] : undefined}
           kitchenPosition={kitchenPosition}
           destinationPosition={[destLatForRoute, destLngForRoute]}
+          isGoingToKitchen={isGoingToKitchen}
+          interactive={false}
           routeCoords={routeCoords.length > 0 ? routeCoords : undefined}
           height={height}
         />

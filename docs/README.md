@@ -37,7 +37,7 @@ RRC Kitchen is a full-stack food ordering platform connecting customers with loc
 | 05 | [Auth & Security](05-auth-security.md) | Auth flows (OTP, 2FA), RBAC matrix, threat model, data classification | All engineers |
 | 06 | [State & Data Flow](06-state-data-flow.md) | State architecture, data flow diagrams, optimistic updates, offline sync | Frontend |
 | 07 | [Component System](07-component-system.md) | Component hierarchy, composition patterns, design tokens, accessibility | Frontend, UI |
-| 08 | [Payment System](08-payment-system.md) | Online + COD flows, reconciliation engine, refund lifecycle, fraud detection | Backend, Finance |
+| 08 | [Payment System](08-payment-system.md) | Online payment flows, refund lifecycle, fraud detection | Backend, Finance |
 | 09 | [Real-Time System](09-real-time-system.md) | WebSocket architecture, channel design, event schema, reliability | Backend, Frontend |
 | 10 | [PWA & Offline](10-pwa-offline.md) | Service worker, caching strategies, push notifications, background sync | Frontend |
 | 11 | [Performance & Scaling](11-performance-scaling.md) | Performance budgets, caching layers, bundle optimization, scaling plan | All engineers |

@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from "react"
 import { useMutation } from "@tanstack/react-query"
+import { toast } from "sonner"
+import { orderTrackingMapStore } from "@/stores/orderTrackingMapStore"
 
 interface LocationPayload {
   deliveryPersonId: string
@@ -50,7 +52,7 @@ export function DeliveryPersonLocationBroadcaster({
 
     const MAX_INTERVAL_MS = 4000
     const MIN_MOVE_M = 15
-    const MAX_ACCURACY_M = 150
+    const MAX_ACCURACY_M = 1000 // Increased from 150m to allow less accurate fixes in production
 
     const sendIfNeeded = (
       lat: number,
@@ -75,6 +77,10 @@ export function DeliveryPersonLocationBroadcaster({
     const onPosition = (pos: GeolocationPosition) => {
       const { latitude, longitude, accuracy, speed, heading } = pos.coords
       if (accuracy != null && accuracy > MAX_ACCURACY_M) return
+      
+      // Optimistically update the local map immediately for a snappy UX
+      orderTrackingMapStore.getState().setLivePosition({ lat: latitude, lng: longitude })
+      
       sendIfNeeded(
         latitude,
         longitude,
@@ -84,7 +90,16 @@ export function DeliveryPersonLocationBroadcaster({
       )
     }
 
-    const onError = () => {}
+    const onError = (error: GeolocationPositionError) => {
+      console.warn("Geolocation error:", error)
+      if (error.code === error.PERMISSION_DENIED) {
+        toast.error("Location permission denied. Please allow location access in your browser.")
+      } else if (error.code === error.POSITION_UNAVAILABLE) {
+        toast.error("Location information is unavailable. Check your GPS settings.")
+      } else if (error.code === error.TIMEOUT) {
+        toast.error("The request to get your location timed out.")
+      }
+    }
 
     if (!navigator.geolocation) return
 

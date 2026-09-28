@@ -14,13 +14,14 @@ import {
   Package, Check, ChefHat, Bike, Loader2, XCircle,
   ShieldCheck,
   ChevronRight, Headphones, Home, Phone,
-  Clock3, Wallet, CreditCard, BadgeCheck
+  Clock3, Wallet, CreditCard, BadgeCheck, PackageCheck, CalendarDays
 } from "lucide-react"
 import { RazorpayIcon } from "@/components/icons/razorpay"
 import { PhonePeIcon } from "@/components/icons/phonepe"
 import { UpiIcon } from "@/components/icons/upi"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
+import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import {
   useOrderTrackingQuery,
@@ -28,6 +29,7 @@ import {
 } from "@/stores/orderTrackingStore"
 import {
   useOrderTrackingEtaMinutes,
+  useOrderTrackingDistanceKm,
   useOrderTrackingMapActions
 } from "@/stores/orderTrackingMapStore"
 
@@ -115,6 +117,28 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
   const queryClient = useQueryClient()
   const { setLivePosition } = useOrderTrackingMapActions()
 
+  // Network connection monitor
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleOnline = () => {
+        toast.success("Network connection restored. You are back online.")
+        queryClient.invalidateQueries({ queryKey: ["order-tracking", orderId] })
+      }
+      
+      const handleOffline = () => {
+        toast.error("Network connection lost. You are offline.", { duration: 5000 })
+      }
+
+      window.addEventListener("online", handleOnline)
+      window.addEventListener("offline", handleOffline)
+
+      return () => {
+        window.removeEventListener("online", handleOnline)
+        window.removeEventListener("offline", handleOffline)
+      }
+    }
+  }, [queryClient, orderId])
+
   const {
     isLoading,
     isError,
@@ -161,6 +185,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
     (orderDeliveryStatus === "PICKEDUP" || orderDeliveryStatus === "INTRANSIT")
 
   const routeEtaMinutes = useOrderTrackingEtaMinutes()
+  const routeDistanceKm = useOrderTrackingDistanceKm()
 
   const now = useNow()
 
@@ -255,7 +280,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
   let mainEtaTitle: string | null = null
   if (inTransit) {
     mainEtaTitle = routeEtaMinutes != null 
-      ? `Arriving in ${routeEtaMinutes} mins`
+      ? `Arriving in ${routeEtaMinutes} mins${routeDistanceKm != null ? ` (${routeDistanceKm} km away)` : ''}`
       : "Arriving soon"
     etaSubtitle = routeEtaMinutes != null && routeEtaMinutes > 15 
       ? `Slight delay due to traffic · Tracking live`
@@ -403,40 +428,52 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
 
           {/* Center Column: Live Map */}
           <div className="order-1 lg:order-2 lg:col-span-9 relative rounded-[26px] overflow-hidden border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] bg-[#F8FAFC] w-full min-h-[400px]">
-            <LiveOrderTrackingMap
-              orderId={order?.id ?? ""}
-              kitchenLat={order.kitchenLat ?? undefined}
-              kitchenLng={order.kitchenLng ?? undefined}
-              customerLat={order.customerLat ?? undefined}
-              customerLng={order.customerLng ?? undefined}
-              deliveryPersonLat={order.deliveryPersonLat ?? undefined}
-              deliveryPersonLng={order.deliveryPersonLng ?? undefined}
-              orderStatus={order.status}
-              deliveryStatus={order.deliveryStatus ?? undefined}
-              assignmentStatus={order.deliveryAssignmentStatus ?? undefined}
-              height="100%"
-              showFooter={false}
-            />
+            {!isDelivered ? (
+              <>
+                <LiveOrderTrackingMap
+                  orderId={order?.id ?? ""}
+                  kitchenLat={order.kitchenLat ?? undefined}
+                  kitchenLng={order.kitchenLng ?? undefined}
+                  customerLat={order.customerLat ?? undefined}
+                  customerLng={order.customerLng ?? undefined}
+                  deliveryPersonLat={order.deliveryPersonLat ?? undefined}
+                  deliveryPersonLng={order.deliveryPersonLng ?? undefined}
+                  orderStatus={order.status}
+                  deliveryStatus={order.deliveryStatus ?? undefined}
+                  assignmentStatus={order.deliveryAssignmentStatus ?? undefined}
+                  height="100%"
+                  showFooter={false}
+                />
 
-            {/* Map Overlay: Live Tracking */}
-            {orderInTransit && (
-              <div className="absolute top-6 left-6 bg-[#FFFFFF]/95 backdrop-blur-md rounded-[20px] p-4 pr-6 shadow-[0_20px_40px_rgba(15,23,42,0.08)] border border-[#eef1f5] flex items-center gap-4">
-                <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-50">
-                  <div className="w-3 h-3 rounded-full bg-green-600 animate-pulse ring-4 ring-green-100" />
-                </div>
-                <div>
-                  <p className="text-[18px] font-bold text-[#111827] leading-tight mb-1 tracking-tight">{mainEtaTitle || "Live Tracking"}</p>
-                  <p className="text-[13px] font-medium text-[#6B7280]">{etaSubtitle || "Fetching location..."}</p>
-                </div>
-              </div>
-            )}
+                {/* Map Overlay: Live Tracking */}
+                {orderInTransit && (
+                  <div className="absolute top-6 left-6 bg-[#FFFFFF]/95 backdrop-blur-md rounded-[20px] p-4 pr-6 shadow-[0_20px_40px_rgba(15,23,42,0.08)] border border-[#eef1f5] flex items-center gap-4">
+                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-50">
+                      <div className="w-3 h-3 rounded-full bg-green-600 animate-pulse ring-4 ring-green-100" />
+                    </div>
+                    <div>
+                      <p className="text-[18px] font-bold text-[#111827] leading-tight mb-1 tracking-tight">{mainEtaTitle || "Live Tracking"}</p>
+                      <p className="text-[13px] font-medium text-[#6B7280]">{etaSubtitle || "Fetching location..."}</p>
+                    </div>
+                  </div>
+                )}
 
-            {/* Map Overlay: Estimated Delivery Time */}
-            {order.timeSlot && (
-              <div className="absolute top-6 right-6 bg-[#FFFFFF] rounded-[16px] p-4 shadow-[0_10px_28px_rgba(15,23,42,0.05)] border border-[#eef1f5] text-right">
-                <p className="text-[13px] text-[#6B7280] mb-1">Estimated Delivery Time</p>
-                <p className="text-[20px] font-bold text-[#F97316] mb-1">{order.timeSlot}</p>
-                <p className="text-[13px] text-[#9CA3AF]">{formatDateOnly(order.serviceDate || new Date().toISOString())}</p>
+                {/* Map Overlay: Estimated Delivery Time */}
+                {order.timeSlot && (
+                  <div className="absolute top-6 right-6 bg-[#FFFFFF] rounded-[16px] p-4 shadow-[0_10px_28px_rgba(15,23,42,0.05)] border border-[#eef1f5] text-right">
+                    <p className="text-[13px] text-[#6B7280] mb-1">Estimated Delivery Time</p>
+                    <p className="text-[20px] font-bold text-[#F97316] mb-1">{order.timeSlot}</p>
+                    <p className="text-[13px] text-[#9CA3AF]">{formatDateOnly(order.serviceDate || new Date().toISOString())}</p>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="w-full h-full min-h-[400px] flex flex-col items-center justify-center p-8 bg-white">
+                <div className="h-24 w-24 rounded-full bg-[#E4F4E7] flex items-center justify-center mb-6">
+                  <PackageCheck className="h-12 w-12 text-[#087B2B]" strokeWidth={1.5} />
+                </div>
+                <h3 className="font-bold text-[#111827] text-[24px] mb-3 text-center">Order Delivered Successfully</h3>
+                <p className="text-[#374151] text-[16px] text-center max-w-md">Thank you for ordering with us! We hope you enjoy your meal.</p>
               </div>
             )}
           </div>
@@ -445,29 +482,74 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
         {/* Tiffin Carrier Return Section */}
         {tiffinPickup && (
           <div className="bg-[#FFFFFF] rounded-[26px] p-6 lg:p-8 border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] mb-6">
-            <div className="flex items-center gap-3 mb-6">
-              <Package className="w-8 h-8 text-[#F97316]" />
+            <div className="flex items-center gap-3 mb-8">
+              <div className="h-12 w-12 rounded-[16px] bg-[#FFF7ED] flex items-center justify-center border border-[#FFEDD5] shrink-0">
+                <Package className="w-6 h-6 text-[#F97316]" />
+              </div>
               <div>
-                <h3 className="text-[20px] font-extrabold text-[#111827]">Tiffin Carrier Return</h3>
-                <p className="text-[14px] text-[#6B7280]">Your home chef&apos;s tiffin carrier needs to be returned.</p>
+                <h3 className="text-[20px] font-extrabold tracking-[-0.03em] text-[#111827] mb-1">Tiffin Carrier Return</h3>
+                <p className="text-[14px] text-[#6B7280]">Your meal was delivered in a reusable tiffin. A delivery partner will come to pick it up.</p>
               </div>
             </div>
             
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-              <div className="bg-[#F8FAFC] rounded-[16px] p-5 border border-[#F1F5F9]">
-                <p className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Status</p>
-                <p className="text-[16px] font-extrabold text-[#111827]">{tiffinPickup.status}</p>
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-8 lg:gap-12">
+              <div className="md:col-span-7">
+                <div className="relative flex flex-col gap-6">
+                  {/* Vertical line behind */}
+                  <div className="absolute left-[19px] top-4 bottom-4 w-0.5 bg-[#F1F5F9] z-0" />
+                  
+                  {[
+                    { 
+                      label: "Scheduled", 
+                      desc: `Scheduled for pickup on ${formatDateOnly(tiffinPickup.scheduledDate.toISOString())}`,
+                      done: true, 
+                      current: tiffinPickup.status === "SCHEDULED" || tiffinPickup.status === "ASSIGNED" || tiffinPickup.status === "ACCEPTED",
+                      icon: <CalendarDays className="w-4 h-4 stroke-[2.5]" />
+                    },
+                    { 
+                      label: "Out for Pickup", 
+                      desc: tiffinPickup.deliveryPartner ? `${tiffinPickup.deliveryPartner.user.name} is on the way to collect the tiffin` : "Waiting for partner to start the pickup",
+                      done: tiffinPickup.status === "ARRIVED" || tiffinPickup.status === "COMPLETED", 
+                      current: tiffinPickup.status === "STARTED" || tiffinPickup.status === "ARRIVED",
+                      icon: <Bike className="w-4 h-4 stroke-[2.5]" />
+                    },
+                    { 
+                      label: "Collected", 
+                      desc: "Tiffin carrier successfully returned",
+                      done: tiffinPickup.status === "COMPLETED", 
+                      current: tiffinPickup.status === "COMPLETED",
+                      icon: <Check className="w-4 h-4 stroke-[2.5]" />
+                    }
+                  ].map((step, i) => (
+                    <div key={i} className="flex gap-4 relative z-10">
+                      <div className={cn("w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm border-[3px] border-[#FFFFFF]", step.done || step.current ? "bg-[#F97316] text-white" : "bg-[#F1F5F9] text-[#9CA3AF]")}>
+                        {step.icon}
+                      </div>
+                      <div className="pt-2">
+                        <h4 className={cn("text-[15px] font-bold leading-none mb-1.5 tracking-tight", step.done || step.current ? "text-[#111827]" : "text-[#9CA3AF]")}>{step.label}</h4>
+                        <p className={cn("text-[13px] leading-snug", step.done || step.current ? "text-[#6B7280]" : "text-[#9CA3AF]")}>{step.desc}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-              <div className="bg-[#F8FAFC] rounded-[16px] p-5 border border-[#F1F5F9]">
-                <p className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Scheduled Date</p>
-                <p className="text-[16px] font-extrabold text-[#111827]">{formatDateOnly(tiffinPickup.scheduledDate.toISOString())}</p>
-              </div>
-              <div className="bg-[#F8FAFC] rounded-[16px] p-5 border border-[#F1F5F9]">
-                <p className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider mb-1">Delivery Partner</p>
-                <p className="text-[16px] font-extrabold text-[#111827]">{tiffinPickup.deliveryPartner?.user.name || "Pending Assignment"}</p>
-                {tiffinPickup.deliveryPartner && (
-                  <p className="text-[13px] text-[#6B7280] mt-1">{tiffinPickup.deliveryPartner.user.phoneNumber}</p>
-                )}
+              
+              <div className="md:col-span-5 flex flex-col gap-4">
+                <div className="bg-[#F8FAFC] rounded-[16px] p-5 border border-[#eef1f5]">
+                  <p className="text-[12px] font-bold text-[#9CA3AF] uppercase tracking-wider mb-1">Scheduled Date</p>
+                  <p className="text-[16px] font-extrabold text-[#111827]">{formatDateOnly(tiffinPickup.scheduledDate.toISOString())}</p>
+                </div>
+                <div className="bg-[#F8FAFC] rounded-[16px] p-5 border border-[#eef1f5]">
+                  <p className="text-[12px] font-bold text-[#9CA3AF] uppercase tracking-wider mb-1">Pickup Partner</p>
+                  {tiffinPickup.deliveryPartner ? (
+                    <div>
+                      <p className="text-[16px] font-extrabold text-[#111827]">{tiffinPickup.deliveryPartner.user.name}</p>
+                      <p className="text-[13px] text-[#6B7280] mt-1 flex items-center gap-1.5"><Phone className="w-3.5 h-3.5 text-[#9CA3AF]" /> {tiffinPickup.deliveryPartner.user.phoneNumber}</p>
+                    </div>
+                  ) : (
+                    <p className="text-[16px] font-extrabold text-[#111827]">Pending Assignment</p>
+                  )}
+                </div>
               </div>
             </div>
           </div>

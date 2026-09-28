@@ -56,7 +56,7 @@ flowchart TB
     RF --> J
 ```
 
-**COD was fully removed (ADR-019).** There is no cash collection, delivery OTP, remittance, or reconciliation engine. All orders are prepaid.
+**Online Payment was fully removed (ADR-019).** There is no cash collection, delivery confirmation, remittance, or reconciliation engine. All orders are prepaid.
 
 ---
 

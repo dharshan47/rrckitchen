@@ -66,6 +66,7 @@ import {
   LayoutGrid,
   ClipboardList,
   Sparkles,
+  Utensils,
 } from "lucide-react";
 import type { AdminPermission } from "@/lib/generated/prisma/client";
 
@@ -99,7 +100,7 @@ const navItems: NavItem[] = [
   {
     href: "/admin/menu",
     label: "Menu Items",
-    icon: ShoppingBag,
+    icon: Utensils,
     permission: "MANAGE_CATALOG",
   },
   {

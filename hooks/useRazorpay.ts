@@ -292,21 +292,16 @@ export function useRazorpay() {
     verifyPaymentMutation.isPending ||
     modalOpen;
 
-  const paymentResult = (() => {
-    if (verifyPaymentMutation.isSuccess) {
-      return { success: true, orderId: verifyPaymentMutation.data.orderId, publicCode: verifyPaymentMutation.data.publicCode };
-    }
-    if (verifyPaymentMutation.isError) {
-      return { success: false, error: verifyPaymentMutation.error.message };
-    }
-    if (createOrderMutation.isError) {
-      return { success: false, error: createOrderMutation.error.message };
-    }
-    if (checkoutError) {
-      return { success: false, error: checkoutError };
-    }
-    return null;
-  })();
+  let paymentResult: { success: boolean; orderId?: string; publicCode?: string; error?: string } | null = null;
+  if (verifyPaymentMutation.isSuccess && verifyPaymentMutation.data) {
+    paymentResult = { success: true, orderId: verifyPaymentMutation.data.orderId, publicCode: verifyPaymentMutation.data.publicCode };
+  } else if (verifyPaymentMutation.isError && verifyPaymentMutation.error) {
+    paymentResult = { success: false, error: verifyPaymentMutation.error.message };
+  } else if (createOrderMutation.isError && createOrderMutation.error) {
+    paymentResult = { success: false, error: createOrderMutation.error.message };
+  } else if (checkoutError) {
+    paymentResult = { success: false, error: checkoutError };
+  }
 
   // ── Main checkout action ───────────────────────────────────────────────────
 

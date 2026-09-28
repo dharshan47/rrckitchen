@@ -36,6 +36,7 @@ export async function POST(req: Request) {
     ([lng, lat]: [number, number]) => [lat, lng] as [number, number]
   );
   const etaMinutes = Math.round(feature.properties.summary.duration / 60);
+  const distanceKm = +(feature.properties.summary.distance / 1000).toFixed(1);
 
-  return Response.json({ route: coords, etaMinutes });
+  return Response.json({ route: coords, etaMinutes, distanceKm });
 }

@@ -272,9 +272,11 @@ export default function AdminOrdersPage() {
       header: "KITCHEN",
       cell: ({ row }) => (
         <div className="flex items-center gap-3 min-w-[160px]">
-          <div className="h-8 w-8 rounded-full bg-[#111827] text-[#F59E0B] flex items-center justify-center text-[12px] font-bold shrink-0">
-            {(row.original.kitchen.name ?? "??").substring(0, 2).toUpperCase()}
-          </div>
+          {row.original.kitchen.image ? (
+            <Image src={row.original.kitchen.image} alt={row.original.kitchen.name ?? "Kitchen"} width={32} height={32} className="rounded-full object-cover shrink-0 border border-[#E5E7EB] h-8 w-8" />
+          ) : (
+            <Image src="/kitchen/profile.webp" alt="Fallback Kitchen Profile" width={32} height={32} className="rounded-full object-cover shrink-0 border border-[#E5E7EB] h-8 w-8" />
+          )}
           <span className="font-extrabold text-[13px] text-[#111827]">{row.original.kitchen.name ?? "Unknown Kitchen"}</span>
         </div>
       ),
@@ -747,9 +749,7 @@ function OrderSheet({
               {order.kitchen.image ? (
                 <Image src={order.kitchen.image} alt={order.kitchen.name ?? "Kitchen"} width={24} height={24} className="rounded-full object-cover shrink-0 border border-[#E5E7EB]" />
               ) : (
-                <div className="h-6 w-6 rounded-full bg-[#111827] text-[#F59E0B] flex items-center justify-center text-[10px] font-bold shrink-0">
-                  {(order.kitchen.name ?? "??").substring(0, 2).toUpperCase()}
-                </div>
+                <Image src="/kitchen/profile.webp" alt="Fallback Kitchen Profile" width={24} height={24} className="rounded-full object-cover shrink-0 border border-[#E5E7EB]" />
               )}
               Kitchen Details
             </h4>

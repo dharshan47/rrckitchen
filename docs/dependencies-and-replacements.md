@@ -145,7 +145,7 @@ RAZORPAY_WEBHOOK_SECRET=<webhook-secret-string>
 
 | Option | Effort | Pros | Cons |
 |--------|--------|------|------|
-| **Stripe** | High | Global, well-documented, powerful API | No COD, FX charges for INR |
+| **Stripe** | High | Global, well-documented, powerful API | No Online Payment, FX charges for INR |
 | **PayU** | Medium | Indian market, PCI SAQ A | Less developer-friendly API |
 | **PhonePe PG** | Medium | Indian UPI-first | Limited feature set |
 | **Cashfree** | Medium | Indian market, good docs | Smaller ecosystem |
@@ -504,7 +504,7 @@ export const logger = {
 **Current state:** No cron jobs, queues, or background workers exist. All operations are synchronous within request handlers.
 
 **Use cases that need background processing:**
-- COD reconciliation (daily)
+- Online Payment reconciliation (daily)
 - Session cleanup (daily)
 - Abandoned cart cleanup (daily)
 - Payout processing (async)

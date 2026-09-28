@@ -6,7 +6,7 @@ import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import {
-  MapPin, Home, Briefcase, MoreHorizontal, Loader2,
+  MapPin, Home, Briefcase, MoreHorizontal, Loader2, LocateFixed
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -94,6 +94,42 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
     }
   }, [])
 
+  const handleLocateMe = useCallback(() => {
+    if (typeof navigator !== "undefined" && "geolocation" in navigator) {
+      setGeocoding(true)
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude
+          const lng = position.coords.longitude
+          setSelectedLat(lat)
+          setSelectedLng(lng)
+          setSaveError(null)
+          try {
+            const res = await fetch(`/api/geocode/reverse?lat=${lat}&lon=${lng}`)
+            if (res.ok) {
+              const data = await res.json()
+              setSelectedAddress(data.display_name || `Location at ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
+              setSelectedPostcode(data.postcode || "")
+            } else {
+              setSelectedAddress(`Location at ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
+              setSelectedPostcode("")
+            }
+          } catch {
+            setSelectedAddress(`Location at ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
+            setSelectedPostcode("")
+          } finally {
+            setGeocoding(false)
+          }
+        },
+        () => {
+          setGeocoding(false)
+          setSaveError("Could not get your location. Please check browser permissions.")
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      )
+    }
+  }, [])
+
   const handleSave = useCallback(async () => {
     if (!selectedAddress) return
     setSaveError(null)
@@ -151,12 +187,25 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
           </SheetHeader>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-foreground">Pin Location</span>
+              <Button 
+                type="button" 
+                variant="outline" 
+                size="sm" 
+                onClick={handleLocateMe}
+                className="h-7 px-2 text-[11px] font-medium border-primary/40 text-primary bg-primary/5 hover:bg-primary/10"
+              >
+                <LocateFixed className="h-3 w-3 mr-1" /> Use Current Location
+              </Button>
+            </div>
             <div className="rounded-xl overflow-hidden border border-border">
               <Map
                 height="200px"
                 onLocationSelect={handleMapSelect}
                 interactive
                 markerPosition={selectedLat && selectedLng ? [selectedLat, selectedLng] : undefined}
+                markerIconType="pin"
               />
             </div>
 

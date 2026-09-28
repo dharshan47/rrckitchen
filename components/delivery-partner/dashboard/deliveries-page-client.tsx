@@ -1,16 +1,16 @@
 "use client"
 
-import { useState, useMemo } from "react"
+import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { useDeliveryData } from "@/stores/deliveryDashboardStore"
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query"
+import { useDeliveryData, useDeliveryActions } from "@/stores/deliveryDashboardStore"
 import type { getDeliveryDashboardData } from "@/actions/admin/dashboard"
 import { LiveOrderTrackingMap } from "@/components/map/live-order-tracking-map"
 import { haversineDistance } from "@/lib/geo/haversine"
 import { 
   Bike, Truck, CircleCheck, CircleX, Clock3, RefreshCw, 
   MapPin, UserRound, Phone, Map, ClipboardList, Landmark, 
-  ShieldAlert, Check, X, ArrowRight, PackageCheck, Navigation 
+  ShieldAlert, Check, X, ArrowRight, PackageCheck, Navigation, ArrowLeft 
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -20,7 +20,6 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import { toast } from "sonner"
 import { getMyTiffinPickups, updateTiffinPickupStatus } from "@/actions/dispatch/tiffin-actions"
-import { useQuery } from "@tanstack/react-query"
 
 
 const KITCHEN_FALLBACK_IMAGE = "/kitchen/profile.webp"
@@ -58,6 +57,30 @@ export default function DeliveriesPageClient() {
   const queryClient = useQueryClient()
   const [activeTab, setActiveTab] = useState<"active" | "completed" | "tiffin">("active")
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [showMobileDetails, setShowMobileDetails] = useState(false)
+  // Network connection monitor
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const handleOnline = () => {
+        toast.success("Network connection restored. You are back online.")
+        queryClient.invalidateQueries({ queryKey: ["delivery-dashboard"] })
+      }
+      
+      const handleOffline = () => {
+        toast.error("Network connection lost. You are offline.", { duration: 5000 })
+      }
+
+      window.addEventListener("online", handleOnline)
+      window.addEventListener("offline", handleOffline)
+
+      return () => {
+        window.removeEventListener("online", handleOnline)
+        window.removeEventListener("offline", handleOffline)
+      }
+    }
+  }, [queryClient])
+
+  const { setData } = useDeliveryActions()
 
   const { data: tiffinPickups, isLoading: tiffinLoading, refetch: refetchTiffin } = useQuery({
     queryKey: ["my-tiffin-pickups"],
@@ -90,15 +113,14 @@ export default function DeliveriesPageClient() {
       }
     },
     onMutate: async ({ orderId, status }) => {
-      await queryClient.cancelQueries({ queryKey: ["delivery-dashboard"] })
-      const previousData = queryClient.getQueryData<{ deliveryOrders: DeliveryOrderData[] }>(["delivery-dashboard"])
+      const previousData = data
       if (previousData) {
-        queryClient.setQueryData(["delivery-dashboard"], {
+        setData({
           ...previousData,
-          deliveryOrders: previousData.deliveryOrders.map((o: DeliveryOrderData) => {
+          deliveryOrders: previousData.deliveryOrders.map((o) => {
             if (o.id === orderId) {
-              // Optmistic update: exactly match the server's uppercase enum values
-              return { ...o, deliveryStatus: status }
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              return { ...o, deliveryStatus: status as any }
             }
             return o
           })
@@ -107,12 +129,11 @@ export default function DeliveriesPageClient() {
       return { previousData }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["delivery-dashboard"] })
       toast.success("Order status updated")
     },
     onError: (err, variables, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(["delivery-dashboard"], context.previousData)
+        setData(context.previousData)
       }
       toast.error(err.message)
     },
@@ -266,7 +287,7 @@ export default function DeliveriesPageClient() {
   )
 
   const displayOrders = activeTab === "active" ? activeOrders : completedOrders
-  const selectedOrder = displayOrders.find((o) => o.id === selectedOrderId) || displayOrders[0]
+  const selectedOrder = displayOrders.find((o) => o.id === selectedOrderId)
 
   const stats = data.stats
   const activeCount = activeOrders.length
@@ -381,11 +402,11 @@ export default function DeliveriesPageClient() {
 
       {/* Tabs & Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E9ECEF]">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 overflow-x-auto w-full scrollbar-hide pb-1 sm:pb-0">
           <button
             onClick={() => setActiveTab("active")}
             className={cn(
-              "px-5 py-3 text-[14px] font-bold transition-colors border-b-2",
+              "px-5 py-3 text-[14px] font-bold transition-colors border-b-2 whitespace-nowrap",
               activeTab === "active"
                 ? "text-[#087B2B] bg-[#EEF8F0] rounded-t-[7px] border-[#087B2B]"
                 : "text-[#374151] border-transparent hover:text-[#111827]"
@@ -396,7 +417,7 @@ export default function DeliveriesPageClient() {
           <button
             onClick={() => setActiveTab("completed")}
             className={cn(
-              "px-5 py-3 text-[14px] font-bold transition-colors border-b-2",
+              "px-5 py-3 text-[14px] font-bold transition-colors border-b-2 whitespace-nowrap",
               activeTab === "completed"
                 ? "text-[#087B2B] bg-[#EEF8F0] rounded-t-[7px] border-[#087B2B]"
                 : "text-[#374151] border-transparent hover:text-[#111827]"
@@ -407,7 +428,7 @@ export default function DeliveriesPageClient() {
           <button
             onClick={() => setActiveTab("tiffin")}
             className={cn(
-              "px-5 py-3 text-[14px] font-bold transition-colors border-b-2",
+              "px-5 py-3 text-[14px] font-bold transition-colors border-b-2 whitespace-nowrap",
               activeTab === "tiffin"
                 ? "text-[#087B2B] bg-[#EEF8F0] rounded-t-[7px] border-[#087B2B]"
                 : "text-[#374151] border-transparent hover:text-[#111827]"
@@ -460,7 +481,7 @@ export default function DeliveriesPageClient() {
                     <p className="text-[13px] text-[#4B5563] mt-2 leading-relaxed">{pickup.kitchen.kitchenAddress?.streetAddress || "Kitchen Address"}</p>
                   </div>
                 </div>
-                <div className="flex justify-end gap-3 border-t border-[#E9ECEF] pt-4 mt-2">
+                <div className="flex flex-wrap justify-end gap-3 border-t border-[#E9ECEF] pt-4 mt-2">
                   {pickup.status === "ASSIGNED" && (
                     <Button onClick={() => tiffinStatusMutation.mutate({ pickupId: pickup.id, status: "ACCEPTED" })}>Accept</Button>
                   )}
@@ -482,7 +503,7 @@ export default function DeliveriesPageClient() {
           </div>
         ) : (
           <>
-          <div className="space-y-4">
+          <div className={cn("space-y-4", showMobileDetails && selectedOrder ? "hidden xl:block" : "block")}>
           {displayOrders.length === 0 ? (
             <Card className="bg-[#FFFFFF] rounded-[10px] p-12 text-center border border-[#E6EAEC] shadow-[0_1px_3px_rgba(17,24,39,0.025)]">
               <PackageCheck className="h-12 w-12 text-[#6B7280] mx-auto mb-4" strokeWidth={1.5} />
@@ -501,7 +522,14 @@ export default function DeliveriesPageClient() {
                     "bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] overflow-hidden transition-all cursor-pointer shadow-[0_1px_2px_rgba(17,24,39,0.02)]",
                     isSelected && "border-[#B9DDBF] ring-1 ring-[#EEF8F0] shadow-[0_4px_12px_rgba(17,24,39,0.05)]"
                   )}
-                  onClick={() => setSelectedOrderId(d.id as string)}
+                  onClick={() => {
+                    if (d.deliveryStatus !== "ASSIGNED" && d.deliveryStatus !== "REJECTED") {
+                      setSelectedOrderId(d.id as string)
+                      setShowMobileDetails(true)
+                    } else {
+                      toast.info("Please accept the order to view details")
+                    }
+                  }}
                 >
                   {/* Order Header */}
                   <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E9ECEF] gap-3">
@@ -530,7 +558,7 @@ export default function DeliveriesPageClient() {
                     <div className="flex gap-4 items-center">
                       <Avatar className="h-[52px] w-[52px] rounded-full border border-[#E6EAEC] shadow-sm shrink-0">
                         <AvatarImage src={(d.kitchenImageUrl as string) || KITCHEN_FALLBACK_IMAGE} alt={d.kitchenName as string} />
-                        <AvatarFallback className="bg-[#EEF8F0] text-[#087B2B] font-bold text-lg">{((d.kitchenName as string) || "K").charAt(0).toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className="bg-[#EEF8F0] text-[#087B2B] font-bold text-lg">K</AvatarFallback>
                       </Avatar>
                       <div className="min-w-0">
                         <div className="font-bold text-[#111827] text-[15px] mb-1 truncate">{d.kitchenName as string}</div>
@@ -548,7 +576,7 @@ export default function DeliveriesPageClient() {
 
                     {/* Customer Info */}
                     <div className="flex gap-4 items-center">
-                      <div className="flex flex-col">
+                      <div className="flex flex-col min-w-0">
                         <div className="text-[12px] font-medium text-[#374151] mb-1 flex items-center gap-1.5 uppercase tracking-wide">
                           <UserRound className="h-[14px] w-[14px]" strokeWidth={1.8} /> Customer
                         </div>
@@ -573,14 +601,22 @@ export default function DeliveriesPageClient() {
                       <OrderTimeline status={d.orderStatus as string} />
                     </div>
                     
-                    <div className="flex items-center gap-3 shrink-0 self-end xl:self-auto">
+                    <div className="flex flex-wrap items-center justify-end gap-3 w-full xl:w-auto xl:self-auto shrink-0 self-end">
                        {/* Buttons */}
                        {d.deliveryStatus === "ASSIGNED" && (
                          <>
-                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "ACCEPTED" })}} className="bg-[#F5FBF6] border border-[#B9DDBF] text-[#087B2B] hover:bg-[#EEF8F0] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
+                           <Button onClick={(e) => { 
+                             e.stopPropagation(); 
+                             statusMutation.mutate({ orderId: d.id as string, status: "ACCEPTED" }, {
+                               onSuccess: () => {
+                                 setSelectedOrderId(d.id as string);
+                                 setShowMobileDetails(true);
+                               }
+                             })
+                           }} className="bg-[#F5FBF6] border border-[#B9DDBF] text-[#087B2B] hover:bg-[#EEF8F0] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none flex-1 xl:flex-none">
                              <Check className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Accept Order
                            </Button>
-                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "REJECTED" })}} className="bg-[#FFF5F5] border border-[#FFCACA] text-[#EF2020] hover:bg-[#FFE8E8] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
+                           <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "REJECTED" })}} className="bg-[#FFF5F5] border border-[#FFCACA] text-[#EF2020] hover:bg-[#FFE8E8] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none flex-1 xl:flex-none">
                              <X className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Reject
                            </Button>
                          </>
@@ -621,7 +657,12 @@ export default function DeliveriesPageClient() {
 
         {/* Sticky Details Sidebar */}
         {selectedOrder && (
-          <div className="xl:sticky xl:top-6 space-y-6">
+          <div className={cn("xl:sticky xl:top-6 space-y-6", showMobileDetails ? "block" : "hidden xl:block")}>
+            <div className="xl:hidden">
+              <Button variant="ghost" onClick={() => setShowMobileDetails(false)} className="flex items-center text-[#374151] hover:text-[#111827] -ml-4">
+                <ArrowLeft className="h-4 w-4 mr-2" /> Back to Deliveries
+              </Button>
+            </div>
             <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.025)] overflow-hidden">
               
               <div className="bg-[#F0F8F1] py-4 px-5 flex items-center gap-3">
@@ -741,7 +782,7 @@ export default function DeliveriesPageClient() {
             </Card>
 
             {/* Live Order Tracking */}
-            {hasKitchenCoords && (
+            {hasKitchenCoords && selectedOrder.deliveryStatus !== "DELIVERED" && selectedOrder.orderStatus !== "DELIVERED" && selectedOrder.orderStatus !== "COMPLETED" && (
               <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.025)] overflow-hidden">
                 <div className="py-4 px-5 flex items-center gap-3 border-b border-[#E9ECEF]">
                   <div className="h-8 w-8 rounded-[6px] bg-[#EAF3FF] flex items-center justify-center border border-[#C9DEFA]">
@@ -763,6 +804,15 @@ export default function DeliveriesPageClient() {
                     broadcastLocation
                   />
                 </div>
+              </Card>
+            )}
+            {(selectedOrder.deliveryStatus === "DELIVERED" || selectedOrder.orderStatus === "DELIVERED" || selectedOrder.orderStatus === "COMPLETED") && (
+              <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.025)] overflow-hidden p-8 flex flex-col items-center justify-center text-center">
+                <div className="h-16 w-16 rounded-full bg-[#E4F4E7] flex items-center justify-center mb-4">
+                  <PackageCheck className="h-8 w-8 text-[#087B2B]" strokeWidth={1.5} />
+                </div>
+                <h3 className="font-bold text-[#111827] text-[18px] mb-2">Order Delivered Successfully</h3>
+                <p className="text-[#374151] text-[14px]">Great job! You have successfully delivered this order to the customer.</p>
               </Card>
             )}
           </div>

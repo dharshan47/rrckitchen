@@ -6,9 +6,11 @@ interface OrderTrackingMapState {
   livePosition: { lat: number; lng: number } | null;
   routeCoords: [number, number][];
   etaMinutes: number | null;
+  distanceKm: number | null;
   setLivePosition: (livePosition: { lat: number; lng: number } | null) => void;
   setRouteCoords: (routeCoords: [number, number][]) => void;
   setEtaMinutes: (etaMinutes: number | null) => void;
+  setDistanceKm: (distanceKm: number | null) => void;
   resetTracking: () => void;
 }
 
@@ -16,10 +18,12 @@ export const orderTrackingMapStore = create<OrderTrackingMapState>()((set) => ({
   livePosition: null,
   routeCoords: [],
   etaMinutes: null,
+  distanceKm: null,
   setLivePosition: (livePosition) => set({ livePosition }),
   setRouteCoords: (routeCoords) => set({ routeCoords }),
   setEtaMinutes: (etaMinutes) => set({ etaMinutes }),
-  resetTracking: () => set({ livePosition: null, routeCoords: [], etaMinutes: null }),
+  setDistanceKm: (distanceKm) => set({ distanceKm }),
+  resetTracking: () => set({ livePosition: null, routeCoords: [], etaMinutes: null, distanceKm: null }),
 }));
 
 const selectLivePosition = (s: OrderTrackingMapState) => s.livePosition;
@@ -39,6 +43,7 @@ export function useOrderTrackingMapActions() {
       setLivePosition: s.setLivePosition,
       setRouteCoords: s.setRouteCoords,
       setEtaMinutes: s.setEtaMinutes,
+      setDistanceKm: s.setDistanceKm,
       resetTracking: s.resetTracking,
     }))
   );
@@ -46,6 +51,10 @@ export function useOrderTrackingMapActions() {
 
 export function useOrderTrackingEtaMinutes() {
   return orderTrackingMapStore((s) => s.etaMinutes);
+}
+
+export function useOrderTrackingDistanceKm() {
+  return orderTrackingMapStore((s) => s.distanceKm);
 }
 
 /**
@@ -95,6 +104,7 @@ export function useRouteEtaQuery(
         orderTrackingMapStore.getState().setRouteCoords(data.route as [number, number][])
       }
       orderTrackingMapStore.getState().setEtaMinutes(data.etaMinutes ?? null)
+      orderTrackingMapStore.getState().setDistanceKm(data.distanceKm ?? null)
       return data.etaMinutes ?? null
     },
     enabled: !!originPos,

@@ -37,6 +37,8 @@ export class AddToCartCommand implements Command {
       foodType: string;
       timeSlot: string;
       kitchenName: string;
+      kitchenId?: string;
+      imageUrl?: string;
     }
   ) {}
 
@@ -73,7 +75,7 @@ export class UpdateCartQuantityCommand implements Command {
 }
 
 export class ClearCartCommand implements Command {
-  private snapshot: Array<{ id: string; name: string; price: number; qty: number; foodType: string; timeSlot: string; kitchenName: string }> = [];
+  private snapshot: Array<{ id: string; name: string; price: number; qty: number; foodType: string; timeSlot: string; kitchenName: string; kitchenId?: string; imageUrl?: string }> = [];
 
   async execute() {
     const { cartStore } = await import("@/stores/cartStore");

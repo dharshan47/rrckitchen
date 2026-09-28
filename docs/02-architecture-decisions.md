@@ -323,12 +323,12 @@ Use **Prisma Data Proxy** (`pooled.db.prisma.io`) with:
 
 | Field | Value |
 |-------|-------|
-| **Status** | Superseded by ADR-019 (COD removed) |
+| **Status** | Superseded by ADR-019 (Online Payment removed) |
 | **Date** | 2026-02-01 |
 | **Deciders** | Product, Tech Lead, Finance |
 
 ### Context
-The platform serves Indian customers who expect online payment (UPI, cards, net banking). COD was originally planned but was removed in ADR-019 — see that ADR for the rationale.
+The platform serves Indian customers who expect online payment (UPI, cards, net banking). Online Payment was originally planned but was removed in ADR-019 — see that ADR for the rationale.
 
 ### Decision
 Use **Razorpay** for all payments:
@@ -482,7 +482,7 @@ Replace the custom implementation with **Radix UI Accordion** for both the "Disc
 
 ---
 
-## ADR-019: Remove Cash on Delivery (Online Payments Only)
+## ADR-019: Remove Online Payment (Online Payments Only)
 
 | Field | Value |
 |-------|-------|
@@ -491,11 +491,11 @@ Replace the custom implementation with **Radix UI Accordion** for both the "Disc
 | **Deciders** | Product, Tech Lead, Finance |
 
 ### Context
-COD introduced operational complexity disproportionate to adoption: daily cash reconciliation (collections vs. remittances vs. variances), delivery-partner cash handling, fraud exposure, and a 2-5% handling cost. The platform's early user base pays overwhelmingly via UPI.
+Online Payment introduced operational complexity disproportionate to adoption: daily cash reconciliation (collections vs. remittances vs. variances), delivery-partner cash handling, fraud exposure, and a 2-5% handling cost. The platform's early user base pays overwhelmingly via UPI.
 
 ### Decision
-Remove COD entirely:
-- Delete all COD surfaces: eligibility checks, COD checkout, delivery OTP confirmation, remittance, reconciliation engine (`CodCollection`, `CodRemittance`, `CodVariance`, `KitchenDailyStock` models dropped)
+Remove Online Payment entirely:
+- Delete all Online Payment surfaces: eligibility checks, Online Payment checkout, delivery confirmation confirmation, remittance, reconciliation engine (`CodCollection`, `CodRemittance`, `CodVariance`, `KitchenDailyStock` models dropped)
 - All orders are prepaid via Razorpay (Checkout) or UPI Smart Collect
 - `Order.paymentMethod` is always `online`; `Payment.method` is always `online`
 

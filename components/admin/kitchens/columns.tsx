@@ -43,12 +43,11 @@ export const columns = (
     cell: ({ row }) => {
       const kitchen = row.original
       const name = kitchenDisplayName(kitchen)
-      const initials = name.substring(0, 2).toUpperCase()
       return (
         <div className="flex items-center gap-3">
           <Avatar className="h-[40px] w-[40px] rounded-[8px]">
-            <AvatarImage src={kitchen.imageUrl ?? ""} alt={name} className="object-cover" />
-            <AvatarFallback className="rounded-[8px] bg-[#F8FAFC] text-[#475569] text-[12px] font-semibold">{initials}</AvatarFallback>
+            <AvatarImage src={kitchen.imageUrl || "/kitchen/profile.webp"} alt={name} className="object-cover" />
+            <AvatarFallback className="rounded-[8px] bg-[#F8FAFC] text-[#475569] text-[12px] font-semibold">K</AvatarFallback>
           </Avatar>
           <div className="flex flex-col gap-0.5">
             <span className="font-semibold text-[13px] text-[#111827] truncate max-w-[150px]">{name}</span>

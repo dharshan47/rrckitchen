@@ -253,7 +253,7 @@ export async function GET(request: Request) {
 }
 ```
 
-> COD-era jobs (cleanup-expired-sessions, cleanup-abandoned-carts, daily-reconciliation, health-check) were planned but never existed; `daily-reconciliation` (COD reconciliation) is obsolete after [ADR-019](02-architecture-decisions.md#adr-019-remove-cash-on-delivery).
+> Online Payment-era jobs (cleanup-expired-sessions, cleanup-abandoned-carts, daily-reconciliation, health-check) were planned but never existed; `daily-reconciliation` (Online Payment reconciliation) is obsolete after [ADR-019](02-architecture-decisions.md#adr-019-remove-cash-on-delivery).
 
 ---
 

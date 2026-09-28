@@ -21,7 +21,8 @@ import {
   Map, 
   Crosshair, 
   PenLine,
-  Save
+  Save,
+  LocateFixed
 } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { useSession } from "@/lib/auth-client"
@@ -33,12 +34,16 @@ import {
 } from "@/stores/userProfileStore"
 import Image from "next/image"
 import { Skeleton } from "@/components/ui/skeleton"
+import { ThanjavurMap } from "@/components/map/thanjavur-map"
+import { toast } from "sonner"
 
 const addressSchema = z.object({
   label: z.string().optional(),
   lineOne: z.string().min(3, "Address is required"),
   lineTwo: z.string().optional(),
   pincode: z.string().regex(/^\d{6}$/, "Enter a valid 6-digit pincode"),
+  latitude: z.number().optional(),
+  longitude: z.number().optional(),
 })
 
 type AddressForm = z.infer<typeof addressSchema>
@@ -123,10 +128,15 @@ export function AddressesContent() {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<AddressForm>({
     resolver: zodResolver(addressSchema),
   })
+
+  const latitude = watch("latitude")
+  const longitude = watch("longitude")
 
   const addMutation = useAddAddressMutation(() => {
     reset()
@@ -134,6 +144,37 @@ export function AddressesContent() {
   })
   const deleteMutation = useDeleteAddressMutation()
   const [deletingId, setDeletingId] = useState<string | null>(null)
+
+  const handleLocateMe = () => {
+    if (typeof navigator !== "undefined" && "geolocation" in navigator) {
+      const toastId = toast.loading("Fetching high-accuracy GPS location...")
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude
+          const lng = position.coords.longitude
+          setValue("latitude", lat)
+          setValue("longitude", lng)
+          
+          fetch(`/api/geocode/reverse?lat=${lat}&lon=${lng}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data?.display_name) {
+                setValue("lineOne", data.display_name)
+              }
+            })
+            .catch(() => {})
+
+          toast.success("Exact location pinned successfully!", { id: toastId })
+        },
+        () => {
+          toast.error("Could not get your location. Please check browser permissions.", { id: toastId })
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      )
+    } else {
+      toast.error("Geolocation is not supported by your browser.")
+    }
+  }
 
   if (isPending || addressesLoading) {
     return <AddressesSkeleton />
@@ -281,7 +322,44 @@ export function AddressesContent() {
               </div>
               {errors.lineOne && <p className="text-[12px] font-medium text-[#D70806] mt-1.5">{errors.lineOne.message}</p>}
             </div>
-            <div>
+            
+            <div className="md:col-span-2">
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-[13px] font-bold text-[#4F5C70] block">Pin Location <span className="text-[#D70806]">*</span></label>
+                <button
+                  type="button"
+                  onClick={handleLocateMe}
+                  className="flex items-center gap-1.5 h-7 px-3 text-[12px] font-bold text-[#09762D] bg-[#E7F6E8] hover:bg-[#D9F0E1] border border-[#B8D9BF] rounded-full transition-colors"
+                >
+                  <LocateFixed className="h-3.5 w-3.5" /> Use Current Location
+                </button>
+              </div>
+              <div className="h-[200px] w-full rounded-[10px] overflow-hidden border border-[#E4E8E4] relative z-0">
+                <ThanjavurMap
+                  height="200px"
+                  markerIconType="pin"
+                  markerPosition={
+                    latitude && longitude
+                      ? [latitude, longitude]
+                      : undefined
+                  }
+                  onLocationSelect={(lat, lng) => {
+                    setValue("latitude", lat)
+                    setValue("longitude", lng)
+                  }}
+                  onPlaceResolved={(place) => {
+                    setValue("lineOne", place.address)
+                    setValue("latitude", place.lat)
+                    setValue("longitude", place.lng)
+                  }}
+                />
+              </div>
+              {(!latitude) && (
+                <p className="text-[12px] font-medium text-[#D70806] mt-1.5">Please pin your exact location on the map.</p>
+              )}
+            </div>
+
+            <div className="md:col-span-2">
               <label className="text-[13px] font-bold text-[#4F5C70] mb-2 block">Address Line 2 (Optional)</label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">

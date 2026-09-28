@@ -20,6 +20,8 @@ interface ThanjavurMapProps {
   onLocationSelect?: (lat: number, lng: number) => void
   onPlaceResolved?: (place: { name: string; address: string; lat: number; lng: number }) => void
   interactive?: boolean
+  isGoingToKitchen?: boolean
+  markerIconType?: "delivery" | "kitchen" | "pin"
 }
 
 export function ThanjavurMap({
@@ -31,6 +33,8 @@ export function ThanjavurMap({
   onLocationSelect,
   onPlaceResolved,
   interactive = true,
+  isGoingToKitchen = false,
+  markerIconType = "delivery",
 }: ThanjavurMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const mapRef = useRef<LeafletMap | null>(null)
@@ -44,6 +48,7 @@ export function ThanjavurMap({
   const onLocationSelectRef = useRef(onLocationSelect)
   const onPlaceResolvedRef = useRef(onPlaceResolved)
   const interactiveRef = useRef(interactive)
+  const markerIconTypeRef = useRef(markerIconType)
   const instanceId = useId()
   const loaded = useThanjavurMapLoaded(instanceId)
   const mapActions = useThanjavurMapActions()
@@ -52,7 +57,8 @@ export function ThanjavurMap({
     onLocationSelectRef.current = onLocationSelect
     onPlaceResolvedRef.current = onPlaceResolved
     interactiveRef.current = interactive
-  }, [onLocationSelect, onPlaceResolved, interactive])
+    markerIconTypeRef.current = markerIconType
+  }, [onLocationSelect, onPlaceResolved, interactive, markerIconType])
 
   const { data: leafletLib } = useQuery<typeof import("leaflet")>({
     queryKey: ["leaflet"],
@@ -84,7 +90,23 @@ export function ThanjavurMap({
     },
   })
 
-  function createDeliveryIcon(L: typeof import("leaflet")) {
+  function createIcon(L: typeof import("leaflet"), type: "delivery" | "kitchen" | "pin") {
+    if (type === "kitchen") {
+      return L.divIcon({
+        html: '<div style="background:#ff5722;color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(255,87,34,0.3);border:3px solid white;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13.87A4 4 0 0 1 7.41 6a5.11 5.11 0 0 1 1.05-1.54 5 5 0 0 1 7.08 0A5.11 5.11 0 0 1 16.59 6 4 4 0 0 1 18 13.87V21H6Z"/><line x1="6" y1="17" x2="18" y2="17"/></svg></div>',
+        className: "",
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+      })
+    }
+    if (type === "pin") {
+      return L.divIcon({
+        html: '<div style="background:#087A3E;color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(8,122,62,0.3);border:3px solid white;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>',
+        className: "",
+        iconSize: [36, 36],
+        iconAnchor: [18, 36],
+      })
+    }
     return L.divIcon({
       html: '<div style="background:#F97316;color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(249,115,22,0.3);border:3px solid white;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg></div>',
       className: "",
@@ -136,8 +158,8 @@ export function ThanjavurMap({
         if (markerRef.current) {
           markerRef.current.setLatLng([lat, lng])
         } else {
-          markerRef.current = L.marker([lat, lng], { draggable: true, icon: createDeliveryIcon(L) }).addTo(map)
-            .bindPopup("Your Delivery Location")
+          markerRef.current = L.marker([lat, lng], { draggable: true, icon: createIcon(L, markerIconTypeRef.current) }).addTo(map)
+            .bindPopup("Your Location")
           markerRef.current.on("dragend", () => {
             const pos = markerRef.current?.getLatLng()
             if (pos) reportPlace(pos.lat, pos.lng)
@@ -185,7 +207,7 @@ export function ThanjavurMap({
       kitchenMarkerRef.current.setLatLng(kitchenPosition)
     } else {
       const kitchenIcon = L.divIcon({
-        html: '<div style="background:#15803D;width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
+        html: '<div style="background:#ff5722;width:14px;height:14px;border-radius:50%;border:2px solid white;box-shadow:0 2px 4px rgba(0,0,0,0.2);"></div>',
         className: "",
         iconSize: [14, 14],
         iconAnchor: [7, 7],
@@ -204,17 +226,35 @@ export function ThanjavurMap({
 
     if (destMarkerRef.current) {
       destMarkerRef.current.setLatLng(destinationPosition)
+      
+      // Update icon if the type of destination changed (going to kitchen vs going to customer)
+      const currentIconStr = (destMarkerRef.current.options.icon as { options?: { html?: string } })?.options?.html || "";
+      const expectedBg = isGoingToKitchen ? "#ff5722" : "#15803D";
+      if (!currentIconStr.includes(expectedBg)) {
+        const destIcon = L.divIcon({
+          html: isGoingToKitchen
+            ? '<div style="background:#ff5722;color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(255,87,34,0.3);border:3px solid white;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>'
+            : '<div style="background:#15803D;color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(21,128,61,0.3);border:3px solid white;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>',
+          className: "",
+          iconSize: [36, 36],
+          iconAnchor: [18, 18],
+        })
+        destMarkerRef.current.setIcon(destIcon);
+        destMarkerRef.current.setPopupContent(isGoingToKitchen ? "Kitchen Location" : "Customer Location");
+      }
     } else {
       const destIcon = L.divIcon({
-        html: '<div style="background:#15803D;color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(21,128,61,0.3);border:3px solid white;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>',
+        html: isGoingToKitchen
+          ? '<div style="background:#ff5722;color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(255,87,34,0.3);border:3px solid white;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg></div>'
+          : '<div style="background:#15803D;color:white;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(21,128,61,0.3);border:3px solid white;"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>',
         className: "",
         iconSize: [36, 36],
         iconAnchor: [18, 18],
       })
       destMarkerRef.current = L.marker(destinationPosition, { icon: destIcon }).addTo(map)
-        .bindPopup("Your Location")
+        .bindPopup(isGoingToKitchen ? "Kitchen Location" : "Customer Location")
     }
-  }, [destinationPosition, loaded])
+  }, [destinationPosition, loaded, isGoingToKitchen])
 
   // Rider marker — animate smoothly to new positions without touching the map instance
   useEffect(() => {
@@ -231,7 +271,7 @@ export function ThanjavurMap({
       const hasReporting = Boolean(onLocationSelectRef.current || onPlaceResolvedRef.current)
       markerRef.current = L.marker(markerPosition, {
         draggable: hasReporting,
-        icon: createDeliveryIcon(L),
+        icon: createIcon(L, markerIconType),
       }).addTo(map)
       if (hasReporting) {
         markerRef.current.on("dragend", () => {
@@ -268,7 +308,7 @@ export function ThanjavurMap({
       }
     }
     animFrameRef.current = requestAnimationFrame(step)
-  }, [markerPosition, loaded, reportPlace])
+  }, [markerPosition, loaded, reportPlace, markerIconType])
 
   // Route polyline — update in place when the route changes
   useEffect(() => {
@@ -276,17 +316,19 @@ export function ThanjavurMap({
     const L = leafletRef.current
     if (!map || !L) return
     if (routeCoords && routeCoords.length > 1) {
+      const expectedColor = isGoingToKitchen ? "#ff5722" : "#15803D"
       if (routeRef.current) {
         routeRef.current.setLatLngs(routeCoords)
+        routeRef.current.setStyle({ color: expectedColor })
       } else {
         routeRef.current = L.polyline(routeCoords, {
-          color: "#15803D",
+          color: expectedColor,
           weight: 3,
           opacity: 1,
         }).addTo(map)
       }
     }
-  }, [routeCoords, loaded])
+  }, [routeCoords, loaded, isGoingToKitchen])
 
   return (
     <div

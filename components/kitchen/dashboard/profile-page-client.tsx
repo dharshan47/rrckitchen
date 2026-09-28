@@ -31,6 +31,7 @@ import {
   ChevronRight,
   Sparkles,
   CircleAlert,
+  LocateFixed,
 } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
@@ -471,6 +472,40 @@ export default function ProfilePageClient() {
         return
       }
       savePrepTimeMutation.mutate(prepTimeValue.trim() ? mins : null)
+    }
+  }
+
+  const handleLocateMe = () => {
+    if (typeof navigator !== "undefined" && "geolocation" in navigator) {
+      const toastId = toast.loading("Fetching high-accuracy GPS location...")
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude
+          const lng = position.coords.longitude
+          setAddressForm((prev) => ({
+            ...prev,
+            latitude: String(lat),
+            longitude: String(lng),
+          }))
+          
+          fetch(`/api/geocode/reverse?lat=${lat}&lon=${lng}`)
+            .then(res => res.json())
+            .then(data => {
+              if (data?.display_name) {
+                setAddressForm((prev) => ({ ...prev, lineOne: data.display_name }))
+              }
+            })
+            .catch(() => {})
+
+          toast.success("Exact location pinned successfully!", { id: toastId })
+        },
+        () => {
+          toast.error("Could not get your location. Please check browser permissions.", { id: toastId })
+        },
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      )
+    } else {
+      toast.error("Geolocation is not supported by your browser.")
     }
   }
 
@@ -929,6 +964,7 @@ export default function ProfilePageClient() {
                           height="250px"
                           markerPosition={[Number(address.latitude), Number(address.longitude)]}
                           interactive={false}
+                          markerIconType="kitchen"
                         />
                       </div>
                     )}
@@ -1194,7 +1230,18 @@ export default function ProfilePageClient() {
                   </div>
                 </div>
                 <div className="space-y-1.5 mt-2">
-                  <Label className="text-[12px] font-semibold text-[#374151]">Pin Location <span className="text-[#EF4444]">*</span></Label>
+                  <div className="flex items-center justify-between">
+                    <Label className="text-[12px] font-semibold text-[#374151]">Pin Location <span className="text-[#EF4444]">*</span></Label>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={handleLocateMe}
+                      className="h-7 px-2 text-[11px] font-medium border-[#9FC8AD] text-[#087A3E] bg-[#EEF8F1] hover:bg-[#D9F0E1]"
+                    >
+                      <LocateFixed className="h-3 w-3 mr-1" /> Use Current Location
+                    </Button>
+                  </div>
                   <div className="h-[200px] w-full rounded-[7px] overflow-hidden border border-[#D9DEE3] relative z-0">
                     <ThanjavurMap
                       height="200px"
@@ -1203,11 +1250,18 @@ export default function ProfilePageClient() {
                           ? [Number(addressForm.latitude), Number(addressForm.longitude)]
                           : undefined
                       }
+                      markerIconType="pin"
                       onLocationSelect={(lat, lng) => {
                         setAddressForm((prev) => ({
                           ...prev,
                           latitude: String(lat),
                           longitude: String(lng),
+                        }))
+                      }}
+                      onPlaceResolved={(place) => {
+                        setAddressForm((prev) => ({
+                          ...prev,
+                          lineOne: place.address,
                         }))
                       }}
                     />

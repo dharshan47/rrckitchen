@@ -150,7 +150,6 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
   const availableCount = menuItems.filter((m) => m.isAvailable).length
 
   const name = kitchenName(kitchen)
-  const initials = name.substring(0, 2).toUpperCase()
 
   const handleSaveGeneral = () => {
     detailsMutation
@@ -331,8 +330,8 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
                   {({ uploading, startUpload }) => (
                     <button type="button" onClick={startUpload} disabled={uploading} className="relative group rounded-full overflow-hidden h-9 w-9">
                       <Avatar className="h-9 w-9 rounded-full border border-[#E2E8F0] bg-[#F8FAFC]">
-                        <AvatarImage src={kitchen.imageUrl ?? ""} alt={name} className="object-cover" />
-                        <AvatarFallback className="rounded-full bg-[#F8FAFC] text-[#475569] text-[14px] font-semibold">{initials}</AvatarFallback>
+                        <AvatarImage src={kitchen.imageUrl || "/kitchen/profile.webp"} alt={name} className="object-cover" />
+                        <AvatarFallback className="rounded-full bg-[#F8FAFC] text-[#475569] text-[14px] font-semibold">K</AvatarFallback>
                       </Avatar>
                       <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         {uploading ? <Loader2 className="h-4 w-4 text-white animate-spin" /> : <Camera className="h-4 w-4 text-white" />}

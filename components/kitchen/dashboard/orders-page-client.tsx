@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useMutation } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapPin, Search, Filter, CalendarDays, ClipboardList, Clock3, Leaf, Drumstick, ImageIcon, Sun, Headset, ChevronRight, ChevronDown } from "lucide-react"
@@ -14,7 +14,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
-import { useKitchenDashboardData } from "@/stores/kitchenDashboardStore"
+import { useKitchenDashboardData, useKitchenDashboardActions } from "@/stores/kitchenDashboardStore"
 import { Calendar } from "@/components/ui/calendar"
 import {
   Popover,
@@ -62,7 +62,6 @@ function getTimeSlotName(slot?: string | null) {
 const quickFilters = ["All Status", "Confirmed", "Preparing", "Ready for Pickup", "Completed", "Cancelled"]
 
 export default function OrdersPageClient() {
-  const queryClient = useQueryClient()
   const [filter, setFilter] = useState<string>("All Status")
   const [searchQuery, setSearchQuery] = useState("")
   const [activeTab, setActiveTab] = useState<"all" | "today" | "tomorrow">("all")
@@ -70,24 +69,19 @@ export default function OrdersPageClient() {
   const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [filterOpen, setFilterOpen] = useState(false)
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["kitchen-dashboard"] })
+  const data = useKitchenDashboardData()
+  const { setData } = useKitchenDashboardActions()
 
   const statusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) => updateOrderStatus(id, status),
     onMutate: async ({ id, status }) => {
-      await queryClient.cancelQueries({ queryKey: ["kitchen-dashboard"] })
-      const previousData = queryClient.getQueryData<{ orders: Array<{ id: string; status: string; [key: string]: unknown }> }>(["kitchen-dashboard"])
+      const previousData = data
       if (previousData) {
-        queryClient.setQueryData(["kitchen-dashboard"], {
+        setData({
           ...previousData,
           orders: previousData.orders.map((o) => {
             if (o.id === id) {
-              let displayStatus = status
-              if (status === "PREPARING") displayStatus = "Preparing"
-              if (status === "READYFORPICKUP") displayStatus = "Ready for Pickup"
-              if (status === "COMPLETED") displayStatus = "Completed"
-              if (status === "CANCELLED") displayStatus = "Cancelled"
-              return { ...o, status: displayStatus }
+              return { ...o, status }
             }
             return o
           })
@@ -95,7 +89,7 @@ export default function OrdersPageClient() {
       }
       return { previousData }
     },
-    onSuccess: (res, { status }) => {
+    onSuccess: (res, { status }, context) => {
       if (res.success) {
         const messages: Record<string, string> = {
           PREPARING: "Order accepted and is now preparing",
@@ -104,21 +98,20 @@ export default function OrdersPageClient() {
           COMPLETED: "Order marked as completed",
         }
         toast.success(messages[status] ?? "Order updated")
-        invalidate()
       } else {
         toast.error(res.error ?? "Failed to update order")
-        invalidate()
+        if (context?.previousData) {
+          setData(context.previousData)
+        }
       }
     },
     onError: (err, variables, context) => {
       if (context?.previousData) {
-        queryClient.setQueryData(["kitchen-dashboard"], context.previousData)
+        setData(context.previousData)
       }
       toast.error("Something went wrong")
     },
   })
-
-  const data = useKitchenDashboardData()
 
   const allOrders = useMemo<OrderRow[]>(() => data?.orders ?? [], [data])
   const menuItems = useMemo<MenuItemRow[]>(() => data?.menuItems ?? [], [data])

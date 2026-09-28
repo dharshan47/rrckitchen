@@ -295,6 +295,7 @@ export async function getAdminDashboardData() {
         : 0
     return {
       name: k.kitchenAlias?.displayName,
+      imageUrl: k.kitchenAlias?.imageUrl,
       orders: k._count.orderItems,
       revenue: totalRev,
       rating: Math.round(avgRating * 10) / 10,

@@ -83,13 +83,15 @@ export async function POST(req: Request) {
       }
     }
 
-    await prisma.orderStatusHistory.create({
-      data: {
-        orderId,
-        status: status === "DELIVERED" ? "COMPLETED" : (status as never),
-        note: `Delivery partner: ${status}`,
-      },
-    });
+    if (status === "DELIVERED") {
+      await prisma.orderStatusHistory.create({
+        data: {
+          orderId,
+          status: "COMPLETED",
+          note: `Delivery partner: ${status}`,
+        },
+      });
+    }
 
     const ably = getAblyRest();
     await ably.channels.get(`order:${orderId}`).publish("delivery:status", { status });

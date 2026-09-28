@@ -561,7 +561,7 @@ export function SearchPageContent() {
                               {kitchen.imageUrl ? (
                                 <Image src={kitchen.imageUrl} alt={kitchen.displayName} fill className="object-cover" sizes="32px" />
                               ) : (
-                                <UtensilsCrossed className="h-4 w-4 text-muted-foreground" />
+                                <Image src="/kitchen/profile.webp" alt="Fallback Kitchen Profile" fill className="object-cover" sizes="32px" />
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
