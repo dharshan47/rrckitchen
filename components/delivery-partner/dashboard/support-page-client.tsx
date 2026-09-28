@@ -547,56 +547,63 @@ export default function SupportPageClient() {
                       
                       return (
                         <button onClick={() => handleTicketClick(ticket.publicCode ?? ticket.id)} key={ticket.id} className={cn("rounded-[10px] border border-[#EDEEEF] bg-[#FFFFFF] p-4 flex flex-col gap-3 relative cursor-pointer hover:shadow-sm transition-all text-left w-full block group")}>
-                            <div className="flex justify-between items-start gap-4">
-                               <div className="flex items-start gap-3.5 flex-1 min-w-0">
+                            <div className="flex justify-between items-start gap-3 sm:gap-4">
+                               <div className="flex items-start gap-3 sm:gap-3.5 flex-1 min-w-0">
                                   <div className={cn("h-11 w-11 rounded-full flex items-center justify-center shrink-0 shadow-sm", iconBg)}>
                                      <CatIcon className={cn("h-5 w-5", iconColor)} strokeWidth={2.5} />
                                   </div>
-                                  <div className="flex flex-col min-w-0">
-                                     <div className="flex items-center gap-2.5 mb-1.5 flex-wrap">
+                                  <div className="flex flex-col min-w-0 flex-1">
+                                     <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                                        <span className="text-[12px] font-[700] text-[#252830]">#{ticket.publicCode ?? `TK-${ticket.id.slice(0,5)}`}</span>
-                                       <span className={cn("text-[10px] font-[700] px-1.5 py-0.5 rounded-[6px]", prioConf.text, prioConf.bg)}>{prioConf.label}</span>
+                                       <span className={cn("text-[10px] font-[700] px-1.5 py-0.5 rounded-[6px] whitespace-nowrap", prioConf.text, prioConf.bg)}>{prioConf.label}</span>
+                                       {/* Status for mobile inline */}
+                                       <div className={cn("flex sm:hidden items-center gap-1.5 px-2 py-1 rounded-[6px] whitespace-nowrap", statusConf.dot.replace('bg-', 'bg-').replace('[#', '[#').replace(']', ']/10'))}>
+                                          <div className={cn("h-1.5 w-1.5 rounded-full", statusConf.dot)} />
+                                          <span className={cn("text-[11px] font-[700]", statusConf.text)}>{statusConf.label}</span>
+                                       </div>
                                      </div>
-                                     <h3 className="text-[15px] font-[700] text-[#111318] truncate">{ticket.subject}</h3>
-                                     <p className="text-[13px] text-[#454951] mt-0.5 line-clamp-1">{ticket.description}</p>
+                                     <h3 className="text-[15px] font-[700] text-[#111318] truncate w-full">{ticket.subject}</h3>
+                                     <p className="text-[13px] text-[#454951] mt-0.5 line-clamp-1 w-full">{ticket.description}</p>
                                   </div>
                                </div>
                                
-                               <div className="flex flex-col items-end gap-2 shrink-0">
-                                  <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded-[6px]", statusConf.dot.replace('bg-', 'bg-').replace('[#', '[#').replace(']', ']/10'))}>
+                               <div className="hidden sm:flex flex-col items-end gap-2 shrink-0">
+                                  <div className={cn("flex items-center gap-1.5 px-2 py-1 rounded-[6px] whitespace-nowrap", statusConf.dot.replace('bg-', 'bg-').replace('[#', '[#').replace(']', ']/10'))}>
                                      <div className={cn("h-1.5 w-1.5 rounded-full", statusConf.dot)} />
                                      <span className={cn("text-[11px] font-[700]", statusConf.text)}>{statusConf.label}</span>
                                   </div>
                                </div>
                             </div>
                             
-                            <div className="flex items-center justify-between border-t border-[#F0F1F2] pt-3.5 mt-1.5 w-full">
-                               <div className="flex items-center gap-2.5 flex-wrap">
-                                  <div className="bg-[#F7F8F9] px-2.5 py-1 rounded-full text-[11px] text-[#747780] font-[600]">Order: {ticket.order?.publicCode ?? ticket.publicCode ?? ticket.orderId ?? "-"}</div>
-                                  <div className="bg-[#F7F8F9] px-2.5 py-1 rounded-full text-[11px] text-[#747780] font-[600]">Created: {formatFullDate(ticket.createdAt)}</div>
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between border-t border-[#F0F1F2] pt-3.5 mt-1.5 w-full gap-3 sm:gap-4">
+                               <div className="flex items-center gap-2 flex-wrap">
+                                  <div className="bg-[#F7F8F9] px-2.5 py-1 rounded-full text-[11px] text-[#747780] font-[600] whitespace-nowrap">Order: {ticket.order?.publicCode ?? ticket.publicCode ?? ticket.orderId ?? "-"}</div>
+                                  <div className="bg-[#F7F8F9] px-2.5 py-1 rounded-full text-[11px] text-[#747780] font-[600] whitespace-nowrap">Created: {formatFullDate(ticket.createdAt)}</div>
                                </div>
                                
-                               <div className="flex items-center gap-4">
+                               <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
                                   <div className="hidden sm:flex items-center gap-2">
                                      <div className="h-7 w-7 rounded-full bg-gray-200 overflow-hidden shrink-0 border border-[#EDEEEF]">
                                         <Image src="/delivery/delivery-person-green.webp" alt="Agent" width={28} height={28} className="object-cover" />
                                      </div>
                                      <div className="flex flex-col">
-                                        <span className="text-[11px] font-[700] text-[#111318]">Rahul Sharma</span>
-                                        <span className="text-[10px] text-[#747780] font-[600]">Support Executive</span>
+                                        <span className="text-[11px] font-[700] text-[#111318] text-left">Rahul Sharma</span>
+                                        <span className="text-[10px] text-[#747780] font-[600] text-left">Support Executive</span>
                                      </div>
                                   </div>
-                                  <div className="text-[11px] text-[#747780] text-right font-[500] leading-tight">
-                                     Updated<br/>{formatRelativeTime(ticket.updatedAt)}
+                                  <div className="text-[11px] text-[#747780] text-left sm:text-right font-[500] leading-tight flex sm:block items-center gap-1.5">
+                                     <span className="sm:hidden font-[600]">Updated:</span>
+                                     <span className="hidden sm:inline">Updated<br/></span>
+                                     {formatRelativeTime(ticket.updatedAt)}
                                   </div>
-                                  <ChevronRight className="h-4 w-4 text-[#A4A7AE] group-hover:text-[#0D6C2B] transition-colors" strokeWidth={2.5} />
+                                  <ChevronRight className="h-4 w-4 text-[#A4A7AE] group-hover:text-[#0D6C2B] transition-colors ml-auto sm:ml-0" strokeWidth={2.5} />
                                </div>
                             </div>
                          </button>
                       )
                    })}
                  </TabsContent>
-                 <div className="p-3 bg-[#FFF7ED] border-t border-[#FCE7D3] flex items-center justify-center gap-2.5 rounded-b-[14px]">
+                 <div className="p-3 bg-[#FFF7ED] border-t border-[#FCE7D3] flex items-center justify-center gap-2.5 rounded-b-[14px] shrink-0">
                     <RefreshCw className="h-4 w-4 text-[#FA4A05]" strokeWidth={2.5} />
                     <span className="text-[13px] text-[#454951] font-[600]">Can&apos;t find your ticket? Pull down to refresh or click the refresh button above.</span>
                  </div>

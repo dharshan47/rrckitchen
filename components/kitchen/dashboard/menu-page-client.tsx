@@ -365,7 +365,7 @@ function MenuForm() {
   )
 }
 
-function AvailabilityCard({ todayAvail, tomorrowAvail, onSetToday, onSetTomorrow }: { todayAvail: boolean | null; tomorrowAvail: boolean | null; onSetToday: (v: boolean) => void; onSetTomorrow: (v: boolean) => void }) {
+function AvailabilityCard({ tomorrowAvail, onSetTomorrow }: { tomorrowAvail: boolean | null; onSetTomorrow: (v: boolean) => void }) {
   return (
     <Card className="rounded-[12px] border border-[#E7E9EB] shadow-[0_1px_3px_rgba(16,24,40,0.04),0_2px_8px_rgba(16,24,40,0.03)] h-fit sticky top-28 bg-[#FFFFFF]">
       <CardHeader className="pb-4 pt-6 px-6 flex flex-row items-center gap-3 border-b border-[#E8EAEC] bg-[#FFFFFF]">
@@ -423,51 +423,6 @@ function AvailabilityCard({ todayAvail, tomorrowAvail, onSetToday, onSetTomorrow
             </Button>
           </div>
         </div>
-
-        {/* Today */}
-        <div className="space-y-5 pb-5">
-          <div className="flex items-center gap-3">
-            <div className="h-[42px] w-[42px] bg-[#FFF0EE] text-[#FF2B20] rounded-full flex items-center justify-center shrink-0">
-              <Calendar className="h-[20px] w-[20px]" />
-            </div>
-            <div className="flex-1">
-              <div className="flex items-center justify-between gap-2">
-                <h4 className="text-[15px] font-[600] text-[#18212B] leading-tight">Today</h4>
-                <Badge className={`border-none px-3 py-1 text-[11px] font-[600] rounded-[999px] shadow-none ${
-                  todayAvail === true ? "bg-[#EAF6ED] text-[#3D8B5A]" : "bg-[#FFF0EE] text-[#FF2B20]"
-                }`}>
-                  {todayAvail === true ? "Available" : "Unavailable"}
-                </Badge>
-              </div>
-              <p className="text-[13px] text-[#68727D] mt-1">Accept orders for today</p>
-            </div>
-          </div>
-          
-          <div className="flex gap-3">
-            <Button
-              variant="outline"
-              onClick={() => onSetToday(true)}
-              className={`flex-1 rounded-[8px] h-[36px] font-[500] text-[13px] border transition-all ${
-                todayAvail === true
-                  ? "bg-[#EAF6ED] border-[#9BC8A8] text-[#3D8B5A] shadow-none"
-                  : "bg-[#FFFFFF] border-[#9BC8A8] text-[#3D8B5A] hover:bg-[#F3FAF4]"
-              }`}
-            >
-              <CheckCircle2 className="h-[16px] w-[16px] mr-1.5 text-[#3D8B5A]" /> Available
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => onSetToday(false)}
-              className={`flex-1 rounded-[8px] h-[36px] font-[500] text-[13px] border transition-all ${
-                todayAvail === false
-                  ? "bg-[#FF2B20] border-[#FF2B20] text-[#FFFFFF] shadow-none"
-                  : "bg-[#FFFFFF] border-[#FF7B73] text-[#FF2B20] hover:bg-[#FFF0EE]"
-              }`}
-            >
-              <XCircle className="h-[16px] w-[16px] mr-1.5 text-[#FF2B20]" /> Unavailable
-            </Button>
-          </div>
-        </div>
         
         {/* Tip Box */}
         <div className="bg-[#F3FAF4] rounded-[8px] p-4 flex gap-3 border border-[#F3FAF4]">
@@ -514,9 +469,7 @@ export default function MenuPageClient() {
 
   const menuItems = useMemo<MenuItemRow[]>(() => data?.menuItems ?? [], [data])
   const tomorrowAvail = data?.tomorrowAvailability
-  const todayAvail = data?.todayAvailability
   const isAvailableTomorrow = tomorrowAvail?.isAvailable ?? null
-  const isAvailableToday = todayAvail?.isAvailable ?? null
 
   const filteredItems = useMemo(() => {
     const q = search.trim().toLowerCase()
@@ -865,9 +818,7 @@ export default function MenuPageClient() {
 
         {/* Right Column: Availability */}
         <AvailabilityCard 
-          todayAvail={isAvailableToday} 
           tomorrowAvail={isAvailableTomorrow} 
-          onSetToday={(v) => availMutation.mutate({ isAvailable: v, dateType: "TODAY" })} 
           onSetTomorrow={(v) => availMutation.mutate({ isAvailable: v, dateType: "TOMORROW" })} 
         />
       </div>

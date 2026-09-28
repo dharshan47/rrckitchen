@@ -136,7 +136,7 @@ function EditDialog({
 }) {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg rounded-[12px] bg-[#FFFFFF]">
+      <DialogContent className="w-[95vw] sm:w-full sm:max-w-lg rounded-[12px] bg-[#FFFFFF] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-[16px] font-bold text-[#111827] flex items-center gap-2">
             <Settings2 className="h-4 w-4 text-[#087A3E]" /> {title}
@@ -144,7 +144,7 @@ function EditDialog({
           {description && <DialogDescription className="text-[12px] text-[#6B7280]">{description}</DialogDescription>}
         </DialogHeader>
         <div className="py-2">{children}</div>
-        <DialogFooter className="gap-2">
+        <DialogFooter className="gap-2 mt-2">
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}

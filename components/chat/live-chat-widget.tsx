@@ -14,6 +14,8 @@ import { format } from "date-fns"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
+import { createPortal } from "react-dom"
+
 const DEFAULT_QUICK_REPLIES = ["Track my order", "Report an issue", "Payment help"]
 
 export function LiveChatWidget() {
@@ -37,7 +39,13 @@ export function LiveChatWidget() {
     }))
   )
   const [message, setMessage] = useState("")
+  const [mounted, setMounted] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true)
+  }, [])
 
   // Fetch active session in the background when the app loads
   useEffect(() => {
@@ -110,8 +118,8 @@ export function LiveChatWidget() {
     const isMe = sessionData ? lastMsg.senderId === (sessionData.userId || sessionData.guestId) : (lastMsg.senderId === "currentUser")
     
     if (isMe) {
-      // Hide quick replies when the user just sent a message and is waiting for support
-      return []
+      // Show default quick replies even when the user just sent a message
+      return DEFAULT_QUICK_REPLIES
     } else {
       const lower = lastMsg.message.toLowerCase()
       if (lower.includes("hello") || lower.includes("hi") || lower.includes("welcome")) return ["I need help with an order", "I have a payment issue", "General question"]
@@ -119,7 +127,7 @@ export function LiveChatWidget() {
       if (lower.includes("order")) return ["Track my order", "Cancel order", "Order is wrong"]
       if (lower.includes("payment") || lower.includes("refund")) return ["Check refund status", "Payment failed", "Other payment issue"]
       if (lower.includes("delivery")) return ["Delivery is late", "Delivery partner issue", "Change address"]
-      return ["Understood", "I need more help", "Thank you!"]
+      return DEFAULT_QUICK_REPLIES
     }
   }, [messages, sessionData])
 
@@ -140,13 +148,12 @@ export function LiveChatWidget() {
     await sendMessage(ticketId, reply)
   }
 
-  if (!isOpen) return null
+  if (!isOpen || !mounted) return null
 
-
-  return (
-    <div className="fixed inset-0 z-[100] flex h-[100dvh] w-full flex-col bg-white overflow-hidden sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[600px] sm:max-h-[calc(100vh-48px)] sm:w-[360px] sm:max-w-[calc(100vw-32px)] sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_6px_20px_rgba(8,122,54,0.22)]">
+  return createPortal(
+    <div className="fixed inset-0 z-[9999] flex h-[100dvh] w-full flex-col bg-white overflow-hidden overscroll-none sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[600px] sm:max-h-[calc(100vh-48px)] sm:w-[360px] sm:max-w-[calc(100vw-32px)] sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_6px_20px_rgba(8,122,54,0.22)]">
       {/* Header */}
-      <div className="bg-[#087A36] text-white p-4 flex items-center justify-between sm:rounded-t-2xl">
+      <div className="bg-[#087A36] text-white p-4 flex items-center justify-between sm:rounded-t-2xl shrink-0">
         <div className="flex items-center gap-3">
           <div className="flex -space-x-2">
             <Image src="https://api.dicebear.com/7.x/avataaars/svg?seed=Support1" alt="Support" width={32} height={32} className="w-8 h-8 rounded-full border-2 border-[#087A36] bg-white" />
@@ -168,7 +175,7 @@ export function LiveChatWidget() {
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 bg-[#FEFEFE] h-full">
+      <ScrollArea className="flex-1 bg-[#FEFEFE] h-full overscroll-contain">
         <div className="p-4 space-y-4 outline-none" tabIndex={0}>
           {/* Welcome Message (Static) */}
         <div className="flex items-start gap-2">
@@ -211,7 +218,7 @@ export function LiveChatWidget() {
 
       {/* Quick Replies */}
       {dynamicQuickReplies.length > 0 && (
-        <div className="px-4 py-2 border-t border-border flex gap-2 overflow-x-auto no-scrollbar bg-white">
+        <div className="px-4 py-2 border-t border-border flex gap-2 overflow-x-auto no-scrollbar bg-white shrink-0">
           {dynamicQuickReplies.map(reply => (
             <button
               key={reply}
@@ -225,7 +232,7 @@ export function LiveChatWidget() {
       )}
 
       {/* Input Area */}
-      <div className="p-3 bg-white border-t border-border flex items-center gap-2">
+      <div className="p-3 bg-white border-t border-border flex items-center gap-2 shrink-0">
         <div className="flex-1 flex items-center border border-[#E5E7EB] rounded-full px-3 py-1 bg-white ">
           <Input
             id="chat-message-input"
@@ -236,7 +243,7 @@ export function LiveChatWidget() {
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type a message..."
-            className="border-0 bg-transparent shadow-none focus-visible:ring-0 px-1 py-4 h-9"
+            className="border-0 bg-transparent shadow-none focus-visible:ring-0 px-1 py-4 h-9 text-base sm:text-sm"
           />
           <div className="flex items-center gap-1 text-[#64748B]">
             <CloudinaryUpload
@@ -275,6 +282,7 @@ export function LiveChatWidget() {
       <div className="bg-[#FEFEFE] text-center py-1.5 text-[10px] text-[#94A3B8]">
         Powered by RRC Kitchen Support
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }

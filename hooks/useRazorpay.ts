@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { CartItem } from "@/stores/cartStore";
 
@@ -292,16 +292,26 @@ export function useRazorpay() {
     verifyPaymentMutation.isPending ||
     modalOpen;
 
-  let paymentResult: { success: boolean; orderId?: string; publicCode?: string; error?: string } | null = null;
-  if (verifyPaymentMutation.isSuccess && verifyPaymentMutation.data) {
-    paymentResult = { success: true, orderId: verifyPaymentMutation.data.orderId, publicCode: verifyPaymentMutation.data.publicCode };
-  } else if (verifyPaymentMutation.isError && verifyPaymentMutation.error) {
-    paymentResult = { success: false, error: verifyPaymentMutation.error.message };
-  } else if (createOrderMutation.isError && createOrderMutation.error) {
-    paymentResult = { success: false, error: createOrderMutation.error.message };
-  } else if (checkoutError) {
-    paymentResult = { success: false, error: checkoutError };
-  }
+  const paymentResult = useMemo(() => {
+    if (verifyPaymentMutation.isSuccess && verifyPaymentMutation.data) {
+      return { success: true, orderId: verifyPaymentMutation.data.orderId, publicCode: verifyPaymentMutation.data.publicCode };
+    } else if (verifyPaymentMutation.isError && verifyPaymentMutation.error) {
+      return { success: false, error: verifyPaymentMutation.error.message };
+    } else if (createOrderMutation.isError && createOrderMutation.error) {
+      return { success: false, error: createOrderMutation.error.message };
+    } else if (checkoutError) {
+      return { success: false, error: checkoutError };
+    }
+    return null;
+  }, [
+    verifyPaymentMutation.isSuccess,
+    verifyPaymentMutation.data,
+    verifyPaymentMutation.isError,
+    verifyPaymentMutation.error,
+    createOrderMutation.isError,
+    createOrderMutation.error,
+    checkoutError
+  ]);
 
   // ── Main checkout action ───────────────────────────────────────────────────
 

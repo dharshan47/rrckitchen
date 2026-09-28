@@ -51,10 +51,10 @@ function StarPicker({
         <button
           key={star}
           type="button"
-          onClick={() => setRating(star)}
+          onClick={() => setRating(rating === star ? 0 : star)}
           onMouseEnter={() => setHovered(star)}
           onMouseLeave={() => setHovered(0)}
-          className="transition-transform hover:scale-110"
+          className="transition-transform hover:scale-110 active:scale-95"
         >
           <Star
             className={`h-6 w-6 ${
@@ -278,7 +278,7 @@ export function RatingPageClient() {
 
         {/* Stepper */}
         <div className="max-w-4xl mx-auto mb-10 relative px-4 sm:px-12">
-          <div className="absolute top-[16px] left-[10%] right-[10%] z-0 block">
+          <div className="absolute top-[16px] left-[12.5%] right-[12.5%] z-0 block">
             <Progress 
               value={step === 'kitchen' ? 0 : (step === 'delivery' ? 33.33 : (step === 'done' ? 100 : 66.66))} 
               className="h-[2px] bg-gray-200 [&>div]:bg-[#15803D]"
@@ -349,7 +349,7 @@ export function RatingPageClient() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                   <RatingSection
                     icon={Smile}
                     title="Taste"
@@ -435,7 +435,7 @@ export function RatingPageClient() {
                       value={kitchenThoughts}
                       onChange={(e) => setKitchenThoughts(e.target.value)}
                       maxLength={250}
-                      className="w-full border border-[#E5E7EB] rounded-2xl p-5 pb-14 text-[15px] h-32 resize-none focus:outline-none focus:ring-1 focus:ring-[#FF5A1F] focus:border-[#FF5A1F] placeholder:text-[#9CA3AF] transition-all text-[#111827]" 
+                      className="w-full border border-[#E5E7EB] rounded-2xl p-5 pb-14 text-[15px] h-40 resize-none focus:outline-none focus:ring-1 focus:ring-[#FF5A1F] focus:border-[#FF5A1F] placeholder:text-[#9CA3AF] transition-all text-[#111827]" 
                       placeholder="The biryani was super tasty and fresh. Loved the packaging too. Will order again!"
                     />
                     <div className="absolute bottom-4 left-4 flex items-center gap-2">
@@ -466,13 +466,15 @@ export function RatingPageClient() {
                   {mediaUrls.length > 0 && (
                     <div className="flex flex-wrap gap-3 mt-4">
                       {mediaUrls.map((url, i) => (
-                        <div key={i} className="relative w-16 h-16 rounded-xl overflow-hidden border border-[#E5E7EB]">
-                          <Image src={url} alt={`Upload ${i}`} fill sizes="64px" className="object-cover" />
+                        <div key={i} className="relative w-16 h-16 rounded-xl border border-[#E5E7EB]">
+                          <div className="absolute inset-0 rounded-xl overflow-hidden">
+                            <Image src={url} alt={`Upload ${i}`} fill sizes="64px" className="object-cover" />
+                          </div>
                           <button 
                             onClick={() => setMediaUrls(mediaUrls.filter((_, idx) => idx !== i))}
-                            className="absolute -top-1 -right-1 w-5 h-5 bg-white rounded-full shadow-sm border border-gray-200 flex items-center justify-center text-red-500 hover:text-red-600 z-10"
+                            className="absolute -top-2 -right-2 w-6 h-6 bg-white rounded-full shadow-md border border-gray-200 flex items-center justify-center text-red-500 hover:text-red-600 hover:bg-gray-50 transition-colors z-10"
                           >
-                            <X className="w-3 h-3" />
+                            <X className="w-3.5 h-3.5" strokeWidth={2.5} />
                           </button>
                         </div>
                       ))}
@@ -514,7 +516,7 @@ export function RatingPageClient() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-4 mb-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
                   <RatingSection
                     icon={Bike}
                     title="Overall Delivery"
@@ -580,7 +582,7 @@ export function RatingPageClient() {
                       value={deliveryThoughts}
                       onChange={(e) => setDeliveryThoughts(e.target.value)}
                       maxLength={250}
-                      className="w-full border border-[#E5E7EB] rounded-2xl p-5 text-[15px] h-32 resize-none focus:outline-none focus:ring-1 focus:ring-[#FF5200] focus:border-[#FF5200] placeholder:text-[#9CA3AF] transition-all text-[#111827]" 
+                      className="w-full border border-[#E5E7EB] rounded-2xl p-5 pb-12 text-[15px] h-40 resize-none focus:outline-none focus:ring-1 focus:ring-[#FF5200] focus:border-[#FF5200] placeholder:text-[#9CA3AF] transition-all text-[#111827]" 
                       placeholder="Very polite and on time..."
                     />
                     <div className="absolute bottom-4 right-4 text-[12px] text-[#9CA3AF] font-medium">

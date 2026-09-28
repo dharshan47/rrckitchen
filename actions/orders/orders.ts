@@ -367,7 +367,6 @@ export async function updateOrderStatus(orderId: string, status: string) {
       }
     }
 
-    revalidatePath("/kitchen/dashboard")
     revalidatePath("/dashboard/orders")
     return { success: true }
   } catch {

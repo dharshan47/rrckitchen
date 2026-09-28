@@ -25,6 +25,7 @@ import {
   useReactTable,
   getCoreRowModel,
   getSortedRowModel,
+  getPaginationRowModel,
   flexRender,
   type ColumnDef,
   type SortingState,
@@ -207,7 +208,6 @@ export default function PaymentsPageClient() {
   const table = useReactTable({
     data: filteredSettlements,
     columns,
-    manualPagination: true,
     pageCount: totalPages,
     state: {
       pagination: { pageIndex: currentPage - 1, pageSize },
@@ -228,6 +228,7 @@ export default function PaymentsPageClient() {
     },
     getCoreRowModel: getCoreRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
     autoResetPageIndex: false,
   })
 
@@ -658,22 +659,7 @@ export default function PaymentsPageClient() {
             </CardContent>
           </Card>
 
-          {/* Promo Card */}
-          <div className="bg-[#F3FAF5] rounded-[10px] p-6 border-none shadow-[0_1px_2px_rgba(16,24,40,.025)] relative overflow-hidden flex flex-col items-start justify-center min-h-[160px]">
-             <div className="w-[65%] z-10 relative">
-               <h3 className="text-[18px] font-bold text-[#111827] leading-tight mb-2">
-                 Get paid on time,<br/>every time!
-               </h3>
-               <p className="text-[12px] text-[#4B5563] font-medium mb-4 leading-relaxed">
-                 Keep your bank details updated to receive payments without delay.
-               </p>
-               <Button onClick={scrollToBankDetails} className="bg-[#006B2B] hover:bg-[#00551F] text-[#FFFFFF] h-[32px] px-4 rounded-[7px] text-[12px] font-medium shadow-none">
-                  Learn More <ArrowUp className="h-3 w-3 ml-1 rotate-45" />
-               </Button>
-             </div>
-             
-             <Image src="/kitchen/smartphone.webp" alt="Smartphone" width={192} height={192} className="absolute right-0 -bottom-6 h-48 w-48 object-contain z-0" />
-          </div>
+
 
         </div>
       </div>
@@ -808,6 +794,23 @@ export default function PaymentsPageClient() {
           )}
         </CardContent>
       </Card>
+
+      {/* Promo Card */}
+      <div className="bg-[#F3FAF5] rounded-[10px] p-6 sm:p-8 border-none shadow-[0_1px_2px_rgba(16,24,40,.025)] relative overflow-hidden flex flex-col items-start justify-center min-h-[160px] sm:min-h-[180px] mt-6">
+         <div className="w-full sm:w-[60%] lg:w-[45%] z-10 relative">
+           <h3 className="text-[20px] sm:text-[24px] font-bold text-[#111827] leading-tight mb-2">
+             Get paid on time, every time!
+           </h3>
+           <p className="text-[13px] text-[#4B5563] font-medium mb-5 leading-relaxed max-w-md">
+             Keep your bank details updated to receive payments without delay. A verified bank account ensures seamless weekly payouts.
+           </p>
+           <Button onClick={scrollToBankDetails} className="bg-[#006B2B] hover:bg-[#00551F] text-[#FFFFFF] h-[36px] px-5 rounded-[7px] text-[13px] font-medium shadow-none">
+              Update Bank Details <ArrowUp className="h-3.5 w-3.5 ml-1.5 rotate-45" />
+           </Button>
+         </div>
+         
+         <Image src="/kitchen/smartphone.webp" alt="Smartphone" width={240} height={240} className="hidden sm:block absolute right-4 lg:right-12 -bottom-8 h-56 w-56 object-contain z-0" />
+      </div>
 
     </div>
   )

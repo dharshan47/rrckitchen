@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useMutation } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { MapPin, Search, Filter, CalendarDays, ClipboardList, Clock3, Leaf, Drumstick, ImageIcon, Sun, Headset, ChevronRight, ChevronDown } from "lucide-react"
@@ -59,6 +59,39 @@ function getTimeSlotName(slot?: string | null) {
   return s || "—"
 }
 
+function getActualServiceDateType(serviceDate?: string | null, fallback?: string | null): string {
+  if (!serviceDate) return fallback || "ALL"
+  
+  const sDate = new Date(serviceDate)
+  if (isNaN(sDate.getTime())) {
+    // If it can't be parsed, fallback to string matching or the fallback type
+    const today = new Date()
+    const todayLabel = today.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const tomorrowLabel = tomorrow.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
+    if (serviceDate === todayLabel) return "TODAY"
+    if (serviceDate === tomorrowLabel) return "TOMORROW"
+    return fallback || "ALL"
+  }
+  
+  // Create Date objects at midnight local time for safe comparison
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+  
+  const tomorrow = new Date(today)
+  tomorrow.setDate(tomorrow.getDate() + 1)
+  
+  // Normalize the parsed service date to midnight local time
+  const targetDate = new Date(sDate)
+  targetDate.setHours(0, 0, 0, 0)
+
+  if (targetDate.getTime() === today.getTime()) return "TODAY"
+  if (targetDate.getTime() === tomorrow.getTime()) return "TOMORROW"
+  
+  return fallback || "ALL"
+}
+
 const quickFilters = ["All Status", "Confirmed", "Preparing", "Ready for Pickup", "Completed", "Cancelled"]
 
 export default function OrdersPageClient() {
@@ -71,10 +104,12 @@ export default function OrdersPageClient() {
 
   const data = useKitchenDashboardData()
   const { setData } = useKitchenDashboardActions()
+  const queryClient = useQueryClient()
 
   const statusMutation = useMutation({
     mutationFn: ({ id, status }: { id: string; status: string }) => updateOrderStatus(id, status),
     onMutate: async ({ id, status }) => {
+      await queryClient.cancelQueries({ queryKey: ["kitchen-dashboard"] })
       const previousData = data
       if (previousData) {
         setData({
@@ -98,6 +133,7 @@ export default function OrdersPageClient() {
           COMPLETED: "Order marked as completed",
         }
         toast.success(messages[status] ?? "Order updated")
+        queryClient.invalidateQueries({ queryKey: ["kitchen-dashboard"] })
       } else {
         toast.error(res.error ?? "Failed to update order")
         if (context?.previousData) {
@@ -118,8 +154,8 @@ export default function OrdersPageClient() {
 
   const tabOrders = useMemo(() => {
     if (activeTab === "all") return allOrders
-    if (activeTab === "today") return allOrders.filter(o => o.serviceDateType === "TODAY")
-    if (activeTab === "tomorrow") return allOrders.filter(o => o.serviceDateType === "TOMORROW")
+    if (activeTab === "today") return allOrders.filter(o => getActualServiceDateType(o.serviceDate, o.serviceDateType) === "TODAY")
+    if (activeTab === "tomorrow") return allOrders.filter(o => getActualServiceDateType(o.serviceDate, o.serviceDateType) === "TOMORROW")
     return allOrders
   }, [allOrders, activeTab])
 
@@ -154,8 +190,8 @@ export default function OrdersPageClient() {
   const allCounts = useMemo(() => {
     return {
       all: allOrders.length,
-      today: allOrders.filter(o => o.serviceDateType === "TODAY").length,
-      tomorrow: allOrders.filter(o => o.serviceDateType === "TOMORROW").length,
+      today: allOrders.filter(o => getActualServiceDateType(o.serviceDate, o.serviceDateType) === "TODAY").length,
+      tomorrow: allOrders.filter(o => getActualServiceDateType(o.serviceDate, o.serviceDateType) === "TOMORROW").length,
     }
   }, [allOrders])
 
@@ -319,13 +355,13 @@ export default function OrdersPageClient() {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px] px-6">
+      <div className="grid gap-6 lg:grid-cols-[1fr_360px] px-6 items-stretch">
         {/* Left Column: Order Cards */}
-        <div className="min-w-0">
-          <ScrollArea className="h-[800px] lg:h-[calc(100vh-220px)] rounded-[10px]">
-            <div className="space-y-4 pr-3 lg:min-w-[850px]">
+        <div className="min-w-0 h-full">
+          <ScrollArea className="h-[800px] lg:h-full rounded-[10px]">
+            <div className="space-y-4 pr-3 lg:min-w-[850px] h-full flex flex-col">
               {filteredOrders.length === 0 ? (
-                <div className="py-20 flex flex-col items-center justify-center text-gray-400 bg-white rounded-xl border border-[#E7E9EC]">
+                <div className="flex-1 min-h-[400px] flex flex-col items-center justify-center text-gray-400 bg-white rounded-xl border border-[#E7E9EC]">
                   <ClipboardList className="h-12 w-12 mb-3 text-gray-300" />
                   <p className="text-[14px] font-medium text-gray-500">No orders match your filter.</p>
                 </div>
@@ -349,8 +385,9 @@ export default function OrdersPageClient() {
 
                   const displayStatus = isReady ? "Ready for Pickup" : order.status
 
-                  const isTomorrow = order.serviceDateType === "TOMORROW"
-                  const isToday = order.serviceDateType === "TODAY"
+                  const actualServiceType = getActualServiceDateType(order.serviceDate, order.serviceDateType)
+                  const isTomorrow = actualServiceType === "TOMORROW"
+                  const isToday = actualServiceType === "TODAY"
 
                   const isPaid = (order.paymentStatus || "").toLowerCase() === "paid"
 

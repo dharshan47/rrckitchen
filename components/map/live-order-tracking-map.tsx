@@ -162,7 +162,7 @@ export function LiveOrderTrackingMap({
       </div>
       {showFooter && (
         <>
-          <div className="mt-3 flex items-center justify-between gap-3 px-1">
+          <div className="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3 px-1">
             <div className="flex items-center gap-1.5 text-xs">
               <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#ff5722]" />
               <span className="text-muted-foreground">Kitchen</span>
@@ -170,7 +170,7 @@ export function LiveOrderTrackingMap({
               <span className="inline-block h-2.5 w-2.5 rounded-full bg-[#1a6a32]" />
               <span className="text-muted-foreground">Delivery</span>
             </div>
-            <div className="flex items-center gap-3 shrink-0">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-3 shrink-0">
               {deliveryPos && (
                 <span className="flex items-center gap-1.5 text-xs font-bold text-green-600">
                   <span className="relative flex h-2 w-2">

@@ -91,11 +91,32 @@ export default function DeliveriesPageClient() {
     mutationFn: async ({ pickupId, status }: { pickupId: string; status: string }) => {
       await updateTiffinPickupStatus(pickupId, status)
     },
+    onMutate: async ({ pickupId, status }) => {
+      await queryClient.cancelQueries({ queryKey: ["my-tiffin-pickups"] })
+      const previousData = queryClient.getQueryData(["my-tiffin-pickups"])
+      if (previousData) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        queryClient.setQueryData(["my-tiffin-pickups"], (old: any) => {
+          if (!old) return old;
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          return old.map((pickup: any) => {
+            if (pickup.id === pickupId) {
+              return { ...pickup, status }
+            }
+            return pickup
+          })
+        })
+      }
+      return { previousData }
+    },
     onSuccess: () => {
       refetchTiffin()
       toast.success("Pickup status updated")
     },
-    onError: (err) => {
+    onError: (err, variables, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(["my-tiffin-pickups"], context.previousData)
+      }
       toast.error(err.message || "Failed to update pickup status")
     }
   })
@@ -113,6 +134,7 @@ export default function DeliveriesPageClient() {
       }
     },
     onMutate: async ({ orderId, status }) => {
+      await queryClient.cancelQueries({ queryKey: ["delivery-dashboard"] })
       const previousData = data
       if (previousData) {
         setData({
@@ -120,7 +142,11 @@ export default function DeliveriesPageClient() {
           deliveryOrders: previousData.deliveryOrders.map((o) => {
             if (o.id === orderId) {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              return { ...o, deliveryStatus: status as any }
+              const newStatus = { ...o, deliveryStatus: status as any }
+              if (status === "DELIVERED") {
+                newStatus.orderStatus = "COMPLETED"
+              }
+              return newStatus
             }
             return o
           })
@@ -130,6 +156,7 @@ export default function DeliveriesPageClient() {
     },
     onSuccess: () => {
       toast.success("Order status updated")
+      queryClient.invalidateQueries({ queryKey: ["delivery-dashboard"] })
     },
     onError: (err, variables, context) => {
       if (context?.previousData) {
@@ -279,11 +306,11 @@ export default function DeliveriesPageClient() {
   }
 
   const activeOrders = mergedOrders.filter(
-    (o) => o.orderStatus !== "COMPLETED" && o.orderStatus !== "CANCELLED" && o.orderStatus !== "FAILED" && o.orderStatus !== "DELIVERED"
+    (o) => o.orderStatus !== "COMPLETED" && o.orderStatus !== "CANCELLED" && o.orderStatus !== "FAILED" && o.orderStatus !== "DELIVERED" && o.deliveryStatus !== "DELIVERED" && o.deliveryStatus !== "CANCELLED"
   )
 
   const completedOrders = mergedOrders.filter(
-    (o) => o.orderStatus === "COMPLETED" || o.orderStatus === "CANCELLED" || o.orderStatus === "FAILED" || o.orderStatus === "DELIVERED"
+    (o) => o.orderStatus === "COMPLETED" || o.orderStatus === "CANCELLED" || o.orderStatus === "FAILED" || o.orderStatus === "DELIVERED" || o.deliveryStatus === "DELIVERED" || o.deliveryStatus === "CANCELLED"
   )
 
   const displayOrders = activeTab === "active" ? activeOrders : completedOrders
@@ -356,7 +383,7 @@ export default function DeliveriesPageClient() {
     if (status === "DELIVERED" || status === "COMPLETED") step = 4;
 
     return (
-      <div className="flex items-center justify-between w-full flex-1 min-w-[320px] max-w-[500px]">
+      <div className="flex items-center justify-between w-full flex-1 min-w-[280px] max-w-[500px]">
         <TimelineNode label="Confirmed" state={step >= 0 ? "done" : "pending"} type="green" />
         <TimelineDash state={step >= 1 ? "done" : "pending"} />
         <TimelineNode label="Ready" state={step >= 1 ? "done" : "pending"} type="green" />
@@ -373,8 +400,10 @@ export default function DeliveriesPageClient() {
   return (
     <div className="max-w-[1400px] mx-auto space-y-6 animate-in fade-in duration-500 pb-12 px-4 sm:px-6 lg:px-8 bg-[#FBFCFB] min-h-screen">
       
-      {/* Header */}
-      <div className="pt-2 sm:pt-0">
+      {!(showMobileDetails && selectedOrder) && (
+        <>
+          {/* Header */}
+          <div className="pt-2 sm:pt-0">
         <h1 className="text-[25px] font-bold text-[#111827]">Deliveries</h1>
         <p className="text-[#374151] mt-1 font-medium text-[14px]">Manage your deliveries and track progress</p>
       </div>
@@ -443,9 +472,10 @@ export default function DeliveriesPageClient() {
           </Button>
         </div>
       </div>
+      </>
+      )}
 
-
-      <div className={cn("grid gap-6 items-start", (selectedOrder && activeTab !== "tiffin") ? "xl:grid-cols-[1fr_400px] 2xl:grid-cols-[1fr_420px]" : "grid-cols-1")}>
+      <div className="grid gap-6 items-start grid-cols-1">
         {activeTab === "tiffin" ? (
           <div className="space-y-4">
             {tiffinLoading && <Skeleton className="h-[200px] w-full" />}
@@ -503,7 +533,7 @@ export default function DeliveriesPageClient() {
           </div>
         ) : (
           <>
-          <div className={cn("space-y-4", showMobileDetails && selectedOrder ? "hidden xl:block" : "block")}>
+          <div className={cn("space-y-4", showMobileDetails && selectedOrder ? "hidden" : "block")}>
           {displayOrders.length === 0 ? (
             <Card className="bg-[#FFFFFF] rounded-[10px] p-12 text-center border border-[#E6EAEC] shadow-[0_1px_3px_rgba(17,24,39,0.025)]">
               <PackageCheck className="h-12 w-12 text-[#6B7280] mx-auto mb-4" strokeWidth={1.5} />
@@ -575,13 +605,17 @@ export default function DeliveriesPageClient() {
                     </div>
 
                     {/* Customer Info */}
-                    <div className="flex gap-4 items-center">
-                      <div className="flex flex-col min-w-0">
+                    <div className="flex gap-4 items-center min-w-0">
+                      <div className="flex flex-col min-w-0 w-full">
                         <div className="text-[12px] font-medium text-[#374151] mb-1 flex items-center gap-1.5 uppercase tracking-wide">
                           <UserRound className="h-[14px] w-[14px]" strokeWidth={1.8} /> Customer
                         </div>
                         <div className="font-bold text-[#111827] text-[14px] mb-1 truncate">{d.customerName as string}</div>
-                        <div className="text-[12px] text-[#374151]">{d.customerPhone as string}</div>
+                        <div className="text-[12px] text-[#374151] mb-1.5">{d.customerPhone as string}</div>
+                        <div className="flex items-start gap-1.5 text-[12px] text-[#374151]">
+                          <MapPin className="h-[15px] w-[15px] shrink-0 mt-0.5" strokeWidth={1.8} />
+                          <span className="truncate block">{d.customerAddress as string}</span>
+                        </div>
                       </div>
                     </div>
 
@@ -597,7 +631,7 @@ export default function DeliveriesPageClient() {
 
                   {/* Order Footer & Actions */}
                   <div className="px-5 py-4 border-t border-[#E9ECEF] flex flex-col xl:flex-row xl:items-center justify-between gap-5 bg-[#FFFFFF]">
-                    <div className="flex-1 overflow-x-auto pb-3 xl:pb-0 scrollbar-hide flex items-center w-full">
+                    <div className="flex-1 overflow-x-auto pb-3 xl:pb-0 scrollbar-hide flex items-center w-full min-w-0">
                       <OrderTimeline status={d.orderStatus as string} />
                     </div>
                     
@@ -656,9 +690,9 @@ export default function DeliveriesPageClient() {
         </div>
 
         {/* Sticky Details Sidebar */}
-        {selectedOrder && (
-          <div className={cn("xl:sticky xl:top-6 space-y-6", showMobileDetails ? "block" : "hidden xl:block")}>
-            <div className="xl:hidden">
+        {selectedOrder && showMobileDetails && (
+          <div className="space-y-6">
+            <div>
               <Button variant="ghost" onClick={() => setShowMobileDetails(false)} className="flex items-center text-[#374151] hover:text-[#111827] -ml-4">
                 <ArrowLeft className="h-4 w-4 mr-2" /> Back to Deliveries
               </Button>

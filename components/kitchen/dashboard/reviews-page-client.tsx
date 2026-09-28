@@ -89,11 +89,11 @@ function RrcKitchenReviewCard({ initial }: { initial: RrcReview | null }) {
                     type="button"
                     aria-label={`Rate ${i} star${i > 1 ? "s" : ""}`}
                     onMouseEnter={() => setHoverRating(i)}
-                    onClick={() => setRating(i)}
-                    className="transition-transform hover:scale-110 focus:outline-none"
+                    onClick={() => setRating(rating === i ? 0 : i)}
+                    className="focus:outline-none transition-transform hover:scale-110 active:scale-95"
                   >
                     <Star
-                      className={`h-9 w-9 transition-colors ${
+                      className={`h-9 w-9 ${
                         i <= (hoverRating || rating) ? "fill-[#FF9800] text-[#FF9800]" : "fill-[#E5E7EB] text-[#E5E7EB]"
                       }`}
                     />
@@ -117,7 +117,7 @@ function RrcKitchenReviewCard({ initial }: { initial: RrcReview | null }) {
           <div className="flex flex-col sm:flex-row items-stretch gap-3 shrink-0 w-full pt-2">
             <Button
               onClick={() => rrcMutation.mutate({ rating, recommendation: recommend, comment: comment || null })}
-              disabled={!rating || rrcMutation.isPending}
+              disabled={rrcMutation.isPending}
               className="h-11 px-6 rounded-[8px] bg-[#087A2B] hover:bg-[#075F22] text-[#FFFFFF] font-bold shadow-none transition-all disabled:opacity-50 disabled:cursor-not-allowed w-full sm:w-auto min-w-[160px]"
             >
               {rrcMutation.isPending ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
@@ -320,8 +320,7 @@ export default function ReviewsPageClient() {
   }
 
   return (
-    <div className="space-y-6 pb-20 animate-in fade-in duration-500 bg-[#FEFEFE] font-sans">
-      
+    <div className="space-y-6 pb-20 animate-in fade-in duration-500 bg-[#FEFEFE] font-sans min-h-screen p-4 sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-2">
         <div className="flex items-start gap-3">
@@ -396,7 +395,7 @@ export default function ReviewsPageClient() {
         </ScrollArea>
       </Tabs>
 
-      {activeTab === "rate" ? (
+      <div className={activeTab === "rate" ? "block" : "hidden"}>
         <div className="pt-8 pb-12 w-full max-w-5xl mx-auto flex justify-center">
           <div className="w-full">
             {!rrcReviewLoading ? (
@@ -406,8 +405,9 @@ export default function ReviewsPageClient() {
             )}
           </div>
         </div>
-      ) : (
-        <>
+      </div>
+
+      <div className={activeTab !== "rate" ? "block space-y-6" : "hidden"}>
           {/* Top Summary Cards */}
           <div className="flex overflow-x-auto pb-4 xl:pb-0 xl:grid xl:grid-cols-5 gap-4 hide-scrollbar snap-x">
         
@@ -833,8 +833,7 @@ export default function ReviewsPageClient() {
 
         </div>
       </div>
-        </>
-      )}
+      </div>
     </div>
   )
 }
