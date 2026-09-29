@@ -22,6 +22,7 @@ export async function getUserOrders() {
       id: true,
       publicCode: true,
       status: true,
+      deliveryStatus: true,
       serviceDate: true,
       timeSlot: true,
       totalAmount: true,
@@ -73,6 +74,7 @@ export async function getUserOrders() {
       id: o.id,
       publicCode: o.publicCode,
       status: o.status,
+      deliveryStatus: o.deliveryStatus,
       serviceDate: o.serviceDate.toISOString(),
       timeSlot: o.timeSlot,
       totalAmount: o.totalAmount.toString(),
@@ -213,6 +215,35 @@ export async function getAdminOrders() {
 export async function updateOrderStatus(orderId: string, status: string) {
   const session = await getSession()
   if (!session?.user?.id) return { success: false, error: "Unauthorized" }
+
+  if (status === "KITCHEN_HANDOVER") {
+    const order = await prisma.order.findUnique({ where: { id: orderId } })
+    if (!order) return { success: false, error: "Order not found" }
+    
+    // Only update if not already picked up or delivered
+    if (order.deliveryStatus !== "PICKEDUP" && order.deliveryStatus !== "INTRANSIT" && order.deliveryStatus !== "DELIVERED") {
+      await prisma.order.update({
+        where: { id: orderId },
+        data: { deliveryStatus: "PICKEDUP" }
+      })
+      
+      const assignment = await prisma.deliveryAssignment.findFirst({
+        where: { orderId, deliveryPartnerId: order.deliveryPartnerId ?? undefined },
+      });
+
+      if (assignment) {
+        await prisma.deliveryAssignment.update({
+          where: { id: assignment.id },
+          data: { pickedUpAt: new Date() },
+        });
+      }
+
+      const ably = getAblyRest()
+      await ably.channels.get(`order:${orderId}`).publish("delivery:status", { status: "PICKEDUP" })
+    }
+    
+    return { success: true }
+  }
 
   const validStatuses = ["CONFIRMED", "PREPARING", "READYFORPICKUP", "COMPLETED", "CANCELLED", "REFUNDED"]
   if (!validStatuses.includes(status)) {

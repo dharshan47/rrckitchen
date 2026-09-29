@@ -65,14 +65,6 @@ function getActualServiceDateType(serviceDate?: string | null, fallback?: string
   
   const sDate = new Date(serviceDate)
   if (isNaN(sDate.getTime())) {
-    // If it can't be parsed, fallback to string matching or the fallback type
-    const today = new Date()
-    const todayLabel = today.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-    const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
-    const tomorrowLabel = tomorrow.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-    if (serviceDate === todayLabel) return "TODAY"
-    if (serviceDate === tomorrowLabel) return "TOMORROW"
     return fallback || "ALL"
   }
   
@@ -199,8 +191,16 @@ export default function OrdersPageClient() {
       }
       let matchesDate = true
       if (pickedDate) {
-        const label = pickedDate.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-        if (o.serviceDate !== label) matchesDate = false
+        if (!o.serviceDate) {
+          matchesDate = false
+        } else {
+          const sDate = new Date(o.serviceDate)
+          if (!isNaN(sDate.getTime())) {
+            matchesDate = sDate.toDateString() === pickedDate.toDateString()
+          } else {
+            matchesDate = false
+          }
+        }
       }
       return matchesFilter && matchesSearch && matchesDate
     })
@@ -482,6 +482,9 @@ export default function OrdersPageClient() {
 
                   const isPaid = (order.paymentStatus || "").toLowerCase() === "paid"
 
+                  const dateStr = order.date ? new Date(order.date).toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "2-digit", month: "short", year: "numeric" }) : "—"
+                  const timeStr = order.time ? new Date(order.time).toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "numeric", minute: "2-digit", hour12: true }).toUpperCase() : "—"
+
                   return (
                     <div key={order.id} className="bg-[#FFFFFF] border border-[#E7E9EC] rounded-[9px] shadow-[0_1px_2px_rgba(16,24,40,0.025),0_2px_6px_rgba(16,24,40,0.015)] overflow-hidden transition-all hover:shadow-[0_2px_6px_rgba(16,24,40,0.04)]">
                       <div className="flex flex-col lg:flex-row p-4 gap-4 lg:gap-0">
@@ -492,10 +495,10 @@ export default function OrdersPageClient() {
                             {order.publicCode ?? `#${order.id.slice(0, 8).toUpperCase()}`}
                           </div>
                           <div className="text-[12px] text-[#5F6975] flex items-center gap-1.5 mt-2">
-                            <CalendarDays className="h-[13px] w-[13px] text-[#68727D]" /> {order.date || "—"}
+                            <CalendarDays className="h-[13px] w-[13px] text-[#68727D]" /> {dateStr}
                           </div>
                           <div className="text-[12px] text-[#5F6975] flex items-center gap-1.5 mt-1">
-                            <Clock3 className="h-[13px] w-[13px] text-[#68727D]" /> {order.time || "—"}
+                            <Clock3 className="h-[13px] w-[13px] text-[#68727D]" /> {timeStr}
                           </div>
                           <div className="mt-2.5">
                             {isTomorrow && (
@@ -628,7 +631,7 @@ export default function OrdersPageClient() {
                               <Button
                                 variant="outline"
                                 className="h-[28px] rounded-[7px] border-[#65A878] text-[#16702E] bg-[#FFFFFF] hover:bg-green-50 font-[500] text-[11px] px-3 w-full shadow-[0_1px_2px_rgba(0,0,0,0.02)]"
-                                onClick={() => statusMutation.mutate({ id: order.id, status: "COMPLETED" })}
+                                onClick={() => statusMutation.mutate({ id: order.id, status: "KITCHEN_HANDOVER" })}
                                 disabled={statusMutation.isPending}
                               >
                                 Mark as Completed

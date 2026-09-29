@@ -33,12 +33,23 @@ import {
   useOrderTrackingMapActions
 } from "@/stores/orderTrackingMapStore"
 
+
+
 const statusFlow: { key: string; label: string; icon: typeof Check, desc: string }[] = [
   { key: "CONFIRMED", label: "Order Confirmed", icon: Check, desc: "Your order has been confirmed." },
   { key: "PREPARING", label: "Preparing Your Order", icon: ChefHat, desc: "The kitchen is preparing your delicious meal." },
-  { key: "READYFORPICKUP", label: "Out for Delivery", icon: Bike, desc: "Your order is on the way." },
+  { key: "READYFORPICKUP", label: "Waiting for Partner", icon: PackageCheck, desc: "Your order is ready and waiting for pickup." },
+  { key: "INTRANSIT", label: "Out for Delivery", icon: Bike, desc: "Your order is on the way." },
   { key: "COMPLETED", label: "Delivered", icon: Package, desc: "Enjoy your meal!" },
 ]
+
+function getStatusIndex(order: { status?: string | null; deliveryStatus?: string | null }): number {
+  if (order.status === "COMPLETED") return 4;
+  if (order.deliveryStatus === "PICKEDUP" || order.deliveryStatus === "INTRANSIT" || order.deliveryStatus === "DELIVERED") return 3;
+  if (order.status === "READYFORPICKUP") return 2;
+  if (order.status === "PREPARING") return 1;
+  return 0;
+}
 
 const statusColors: Record<string, string> = {
   CONFIRMED: "text-blue-600 bg-blue-100",
@@ -47,10 +58,6 @@ const statusColors: Record<string, string> = {
   COMPLETED: "text-gray-600 bg-gray-100",
   CANCELLED: "text-red-600 bg-red-100",
   REFUNDED: "text-purple-600 bg-purple-100",
-}
-
-function getStatusIndex(status: string): number {
-  return statusFlow.findIndex((s) => s.key === status)
 }
 
 function getStatusLabel(status: string | undefined): string {
@@ -70,6 +77,7 @@ function formatPaymentStatus(status: string | null | undefined): { label: string
 function formatDateTime(iso: string) {
   const d = new Date(iso)
   return d.toLocaleDateString("en-IN", {
+    timeZone: "Asia/Kolkata",
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -81,6 +89,7 @@ function formatDateTime(iso: string) {
 function formatDateOnly(iso: string) {
   const d = new Date(iso)
   return d.toLocaleDateString("en-IN", {
+    timeZone: "Asia/Kolkata",
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -261,7 +270,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
   }
 
   const isCancelled = order.status === "CANCELLED" || order.status === "REFUNDED"
-  const currentIdx = isCancelled ? 0 : getStatusIndex(order.status)
+  const currentIdx = isCancelled ? 0 : getStatusIndex(order)
   // isDelivered is already defined above
   const deliveryStatus = order.deliveryStatus || order.deliveryAssignmentStatus
 

@@ -6,7 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import {
   Check, CheckCircle2, Copy, Calendar, ShoppingBag,
-  ChefHat, XCircle, MapPin, Phone, Clock, Bike, Star, Package, CalendarDays
+  ChefHat, XCircle, MapPin, Phone, Clock, Bike, Star, Package, CalendarDays, PackageCheck
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -34,12 +34,6 @@ import { useCartActions } from "@/stores"
 import { toast } from "sonner"
 import { getTiffinPickupByOrderId } from "@/actions/dispatch/tiffin-actions"
 
-const statusFlow = [
-  { key: "CONFIRMED", label: "Order Confirmed" },
-  { key: "PREPARING", label: "Preparing Your Order" },
-  { key: "READYFORPICKUP", label: "Out for Delivery" },
-  { key: "COMPLETED", label: "Delivery Completed" },
-] as const
 
 function getStatusCategory(status: string): "ongoing" | "completed" | "cancelled" | "refunds" {
   if (status === "CANCELLED") return "cancelled"
@@ -48,33 +42,37 @@ function getStatusCategory(status: string): "ongoing" | "completed" | "cancelled
   return "ongoing"
 }
 
-function getCurrentStep(status: string): number {
-  const idx = statusFlow.findIndex((s) => s.key === status)
-  return idx >= 0 ? idx : 0
+function getCurrentStep(order: UserOrder): number {
+  if (order.status === "COMPLETED") return 4;
+  if (order.deliveryStatus === "PICKEDUP" || order.deliveryStatus === "INTRANSIT" || order.deliveryStatus === "DELIVERED") return 3;
+  if (order.status === "READYFORPICKUP") return 2;
+  if (order.status === "PREPARING") return 1;
+  return 0;
 }
 
 function getStatusLabel(status: string): string {
-  if (status === "READYFORPICKUP") return "Out for Delivery"
+  if (status === "READYFORPICKUP") return "Waiting for Partner"
   return status.charAt(0) + status.slice(1).toLowerCase()
 }
 
 function formatDateTime(iso: string) {
   const d = new Date(iso)
-  const dateStr = d.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })
-  const timeStr = d.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true }).toUpperCase()
+  const dateStr = d.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short", year: "numeric" })
+  const timeStr = d.toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "numeric", minute: "2-digit", hour12: true }).toUpperCase()
   return `${dateStr}, ${timeStr}`
 }
 
 function formatTimelineDate(iso: string) {
   const d = new Date(iso)
-  const dateStr = d.toLocaleDateString("en-IN", { day: "numeric", month: "short" })
-  const timeStr = d.toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true }).toUpperCase()
+  const dateStr = d.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata", day: "numeric", month: "short" })
+  const timeStr = d.toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata", hour: "numeric", minute: "2-digit", hour12: true }).toUpperCase()
   return `${dateStr}, ${timeStr}`
 }
 
 function formatDateOnly(iso: string) {
   const d = new Date(iso)
   return d.toLocaleDateString("en-IN", {
+    timeZone: "Asia/Kolkata",
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -118,7 +116,8 @@ function HorizontalTimeline({ currentStep, category, history }: { currentStep: n
   const steps = [
     { label: "Order Confirmed", key: "CONFIRMED", icon: Check },
     { label: "Preparing Your Order", key: "PREPARING", icon: ChefHat },
-    { label: "Out for Delivery", key: "READYFORPICKUP", icon: Bike },
+    { label: "Waiting for Partner", key: "READYFORPICKUP", icon: PackageCheck },
+    { label: "Out for Delivery", key: "INTRANSIT", icon: Bike },
     { label: "Delivery Completed", key: "COMPLETED", icon: Check },
   ]
 
@@ -132,7 +131,7 @@ function HorizontalTimeline({ currentStep, category, history }: { currentStep: n
         {!isCancelled && (
           <div
             className="absolute top-[16px] left-[10%] h-[2px] bg-[#15803D] z-0 transition-all duration-500"
-            style={{ width: `${Math.min((currentStep / 3) * 80, 80)}%` }}
+            style={{ width: `${Math.min((currentStep / 4) * 80, 80)}%` }}
           />
         )}
         {isCancelled && (
@@ -185,10 +184,10 @@ function HorizontalTimeline({ currentStep, category, history }: { currentStep: n
 
 export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { status: string, changedAt: string, note?: string | null }[] } }) {
   const category = getStatusCategory(order.status)
-  const currentStep = getCurrentStep(order.status)
+  const isCompleted = category === "completed"
+  const currentStep = isCompleted ? 4 : getCurrentStep(order)
   const isCancelled = category === "cancelled"
   const isOngoing = category === "ongoing"
-  const isCompleted = category === "completed"
   const imageUrl = getFirstItemPhoto(order)
   const payStatus = formatPaymentStatus(order.paymentStatus)
   const itemsStr = getItemsSummary(order)

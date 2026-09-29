@@ -71,13 +71,18 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
     serviceDate = picked;
     resolvedServiceDateType = picked.getTime() === tomorrow.getTime() ? "TOMORROW" : "FUTURE";
   } else {
-    serviceDate = new Date();
+    // Determine the current date in IST (UTC +5:30)
+    const now = new Date();
+    const istOffset = 5.5 * 60 * 60 * 1000;
+    const nowIst = new Date(now.getTime() + istOffset);
+    
+    // Create a UTC date representing midnight of the IST day
+    serviceDate = new Date(Date.UTC(nowIst.getUTCFullYear(), nowIst.getUTCMonth(), nowIst.getUTCDate()));
+
     if (serviceDateType === "TODAY") {
-      serviceDate.setHours(0, 0, 0, 0);
       resolvedServiceDateType = "TODAY";
     } else {
-      serviceDate.setDate(serviceDate.getDate() + 1);
-      serviceDate.setHours(0, 0, 0, 0);
+      serviceDate.setUTCDate(serviceDate.getUTCDate() + 1);
       resolvedServiceDateType = "TOMORROW";
     }
   }
