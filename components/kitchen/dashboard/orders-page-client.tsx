@@ -3,11 +3,12 @@
 import { useMemo, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { MapPin, Search, Filter, CalendarDays, ClipboardList, Clock3, Leaf, Drumstick, ImageIcon, Sun, Headset, ChevronRight, ChevronDown } from "lucide-react"
+import { MapPin, Search, Filter, CalendarDays, ClipboardList, Clock3, Leaf, Drumstick, ImageIcon, Sun, Headset, ChevronRight, ChevronDown, PackageCheck } from "lucide-react"
 import { updateOrderStatus } from "@/actions/orders/orders"
+import { getKitchenTiffinPickups, updateTiffinPickupStatus } from "@/actions/dispatch/tiffin-actions"
 import { toast } from "sonner"
 import { Input } from "@/components/ui/input"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -97,10 +98,28 @@ const quickFilters = ["All Status", "Confirmed", "Preparing", "Ready for Pickup"
 export default function OrdersPageClient() {
   const [filter, setFilter] = useState<string>("All Status")
   const [searchQuery, setSearchQuery] = useState("")
-  const [activeTab, setActiveTab] = useState<"all" | "today" | "tomorrow">("all")
+  const [activeTab, setActiveTab] = useState<"all" | "today" | "tomorrow" | "tiffin">("all")
   const [pickedDate, setPickedDate] = useState<Date | null>(null)
   const [datePickerOpen, setDatePickerOpen] = useState(false)
   const [filterOpen, setFilterOpen] = useState(false)
+
+  const { data: tiffinPickups, isLoading: tiffinLoading, refetch: refetchTiffin } = useQuery({
+    queryKey: ["kitchen-tiffin-pickups"],
+    queryFn: getKitchenTiffinPickups
+  })
+
+  const tiffinStatusMutation = useMutation({
+    mutationFn: async ({ pickupId, status }: { pickupId: string; status: string }) => {
+      await updateTiffinPickupStatus(pickupId, status)
+    },
+    onSuccess: () => {
+      refetchTiffin()
+      toast.success("Tiffin status updated")
+    },
+    onError: (err) => {
+      toast.error(err.message || "Failed to update tiffin status")
+    }
+  })
 
   const data = useKitchenDashboardData()
   const { setData } = useKitchenDashboardActions()
@@ -315,6 +334,20 @@ export default function OrdersPageClient() {
               {allCounts.tomorrow}
             </Badge>
           </button>
+
+          <button
+            onClick={() => setActiveTab("tiffin")}
+            className={`h-[44px] px-4 rounded-[8px] shadow-[0_1px_2px_rgba(16,24,40,0.02)] transition-all flex items-center gap-2 font-[600] text-[13px] ${
+              activeTab === "tiffin" 
+                ? "bg-[#00601E] text-[#FFFFFF] shadow-[0_2px_5px_rgba(0,96,30,0.12)] border border-[#00601E]" 
+                : "bg-[#FFFFFF] border border-[#E7E9EC] text-[#18212B]"
+            }`}
+          >
+            <PackageCheck className={`h-[16px] w-[16px] ${activeTab === "tiffin" ? "text-[#FFFFFF]" : "text-[#4B5563]"}`} /> Carrier Returns
+            <Badge className={`px-1.5 py-0.5 rounded-[8px] ml-1 text-[11px] hover:bg-transparent ${activeTab === "tiffin" ? "bg-[#FFFFFF] text-[#18212B]" : "bg-[#F3F4F6] text-[#18212B]"}`}>
+              {tiffinPickups?.length || 0}
+            </Badge>
+          </button>
         </div>
         
         <div className="flex w-full lg:w-auto items-center gap-2 sm:gap-3">
@@ -360,14 +393,72 @@ export default function OrdersPageClient() {
         <div className="min-w-0 h-full">
           <ScrollArea className="h-[800px] lg:h-full rounded-[10px]">
             <div className="space-y-4 pr-3 lg:min-w-[850px] h-full flex flex-col">
-              {filteredOrders.length === 0 ? (
-                <div className="flex-1 min-h-[400px] flex flex-col items-center justify-center text-gray-400 bg-white rounded-xl border border-[#E7E9EC]">
-                  <ClipboardList className="h-12 w-12 mb-3 text-gray-300" />
-                  <p className="text-[14px] font-medium text-gray-500">No orders match your filter.</p>
-                </div>
+              {activeTab === "tiffin" ? (
+                <>
+                  {tiffinLoading && <Skeleton className="h-[200px] w-full" />}
+                  {!tiffinLoading && tiffinPickups?.length === 0 && (
+                    <div className="flex-1 min-h-[400px] flex flex-col items-center justify-center text-gray-400 bg-white rounded-xl border border-[#E7E9EC]">
+                      <PackageCheck className="h-12 w-12 mb-3 text-gray-300" />
+                      <p className="text-[14px] font-medium text-gray-500">No Carrier Returns pending.</p>
+                    </div>
+                  )}
+                  {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                  {tiffinPickups?.map((pickup: any) => (
+                    <Card key={pickup.id} className="bg-white border border-[#E9ECEF] p-5 shadow-sm rounded-xl">
+                      <div className="flex justify-between items-start mb-4">
+                        <div>
+                          <h4 className="font-bold text-[#111827] flex items-center gap-2">
+                            <PackageCheck className="w-5 h-5 text-[#FF8500]" /> 
+                            {pickup.publicCode}
+                          </h4>
+                          <p className="text-sm text-[#6B7280]">For Order {pickup.order?.publicCode || "N/A"}</p>
+                        </div>
+                        <Badge className="bg-[#FFF1DF] text-[#FF8500] hover:bg-[#FFF1DF]">{pickup.status}</Badge>
+                      </div>
+                      <div className="grid md:grid-cols-2 gap-4 mb-5">
+                        <div className="bg-[#F8FAFC] p-4 rounded-[10px] border border-[#F1F5F9]">
+                          <p className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Customer Details</p>
+                          <p className="font-bold text-[#111827] text-[15px]">{pickup.customer?.name}</p>
+                          <p className="text-[13px] text-[#6B7280]">{pickup.customer?.phoneNumber}</p>
+                        </div>
+                        <div className="bg-[#F8FAFC] p-4 rounded-[10px] border border-[#F1F5F9]">
+                          <p className="text-[12px] font-bold text-[#6B7280] uppercase tracking-wider mb-2">Delivery Partner</p>
+                          {pickup.deliveryPartner ? (
+                            <>
+                              <p className="font-bold text-[#111827] text-[15px]">{pickup.deliveryPartner.user?.name}</p>
+                              <p className="text-[13px] text-[#6B7280]">{pickup.deliveryPartner.user?.phoneNumber}</p>
+                            </>
+                          ) : (
+                            <p className="text-[13px] text-[#6B7280]">Not Assigned Yet</p>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap justify-end gap-3 border-t border-[#E9ECEF] pt-4 mt-2">
+                        {pickup.status !== "COMPLETED" && (
+                          <Button 
+                            className="bg-[#F5FBF6] border border-[#B9DDBF] text-[#087B2B] hover:bg-[#EEF8F0] shadow-none"
+                            onClick={() => tiffinStatusMutation.mutate({ pickupId: pickup.id, status: "COMPLETED" })}
+                            disabled={tiffinStatusMutation.isPending}
+                          >
+                            Mark as Returned
+                          </Button>
+                        )}
+                        {pickup.status === "COMPLETED" && (
+                          <Button disabled variant="outline">Returned & Completed</Button>
+                        )}
+                      </div>
+                    </Card>
+                  ))}
+                </>
               ) : (
-                filteredOrders.map((order) => {
-                  const menuItem = menuItems.find((mi) => mi.name === order.itemName)
+                filteredOrders.length === 0 ? (
+                  <div className="flex-1 min-h-[400px] flex flex-col items-center justify-center text-gray-400 bg-white rounded-xl border border-[#E7E9EC]">
+                    <ClipboardList className="h-12 w-12 mb-3 text-gray-300" />
+                    <p className="text-[14px] font-medium text-gray-500">No orders match your filter.</p>
+                  </div>
+                ) : (
+                  filteredOrders.map((order) => {
+                    const menuItem = menuItems.find((mi) => mi.name === order.itemName)
                   const isVeg = menuItem?.foodType === "VEG"
                   
                   const isConfirmed = (order.status || "").toLowerCase() === "confirmed"
@@ -550,8 +641,9 @@ export default function OrdersPageClient() {
                     </div>
                   )
                 })
-              )}
-            </div>
+              )
+            )}
+          </div>
             <ScrollBar />
             <ScrollBar orientation="horizontal" />
           </ScrollArea>

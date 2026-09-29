@@ -305,13 +305,28 @@ export default function DeliveriesPageClient() {
     )
   }
 
-  const activeOrders = mergedOrders.filter(
-    (o) => o.orderStatus !== "COMPLETED" && o.orderStatus !== "CANCELLED" && o.orderStatus !== "FAILED" && o.orderStatus !== "DELIVERED" && o.deliveryStatus !== "DELIVERED" && o.deliveryStatus !== "CANCELLED"
-  )
+  const getEffectiveStatus = (d: MergedDeliveryOrder) => {
+    if (d.deliveryStatus === "DELIVERED" || d.orderStatus === "DELIVERED") return "DELIVERED";
+    if (d.deliveryStatus === "CANCELLED" || d.orderStatus === "CANCELLED" || d.orderStatus === "FAILED") return "CANCELLED";
+    
+    if (d.orderStatus === "COMPLETED") return "INTRANSIT";
+    if (d.deliveryStatus === "INTRANSIT" || d.deliveryStatus === "PICKEDUP") return "INTRANSIT";
+    
+    if (d.orderStatus === "READYFORPICKUP") return "READYFORPICKUP";
+    if (d.orderStatus === "PREPARING") return "PREPARING";
+    
+    return d.deliveryStatus || d.orderStatus || "CONFIRMED";
+  }
 
-  const completedOrders = mergedOrders.filter(
-    (o) => o.orderStatus === "COMPLETED" || o.orderStatus === "CANCELLED" || o.orderStatus === "FAILED" || o.orderStatus === "DELIVERED" || o.deliveryStatus === "DELIVERED" || o.deliveryStatus === "CANCELLED"
-  )
+  const activeOrders = mergedOrders.filter((o) => {
+    const s = getEffectiveStatus(o);
+    return s !== "DELIVERED" && s !== "CANCELLED";
+  })
+
+  const completedOrders = mergedOrders.filter((o) => {
+    const s = getEffectiveStatus(o);
+    return s === "DELIVERED" || s === "CANCELLED";
+  })
 
   const displayOrders = activeTab === "active" ? activeOrders : completedOrders
   const selectedOrder = displayOrders.find((o) => o.id === selectedOrderId)
@@ -541,7 +556,8 @@ export default function DeliveriesPageClient() {
             </Card>
           ) : (
             displayOrders.map((d, idx) => {
-              const statusDisplay = getStatusDisplay(d.orderStatus as string)
+              const effectiveStatus = getEffectiveStatus(d)
+              const statusDisplay = getStatusDisplay(effectiveStatus)
               const orderIdStr = (d.publicCode as string) ?? (d.id as string).substring(0, 8).toUpperCase()
               const isSelected = selectedOrderId === d.id || (!selectedOrderId && idx === 0)
               
@@ -632,7 +648,7 @@ export default function DeliveriesPageClient() {
                   {/* Order Footer & Actions */}
                   <div className="px-5 py-4 border-t border-[#E9ECEF] flex flex-col xl:flex-row xl:items-center justify-between gap-5 bg-[#FFFFFF]">
                     <div className="flex-1 overflow-x-auto pb-3 xl:pb-0 scrollbar-hide flex items-center w-full min-w-0">
-                      <OrderTimeline status={d.orderStatus as string} />
+                      <OrderTimeline status={effectiveStatus} />
                     </div>
                     
                     <div className="flex flex-wrap items-center justify-end gap-3 w-full xl:w-auto xl:self-auto shrink-0 self-end">
@@ -655,17 +671,12 @@ export default function DeliveriesPageClient() {
                            </Button>
                          </>
                        )}
-                       {d.deliveryStatus === "ACCEPTED" && (
+                       {d.deliveryStatus === "ACCEPTED" && effectiveStatus !== "INTRANSIT" && (
                          <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "PICKEDUP" })}} className="bg-[#FFFDFC] border border-[#FFD39E] text-[#FF8500] hover:bg-[#FFF1DF] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
                            <PackageCheck className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Picked Up
                          </Button>
                        )}
-                       {d.deliveryStatus === "PICKEDUP" && (
-                         <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "INTRANSIT" })}} className="bg-[#F5FBF6] border border-[#B9DDBF] text-[#087B2B] hover:bg-[#EEF8F0] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
-                           <Truck className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Start Navigating
-                         </Button>
-                       )}
-                       {d.deliveryStatus === "INTRANSIT" && (
+                       {effectiveStatus === "INTRANSIT" && (
                          <Button onClick={(e) => { e.stopPropagation(); statusMutation.mutate({ orderId: d.id as string, status: "DELIVERED" })}} className="bg-[#F5FBF6] border border-[#B9DDBF] text-[#087B2B] hover:bg-[#EEF8F0] rounded-[6px] h-9 px-4 font-bold text-[13px] shadow-none">
                            <CircleCheck className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Mark Delivered
                          </Button>
@@ -756,8 +767,8 @@ export default function DeliveriesPageClient() {
                       <Check className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Call Kitchen
                     </Button>
                   </a>
-                  {hasKitchenCoords ? (
-                    <a href={`https://maps.google.com/?q=${selectedKitchenLat},${selectedKitchenLng}`} target="_blank" rel="noopener noreferrer">
+                  {hasKitchenCoords || selectedOrder?.kitchenAddress ? (
+                    <a href={hasKitchenCoords ? `https://maps.google.com/?q=${selectedKitchenLat},${selectedKitchenLng}` : `https://maps.google.com/?q=${encodeURIComponent(selectedOrder?.kitchenAddress as string)}`} target="_blank" rel="noopener noreferrer">
                       <Button className="w-full bg-[#EEF8F0] hover:bg-[#E4F4E7] text-[#087B2B] rounded-[6px] font-bold h-9 text-[13px] shadow-none border-none">
                         <Map className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Open in Map
                       </Button>
@@ -792,8 +803,8 @@ export default function DeliveriesPageClient() {
                       <Check className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Call Customer
                     </Button>
                   </a>
-                  {hasCustomerCoords ? (
-                    <a href={`https://maps.google.com/?q=${selectedCustomerLat},${selectedCustomerLng}`} target="_blank" rel="noopener noreferrer">
+                  {hasCustomerCoords || selectedOrder?.customerAddress ? (
+                    <a href={hasCustomerCoords ? `https://maps.google.com/?q=${selectedCustomerLat},${selectedCustomerLng}` : `https://maps.google.com/?q=${encodeURIComponent(selectedOrder?.customerAddress as string)}`} target="_blank" rel="noopener noreferrer">
                       <Button className="w-full bg-[#EEF8F0] hover:bg-[#E4F4E7] text-[#087B2B] rounded-[6px] font-bold h-9 text-[13px] shadow-none border-none">
                         <Map className="h-[16px] w-[16px] mr-1.5" strokeWidth={2} /> Open in Map
                       </Button>

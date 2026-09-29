@@ -93,3 +93,23 @@ export async function getCustomerTiffinPickups() {
     orderBy: { scheduledDate: "desc" }
   })
 }
+
+export async function getKitchenTiffinPickups() {
+  const session = await getSession()
+  if (!session?.user) throw new Error("Unauthorized")
+
+  const kitchen = await prisma.kitchenPartner.findUnique({
+    where: { userId: session.user.id }
+  })
+  if (!kitchen) throw new Error("Not a kitchen partner")
+
+  return await prisma.tiffinPickup.findMany({
+    where: { kitchenId: kitchen.id },
+    include: {
+      deliveryPartner: { include: { user: true } },
+      customer: { select: { name: true, phoneNumber: true } },
+      order: { select: { publicCode: true, totalAmount: true } }
+    },
+    orderBy: { scheduledDate: "desc" }
+  })
+}

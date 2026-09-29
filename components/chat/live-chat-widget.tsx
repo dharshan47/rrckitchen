@@ -86,12 +86,15 @@ export function LiveChatWidget() {
   }, [activeTicketId, receiveMessage])
 
   function scrollToBottom() {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
+    }
   }
 
   useEffect(() => {
     if (isOpen) {
-      scrollToBottom()
+      // Small delay to allow the DOM to render the messages and layout before scrolling
+      setTimeout(scrollToBottom, 100)
     }
   }, [messages, isOpen])
 
@@ -151,7 +154,7 @@ export function LiveChatWidget() {
   if (!isOpen || !mounted) return null
 
   return createPortal(
-    <div className="fixed inset-0 z-[9999] flex h-[100dvh] w-full flex-col bg-white overflow-hidden overscroll-none sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[600px] sm:max-h-[calc(100vh-48px)] sm:w-[360px] sm:max-w-[calc(100vw-32px)] sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_6px_20px_rgba(8,122,54,0.22)]">
+    <div className="fixed inset-0 z-[9999] flex h-full w-full flex-col bg-white overflow-hidden sm:inset-auto sm:bottom-6 sm:right-6 sm:h-[600px] sm:max-h-[calc(100vh-48px)] sm:w-[360px] sm:max-w-[calc(100vw-32px)] sm:rounded-2xl sm:border sm:border-border sm:shadow-[0_6px_20px_rgba(8,122,54,0.22)]">
       {/* Header */}
       <div className="bg-[#087A36] text-white p-4 flex items-center justify-between sm:rounded-t-2xl shrink-0">
         <div className="flex items-center gap-3">
@@ -175,7 +178,7 @@ export function LiveChatWidget() {
       </div>
 
       {/* Messages */}
-      <ScrollArea className="flex-1 bg-[#FEFEFE] h-full overscroll-contain">
+      <ScrollArea className="flex-1 min-h-0 bg-[#FEFEFE] w-full">
         <div className="p-4 space-y-4 outline-none" tabIndex={0}>
           {/* Welcome Message (Static) */}
         <div className="flex items-start gap-2">
