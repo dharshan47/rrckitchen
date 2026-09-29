@@ -127,7 +127,7 @@ export default function OrdersPageClient() {
           ...previousData,
           orders: previousData.orders.map((o) => {
             if (o.id === id) {
-              return { ...o, status }
+              return { ...o, status: status === "KITCHEN_HANDOVER" ? "Completed" : status }
             }
             return o
           })
@@ -141,7 +141,7 @@ export default function OrdersPageClient() {
           PREPARING: "Order accepted and is now preparing",
           CANCELLED: "Order rejected",
           READYFORPICKUP: "Order is ready for pickup",
-          COMPLETED: "Order marked as completed",
+          KITCHEN_HANDOVER: "Order marked as completed",
         }
         toast.success(messages[status] ?? "Order updated")
         queryClient.invalidateQueries({ queryKey: ["kitchen-dashboard"] })

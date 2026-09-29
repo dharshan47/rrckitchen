@@ -320,6 +320,40 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
   const statusColor = statusColors[order.status] || "text-blue-600 bg-blue-100"
   const cancelledHistory = order.statusHistory?.find((h) => h.status === "CANCELLED")
 
+  const mapOverlays = (
+    <>
+      {/* Live Tracking */}
+      {orderInTransit ? (
+        <div className="bg-[#FFFFFF] sm:bg-[#FFFFFF]/95 sm:backdrop-blur-md rounded-[20px] p-4 sm:pr-6 shadow-[0_2px_8px_rgba(15,23,42,0.04)] sm:shadow-[0_20px_40px_rgba(15,23,42,0.08)] border border-[#eef1f5] flex items-center gap-3 sm:gap-4 pointer-events-auto self-stretch sm:self-auto max-w-full">
+          <div className="flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 shrink-0 rounded-full bg-green-50">
+            <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-green-600 animate-pulse ring-4 ring-green-100" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[15px] sm:text-[18px] font-bold text-[#111827] leading-tight mb-0.5 sm:mb-1 tracking-tight truncate">{mainEtaTitle || "Live Tracking"}</p>
+            <p className="text-[12px] sm:text-[13px] font-medium text-[#6B7280] leading-snug line-clamp-2 sm:line-clamp-1">{etaSubtitle || "Fetching location..."}</p>
+          </div>
+        </div>
+      ) : <div className="hidden sm:block" />}
+      
+      {/* Estimated Delivery Time */}
+      {order.timeSlot && (
+        <div className="bg-[#FFFFFF] rounded-[16px] p-4 shadow-[0_10px_28px_rgba(15,23,42,0.05)] border border-[#eef1f5] text-left sm:text-right pointer-events-auto shrink-0 flex flex-row sm:flex-col justify-between items-center sm:items-end">
+          <div className="sm:hidden">
+            <p className="text-[12px] text-[#6B7280] mb-1 leading-none">Estimated Delivery</p>
+            <p className="text-[12px] text-[#9CA3AF] leading-none mt-1">{formatDateOnly(order.serviceDate || new Date().toISOString())}</p>
+          </div>
+          <div className="hidden sm:block">
+            <p className="text-[11px] sm:text-[13px] text-[#6B7280] mb-0.5 sm:mb-1 leading-none">Estimated Delivery Time</p>
+          </div>
+          <div className="text-right">
+            <p className="text-[16px] sm:text-[20px] font-bold text-[#F97316] mb-0.5 sm:mb-1 leading-none">{order.timeSlot}</p>
+            <p className="text-[11px] sm:text-[13px] text-[#9CA3AF] leading-none hidden sm:block">{formatDateOnly(order.serviceDate || new Date().toISOString())}</p>
+          </div>
+        </div>
+      )}
+    </>
+  );
+
   return (
     <div className="bg-[#fcfbf9] min-h-screen text-[#374151] pb-24 font-sans">
       <div className="max-w-[1200px] mx-auto px-6 pt-8">
@@ -436,48 +470,38 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
           </div>
 
           {/* Center Column: Live Map */}
-          <div className="order-1 lg:order-2 lg:col-span-9 relative rounded-[26px] overflow-hidden border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] bg-[#F8FAFC] w-full min-h-[400px]">
+          <div className="order-1 lg:order-2 lg:col-span-9 flex flex-col gap-4">
             {!isDelivered ? (
               <>
-                <LiveOrderTrackingMap
-                  orderId={order?.id ?? ""}
-                  kitchenLat={order.kitchenLat ?? undefined}
-                  kitchenLng={order.kitchenLng ?? undefined}
-                  customerLat={order.customerLat ?? undefined}
-                  customerLng={order.customerLng ?? undefined}
-                  deliveryPersonLat={order.deliveryPersonLat ?? undefined}
-                  deliveryPersonLng={order.deliveryPersonLng ?? undefined}
-                  orderStatus={order.status}
-                  deliveryStatus={order.deliveryStatus ?? undefined}
-                  assignmentStatus={order.deliveryAssignmentStatus ?? undefined}
-                  height="100%"
-                  showFooter={false}
-                />
+                <div className="relative rounded-[26px] overflow-hidden border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] bg-[#F8FAFC] w-full h-[350px] sm:h-[400px] lg:h-full lg:min-h-[400px]">
+                  <LiveOrderTrackingMap
+                    orderId={order?.id ?? ""}
+                    kitchenLat={order.kitchenLat ?? undefined}
+                    kitchenLng={order.kitchenLng ?? undefined}
+                    customerLat={order.customerLat ?? undefined}
+                    customerLng={order.customerLng ?? undefined}
+                    deliveryPersonLat={order.deliveryPersonLat ?? undefined}
+                    deliveryPersonLng={order.deliveryPersonLng ?? undefined}
+                    orderStatus={order.status}
+                    deliveryStatus={order.deliveryStatus ?? undefined}
+                    assignmentStatus={order.deliveryAssignmentStatus ?? undefined}
+                    height="100%"
+                    showFooter={false}
+                  />
 
-                {/* Map Overlay: Live Tracking */}
-                {orderInTransit && (
-                  <div className="absolute top-6 left-6 bg-[#FFFFFF]/95 backdrop-blur-md rounded-[20px] p-4 pr-6 shadow-[0_20px_40px_rgba(15,23,42,0.08)] border border-[#eef1f5] flex items-center gap-4">
-                    <div className="flex items-center justify-center w-12 h-12 rounded-full bg-green-50">
-                      <div className="w-3 h-3 rounded-full bg-green-600 animate-pulse ring-4 ring-green-100" />
-                    </div>
-                    <div>
-                      <p className="text-[18px] font-bold text-[#111827] leading-tight mb-1 tracking-tight">{mainEtaTitle || "Live Tracking"}</p>
-                      <p className="text-[13px] font-medium text-[#6B7280]">{etaSubtitle || "Fetching location..."}</p>
-                    </div>
+                  {/* Map Overlays Container (Desktop) */}
+                  <div className="hidden sm:flex absolute top-6 left-16 right-6 z-[1000] flex-row items-start justify-between gap-3 pointer-events-none">
+                    {mapOverlays}
                   </div>
-                )}
+                </div>
 
-                {/* Map Overlay: Estimated Delivery Time */}
-                {order.timeSlot && (
-                  <div className="absolute top-6 right-6 bg-[#FFFFFF] rounded-[16px] p-4 shadow-[0_10px_28px_rgba(15,23,42,0.05)] border border-[#eef1f5] text-right">
-                    <p className="text-[13px] text-[#6B7280] mb-1">Estimated Delivery Time</p>
-                    <p className="text-[20px] font-bold text-[#F97316] mb-1">{order.timeSlot}</p>
-                    <p className="text-[13px] text-[#9CA3AF]">{formatDateOnly(order.serviceDate || new Date().toISOString())}</p>
-                  </div>
-                )}
+                {/* Map Overlays Container (Mobile) */}
+                <div className="flex sm:hidden flex-col gap-3 w-full">
+                  {mapOverlays}
+                </div>
               </>
             ) : (
-              <div className="w-full h-full min-h-[400px] flex flex-col items-center justify-center p-8 bg-white">
+              <div className="w-full h-full min-h-[400px] flex flex-col items-center justify-center p-8 bg-white rounded-[26px] border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)]">
                 <div className="h-24 w-24 rounded-full bg-[#E4F4E7] flex items-center justify-center mb-6">
                   <PackageCheck className="h-12 w-12 text-[#087B2B]" strokeWidth={1.5} />
                 </div>

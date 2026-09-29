@@ -537,6 +537,7 @@ export async function getKitchenDashboardData() {
             id: true,
             publicCode: true,
             status: true,
+            deliveryStatus: true,
             createdAt: true,
             serviceDate: true,
             serviceDateType: true,

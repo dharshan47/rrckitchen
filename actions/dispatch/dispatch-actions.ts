@@ -144,6 +144,11 @@ export async function updateDeliveryStatus(orderId: string, status: string) {
   const validStatuses: Array<"PICKEDUP" | "INTRANSIT" | "DELIVERED" | "FAILED"> = ["PICKEDUP", "INTRANSIT", "DELIVERED", "FAILED"]
   if (!validStatuses.includes(status as typeof validStatuses[number])) throw new Error("Invalid status")
 
+  await prisma.order.update({
+    where: { id: orderId },
+    data: { deliveryStatus: status as import("@/lib/generated/prisma/client").DeliveryStatus }
+  })
+
   if (status === "PICKEDUP") {
     await prisma.deliveryAssignment.updateMany({
       where: { orderId },

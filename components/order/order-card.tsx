@@ -353,17 +353,11 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
 
           {isOngoing && (
             <>
-              {order.status === "READYFORPICKUP" && !!order.deliveryPartner ? (
-                <Button asChild className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white rounded-[12px] h-[48px] text-[15px] font-[600] gap-2 transition-colors shadow-[0_4px_12px_rgba(249,115,22,0.2)]">
-                  <Link href={`/account/orders/${order.publicCode ?? order.id}/track`}>
-                    <MapPin className="w-[18px] h-[18px]" /> Track Order
-                  </Link>
-                </Button>
-              ) : (
-                <Button disabled className="w-full bg-[#F3F4F6] text-[#9CA3AF] rounded-[12px] h-[48px] text-[15px] font-[600] gap-2 opacity-100 cursor-not-allowed shadow-none">
+              <Button asChild className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white rounded-[12px] h-[48px] text-[15px] font-[600] gap-2 transition-colors shadow-[0_4px_12px_rgba(249,115,22,0.2)]">
+                <Link href={`/account/orders/${order.publicCode ?? order.id}/track`}>
                   <MapPin className="w-[18px] h-[18px]" /> Track Order
-                </Button>
-              )}
+                </Link>
+              </Button>
               <AlertDialog open={cancelOpen} onOpenChange={setCancelOpen}>
                 <AlertDialogTrigger asChild>
                   <Button
