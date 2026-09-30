@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useMemo } from "react";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -184,6 +185,12 @@ const categoryConfig: Record<
     label: "Other",
     description: "General queries",
     barColor: "bg-[#64748B]",
+  },
+  LIVE_CHAT: {
+    icon: MessageCircle,
+    label: "Live Chat Support",
+    description: "Real-time support chat",
+    barColor: "bg-[#3E9645]",
   },
 };
 
@@ -1169,7 +1176,7 @@ export default function AdminSupportPage() {
         <SheetContent
           side="right"
           showCloseButton={false}
-          className="w-full sm:max-w-md p-0 flex flex-col bg-[#FFFFFF] border-l border-[#E5E7EB] gap-0"
+          className="w-full sm:max-w-lg p-0 flex flex-col bg-[#FFFFFF] border-l border-[#E5E7EB] gap-0"
         >
           {selectedTicket && (
             <>
@@ -1347,7 +1354,45 @@ export default function AdminSupportPage() {
               {/* Conversation Thread */}
               {detailTab === "conversation" && (
                 <div className="px-6 py-5 space-y-5">
-                  {selectedTicket.messages.length === 0 ? (
+                  {/* Always show the description as the initial issue message if it's not the live chat default */}
+                  {selectedTicket.description !== "Live chat initiated by user" && (
+                    <div className="flex gap-3 flex-row">
+                      <Avatar className="h-[32px] w-[32px]">
+                        {selectedTicket.user?.image ? (
+                          <AvatarImage
+                            src={selectedTicket.user.image}
+                            alt="Customer"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <AvatarFallback className="text-[11px] font-bold border border-[#E5E7EB] bg-[#FFFFFF] text-[#334155]">
+                            {getInitials(selectedTicket.user?.name)}
+                          </AvatarFallback>
+                        )}
+                      </Avatar>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <span className="text-[11px] font-bold text-[#1F2937]">
+                            {selectedTicket.user?.name || "Customer"}
+                          </span>
+                          <span className="text-[10px] text-[#94A3B8] font-medium">
+                            {format(
+                              new Date(selectedTicket.createdAt),
+                              "dd MMM yyyy, hh:mm a"
+                            )}
+                          </span>
+                        </div>
+                        <div className="px-4 py-3 text-[13px] font-medium leading-relaxed max-w-[90%] bg-[#FFFFFF] border border-[#EEF0F2] text-[#334155] rounded-[10px] rounded-tl-none">
+                          {selectedTicket.mediaUrls?.map((url, i) => (
+                            <Image key={i} src={url} alt="Attachment" width={500} height={500} className="max-w-full rounded-md mb-2 object-cover max-h-48" />
+                          ))}
+                          {selectedTicket.description}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {selectedTicket.messages.length === 0 && selectedTicket.description === "Live chat initiated by user" ? (
                     <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-10">
                       <MessageCircle
                         className="h-10 w-10 text-[#64748B]"
@@ -1359,7 +1404,7 @@ export default function AdminSupportPage() {
                     </div>
                   ) : (
                     selectedTicket.messages.map((msg) => {
-                      const isAdmin = msg.senderId !== selectedTicket.userId;
+                      const isAdmin = msg.senderId !== selectedTicket.userId && msg.senderId !== selectedTicket.guestId;
                       return (
                         <div
                           key={msg.id}
@@ -1424,6 +1469,9 @@ export default function AdminSupportPage() {
                                     : "bg-[#FFFFFF] border border-[#EEF0F2] text-[#334155] rounded-[10px] rounded-tl-none",
                                 )}
                               >
+                                {msg.mediaUrls?.map((url, i) => (
+                                  <Image key={i} src={url} alt="Attachment" width={500} height={500} className="max-w-full rounded-md mb-2 object-cover max-h-48" />
+                                ))}
                                 {msg.message}
                                 {isAdmin && (
                                   <div className="flex justify-end mt-1.5">

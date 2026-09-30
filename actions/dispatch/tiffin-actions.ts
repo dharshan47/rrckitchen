@@ -51,11 +51,20 @@ export async function updateTiffinPickupStatus(pickupId: string, status: string)
   const validStatuses = ["ACCEPTED", "STARTED", "ARRIVED", "COLLECTED", "COMPLETED", "FAILED"]
   if (!validStatuses.includes(status)) throw new Error("Invalid status")
 
-  return await prisma.tiffinPickup.update({
+  const updated = await prisma.tiffinPickup.update({
     where: { id: pickupId },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     data: { status: status as any }
   })
+
+  if (status === "COMPLETED") {
+    await prisma.order.update({
+      where: { id: updated.orderId },
+      data: { status: "COMPLETED" }
+    })
+  }
+
+  return updated
 }
 
 export async function getMyTiffinPickups() {

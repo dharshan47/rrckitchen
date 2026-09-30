@@ -521,7 +521,7 @@ export default function SupportPageClient() {
               <div>
                 <h4 className="font-bold text-[14px] text-[#075C30] mb-4">Other Ways to Reach Us</h4>
                 <div className="space-y-4">
-                  <button type="button" onClick={openChat} className="flex items-center gap-3 group text-left">
+                  <button type="button" onClick={() => { setActiveTicket(null); openChat(); }} className="flex items-center gap-3 group text-left">
                     <div className="h-10 w-10 rounded-[8px] border border-[#E5E7EB] bg-[#FCFDFC] flex items-center justify-center group-hover:border-[#087A3D] transition-colors shrink-0">
                       <MessageSquare className="h-4 w-4 text-[#075C30]" strokeWidth={2} />
                     </div>

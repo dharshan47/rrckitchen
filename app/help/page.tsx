@@ -177,6 +177,7 @@ export default function HelpPage() {
   const activeTab = useHelpActiveTab();
   const actions = useHelpActions();
   const openChat = useLiveChatStore((state) => state.openChat);
+  const setActiveTicket = useLiveChatStore((state) => state.setActiveTicket);
 
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebouncedValue(searchQuery, 300);
@@ -455,7 +456,7 @@ export default function HelpPage() {
                    <Button 
                       variant="outline" 
                       className="flex-1 border-gray-200 text-gray-700 font-bold bg-white hover:bg-gray-50 h-11 px-4 shadow-sm"
-                      onClick={openChat}
+                      onClick={() => { setActiveTicket(null); openChat(); }}
                    >
                       <MessageSquare className="mr-2 h-4 w-4 text-emerald-600 stroke-[2.5] shrink-0" />
                       Chat with Us

@@ -436,7 +436,7 @@ export function SupportContent() {
               <div className="space-y-3">
                 <div 
                   className="flex items-center gap-3 p-3.5 rounded-[10px] border border-[#DCE9DF] bg-[#FBFDFC] shadow-[0_2px_8px_rgba(17,24,39,0.04)] hover:border-[#D8EBDD] transition-colors cursor-pointer"
-                  onClick={openChat}
+                  onClick={() => { setActiveTicket(null); openChat(); }}
                 >
                   <MessageCircle className="h-5 w-5 text-[#087A35] shrink-0 stroke-[1.8px]" />
                   <div>

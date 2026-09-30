@@ -6,7 +6,7 @@ import { useForm, useWatch } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import {
-  MapPin, Home, Briefcase, MoreHorizontal, Loader2, LocateFixed
+  MapPin, Home, Briefcase, MoreHorizontal, Loader2, LocateFixed, X
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -182,8 +182,11 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
     <>
       <Sheet open={open} onOpenChange={(o) => { if (!o) { form.reset(); setSelectedLat(null); setSelectedLng(null); setSelectedAddress(""); setSelectedPostcode(""); setSaveError(null); setOpen(false) } }}>
         <SheetContent side="bottom" className="w-full sm:max-w-md p-0 flex flex-col sm:left-auto mx-auto">
-          <SheetHeader className="border-b border-border px-4 py-3 shrink-0">
+          <SheetHeader className="border-b border-border px-4 py-3 shrink-0 flex flex-row items-center justify-between space-y-0">
             <SheetTitle className="text-base">Save Delivery Address</SheetTitle>
+            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" onClick={() => { form.reset(); setSelectedLat(null); setSelectedLng(null); setSelectedAddress(""); setSelectedPostcode(""); setSaveError(null); setOpen(false); }}>
+              <X className="h-4 w-4" />
+            </Button>
           </SheetHeader>
 
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -283,9 +286,16 @@ export function DeliveryAddressCard({ open: externalOpen, onOpenChange: external
             </div>
           </div>
 
-          <div className="border-t border-border p-4 shrink-0">
+          <div className="border-t border-border p-4 shrink-0 flex gap-3">
             <Button
-              className="w-full"
+              variant="outline"
+              className="flex-1"
+              onClick={() => { form.reset(); setSelectedLat(null); setSelectedLng(null); setSelectedAddress(""); setSelectedPostcode(""); setSaveError(null); setOpen(false); }}
+            >
+              Cancel
+            </Button>
+            <Button
+              className="flex-1"
               onClick={handleSave}
               disabled={!selectedAddress || geocoding || saving}
             >

@@ -547,6 +547,7 @@ export async function getKitchenDashboardData() {
             deliveryPartner: {
               include: { user: { select: { name: true, phoneNumber: true } } },
             },
+            tiffinPickup: { select: { status: true } },
           },
         },
         menuItem: { select: { name: true, timeSlot: true } },
@@ -656,7 +657,13 @@ export async function getKitchenDashboardData() {
     timeSlot: formatTimeSlot(oi.menuItem.timeSlot),
     quantity: oi.quantity,
     amount: Number(oi.unitPrice) * oi.quantity,
-    status: (oi.order.deliveryStatus === "PICKEDUP" || oi.order.deliveryStatus === "INTRANSIT" || oi.order.deliveryStatus === "DELIVERED") ? "Completed" : formatOrderStatus(oi.order.status),
+    status: (oi.order.tiffinPickup && oi.order.tiffinPickup.status === "COMPLETED") 
+      ? "Completed" 
+      : (oi.order.deliveryStatus === "DELIVERED" 
+          ? (oi.order.tiffinPickup ? "Delivered" : "Completed") 
+          : (oi.order.deliveryStatus === "PICKEDUP" || oi.order.deliveryStatus === "INTRANSIT" 
+              ? "Handovered" 
+              : formatOrderStatus(oi.order.status))),
     deliveryStatus: oi.order.deliveryStatus,
     serviceDateType: oi.order.serviceDateType,
     paymentStatus: formatPaymentStatus(oi.order.payment?.status),

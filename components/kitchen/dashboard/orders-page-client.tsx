@@ -388,11 +388,11 @@ export default function OrdersPageClient() {
         </div>
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_360px] px-6 items-stretch">
+      <div className="flex flex-col gap-6 px-6 items-stretch">
         {/* Left Column: Order Cards */}
-        <div className="min-w-0 h-full">
-          <ScrollArea className="h-[800px] lg:h-full rounded-[10px]">
-            <div className="space-y-4 pr-3 lg:min-w-[850px] h-full flex flex-col">
+        <div className="min-w-0 h-full w-full">
+          <ScrollArea className="h-[800px] lg:h-full rounded-[10px] w-full">
+            <div className="space-y-4 pr-3 w-full h-full flex flex-col">
               {activeTab === "tiffin" ? (
                 <>
                   {tiffinLoading && <Skeleton className="h-[200px] w-full" />}
@@ -647,17 +647,16 @@ export default function OrdersPageClient() {
               )
             )}
           </div>
-            <ScrollBar />
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
-        </div>
-
-        {/* Right Column: Sidebar Widgets */}
-        <div className="space-y-4">
+          <ScrollBar />
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      </div>
+        {/* Right Column: Bottom Widgets */}
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 w-full">
           
           {/* Order Summary */}
-          <Card className="rounded-[10px] border border-[#E7E9EC] shadow-[0_1px_3px_rgba(16,24,40,0.025)] bg-[#FFFFFF]">
-            <CardHeader className="pb-4 pt-5 px-5 flex flex-row items-center gap-2">
+          <Card className="rounded-[10px] border border-[#E7E9EC] shadow-[0_1px_3px_rgba(16,24,40,0.025)] bg-[#FFFFFF] flex flex-col">
+            <CardHeader className="pb-4 pt-5 px-5 flex flex-row items-center gap-2 shrink-0">
               <div className="h-[32px] w-[32px] rounded-full bg-[#EAF5ED] flex items-center justify-center shrink-0">
                 <ClipboardList className="h-[16px] w-[16px] text-[#287844]" />
               </div>
@@ -710,14 +709,14 @@ export default function OrdersPageClient() {
           </Card>
 
           {/* Quick Filters */}
-          <Card className="rounded-[10px] border border-[#E7E9EC] shadow-[0_1px_3px_rgba(16,24,40,0.025)] bg-[#FFFFFF]">
-            <CardHeader className="pb-4 pt-5 px-5 flex flex-row items-center gap-2">
+          <Card className="rounded-[10px] border border-[#E7E9EC] shadow-[0_1px_3px_rgba(16,24,40,0.025)] bg-[#FFFFFF] flex flex-col">
+            <CardHeader className="pb-4 pt-5 px-5 flex flex-row items-center gap-2 shrink-0">
               <div className="h-[32px] w-[32px] rounded-full bg-[#EAF5ED] flex items-center justify-center shrink-0">
                 <Filter className="h-[16px] w-[16px] text-[#287844]" />
               </div>
               <CardTitle className="text-[15px] font-[600] text-[#111827]">Quick Filters</CardTitle>
             </CardHeader>
-            <CardContent className="px-5 pb-5 pt-0 flex flex-wrap gap-2.5">
+            <CardContent className="px-5 pb-5 pt-0 flex flex-wrap gap-2.5 flex-1 content-start">
               {quickFilters.map((f) => {
                 const isActive = filter === f
                 let colorClass = "text-[#4B5563] border-[#E2E6EA] hover:bg-gray-50 bg-[#FFFFFF]"
@@ -762,15 +761,15 @@ export default function OrdersPageClient() {
           </Card>
 
           {/* Keep it Up! */}
-          <Card className="rounded-[10px] border border-[#EDF2EE] shadow-sm bg-gradient-to-br from-[#F7FBF7] to-[#EFF7F0]">
-            <CardContent className="px-5 py-5 text-left">
-              <h4 className="text-[15px] font-[600] text-[#18212B] flex items-center gap-1.5">
+          <Card className="rounded-[10px] border border-[#EDF2EE] shadow-sm bg-gradient-to-br from-[#F7FBF7] to-[#EFF7F0] flex flex-col">
+            <CardContent className="px-5 py-5 text-left flex-1 flex flex-col">
+              <h4 className="text-[15px] font-[600] text-[#18212B] flex items-center gap-1.5 shrink-0">
                 Keep it Up! <span className="text-[16px]">🎉</span>
               </h4>
-              <p className="text-[12px] text-[#4B5563] mt-1.5 leading-relaxed pr-4">
+              <p className="text-[12px] text-[#4B5563] mt-1.5 leading-relaxed pr-4 shrink-0">
                 You have completed {counts.completed} orders today.<br/>Great service!
               </p>
-              <div className="flex justify-center mt-3">
+              <div className="flex justify-center mt-auto">
                 <div className="h-[100px] w-[140px] relative">
                   <Image src="/kitchen/shield.webp" alt="Keep it Up Shield" fill sizes="140px" className="object-contain" />
                 </div>
@@ -779,22 +778,22 @@ export default function OrdersPageClient() {
           </Card>
           
           {/* Need Help? */}
-          <div className="bg-[#FFFFFF] rounded-[10px] p-5 shadow-[0_1px_3px_rgba(16,24,40,0.025)] border border-[#E7E9EC] flex flex-col sm:flex-row lg:flex-col sm:items-start gap-4">
-            <div className="h-[40px] w-[40px] rounded-full bg-[#EAF5ED] flex items-center justify-center shrink-0">
-              <Headset className="h-[20px] w-[20px] text-[#16702E]" />
+          <div className="bg-[#FFFFFF] rounded-[10px] p-5 shadow-[0_1px_3px_rgba(16,24,40,0.025)] border border-[#E7E9EC] flex flex-col gap-4 justify-between">
+            <div className="flex items-start gap-4">
+              <div className="h-[40px] w-[40px] rounded-full bg-[#EAF5ED] flex items-center justify-center shrink-0">
+                <Headset className="h-[20px] w-[20px] text-[#16702E]" />
+              </div>
+              <div>
+                <h4 className="text-[14px] font-[600] text-[#18212B]">Need Help?</h4>
+                <p className="text-[12px] text-[#4B5563] mt-1 mb-4">Facing issues with orders?</p>
+              </div>
             </div>
-            <div>
-              <h4 className="text-[14px] font-[600] text-[#18212B]">Need Help?</h4>
-              <p className="text-[12px] text-[#4B5563] mt-1 mb-4">Facing issues with orders?</p>
-              <Button asChild variant="outline" className="h-[36px] w-full sm:w-auto lg:w-full text-[13px] font-[500] border-[#65A878] text-[#16702E] bg-[#FFFFFF] hover:bg-[#EAF5ED] rounded-[7px] shadow-none">
-                <Link href="/kitchen/dashboard/support">Contact Support <ChevronRight className="h-[14px] w-[14px] ml-1 text-[#16702E]" /></Link>
-              </Button>
-            </div>
+            <Button asChild variant="outline" className="h-[36px] w-full text-[13px] font-[500] border-[#65A878] text-[#16702E] bg-[#FFFFFF] hover:bg-[#EAF5ED] rounded-[7px] shadow-none mt-auto">
+              <Link href="/kitchen/dashboard/support">Contact Support <ChevronRight className="h-[14px] w-[14px] ml-1 text-[#16702E]" /></Link>
+            </Button>
           </div>
-
         </div>
       </div>
-
     </div>
   )
 }

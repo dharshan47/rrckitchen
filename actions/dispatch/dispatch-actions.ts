@@ -161,9 +161,10 @@ export async function updateDeliveryStatus(orderId: string, status: string) {
       where: { orderId },
       data: { deliveredAt: new Date() },
     })
-    const updatedOrder = await prisma.order.update({
+    
+    // First find if the order has reusable carriers
+    const orderForCheck = await prisma.order.findUnique({
       where: { id: orderId },
-      data: { status: "COMPLETED" },
       include: {
         orderItems: {
           include: { menuItem: true }
@@ -171,11 +172,23 @@ export async function updateDeliveryStatus(orderId: string, status: string) {
       }
     })
 
-    const hasReusableCarrier = updatedOrder.orderItems.some(item =>
+    const hasReusableCarrier = orderForCheck?.orderItems.some(item =>
       item.menuItem.packagingType === "REUSABLE_TIFFIN" || 
       item.menuItem.packagingType === "Reusable Tiffin" ||
       item.menuItem.packagingType === "Tiffin Carrier"
     )
+
+    const finalOrderStatus = hasReusableCarrier ? "READYFORPICKUP" : "COMPLETED"
+
+    const updatedOrder = await prisma.order.update({
+      where: { id: orderId },
+      data: { status: finalOrderStatus },
+      include: {
+        orderItems: {
+          include: { menuItem: true }
+        }
+      }
+    })
 
     if (hasReusableCarrier) {
       const tomorrow = new Date()

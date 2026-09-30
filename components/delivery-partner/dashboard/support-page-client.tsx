@@ -623,7 +623,7 @@ export default function SupportPageClient() {
                <Card className="rounded-[14px] border-[#EDEEEF] bg-[#FFFFFF] shadow-[0_2px_12px_rgba(16,24,40,0.035)]">
                   <CardContent className="p-2.5 space-y-1">
                      {[
-                       { icon: MessageCircle, title: "Live Chat", sub: "Chat with support", action: openChat },
+                       { icon: MessageCircle, title: "Live Chat", sub: "Chat with support", action: () => { setActiveTicket(null); openChat(); } },
                        { icon: Phone, title: "Call Support", sub: "Speak with executive" },
                        { icon: MessageCircle, title: "WhatsApp Support", sub: "Chat on WhatsApp" },
                        { icon: Share2, title: "Track Existing Ticket", sub: "Check ticket status" },
@@ -710,7 +710,7 @@ export default function SupportPageClient() {
            <Card className="rounded-[14px] border-[#EEF0E7] bg-[#F8FAF2] p-5 shadow-[0_2px_12px_rgba(16,24,40,0.035)] flex flex-col justify-center">
               <h4 className="text-[14px] font-[700] text-[#252830]">Need immediate help?</h4>
               <p className="text-[11px] text-[#747780] font-[500] mb-3.5 mt-0.5">Our team is available 24/7 to assist you</p>
-              <Button onClick={openChat} className="w-full h-[40px] bg-[#0D6C2B] hover:bg-[#09541B] text-white text-[13px] font-[700] rounded-[8px] shadow-sm">
+              <Button onClick={() => { setActiveTicket(null); openChat(); }} className="w-full h-[40px] bg-[#0D6C2B] hover:bg-[#09541B] text-white text-[13px] font-[700] rounded-[8px] shadow-sm">
                  <MessageCircle className="h-4 w-4 mr-2" strokeWidth={2.5} /> Contact Live Support
               </Button>
            </Card>

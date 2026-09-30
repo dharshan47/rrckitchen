@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import prisma from "@/lib/prisma";
+import { getAblyRest } from "@/lib/ably/server";
 
 async function requireAdmin() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -110,6 +111,14 @@ export async function POST(req: NextRequest) {
       where: { id: ticket.id },
       data: { status: "INPROGRESS" },
     });
+
+    try {
+      const ably = getAblyRest();
+      const channel = ably.channels.get(`live-chat:${ticket.publicCode}`);
+      await channel.publish("message", { message: msg });
+    } catch (err) {
+      console.error("[Admin Support] Failed to publish to Ably:", err);
+    }
 
     return NextResponse.json({ success: true, message: msg });
   } catch (error) {

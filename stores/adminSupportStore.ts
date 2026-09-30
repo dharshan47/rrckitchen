@@ -15,11 +15,13 @@ export interface AdminSupportTicketMessage {
 /** Shape of a support ticket as returned by the admin support API. */
 export interface AdminSupportTicket {
   id: string;
-  userId: string;
+  userId: string | null;
+  guestId: string | null;
   publicCode: string | null;
   orderId: string | null;
   subject: string;
   description: string;
+  mediaUrls: string[];
   status: "OPEN" | "INPROGRESS" | "RESOLVED" | "CLOSED";
   priority: "LOW" | "MEDIUM" | "HIGH" | "URGENT";
   category: string;

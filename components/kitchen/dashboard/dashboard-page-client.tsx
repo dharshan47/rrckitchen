@@ -672,7 +672,7 @@ export default function DashboardPageClient() {
                         </span>
                       </div>
                       <div className="w-16 text-right hidden sm:block shrink-0" style={{ color: COLORS.textMuted }}>
-                        {order.time}
+                        {order.time ? new Date(order.time).toLocaleTimeString("en-IN", { hour: "numeric", minute: "2-digit", hour12: true }) : ""}
                       </div>
                       <div className="shrink-0 text-right font-medium" style={{ color: COLORS.textSecondary }}>
                         ₹{order.amount}

@@ -38,7 +38,7 @@ import {
 const statusFlow: { key: string; label: string; icon: typeof Check, desc: string }[] = [
   { key: "CONFIRMED", label: "Order Confirmed", icon: Check, desc: "Your order has been confirmed." },
   { key: "PREPARING", label: "Preparing Your Order", icon: ChefHat, desc: "The kitchen is preparing your delicious meal." },
-  { key: "READYFORPICKUP", label: "Waiting for Partner", icon: PackageCheck, desc: "Your order is ready and waiting for pickup." },
+  { key: "READYFORPICKUP", label: "Waiting for Delivery Partner", icon: PackageCheck, desc: "Your order is ready and waiting for pickup." },
   { key: "INTRANSIT", label: "Out for Delivery", icon: Bike, desc: "Your order is on the way." },
   { key: "COMPLETED", label: "Delivered", icon: Package, desc: "Enjoy your meal!" },
 ]
@@ -86,7 +86,7 @@ function formatDateTime(iso: string) {
   })
 }
 
-function formatDateOnly(iso: string) {
+function formatDateOnly(iso: string | Date) {
   const d = new Date(iso)
   return d.toLocaleDateString("en-IN", {
     timeZone: "Asia/Kolkata",
@@ -156,7 +156,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
 
   const order = useOrderTracking()
 
-  const isDelivered = order?.status === "COMPLETED"
+  const isDelivered = order?.deliveryStatus === "DELIVERED" || order?.status === "COMPLETED"
 
   const { data: tiffinPickup } = useQuery({
     queryKey: ["tiffin-pickup", orderId],
@@ -473,7 +473,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
           <div className="order-1 lg:order-2 lg:col-span-9 flex flex-col gap-4">
             {!isDelivered ? (
               <>
-                <div className="relative rounded-[26px] overflow-hidden border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] bg-[#F8FAFC] w-full h-[350px] sm:h-[400px] lg:h-full lg:min-h-[400px]">
+                <div className="relative z-0 rounded-[26px] overflow-hidden border border-[#eef1f5] shadow-[0_10px_28px_rgba(15,23,42,0.05)] bg-[#F8FAFC] w-full h-[350px] sm:h-[400px] lg:h-full lg:min-h-[400px]">
                   <LiveOrderTrackingMap
                     orderId={order?.id ?? ""}
                     kitchenLat={order.kitchenLat ?? undefined}
@@ -521,7 +521,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
               </div>
               <div>
                 <h3 className="text-[20px] font-extrabold tracking-[-0.03em] text-[#111827] mb-1">Tiffin Carrier Return</h3>
-                <p className="text-[14px] text-[#6B7280]">Your meal was delivered in a reusable tiffin. A delivery partner will come to pick it up.</p>
+                <p className="text-[14px] text-[#6B7280]">Your meal was delivered in a reusable tiffin. Next day delivery partner will come and pickup carrier.</p>
               </div>
             </div>
             
@@ -534,7 +534,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
                   {[
                     { 
                       label: "Scheduled", 
-                      desc: `Scheduled for pickup on ${formatDateOnly(tiffinPickup.scheduledDate.toISOString())}`,
+                      desc: `Scheduled for pickup on ${formatDateOnly(tiffinPickup.scheduledDate)}`,
                       done: true, 
                       current: tiffinPickup.status === "SCHEDULED" || tiffinPickup.status === "ASSIGNED" || tiffinPickup.status === "ACCEPTED",
                       icon: <CalendarDays className="w-4 h-4 stroke-[2.5]" />
@@ -570,7 +570,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
               <div className="md:col-span-5 flex flex-col gap-4">
                 <div className="bg-[#F8FAFC] rounded-[16px] p-5 border border-[#eef1f5]">
                   <p className="text-[12px] font-bold text-[#9CA3AF] uppercase tracking-wider mb-1">Scheduled Date</p>
-                  <p className="text-[16px] font-extrabold text-[#111827]">{formatDateOnly(tiffinPickup.scheduledDate.toISOString())}</p>
+                  <p className="text-[16px] font-extrabold text-[#111827]">{formatDateOnly(tiffinPickup.scheduledDate)}</p>
                 </div>
                 <div className="bg-[#F8FAFC] rounded-[16px] p-5 border border-[#eef1f5]">
                   <p className="text-[12px] font-bold text-[#9CA3AF] uppercase tracking-wider mb-1">Pickup Partner</p>

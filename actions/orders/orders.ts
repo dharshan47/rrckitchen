@@ -34,6 +34,7 @@ export async function getUserOrders() {
           kitchenPartnerId: true,
           menuItem: {
             select: {
+              id: true,
               name: true,
               foodType: true,
               photos: { take: 1, orderBy: { sortOrder: "asc" }, select: { imageUrl: true } },
@@ -43,15 +44,6 @@ export async function getUserOrders() {
             select: {
               id: true,
               kitchenAlias: { select: { displayName: true } },
-              deliveryPartnerAssignments: {
-                select: {
-                  deliveryPartner: {
-                    select: { id: true, user: { select: { name: true } } },
-                  },
-                },
-                take: 1,
-                orderBy: { createdAt: "desc" },
-              },
             },
           },
         },
@@ -62,6 +54,24 @@ export async function getUserOrders() {
       review: { select: { id: true, rating: true, tasteRating: true, packagingRating: true, portionSizeRating: true, comment: true } },
       statusHistory: { select: { status: true, changedAt: true, note: true } },
       user: { select: { phoneNumber: true } },
+      deliveryPartner: {
+        select: {
+          id: true,
+          user: { select: { name: true } },
+        },
+      },
+      tiffinPickup: {
+        select: {
+          id: true,
+          status: true,
+          scheduledDate: true,
+          deliveryPartner: {
+            select: {
+              user: { select: { name: true, phoneNumber: true } }
+            }
+          }
+        }
+      },
     },
     orderBy: { createdAt: "desc" },
     take: 20,
@@ -69,7 +79,6 @@ export async function getUserOrders() {
 
   return orders.map((o) => {
     const kitchenPartner = o.orderItems[0]?.kitchenPartner
-    const deliveryAssignment = kitchenPartner?.deliveryPartnerAssignments[0]
     return {
       id: o.id,
       publicCode: o.publicCode,
@@ -80,6 +89,7 @@ export async function getUserOrders() {
       totalAmount: o.totalAmount.toString(),
       createdAt: o.createdAt.toISOString(),
       items: o.orderItems.map((i) => ({
+        menuItemId: i.menuItem.id,
         name: i.menuItem.name,
         foodType: i.menuItem.foodType,
         quantity: i.quantity,
@@ -100,10 +110,10 @@ export async function getUserOrders() {
       kitchenReview: o.review,
       kitchenName: kitchenPartner?.kitchenAlias?.displayName,
       kitchenPartnerId: kitchenPartner?.id,
-      deliveryPartner: deliveryAssignment
+      deliveryPartner: o.deliveryPartner
         ? {
-            id: deliveryAssignment.deliveryPartner.id,
-            name: deliveryAssignment.deliveryPartner.user?.name,
+            id: o.deliveryPartner.id,
+            name: o.deliveryPartner.user?.name,
           }
         : null,
       statusHistory: o.statusHistory.map(h => ({
@@ -111,6 +121,15 @@ export async function getUserOrders() {
         changedAt: h.changedAt.toISOString(),
         note: h.note,
       })),
+      tiffinPickup: o.tiffinPickup ? {
+        id: o.tiffinPickup.id,
+        status: o.tiffinPickup.status,
+        scheduledDate: o.tiffinPickup.scheduledDate.toISOString(),
+        deliveryPartner: o.tiffinPickup.deliveryPartner ? {
+          name: o.tiffinPickup.deliveryPartner.user?.name,
+          phone: o.tiffinPickup.deliveryPartner.user?.phoneNumber,
+        } : null
+      } : null,
     }
   })
 }
