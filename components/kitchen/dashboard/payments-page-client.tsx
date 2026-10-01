@@ -265,17 +265,17 @@ export default function PaymentsPageClient() {
       <div className="space-y-6 pb-20 animate-in fade-in duration-500 bg-[#FCFCFC] min-h-screen p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-8 w-8 rounded-xl" />
+            <Skeleton className="h-[32px] w-[32px] rounded-xl bg-black/5" />
             <div>
-              <Skeleton className="h-8 w-56 rounded" />
-              <Skeleton className="h-5 w-72 rounded mt-1" />
+              <Skeleton className="h-[32px] w-56 rounded bg-black/5" />
+              <Skeleton className="h-[20px] w-72 rounded mt-1 bg-black/5" />
             </div>
           </div>
-          <Skeleton className="h-11 w-40 rounded-xl" />
+          <Skeleton className="h-[36px] w-40 rounded-xl bg-black/5" />
         </div>
         <div className="grid grid-cols-5 gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-32 w-full rounded-[10px]" />
+            <Skeleton key={i} className="h-[128px] w-full rounded-[10px] bg-black/5" />
           ))}
         </div>
       </div>

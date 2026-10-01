@@ -147,10 +147,10 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
           {/* Logo */}
           <div className="px-6 pt-8 pb-6">
             <div className="flex items-center gap-3">
-              <Skeleton className="h-12 w-12 rounded-xl" />
+              <Skeleton className="h-[48px] w-[48px] rounded-xl bg-black/5" />
               <div className="flex flex-col gap-2">
-                <Skeleton className="h-5 w-36 rounded" />
-                <Skeleton className="h-3 w-24 rounded" />
+                <Skeleton className="h-[20px] w-[144px] rounded bg-black/5" />
+                <Skeleton className="h-[12px] w-[96px] rounded bg-black/5" />
               </div>
             </div>
           </div>
@@ -158,27 +158,27 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
           {/* Nav items */}
           <div className="flex-1 px-4 space-y-2">
             {navItems.map((_, i) => (
-              <Skeleton key={i} className="h-12 w-full rounded-xl" />
+              <Skeleton key={i} className="h-[48px] w-full rounded-xl bg-black/5" />
             ))}
           </div>
 
           {/* Online status toggle */}
           <div className="px-4 pb-4">
-            <Skeleton className="h-[72px] w-full rounded-2xl" />
+            <Skeleton className="h-[72px] w-full rounded-2xl bg-black/5" />
           </div>
 
           {/* User profile widget */}
           <div className="px-4 pb-6">
             <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 space-y-3">
               <div className="flex items-center gap-3">
-                <Skeleton className="h-10 w-10 rounded-full" />
+                <Skeleton className="h-[40px] w-[40px] rounded-full bg-black/5" />
                 <div className="flex flex-col gap-1.5 flex-1">
-                  <Skeleton className="h-3.5 w-28 rounded" />
-                  <Skeleton className="h-3 w-20 rounded" />
+                  <Skeleton className="h-[14px] w-[112px] rounded bg-black/5" />
+                  <Skeleton className="h-[12px] w-[80px] rounded bg-black/5" />
                 </div>
               </div>
-              <Skeleton className="h-4 w-32 rounded" />
-              <Skeleton className="h-10 w-full rounded-xl" />
+              <Skeleton className="h-[16px] w-[128px] rounded bg-black/5" />
+              <Skeleton className="h-[40px] w-full rounded-xl bg-black/5" />
             </div>
           </div>
         </aside>
@@ -187,11 +187,11 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
         <div className="flex-1 flex flex-col min-w-0">
           {/* Top header */}
           <header className="sticky top-0 z-30 bg-[#f9fafb] px-4 md:px-8 h-20 flex items-center justify-between">
-            <Skeleton className="h-[44px] w-[44px] rounded-xl" />
+            <Skeleton className="h-[44px] w-[44px] rounded-xl bg-black/5" />
             <div className="flex items-center gap-4 md:gap-6">
-              <Skeleton className="hidden sm:block h-[38px] w-28 rounded-xl" />
-              <Skeleton className="h-[44px] w-[44px] rounded-full" />
-              <Skeleton className="h-[44px] w-[44px] rounded-full" />
+              <Skeleton className="hidden sm:block h-[38px] w-[112px] rounded-xl bg-black/5" />
+              <Skeleton className="h-[44px] w-[44px] rounded-full bg-black/5" />
+              <Skeleton className="h-[44px] w-[44px] rounded-full bg-black/5" />
             </div>
           </header>
 

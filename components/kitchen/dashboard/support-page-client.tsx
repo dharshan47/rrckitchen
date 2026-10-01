@@ -181,26 +181,26 @@ export default function SupportPageClient() {
         {/* Header Skeleton */}
         <div className="flex items-center justify-between mb-8">
           <div className="space-y-2">
-            <Skeleton className="h-8 w-64 rounded" />
-            <Skeleton className="h-4 w-96 rounded" />
+            <Skeleton className="h-[32px] w-64 rounded bg-black/5" />
+            <Skeleton className="h-[16px] w-96 rounded bg-black/5" />
           </div>
-          <Skeleton className="h-24 w-24 rounded-full hidden sm:block" />
+          <Skeleton className="h-[96px] w-[96px] rounded-full hidden sm:block bg-black/5" />
         </div>
         
         {/* Category Grid Skeleton */}
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-[140px] rounded-[16px]" />
+            <Skeleton key={i} className="h-[140px] rounded-[16px] bg-black/5" />
           ))}
         </div>
 
         {/* 3-Column Layout Skeleton */}
         <div className="grid grid-cols-1 xl:grid-cols-[300px_1fr] 2xl:grid-cols-[320px_1fr_300px] gap-6">
-          <Skeleton className="h-[600px] rounded-[16px]" />
-          <Skeleton className="h-[600px] rounded-[16px]" />
+          <Skeleton className="h-[600px] rounded-[16px] bg-black/5" />
+          <Skeleton className="h-[600px] rounded-[16px] bg-black/5" />
           <div className="space-y-6 hidden 2xl:block">
-            <Skeleton className="h-[300px] rounded-[16px]" />
-            <Skeleton className="h-[200px] rounded-[16px]" />
+            <Skeleton className="h-[300px] rounded-[16px] bg-black/5" />
+            <Skeleton className="h-[200px] rounded-[16px] bg-black/5" />
           </div>
         </div>
       </div>

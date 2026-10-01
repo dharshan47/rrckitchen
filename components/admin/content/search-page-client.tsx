@@ -180,30 +180,30 @@ function EditorSkeleton() {
     <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div className="space-y-2">
-          <Skeleton className="h-7 w-56 rounded-md" />
-          <Skeleton className="h-4 w-80 rounded-md" />
+          <Skeleton className="h-[28px] w-56 rounded-md bg-black/5" />
+          <Skeleton className="h-[16px] w-80 rounded-md bg-black/5" />
         </div>
         <div className="flex gap-3">
-          <Skeleton className="h-10 w-24 rounded-md" />
-          <Skeleton className="h-10 w-40 rounded-md" />
-          <Skeleton className="h-10 w-40 rounded-md" />
+          <Skeleton className="h-[40px] w-24 rounded-md bg-black/5" />
+          <Skeleton className="h-[40px] w-40 rounded-md bg-black/5" />
+          <Skeleton className="h-[40px] w-40 rounded-md bg-black/5" />
         </div>
       </div>
 
-      <Skeleton className="h-11 w-full rounded-md mb-6" />
+      <Skeleton className="h-[44px] w-full rounded-md mb-6 bg-black/5" />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div className="lg:col-span-3 space-y-6">
           {[0, 1, 2].map((i) => (
             <Card key={i} className="shadow-sm border-gray-200/60 bg-white">
               <div className="p-4 border-b border-gray-100">
-                <Skeleton className="h-5 w-32 rounded-md" />
+                <Skeleton className="h-[20px] w-32 rounded-md bg-black/5" />
               </div>
               <div className="p-4 space-y-4">
-                <Skeleton className="h-[140px] w-full rounded-md" />
-                <Skeleton className="h-9 w-full rounded-md" />
-                <Skeleton className="h-9 w-full rounded-md" />
-                <Skeleton className="h-9 w-full rounded-md" />
+                <Skeleton className="h-[140px] w-full rounded-md bg-black/5" />
+                <Skeleton className="h-[36px] w-full rounded-md bg-black/5" />
+                <Skeleton className="h-[36px] w-full rounded-md bg-black/5" />
+                <Skeleton className="h-[36px] w-full rounded-md bg-black/5" />
               </div>
             </Card>
           ))}
@@ -213,16 +213,16 @@ function EditorSkeleton() {
           {[0, 1].map((i) => (
             <Card key={i} className="shadow-sm border-gray-200/60 bg-white">
               <div className="p-4 border-b border-gray-100">
-                <Skeleton className="h-5 w-40 rounded-md" />
+                <Skeleton className="h-[20px] w-40 rounded-md bg-black/5" />
               </div>
               <div className="p-4 space-y-3">
                 {Array.from({ length: 4 }).map((_, j) => (
                   <div key={j} className="flex items-center justify-between">
-                    <Skeleton className="h-4 w-40 rounded-md" />
-                    <Skeleton className="h-5 w-9 rounded-full" />
+                    <Skeleton className="h-[16px] w-40 rounded-md bg-black/5" />
+                    <Skeleton className="h-[20px] w-9 rounded-full bg-black/5" />
                   </div>
                 ))}
-                <Skeleton className="h-10 w-full rounded-md" />
+                <Skeleton className="h-[40px] w-full rounded-md bg-black/5" />
               </div>
             </Card>
           ))}
@@ -230,15 +230,15 @@ function EditorSkeleton() {
 
         <div className="lg:col-span-6 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden h-[calc(100vh-140px)]">
           <div className="bg-gray-50/80 border-b border-gray-100 p-4">
-            <Skeleton className="h-4 w-32 rounded-md" />
+            <Skeleton className="h-[16px] w-32 rounded-md bg-black/5" />
           </div>
           <div className="p-6 space-y-4">
-            <Skeleton className="h-12 w-full rounded-md" />
-            <Skeleton className="h-6 w-40 rounded-md" />
+            <Skeleton className="h-[48px] w-full rounded-md bg-black/5" />
+            <Skeleton className="h-[24px] w-40 rounded-md bg-black/5" />
             <div className="flex gap-4">
-              <Skeleton className="h-40 w-40 rounded-lg" />
-              <Skeleton className="h-40 w-40 rounded-lg" />
-              <Skeleton className="h-40 w-40 rounded-lg" />
+              <Skeleton className="h-[160px] w-[160px] rounded-lg bg-black/5" />
+              <Skeleton className="h-[160px] w-[160px] rounded-lg bg-black/5" />
+              <Skeleton className="h-[160px] w-[160px] rounded-lg bg-black/5" />
             </div>
           </div>
         </div>

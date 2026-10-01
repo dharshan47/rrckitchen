@@ -71,7 +71,7 @@ function normalizeHours(hours: OperatingHours | null | undefined): OperatingHour
 }
 
 function kitchenName(kitchen: KitchenPartnerRow) {
-  return kitchen.displayName || kitchen.name || "Unknown Kitchen"
+  return kitchen.displayName || kitchen.name || ""
 }
 
 export function KitchenDetailsSheet({ open, onOpenChange, kitchen }: KitchenDetailsSheetProps) {

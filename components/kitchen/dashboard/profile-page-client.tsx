@@ -372,14 +372,14 @@ export default function ProfilePageClient() {
     return (
       <div className="flex flex-col gap-6 max-w-[1400px] mx-auto animate-in fade-in duration-500">
         <div className="flex justify-between items-end">
-          <div><Skeleton className="h-8 w-64 mb-2" /><Skeleton className="h-4 w-96" /></div>
-          <Skeleton className="h-10 w-48 rounded-lg" />
+          <div><Skeleton className="h-[32px] w-64 mb-2 bg-black/5" /><Skeleton className="h-[16px] w-96 bg-black/5" /></div>
+          <Skeleton className="h-[40px] w-48 rounded-lg bg-black/5" />
         </div>
-        <Skeleton className="h-[280px] w-full rounded-xl" />
-        <div className="flex gap-4 border-b border-[#E5E7EB] pb-2"><Skeleton className="h-6 w-24" /><Skeleton className="h-6 w-24" /></div>
+        <Skeleton className="h-[280px] w-full rounded-xl bg-black/5" />
+        <div className="flex gap-4 border-b border-[#E5E7EB] pb-2"><Skeleton className="h-[24px] w-24 bg-black/5" /><Skeleton className="h-[24px] w-24 bg-black/5" /></div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.from({ length: 9 }).map((_, i) => (
-            <Skeleton key={i} className="h-[220px] rounded-xl" />
+            <Skeleton key={i} className="h-[220px] rounded-xl bg-black/5" />
           ))}
         </div>
       </div>

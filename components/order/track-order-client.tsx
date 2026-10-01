@@ -541,7 +541,7 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
                     },
                     { 
                       label: "Out for Pickup", 
-                      desc: tiffinPickup.deliveryPartner ? `${tiffinPickup.deliveryPartner.user.name} is on the way to collect the tiffin` : "Waiting for partner to start the pickup",
+                      desc: tiffinPickup.deliveryPartner ? `${tiffinPickup.deliveryPartner.user.name} is on the way to collect the tiffin` : "Waiting for Delivery Partner to start the pickup",
                       done: tiffinPickup.status === "ARRIVED" || tiffinPickup.status === "COMPLETED", 
                       current: tiffinPickup.status === "STARTED" || tiffinPickup.status === "ARRIVED",
                       icon: <Bike className="w-4 h-4 stroke-[2.5]" />

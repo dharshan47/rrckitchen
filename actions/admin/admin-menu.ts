@@ -68,6 +68,7 @@ export async function getAdminKitchensWithMenus() {
     select: {
       id: true,
       kitchenAlias: { select: { displayName: true } },
+      user: { select: { name: true, phoneNumber: true, email: true } },
       menus: {
         where: { isActive: true },
         select: { id: true, name: true },
@@ -79,7 +80,7 @@ export async function getAdminKitchensWithMenus() {
 
   return kitchens.map((k) => ({
     id: k.id,
-    name: k.kitchenAlias?.displayName ?? "Unnamed Kitchen",
+    name: k.kitchenAlias?.displayName || k.user?.name || "",
     menus: k.menus,
   }))
 }

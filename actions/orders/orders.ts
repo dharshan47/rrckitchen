@@ -150,7 +150,7 @@ export async function getAdminOrders() {
           kitchenPartner: { 
             include: { 
               kitchenAlias: true,
-              user: { select: { image: true, phoneNumber: true } },
+              user: { select: { image: true, phoneNumber: true, name: true, email: true } },
               kitchenAddress: {
                 select: { lineOne: true, area: true, landmark: true, pincode: true }
               }
@@ -160,7 +160,7 @@ export async function getAdminOrders() {
         },
       },
       payment: { select: { status: true, provider: true, paymentMethod: true, providerOrderId: true } },
-      deliveryPartner: { include: { user: { select: { name: true, phoneNumber: true } } } },
+      deliveryPartner: { include: { user: { select: { name: true, phoneNumber: true, email: true } } } },
       address: { select: { lineOne: true, lineTwo: true, pincode: true, label: true } },
       statusHistory: { orderBy: { changedAt: "asc" }, select: { id: true, status: true, changedAt: true, note: true } },
     },
@@ -181,7 +181,7 @@ export async function getAdminOrders() {
         email: o.user?.email
       },
       kitchen: {
-        name: firstKitchen?.kitchenAlias?.displayName,
+        name: firstKitchen?.kitchenAlias?.displayName || firstKitchen?.user?.name || "",
         address: address 
           ? [address.lineOne, address.area, address.landmark, address.pincode].filter(Boolean).join(", ") || undefined
           : undefined,
@@ -223,7 +223,7 @@ export async function getAdminOrders() {
       deliveryPartner: o.deliveryPartner
         ? {
             id: o.deliveryPartner.id,
-            name: o.deliveryPartner.user?.name,
+            name: o.deliveryPartner.user?.name || "",
             phone: o.deliveryPartner.user?.phoneNumber,
           }
         : null,

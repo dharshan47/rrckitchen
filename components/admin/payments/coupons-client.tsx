@@ -102,12 +102,12 @@ function StatsSkeleton() {
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="rounded-[10px] border border-[#E7EAEE] bg-[#FFFFFF] p-4 h-[100px] flex flex-col justify-between overflow-hidden relative">
           <div className="flex items-start gap-4">
-            <Skeleton className="h-[48px] w-[48px] rounded-full" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-3 w-24" />
-              <div className="flex items-end gap-2">
-                <Skeleton className="h-6 w-20" />
-                <Skeleton className="h-3 w-16" />
+            <Skeleton className="h-[48px] w-[48px] rounded-full bg-black/5" />
+            <div className="flex-1 space-y-2 mt-1">
+              <Skeleton className="h-[12px] w-24 bg-black/5" />
+              <div className="flex items-end gap-2 mt-2">
+                <Skeleton className="h-[24px] w-16 bg-black/5" />
+                <Skeleton className="h-[12px] w-20 mb-1 bg-black/5" />
               </div>
             </div>
           </div>
@@ -119,26 +119,32 @@ function StatsSkeleton() {
 
 function TableSkeleton() {
   return (
-    <div className="p-4 space-y-3">
+    <div className="w-full">
+      <div className="flex items-center py-4 px-4 border-b border-[#F3F4F6] bg-white gap-4">
+         <Skeleton className="h-[16px] w-[95%] bg-black/5" />
+      </div>
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-4">
-          <Skeleton className="h-4 w-4 rounded-sm" />
-          <Skeleton className="h-6 w-28 rounded-md" />
+        <div key={i} className="flex items-center py-2 px-4 border-b border-[#F3F4F6] gap-4 bg-white">
+          <Skeleton className="h-4 w-4 rounded-[4px] shrink-0 bg-black/5 ml-2" />
+          <Skeleton className="h-[28px] w-24 rounded-[6px] bg-black/5" />
           <div className="space-y-1.5 flex-1 max-w-[200px]">
-            <Skeleton className="h-3 w-40" />
-            <Skeleton className="h-2 w-28" />
+            <Skeleton className="h-[14px] w-32 bg-black/5" />
+            <Skeleton className="h-[12px] w-24 bg-black/5" />
           </div>
-          <Skeleton className="h-6 w-20 rounded-full" />
+          <Skeleton className="h-[24px] w-20 rounded-full bg-black/5" />
           <div className="space-y-1.5 w-[80px]">
-            <Skeleton className="h-3 w-full" />
-            <Skeleton className="h-3 w-3/4" />
+            <Skeleton className="h-[13px] w-16 bg-black/5" />
+            <Skeleton className="h-[13px] w-12 bg-black/5" />
           </div>
           <div className="space-y-1.5 w-[100px]">
-            <Skeleton className="h-3 w-16" />
-            <Skeleton className="h-1.5 w-full rounded-full" />
+            <Skeleton className="h-[13px] w-16 bg-black/5" />
+            <Skeleton className="h-2 w-full rounded-full bg-black/5" />
           </div>
-          <Skeleton className="h-5 w-9 rounded-full" />
-          <Skeleton className="h-8 w-16" />
+          <Skeleton className="h-[20px] w-10 rounded-full bg-black/5" />
+          <div className="flex gap-2">
+            <Skeleton className="h-[32px] w-[32px] rounded-[6px] bg-black/5" />
+            <Skeleton className="h-[32px] w-[32px] rounded-[6px] bg-black/5" />
+          </div>
         </div>
       ))}
     </div>
@@ -149,24 +155,24 @@ function SidebarSkeleton() {
   return (
     <div className="space-y-4">
       <div className="rounded-[10px] border border-[#E7EAEE] bg-[#FFFFFF] overflow-hidden">
-        <div className="p-5 border-b border-[#E7EAEE]"><Skeleton className="h-4 w-36" /></div>
+        <div className="p-5 border-b border-[#E7EAEE]"><Skeleton className="h-[16px] w-36 bg-black/5" /></div>
         <div className="p-4 flex flex-col gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <Skeleton className="h-4 w-4 rounded-full" />
-                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-4 w-4 rounded-full bg-black/5" />
+                <Skeleton className="h-[13px] w-24 bg-black/5" />
               </div>
-              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-[13px] w-20 bg-black/5" />
             </div>
           ))}
         </div>
       </div>
       <div className="rounded-[10px] border border-[#E7EAEE] bg-[#FFFFFF] overflow-hidden">
-        <div className="p-5 border-b border-[#E7EAEE]"><Skeleton className="h-4 w-32" /></div>
+        <div className="p-5 border-b border-[#E7EAEE]"><Skeleton className="h-[16px] w-32 bg-black/5" /></div>
         <div className="p-4 grid grid-cols-2 gap-3">
-          <Skeleton className="h-16 rounded-lg" />
-          <Skeleton className="h-16 rounded-lg" />
+          <Skeleton className="h-[64px] rounded-lg bg-black/5" />
+          <Skeleton className="h-[64px] rounded-lg bg-black/5" />
         </div>
       </div>
     </div>
@@ -966,7 +972,7 @@ export default function AdminCouponsPage() {
                   <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select a kitchen..." /></SelectTrigger>
                   <SelectContent>
                     {kitchens.map((k) => (
-                      <SelectItem key={k.id} value={k.id}>{k.name ?? "Unnamed Kitchen"}</SelectItem>
+                      <SelectItem key={k.id} value={k.id}>{k.name ?? ""}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

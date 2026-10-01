@@ -88,16 +88,18 @@ function StatsSkeleton() {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-4">
       {Array.from({ length: 6 }).map((_, i) => (
-        <div key={i} className="rounded-[16px] border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex flex-col gap-4">
-          <div className="flex items-center gap-4">
-            <Skeleton className="h-12 w-12 rounded-full" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-3 w-16" />
-              <Skeleton className="h-7 w-12" />
+        <Card key={i} className="shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-[#E5E7EB] rounded-[16px] bg-white overflow-hidden">
+          <CardContent className="p-5 flex flex-col gap-4">
+            <div className="flex items-start gap-4">
+              <Skeleton className="h-[48px] w-[48px] rounded-full shrink-0 bg-black/5" />
+              <div className="flex flex-col w-full gap-2 mt-1">
+                <Skeleton className="h-[12px] w-20 bg-black/5" />
+                <Skeleton className="h-[22px] w-12 bg-black/5" />
+              </div>
             </div>
-          </div>
-          <Skeleton className="h-3 w-32 mx-auto" />
-        </div>
+            <Skeleton className="h-[12px] w-28 mx-auto mt-1 bg-black/5" />
+          </CardContent>
+        </Card>
       ))}
     </div>
   )
@@ -105,21 +107,31 @@ function StatsSkeleton() {
 
 function TableSkeleton() {
   return (
-    <div className="p-4 space-y-4">
+    <div className="w-full">
+      <div className="flex items-center py-4 px-4 border-b border-[#F3F4F6] bg-white gap-4">
+         <Skeleton className="h-[16px] w-[95%] bg-black/5" />
+      </div>
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-4">
-          <Skeleton className="h-4 w-4 rounded-sm" />
-          <div className="flex items-center gap-4 flex-1">
-            <Skeleton className="h-14 w-14 rounded-[10px]" />
+        <div key={i} className="flex items-center py-2 px-4 border-b border-[#F3F4F6] gap-4 bg-white">
+          <Skeleton className="h-4 w-4 rounded-[4px] shrink-0 bg-black/5 ml-2" />
+          <div className="flex items-center gap-4 min-w-[280px]">
+            <Skeleton className="h-14 w-14 rounded-[10px] shrink-0 bg-black/5" />
             <div className="space-y-2 flex-1">
-              <Skeleton className="h-4 w-48" />
-              <Skeleton className="h-3 w-32" />
+              <Skeleton className="h-[14px] w-32 bg-black/5" />
+              <Skeleton className="h-[12px] w-48 bg-black/5" />
             </div>
           </div>
-          <Skeleton className="h-4 w-24 hidden md:block" />
-          <Skeleton className="h-4 w-20 hidden lg:block" />
-          <Skeleton className="h-6 w-24 rounded-md" />
-          <Skeleton className="h-8 w-16" />
+          <Skeleton className="h-[13px] w-24 shrink-0 bg-black/5" />
+          <Skeleton className="h-[13px] w-24 shrink-0 bg-black/5" />
+          <Skeleton className="h-[30px] w-16 shrink-0 bg-black/5" />
+          <Skeleton className="h-[20px] w-20 rounded-[999px] shrink-0 bg-black/5" />
+          <Skeleton className="h-[13px] w-12 shrink-0 bg-black/5" />
+          <Skeleton className="h-[13px] w-16 shrink-0 bg-black/5" />
+          <div className="flex gap-2">
+            <Skeleton className="h-8 w-8 rounded-[10px] bg-black/5" />
+            <Skeleton className="h-8 w-8 rounded-[10px] bg-black/5" />
+            <Skeleton className="h-8 w-8 rounded-[10px] bg-black/5" />
+          </div>
         </div>
       ))}
     </div>
@@ -238,7 +250,7 @@ export default function AdminMenuPage() {
       (best, i) => (!best || i.orderCount > best.orderCount ? i : best),
       null,
     )
-    const kitchenCount = new Set(menuItems.map((i) => i.kitchenName ?? "Unknown").filter((n) => n !== "Unknown")).size
+    const kitchenCount = new Set(menuItems.map((i) => i.kitchenName ?? "").filter((n) => n !== "")).size
     return { total, available, lowStock: outOfStock, avgPrice, totalOrders, topItem, kitchenCount }
   }, [menuItems])
 
@@ -268,7 +280,7 @@ export default function AdminMenuPage() {
   }, [rows, searchQuery, kitchenFilter, cuisineFilter, foodTypeFilter, timeSlotFilter, statusFilter, sortBy])
 
   const kitchens = useMemo(
-    () => Array.from(new Set(menuItems.map((i) => i.kitchenName ?? "Unknown").filter(Boolean))),
+    () => Array.from(new Set(menuItems.map((i) => i.kitchenName ?? "").filter(Boolean))),
     [menuItems],
   )
 

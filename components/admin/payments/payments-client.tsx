@@ -164,7 +164,7 @@ function shortId(id?: string | null) {
 }
 
 function kitchenName(payment: AdminPaymentRow) {
-  return payment.kitchen || "Unknown Kitchen"
+  return payment.kitchen || ""
 }
 
 function isRefundedStatus(status?: string) {
@@ -815,7 +815,7 @@ export default function PaymentsClient() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-6">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start lg:items-center gap-4 sm:gap-6">
                 <div className="relative w-[130px] h-[130px] shrink-0 flex items-center justify-center">
                   <PieChart width={130} height={130}>
                     <Pie
@@ -841,7 +841,7 @@ export default function PaymentsClient() {
                   </div>
                 </div>
 
-                <div className="flex-1 flex flex-col gap-2.5">
+                <div className="flex-1 w-full flex flex-col gap-2.5">
                   {[
                     { label: "Successful", color: "#16A34A", value: overviewData.successful },
                     { label: "Pending", color: "#F59E0B", value: overviewData.pending },

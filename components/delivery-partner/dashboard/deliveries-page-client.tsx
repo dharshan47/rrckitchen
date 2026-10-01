@@ -194,18 +194,18 @@ export default function DeliveriesPageClient() {
       <div className="max-w-[1400px] mx-auto space-y-6 pb-12 px-4 sm:px-6 lg:px-8 bg-[#FBFCFB] min-h-screen" role="status" aria-label="Loading deliveries">
         {/* Header */}
         <div className="pt-2 sm:pt-0 space-y-3">
-          <Skeleton className="h-[30px] w-48" />
-          <Skeleton className="h-4 w-80 max-w-full" />
+          <Skeleton className="h-[30px] w-[192px] bg-black/5" />
+          <Skeleton className="h-[16px] w-[320px] max-w-full bg-black/5" />
         </div>
 
         {/* Top Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Card key={i} className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] p-5 flex items-center gap-4 shadow-none">
-              <Skeleton className="h-[50px] w-[50px] rounded-full shrink-0" />
-              <div className="flex flex-col">
-                <Skeleton className="h-[23px] w-14 mb-2" />
-                <Skeleton className="h-3 w-24" />
+            <Card key={i} className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] p-5 flex items-center gap-4 shadow-[0_1px_3px_rgba(17,24,39,0.025)]">
+              <Skeleton className="h-[50px] w-[50px] rounded-full shrink-0 bg-black/5" />
+              <div className="flex flex-col w-full">
+                <Skeleton className="h-[23px] w-[56px] mb-1.5 bg-black/5" />
+                <Skeleton className="h-[14px] w-[96px] bg-black/5" />
               </div>
             </Card>
           ))}
@@ -214,12 +214,13 @@ export default function DeliveriesPageClient() {
         {/* Tabs & Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E9ECEF]">
           <div className="flex items-center gap-2">
-            <Skeleton className="h-10 w-36 rounded-t-[7px]" />
-            <Skeleton className="h-10 w-40 rounded-t-[7px]" />
+            <Skeleton className="h-[40px] w-[96px] rounded-t-[7px] rounded-b-none bg-black/5" />
+            <Skeleton className="h-[40px] w-[112px] rounded-t-[7px] rounded-b-none bg-black/5" />
+            <Skeleton className="h-[40px] w-[112px] rounded-t-[7px] rounded-b-none bg-black/5" />
           </div>
           <div className="flex items-center gap-3 pb-3 sm:pb-0">
-            <Skeleton className="h-9 w-28 rounded-[6px]" />
-            <Skeleton className="h-9 w-24 rounded-[6px]" />
+            <Skeleton className="h-[36px] w-[200px] rounded-[6px] bg-black/5" />
+            <Skeleton className="h-[36px] w-[96px] rounded-[6px] bg-black/5" />
           </div>
         </div>
 
@@ -227,77 +228,73 @@ export default function DeliveriesPageClient() {
         <div className="grid xl:grid-cols-[1fr_400px] 2xl:grid-cols-[1fr_420px] gap-6 items-start">
           {/* Orders List */}
           <div className="space-y-4">
-            {Array.from({ length: 2 }).map((_, i) => (
-              <Card key={i} className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] overflow-hidden shadow-none">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Card key={i} className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] overflow-hidden shadow-[0_1px_3px_rgba(17,24,39,0.025)]">
                 <div className="px-5 py-4 flex items-center justify-between border-b border-[#E9ECEF]">
                   <div className="flex items-center gap-3">
-                    <Skeleton className="h-7 w-7 rounded-[6px]" />
-                    <Skeleton className="h-6 w-24 rounded-[6px]" />
+                    <Skeleton className="h-[28px] w-[28px] rounded-[6px] bg-black/5" />
+                    <Skeleton className="h-[20px] w-[128px] bg-black/5" />
                   </div>
-                  <div className="flex items-center gap-6">
-                    <Skeleton className="h-4 w-16" />
-                    <Skeleton className="h-4 w-20" />
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="h-[20px] w-[80px] rounded-full bg-black/5" />
                   </div>
                 </div>
                 <div className="p-5 grid md:grid-cols-[1.5fr_1fr_auto] gap-6 items-center">
                   <div className="flex gap-4 items-center">
-                    <Skeleton className="h-[52px] w-[52px] rounded-full" />
-                    <div className="flex flex-col gap-2">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-3 w-44" />
+                    <Skeleton className="h-[52px] w-[52px] rounded-[10px] bg-black/5 shrink-0" />
+                    <div className="flex flex-col gap-2 w-full">
+                      <Skeleton className="h-[20px] w-[128px] bg-black/5" />
+                      <Skeleton className="h-[16px] w-[176px] bg-black/5" />
                     </div>
                   </div>
                   <div className="flex flex-col gap-2">
-                    <Skeleton className="h-3 w-16" />
-                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-[16px] w-[80px] bg-black/5" />
+                    <Skeleton className="h-[20px] w-[112px] bg-black/5" />
                   </div>
                   <div className="flex flex-col items-start md:items-end gap-2">
-                    <Skeleton className="h-[18px] w-20" />
-                    <Skeleton className="h-3 w-24" />
+                    <Skeleton className="h-[20px] w-[96px] bg-black/5" />
+                    <Skeleton className="h-[16px] w-[80px] bg-black/5" />
                   </div>
                 </div>
                 <div className="px-5 py-4 border-t border-[#E9ECEF] flex items-center justify-between gap-5">
-                  <Skeleton className="flex-1 h-[16px] max-w-[320px]" />
-                  <Skeleton className="h-9 w-24 rounded-[6px]" />
+                  <Skeleton className="flex-1 h-[20px] max-w-[320px] bg-black/5" />
+                  <Skeleton className="h-[36px] w-[96px] rounded-[6px] bg-black/5" />
                 </div>
               </Card>
             ))}
-
-            {/* Bottom Banner */}
-            <Skeleton className="h-[68px] w-full rounded-[8px]" />
           </div>
 
           {/* Sticky Details Sidebar */}
           <div className="xl:sticky xl:top-6 space-y-6">
-            <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-none overflow-hidden">
-              <div className="bg-[#F0F8F1] py-4 px-5">
-                <Skeleton className="h-4 w-36" />
+            <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.025)] overflow-hidden">
+              <div className="bg-[#F8FAFC] py-4 px-5">
+                <Skeleton className="h-[20px] w-[144px] bg-black/5" />
               </div>
-              <div className="p-5 border-b border-[#E9ECEF] space-y-3">
-                <Skeleton className="h-3 w-24 mb-4" />
-                {Array.from({ length: 5 }).map((_, j) => (
-                  <div key={j} className="flex justify-between">
-                    <Skeleton className="h-3 w-20" />
-                    <Skeleton className="h-3 w-28" />
+              <div className="p-5 border-b border-[#E9ECEF] space-y-4">
+                <Skeleton className="h-[16px] w-[96px] mb-4 bg-black/5" />
+                {Array.from({ length: 4 }).map((_, j) => (
+                  <div key={j} className="flex justify-between items-center">
+                    <Skeleton className="h-[16px] w-[80px] bg-black/5" />
+                    <Skeleton className="h-[16px] w-[112px] bg-black/5" />
                   </div>
                 ))}
               </div>
-              <div className="p-5 space-y-3">
-                <Skeleton className="h-3 w-24 mb-4" />
-                <Skeleton className="h-4 w-40" />
-                <Skeleton className="h-3 w-48" />
-                <div className="grid grid-cols-2 gap-3 pt-2">
-                  <Skeleton className="h-9 rounded-[6px]" />
-                  <Skeleton className="h-9 rounded-[6px]" />
+              <div className="p-5 space-y-4">
+                <Skeleton className="h-[16px] w-[96px] mb-4 bg-black/5" />
+                <Skeleton className="h-[20px] w-[160px] bg-black/5" />
+                <Skeleton className="h-[16px] w-[192px] bg-black/5" />
+                <div className="flex flex-col gap-3 pt-2">
+                  <Skeleton className="h-[40px] w-full rounded-[6px] bg-black/5" />
+                  <Skeleton className="h-[40px] w-full rounded-[6px] bg-black/5" />
                 </div>
               </div>
             </Card>
-            <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-none overflow-hidden">
+            <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.025)] overflow-hidden">
               <div className="py-4 px-5 flex items-center gap-3 border-b border-[#E9ECEF]">
-                <Skeleton className="h-8 w-8 rounded-[6px]" />
-                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-[32px] w-[32px] rounded-full bg-black/5" />
+                <Skeleton className="h-[20px] w-[160px] bg-black/5" />
               </div>
-              <Skeleton className="h-[220px] w-full" />
+              <Skeleton className="h-[240px] w-full rounded-none bg-black/5" />
             </Card>
           </div>
         </div>
@@ -493,7 +490,7 @@ export default function DeliveriesPageClient() {
       <div className="grid gap-6 items-start grid-cols-1">
         {activeTab === "tiffin" ? (
           <div className="space-y-4">
-            {tiffinLoading && <Skeleton className="h-[200px] w-full" />}
+            {tiffinLoading && <Skeleton className="h-[200px] w-full bg-black/5" />}
             {!tiffinLoading && tiffinPickups?.length === 0 && (
               <Card className="bg-[#FFFFFF] rounded-[10px] p-12 text-center border border-[#E6EAEC] shadow-[0_1px_3px_rgba(17,24,39,0.025)]">
                 <PackageCheck className="h-12 w-12 text-[#6B7280] mx-auto mb-4" strokeWidth={1.5} />

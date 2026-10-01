@@ -68,7 +68,7 @@ export const columns = (
         <div className="flex flex-col gap-0.5">
           <span className="text-[13px] font-medium text-[#111827] flex items-center gap-1.5">
             <MapPin className="h-[14px] w-[14px] text-[#64748B]" />
-            {address.area || address.lineOne || "Unknown Area"}
+            {address.area || address.lineOne || ""}
           </span>
           <span className="text-[11px] text-[#64748B] pl-[20px]">{address.pincode ?? "No Pincode"}</span>
         </div>

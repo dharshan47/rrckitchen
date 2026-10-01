@@ -696,64 +696,64 @@ export default function MenuPageClient() {
       <div className="space-y-6 pb-20 animate-in fade-in duration-500">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
           <div>
-            <Skeleton className="h-8 w-64 rounded" />
-            <Skeleton className="h-5 w-96 rounded mt-2" />
+            <Skeleton className="h-[32px] w-64 rounded bg-black/5" />
+            <Skeleton className="h-[20px] w-96 rounded mt-2 bg-black/5" />
           </div>
           <div className="flex items-center gap-3">
-            <Skeleton className="h-11 w-40 rounded-xl" />
-            <Skeleton className="h-11 w-40 rounded-xl" />
+            <Skeleton className="h-[36px] w-40 rounded-xl bg-black/5" />
+            <Skeleton className="h-[36px] w-40 rounded-xl bg-black/5" />
           </div>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
           <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
             <div className="pb-4 pt-6 px-6 flex flex-row items-center gap-2 border-b border-gray-50">
-              <Skeleton className="h-5 w-5 rounded-full" />
-              <Skeleton className="h-5 w-44" />
+              <Skeleton className="h-[20px] w-[20px] rounded-full bg-black/5" />
+              <Skeleton className="h-[20px] w-44 bg-black/5" />
             </div>
             <div className="px-6 py-6 space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="space-y-2">
-                    <Skeleton className="h-3.5 w-24" />
-                    <Skeleton className="h-11 w-full rounded-xl" />
+                    <Skeleton className="h-[14px] w-24 bg-black/5" />
+                    <Skeleton className="h-[44px] w-full rounded-xl bg-black/5" />
                   </div>
                 ))}
               </div>
               <div className="space-y-2">
-                <Skeleton className="h-3.5 w-24" />
-                <Skeleton className="h-20 w-full rounded-xl" />
+                <Skeleton className="h-[14px] w-24 bg-black/5" />
+                <Skeleton className="h-[80px] w-full rounded-xl bg-black/5" />
               </div>
-              <Skeleton className="h-[140px] w-full rounded-xl" />
+              <Skeleton className="h-[140px] w-full rounded-xl bg-black/5" />
               <div className="flex justify-end">
-                <Skeleton className="h-11 w-36 rounded-xl" />
+                <Skeleton className="h-[44px] w-36 rounded-xl bg-black/5" />
               </div>
             </div>
           </div>
 
           <div className="rounded-2xl border border-gray-100 bg-white shadow-sm h-fit sticky top-28">
             <div className="pb-4 pt-6 px-6 flex flex-row items-center gap-2 border-b border-gray-50">
-              <Skeleton className="h-5 w-5 rounded-full" />
+              <Skeleton className="h-[20px] w-[20px] rounded-full bg-black/5" />
               <div className="space-y-1.5">
-                <Skeleton className="h-5 w-44" />
-                <Skeleton className="h-3 w-56" />
+                <Skeleton className="h-[20px] w-44 bg-black/5" />
+                <Skeleton className="h-[12px] w-56 bg-black/5" />
               </div>
             </div>
             <div className="px-6 py-6 space-y-6">
               <div className="rounded-2xl p-5">
                 <div className="flex items-center gap-3 mb-5">
-                  <Skeleton className="h-12 w-12 rounded-xl" />
+                  <Skeleton className="h-[48px] w-[48px] rounded-xl bg-black/5" />
                   <div className="flex-1 space-y-1.5">
-                    <Skeleton className="h-4 w-40" />
-                    <Skeleton className="h-3 w-48" />
+                    <Skeleton className="h-[16px] w-40 bg-black/5" />
+                    <Skeleton className="h-[12px] w-48 bg-black/5" />
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <Skeleton className="h-11 flex-1 rounded-xl" />
-                  <Skeleton className="h-11 flex-1 rounded-xl" />
+                  <Skeleton className="h-[44px] flex-1 rounded-xl bg-black/5" />
+                  <Skeleton className="h-[44px] flex-1 rounded-xl bg-black/5" />
                 </div>
               </div>
-              <Skeleton className="h-16 w-full rounded-xl" />
+              <Skeleton className="h-[64px] w-full rounded-xl bg-black/5" />
             </div>
           </div>
         </div>
@@ -761,30 +761,30 @@ export default function MenuPageClient() {
         <div className="rounded-2xl border border-gray-100 bg-white shadow-sm overflow-hidden">
           <div className="pb-4 pt-6 px-6 flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-50 gap-4">
             <div className="flex items-center gap-2">
-              <Skeleton className="h-5 w-5 rounded-full" />
-              <Skeleton className="h-5 w-44" />
+              <Skeleton className="h-[20px] w-[20px] rounded-full bg-black/5" />
+              <Skeleton className="h-[20px] w-44 bg-black/5" />
             </div>
             <div className="flex items-center gap-3">
-              <Skeleton className="h-10 w-64 rounded-xl" />
-              <Skeleton className="h-10 w-[140px] rounded-xl" />
+              <Skeleton className="h-[40px] w-64 rounded-xl bg-black/5" />
+              <Skeleton className="h-[40px] w-[140px] rounded-xl bg-black/5" />
             </div>
           </div>
           <div className="p-6 space-y-5">
             {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex items-center gap-6">
                 <div className="flex items-center gap-3 w-[280px]">
-                  <Skeleton className="h-12 w-12 rounded-xl" />
+                  <Skeleton className="h-[48px] w-[48px] rounded-xl bg-black/5" />
                   <div className="space-y-1.5 flex-1">
-                    <Skeleton className="h-3.5 w-28" />
-                    <Skeleton className="h-3 w-20" />
+                    <Skeleton className="h-[14px] w-28 bg-black/5" />
+                    <Skeleton className="h-[12px] w-20 bg-black/5" />
                   </div>
                 </div>
-                <Skeleton className="h-3.5 w-20 flex-1" />
-                <Skeleton className="h-4 w-16" />
-                <Skeleton className="h-4 w-20" />
-                <Skeleton className="h-4 w-12" />
-                <Skeleton className="h-5 w-20 rounded-full" />
-                <Skeleton className="h-8 w-28 rounded-lg" />
+                <Skeleton className="h-[14px] w-20 flex-1 bg-black/5" />
+                <Skeleton className="h-[16px] w-16 bg-black/5" />
+                <Skeleton className="h-[16px] w-20 bg-black/5" />
+                <Skeleton className="h-[16px] w-12 bg-black/5" />
+                <Skeleton className="h-[20px] w-20 rounded-full bg-black/5" />
+                <Skeleton className="h-[32px] w-28 rounded-lg bg-black/5" />
               </div>
             ))}
           </div>

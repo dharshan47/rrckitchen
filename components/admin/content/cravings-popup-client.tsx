@@ -128,30 +128,30 @@ function formatUpdatedAt(dateStr: string) {
 
 function RuleDetailSkeleton() {
   return (
-    <div className="flex flex-col gap-5 animate-in fade-in-0 duration-300">
+    <div className="flex flex-col gap-5 animate-in fade-in-0 duration-300 bg-white p-6 rounded-[12px] border border-[#EEF1F3]">
       <div className="flex items-center justify-between pb-4 border-b border-[#EEF1F3]">
-        <Skeleton className="h-6 w-56 rounded-md" />
-        <Skeleton className="h-9 w-28 rounded-lg" />
+        <Skeleton className="h-[24px] w-56 rounded-md bg-black/5" />
+        <Skeleton className="h-[36px] w-28 rounded-lg bg-black/5" />
       </div>
-      <Skeleton className="h-11 w-full rounded-lg" />
+      <Skeleton className="h-[44px] w-full rounded-lg bg-black/5" />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         <div className="md:col-span-2 space-y-5">
-          <Skeleton className="h-14 w-full rounded-xl" />
-          <Skeleton className="h-24 w-full rounded-xl" />
-          <Skeleton className="h-16 w-full rounded-xl" />
-          <Skeleton className="h-28 w-full rounded-xl" />
+          <Skeleton className="h-[56px] w-full rounded-xl bg-black/5" />
+          <Skeleton className="h-[96px] w-full rounded-xl bg-black/5" />
+          <Skeleton className="h-[64px] w-full rounded-xl bg-black/5" />
+          <Skeleton className="h-[112px] w-full rounded-xl bg-black/5" />
         </div>
-        <Skeleton className="h-64 w-full rounded-xl" />
+        <Skeleton className="h-[256px] w-full rounded-xl bg-black/5" />
       </div>
       <div className="pt-4 border-t border-[#EEF1F3]">
         <div className="flex items-end justify-between mb-4">
           <div className="space-y-2">
-            <Skeleton className="h-5 w-44 rounded-md" />
-            <Skeleton className="h-4 w-64 rounded-md" />
+            <Skeleton className="h-[20px] w-44 rounded-md bg-black/5" />
+            <Skeleton className="h-[16px] w-64 rounded-md bg-black/5" />
           </div>
-          <Skeleton className="h-9 w-28 rounded-lg" />
+          <Skeleton className="h-[36px] w-28 rounded-lg bg-black/5" />
         </div>
-        <Skeleton className="h-72 w-full rounded-xl" />
+        <Skeleton className="h-[288px] w-full rounded-xl bg-black/5" />
       </div>
     </div>
   );

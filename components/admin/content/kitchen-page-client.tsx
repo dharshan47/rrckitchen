@@ -163,37 +163,37 @@ function DashboardSkeleton() {
     <div className="min-h-screen bg-[#f8fafc] p-6 md:p-8 max-w-[1400px] mx-auto animate-in fade-in duration-300 font-sans">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
         <div className="flex items-center gap-4">
-          <Skeleton className="h-14 w-14 rounded-xl" />
+          <Skeleton className="h-[56px] w-[56px] rounded-xl bg-black/5" />
           <div className="space-y-2">
-            <Skeleton className="h-7 w-72" />
-            <Skeleton className="h-4 w-96 max-w-full" />
+            <Skeleton className="h-[28px] w-72 bg-black/5" />
+            <Skeleton className="h-[16px] w-96 max-w-full bg-black/5" />
           </div>
         </div>
         <div className="flex gap-3">
-          <Skeleton className="h-10 w-36" />
-          <Skeleton className="h-10 w-44" />
+          <Skeleton className="h-[40px] w-36 bg-black/5" />
+          <Skeleton className="h-[40px] w-44 bg-black/5" />
         </div>
       </div>
-      <Card className="border-slate-200 shadow-sm overflow-hidden rounded-xl">
+      <Card className="border-slate-200 shadow-sm overflow-hidden rounded-xl bg-white">
         <div className="p-4 border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex gap-3 w-full lg:w-auto">
-            <Skeleton className="h-10 w-full md:w-[350px]" />
-            <Skeleton className="h-10 w-40" />
+            <Skeleton className="h-[40px] w-full md:w-[350px] bg-black/5" />
+            <Skeleton className="h-[40px] w-40 bg-black/5" />
           </div>
-          <Skeleton className="h-10 w-28" />
+          <Skeleton className="h-[40px] w-28 bg-black/5" />
         </div>
         {Array.from({ length: 6 }).map((_, i) => (
           <div
             key={i}
-            className="flex items-center gap-4 px-6 py-4 border-b border-slate-50"
+            className="flex items-center gap-4 px-6 py-4 border-b border-slate-50 bg-white"
           >
-            <Skeleton className="h-5 w-6" />
-            <Skeleton className="h-5 w-40" />
-            <Skeleton className="h-5 w-16" />
-            <Skeleton className="h-5 w-16" />
-            <Skeleton className="h-5 w-20" />
-            <Skeleton className="h-5 w-28" />
-            <Skeleton className="h-5 w-28" />
+            <Skeleton className="h-[20px] w-6 bg-black/5" />
+            <Skeleton className="h-[20px] w-40 bg-black/5" />
+            <Skeleton className="h-[20px] w-16 bg-black/5" />
+            <Skeleton className="h-[20px] w-16 bg-black/5" />
+            <Skeleton className="h-[20px] w-20 bg-black/5" />
+            <Skeleton className="h-[20px] w-28 bg-black/5" />
+            <Skeleton className="h-[20px] w-28 bg-black/5" />
           </div>
         ))}
       </Card>
@@ -206,25 +206,25 @@ function EditorSkeleton() {
     <div className="min-h-screen bg-[#f8fafc] p-6 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300 font-sans">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div className="flex items-center gap-4">
-          <Skeleton className="h-14 w-14 rounded-xl" />
+          <Skeleton className="h-[56px] w-[56px] rounded-xl bg-black/5" />
           <div className="space-y-2">
-            <Skeleton className="h-7 w-80" />
-            <Skeleton className="h-4 w-96 max-w-full" />
+            <Skeleton className="h-[28px] w-80 bg-black/5" />
+            <Skeleton className="h-[16px] w-96 max-w-full bg-black/5" />
           </div>
         </div>
         <div className="flex gap-3">
-          <Skeleton className="h-10 w-32" />
-          <Skeleton className="h-10 w-40" />
+          <Skeleton className="h-[40px] w-32 bg-black/5" />
+          <Skeleton className="h-[40px] w-40 bg-black/5" />
         </div>
-        <div className="flex flex-col gap-6 mt-6">
-          <div className="w-full space-y-4">
-            <Skeleton className="h-10 w-full" />
-            <Skeleton className="h-64 w-full rounded-xl" />
-            <Skeleton className="h-40 w-full rounded-xl" />
-          </div>
-          <div className="w-full mt-6">
-            <Skeleton className="h-[600px] w-full rounded-2xl" />
-          </div>
+      </div>
+      <div className="flex flex-col gap-6 mt-6">
+        <div className="w-full space-y-4">
+          <Skeleton className="h-[40px] w-full bg-black/5" />
+          <Skeleton className="h-[256px] w-full rounded-xl bg-black/5" />
+          <Skeleton className="h-[160px] w-full rounded-xl bg-black/5" />
+        </div>
+        <div className="w-full mt-6">
+          <Skeleton className="h-[600px] w-full rounded-2xl bg-black/5" />
         </div>
       </div>
     </div>

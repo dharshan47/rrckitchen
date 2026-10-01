@@ -63,11 +63,11 @@ function StatsSkeleton() {
       {Array.from({ length: 4 }).map((_, i) => (
         <Card key={i} className="shadow-sm border-slate-200">
           <CardContent className="p-5 flex items-center gap-4">
-            <Skeleton className="h-12 w-12 rounded-xl" />
+            <Skeleton className="h-[48px] w-[48px] rounded-xl bg-black/5" />
             <div className="space-y-2">
-              <Skeleton className="h-3 w-24" />
-              <Skeleton className="h-7 w-14" />
-              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-[12px] w-24 bg-black/5" />
+              <Skeleton className="h-[28px] w-14 bg-black/5" />
+              <Skeleton className="h-[12px] w-20 bg-black/5" />
             </div>
           </CardContent>
         </Card>
@@ -80,22 +80,22 @@ function TableSkeleton() {
   return (
     <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
       <div className="p-5 border-b border-slate-100">
-        <Skeleton className="h-5 w-48" />
-        <Skeleton className="h-4 w-64 mt-2" />
+        <Skeleton className="h-[20px] w-48 bg-black/5" />
+        <Skeleton className="h-[16px] w-64 mt-2 bg-black/5" />
       </div>
       <div className="divide-y divide-slate-100">
         {Array.from({ length: 6 }).map((_, i) => (
           <div key={i} className="flex items-center gap-6 px-5 py-4">
-            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-[40px] w-[40px] rounded-full bg-black/5" />
             <div className="flex-1 space-y-2">
-              <Skeleton className="h-3.5 w-40" />
-              <Skeleton className="h-3 w-28" />
+              <Skeleton className="h-[14px] w-40 bg-black/5" />
+              <Skeleton className="h-[12px] w-28 bg-black/5" />
             </div>
-            <Skeleton className="h-3 w-12 hidden md:block" />
-            <Skeleton className="h-3 w-10 hidden md:block" />
-            <Skeleton className="h-3 w-14 hidden md:block" />
-            <Skeleton className="h-5 w-16 hidden md:block" />
-            <Skeleton className="h-8 w-20 hidden xl:block" />
+            <Skeleton className="h-[12px] w-12 hidden md:block bg-black/5" />
+            <Skeleton className="h-[12px] w-10 hidden md:block bg-black/5" />
+            <Skeleton className="h-[12px] w-14 hidden md:block bg-black/5" />
+            <Skeleton className="h-[20px] w-16 hidden md:block bg-black/5" />
+            <Skeleton className="h-[32px] w-20 hidden xl:block bg-black/5" />
           </div>
         ))}
       </div>

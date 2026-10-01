@@ -135,7 +135,7 @@ export async function getAdminDashboardData() {
         payment: { select: { status: true } },
         orderItems: {
           take: 1,
-          include: { kitchenPartner: { include: { kitchenAlias: true } } },
+          include: { kitchenPartner: { include: { kitchenAlias: true, user: { select: { name: true, phoneNumber: true, email: true } } } } },
         },
       },
     }),
@@ -162,6 +162,7 @@ export async function getAdminDashboardData() {
       take: 5,
       orderBy: { createdAt: "desc" },
       include: {
+        user: { select: { name: true, phoneNumber: true, email: true } },
         kitchenAlias: true,
         _count: { select: { orderItems: true } },
         reviews: { select: { rating: true } },
@@ -174,6 +175,7 @@ export async function getAdminDashboardData() {
       take: 10,
       orderBy: { createdAt: "desc" },
       include: {
+        user: { select: { name: true, phoneNumber: true, email: true } },
         kitchenAlias: true,
         _count: { select: { orderItems: true } },
         orderItems: {
@@ -185,7 +187,7 @@ export async function getAdminDashboardData() {
       take: 10,
       orderBy: { createdAt: "desc" },
       include: {
-        user: { select: { name: true } },
+        user: { select: { name: true, phoneNumber: true, email: true } },
         _count: { select: { kitchenAssignments: true } },
         kyc: true,
         reviews: { select: { rating: true } },
@@ -294,7 +296,7 @@ export async function getAdminDashboardData() {
         ? k.reviews.reduce((sum, r) => sum + r.rating, 0) / k.reviews.length
         : 0
     return {
-      name: k.kitchenAlias?.displayName,
+      name: k.kitchenAlias?.displayName || k.user?.name || "",
       imageUrl: k.kitchenAlias?.imageUrl,
       orders: k._count.orderItems,
       revenue: totalRev,
@@ -308,17 +310,18 @@ export async function getAdminDashboardData() {
         ? s.reviews.reduce((sum, r) => sum + r.rating, 0) / s.reviews.length
         : 0
     return {
-      name: s.user?.name,
+      name: s.user?.name || "",
       deliveries: s._count.kitchenAssignments,
       rating: Math.round(avgRating * 10) / 10,
     }
   })
 
   const recentOrders = recentOrdersData.map((o) => {
-    const kitchen = o.orderItems[0]?.kitchenPartner?.kitchenAlias?.displayName
+    const kp = o.orderItems[0]?.kitchenPartner
+    const kitchen = kp?.kitchenAlias?.displayName || kp?.user?.name || ""
     return {
       id: o.publicCode ?? o.id,
-      customer: o.user?.name,
+      customer: o.user?.name || "Guest",
       kitchen,
       date: format(o.createdAt, "dd MMM yyyy"),
       amount: Number(o.totalAmount),
@@ -330,7 +333,7 @@ export async function getAdminDashboardData() {
   const kitchenPartnersList = kitchenPartnersData.map((k) => {
     const totalRev = k.orderItems.reduce((sum, oi) => sum + Number(oi.unitPrice) * oi.quantity, 0)
     return {
-      name: k.kitchenAlias?.displayName,
+      name: k.kitchenAlias?.displayName || k.user?.name || "",
       status: k.status === "ACTIVE" || k.status === "APPROVED" ? "Active" : k.status,
       orders: k._count.orderItems,
       revenue: totalRev,
@@ -338,7 +341,7 @@ export async function getAdminDashboardData() {
   })
 
   const deliveryPartnersList = deliveryPartnersData.map((s) => ({
-    name: s.user?.name,
+    name: s.user?.name || "",
     orders: s._count.kitchenAssignments,
     status: s.status === "ACTIVE" || s.status === "APPROVED" ? "Active" : s.status === "PENDINGAPPROVAL" ? "Pending Approval" : s.status,
     docs: s.kyc?.verifiedAt ? "Verified" : "Pending",

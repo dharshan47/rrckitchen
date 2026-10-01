@@ -108,18 +108,29 @@ export default function DashboardPageClient() {
 
   if (!data) {
     return (
-      <div className="space-y-6 animate-in fade-in duration-500 pb-20" style={{ backgroundColor: COLORS.background }}>
-        <div className="flex flex-col gap-1 mb-2">
-          <Skeleton className="h-8 w-64 rounded" />
-          <Skeleton className="h-5 w-96 rounded mt-2" />
+      <div className="space-y-[18px] animate-in fade-in duration-500 pb-20 pt-[25px]" style={{ backgroundColor: COLORS.background }}>
+        
+        {/* Header Row Skeleton */}
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-2">
+          <div className="flex flex-col gap-1">
+            <Skeleton className="h-8 w-64 rounded bg-black/5" />
+            <Skeleton className="h-4 w-72 rounded mt-1 bg-black/5" />
+          </div>
+          <Skeleton className="h-[36px] w-[140px] rounded-[8px] bg-black/5" />
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
+
+        {/* KPI Cards Row Skeleton */}
+        <div className="grid gap-[18px] sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-6">
           {Array.from({ length: 6 }).map((_, i) => (
-            <div key={i} className="rounded-[12px] border bg-white p-5 space-y-4" style={{ borderColor: COLORS.border, boxShadow: '0 1px 4px rgba(15, 25, 18, 0.025)' }}>
+            <div key={i} className="rounded-[12px] border bg-white p-4 flex flex-col justify-between h-full space-y-3" style={{ borderColor: COLORS.border, boxShadow: '0 1px 4px rgba(15, 25, 18, 0.025)' }}>
               <div className="flex items-center gap-3">
-                <Skeleton className="h-12 w-12 rounded-full" />
+                <Skeleton className="h-[48px] w-[48px] rounded-full shrink-0 bg-black/5" />
+                <Skeleton className="h-4 w-24 bg-black/5" />
               </div>
-              <Skeleton className="h-8 w-16" />
+              <div>
+                <Skeleton className="h-7 w-20 mb-1 bg-black/5" />
+                <Skeleton className="h-3 w-32 mt-1 bg-black/5" />
+              </div>
             </div>
           ))}
         </div>

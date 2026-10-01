@@ -121,13 +121,13 @@ function StatsSkeleton() {
       {Array.from({ length: 6 }).map((_, i) => (
         <div key={i} className="rounded-[16px] border border-[#E5E7EB] bg-white p-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)] flex flex-col gap-3">
           <div className="flex justify-between items-start">
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-3 w-16" />
-              <Skeleton className="h-8 w-14" />
+            <div className="flex-1 space-y-2 mt-1">
+              <Skeleton className="h-[12px] w-20 bg-black/5" />
+              <Skeleton className="h-[24px] w-16 bg-black/5" />
             </div>
-            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-[40px] w-[40px] rounded-full shrink-0 bg-black/5" />
           </div>
-          <Skeleton className="h-3 w-24" />
+          <Skeleton className="h-[12px] w-28 bg-black/5 mt-1" />
         </div>
       ))}
     </div>
@@ -136,23 +136,46 @@ function StatsSkeleton() {
 
 function TableSkeleton() {
   return (
-    <div className="p-4 space-y-4">
+    <div className="w-full">
+      <div className="flex items-center py-4 px-4 border-b border-[#F3F4F6] bg-white gap-4">
+         <Skeleton className="h-[16px] w-[95%] bg-black/5" />
+      </div>
       {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-4">
-          <Skeleton className="h-4 w-4 rounded-sm" />
-          <div className="flex items-center gap-3 flex-1">
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <div className="space-y-1.5 flex-1">
-              <Skeleton className="h-3.5 w-36" />
-              <Skeleton className="h-2.5 w-20" />
-            </div>
+        <div key={i} className="flex items-center py-2 px-4 border-b border-[#F3F4F6] gap-4 bg-white">
+          <Skeleton className="h-4 w-4 rounded-[4px] shrink-0 bg-black/5 ml-2" />
+          
+          <div className="flex flex-col gap-1 min-w-[120px]">
+             <Skeleton className="h-[13px] w-20 bg-black/5" />
+             <Skeleton className="h-[11px] w-24 bg-black/5" />
           </div>
-          <Skeleton className="h-3 w-24 hidden md:block" />
-          <Skeleton className="h-3 w-20 hidden lg:block" />
-          <Skeleton className="h-3 w-12 hidden lg:block" />
-          <Skeleton className="h-6 w-20 rounded-md" />
-          <Skeleton className="h-6 w-20 rounded-md" />
-          <Skeleton className="h-8 w-24" />
+          
+          <div className="flex flex-col gap-1 min-w-[140px]">
+             <Skeleton className="h-[13px] w-28 bg-black/5" />
+             <Skeleton className="h-[11px] w-24 bg-black/5" />
+          </div>
+          
+          <div className="flex items-center gap-3 min-w-[160px]">
+             <Skeleton className="h-8 w-8 rounded-full shrink-0 bg-black/5" />
+             <Skeleton className="h-[13px] w-24 bg-black/5" />
+          </div>
+
+          <div className="flex flex-col gap-1 min-w-[100px]">
+             <Skeleton className="h-[13px] w-16 bg-black/5" />
+             <Skeleton className="h-[11px] w-12 bg-black/5" />
+          </div>
+          
+          <div className="min-w-[120px]">
+             <Skeleton className="h-[20px] w-24 rounded-[4px] bg-black/5" />
+          </div>
+          
+          <div className="min-w-[90px]">
+             <Skeleton className="h-[20px] w-16 rounded-[4px] bg-black/5" />
+          </div>
+          
+          <div className="flex gap-2">
+            <Skeleton className="h-8 w-8 rounded-[10px] bg-black/5" />
+            <Skeleton className="h-8 w-8 rounded-[10px] bg-black/5" />
+          </div>
         </div>
       ))}
     </div>
@@ -214,7 +237,7 @@ export default function AdminOrdersPage() {
       }
       if (statusFilter !== "all" && o.status.toUpperCase() !== statusFilter) return false
       if (paymentFilter !== "all" && (o.payment ?? "").toUpperCase() !== paymentFilter) return false
-      if (kitchenFilter !== "all" && (o.kitchen.name ?? "Unknown") !== kitchenFilter) return false
+      if (kitchenFilter !== "all" && (o.kitchen.name ?? "") !== kitchenFilter) return false
       if (deliveryFilter === "assigned" && !o.deliveryPartner) return false
       if (deliveryFilter === "unassigned" && o.deliveryPartner) return false
       return true
@@ -222,7 +245,7 @@ export default function AdminOrdersPage() {
   }, [orders, searchQuery, statusFilter, paymentFilter, kitchenFilter, deliveryFilter])
 
   const kitchens = useMemo(
-    () => Array.from(new Set(orders.map((o) => o.kitchen.name ?? "Unknown").filter(Boolean))),
+    () => Array.from(new Set(orders.map((o) => o.kitchen.name ?? "").filter(Boolean))),
     [orders],
   )
 
@@ -277,7 +300,7 @@ export default function AdminOrdersPage() {
           ) : (
             <Image src="/kitchen/profile.webp" alt="Fallback Kitchen Profile" width={32} height={32} className="rounded-full object-cover shrink-0 border border-[#E5E7EB] h-8 w-8" />
           )}
-          <span className="font-extrabold text-[13px] text-[#111827]">{row.original.kitchen.name ?? "Unknown Kitchen"}</span>
+          <span className="font-extrabold text-[13px] text-[#111827]">{row.original.kitchen.name ?? ""}</span>
         </div>
       ),
     }),
@@ -754,7 +777,7 @@ function OrderSheet({
               Kitchen Details
             </h4>
             <div className="flex flex-col gap-3">
-              <span className="text-[13px] font-extrabold text-[#111827]">{order.kitchen.name ?? "Unknown Kitchen"}</span>
+              <span className="text-[13px] font-extrabold text-[#111827]">{order.kitchen.name ?? ""}</span>
               <span className="text-[13px] font-medium text-[#6B7280] flex items-start gap-2.5"><MapPin className="h-4 w-4 shrink-0 mt-0.5 text-[#6B7280]" /> <span className="line-clamp-2 leading-tight">{order.kitchen.address || "Address not provided"}</span></span>
               <span className="text-[13px] font-medium text-[#6B7280] flex items-center gap-2.5"><Phone className="h-4 w-4 text-[#6B7280] shrink-0" /> {order.kitchen.phone ?? "+91 98765 43210"}</span>
             </div>
@@ -1038,7 +1061,7 @@ function OrderSheet({
               {onlinePartners?.map((p) => (
                 <div key={p.id} className="flex items-center justify-between p-4 border border-[#E5E7EB] rounded-xl hover:border-[#FED7AA] transition-colors">
                   <div className="flex flex-col gap-1">
-                    <span className="text-[13px] font-extrabold text-[#111827]">{p.user?.name ?? "Unknown"}</span>
+                    <span className="text-[13px] font-extrabold text-[#111827]">{p.user?.name ?? ""}</span>
                     <span className="text-[12px] font-medium text-[#6B7280]">{p.user?.phoneNumber ?? "No phone"}</span>
                   </div>
                   <Button 

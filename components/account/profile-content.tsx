@@ -639,7 +639,7 @@ export function ProfileContent() {
               </div>
               <div className="mt-5 pt-1">
                 {rateableOrder ? (
-                  <Link href={`/account/rating?orderId=${rateableOrder.id}`} className="block">
+                  <Link href={`/account/rating?orderId=${rateableOrder.publicCode ?? rateableOrder.id}`} className="block">
                     <Button variant="outline" className="w-full rounded-[6px] border-[#FF4B00] text-[#FF4B00] hover:bg-[#FFF4EE] text-[13px] font-semibold h-[40px]">
                       Write a Review
                     </Button>

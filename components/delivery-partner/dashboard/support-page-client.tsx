@@ -210,10 +210,10 @@ export default function SupportPageClient() {
         <div className="max-w-[1440px] mx-auto p-4 sm:p-6 md:p-8 space-y-8">
           {/* Header */}
           <div className="flex items-center gap-4">
-            <Skeleton className="h-[52px] w-[52px] rounded-full" />
+            <Skeleton className="h-[52px] w-[52px] rounded-full bg-black/5" />
             <div className="space-y-2">
-              <Skeleton className="h-7 w-44" />
-              <Skeleton className="h-3.5 w-96 max-w-full" />
+              <Skeleton className="h-[28px] w-[176px] bg-black/5" />
+              <Skeleton className="h-[14px] w-[384px] max-w-full bg-black/5" />
             </div>
           </div>
 
@@ -222,11 +222,11 @@ export default function SupportPageClient() {
             {Array.from({ length: 6 }).map((_, i) => (
               <Card key={i} className="bg-[#FFFFFF] border-[#EDEEEF] rounded-[12px] shadow-none">
                 <CardContent className="p-4 sm:p-5 flex items-start gap-4">
-                  <Skeleton className="h-11 w-11 rounded-full shrink-0" />
+                  <Skeleton className="h-[44px] w-[44px] rounded-full shrink-0 bg-black/5" />
                   <div className="flex flex-col justify-center min-w-0 flex-1 gap-1.5">
-                    <Skeleton className="h-3 w-24" />
-                    <Skeleton className="h-5 w-10" />
-                    <Skeleton className="h-2.5 w-20" />
+                    <Skeleton className="h-[12px] w-[96px] bg-black/5" />
+                    <Skeleton className="h-[20px] w-[40px] bg-black/5" />
+                    <Skeleton className="h-[10px] w-[80px] bg-black/5" />
                   </div>
                 </CardContent>
               </Card>
@@ -236,12 +236,12 @@ export default function SupportPageClient() {
           {/* Issue Categories */}
           <div className="flex flex-col gap-4">
             <div className="space-y-2">
-              <Skeleton className="h-4 w-48" />
-              <Skeleton className="h-3 w-72" />
+              <Skeleton className="h-[16px] w-[192px] bg-black/5" />
+              <Skeleton className="h-[12px] w-[288px] bg-black/5" />
             </div>
             <div className="flex overflow-x-auto gap-3 pb-2">
               {Array.from({ length: 5 }).map((_, i) => (
-                <Skeleton key={i} className="h-[108px] w-[116px] rounded-[12px] shrink-0" />
+                <Skeleton key={i} className="h-[108px] w-[116px] rounded-[12px] shrink-0 bg-black/5" />
               ))}
             </div>
           </div>
@@ -251,16 +251,16 @@ export default function SupportPageClient() {
             {/* Left: Raise a New Ticket */}
             <div className="lg:col-span-5 2xl:col-span-3 flex flex-col h-full space-y-4">
               <div className="flex items-center gap-2">
-                <Skeleton className="h-6 w-6 rounded-full" />
-                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-[24px] w-[24px] rounded-full bg-black/5" />
+                <Skeleton className="h-[16px] w-[160px] bg-black/5" />
               </div>
               <Card className="rounded-[14px] border-[#EDEEEF] bg-[#FFFFFF] shadow-none flex-1">
                 <CardContent className="p-5 space-y-5">
-                  <Skeleton className="h-[116px] w-full rounded-[12px]" />
-                  <Skeleton className="h-[44px] w-full rounded-[8px]" />
-                  <Skeleton className="h-[44px] w-full rounded-[8px]" />
-                  <Skeleton className="h-[120px] w-full rounded-[8px]" />
-                  <Skeleton className="h-10 w-full rounded-[8px]" />
+                  <Skeleton className="h-[116px] w-full rounded-[12px] bg-black/5" />
+                  <Skeleton className="h-[44px] w-full rounded-[8px] bg-black/5" />
+                  <Skeleton className="h-[44px] w-full rounded-[8px] bg-black/5" />
+                  <Skeleton className="h-[120px] w-full rounded-[8px] bg-black/5" />
+                  <Skeleton className="h-[40px] w-full rounded-[8px] bg-black/5" />
                 </CardContent>
               </Card>
             </div>
@@ -268,38 +268,38 @@ export default function SupportPageClient() {
             {/* Center: My Tickets */}
             <div className="lg:col-span-7 2xl:col-span-6 flex flex-col h-full space-y-4 order-first lg:order-none">
               <div className="flex items-center gap-2">
-                <Skeleton className="h-6 w-6 rounded-full" />
-                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-[24px] w-[24px] rounded-full bg-black/5" />
+                <Skeleton className="h-[16px] w-[112px] bg-black/5" />
               </div>
               <Card className="rounded-[14px] border-[#EDEEEF] bg-[#FFFFFF] shadow-none flex-1 overflow-hidden">
                 <div className="px-5 border-b border-[#F0F1F2] flex items-center justify-between">
                   <div className="flex items-center gap-7 overflow-hidden">
                     {Array.from({ length: 4 }).map((_, i) => (
-                      <Skeleton key={i} className="h-4 w-20 my-4" />
+                      <Skeleton key={i} className="h-[16px] w-[80px] my-4 bg-black/5" />
                     ))}
                   </div>
-                  <Skeleton className="h-3.5 w-24 hidden md:block" />
+                  <Skeleton className="h-[14px] w-[96px] hidden md:block bg-black/5" />
                 </div>
                 <div className="p-5 space-y-4">
                   {Array.from({ length: 2 }).map((_, i) => (
                     <div key={i} className="rounded-[10px] border border-[#EDEEEF] p-4">
                       <div className="flex justify-between items-start gap-4">
                         <div className="flex items-start gap-3.5 flex-1 min-w-0">
-                          <Skeleton className="h-11 w-11 rounded-full shrink-0" />
+                          <Skeleton className="h-[44px] w-[44px] rounded-full shrink-0 bg-black/5" />
                           <div className="flex flex-col gap-2 flex-1 min-w-0">
-                            <Skeleton className="h-3 w-24" />
-                            <Skeleton className="h-4 w-48" />
-                            <Skeleton className="h-3 w-full" />
+                            <Skeleton className="h-[12px] w-[96px] bg-black/5" />
+                            <Skeleton className="h-[16px] w-[192px] bg-black/5" />
+                            <Skeleton className="h-[12px] w-full bg-black/5" />
                           </div>
                         </div>
-                        <Skeleton className="h-6 w-20 rounded-[6px]" />
+                        <Skeleton className="h-[24px] w-[80px] rounded-[6px] bg-black/5" />
                       </div>
                       <div className="flex items-center justify-between border-t border-[#F0F1F2] pt-3.5 mt-3.5">
                         <div className="flex items-center gap-2">
-                          <Skeleton className="h-5 w-16 rounded-full" />
-                          <Skeleton className="h-5 w-24 rounded-full" />
+                          <Skeleton className="h-[20px] w-[64px] rounded-full bg-black/5" />
+                          <Skeleton className="h-[20px] w-[96px] rounded-full bg-black/5" />
                         </div>
-                        <Skeleton className="h-4 w-16" />
+                        <Skeleton className="h-[16px] w-[64px] bg-black/5" />
                       </div>
                     </div>
                   ))}
@@ -312,21 +312,21 @@ export default function SupportPageClient() {
               {Array.from({ length: 2 }).map((_, i) => (
                 <div key={i} className="flex flex-col space-y-4 flex-1">
                   <div className="flex items-center gap-2">
-                    <Skeleton className="h-6 w-6 rounded-full" />
-                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-[24px] w-[24px] rounded-full bg-black/5" />
+                    <Skeleton className="h-[16px] w-[96px] bg-black/5" />
                   </div>
                   <Card className="rounded-[14px] border-[#EDEEEF] bg-[#FFFFFF] shadow-none">
                     <CardContent className="p-2.5 space-y-2">
                       {Array.from({ length: 4 }).map((_, j) => (
                         <div key={j} className="flex items-center justify-between p-3">
                           <div className="flex items-center gap-3.5">
-                            <Skeleton className="h-9 w-9 rounded-full" />
+                            <Skeleton className="h-[36px] w-[36px] rounded-full bg-black/5" />
                             <div className="flex flex-col gap-1.5">
-                              <Skeleton className="h-3 w-28" />
-                              <Skeleton className="h-2.5 w-20" />
+                              <Skeleton className="h-[12px] w-[112px] bg-black/5" />
+                              <Skeleton className="h-[10px] w-[80px] bg-black/5" />
                             </div>
                           </div>
-                          <Skeleton className="h-4 w-4" />
+                          <Skeleton className="h-[16px] w-[16px] bg-black/5" />
                         </div>
                       ))}
                     </CardContent>

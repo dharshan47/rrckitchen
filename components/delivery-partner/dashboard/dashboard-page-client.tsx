@@ -59,19 +59,19 @@ export default function DashboardPageClient() {
       <div className="max-w-[1400px] mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-300 px-4 sm:px-6 lg:px-8" role="status" aria-label="Loading delivery dashboard">
         {/* Welcome Section */}
         <div className="space-y-3">
-          <Skeleton className="h-[25px] sm:h-[28px] w-72 max-w-full" />
-          <Skeleton className="h-4 w-56" />
+          <Skeleton className="h-[25px] sm:h-[28px] w-[288px] max-w-full bg-black/5" />
+          <Skeleton className="h-[16px] w-[224px] bg-black/5" />
         </div>
         {/* Top Stats Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-3 sm:gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} className="bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-none">
+            <Card key={i} className="bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)]">
               <CardContent className="p-3 sm:p-4 flex items-center gap-3 sm:gap-4 h-full">
-                <Skeleton className="h-[40px] w-[40px] sm:h-[50px] sm:w-[50px] rounded-full shrink-0" />
+                <Skeleton className="h-[40px] w-[40px] sm:h-[50px] sm:w-[50px] rounded-full shrink-0 bg-black/5" />
                 <div className="flex flex-col items-start overflow-hidden w-full">
-                  <Skeleton className="h-3 w-16 mb-1" />
-                  <Skeleton className="h-[23px] w-12 mb-1" />
-                  <Skeleton className="h-3 w-14" />
+                  <Skeleton className="h-[12px] w-[64px] mb-1 bg-black/5" />
+                  <Skeleton className="h-[23px] w-[48px] mb-1 bg-black/5" />
+                  <Skeleton className="h-[12px] w-[56px] bg-black/5" />
                 </div>
               </CardContent>
             </Card>
@@ -79,36 +79,36 @@ export default function DashboardPageClient() {
         </div>
         {/* Charts Section */}
         <div className="grid xl:grid-cols-5 gap-6">
-          <Card className="xl:col-span-3 bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-none overflow-hidden">
+          <Card className="xl:col-span-3 bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)] overflow-hidden">
             <div className="p-4 sm:p-5 flex items-center justify-between border-b border-[#F0F2F3]">
               <div className="flex items-center gap-2">
-                <Skeleton className="h-5 w-5 rounded-full" />
-                <Skeleton className="h-4 w-40" />
+                <Skeleton className="h-[20px] w-[20px] rounded-full bg-black/5" />
+                <Skeleton className="h-[16px] w-[160px] bg-black/5" />
               </div>
-              <Skeleton className="h-8 w-24 rounded-[7px]" />
+              <Skeleton className="h-[32px] w-[96px] rounded-[7px] bg-black/5" />
             </div>
             <div className="flex flex-col md:flex-row gap-6 sm:gap-8 p-4 sm:p-6">
               <div className="flex flex-col justify-center min-w-[140px]">
-                <Skeleton className="h-3 w-24 mb-2" />
-                <Skeleton className="h-7 w-28 mb-6" />
-                <Skeleton className="h-3 w-20" />
+                <Skeleton className="h-[12px] w-[96px] mb-2 bg-black/5" />
+                <Skeleton className="h-[28px] w-[112px] mb-6 bg-black/5" />
+                <Skeleton className="h-[12px] w-[80px] bg-black/5" />
               </div>
-              <Skeleton className="flex-1 h-[180px] sm:h-[200px]" />
+              <Skeleton className="flex-1 h-[180px] sm:h-[200px] bg-black/5" />
             </div>
           </Card>
-          <Card className="xl:col-span-2 bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-none">
+          <Card className="xl:col-span-2 bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)]">
             <div className="p-4 sm:p-5 flex items-center gap-2 border-b border-[#F0F2F3]">
-              <Skeleton className="h-5 w-5 rounded-full" />
-              <Skeleton className="h-4 w-40" />
+              <Skeleton className="h-[20px] w-[20px] rounded-full bg-black/5" />
+              <Skeleton className="h-[16px] w-[160px] bg-black/5" />
             </div>
             <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 p-4 sm:p-6">
-              <Skeleton className="h-28 w-28 sm:h-32 sm:w-32 rounded-full" />
+              <Skeleton className="h-[112px] w-[112px] sm:h-[128px] sm:w-[128px] rounded-full shrink-0 bg-black/5" />
               <div className="flex-1 w-full space-y-2.5">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <div key={i} className="flex items-center">
-                    <Skeleton className="h-3 w-[50px]" />
-                    <Skeleton className="flex-1 h-[6px] rounded-full mx-3" />
-                    <Skeleton className="h-3 w-[60px]" />
+                    <Skeleton className="h-[12px] w-[50px] bg-black/5" />
+                    <Skeleton className="flex-1 h-[6px] rounded-full mx-3 bg-black/5" />
+                    <Skeleton className="h-[12px] w-[60px] bg-black/5" />
                   </div>
                 ))}
               </div>
@@ -118,13 +118,13 @@ export default function DashboardPageClient() {
         {/* Bottom Section */}
         <div className="grid xl:grid-cols-3 gap-6">
           {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-none overflow-hidden">
+            <Card key={i} className="bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)] overflow-hidden">
               <div className="p-4 sm:p-5 border-b border-[#F0F2F3]">
-                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-[16px] w-[128px] bg-black/5" />
               </div>
               <div className="p-4 sm:p-6 space-y-3">
                 {Array.from({ length: 4 }).map((_, j) => (
-                  <Skeleton key={j} className="h-10 w-full rounded-[9px]" />
+                  <Skeleton key={j} className="h-[40px] w-full rounded-[9px] bg-black/5" />
                 ))}
               </div>
             </Card>

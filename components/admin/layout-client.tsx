@@ -262,10 +262,10 @@ function LayoutSkeleton() {
     <div className="min-h-screen bg-[#F9FAFB] flex w-full font-sans">
       <div className="w-[280px] border-r border-[#E5E7EB] bg-[#FFFFFF] hidden lg:flex flex-col">
         <div className="flex items-center gap-3 px-6 h-[80px] pt-6 pb-2">
-          <Skeleton className="h-9 w-9 rounded-lg" />
+          <Skeleton className="h-9 w-9 rounded-lg bg-black/5" />
           <div className="space-y-2">
-            <Skeleton className="h-6 w-28 rounded-md" />
-            <Skeleton className="h-3 w-20 rounded-md" />
+            <Skeleton className="h-6 w-28 rounded-md bg-black/5" />
+            <Skeleton className="h-3 w-20 rounded-md bg-black/5" />
           </div>
         </div>
         <div className="space-y-2 flex-1 px-4 mt-6">
@@ -274,31 +274,31 @@ function LayoutSkeleton() {
               key={i}
               className="flex items-center gap-3 px-4 h-[48px] rounded-[14px]"
             >
-              <Skeleton className="h-5 w-5 rounded-md" />
-              <Skeleton className="h-4 w-32" />
+              <Skeleton className="h-5 w-5 rounded-md bg-black/5" />
+              <Skeleton className="h-4 w-32 bg-black/5" />
             </div>
           ))}
         </div>
         <div className="p-4 space-y-4">
-          <Skeleton className="h-32 w-full rounded-[14px]" />
-          <Skeleton className="h-32 w-full rounded-[14px]" />
+          <Skeleton className="h-32 w-full rounded-[14px] bg-black/5" />
+          <Skeleton className="h-32 w-full rounded-[14px] bg-black/5" />
         </div>
       </div>
       <div className="flex-1 flex flex-col min-w-0">
         <header className="h-[80px] border-b border-[#E5E7EB] bg-[#FFFFFF] flex items-center justify-between px-6">
-          <Skeleton className="h-10 w-10 rounded-full" />
+          <Skeleton className="h-10 w-10 rounded-full bg-black/5" />
           <div className="flex items-center gap-4">
-            <Skeleton className="h-11 w-60 rounded-xl hidden md:block" />
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-11 w-60 rounded-xl hidden md:block bg-black/5" />
+            <Skeleton className="h-10 w-10 rounded-full bg-black/5" />
+            <Skeleton className="h-10 w-10 rounded-full bg-black/5" />
+            <Skeleton className="h-10 w-10 rounded-full bg-black/5" />
           </div>
         </header>
         <main className="flex-1 overflow-y-auto p-6 md:p-8">
-          <Skeleton className="h-10 w-64 rounded-md mb-6" />
+          <Skeleton className="h-10 w-64 rounded-md mb-6 bg-black/5" />
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-32 rounded-2xl" />
+              <Skeleton key={i} className="h-32 rounded-2xl bg-black/5" />
             ))}
           </div>
         </main>

@@ -168,7 +168,7 @@ export function RatingPageClient() {
 
   const orders = useRatingOrders()
 
-  const order = orders?.find(o => o.id === orderId)
+  const order = orders?.find(o => o.id === orderId || o.publicCode === orderId)
 
   // Fast forward if review already exists
   useEffect(() => {
@@ -181,21 +181,9 @@ export function RatingPageClient() {
     }
   }, [order, setStep])
 
-  const kitchenMutation = useSubmitKitchenReviewMutation(() => {
-    if (order?.deliveryPartner) {
-      setStep("delivery")
-      window.scrollTo({ top: 0, behavior: "smooth" })
-    } else {
-      toast.success("Review submitted!")
-      setStep("done")
-    }
-  })
+  const kitchenMutation = useSubmitKitchenReviewMutation()
 
-  const deliveryMutation = useSubmitDeliveryReviewMutation(() => {
-    toast.success("All reviews submitted!")
-    setStep("done")
-    router.push("/account/orders")
-  })
+  const deliveryMutation = useSubmitDeliveryReviewMutation()
 
   function toggleTag(tag: string, list: string[], setter: (t: string[]) => void) {
     if (list.includes(tag)) {
@@ -278,9 +266,9 @@ export function RatingPageClient() {
 
         {/* Stepper */}
         <div className="max-w-4xl mx-auto mb-10 relative px-4 sm:px-12">
-          <div className="absolute top-[16px] left-[12.5%] right-[12.5%] z-0 block">
+          <div className="absolute top-[16px] left-[16.66%] right-[16.66%] z-0 block">
             <Progress 
-              value={step === 'kitchen' ? 0 : (step === 'delivery' ? 33.33 : (step === 'done' ? 100 : 66.66))} 
+              value={step === 'kitchen' ? 0 : (step === 'delivery' ? 50 : 100)} 
               className="h-[2px] bg-gray-200 [&>div]:bg-[#15803D]"
             />
           </div>
@@ -309,15 +297,6 @@ export function RatingPageClient() {
               <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-[2px] bg-white transition-colors", 
                 step === "done" ? "border-[#15803D] bg-[#15803D] text-white" : "border-[#E5E7EB] text-[#6B7280]")}>
                 {step === "done" ? <CheckCircle2 className="w-5 h-5" /> : "3"}
-              </div>
-              <span className={cn("text-[13px] font-bold leading-tight", step === "done" ? "text-[#15803D]" : "text-[#9CA3AF]")}>RRC Kitchen</span>
-            </div>
-
-            {/* Step 4 */}
-            <div className="flex flex-col items-center gap-3 flex-1 text-center">
-              <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-[2px] bg-white transition-colors", 
-                step === "done" ? "border-[#15803D] bg-[#15803D] text-white" : "border-[#E5E7EB] text-[#6B7280]")}>
-                {step === "done" ? <CheckCircle2 className="w-5 h-5" /> : "4"}
               </div>
               <span className={cn("text-[13px] font-bold leading-tight", step === "done" ? "text-[#15803D]" : "text-[#9CA3AF]")}>Done</span>
             </div>
@@ -484,7 +463,7 @@ export function RatingPageClient() {
 
                 <button
                   onClick={() => kitchenMutation.mutate({
-                    orderId: orderId!,
+                    orderId: order!.id,
                     kitchenPartnerId: order!.kitchenPartnerId!,
                     rating: kitchenOverall || tasteRating,
                     tasteRating: tasteRating || undefined,
@@ -493,6 +472,16 @@ export function RatingPageClient() {
                     tags: kitchenTags,
                     comment: kitchenThoughts,
                     mediaUrls,
+                  }, {
+                    onSuccess: () => {
+                      if (order?.deliveryPartner) {
+                        setStep("delivery")
+                        window.scrollTo({ top: 0, behavior: "smooth" })
+                      } else {
+                        toast.success("Review submitted!")
+                        setStep("done")
+                      }
+                    }
                   })}
                   disabled={kitchenOverall === 0 && tasteRating === 0 || kitchenMutation.isPending}
                   className="w-full bg-[#FF5A1F] text-white py-4 rounded-xl font-bold text-[16px] flex items-center justify-center gap-2 hover:bg-[#E84C12] transition-all shadow-[0_10px_30px_rgba(255,90,31,0.22)] disabled:opacity-50 disabled:shadow-none"
@@ -600,12 +589,18 @@ export function RatingPageClient() {
                   </button>
                   <button
                     onClick={() => deliveryMutation.mutate({
-                      orderId: orderId!,
+                      orderId: order!.id,
                       deliveryPartnerId: order!.deliveryPartner!.id,
                       rating: deliveryRating,
                       speedRating: speedRating || undefined,
                       behaviorHygiene: true,
                       comment: deliveryThoughts,
+                    }, {
+                      onSuccess: () => {
+                        toast.success("All reviews submitted!")
+                        setStep("done")
+                        router.push("/account/orders")
+                      }
                     })}
                     disabled={deliveryRating === 0 || deliveryMutation.isPending}
                     className="flex-[2] bg-[#FF5A1F] text-white py-4 rounded-xl font-bold text-[16px] flex items-center justify-center gap-2 hover:bg-[#E84C12] transition-all shadow-[0_10px_30px_rgba(255,90,31,0.22)] disabled:opacity-50 disabled:shadow-none"

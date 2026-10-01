@@ -257,54 +257,67 @@ function FiltersSkeleton() {
   );
 }
 
-const tableCols = "grid-cols-[1.4fr_2fr_1.6fr_1.1fr_0.8fr_0.9fr_1fr_0.5fr]";
-
 function TableSkeleton() {
   return (
-    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] shadow-none w-full overflow-hidden">
-      <div
-        className={cn(
-          "grid items-center gap-4 px-5 py-4 border-b border-[#EEF0F2]",
-          tableCols,
-        )}
-      >
-        {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton key={i} className={cn("h-3", i === 7 ? "w-10" : "w-16")} />
-        ))}
+    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] shadow-none w-full overflow-x-auto">
+      <div className="min-w-[900px]">
+        <Table className="w-full">
+          <TableHeader className="bg-[#FFFFFF] border-b border-[#E5E7EB]">
+            <TableRow className="hover:bg-transparent border-none">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <TableHead key={i} className="h-11 px-5 py-3.5 bg-[#FAFAFB]">
+                  <Skeleton className={cn("h-3", i === 7 ? "w-10" : "w-16")} />
+                </TableHead>
+              ))}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {Array.from({ length: 8 }).map((_, i) => (
+              <TableRow key={i} className="hover:bg-[#F8FAFC] border-b border-[#EEF0F2]">
+                <TableCell className="px-5 py-3.5 relative">
+                  <Skeleton className="absolute -left-0 top-0 w-[2px] h-full bg-black/5" />
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-3.5 w-24 bg-black/5" />
+                  </div>
+                </TableCell>
+                <TableCell className="px-5 py-3.5">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Skeleton className="h-[32px] w-[32px] rounded-full flex-shrink-0 bg-black/5" />
+                    <div className="space-y-1.5 min-w-0 flex-1">
+                      <Skeleton className="h-3 w-24 bg-black/5" />
+                      <Skeleton className="h-2.5 w-16 bg-black/5" />
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="px-5 py-3.5">
+                  <Skeleton className="h-3.5 w-28 bg-black/5" />
+                </TableCell>
+                <TableCell className="px-5 py-3.5">
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-4 w-4 rounded-[4px] bg-black/5" />
+                    <Skeleton className="h-3 w-16 bg-black/5" />
+                  </div>
+                </TableCell>
+                <TableCell className="px-5 py-3.5">
+                  <Skeleton className="h-[22px] w-14 rounded-[5px] bg-black/5" />
+                </TableCell>
+                <TableCell className="px-5 py-3.5">
+                  <Skeleton className="h-[22px] w-[72px] rounded-[5px] bg-black/5" />
+                </TableCell>
+                <TableCell className="px-5 py-3.5">
+                  <div className="space-y-1.5">
+                    <Skeleton className="h-3 w-20 bg-black/5" />
+                    <Skeleton className="h-2.5 w-14 bg-black/5" />
+                  </div>
+                </TableCell>
+                <TableCell className="px-5 py-3.5">
+                  <Skeleton className="h-8 w-8 rounded-full bg-black/5" />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
       </div>
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div
-          key={i}
-          className={cn(
-            "grid items-center gap-4 px-5 py-3.5 border-b border-[#EEF0F2]",
-            tableCols,
-          )}
-        >
-          <div className="relative flex items-center">
-            <Skeleton className="absolute -left-4 w-[2px] h-[28px] rounded-r-md" />
-            <Skeleton className="h-3.5 w-24" />
-          </div>
-          <div className="flex items-center gap-3 min-w-0">
-            <Skeleton className="h-[32px] w-[32px] rounded-full flex-shrink-0" />
-            <div className="space-y-1.5 min-w-0 flex-1">
-              <Skeleton className="h-3 w-24" />
-              <Skeleton className="h-2.5 w-16" />
-            </div>
-          </div>
-          <Skeleton className="h-3.5 w-28" />
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-4 w-4 rounded-[4px]" />
-            <Skeleton className="h-3 w-16" />
-          </div>
-          <Skeleton className="h-[22px] w-14 rounded-[5px]" />
-          <Skeleton className="h-[22px] w-[72px] rounded-[5px]" />
-          <div className="space-y-1.5">
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-2.5 w-14" />
-          </div>
-          <Skeleton className="h-8 w-8 rounded-full" />
-        </div>
-      ))}
       <div className="flex items-center justify-between px-5 py-4">
         <Skeleton className="h-3 w-48" />
         <div className="flex items-center gap-1.5">
@@ -491,7 +504,7 @@ export default function AdminSupportPage() {
     ];
     const rows = filtered.map((t) => [
       formatTicketId(t.id, t.publicCode),
-      `"${(t.user?.name ?? "Unknown").replace(/"/g, '""')}"`,
+      `"${(t.user?.name ?? "").replace(/"/g, '""')}"`,
       `"${(t.user?.email ?? "").replace(/"/g, '""')}"`,
       `"${(t.user?.phoneNumber ?? "").replace(/"/g, '""')}"`,
       `"${t.subject.replace(/"/g, '""')}"`,
@@ -557,7 +570,7 @@ export default function AdminSupportPage() {
               </Avatar>
               <div>
                 <p className="text-[12px] font-semibold text-[#111827]">
-                  {ticket.user?.name || "Unknown"}
+                  {ticket.user?.name || ""}
                 </p>
                 <p className="text-[11px] text-[#64748B] font-medium mt-0.5">
                   {ticket.user?.phoneNumber || ticket.user?.email || "—"}
@@ -1199,7 +1212,7 @@ export default function AdminSupportPage() {
               <ScrollArea className="flex-1 min-h-0">
                 <div className="px-6 pt-5">
                   {/* Badges & ID */}
-                  <div className="flex items-center justify-between mb-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-6">
                     <div className="flex items-center gap-2">
                       <span
                         className={statusConfig[selectedTicket.status]?.className}
@@ -1214,11 +1227,11 @@ export default function AdminSupportPage() {
                         {selectedTicket.priority}
                       </span>
                     </div>
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">
                         Ticket ID
                       </p>
-                      <div className="flex items-center justify-end gap-1.5">
+                      <div className="flex items-center justify-start sm:justify-end gap-1.5">
                         <span className="text-[13px] font-bold text-[#1F2937] font-mono">
                           {formatTicketId(
                             selectedTicket.id,
@@ -1244,7 +1257,7 @@ export default function AdminSupportPage() {
                   </div>
 
                   {/* Customer Info Box */}
-                  <div className="flex items-start justify-between mb-6">
+                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 sm:gap-0 mb-6">
                     <div className="flex items-center gap-3">
                       <Avatar className="h-[44px] w-[44px]">
                         {selectedTicket.user?.image ? (
@@ -1261,7 +1274,7 @@ export default function AdminSupportPage() {
                       </Avatar>
                       <div>
                         <p className="font-bold text-[#111827] text-[14px]">
-                          {selectedTicket.user?.name || "Unknown Customer"}
+                          {selectedTicket.user?.name || ""}
                         </p>
                         <div className="flex items-center gap-1.5 mt-1">
                           <Phone className="h-[12px] w-[12px] text-[#475569]" />
@@ -1277,26 +1290,30 @@ export default function AdminSupportPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">
-                        Order ID
-                      </p>
-                      <p className="text-[13px] font-bold text-[#16A34A] font-mono mb-2">
-                        {selectedTicket.order?.publicCode
-                          ? `ORD-${selectedTicket.order.publicCode}`
-                          : selectedTicket.orderId
-                            ? `ORD-${selectedTicket.orderId.slice(-8).toUpperCase()}`
-                            : "—"}
-                      </p>
-                      <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">
-                        Created At
-                      </p>
-                      <p className="text-[11px] font-semibold text-[#334155]">
-                        {format(
-                          new Date(selectedTicket.createdAt),
-                          "dd MMM yyyy, hh:mm a",
-                        )}
-                      </p>
+                    <div className="text-left sm:text-right w-full sm:w-auto flex flex-row sm:flex-col justify-between sm:block mt-1 sm:mt-0 pt-3 sm:pt-0 border-t border-[#EEF0F2] sm:border-0">
+                      <div>
+                        <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">
+                          Order ID
+                        </p>
+                        <p className="text-[13px] font-bold text-[#16A34A] font-mono mb-0 sm:mb-2">
+                          {selectedTicket.order?.publicCode
+                            ? `ORD-${selectedTicket.order.publicCode}`
+                            : selectedTicket.orderId
+                              ? `ORD-${selectedTicket.orderId.slice(-8).toUpperCase()}`
+                              : "—"}
+                        </p>
+                      </div>
+                      <div className="text-right sm:text-right">
+                        <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">
+                          Created At
+                        </p>
+                        <p className="text-[11px] font-semibold text-[#334155]">
+                          {format(
+                            new Date(selectedTicket.createdAt),
+                            "dd MMM yyyy, hh:mm a",
+                          )}
+                        </p>
+                      </div>
                     </div>
                   </div>
 
@@ -1605,7 +1622,7 @@ export default function AdminSupportPage() {
                       </Avatar>
                       <div>
                         <p className="font-bold text-[#111827] text-[15px]">
-                          {selectedTicket.user?.name || "Unknown Customer"}
+                          {selectedTicket.user?.name || ""}
                         </p>
                         <p className="text-[12px] font-medium text-[#64748B] mt-0.5">
                           Customer ID:{" "}
@@ -1741,7 +1758,7 @@ export default function AdminSupportPage() {
               </ScrollArea>
 
               {/* Action Buttons - fixed at bottom */}
-              <div className="border-t border-[#EEF0F2] px-6 py-4 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 flex-shrink-0 bg-[#FFFFFF]">
+              <div className="border-t border-[#EEF0F2] px-6 py-4 flex flex-wrap items-center justify-between gap-3 flex-shrink-0 bg-[#FFFFFF]">
                 <Button
                   size="sm"
                   variant="outline"

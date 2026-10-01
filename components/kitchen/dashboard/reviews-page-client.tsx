@@ -232,19 +232,19 @@ export default function ReviewsPageClient() {
     return (
       <div className="space-y-6 pb-20 animate-in fade-in duration-500">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
-          <Skeleton className="h-10 w-64 rounded-xl" />
-          <Skeleton className="h-11 w-56 rounded-xl" />
+          <Skeleton className="h-[40px] w-64 rounded-xl bg-black/5" />
+          <Skeleton className="h-[44px] w-56 rounded-xl bg-black/5" />
         </div>
-        <Skeleton className="h-14 w-full" />
+        <Skeleton className="h-[56px] w-full bg-black/5" />
         <div className="grid lg:grid-cols-5 gap-4">
-          {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-32 rounded-[10px]" />)}
+          {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-[128px] rounded-[10px] bg-black/5" />)}
         </div>
         <div className="grid xl:grid-cols-3 gap-6">
-          {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-64 rounded-[10px]" />)}
+          {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-[256px] rounded-[10px] bg-black/5" />)}
         </div>
         <div className="grid lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px] gap-6">
-          <Skeleton className="h-96 rounded-[10px]" />
-          <Skeleton className="h-96 rounded-[10px]" />
+          <Skeleton className="h-[384px] rounded-[10px] bg-black/5" />
+          <Skeleton className="h-[384px] rounded-[10px] bg-black/5" />
         </div>
       </div>
     )
@@ -401,7 +401,7 @@ export default function ReviewsPageClient() {
             {!rrcReviewLoading ? (
               <RrcKitchenReviewCard initial={rrcReview ?? null} />
             ) : (
-              <Skeleton className="h-[200px] w-full rounded-[10px]" />
+              <Skeleton className="h-[200px] w-full rounded-[10px] bg-black/5" />
             )}
           </div>
         </div>

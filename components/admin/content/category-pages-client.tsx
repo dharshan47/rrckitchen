@@ -169,15 +169,15 @@ function DashboardSkeleton() {
     <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto animate-in fade-in duration-300">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Skeleton className="h-12 w-12 rounded-lg" />
+          <Skeleton className="h-[48px] w-[48px] rounded-lg bg-black/5" />
           <div className="space-y-2">
-            <Skeleton className="h-6 w-60 rounded-md" />
-            <Skeleton className="h-4 w-80 rounded-md" />
+            <Skeleton className="h-[24px] w-60 rounded-md bg-black/5" />
+            <Skeleton className="h-[16px] w-80 rounded-md bg-black/5" />
           </div>
         </div>
         <div className="flex gap-3">
-          <Skeleton className="h-10 w-40 rounded-md" />
-          <Skeleton className="h-10 w-52 rounded-md" />
+          <Skeleton className="h-[40px] w-40 rounded-md bg-black/5" />
+          <Skeleton className="h-[40px] w-52 rounded-md bg-black/5" />
         </div>
       </div>
 
@@ -186,11 +186,11 @@ function DashboardSkeleton() {
           <Card key={i} className="border-gray-100/80 shadow-sm bg-white">
             <CardContent className="p-5">
               <div className="flex items-start gap-4">
-                <Skeleton className="h-12 w-12 rounded-lg" />
+                <Skeleton className="h-[48px] w-[48px] rounded-lg bg-black/5" />
                 <div className="flex-1 space-y-2 pt-0.5">
-                  <Skeleton className="h-3 w-32 rounded-md" />
-                  <Skeleton className="h-8 w-16 rounded-md" />
-                  <Skeleton className="h-3 w-36 rounded-md" />
+                  <Skeleton className="h-[12px] w-32 rounded-md bg-black/5" />
+                  <Skeleton className="h-[32px] w-16 rounded-md bg-black/5" />
+                  <Skeleton className="h-[12px] w-36 rounded-md bg-black/5" />
                 </div>
               </div>
             </CardContent>
@@ -201,16 +201,16 @@ function DashboardSkeleton() {
       <Card className="shadow-sm border-gray-200/60 overflow-hidden bg-white">
         <div className="p-5 border-b border-gray-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-9 w-9 rounded-md" />
+            <Skeleton className="h-[36px] w-[36px] rounded-md bg-black/5" />
             <div className="space-y-2">
-              <Skeleton className="h-5 w-48 rounded-md" />
-              <Skeleton className="h-4 w-72 rounded-md" />
+              <Skeleton className="h-[20px] w-48 rounded-md bg-black/5" />
+              <Skeleton className="h-[16px] w-72 rounded-md bg-black/5" />
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-64 rounded-md" />
-            <Skeleton className="h-10 w-24 rounded-md" />
-            <Skeleton className="h-10 w-36 rounded-md" />
+            <Skeleton className="h-[40px] w-64 rounded-md bg-black/5" />
+            <Skeleton className="h-[40px] w-24 rounded-md bg-black/5" />
+            <Skeleton className="h-[40px] w-36 rounded-md bg-black/5" />
           </div>
         </div>
         <ScrollArea className="bg-white w-full">
@@ -219,7 +219,7 @@ function DashboardSkeleton() {
               <TableRow className="border-b-gray-100 bg-gray-50/50">
                 {Array.from({ length: 8 }).map((_, i) => (
                   <TableHead key={i} className="h-12">
-                    <Skeleton className="h-3.5 w-20 rounded-md" />
+                    <Skeleton className="h-[14px] w-20 rounded-md bg-black/5" />
                   </TableHead>
                 ))}
               </TableRow>
@@ -229,36 +229,36 @@ function DashboardSkeleton() {
                 <TableRow key={i} className="border-b-gray-100">
                   <TableCell className="py-4">
                     <div className="flex items-center gap-3">
-                      <Skeleton className="h-2 w-2 rounded-full" />
+                      <Skeleton className="h-[8px] w-[8px] rounded-full bg-black/5" />
                       <div className="space-y-1.5">
-                        <Skeleton className="h-4 w-20 rounded-md" />
-                        <Skeleton className="h-3 w-12 rounded-md" />
+                        <Skeleton className="h-[16px] w-20 rounded-md bg-black/5" />
+                        <Skeleton className="h-[12px] w-12 rounded-md bg-black/5" />
                       </div>
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-[52px] w-[170px] rounded-md" />
+                    <Skeleton className="h-[52px] w-[170px] rounded-md bg-black/5" />
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Skeleton className="h-5 w-16 rounded-full" />
-                      <Skeleton className="h-5 w-16 rounded-full" />
+                      <Skeleton className="h-[20px] w-16 rounded-full bg-black/5" />
+                      <Skeleton className="h-[20px] w-16 rounded-full bg-black/5" />
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-5 w-16 rounded-full" />
+                    <Skeleton className="h-[20px] w-16 rounded-full bg-black/5" />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-10 rounded-md" />
+                    <Skeleton className="h-[16px] w-10 rounded-md bg-black/5" />
                   </TableCell>
                   <TableCell>
-                    <Skeleton className="h-4 w-24 rounded-md" />
+                    <Skeleton className="h-[16px] w-24 rounded-md bg-black/5" />
                   </TableCell>
                   <TableCell>
                     <div className="flex gap-2">
-                      <Skeleton className="h-8 w-8 rounded-md" />
-                      <Skeleton className="h-8 w-8 rounded-md" />
-                      <Skeleton className="h-8 w-8 rounded-md" />
+                      <Skeleton className="h-[32px] w-[32px] rounded-md bg-black/5" />
+                      <Skeleton className="h-[32px] w-[32px] rounded-md bg-black/5" />
+                      <Skeleton className="h-[32px] w-[32px] rounded-md bg-black/5" />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -268,10 +268,10 @@ function DashboardSkeleton() {
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
         <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Skeleton className="h-4 w-64 rounded-md" />
+          <Skeleton className="h-[16px] w-64 rounded-md bg-black/5" />
           <div className="flex items-center gap-1">
             {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-8 w-8 rounded-md" />
+              <Skeleton key={i} className="h-[32px] w-[32px] rounded-md bg-black/5" />
             ))}
           </div>
         </div>
@@ -285,30 +285,30 @@ function EditorSkeleton() {
     <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div className="space-y-2">
-          <Skeleton className="h-7 w-56 rounded-md" />
-          <Skeleton className="h-4 w-80 rounded-md" />
+          <Skeleton className="h-[28px] w-56 rounded-md bg-black/5" />
+          <Skeleton className="h-[16px] w-80 rounded-md bg-black/5" />
         </div>
         <div className="flex gap-3">
-          <Skeleton className="h-10 w-24 rounded-md" />
-          <Skeleton className="h-10 w-40 rounded-md" />
-          <Skeleton className="h-10 w-40 rounded-md" />
+          <Skeleton className="h-[40px] w-24 rounded-md bg-black/5" />
+          <Skeleton className="h-[40px] w-40 rounded-md bg-black/5" />
+          <Skeleton className="h-[40px] w-40 rounded-md bg-black/5" />
         </div>
       </div>
 
-      <Skeleton className="h-11 w-full rounded-md mb-6" />
+      <Skeleton className="h-[44px] w-full rounded-md mb-6 bg-black/5" />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <div className="lg:col-span-8 space-y-6">
           {[0, 1].map((i) => (
             <Card key={i} className="shadow-sm border-gray-200/60 bg-white">
               <div className="p-4 border-b border-gray-100">
-                <Skeleton className="h-5 w-32 rounded-md" />
+                <Skeleton className="h-[20px] w-32 rounded-md bg-black/5" />
               </div>
               <div className="p-4 space-y-4">
-                <Skeleton className="h-[140px] w-full rounded-md" />
-                <Skeleton className="h-9 w-full rounded-md" />
-                <Skeleton className="h-9 w-full rounded-md" />
-                <Skeleton className="h-9 w-full rounded-md" />
+                <Skeleton className="h-[140px] w-full rounded-md bg-black/5" />
+                <Skeleton className="h-[36px] w-full rounded-md bg-black/5" />
+                <Skeleton className="h-[36px] w-full rounded-md bg-black/5" />
+                <Skeleton className="h-[36px] w-full rounded-md bg-black/5" />
               </div>
             </Card>
           ))}
@@ -316,15 +316,15 @@ function EditorSkeleton() {
 
         <div className="lg:col-span-4 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden h-[calc(100vh-140px)]">
           <div className="bg-gray-50/80 border-b border-gray-100 p-4">
-            <Skeleton className="h-4 w-32 rounded-md" />
+            <Skeleton className="h-[16px] w-32 rounded-md bg-black/5" />
           </div>
           <div className="p-6 space-y-4">
-            <Skeleton className="h-12 w-full rounded-md" />
-            <Skeleton className="h-6 w-40 rounded-md" />
+            <Skeleton className="h-[48px] w-full rounded-md bg-black/5" />
+            <Skeleton className="h-[24px] w-40 rounded-md bg-black/5" />
             <div className="flex gap-4">
-              <Skeleton className="h-40 w-40 rounded-lg" />
-              <Skeleton className="h-40 w-40 rounded-lg" />
-              <Skeleton className="h-40 w-40 rounded-lg" />
+              <Skeleton className="h-[160px] w-[160px] rounded-lg bg-black/5" />
+              <Skeleton className="h-[160px] w-[160px] rounded-lg bg-black/5" />
+              <Skeleton className="h-[160px] w-[160px] rounded-lg bg-black/5" />
             </div>
           </div>
         </div>

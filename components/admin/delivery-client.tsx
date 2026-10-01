@@ -1,7 +1,6 @@
 "use client"
 
 import { useCallback, useMemo, useState } from "react"
-import { useRouter } from "next/navigation"
 import Link from "next/link"
 import {
   AdminDeliveryPartner,
@@ -14,7 +13,7 @@ import {
 import {
   Users, ShieldCheck, Check, Bike,
   Search, RefreshCw, MoreVertical, Phone, Mail, Star, Eye,
-  CheckCircle, X, Landmark, Clock, Plus, Pause, UserX, UserRoundCheck,
+  CheckCircle, X, Landmark, Clock, Pause, UserX, UserRoundCheck,
   RotateCcw, MapPin, MessageSquare, ShoppingBag, Upload
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
@@ -54,7 +53,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { toast } from "sonner"
 
 function partnerName(p: AdminDeliveryPartner) {
-  return p.name ?? "Unknown Partner"
+  return p.name ?? ""
 }
 
 function partnerInitials(p: AdminDeliveryPartner) {
@@ -122,15 +121,20 @@ function StatsSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 2xl:grid-cols-5 gap-4 sm:gap-6">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="rounded-[16px] border border-[#E5E7EB] bg-white p-5 sm:p-6 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
-          <div className="flex items-start gap-4">
-            <Skeleton className="h-14 w-14 rounded-full" />
-            <div className="flex-1 space-y-2 mt-1">
-              <Skeleton className="h-3 w-20" />
-              <Skeleton className="h-8 w-16" />
+        <div key={i} className="rounded-[16px] border border-[#E5E7EB] bg-white transition-shadow overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+          <div className="p-5 sm:p-[24px] flex flex-col gap-4">
+            <div className="flex items-start gap-4">
+              <Skeleton className="h-[48px] w-[48px] sm:h-[56px] sm:w-[56px] rounded-full shrink-0 bg-black/5" />
+              <div className="flex flex-col gap-1 w-full mt-1">
+                <Skeleton className="h-3 w-24 bg-black/5" />
+                <Skeleton className="h-8 w-16 bg-black/5" />
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5 mt-1">
+              <Skeleton className="h-3 w-10 bg-black/5" />
+              <Skeleton className="h-3 w-20 bg-black/5" />
             </div>
           </div>
-          <Skeleton className="mt-4 h-3 w-32" />
         </div>
       ))}
     </div>
@@ -162,7 +166,6 @@ function TableSkeleton() {
 }
 
 export default function AdminDeliveryPage() {
-  const router = useRouter()
   const [rowSelection, setRowSelection] = useState({})
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -382,9 +385,6 @@ export default function AdminDeliveryPage() {
           <Button variant="outline" className="bg-white border-[#D1D5DB] text-[#374151] rounded-[12px] h-[40px] sm:h-[44px] px-4 sm:px-5 font-semibold gap-2 shadow-none hover:bg-gray-50 flex-1 md:flex-none" onClick={exportCSV} disabled={isLoading}>
             <Upload className="h-4 w-4 text-[#6B7280]" /> <span className="hidden sm:inline">Export</span>
           </Button>
-          <Button className="bg-[#15803D] hover:bg-[#166534] text-white rounded-[12px] h-[40px] sm:h-[44px] px-4 sm:px-5 font-bold shadow-[0_2px_6px_rgba(21,128,61,0.2)] gap-2 w-full md:w-auto" onClick={() => router.push("/admin/invite")}>
-            <Plus className="h-4 w-4" strokeWidth={3} /> Add New Partner
-          </Button>
         </div>
       </div>
 
@@ -567,67 +567,64 @@ export default function AdminDeliveryPage() {
         <SheetContent className="w-full sm:max-w-[800px] p-0 flex flex-col bg-white border-l-0 shadow-[0_12px_40px_rgba(0,0,0,0.12)] z-[100]">
           {selectedPartner && (
             <>
-              <SheetHeader className="p-8 pb-0 border-b border-[#E5E7EB] bg-white z-20 sticky top-0 text-left">
+              <SheetHeader className="p-5 sm:p-8 pb-0 border-b border-[#E5E7EB] bg-white z-20 sticky top-0 text-left">
                 <div className="flex justify-between items-center mb-6">
-                  <SheetTitle className="text-[22px] font-extrabold text-[#111827]">Partner Details</SheetTitle>
-                  <div className="flex items-center gap-4">
+                  <SheetTitle className="text-[20px] sm:text-[22px] font-extrabold text-[#111827]">Partner Details</SheetTitle>
+                  <div className="flex items-center gap-2 sm:gap-4">
                     {getStatusBadge(selectedPartner.status)}
                     <Button variant="ghost" size="icon" className="h-8 w-8 text-[#6B7280] hover:bg-gray-100" onClick={() => setSelectedPartner(null)}><X className="h-5 w-5" /></Button>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-5 mb-6">
-                  <Avatar className="h-[72px] w-[72px] rounded-full border border-[#E5E7EB] shadow-sm">
+                <div className="flex items-center gap-4 sm:gap-5 mb-6">
+                  <Avatar className="h-[60px] w-[60px] sm:h-[72px] sm:w-[72px] rounded-full border border-[#E5E7EB] shadow-sm shrink-0">
                     <AvatarImage src={selectedPartner.image ?? ""} alt={partnerName(selectedPartner)} className="object-cover" />
-                    <AvatarFallback className="bg-[#DCFCE7] text-[#15803D] font-bold text-2xl">{partnerInitials(selectedPartner)}</AvatarFallback>
+                    <AvatarFallback className="bg-[#DCFCE7] text-[#15803D] font-bold text-xl sm:text-2xl">{partnerInitials(selectedPartner)}</AvatarFallback>
                   </Avatar>
-                  <div className="flex flex-col gap-1">
-                    <h3 className="text-[20px] font-bold text-[#1F2937] flex items-center gap-2">
-                      {partnerName(selectedPartner)}
-                      {ACTIVE_STATUSES.includes(selectedPartner.status.toUpperCase()) && <CheckCircle className="h-5 w-5 text-[#2563EB] fill-[#EFF6FF]" />}
+                  <div className="flex flex-col gap-1 min-w-0">
+                    <h3 className="text-[18px] sm:text-[20px] font-bold text-[#1F2937] flex items-center gap-2 truncate">
+                      <span className="truncate">{partnerName(selectedPartner)}</span>
+                      {ACTIVE_STATUSES.includes(selectedPartner.status.toUpperCase()) && <CheckCircle className="h-4 w-4 sm:h-5 sm:w-5 text-[#2563EB] fill-[#EFF6FF] shrink-0" />}
                     </h3>
-                    <span className="text-[13px] text-[#6B7280] font-medium">ID: {selectedPartner.publicCode ?? selectedPartner.id.slice(0, 8).toUpperCase()}</span>
+                    <span className="text-[12px] sm:text-[13px] text-[#6B7280] font-medium truncate">ID: {selectedPartner.publicCode ?? selectedPartner.id.slice(0, 8).toUpperCase()}</span>
                   </div>
                 </div>
 
-                <ScrollArea className="w-full mb-6">
-                  <div className="flex items-center gap-8 px-2 w-max pr-4">
-                    <div className="flex flex-col items-center shrink-0">
-                      <span className="text-[16px] font-bold flex items-center gap-1.5 text-[#1F2937]">
-                        <Star className="h-4 w-4 fill-[#F59E0B] text-[#F59E0B]" />
-                        {selectedPartner.avgRating > 0 ? selectedPartner.avgRating.toFixed(1) : "N/A"}
-                      </span>
-                      <span className="text-[12px] text-[#6B7280] font-medium mt-1">Rating</span>
-                    </div>
-                    <div className="flex flex-col items-center shrink-0">
-                      <span className="text-[16px] font-bold text-[#1F2937]">{selectedPartner.deliveredCount ?? 0}</span>
-                      <span className="text-[12px] text-[#6B7280] font-medium mt-1">Deliveries</span>
-                    </div>
-                    <div className="flex flex-col items-center shrink-0">
-                      <span className="text-[16px] font-bold text-[#1F2937]">{completionRate(selectedPartner) !== null ? `${completionRate(selectedPartner)}%` : "—"}</span>
-                      <span className="text-[12px] text-[#6B7280] font-medium mt-1">Completion</span>
-                    </div>
-                    <div className="flex flex-col items-center shrink-0">
-                      <span className="text-[16px] font-bold text-[#1F2937]">{selectedPartner.totalAssignments ?? 0}</span>
-                      <span className="text-[12px] text-[#6B7280] font-medium mt-1">Assignments</span>
-                    </div>
+                <div className="grid grid-cols-2 sm:flex sm:items-center gap-3 sm:gap-8 mb-6">
+                  <div className="flex flex-col items-center sm:items-start shrink-0 bg-[#F9FAFB] sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-[#EEF0F2] sm:border-transparent">
+                    <span className="text-[15px] sm:text-[16px] font-bold flex items-center gap-1.5 text-[#1F2937]">
+                      <Star className="h-4 w-4 fill-[#F59E0B] text-[#F59E0B]" />
+                      {selectedPartner.avgRating > 0 ? selectedPartner.avgRating.toFixed(1) : "N/A"}
+                    </span>
+                    <span className="text-[11px] sm:text-[12px] text-[#6B7280] font-medium mt-1">Rating</span>
                   </div>
-                  <ScrollBar orientation="horizontal" />
-                </ScrollArea>
+                  <div className="flex flex-col items-center sm:items-start shrink-0 bg-[#F9FAFB] sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-[#EEF0F2] sm:border-transparent">
+                    <span className="text-[15px] sm:text-[16px] font-bold text-[#1F2937]">{selectedPartner.deliveredCount ?? 0}</span>
+                    <span className="text-[11px] sm:text-[12px] text-[#6B7280] font-medium mt-1">Deliveries</span>
+                  </div>
+                  <div className="flex flex-col items-center sm:items-start shrink-0 bg-[#F9FAFB] sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-[#EEF0F2] sm:border-transparent">
+                    <span className="text-[15px] sm:text-[16px] font-bold text-[#1F2937]">{completionRate(selectedPartner) !== null ? `${completionRate(selectedPartner)}%` : "—"}</span>
+                    <span className="text-[11px] sm:text-[12px] text-[#6B7280] font-medium mt-1">Completion</span>
+                  </div>
+                  <div className="flex flex-col items-center sm:items-start shrink-0 bg-[#F9FAFB] sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-[#EEF0F2] sm:border-transparent">
+                    <span className="text-[15px] sm:text-[16px] font-bold text-[#1F2937]">{selectedPartner.totalAssignments ?? 0}</span>
+                    <span className="text-[11px] sm:text-[12px] text-[#6B7280] font-medium mt-1">Assignments</span>
+                  </div>
+                </div>
 
                 <ScrollArea className="w-full border-b-0">
-                  <div className="flex gap-7 w-max pr-4">
+                  <div className="flex items-center gap-4 sm:gap-7 w-max pr-4">
                     <button
                       onClick={() => setActiveTab("overview")}
-                      className={`pb-4 text-[14px] font-bold shrink-0 transition-colors ${activeTab === "overview" ? "text-[#15803D] border-b-[3px] border-[#15803D]" : "text-[#6B7280] hover:text-[#111827]"}`}
+                      className={`pb-3 sm:pb-4 text-[13px] sm:text-[14px] font-bold shrink-0 transition-colors ${activeTab === "overview" ? "text-[#15803D] border-b-[3px] border-[#15803D]" : "text-[#6B7280] hover:text-[#111827]"}`}
                     >Overview</button>
                     <button
                       onClick={() => setActiveTab("kyc")}
-                      className={`pb-4 text-[14px] font-bold shrink-0 transition-colors ${activeTab === "kyc" ? "text-[#15803D] border-b-[3px] border-[#15803D]" : "text-[#6B7280] hover:text-[#111827]"}`}
+                      className={`pb-3 sm:pb-4 text-[13px] sm:text-[14px] font-bold shrink-0 transition-colors ${activeTab === "kyc" ? "text-[#15803D] border-b-[3px] border-[#15803D]" : "text-[#6B7280] hover:text-[#111827]"}`}
                     >KYC & Bank</button>
                     <button
                       onClick={() => setActiveTab("performance")}
-                      className={`pb-4 text-[14px] font-bold shrink-0 transition-colors ${activeTab === "performance" ? "text-[#15803D] border-b-[3px] border-[#15803D]" : "text-[#6B7280] hover:text-[#111827]"}`}
+                      className={`pb-3 sm:pb-4 text-[13px] sm:text-[14px] font-bold shrink-0 transition-colors ${activeTab === "performance" ? "text-[#15803D] border-b-[3px] border-[#15803D]" : "text-[#6B7280] hover:text-[#111827]"}`}
                     >Performance</button>
                   </div>
                   <ScrollBar orientation="horizontal" />

@@ -279,13 +279,13 @@ function StatsSkeleton() {
           className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm h-[120px] flex flex-col justify-between"
         >
           <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-10 w-10 rounded-full bg-black/5" />
             <div className="space-y-2">
-              <Skeleton className="h-3 w-24" />
-              <Skeleton className="h-6 w-16" />
+              <Skeleton className="h-3 w-24 bg-black/5" />
+              <Skeleton className="h-6 w-16 bg-black/5" />
             </div>
           </div>
-          <Skeleton className="h-3 w-28" />
+          <Skeleton className="h-3 w-28 bg-black/5" />
         </div>
       ))}
     </div>
@@ -296,25 +296,25 @@ function CreateInviteSkeleton() {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col">
       <div className="p-6 border-b border-gray-100 space-y-2">
-        <Skeleton className="h-5 w-56" />
-        <Skeleton className="h-3.5 w-72" />
+        <Skeleton className="h-5 w-56 bg-black/5" />
+        <Skeleton className="h-3.5 w-72 bg-black/5" />
       </div>
       <div className="p-6 flex-1 flex flex-col">
         <div className="flex items-center justify-between mb-4">
-          <Skeleton className="h-4 w-36" />
-          <Skeleton className="h-7 w-20 rounded-md" />
+          <Skeleton className="h-4 w-36 bg-black/5" />
+          <Skeleton className="h-7 w-20 rounded-md bg-black/5" />
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 2xl:grid-cols-4 gap-3 mb-8">
           {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton key={i} className="h-[86px] rounded-xl" />
+            <Skeleton key={i} className="h-[86px] rounded-xl bg-black/5" />
           ))}
         </div>
         <div className="mt-auto space-y-3">
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-12 w-full rounded-lg" />
+          <Skeleton className="h-4 w-32 bg-black/5" />
+          <Skeleton className="h-12 w-full rounded-lg bg-black/5" />
           <div className="flex gap-3">
-            <Skeleton className="h-10 w-24 rounded-lg" />
-            <Skeleton className="h-10 flex-1 rounded-lg" />
+            <Skeleton className="h-10 w-24 rounded-lg bg-black/5" />
+            <Skeleton className="h-10 flex-1 rounded-lg bg-black/5" />
           </div>
         </div>
       </div>
@@ -326,8 +326,8 @@ function PendingInvitesSkeleton() {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col">
       <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-        <Skeleton className="h-5 w-36" />
-        <Skeleton className="h-7 w-20 rounded-md" />
+        <Skeleton className="h-5 w-36 bg-black/5" />
+        <Skeleton className="h-7 w-20 rounded-md bg-black/5" />
       </div>
       <div className="flex-1 p-0">
         {Array.from({ length: 5 }).map((_, i) => (
@@ -335,17 +335,17 @@ function PendingInvitesSkeleton() {
             key={i}
             className="flex items-center gap-4 p-4 pl-6 border-b border-gray-50"
           >
-            <Skeleton className="h-10 w-10 rounded-full" />
+            <Skeleton className="h-10 w-10 rounded-full bg-black/5" />
             <div className="flex-1 space-y-2">
-              <Skeleton className="h-3.5 w-40" />
-              <Skeleton className="h-2.5 w-52" />
+              <Skeleton className="h-3.5 w-40 bg-black/5" />
+              <Skeleton className="h-2.5 w-52 bg-black/5" />
             </div>
-            <Skeleton className="h-7 w-28 rounded" />
-            <Skeleton className="h-6 w-20 rounded-full" />
+            <Skeleton className="h-7 w-28 rounded bg-black/5" />
+            <Skeleton className="h-6 w-20 rounded-full bg-black/5" />
             <div className="flex gap-1.5">
-              <Skeleton className="h-8 w-8 rounded-lg" />
-              <Skeleton className="h-8 w-8 rounded-lg" />
-              <Skeleton className="h-8 w-8 rounded-lg" />
+              <Skeleton className="h-8 w-8 rounded-lg bg-black/5" />
+              <Skeleton className="h-8 w-8 rounded-lg bg-black/5" />
+              <Skeleton className="h-8 w-8 rounded-lg bg-black/5" />
             </div>
           </div>
         ))}
@@ -358,11 +358,11 @@ function AdminsTableSkeleton() {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col">
       <div className="p-4 md:p-6 border-b border-gray-100 flex items-center justify-between gap-4">
-        <Skeleton className="h-5 w-40" />
+        <Skeleton className="h-5 w-40 bg-black/5" />
         <div className="flex items-center gap-3">
-          <Skeleton className="h-9 w-[280px] rounded-lg" />
-          <Skeleton className="h-9 w-36 rounded-lg" />
-          <Skeleton className="h-9 w-24 rounded-lg" />
+          <Skeleton className="h-9 w-[280px] rounded-lg bg-black/5" />
+          <Skeleton className="h-9 w-36 rounded-lg bg-black/5" />
+          <Skeleton className="h-9 w-24 rounded-lg bg-black/5" />
         </div>
       </div>
       <div className="overflow-x-auto">
@@ -372,25 +372,25 @@ function AdminsTableSkeleton() {
             className="flex items-center gap-6 px-6 py-4 border-b border-gray-50"
           >
             <div className="flex items-center gap-3 w-56">
-              <Skeleton className="h-8 w-8 rounded-full" />
-              <Skeleton className="h-3.5 w-28" />
+              <Skeleton className="h-8 w-8 rounded-full bg-black/5" />
+              <Skeleton className="h-3.5 w-28 bg-black/5" />
             </div>
-            <Skeleton className="h-3 w-44" />
-            <Skeleton className="h-6 w-32" />
-            <Skeleton className="h-3 w-24" />
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-6 w-16 rounded-full" />
+            <Skeleton className="h-3 w-44 bg-black/5" />
+            <Skeleton className="h-6 w-32 bg-black/5" />
+            <Skeleton className="h-3 w-24 bg-black/5" />
+            <Skeleton className="h-3 w-20 bg-black/5" />
+            <Skeleton className="h-3 w-20 bg-black/5" />
+            <Skeleton className="h-6 w-16 rounded-full bg-black/5" />
             <div className="flex gap-1.5">
-              <Skeleton className="h-8 w-8 rounded-lg" />
-              <Skeleton className="h-8 w-8 rounded-lg" />
+              <Skeleton className="h-8 w-8 rounded-lg bg-black/5" />
+              <Skeleton className="h-8 w-8 rounded-lg bg-black/5" />
             </div>
           </div>
         ))}
       </div>
       <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/30">
-        <Skeleton className="h-3.5 w-40" />
-        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-3.5 w-40 bg-black/5" />
+        <Skeleton className="h-8 w-48 bg-black/5" />
       </div>
     </div>
   );
@@ -956,7 +956,7 @@ export default function AdminInvitesClient() {
                                     {invite.id.slice(-4).toUpperCase()}
                                   </p>
                                   <p className="text-xs text-gray-500 mt-0.5">
-                                    Created by {invite.createdBy ?? "Unknown"}
+                                    Created by {invite.createdBy ?? ""}
                                   </p>
                                   <p className="text-xs text-gray-400 mt-0.5">
                                     {formatDate(invite.createdAt)}
@@ -1395,7 +1395,7 @@ export default function AdminInvitesClient() {
                     Created By
                   </p>
                   <p className="font-bold text-gray-900 mt-1 truncate">
-                    {inviteToView.createdBy ?? "Unknown"}
+                    {inviteToView.createdBy ?? ""}
                   </p>
                 </div>
                 <div className="rounded-xl border border-gray-100 p-3.5">

@@ -106,8 +106,8 @@ export default function ReviewsPageClient() {
       <div className="max-w-[1440px] mx-auto space-y-[32px] pb-12 px-4 sm:px-6 lg:px-8 bg-[#FEFEFE]" role="status" aria-label="Loading reviews">
         {/* Header */}
         <div className="space-y-3">
-          <Skeleton className="h-[29px] w-72 max-w-full" />
-          <Skeleton className="h-4 w-80 max-w-full" />
+          <Skeleton className="h-[29px] w-[288px] max-w-full bg-black/5" />
+          <Skeleton className="h-[16px] w-[320px] max-w-full bg-black/5" />
         </div>
 
         {/* Top Stats Grid */}
@@ -116,11 +116,11 @@ export default function ReviewsPageClient() {
             <Card key={i} className={cn(cardStyle)}>
               <CardContent className="p-5 flex flex-col items-center text-center space-y-3">
                 <div className="flex items-center gap-2">
-                  <Skeleton className="h-6 w-6 rounded-full" />
-                  <Skeleton className="h-3 w-24" />
+                  <Skeleton className="h-[24px] w-[24px] rounded-full bg-black/5" />
+                  <Skeleton className="h-[12px] w-[96px] bg-black/5" />
                 </div>
-                <Skeleton className="h-8 w-14" />
-                <Skeleton className="h-3 w-20" />
+                <Skeleton className="h-[32px] w-[56px] bg-black/5" />
+                <Skeleton className="h-[12px] w-[80px] bg-black/5" />
               </CardContent>
             </Card>
           ))}
@@ -133,12 +133,12 @@ export default function ReviewsPageClient() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 w-full">
               <div className="flex items-center gap-6 border-b border-[#F3F5F8] w-full md:w-auto">
                 {Array.from({ length: 4 }).map((_, i) => (
-                  <Skeleton key={i} className="h-4 w-24" />
+                  <Skeleton key={i} className="h-[16px] w-[96px] bg-black/5" />
                 ))}
               </div>
               <div className="flex items-center gap-3">
-                <Skeleton className="h-9 w-24 rounded-[8px]" />
-                <Skeleton className="h-9 w-32 rounded-[8px]" />
+                <Skeleton className="h-[36px] w-[96px] rounded-[8px] bg-black/5" />
+                <Skeleton className="h-[36px] w-[128px] rounded-[8px] bg-black/5" />
               </div>
             </div>
 
@@ -148,31 +148,31 @@ export default function ReviewsPageClient() {
                   <CardContent className="p-6">
                     <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
                       <div className="flex gap-4 sm:w-[200px] flex-shrink-0">
-                        <Skeleton className="h-[42px] w-[42px] rounded-full" />
+                        <Skeleton className="h-[42px] w-[42px] rounded-full bg-black/5" />
                         <div className="flex flex-col gap-2">
-                          <Skeleton className="h-3 w-24" />
-                          <Skeleton className="h-4 w-16 rounded-full" />
-                          <Skeleton className="h-3 w-20" />
+                          <Skeleton className="h-[12px] w-[96px] bg-black/5" />
+                          <Skeleton className="h-[16px] w-[64px] rounded-full bg-black/5" />
+                          <Skeleton className="h-[12px] w-[80px] bg-black/5" />
                         </div>
                       </div>
                       <div className="flex-1">
                         <div className="flex justify-between items-start mb-4">
                           <div className="flex items-center gap-3">
-                            <Skeleton className="h-4 w-24" />
-                            <Skeleton className="h-3 w-8" />
+                            <Skeleton className="h-[16px] w-[96px] bg-black/5" />
+                            <Skeleton className="h-[12px] w-[32px] bg-black/5" />
                           </div>
-                          <Skeleton className="h-6 w-20 rounded-[6px]" />
+                          <Skeleton className="h-[24px] w-[80px] rounded-[6px] bg-black/5" />
                         </div>
                         <div className="flex gap-8 mb-4">
                           {Array.from({ length: 3 }).map((_, j) => (
                             <div key={j} className="flex flex-col gap-1.5">
-                              <Skeleton className="h-3 w-12" />
-                              <Skeleton className="h-3 w-8" />
+                              <Skeleton className="h-[12px] w-[48px] bg-black/5" />
+                              <Skeleton className="h-[12px] w-[32px] bg-black/5" />
                             </div>
                           ))}
                         </div>
-                        <Skeleton className="h-3 w-full" />
-                        <Skeleton className="h-3 w-2/3 mt-2" />
+                        <Skeleton className="h-[12px] w-full bg-black/5" />
+                        <Skeleton className="h-[12px] w-[8px]/3 mt-2 bg-black/5" />
                       </div>
                     </div>
                   </CardContent>
@@ -181,7 +181,7 @@ export default function ReviewsPageClient() {
             </div>
 
             <div className="flex justify-center mt-2">
-              <Skeleton className="h-10 w-44 rounded-[8px]" />
+              <Skeleton className="h-[40px] w-[176px] rounded-[8px] bg-black/5" />
             </div>
           </div>
 
@@ -190,15 +190,15 @@ export default function ReviewsPageClient() {
             {/* Rating Breakdown */}
             <Card className={cn(cardStyle)}>
               <div className="px-6 py-5 flex items-center gap-2">
-                <Skeleton className="h-4 w-4 rounded-full" />
-                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-[16px] w-[16px] rounded-full bg-black/5" />
+                <Skeleton className="h-[16px] w-[128px] bg-black/5" />
               </div>
               <div className="px-6 pb-6 space-y-3">
                 {Array.from({ length: 5 }).map((_, i) => (
                   <div key={i} className="flex items-center">
-                    <Skeleton className="h-3 w-14" />
-                    <Skeleton className="flex-1 h-[6px] rounded-full mx-3" />
-                    <Skeleton className="h-3 w-16" />
+                    <Skeleton className="h-[12px] w-[56px] bg-black/5" />
+                    <Skeleton className="flex-1 h-[6px] rounded-full mx-3 bg-black/5" />
+                    <Skeleton className="h-[12px] w-[64px] bg-black/5" />
                   </div>
                 ))}
               </div>
@@ -207,14 +207,14 @@ export default function ReviewsPageClient() {
             {/* Category Scores */}
             <Card className={cn(cardStyle)}>
               <div className="px-6 py-5 flex items-center gap-2">
-                <Skeleton className="h-4 w-4 rounded-full" />
-                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-[16px] w-[16px] rounded-full bg-black/5" />
+                <Skeleton className="h-[16px] w-[128px] bg-black/5" />
               </div>
               <div className="px-6 pb-6 flex justify-between">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="flex flex-col items-center gap-2">
-                    <Skeleton className="h-[60px] w-[60px] rounded-full" />
-                    <Skeleton className="h-3 w-14" />
+                    <Skeleton className="h-[60px] w-[60px] rounded-full bg-black/5" />
+                    <Skeleton className="h-[12px] w-[56px] bg-black/5" />
                   </div>
                 ))}
               </div>
@@ -223,16 +223,16 @@ export default function ReviewsPageClient() {
             {/* Recent Highlights */}
             <Card className={cn(cardStyle)}>
               <div className="px-6 py-5 flex items-center gap-2">
-                <Skeleton className="h-4 w-4 rounded-full" />
-                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-[16px] w-[16px] rounded-full bg-black/5" />
+                <Skeleton className="h-[16px] w-[128px] bg-black/5" />
               </div>
               <div className="px-6 pb-6 space-y-4">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="flex gap-3 items-center">
-                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <Skeleton className="h-[32px] w-[32px] rounded-full bg-black/5" />
                     <div className="flex flex-col gap-1.5">
-                      <Skeleton className="h-3 w-36" />
-                      <Skeleton className="h-3 w-28" />
+                      <Skeleton className="h-[12px] w-[144px] bg-black/5" />
+                      <Skeleton className="h-[12px] w-[112px] bg-black/5" />
                     </div>
                   </div>
                 ))}
@@ -242,17 +242,17 @@ export default function ReviewsPageClient() {
             {/* Your Progress */}
             <Card className={cn(cardStyle, "overflow-hidden")}>
               <div className="px-6 py-5 flex items-center gap-2">
-                <Skeleton className="h-4 w-4 rounded-full" />
-                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-[16px] w-[16px] rounded-full bg-black/5" />
+                <Skeleton className="h-[16px] w-[128px] bg-black/5" />
               </div>
               <div className="px-6 pb-6 pt-2">
-                <Skeleton className="h-[140px] w-full" />
+                <Skeleton className="h-[140px] w-full bg-black/5" />
                 <div className="mt-4 flex items-center justify-between">
                   <div className="flex flex-col gap-1.5">
-                    <Skeleton className="h-3 w-40" />
-                    <Skeleton className="h-6 w-32" />
+                    <Skeleton className="h-[12px] w-[160px] bg-black/5" />
+                    <Skeleton className="h-[24px] w-[128px] bg-black/5" />
                   </div>
-                  <Skeleton className="h-10 w-10 rounded-full" />
+                  <Skeleton className="h-[40px] w-[40px] rounded-full bg-black/5" />
                 </div>
               </div>
             </Card>
@@ -260,16 +260,16 @@ export default function ReviewsPageClient() {
             {/* Tips to Improve */}
             <Card className={cn(cardStyle)}>
               <div className="px-6 py-5 flex items-center gap-2">
-                <Skeleton className="h-4 w-4 rounded-full" />
-                <Skeleton className="h-4 w-32" />
+                <Skeleton className="h-[16px] w-[16px] rounded-full bg-black/5" />
+                <Skeleton className="h-[16px] w-[128px] bg-black/5" />
               </div>
               <div className="px-6 pb-6 space-y-5">
                 {Array.from({ length: 3 }).map((_, i) => (
                   <div key={i} className="flex gap-3">
-                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <Skeleton className="h-[32px] w-[32px] rounded-full bg-black/5" />
                     <div className="flex flex-col gap-1.5">
-                      <Skeleton className="h-3 w-40" />
-                      <Skeleton className="h-3 w-32" />
+                      <Skeleton className="h-[12px] w-[160px] bg-black/5" />
+                      <Skeleton className="h-[12px] w-[128px] bg-black/5" />
                     </div>
                   </div>
                 ))}

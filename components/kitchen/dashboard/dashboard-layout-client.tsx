@@ -74,22 +74,22 @@ export default function DashboardLayoutClient({
         <aside className="hidden lg:flex w-72 flex-col border-r border-[#F0ECE7] bg-[#FEFBF9]">
           {/* Logo */}
           <div className="px-[20px] pt-[25px] pb-[10px] flex flex-col items-center gap-2">
-            <Skeleton className="h-8 w-32 rounded" />
-            <Skeleton className="h-3 w-24 rounded" />
+            <Skeleton className="h-[32px] w-32 rounded bg-black/5" />
+            <Skeleton className="h-[12px] w-24 rounded bg-black/5" />
           </div>
           {/* Nav items */}
           <div className="flex-1 px-[20px] mt-[34px] space-y-[10px]">
             {Array.from({ length: 7 }).map((_, i) => (
               <div key={i} className="flex items-center gap-[15px] px-[14px] h-[44px] rounded-[8px]">
-                <Skeleton className="h-[20px] w-[20px] rounded-full" />
-                <Skeleton className="h-4 w-24" />
+                <Skeleton className="h-[20px] w-[20px] rounded-full bg-black/5" />
+                <Skeleton className="h-[16px] w-24 bg-black/5" />
               </div>
             ))}
           </div>
           {/* Footer: support card + user row + logout */}
           <div className="p-4 space-y-4">
-            <Skeleton className="h-[105px] w-full rounded-[10px]" />
-            <Skeleton className="h-[188px] w-full rounded-[11px]" />
+            <Skeleton className="h-[105px] w-full rounded-[10px] bg-black/5" />
+            <Skeleton className="h-[188px] w-full rounded-[11px] bg-black/5" />
           </div>
         </aside>
 
@@ -97,17 +97,17 @@ export default function DashboardLayoutClient({
           <header className="sticky top-0 z-30 bg-[#FEFBF9] border-b border-[#F1EEEA]">
             <div className="flex items-center justify-between px-6 lg:px-10 h-[82px]">
               <div className="flex items-center gap-3">
-                <Skeleton className="h-10 w-10 rounded-lg" />
+                <Skeleton className="h-[40px] w-[40px] rounded-lg bg-black/5" />
               </div>
               <div className="flex items-center gap-7 pr-[8px]">
-                <Skeleton className="h-[21px] w-[21px] rounded-full" />
+                <Skeleton className="h-[21px] w-[21px] rounded-full bg-black/5" />
                 <div className="hidden lg:flex items-center gap-3">
-                  <Skeleton className="h-[42px] w-[42px] rounded-full" />
+                  <Skeleton className="h-[42px] w-[42px] rounded-full bg-black/5" />
                   <div className="space-y-1.5 mr-1">
-                    <Skeleton className="h-3 w-24" />
-                    <Skeleton className="h-2 w-16" />
+                    <Skeleton className="h-[12px] w-24 bg-black/5" />
+                    <Skeleton className="h-[8px] w-16 bg-black/5" />
                   </div>
-                  <Skeleton className="h-4 w-4 rounded-full" />
+                  <Skeleton className="h-[16px] w-[16px] rounded-full bg-black/5" />
                 </div>
               </div>
             </div>
@@ -118,11 +118,11 @@ export default function DashboardLayoutClient({
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="rounded-xl border border-[#ECE9E5] bg-[#FFFDFC] p-5 space-y-3">
                     <div className="flex items-center justify-between">
-                      <Skeleton className="h-4 w-20" />
-                      <Skeleton className="h-8 w-8 rounded-full" />
+                      <Skeleton className="h-[16px] w-20 bg-black/5" />
+                      <Skeleton className="h-[32px] w-[32px] rounded-full bg-black/5" />
                     </div>
-                    <Skeleton className="h-8 w-24" />
-                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-[32px] w-24 bg-black/5" />
+                    <Skeleton className="h-[16px] w-16 bg-black/5" />
                   </div>
                 ))}
               </div>

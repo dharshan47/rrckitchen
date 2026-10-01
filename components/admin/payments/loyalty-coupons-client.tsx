@@ -151,18 +151,18 @@ function StatsSkeleton() {
 
 function TableSkeleton() {
   return (
-    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] overflow-hidden animate-pulse">
+    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] overflow-hidden">
       <div className="flex items-center gap-8 px-4 py-3.5 border-b border-[#EEF0F3]">
-        <Skeleton className="h-2.5 w-28 rounded-md" />
-        <Skeleton className="h-2.5 w-12 rounded-md" />
+        <Skeleton className="h-[14px] w-28 rounded-md bg-black/5" />
+        <Skeleton className="h-[14px] w-12 rounded-md bg-black/5" />
       </div>
       {Array.from({ length: 5 }).map((_, i) => (
         <div key={i} className="flex items-center gap-8 px-4 py-4 border-b border-[#EEF0F3]">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-10 rounded-xl flex-shrink-0" />
+            <Skeleton className="h-10 w-10 rounded-xl flex-shrink-0 bg-black/5" />
             <div className="space-y-1.5">
-              <Skeleton className="h-2.5 w-32 rounded-md" />
-              <Skeleton className="h-2 w-24 rounded-md" />
+              <Skeleton className="h-[14px] w-32 rounded-md bg-black/5" />
+              <Skeleton className="h-[12px] w-24 rounded-md bg-black/5" />
             </div>
           </div>
         </div>
@@ -173,10 +173,10 @@ function TableSkeleton() {
 
 function RedemptionOverviewSkeleton() {
   return (
-    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] p-5 animate-pulse">
-      <Skeleton className="h-3.5 w-40 rounded-md mb-5" />
+    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] p-5">
+      <Skeleton className="h-[16px] w-40 rounded-md mb-5 bg-black/5" />
       <div className="flex items-center gap-5">
-        <Skeleton className="h-[150px] w-[150px] rounded-full flex-shrink-0" />
+        <Skeleton className="h-[150px] w-[150px] rounded-full flex-shrink-0 bg-black/5" />
       </div>
     </div>
   )
@@ -184,12 +184,12 @@ function RedemptionOverviewSkeleton() {
 
 function SideListSkeleton() {
   return (
-    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] p-5 animate-pulse">
-      <Skeleton className="h-3.5 w-44 rounded-md mb-4" />
+    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] p-5">
+      <Skeleton className="h-[16px] w-44 rounded-md mb-4 bg-black/5" />
       <div className="space-y-3">
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className="flex items-center gap-3">
-            <Skeleton className="h-7 w-7 rounded-full flex-shrink-0" />
+            <Skeleton className="h-7 w-7 rounded-full flex-shrink-0 bg-black/5" />
           </div>
         ))}
       </div>

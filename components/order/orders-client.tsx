@@ -73,20 +73,33 @@ export function OrdersClient() {
     return (
       <div className="container max-w-6xl mx-auto px-4 py-6 md:py-10">
         <div className="mb-8">
-          <Skeleton className="h-8 w-40 mb-2" />
-          <Skeleton className="h-4 w-64" />
-        </div>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
-          <div className="flex gap-4 md:gap-8 border-b border-gray-200">
-            <Skeleton className="h-10 w-20 rounded-none border-b-2 border-transparent bg-transparent" />
-            <Skeleton className="h-10 w-20 rounded-none border-b-2 border-transparent bg-transparent" />
-            <Skeleton className="h-10 w-24 rounded-none border-b-2 border-transparent bg-transparent" />
-            <Skeleton className="h-10 w-24 rounded-none border-b-2 border-transparent bg-transparent" />
-            <Skeleton className="h-10 w-20 rounded-none border-b-2 border-transparent bg-transparent" />
+          <div className="flex items-center gap-2 mb-4">
+            <Skeleton className="h-4 w-12 bg-black/5" />
+            <Skeleton className="h-4 w-4 bg-black/5" />
+            <Skeleton className="h-4 w-16 bg-black/5" />
+            <Skeleton className="h-4 w-4 bg-black/5" />
+            <Skeleton className="h-4 w-14 bg-black/5" />
           </div>
-          <Skeleton className="h-9 w-[200px]" />
+          <Skeleton className="h-8 w-40 mb-2 bg-black/5" />
+          <Skeleton className="h-4 w-64 mt-1.5 bg-black/5" />
         </div>
-        <div className="flex flex-col gap-5">
+        <div className="flex flex-col md:flex-row justify-between md:items-end gap-4 md:gap-0 mb-6 relative">
+          <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gray-200 hidden md:block" />
+          <div className="flex gap-4 overflow-x-auto border-b border-gray-200 md:border-none z-10 w-full md:w-auto">
+            <Skeleton className="h-10 w-24 rounded-none bg-black/5 shrink-0" />
+            <div className="w-[1px] h-4 bg-gray-200 self-center shrink-0" />
+            <Skeleton className="h-10 w-24 rounded-none bg-black/5 shrink-0" />
+            <div className="w-[1px] h-4 bg-gray-200 self-center shrink-0" />
+            <Skeleton className="h-10 w-28 rounded-none bg-black/5 shrink-0" />
+            <div className="w-[1px] h-4 bg-gray-200 self-center shrink-0" />
+            <Skeleton className="h-10 w-28 rounded-none bg-black/5 shrink-0" />
+          </div>
+          <div className="flex items-center gap-3 z-10 md:pb-[9px]">
+            <Skeleton className="h-5 w-16 bg-black/5" />
+            <Skeleton className="h-9 w-[140px] rounded-[6px] bg-black/5" />
+          </div>
+        </div>
+        <div className="flex flex-col gap-6 mb-16">
           <OrderCardSkeleton />
           <OrderCardSkeleton />
           <OrderCardSkeleton />

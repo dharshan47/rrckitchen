@@ -50,7 +50,7 @@ function getCurrentStep(order: UserOrder): number {
 function getStatusLabel(order: UserOrder): string {
   if (order.status === "COMPLETED") return "Completed"
   if (order.deliveryStatus === "DELIVERED") return "Delivered"
-  if (order.status === "READYFORPICKUP") return "Waiting for Partner"
+  if (order.status === "READYFORPICKUP") return "Waiting for Delivery Partner"
   return order.status.charAt(0) + order.status.slice(1).toLowerCase()
 }
 
@@ -115,7 +115,7 @@ function HorizontalTimeline({ currentStep, category, history }: { currentStep: n
   const steps = [
     { label: "Order Confirmed", key: "CONFIRMED", icon: Check },
     { label: "Preparing Your Order", key: "PREPARING", icon: ChefHat },
-    { label: "Waiting for Partner", key: "READYFORPICKUP", icon: PackageCheck },
+    { label: "Waiting for Delivery Partner", key: "READYFORPICKUP", icon: PackageCheck },
     { label: "Out for Delivery", key: "INTRANSIT", icon: Bike },
     { label: "Delivery Completed", key: "COMPLETED", icon: Check },
   ]
@@ -184,6 +184,7 @@ function HorizontalTimeline({ currentStep, category, history }: { currentStep: n
 export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { status: string, changedAt: string, note?: string | null }[] } }) {
   const category = getStatusCategory(order.status)
   const isCompleted = category === "completed"
+  const hasFullyRated = Boolean(order.kitchenReview) && (!order.deliveryPartner || Boolean(order.deliveryReview))
   const currentStep = isCompleted ? 4 : getCurrentStep(order)
   const isCancelled = category === "cancelled"
   const isOngoing = category === "ongoing"
@@ -349,7 +350,7 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
 
           {isOngoing && (
             <>
-              {order.status === "READYFORPICKUP" && ["ACCEPTED", "PICKEDUP", "INTRANSIT"].includes(order.deliveryStatus || "") && (
+              {["ACCEPTED", "PICKEDUP", "INTRANSIT"].includes(order.deliveryStatus || "") && (
                 <Button asChild className="w-full bg-[#F97316] hover:bg-[#EA580C] text-white rounded-[12px] h-[48px] text-[15px] font-[600] gap-2 transition-colors shadow-[0_4px_12px_rgba(249,115,22,0.2)]">
                   <Link href={`/account/orders/${order.publicCode ?? order.id}/track`}>
                     <MapPin className="w-[18px] h-[18px]" /> Track Order
@@ -389,9 +390,9 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
             </>
           )}
 
-          {isCompleted && (
+          {isCompleted && !hasFullyRated && (
             <Button asChild className="w-full bg-[#15803D] hover:bg-[#166534] text-white rounded-[12px] h-[48px] text-[15px] font-[600] gap-2 transition-colors shadow-[0_4px_12px_rgba(21,128,61,0.2)] mb-3">
-              <Link href={`/account/rating?orderId=${order.id}`}>
+              <Link href={`/account/rating?orderId=${order.publicCode ?? order.id}`}>
                 <Star className="w-[18px] h-[18px]" /> Rate Order
               </Link>
             </Button>
@@ -496,7 +497,7 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
                   },
                   { 
                     label: "Out for Pickup", 
-                    desc: tiffinPickup.deliveryPartner ? `${tiffinPickup.deliveryPartner.name} is on the way` : "Waiting for partner",
+                    desc: tiffinPickup.deliveryPartner ? `${tiffinPickup.deliveryPartner.name} is on the way` : "Waiting for Delivery Partner",
                     done: tiffinPickup.status === "ARRIVED" || tiffinPickup.status === "COMPLETED", 
                     current: tiffinPickup.status === "STARTED" || tiffinPickup.status === "ARRIVED",
                     icon: <Bike className="w-3 h-3 stroke-[2.5]" />
@@ -544,35 +545,44 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
 export function OrderCardSkeleton() {
   return (
     <div className="bg-[#FFFFFF] rounded-[24px] shadow-[0_8px_24px_rgba(15,23,42,0.06)] border border-[#E5E7EB] flex flex-col mb-6 overflow-hidden w-full max-w-4xl mx-auto">
-      <div className="flex flex-col md:flex-row p-5 lg:p-6 gap-6">
-        <Skeleton className="w-full md:w-[130px] h-[200px] md:h-[130px] rounded-[20px] shrink-0" />
-        <div className="flex flex-col justify-center flex-1 min-w-0 gap-3">
-          <Skeleton className="h-4 w-32" />
-          <Skeleton className="h-6 w-48" />
-          <Skeleton className="h-4 w-64" />
-          <div className="flex gap-4">
-            <Skeleton className="h-6 w-20 rounded" />
-            <Skeleton className="h-6 w-16 rounded" />
+      <div className="flex flex-col md:flex-row p-5 lg:p-6 gap-6 relative">
+        <Skeleton className="w-full md:w-[130px] h-[200px] md:h-[130px] rounded-[20px] shrink-0 bg-black/5" />
+        <div className="flex flex-col justify-center flex-1 min-w-0">
+          <div className="flex items-start md:items-center justify-between gap-3 mb-2 flex-col md:flex-row">
+            <Skeleton className="h-5 w-32 bg-black/5" />
+            <Skeleton className="h-6 w-24 rounded-full bg-black/5" />
           </div>
-          <Skeleton className="h-4 w-40" />
+          <div className="flex items-center gap-1.5 mb-2">
+            <Skeleton className="h-6 w-48 bg-black/5" />
+          </div>
+          <Skeleton className="h-5 w-64 mb-3 bg-black/5" />
+          <div className="flex gap-4 mb-3">
+            <Skeleton className="h-6 w-20 rounded bg-black/5" />
+            <Skeleton className="h-6 w-16 rounded bg-black/5" />
+          </div>
+          <Skeleton className="h-5 w-40 mb-3 bg-black/5" />
+          <div className="flex gap-3">
+            <Skeleton className="h-7 w-32 rounded-full bg-black/5" />
+            <Skeleton className="h-7 w-20 rounded-full bg-black/5" />
+          </div>
         </div>
-        <div className="flex flex-col md:w-[160px] lg:w-[180px] shrink-0 gap-3">
-          <Skeleton className="h-[48px] w-full rounded-[12px]" />
-          <Skeleton className="h-[48px] w-full rounded-[12px]" />
+        <div className="flex flex-col md:w-[160px] lg:w-[180px] shrink-0 gap-3 mt-4 md:mt-0">
+          <Skeleton className="h-[48px] w-full rounded-[12px] bg-black/5" />
+          <Skeleton className="h-[48px] w-full rounded-[12px] bg-black/5" />
         </div>
       </div>
       
       <div className="w-full h-[120px] bg-[#FAFAFA] border-y border-[#F3F4F6]" />
       
       <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-[#F3F4F6]">
-        <div className="flex-1 p-5 lg:p-6 flex flex-col gap-3">
-           <Skeleton className="h-4 w-32" />
-           <Skeleton className="h-3 w-full" />
-           <Skeleton className="h-3 w-40" />
+        <div className="flex-1 p-5 lg:p-6 flex flex-col">
+           <Skeleton className="h-4 w-32 mb-2 bg-black/5" />
+           <Skeleton className="h-5 w-full mb-1 bg-black/5" />
+           <Skeleton className="h-4 w-40 bg-black/5" />
         </div>
-        <div className="flex-1 p-5 lg:p-6 flex flex-col gap-3">
-           <Skeleton className="h-4 w-32" />
-           <Skeleton className="h-3 w-40" />
+        <div className="flex-1 p-5 lg:p-6 flex flex-col">
+           <Skeleton className="h-4 w-32 mb-2 bg-black/5" />
+           <Skeleton className="h-5 w-48 bg-black/5" />
         </div>
       </div>
     </div>

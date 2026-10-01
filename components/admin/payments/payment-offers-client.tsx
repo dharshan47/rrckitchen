@@ -184,13 +184,13 @@ function StatsSkeleton() {
       {Array.from({ length: 5 }).map((_, i) => (
         <div key={i} className="bg-white rounded-[12px] p-4 border border-[#E2E8F0] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
           <div className="flex items-start gap-4">
-            <Skeleton className="h-[44px] w-[44px] rounded-full" />
-            <div className="space-y-2 flex-1">
-              <Skeleton className="h-3 w-24" />
-              <Skeleton className="h-5 w-16" />
+            <Skeleton className="h-[44px] w-[44px] rounded-full bg-black/5" />
+            <div className="space-y-2 flex-1 mt-1">
+              <Skeleton className="h-[12px] w-24 bg-black/5" />
+              <Skeleton className="h-[20px] w-16 bg-black/5" />
             </div>
           </div>
-          <Skeleton className="h-3 w-28 mt-4" />
+          <Skeleton className="h-[12px] w-28 mt-4 bg-black/5" />
         </div>
       ))}
     </div>
@@ -201,21 +201,30 @@ function TableSkeleton() {
   return (
     <div className="w-full space-y-4 p-4">
       <div className="flex flex-wrap items-center gap-3">
-        <Skeleton className="h-[38px] flex-1 min-w-[280px] rounded-[7px]" />
-        <Skeleton className="h-[38px] w-[130px] rounded-[7px]" />
-        <Skeleton className="h-[38px] w-[120px] rounded-[7px]" />
-        <Skeleton className="h-[38px] w-[130px] rounded-[7px]" />
+        <Skeleton className="h-[38px] flex-1 min-w-[280px] rounded-[7px] bg-black/5" />
+        <Skeleton className="h-[38px] w-[130px] rounded-[7px] bg-black/5" />
+        <Skeleton className="h-[38px] w-[120px] rounded-[7px] bg-black/5" />
+        <Skeleton className="h-[38px] w-[130px] rounded-[7px] bg-black/5" />
       </div>
       <div className="rounded-[12px] border border-[#E2E8F0] bg-white overflow-hidden">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-4 px-5 py-4 border-b border-[#F1F5F9] last:border-b-0">
-            <Skeleton className="h-3 w-28 flex-[2]" />
-            <Skeleton className="h-5 w-16" />
-            <Skeleton className="h-3 w-14" />
-            <Skeleton className="h-3 w-16" />
-            <Skeleton className="h-3 w-24" />
-            <Skeleton className="h-5 w-20" />
-            <Skeleton className="h-8 w-[76px]" />
+          <div key={i} className="flex items-center gap-4 px-5 py-4 border-b border-[#F1F5F9] last:border-b-0 bg-white">
+            <div className="flex items-center gap-3 flex-[2] min-w-[200px]">
+              <Skeleton className="h-[36px] w-[36px] rounded-[8px] shrink-0 bg-black/5" />
+              <div className="space-y-1.5 flex-1">
+                <Skeleton className="h-[14px] w-32 bg-black/5" />
+                <Skeleton className="h-[12px] w-24 bg-black/5" />
+              </div>
+            </div>
+            <Skeleton className="h-[20px] w-16 shrink-0 bg-black/5" />
+            <Skeleton className="h-[13px] w-14 shrink-0 bg-black/5" />
+            <Skeleton className="h-[13px] w-16 shrink-0 bg-black/5" />
+            <Skeleton className="h-[13px] w-24 shrink-0 bg-black/5" />
+            <Skeleton className="h-[20px] w-20 rounded-[4px] shrink-0 bg-black/5" />
+            <div className="flex gap-2 w-[76px] shrink-0 justify-end">
+              <Skeleton className="h-[32px] w-[32px] rounded-[6px] bg-black/5" />
+              <Skeleton className="h-[32px] w-[32px] rounded-[6px] bg-black/5" />
+            </div>
           </div>
         ))}
       </div>

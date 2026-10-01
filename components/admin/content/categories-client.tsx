@@ -128,11 +128,11 @@ function StatsRowSkeleton() {
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="bg-[#FFFFFF] rounded-[10px] p-5 border border-[#E7EBE8] flex items-center gap-4">
-          <Skeleton className="h-12 w-12 rounded-full" />
+          <Skeleton className="h-[48px] w-[48px] rounded-full shrink-0 bg-black/5" />
           <div className="space-y-2">
-            <Skeleton className="h-3 w-24 rounded-md" />
-            <Skeleton className="h-7 w-14 rounded-md" />
-            <Skeleton className="h-3 w-28 rounded-md" />
+            <Skeleton className="h-[14px] w-24 rounded-md bg-black/5" />
+            <Skeleton className="h-[28px] w-14 rounded-md bg-black/5" />
+            <Skeleton className="h-[12px] w-28 rounded-md bg-black/5" />
           </div>
         </div>
       ))}
@@ -145,20 +145,20 @@ function SidebarSkeleton() {
     <div className="flex flex-col gap-6">
       <div className="bg-white rounded-[10px] border border-[#E7EBE8] p-5">
         <div className="flex items-center justify-between mb-6">
-          <Skeleton className="h-4 w-36 rounded-md" />
-          <Skeleton className="h-8 w-24 rounded-lg" />
+          <Skeleton className="h-[16px] w-36 rounded-md bg-black/5" />
+          <Skeleton className="h-[32px] w-24 rounded-lg bg-black/5" />
         </div>
         <div className="flex justify-center py-4">
-          <Skeleton className="h-40 w-40 rounded-full" />
+          <Skeleton className="h-[160px] w-[160px] rounded-full bg-black/5" />
         </div>
         <div className="mt-6 space-y-3.5">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <Skeleton className="h-2.5 w-2.5 rounded-full" />
-                <Skeleton className="h-3.5 w-24 rounded-md" />
+                <Skeleton className="h-2.5 w-2.5 rounded-full bg-black/5" />
+                <Skeleton className="h-[14px] w-24 rounded-md bg-black/5" />
               </div>
-              <Skeleton className="h-3.5 w-8 rounded-md" />
+              <Skeleton className="h-[14px] w-8 rounded-md bg-black/5" />
             </div>
           ))}
         </div>
@@ -550,12 +550,12 @@ export default function CategoriesPage() {
                   {isLoading ? (
                     Array.from({ length: 5 }).map((_, i) => (
                       <TableRow key={i} className="border-b border-[#EEF1EF]">
-                        <TableCell className="px-6 py-4"><Skeleton className="h-10 w-32" /></TableCell>
-                        <TableCell className="px-6 py-4"><Skeleton className="h-4 w-48" /></TableCell>
-                        <TableCell className="px-6 py-4"><Skeleton className="h-4 w-16" /></TableCell>
-                        <TableCell className="px-6 py-4"><Skeleton className="h-6 w-20 rounded-full" /></TableCell>
-                        <TableCell className="px-6 py-4"><Skeleton className="h-8 w-24" /></TableCell>
-                        <TableCell className="px-6 py-4"><Skeleton className="h-8 w-16" /></TableCell>
+                        <TableCell className="px-6 py-4"><Skeleton className="h-[40px] w-32 bg-black/5" /></TableCell>
+                        <TableCell className="px-6 py-4"><Skeleton className="h-[16px] w-48 bg-black/5" /></TableCell>
+                        <TableCell className="px-6 py-4"><Skeleton className="h-[16px] w-16 bg-black/5" /></TableCell>
+                        <TableCell className="px-6 py-4"><Skeleton className="h-[24px] w-20 rounded-full bg-black/5" /></TableCell>
+                        <TableCell className="px-6 py-4"><Skeleton className="h-[32px] w-24 bg-black/5" /></TableCell>
+                        <TableCell className="px-6 py-4"><Skeleton className="h-[32px] w-16 bg-black/5" /></TableCell>
                       </TableRow>
                     ))
                   ) : table.getRowModel().rows?.length ? (
