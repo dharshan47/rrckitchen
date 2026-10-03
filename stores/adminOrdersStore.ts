@@ -30,6 +30,12 @@ export interface AdminOrder {
   } | null;
   statusHistory: { id: string; status: string; changedAt: string; note?: string | null }[];
   deliveryPartner: { id: string; name?: string | null; phone?: string | null } | null;
+  tiffinPickup?: {
+    id: string;
+    status: string;
+    scheduledDate: string;
+    deliveryPartner: { id: string; name?: string | null; phone?: string | null; } | null;
+  } | null;
 }
 
 /** Valid order statuses and the next status in the fulfilment flow. */

@@ -309,6 +309,35 @@ export async function adminAssignDeliveryPartner(orderId: string, deliveryPartne
   if (!assignment) {
     throw new Error("Failed to assign delivery partner")
   }
-  
+  return { success: true }
+}
+
+export async function adminAssignTiffinPartner(tiffinPickupId: string, deliveryPartnerId: string) {
+  const session = await getSession()
+  if (!session?.user) throw new Error("Unauthorized")
+
+  const tiffin = await prisma.tiffinPickup.findUnique({
+    where: { id: tiffinPickupId },
+  })
+
+  if (!tiffin) throw new Error("Tiffin pickup not found")
+
+  await prisma.tiffinPickup.update({
+    where: { id: tiffinPickupId },
+    data: { deliveryPartnerId, status: "ASSIGNED" }
+  })
+
+  return { success: true }
+}
+
+export async function adminWithdrawTiffinPartner(tiffinPickupId: string) {
+  const session = await getSession()
+  if (!session?.user) throw new Error("Unauthorized")
+
+  await prisma.tiffinPickup.update({
+    where: { id: tiffinPickupId },
+    data: { deliveryPartnerId: null, status: "SCHEDULED" }
+  })
+
   return { success: true }
 }

@@ -49,16 +49,27 @@ export async function assignUserRole(roleName: AllowedRole) {
         .filter(Boolean) as string[]
     )
     const slug = uniqueSlug(session.user.name ?? session.user.id, existingSlugs)
-    await prisma.kitchenPartner.upsert({
-      where: { userId: session.user.id },
-      create: { userId: session.user.id, slug, status: "APPROVED" },
-      update: {},
+    
+    const { PUBLIC_ID_SPECS, allocatePublicCode } = await import("@/lib/public-id")
+    await prisma.$transaction(async (tx) => {
+      const existing = await tx.kitchenPartner.findUnique({ where: { userId: session.user.id } })
+      if (!existing) {
+        const publicCode = await allocatePublicCode(tx, PUBLIC_ID_SPECS.KITCHEN_PARTNER)
+        await tx.kitchenPartner.create({
+          data: { userId: session.user.id, slug, status: "APPROVED", publicCode },
+        })
+      }
     })
   } else if (roleName === "DELIVERYPARTNER") {
-    await prisma.deliveryPartner.upsert({
-      where: { userId: session.user.id },
-      create: { userId: session.user.id },
-      update: {},
+    const { PUBLIC_ID_SPECS, allocatePublicCode } = await import("@/lib/public-id")
+    await prisma.$transaction(async (tx) => {
+      const existing = await tx.deliveryPartner.findUnique({ where: { userId: session.user.id } })
+      if (!existing) {
+        const publicCode = await allocatePublicCode(tx, PUBLIC_ID_SPECS.DELIVERY_PARTNER)
+        await tx.deliveryPartner.create({
+          data: { userId: session.user.id, publicCode },
+        })
+      }
     })
   }
 }

@@ -163,6 +163,19 @@ export async function getAdminOrders() {
       deliveryPartner: { include: { user: { select: { name: true, phoneNumber: true, email: true } } } },
       address: { select: { lineOne: true, lineTwo: true, pincode: true, label: true } },
       statusHistory: { orderBy: { changedAt: "asc" }, select: { id: true, status: true, changedAt: true, note: true } },
+      tiffinPickup: {
+        select: {
+          id: true,
+          status: true,
+          scheduledDate: true,
+          deliveryPartner: {
+            select: {
+              id: true,
+              user: { select: { name: true, phoneNumber: true } }
+            }
+          }
+        }
+      },
     },
     orderBy: { createdAt: "desc" },
     take: 50,
@@ -227,6 +240,16 @@ export async function getAdminOrders() {
             phone: o.deliveryPartner.user?.phoneNumber,
           }
         : null,
+      tiffinPickup: o.tiffinPickup ? {
+        id: o.tiffinPickup.id,
+        status: o.tiffinPickup.status,
+        scheduledDate: o.tiffinPickup.scheduledDate.toISOString(),
+        deliveryPartner: o.tiffinPickup.deliveryPartner ? {
+          id: o.tiffinPickup.deliveryPartner.id,
+          name: o.tiffinPickup.deliveryPartner.user?.name || "",
+          phone: o.tiffinPickup.deliveryPartner.user?.phoneNumber,
+        } : null
+      } : null,
     }
   })
 }

@@ -35,17 +35,34 @@ import {
 
 
 
-const statusFlow: { key: string; label: string; icon: typeof Check, desc: string }[] = [
-  { key: "CONFIRMED", label: "Order Confirmed", icon: Check, desc: "Your order has been confirmed." },
-  { key: "PREPARING", label: "Preparing Your Order", icon: ChefHat, desc: "The kitchen is preparing your delicious meal." },
-  { key: "READYFORPICKUP", label: "Waiting for Delivery Partner", icon: PackageCheck, desc: "Your order is ready and waiting for pickup." },
-  { key: "INTRANSIT", label: "Out for Delivery", icon: Bike, desc: "Your order is on the way." },
-  { key: "COMPLETED", label: "Delivered", icon: Package, desc: "Enjoy your meal!" },
-]
+const getStatusFlow = (hasTiffin: boolean) => {
+  const base = [
+    { key: "CONFIRMED", label: "Order Confirmed", icon: Check, desc: "Your order has been confirmed." },
+    { key: "PREPARING", label: "Preparing Your Order", icon: ChefHat, desc: "The kitchen is preparing your delicious meal." },
+    { key: "READYFORPICKUP", label: "Waiting for Delivery Partner", icon: PackageCheck, desc: "Your order is ready and waiting for pickup." },
+    { key: "INTRANSIT", label: "Out for Delivery", icon: Bike, desc: "Your order is on the way." },
+    { key: "DELIVERED", label: "Delivered", icon: Package, desc: "Order delivered to you." },
+  ]
+  if (hasTiffin) {
+    base.push({ key: "RETURN_PICKUP", label: "Carrier Return", icon: Bike, desc: "Next day tiffin carrier return pickup." })
+    base.push({ key: "COMPLETED", label: "Completed", icon: Check, desc: "Order fully completed." })
+  }
+  return base
+}
 
-function getStatusIndex(order: { status?: string | null; deliveryStatus?: string | null }): number {
-  if (order.status === "COMPLETED") return 4;
-  if (order.deliveryStatus === "PICKEDUP" || order.deliveryStatus === "INTRANSIT" || order.deliveryStatus === "DELIVERED") return 3;
+function getStatusIndex(order: { status?: string | null; deliveryStatus?: string | null }, tiffinPickup?: { status?: string | null } | null): number {
+  if (tiffinPickup) {
+    if (tiffinPickup.status === "COMPLETED") return 6;
+    if (tiffinPickup.status !== "SCHEDULED") return 5;
+    if (order.deliveryStatus === "DELIVERED") return 4;
+    if (order.deliveryStatus === "PICKEDUP" || order.deliveryStatus === "INTRANSIT") return 3;
+    if (order.status === "READYFORPICKUP") return 2;
+    if (order.status === "PREPARING") return 1;
+    return 0;
+  }
+  
+  if (order.status === "COMPLETED" || order.deliveryStatus === "DELIVERED") return 4;
+  if (order.deliveryStatus === "PICKEDUP" || order.deliveryStatus === "INTRANSIT") return 3;
   if (order.status === "READYFORPICKUP") return 2;
   if (order.status === "PREPARING") return 1;
   return 0;
@@ -60,9 +77,9 @@ const statusColors: Record<string, string> = {
   REFUNDED: "text-purple-600 bg-purple-100",
 }
 
-function getStatusLabel(status: string | undefined): string {
+function getStatusLabel(status: string | undefined, hasTiffin: boolean = false): string {
   if (!status) return "Confirmed"
-  const step = statusFlow.find((s) => s.key === status)
+  const step = getStatusFlow(hasTiffin).find((s) => s.key === status)
   if (step) return step.label
   return status.charAt(0) + status.slice(1).toLowerCase()
 }
@@ -270,7 +287,8 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
   }
 
   const isCancelled = order.status === "CANCELLED" || order.status === "REFUNDED"
-  const currentIdx = isCancelled ? 0 : getStatusIndex(order)
+  const currentStatusFlow = getStatusFlow(!!tiffinPickup)
+  const currentIdx = isCancelled ? 0 : getStatusIndex(order, tiffinPickup)
   // isDelivered is already defined above
   const deliveryStatus = order.deliveryStatus || order.deliveryAssignmentStatus
 
@@ -403,17 +421,17 @@ export function TrackOrderClient({ orderId }: { orderId: string }) {
             <h3 className="text-[20px] font-extrabold tracking-[-0.03em] text-[#111827] mb-8">Order Progress</h3>
             <div className="relative flex-1">
               <div className="absolute top-5 bottom-16 left-[19px] w-[2px] bg-[#eef1f5]" />
-              {!isDelivered && !isCancelled && (
+              {!isCancelled && (
                 <div 
                   className="absolute top-5 left-[19px] w-[2px] bg-[#15803D] transition-all duration-700" 
-                  style={{ height: `${currentIdx > 0 ? (currentIdx / (statusFlow.length - 1)) * 100 : 0}%` }} 
+                  style={{ height: `${currentIdx > 0 ? (currentIdx / (currentStatusFlow.length - 1)) * 100 : 0}%` }} 
                 />
               )}
               {isCancelled && (
                 <div className="absolute top-5 left-[19px] w-[2px] bg-[#DC2626] transition-all duration-700" style={{ height: "25%" }} />
               )}
               <div className="space-y-8 relative">
-                {statusFlow.map((step, idx) => {
+                {currentStatusFlow.map((step, idx) => {
                   const done = idx < currentIdx;
                   const current = idx === currentIdx && !isCancelled;
                   const isFuture = !done && !current;

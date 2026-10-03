@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import Image from "next/image"
-import { getOnlineDeliveryPartners, adminAssignDeliveryPartner, adminWithdrawDeliveryPartner } from "@/actions/dispatch/dispatch-actions"
+import { getOnlineDeliveryPartners, adminAssignDeliveryPartner, adminWithdrawDeliveryPartner, adminAssignTiffinPartner, adminWithdrawTiffinPartner } from "@/actions/dispatch/dispatch-actions"
 import {
   Search, Download, RefreshCw, CheckCircle2, ChefHat,
   Wallet, Eye, Pencil, MoreVertical, Bike, User, Phone, Mail, MapPin, Loader2,
@@ -189,7 +189,7 @@ export default function AdminOrdersPage() {
   const [paymentFilter, setPaymentFilter] = useState("all")
   const [kitchenFilter, setKitchenFilter] = useState("all")
   const [deliveryFilter, setDeliveryFilter] = useState("all")
-  const [pageSize, setPageSize] = useState(10)
+
 
   const selectedOrder = useAdminSelectedOrder()
   const { setSelectedOrder } = useAdminOrdersActions()
@@ -376,7 +376,9 @@ export default function AdminOrdersPage() {
     columns,
     state: {
       rowSelection,
-      pagination: { pageIndex: 0, pageSize },
+    },
+    initialState: {
+      pagination: { pageIndex: 0, pageSize: 10 },
     },
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
@@ -389,8 +391,9 @@ export default function AdminOrdersPage() {
     .map((idx) => filteredOrders[Number(idx)])
     .filter(Boolean) as AdminOrder[]
 
-  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / pageSize))
+  const pageSize = table.getState().pagination.pageSize
   const currentPage = table.getState().pagination.pageIndex
+  const totalPages = Math.max(1, Math.ceil(filteredOrders.length / pageSize))
 
   const handleBulkStatus = useCallback((status: string) => {
     Promise.all(selectedRows.map((o) => updateOrderMutation.mutateAsync({ orderId: o.id, status })))
@@ -607,7 +610,7 @@ export default function AdminOrdersPage() {
               <Button variant="outline" size="icon" className="h-8 w-8 rounded-md p-0 border-[#E5E7EB] bg-white text-[#6B7280]" disabled={!table.getCanNextPage()} onClick={() => table.nextPage()}>{">"}</Button>
             </div>
             <div className="flex items-center gap-3">
-              <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+              <Select value={String(pageSize)} onValueChange={(v) => table.setPageSize(Number(v))}>
                 <SelectTrigger className="w-[90px] h-9 rounded-lg text-[13px] font-bold border-[#E5E7EB]">
                   <SelectValue placeholder="10 / page" />
                 </SelectTrigger>
@@ -624,7 +627,7 @@ export default function AdminOrdersPage() {
 
       {/* Order Details Side Panel */}
       <Sheet open={!!selectedOrder} onOpenChange={(open) => !open && setSelectedOrder(null)}>
-        <SheetContent className="w-full sm:max-w-[650px] overflow-y-auto overflow-x-hidden p-0 flex flex-col bg-[#F9FAFB] border-l-0 shadow-2xl z-[100]">
+        <SheetContent className="w-full sm:max-w-[650px] p-0 flex flex-col bg-[#F9FAFB] border-l-0 shadow-2xl z-[100] overflow-hidden">
           {selectedOrder && (
             <OrderSheet key={selectedOrder.id} order={selectedOrder} onClose={() => setSelectedOrder(null)} onStatusChange={updateOrder} />
           )}
@@ -673,7 +676,7 @@ function OrderSheet({
     mutationFn: (partnerId: string) => adminAssignDeliveryPartner(order.id, partnerId),
     onSuccess: () => {
       toast.success("Delivery partner assigned successfully")
-      queryClient.invalidateQueries({ queryKey: ["admin-orders"] })
+      queryClient.invalidateQueries({ queryKey: ["admin-orders-list"] })
       setTab("delivery")
     },
     onError: (err) => {
@@ -685,11 +688,30 @@ function OrderSheet({
     mutationFn: () => adminWithdrawDeliveryPartner(order.id),
     onSuccess: () => {
       toast.success("Delivery partner withdrawn successfully")
-      queryClient.invalidateQueries({ queryKey: ["admin-orders"] })
+      queryClient.invalidateQueries({ queryKey: ["admin-orders-list"] })
     },
     onError: (err) => {
       toast.error(err instanceof Error ? err.message : "Failed to withdraw partner")
     }
+  })
+
+  const assignTiffinMutation = useMutation({
+    mutationFn: (partnerId: string) => adminAssignTiffinPartner(order.tiffinPickup!.id, partnerId),
+    onSuccess: () => {
+      toast.success("Return pickup partner assigned successfully")
+      queryClient.invalidateQueries({ queryKey: ["admin-orders-list"] })
+      setTab("delivery")
+    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Failed to assign partner")
+  })
+
+  const withdrawTiffinMutation = useMutation({
+    mutationFn: () => adminWithdrawTiffinPartner(order.tiffinPickup!.id),
+    onSuccess: () => {
+      toast.success("Return pickup partner withdrawn")
+      queryClient.invalidateQueries({ queryKey: ["admin-orders-list"] })
+    },
+    onError: (err) => toast.error(err instanceof Error ? err.message : "Failed to withdraw partner")
   })
 
   const tabs = [
@@ -699,6 +721,7 @@ function OrderSheet({
     { id: "payment", label: "Payment" },
     { id: "delivery", label: "Delivery" },
     ...((!order.deliveryStatus || ['ASSIGNED', 'ACCEPTED'].includes(order.deliveryStatus)) && !isTerminal ? [{ id: "assign-partner", label: order.deliveryPartner ? "Reassign Partner" : "Assign Partner" }] : []),
+    ...(order.tiffinPickup && (!order.tiffinPickup.status || ['SCHEDULED', 'ASSIGNED'].includes(order.tiffinPickup.status)) && !isTerminal ? [{ id: "assign-tiffin", label: order.tiffinPickup.deliveryPartner ? "Reassign Return" : "Assign Return" }] : []),
     { id: "notes", label: "Notes" },
   ]
 
@@ -731,7 +754,8 @@ function OrderSheet({
         </ScrollArea>
       </SheetHeader>
 
-      <div className="p-6 space-y-6 flex-1 bg-[#F9FAFB]">
+      <ScrollArea className="flex-1 bg-[#F9FAFB]">
+        <div className="p-6 space-y-6">
         {tab === "overview" && (
         <>
         {/* Top Summary Cards */}
@@ -786,7 +810,7 @@ function OrderSheet({
         </div>
 
         {/* Delivery Partner */}
-        <div className="bg-white p-5 rounded-[18px] border border-[#E5E7EB] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+        <div className="bg-white p-5 rounded-[18px] border border-[#E5E7EB] flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between gap-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
           <div className="flex flex-col gap-2.5">
             <h4 className="text-[11px] font-bold text-[#6B7280]">Delivery Partner</h4>
             {order.deliveryPartner ? (
@@ -799,7 +823,7 @@ function OrderSheet({
             )}
           </div>
           {order.deliveryPartner && (
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full sm:w-auto mt-2 sm:mt-0">
+            <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-4 w-full sm:w-auto mt-2 sm:mt-0">
               <div className="flex flex-col items-start sm:items-center gap-2 text-left sm:text-center">
                 <h4 className="text-[11px] font-bold text-[#6B7280]">Delivery Status</h4>
                 <div className="flex items-center gap-2 text-[#15803D] font-extrabold text-[15px] capitalize">
@@ -816,7 +840,7 @@ function OrderSheet({
         {/* Order Status */}
         <div className="bg-white p-5 rounded-[18px] border border-[#E5E7EB] flex flex-col gap-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
           <h4 className="text-[14px] font-extrabold text-[#111827]">Order Status</h4>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between border-b border-[#F3F4F6] pb-5 gap-4">
+          <div className="flex flex-col sm:flex-row flex-wrap items-start sm:items-center justify-between border-b border-[#F3F4F6] pb-5 gap-4">
             <div className="flex flex-col gap-2.5">
               <span className="text-[11px] font-bold text-[#6B7280]">Current Status</span>
               <div>{getStatusBadge(order.status)}</div>
@@ -837,9 +861,9 @@ function OrderSheet({
               </div>
             )}
           </div>
-          <div className="flex flex-col gap-2.5">
+          <div className="flex flex-col gap-2.5 w-full">
             <span className="text-[11px] font-bold text-[#6B7280]">Change Status</span>
-            <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex flex-col sm:flex-row flex-wrap gap-3 w-full">
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger className="h-11 text-[13px] font-medium flex-1 rounded-xl border-[#D1D5DB] w-full"><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -914,17 +938,64 @@ function OrderSheet({
           {order.statusHistory.length > 0 ? (
             <div className="flex flex-col">
               {(() => {
-                const uniqueHistory = order.statusHistory.filter((h, i, arr) => i === 0 || h.status !== arr[i - 1].status);
-                return uniqueHistory.map((h, idx) => (
-                  <div key={h.id} className="relative flex gap-4 pb-6 last:pb-0">
-                    {idx < uniqueHistory.length - 1 && <span className="absolute left-[11px] top-7 bottom-0 w-[2px] bg-[#E5E7EB]" />}
+                const seen = new Set();
+                const timelineEvents: { id: string; label: string; date: string | Date | null; note?: string | null }[] = [];
+                
+                order.statusHistory.forEach(h => {
+                  if (seen.has(h.status)) return;
+                  seen.add(h.status);
+                  
+                  if (h.status === 'COMPLETED') {
+                     if (order.deliveryStatus === 'DELIVERED') {
+                       timelineEvents.push({
+                         id: 'delivered',
+                         label: 'DELIVERED',
+                         date: null,
+                         note: 'Delivered to customer'
+                       });
+                     }
+                     if (order.tiffinPickup) {
+                       timelineEvents.push({
+                         id: 'return_pickup',
+                         label: `RETURN PICKUP - ${order.tiffinPickup.status}`,
+                         date: order.tiffinPickup.scheduledDate,
+                         note: order.tiffinPickup.deliveryPartner ? `Partner: ${order.tiffinPickup.deliveryPartner.name}` : 'No partner assigned'
+                       });
+                     }
+                  }
+                  
+                  timelineEvents.push({ id: h.id, label: STATUS_LABELS[h.status.toUpperCase()] || h.status, date: h.changedAt, note: h.note });
+                  
+                  if (h.status === 'READYFORPICKUP' && !order.statusHistory.some(sh => sh.status === 'COMPLETED')) {
+                     if (order.deliveryStatus === 'DELIVERED') {
+                       timelineEvents.push({
+                         id: 'delivered',
+                         label: 'DELIVERED',
+                         date: null,
+                         note: 'Delivered to customer'
+                       });
+                     }
+                     if (order.tiffinPickup) {
+                       timelineEvents.push({
+                         id: 'return_pickup',
+                         label: `RETURN PICKUP - ${order.tiffinPickup.status}`,
+                         date: order.tiffinPickup.scheduledDate,
+                         note: order.tiffinPickup.deliveryPartner ? `Partner: ${order.tiffinPickup.deliveryPartner.name}` : 'No partner assigned'
+                       });
+                     }
+                  }
+                });
+
+                return timelineEvents.map((event, idx) => (
+                  <div key={event.id} className="relative flex gap-4 pb-6 last:pb-0">
+                    {idx < timelineEvents.length - 1 && <span className="absolute left-[11px] top-7 bottom-0 w-[2px] bg-[#E5E7EB]" />}
                     <div className="h-6 w-6 rounded-full border-2 border-[#F97316] bg-white flex items-center justify-center shrink-0 z-10">
                       <div className="h-2 w-2 bg-[#F97316] rounded-full" />
                     </div>
                     <div className="flex flex-col gap-1 pt-0.5">
-                      <span className="text-[13px] font-extrabold text-[#111827] uppercase">{STATUS_LABELS[h.status.toUpperCase()] ?? h.status}</span>
-                      <span className="text-[12px] font-medium text-[#6B7280]">{new Date(h.changedAt).toLocaleString("en-IN", { day: "2-digit", month: "short", hour: "numeric", minute: "2-digit", hour12: true })}</span>
-                      {h.note && <span className="text-[12px] font-medium text-[#374151] italic">&ldquo;{h.note}&rdquo;</span>}
+                      <span className="text-[13px] font-extrabold text-[#111827] uppercase">{event.label}</span>
+                      {event.date && <span className="text-[12px] font-medium text-[#6B7280]">{new Date(event.date).toLocaleString("en-IN", { day: "2-digit", month: "short", hour: "numeric", minute: "2-digit", hour12: true })}</span>}
+                      {event.note && <span className="text-[12px] font-medium text-[#374151] italic">&ldquo;{event.note}&rdquo;</span>}
                     </div>
                   </div>
                 ));
@@ -1031,6 +1102,28 @@ function OrderSheet({
               <span className="leading-relaxed">{order.kitchen.address || "Address not provided"}</span>
             </span>
           </div>
+          {order.tiffinPickup && (
+            <div className="flex flex-col gap-3 pt-3 border-t border-[#F3F4F6]">
+              <span className="text-[11px] font-bold text-[#6B7280]">Return Pickup Details</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-2">
+                  <span className="text-[11px] font-bold text-[#6B7280]">Partner</span>
+                  {order.tiffinPickup.deliveryPartner ? (
+                    <>
+                      <span className="text-[13px] font-extrabold text-[#111827]">{order.tiffinPickup.deliveryPartner.name ?? "—"}</span>
+                      <span className="text-[13px] font-medium text-[#6B7280] flex items-center gap-2"><Phone className="h-4 w-4 text-[#6B7280] shrink-0" /> {order.tiffinPickup.deliveryPartner.phone ?? "—"}</span>
+                    </>
+                  ) : (
+                    <span className="text-[13px] font-extrabold text-[#111827] italic text-muted-foreground">Not Assigned</span>
+                  )}
+                </div>
+                <div className="flex flex-col gap-2">
+                  <span className="text-[11px] font-bold text-[#6B7280]">Status</span>
+                  <span className="text-[13px] font-extrabold text-[#111827] uppercase">{order.tiffinPickup.status}</span>
+                </div>
+              </div>
+            </div>
+          )}
           {order.deliveryPartner && (!order.deliveryStatus || ['ASSIGNED', 'ACCEPTED'].includes(order.deliveryStatus)) && !isTerminal && (
             <div className="flex flex-col gap-3 pt-4 mt-2 border-t border-[#F3F4F6]">
               <Button 
@@ -1041,6 +1134,19 @@ function OrderSheet({
               >
                 {withdrawMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                 Withdraw Assignment
+              </Button>
+            </div>
+          )}
+          {order.tiffinPickup?.deliveryPartner && (!order.tiffinPickup.status || ['SCHEDULED', 'ASSIGNED'].includes(order.tiffinPickup.status)) && !isTerminal && (
+            <div className="flex flex-col gap-3 pt-4 border-t border-[#F3F4F6]">
+              <Button 
+                variant="outline" 
+                className="w-full text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 font-bold"
+                onClick={() => withdrawTiffinMutation.mutate()}
+                disabled={withdrawTiffinMutation.isPending}
+              >
+                {withdrawTiffinMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                Withdraw Return Pickup
               </Button>
             </div>
           )}
@@ -1080,6 +1186,38 @@ function OrderSheet({
         </>
         )}
 
+        {tab === "assign-tiffin" && order.tiffinPickup && (
+        <>
+        <div className="bg-white p-5 rounded-[18px] border border-[#E5E7EB] flex flex-col gap-5 shadow-[0_2px_8px_rgba(0,0,0,0.04)]">
+          <h4 className="text-[14px] font-extrabold text-[#111827] flex items-center gap-2"><Bike className="h-4 w-4 text-[#6B7280]" /> {order.tiffinPickup.deliveryPartner ? "Reassign Return Pickup Partner" : "Assign Return Pickup Partner"}</h4>
+          {isLoadingPartners ? (
+            <div className="flex items-center justify-center p-8"><Loader2 className="h-6 w-6 animate-spin text-[#6B7280]" /></div>
+          ) : onlinePartners?.length === 0 ? (
+            <p className="text-[13px] font-medium text-[#6B7280]">No active delivery partners are currently online.</p>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {onlinePartners?.map((p) => (
+                <div key={p.id} className="flex items-center justify-between p-4 border border-[#E5E7EB] rounded-xl hover:border-[#FED7AA] transition-colors">
+                  <div className="flex flex-col gap-1">
+                    <span className="text-[13px] font-extrabold text-[#111827]">{p.user?.name ?? ""}</span>
+                    <span className="text-[12px] font-medium text-[#6B7280]">{p.user?.phoneNumber ?? "No phone"}</span>
+                  </div>
+                  <Button 
+                    size="sm" 
+                    className="bg-[#F97316] hover:bg-[#EA580C] text-white rounded-lg text-[12px] font-bold h-8 px-4"
+                    disabled={assignTiffinMutation.isPending || p.id === order.tiffinPickup?.deliveryPartner?.id}
+                    onClick={() => assignTiffinMutation.mutate(p.id)}
+                  >
+                    {assignTiffinMutation.isPending && assignTiffinMutation.variables === p.id ? <Loader2 className="w-4 h-4 animate-spin" /> : p.id === order.tiffinPickup?.deliveryPartner?.id ? "Assigned" : order.tiffinPickup?.deliveryPartner ? "Reassign" : "Assign"}
+                  </Button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        </>
+        )}
+
         {tab === "notes" && (
         <>
         {/* Notes */}
@@ -1106,7 +1244,8 @@ function OrderSheet({
         </div>
         </>
         )}
-      </div>
+        </div>
+      </ScrollArea>
 
       <div className="p-5 border-t border-[#E5E7EB] bg-white flex flex-wrap-reverse sm:flex-nowrap justify-end gap-3 sticky bottom-0 z-10 rounded-b-xl">
         <Button variant="outline" onClick={onClose} className="h-11 px-6 text-[13px] font-bold text-[#374151] border-[#D1D5DB] rounded-xl shadow-none w-full sm:w-auto mt-2 sm:mt-0">Close</Button>

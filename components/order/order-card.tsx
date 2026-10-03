@@ -40,6 +40,16 @@ function getStatusCategory(status: string): "ongoing" | "completed" | "cancelled
 }
 
 function getCurrentStep(order: UserOrder): number {
+  if (order.tiffinPickup) {
+    if (order.tiffinPickup.status === "COMPLETED") return 6;
+    if (order.tiffinPickup.status !== "SCHEDULED") return 5;
+    if (order.deliveryStatus === "DELIVERED") return 4;
+    if (order.deliveryStatus === "PICKEDUP" || order.deliveryStatus === "INTRANSIT") return 3;
+    if (order.status === "READYFORPICKUP") return 2;
+    if (order.status === "PREPARING") return 1;
+    return 0;
+  }
+  
   if (order.status === "COMPLETED" || order.deliveryStatus === "DELIVERED") return 4;
   if (order.deliveryStatus === "PICKEDUP" || order.deliveryStatus === "INTRANSIT") return 3;
   if (order.status === "READYFORPICKUP") return 2;
@@ -109,16 +119,28 @@ function getTotalItems(order: UserOrder): number {
   return order.items.reduce((sum, i) => sum + i.quantity, 0)
 }
 
-function HorizontalTimeline({ currentStep, category, history }: { currentStep: number; category: string; history?: { status: string, changedAt: string, note?: string | null }[] }) {
+function HorizontalTimeline({ currentStep, category, history, hasTiffin }: { currentStep: number; category: string; history?: { status: string, changedAt: string, note?: string | null }[], hasTiffin: boolean }) {
   const isCancelled = category === "cancelled"
 
-  const steps = [
+  const baseSteps = [
+    { label: "Order Confirmed", key: "CONFIRMED", icon: Check },
+    { label: "Preparing Your Order", key: "PREPARING", icon: ChefHat },
+    { label: "Waiting for Delivery Partner", key: "READYFORPICKUP", icon: PackageCheck },
+    { label: "Out for Delivery", key: "INTRANSIT", icon: Bike },
+    { label: "Delivered", key: "DELIVERED", icon: Check },
+  ]
+  
+  const steps = hasTiffin ? [
+    ...baseSteps,
+    { label: "Return Pickup", key: "RETURN_PICKUP", icon: Bike },
+    { label: "Completed", key: "COMPLETED", icon: Check },
+  ] : [
     { label: "Order Confirmed", key: "CONFIRMED", icon: Check },
     { label: "Preparing Your Order", key: "PREPARING", icon: ChefHat },
     { label: "Waiting for Delivery Partner", key: "READYFORPICKUP", icon: PackageCheck },
     { label: "Out for Delivery", key: "INTRANSIT", icon: Bike },
     { label: "Delivery Completed", key: "COMPLETED", icon: Check },
-  ]
+  ];
 
   return (
     <div className="w-full relative px-2 lg:px-8 py-6">
@@ -130,7 +152,7 @@ function HorizontalTimeline({ currentStep, category, history }: { currentStep: n
         {!isCancelled && (
           <div
             className="absolute top-[16px] left-[10%] h-[2px] bg-[#15803D] z-0 transition-all duration-500"
-            style={{ width: `${Math.min((currentStep / 4) * 80, 80)}%` }}
+            style={{ width: `${Math.min((currentStep / (steps.length - 1)) * 80, 80)}%` }}
           />
         )}
         {isCancelled && (
@@ -158,18 +180,18 @@ function HorizontalTimeline({ currentStep, category, history }: { currentStep: n
                 <Icon className="w-4 h-4" strokeWidth={2.5} />
               </div>
               <p className={cn(
-                "text-[12px] lg:text-[13px] font-[600] text-center mb-1 leading-tight",
+                "text-[10px] sm:text-[12px] lg:text-[13px] font-[600] text-center mb-1 leading-tight",
                 isError ? "text-[#EF4444]" : (isActive ? "text-[#15803D]" : "text-[#6B7280]")
               )}>
                 {isError ? "Cancelled" : step.label}
               </p>
               {isActive && !isError && dateStr && (
-                <p className="text-[11px] lg:text-[12px] font-[400] text-[#6B7280] text-center">
+                <p className="text-[10px] lg:text-[11px] font-[400] text-[#6B7280] text-center">
                   {dateStr}
                 </p>
               )}
               {isError && dateStr && (
-                <p className="text-[11px] lg:text-[12px] font-[400] text-[#6B7280] text-center">
+                <p className="text-[10px] lg:text-[11px] font-[400] text-[#6B7280] text-center">
                   {dateStr}
                 </p>
               )}
@@ -413,7 +435,7 @@ export function OrderCard({ order }: { order: UserOrder & { statusHistory?: { st
 
       {/* Row 2: Horizontal Timeline */}
       <div className="w-full border-y border-[#F3F4F6] bg-[#FAFAFA] flex items-center justify-center">
-        <HorizontalTimeline currentStep={currentStep} category={category} history={order.statusHistory} />
+        <HorizontalTimeline currentStep={currentStep} category={category} history={order.statusHistory} hasTiffin={!!tiffinPickup} />
       </div>
 
       {/* Row 3: Address & Expected Delivery */}

@@ -53,7 +53,7 @@ async function main() {
       console.log(`Payment ${row.id} -> ${publicCode}`);
     }
 
-    const refunds = await tx.refund.findMany({ orderBy: ORDER_BY, select: { id: true, publicCode: true } });
+    const refunds = await tx.refund.findMany({ orderBy: [{ initiatedAt: "asc" as const }, { id: "asc" as const }], select: { id: true, publicCode: true } });
     for (const row of refunds) {
       if (row.publicCode) continue;
       const publicCode = await allocatePublicCode(tx, PUBLIC_ID_SPECS.REFUND);

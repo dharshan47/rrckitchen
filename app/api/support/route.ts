@@ -36,7 +36,11 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ success: true, ticket });
   } catch (error) {
     console.error("[Support] POST failed:", error);
-    return NextResponse.json({ error: "Failed to create support ticket" }, { status: 500 });
+    if (error instanceof Error) {
+      console.error("Error message:", error.message);
+      console.error("Error stack:", error.stack);
+    }
+    return NextResponse.json({ error: "Failed to create support ticket", details: String(error) }, { status: 500 });
   }
 }
 

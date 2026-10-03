@@ -264,7 +264,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
     <>
       <div className="flex flex-col flex-1 overflow-hidden min-h-0">
         {/* Header section */}
-        <div className="p-6 pb-0">
+        <div className="p-6 pb-0 shrink-0">
           <div className="flex items-start justify-between mb-6 mr-8">
             <div>
               <h2 className="text-[20px] font-bold text-[#111827]">Edit Kitchen Details</h2>
@@ -374,9 +374,9 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
         </div>
 
         <Tabs defaultValue="general" className="w-full flex-1 flex flex-col min-h-0">
-          <div className="px-6 border-b border-[#EEF2F6]">
+          <div className="px-6 border-b border-[#EEF2F6] shrink-0">
             <ScrollArea className="w-full">
-              <TabsList className="w-full justify-start rounded-none h-12 bg-transparent p-0 space-x-6 flex-nowrap">
+              <TabsList className="w-max justify-start rounded-none h-12 bg-transparent p-0 space-x-6 flex-nowrap">
                 <TabsTrigger value="general" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">General</TabsTrigger>
                 <TabsTrigger value="menu" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Menu & Cuisines</TabsTrigger>
                 <TabsTrigger value="location" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Location</TabsTrigger>
@@ -388,7 +388,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
             </ScrollArea>
           </div>
 
-          <ScrollArea className="flex-1 px-6">
+          <ScrollArea className="flex-1 px-6 min-h-0">
             <TabsContent value="general" className="py-6 space-y-8 mt-0 outline-none">
               
               <div className="space-y-4">
@@ -827,7 +827,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
             </TabsContent>
           </ScrollArea>
 
-          <div className="p-5 border-t border-[#EEF2F6] bg-[#FFFFFF] flex items-center justify-end gap-3 mt-auto">
+          <div className="p-5 border-t border-[#EEF2F6] bg-[#FFFFFF] flex items-center justify-end gap-3 mt-auto shrink-0">
             <Button 
               variant="outline" 
               onClick={onClose}

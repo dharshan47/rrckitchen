@@ -1189,7 +1189,7 @@ export default function AdminSupportPage() {
         <SheetContent
           side="right"
           showCloseButton={false}
-          className="w-full sm:max-w-lg p-0 flex flex-col bg-[#FFFFFF] border-l border-[#E5E7EB] gap-0"
+          className="!w-full !max-w-[100vw] sm:!max-w-lg p-0 flex flex-col bg-[#FFFFFF] border-l border-[#E5E7EB] gap-0"
         >
           {selectedTicket && (
             <>
@@ -1758,7 +1758,7 @@ export default function AdminSupportPage() {
               </ScrollArea>
 
               {/* Action Buttons - fixed at bottom */}
-              <div className="border-t border-[#EEF0F2] px-6 py-4 flex flex-wrap items-center justify-between gap-3 flex-shrink-0 bg-[#FFFFFF]">
+              <div className="border-t border-[#EEF0F2] p-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-3 flex-shrink-0 bg-[#FFFFFF] w-full">
                 <Button
                   size="sm"
                   variant="outline"
@@ -1767,7 +1767,7 @@ export default function AdminSupportPage() {
                     selectedTicket.status === "INPROGRESS" ||
                     updateMutation.isPending
                   }
-                  className="flex-1 min-w-[120px] h-10 rounded-[7px] text-[12px] font-bold border border-[#D4EAD6] bg-[#F2FAF3] text-[#15803D] hover:bg-[#E8F5EA] gap-1.5 shadow-none"
+                  className="w-full sm:flex-1 sm:min-w-[120px] h-10 rounded-[7px] text-[12px] font-bold border border-[#D4EAD6] bg-[#F2FAF3] text-[#15803D] hover:bg-[#E8F5EA] gap-1.5 shadow-none"
                 >
                   <Clock3
                     className="h-[14px] w-[14px] text-[#16A34A]"
@@ -1783,7 +1783,7 @@ export default function AdminSupportPage() {
                     selectedTicket.status === "RESOLVED" ||
                     updateMutation.isPending
                   }
-                  className="flex-1 min-w-[120px] h-10 rounded-[7px] text-[12px] font-bold border border-[#D4EAD6] bg-[#F2FAF3] text-[#15803D] hover:bg-[#E8F5EA] gap-1.5 shadow-none"
+                  className="w-full sm:flex-1 sm:min-w-[120px] h-10 rounded-[7px] text-[12px] font-bold border border-[#D4EAD6] bg-[#F2FAF3] text-[#15803D] hover:bg-[#E8F5EA] gap-1.5 shadow-none"
                 >
                   <Check
                     className="h-[14px] w-[14px] text-[#16A34A]"
@@ -1799,7 +1799,7 @@ export default function AdminSupportPage() {
                     selectedTicket.status === "CLOSED" ||
                     updateMutation.isPending
                   }
-                  className="flex-1 min-w-[120px] h-10 rounded-[7px] text-[12px] font-bold border border-[#E2E8F0] bg-[#F8FAFC] text-[#334155] hover:bg-[#F1F5F9] gap-1.5 shadow-none"
+                  className="w-full sm:flex-1 sm:min-w-[120px] h-10 rounded-[7px] text-[12px] font-bold border border-[#E2E8F0] bg-[#F8FAFC] text-[#334155] hover:bg-[#F1F5F9] gap-1.5 shadow-none"
                 >
                   <Lock
                     className="h-[14px] w-[14px] text-[#475569]"

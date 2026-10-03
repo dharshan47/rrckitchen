@@ -170,7 +170,7 @@ export default function SupportPageClient() {
       })
       if (!res.ok) {
         const err = await res.json().catch(() => ({ error: "Failed to create ticket" }))
-        throw new Error(err.error || "Failed to create ticket")
+        throw new Error(err.details || err.error || "Failed to create ticket")
       }
       return res.json()
     },
