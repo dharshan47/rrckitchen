@@ -465,17 +465,17 @@ export default function AdminMenuPage() {
             { title: "Most Ordered", value: stats.topItem?.name ?? "—", subtitle: stats.topItem ? `${stats.topItem.orderCount.toLocaleString("en-IN")} orders` : "no orders yet", icon: Star, color: "text-[#22C55E]", bg: "bg-[#F0FDF4]" },
           ].map((stat, i) => (
             <Card key={i} className="shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-[#E5E7EB] rounded-[16px] bg-white overflow-hidden">
-              <CardContent className="p-5 flex flex-col gap-4">
-                <div className="flex items-start gap-4">
-                  <div className={`h-[48px] w-[48px] rounded-full flex items-center justify-center shrink-0 ${stat.bg} ${stat.color}`}>
-                    <stat.icon className="h-6 w-6" strokeWidth={2} />
+              <CardContent className="p-4 sm:p-5 flex flex-col gap-3 sm:gap-4">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4 text-center sm:text-left">
+                  <div className={`h-[40px] w-[40px] sm:h-[48px] sm:w-[48px] rounded-full flex items-center justify-center shrink-0 ${stat.bg} ${stat.color}`}>
+                    <stat.icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2} />
                   </div>
-                  <div className="flex flex-col min-w-0">
-                    <p className="text-[12px] font-bold text-[#6B7280] leading-tight mb-1">{stat.title}</p>
-                    <h3 className="text-[22px] font-extrabold text-[#111827] leading-none truncate">{stat.value}</h3>
+                  <div className="flex flex-col min-w-0 w-full">
+                    <p className="text-[11px] sm:text-[12px] font-bold text-[#6B7280] leading-tight mb-0.5 sm:mb-1">{stat.title}</p>
+                    <h3 className="text-[18px] sm:text-[22px] font-extrabold text-[#111827] leading-none truncate">{stat.value}</h3>
                   </div>
                 </div>
-                <p className="text-[12px] font-bold text-center mt-1 text-[#9CA3AF] truncate">
+                <p className="text-[10px] sm:text-[12px] font-bold text-center sm:text-left mt-0 sm:mt-1 text-[#9CA3AF] truncate">
                   {stat.subtitle}
                 </p>
               </CardContent>

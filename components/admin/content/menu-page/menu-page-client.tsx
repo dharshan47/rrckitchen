@@ -324,10 +324,10 @@ export function MenuPageClient() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <div className="flex items-center gap-3">
+            <div className="grid grid-cols-2 md:flex md:items-center gap-3 w-full md:w-auto">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="h-[44px] flex-1 md:w-[110px] border-[#DDE3E8] text-[#1F2937] bg-[#FFFFFF] font-medium rounded-[8px] focus:ring-0 focus:border-[#008A3D]">
-                  <Filter className="h-[18px] w-[18px] text-[#334155] mr-1" strokeWidth={1.8} />
+                <SelectTrigger className="h-[44px] w-full md:w-[110px] border-[#DDE3E8] text-[#1F2937] bg-[#FFFFFF] font-medium rounded-[8px] focus:ring-0 focus:border-[#008A3D]">
+                  <Filter className="h-[18px] w-[18px] text-[#334155] mr-1 shrink-0" strokeWidth={1.8} />
                   <SelectValue placeholder="Filter" />
                 </SelectTrigger>
                 <SelectContent>
@@ -337,7 +337,7 @@ export function MenuPageClient() {
                 </SelectContent>
               </Select>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="h-[44px] flex-1 md:w-[160px] border-[#DDE3E8] bg-[#FFFFFF] font-medium text-[#1F2937] rounded-[8px] focus:ring-0 focus:border-[#008A3D]">
+                <SelectTrigger className="h-[44px] w-full md:w-[160px] border-[#DDE3E8] bg-[#FFFFFF] font-medium text-[#1F2937] rounded-[8px] focus:ring-0 focus:border-[#008A3D]">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
                 <SelectContent>

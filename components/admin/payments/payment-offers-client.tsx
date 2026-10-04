@@ -662,12 +662,12 @@ export default function PaymentOffersClient() {
             <h1 className="text-[24px] font-bold text-[#0F172A] leading-tight">Payment Offers Management</h1>
             <p className="text-[#475569] mt-1 text-[13px]">Create and manage payment method offers to boost conversions</p>
           </div>
-          <div className="flex items-center gap-3">
-            <Button variant="outline" onClick={exportCSV} className="flex items-center gap-2 px-4 h-[40px] bg-white border border-[#E2E8F0] text-[#0F172A] rounded-[7px] font-medium text-[13px] hover:bg-gray-50 transition-colors shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <Button variant="outline" onClick={exportCSV} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 h-[40px] bg-white border border-[#E2E8F0] text-[#0F172A] rounded-[7px] font-medium text-[13px] hover:bg-gray-50 transition-colors shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
               <Download className="h-[16px] w-[16px] text-[#0F172A]" />
               Export Offers
             </Button>
-            <Button onClick={openCreate} disabled={isFetching} className="flex items-center gap-2 px-4 h-[40px] bg-[#FF6B00] text-white rounded-[7px] font-medium text-[13px] hover:bg-[#EA580C] transition-colors shadow-[0_1px_3px_rgba(15,23,42,0.04)] border-none">
+            <Button onClick={openCreate} disabled={isFetching} className="flex-1 md:flex-none flex items-center justify-center gap-2 px-4 h-[40px] bg-[#FF6B00] text-white rounded-[7px] font-medium text-[13px] hover:bg-[#EA580C] transition-colors shadow-[0_1px_3px_rgba(15,23,42,0.04)] border-none whitespace-nowrap">
               <Plus className="h-[16px] w-[16px]" strokeWidth={2.5} />
               Create New Offer
             </Button>

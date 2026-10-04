@@ -590,7 +590,7 @@ export default function AdminDeliveryPage() {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-2 sm:flex sm:items-center gap-3 sm:gap-8 mb-6">
+                <div className="grid grid-cols-2 sm:flex sm:flex-wrap sm:items-center gap-3 sm:gap-8 mb-6">
                   <div className="flex flex-col items-center sm:items-start shrink-0 bg-[#F9FAFB] sm:bg-transparent p-3 sm:p-0 rounded-xl sm:rounded-none border border-[#EEF0F2] sm:border-transparent">
                     <span className="text-[15px] sm:text-[16px] font-bold flex items-center gap-1.5 text-[#1F2937]">
                       <Star className="h-4 w-4 fill-[#F59E0B] text-[#F59E0B]" />
@@ -612,7 +612,7 @@ export default function AdminDeliveryPage() {
                   </div>
                 </div>
 
-                <ScrollArea className="w-full border-b-0">
+                <ScrollArea className="w-full max-w-full border-b-0">
                   <div className="flex items-center gap-4 sm:gap-7 w-max pr-4">
                     <button
                       onClick={() => setActiveTab("overview")}
@@ -631,7 +631,7 @@ export default function AdminDeliveryPage() {
                 </ScrollArea>
               </SheetHeader>
 
-              <ScrollArea className="flex-1 bg-[#F9FAFB] w-full">
+              <ScrollArea className="flex-1 min-h-0 bg-[#F9FAFB] w-full">
                 <div className="p-4 sm:p-8 space-y-6">
                 {activeTab === "overview" && (
                   <div className="flex flex-col gap-6">
@@ -790,6 +790,7 @@ export default function AdminDeliveryPage() {
                   </div>
                 )}
                 </div>
+                <ScrollBar orientation="vertical" />
               </ScrollArea>
             </>
           )}

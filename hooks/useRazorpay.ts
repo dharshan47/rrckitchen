@@ -381,7 +381,11 @@ export function useRazorpay() {
         name: "RRC Kitchen",
         description: `Order for ${items.length} item(s)  •  ₹${total.toFixed(2)}`,
         order_id: order.orderId,
-        prefill: { contact: phoneNumber, name: prefill?.name, email: prefill?.email },
+        prefill: { 
+          contact: phoneNumber, 
+          ...(prefill?.name ? { name: prefill.name } : {}),
+          ...(prefill?.email ? { email: prefill.email } : {})
+        },
         theme: { color: "#EE7005" },
         config: PAYMENT_BLOCKS_CONFIG,
         notes: { localOrderId: order.localOrderId },

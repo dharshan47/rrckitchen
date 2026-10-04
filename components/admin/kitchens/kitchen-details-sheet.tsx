@@ -313,7 +313,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
             </div>
 
             <div className="flex flex-col pt-1">
-              <div className="flex items-center gap-3 mb-1.5">
+              <div className="flex flex-wrap items-center gap-3 mb-1.5">
                 <CloudinaryUpload
                   onUpload={(result) =>
                     imageMutation
@@ -328,7 +328,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
                   }
                 >
                   {({ uploading, startUpload }) => (
-                    <button type="button" onClick={startUpload} disabled={uploading} className="relative group rounded-full overflow-hidden h-9 w-9">
+                    <button type="button" onClick={startUpload} disabled={uploading} className="relative group rounded-full overflow-hidden h-9 w-9 shrink-0">
                       <Avatar className="h-9 w-9 rounded-full border border-[#E2E8F0] bg-[#F8FAFC]">
                         <AvatarImage src={kitchen.imageUrl || "/kitchen/profile.webp"} alt={name} className="object-cover" />
                         <AvatarFallback className="rounded-full bg-[#F8FAFC] text-[#475569] text-[14px] font-semibold">K</AvatarFallback>
@@ -339,15 +339,17 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
                     </button>
                   )}
                 </CloudinaryUpload>
-                <h3 className="text-[18px] font-bold text-[#111827]">{name}</h3>
-                <Badge variant="outline" className={`uppercase font-bold tracking-wide px-2 py-0.5 text-[10px] rounded-[6px] ${statusStyles[kitchen.status]}`}>
+                <h3 className="text-[18px] font-bold text-[#111827] leading-tight break-words min-w-0 flex-1">{name}</h3>
+                <Badge variant="outline" className={`uppercase font-bold tracking-wide px-2 py-0.5 text-[10px] rounded-[6px] shrink-0 whitespace-nowrap ${statusStyles[kitchen.status]}`}>
                   {kitchen.status === "PENDINGAPPROVAL" ? "PENDING" : kitchen.status}
                 </Badge>
               </div>
               
-              <p className="text-[12px] text-[#64748B] mb-3">
-                ID: {kitchen.publicCode ?? `KITCHEN_${kitchen.id.substring(0, 5).toUpperCase()}`} • Joined on {kitchen.createdAt ? new Date(kitchen.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : "New"}
-              </p>
+              <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[12px] text-[#64748B] mb-3">
+                <span className="shrink-0">ID: {kitchen.publicCode ?? `KITCHEN_${kitchen.id.substring(0, 5).toUpperCase()}`}</span>
+                <span className="hidden sm:inline shrink-0">•</span>
+                <span className="shrink-0">Joined on {kitchen.createdAt ? new Date(kitchen.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : "New"}</span>
+              </div>
 
               <div className="flex items-center gap-1.5 mb-5">
                 <Star className="h-[14px] w-[14px] text-[#F59E0B] fill-[#F59E0B]" />
@@ -825,20 +827,21 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
                 </div>
               </div>
             </TabsContent>
+            <ScrollBar orientation="vertical" />
           </ScrollArea>
 
-          <div className="p-5 border-t border-[#EEF2F6] bg-[#FFFFFF] flex items-center justify-end gap-3 mt-auto shrink-0">
+          <div className="p-5 border-t border-[#EEF2F6] bg-[#FFFFFF] flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-auto shrink-0 w-full">
             <Button 
               variant="outline" 
               onClick={onClose}
-              className="h-[40px] px-6 bg-[#FFFFFF] border-[#E2E8F0] text-[#334155] hover:bg-[#F8FAFC] rounded-[8px]"
+              className="w-full sm:w-auto h-[40px] px-6 bg-[#FFFFFF] border-[#E2E8F0] text-[#334155] hover:bg-[#F8FAFC] rounded-[8px]"
             >
               Cancel
             </Button>
             <Button 
               onClick={handleSaveGeneral} 
               disabled={detailsMutation.isPending || offerTextMutation.isPending}
-              className="h-[40px] px-6 bg-[#07883F] hover:bg-[#057333] active:bg-[#04652D] text-[#FFFFFF] rounded-[8px] border border-[#07883F]"
+              className="w-full sm:w-auto h-[40px] px-6 bg-[#07883F] hover:bg-[#057333] active:bg-[#04652D] text-[#FFFFFF] rounded-[8px] border border-[#07883F]"
             >
               {(detailsMutation.isPending || offerTextMutation.isPending) && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Update Kitchen

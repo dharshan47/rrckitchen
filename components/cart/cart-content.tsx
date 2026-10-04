@@ -14,7 +14,7 @@ import {
 import { useOptimisticCart } from "@/hooks/useOptimisticCart";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import { useSession } from "@/lib/auth-client";
-import { useCartCoupon, useMenuDeliveryAddress, useCartActions } from "@/stores";
+import { useCartCoupon, useCartActions } from "@/stores";
 import type { AppliedCoupon } from "@/stores";
 import {
   useCartAddressesQuery,
@@ -226,7 +226,6 @@ export function CartContent() {
   const { cart, updateQuantity, removeFromCart, total } = useOptimisticCart();
   const { initiateCheckout, isProcessing, paymentResult, resetPayment } = useRazorpay();
   const { data: session, isPending } = useSession();
-  const deliveryAddress = useMenuDeliveryAddress();
   const appliedCoupon = useCartCoupon();
   const { applyCoupon, removeCoupon, clearCart } = useCartActions();
 
@@ -321,7 +320,7 @@ export function CartContent() {
   });
 
   const handleCheckout = useEventCallback(async () => {
-    if (!deliveryAddress) {
+    if (!defaultAddress) {
       toast.error("Please select a delivery location before placing your order");
       return;
     }
@@ -339,7 +338,11 @@ export function CartContent() {
       serviceDateType,
       toIsoDate(deliveryDate),
       selectedSlot,
-      defaultAddress?.id
+      defaultAddress?.id,
+      {
+        name: session?.user?.name || undefined,
+        email: session?.user?.email || undefined,
+      }
     );
   });
 
@@ -769,7 +772,7 @@ export function CartContent() {
       </div>
 
       <div className="fixed bottom-0 left-0 right-0 z-50 bg-[#FFFFFF] border-t border-[#E7E7E7] p-4 md:hidden safe-area-bottom">
-        {!deliveryAddress ? (
+        {!defaultAddress ? (
           <button
             onClick={() => setAddressSheetOpen(true)}
             className="w-full bg-[#FE4D02] hover:bg-[#F04400] text-white rounded-[7px] py-3.5 flex items-center justify-center gap-3 shadow-[0_3px_8px_rgba(254,77,2,0.16)] transition-colors"

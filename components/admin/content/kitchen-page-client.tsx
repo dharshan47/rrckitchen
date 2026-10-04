@@ -2394,9 +2394,9 @@ export default function KitchenSearchPagesManagement() {
       <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[24px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
         {/* Header Section */}
         <div className="px-8 py-6 border-b border-[#EEF0F2] bg-[#FFFFFF]">
-          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
-            <div className="flex items-center gap-4">
-              <div className="text-[#FF4B0B] stroke-[1.8px]">
+          <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
+            <div className="flex items-start lg:items-center gap-4">
+              <div className="text-[#FF4B0B] stroke-[1.8px] mt-1 lg:mt-0 shrink-0">
                 <ChefHat className="h-8 w-8" strokeWidth={1.8} />
               </div>
               <div>
@@ -2410,18 +2410,18 @@ export default function KitchenSearchPagesManagement() {
               </div>
             </div>
 
-            <div className="flex flex-col items-end gap-2 w-full lg:w-auto">
-              <div className="flex w-full lg:w-auto items-center gap-3">
+            <div className="flex flex-col items-start lg:items-end gap-2 w-full lg:w-auto mt-2 lg:mt-0">
+              <div className="flex flex-col sm:flex-row w-full lg:w-auto items-stretch sm:items-center gap-3">
                 <Button
                   variant="outline"
-                  className="w-full lg:w-auto bg-[#FFFFFF] border-[#9BD0AE] text-[#087A3D] hover:bg-[#EAF7EF] rounded-[8px] h-[40px] px-4 font-semibold text-[14px]"
+                  className="w-full sm:w-auto bg-[#FFFFFF] border-[#9BD0AE] text-[#087A3D] hover:bg-[#EAF7EF] rounded-[8px] h-[40px] px-4 font-semibold text-[14px]"
                   onClick={() => window.open("/search", "_blank")}
                 >
                   View Live Site{" "}
                   <ExternalLink className="h-4 w-4 ml-2" strokeWidth={1.8} />
                 </Button>
                 <Button
-                  className="w-full lg:w-auto bg-[#FF4B0B] hover:bg-[#E94106] text-[#FFFFFF] rounded-[10px] h-[44px] px-[18px] font-semibold text-[14px] shadow-[0_2px_5px_rgba(255,75,11,0.12)]"
+                  className="w-full sm:w-auto bg-[#FF4B0B] hover:bg-[#E94106] text-[#FFFFFF] rounded-[10px] h-[44px] px-[18px] font-semibold text-[14px] shadow-[0_2px_5px_rgba(255,75,11,0.12)]"
                   onClick={() => setAddDialogOpen(true)}
                 >
                   <Plus className="h-[18px] w-[18px] mr-2" strokeWidth={2} />{" "}

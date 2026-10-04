@@ -529,19 +529,19 @@ export default function AdminLoyaltyPointsPage() {
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
           <Button
             variant="outline"
             size="sm"
             onClick={handleExport}
-            className="h-10 rounded-[8px] px-4 text-sm font-semibold text-[#334155] border-[#E2E8F0] bg-[#FFFFFF] hover:bg-[#F8FAFC] hover:border-[#CBD5E1] gap-2 shadow-none"
+            className="flex-1 md:flex-none justify-center h-10 rounded-[8px] px-4 text-sm font-semibold text-[#334155] border-[#E2E8F0] bg-[#FFFFFF] hover:bg-[#F8FAFC] hover:border-[#CBD5E1] gap-2 shadow-none"
           >
             <Download className="h-4 w-4 text-[#334155]" strokeWidth={1.8} /> Export
           </Button>
           <Button
             size="sm"
             onClick={openCreate}
-            className="h-10 rounded-[8px] px-5 text-sm font-bold bg-[#6D3DE8] hover:bg-[#6132D7] active:bg-[#5428C4] text-[#FFFFFF] gap-2 shadow-[0_4px_12px_rgba(109,61,232,0.18)] border-none"
+            className="flex-1 md:flex-none justify-center h-10 rounded-[8px] px-5 text-sm font-bold bg-[#6D3DE8] hover:bg-[#6132D7] active:bg-[#5428C4] text-[#FFFFFF] gap-2 shadow-[0_4px_12px_rgba(109,61,232,0.18)] border-none whitespace-nowrap"
           >
             <Plus className="h-4 w-4 text-[#FFFFFF]" strokeWidth={2} /> Create New Coupon
           </Button>

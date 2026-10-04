@@ -1189,7 +1189,7 @@ export default function AdminSupportPage() {
         <SheetContent
           side="right"
           showCloseButton={false}
-          className="!w-full !max-w-[100vw] sm:!max-w-lg p-0 flex flex-col bg-[#FFFFFF] border-l border-[#E5E7EB] gap-0"
+          className="w-full max-w-[100vw] sm:!max-w-[500px] p-0 flex flex-col bg-[#FFFFFF] border-l border-[#E5E7EB] gap-0"
         >
           {selectedTicket && (
             <>
@@ -1209,7 +1209,7 @@ export default function AdminSupportPage() {
               </div>
 
               {/* Scrollable body */}
-              <ScrollArea className="flex-1 min-h-0">
+              <ScrollArea className="flex-1 min-h-0 w-full overflow-x-hidden">
                 <div className="px-6 pt-5">
                   {/* Badges & ID */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-6">
@@ -1370,7 +1370,7 @@ export default function AdminSupportPage() {
 
               {/* Conversation Thread */}
               {detailTab === "conversation" && (
-                <div className="px-6 py-5 space-y-5">
+                <div className="px-6 py-5 space-y-5 overflow-x-hidden">
                   {/* Always show the description as the initial issue message if it's not the live chat default */}
                   {selectedTicket.description !== "Live chat initiated by user" && (
                     <div className="flex gap-3 flex-row">
@@ -1387,7 +1387,7 @@ export default function AdminSupportPage() {
                           </AvatarFallback>
                         )}
                       </Avatar>
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1.5">
                           <span className="text-[11px] font-bold text-[#1F2937]">
                             {selectedTicket.user?.name || "Customer"}
@@ -1399,7 +1399,7 @@ export default function AdminSupportPage() {
                             )}
                           </span>
                         </div>
-                        <div className="px-4 py-3 text-[13px] font-medium leading-relaxed max-w-[90%] bg-[#FFFFFF] border border-[#EEF0F2] text-[#334155] rounded-[10px] rounded-tl-none">
+                        <div className="px-4 py-3 text-[13px] font-medium leading-relaxed max-w-[90%] break-words bg-[#FFFFFF] border border-[#EEF0F2] text-[#334155] rounded-[10px] rounded-tl-none">
                           {selectedTicket.mediaUrls?.map((url, i) => (
                             <Image key={i} src={url} alt="Attachment" width={500} height={500} className="max-w-full rounded-md mb-2 object-cover max-h-48" />
                           ))}
@@ -1454,7 +1454,7 @@ export default function AdminSupportPage() {
                           </Avatar>
                           <div
                             className={cn(
-                              "flex-1",
+                              "flex-1 min-w-0",
                               isAdmin ? "items-end flex flex-col" : "",
                             )}
                           >
@@ -1480,7 +1480,7 @@ export default function AdminSupportPage() {
                               </div>
                               <div
                                 className={cn(
-                                  "px-4 py-3 text-[13px] font-medium leading-relaxed max-w-[90%]",
+                                  "px-4 py-3 text-[13px] font-medium leading-relaxed max-w-[90%] break-words",
                                   isAdmin
                                     ? "bg-[#F0F8F1] border border-[#DCEEDD] text-[#334155] rounded-[10px] rounded-tr-none"
                                     : "bg-[#FFFFFF] border border-[#EEF0F2] text-[#334155] rounded-[10px] rounded-tl-none",

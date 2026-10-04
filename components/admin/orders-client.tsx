@@ -754,7 +754,7 @@ function OrderSheet({
         </ScrollArea>
       </SheetHeader>
 
-      <ScrollArea className="flex-1 bg-[#F9FAFB]">
+      <ScrollArea className="flex-1 bg-[#F9FAFB] min-h-0">
         <div className="p-6 space-y-6">
         {tab === "overview" && (
         <>
@@ -1245,6 +1245,7 @@ function OrderSheet({
         </>
         )}
         </div>
+        <ScrollBar orientation="vertical" />
       </ScrollArea>
 
       <div className="p-5 border-t border-[#E5E7EB] bg-white flex flex-wrap-reverse sm:flex-nowrap justify-end gap-3 sticky bottom-0 z-10 rounded-b-xl">
