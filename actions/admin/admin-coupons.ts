@@ -62,13 +62,14 @@ export async function getSimpleKitchenPartners() {
     select: {
       id: true,
       kitchenAlias: { select: { displayName: true } },
+      user: { select: { name: true, fullName: true, email: true } },
     },
     orderBy: { createdAt: "desc" },
   })
 
   return partners.map((p) => ({
     id: p.id,
-    name: p.kitchenAlias?.displayName,
+    name: p.kitchenAlias?.displayName || p.user?.fullName || p.user?.name || "",
   }))
 }
 

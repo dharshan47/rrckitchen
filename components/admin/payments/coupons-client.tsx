@@ -17,12 +17,13 @@ import {
   TicketPercent, TicketCheck, ShoppingCart, IndianRupee,
   Loader2, CircleCheck,
   Pizza, CakeSlice, Crown, Upload, Files, BarChart3, Lightbulb,
-  ChevronLeft, ChevronRight, Clock, RefreshCcw
+  ChevronLeft, ChevronRight, Clock, RefreshCcw, Check, ChevronsUpDown, X
 } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
+import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   useReactTable,
   getCoreRowModel,
@@ -57,6 +58,8 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Switch } from "@/components/ui/switch"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 
 type Coupon = AdminCoupon
 
@@ -182,6 +185,7 @@ function SidebarSkeleton() {
 export default function AdminCouponsPage() {
   const [rowSelection, setRowSelection] = useState({})
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [openKitchenSelect, setOpenKitchenSelect] = useState(false)
   const [editingCoupon, setEditingCoupon] = useState<Coupon | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
@@ -258,6 +262,10 @@ export default function AdminCouponsPage() {
   const handleSave = () => {
     if (!formData.code.trim()) {
       toast.error("Coupon code is required")
+      return
+    }
+    if (formData.scope === "KITCHEN_SPECIFIC" && !formData.kitchenPartnerId) {
+      toast.error("Please select a kitchen partner")
       return
     }
     const payload = {
@@ -934,164 +942,208 @@ export default function AdminCouponsPage() {
 
       {/* Add / Edit Dialog (Functionality preserved) */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editingCoupon ? "Edit Coupon" : "Create New Coupon"}</DialogTitle>
-            <DialogDescription>
-              {editingCoupon ? "Update the details of the coupon campaign." : "Configure a new discount coupon campaign."}
-            </DialogDescription>
+        <DialogContent showCloseButton={false} className="sm:max-w-[600px] w-[95vw] p-0 overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85vh]">
+          <DialogHeader className="px-5 pt-5 pb-3 flex-shrink-0 border-b border-[#EEF0F3] relative">
+            <div className="flex justify-between items-start">
+              <div>
+                <DialogTitle>{editingCoupon ? "Edit Coupon" : "Create New Coupon"}</DialogTitle>
+                <DialogDescription>
+                  {editingCoupon ? "Update the details of the coupon campaign." : "Configure a new discount coupon campaign."}
+                </DialogDescription>
+              </div>
+              <button onClick={() => setIsDialogOpen(false)} className="h-8 w-8 rounded-full bg-[#F1F5F9] hover:bg-[#E2E8F0] flex items-center justify-center transition-colors shrink-0">
+                <X className="h-4 w-4 text-[#475569]" />
+              </button>
+            </div>
           </DialogHeader>
 
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
+          <ScrollArea className="flex-1 min-h-0">
+            <div className="grid gap-4 p-5 pb-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">Coupon Code</Label>
+                  <Input
+                    placeholder="e.g. SUMMER50"
+                    value={formData.code}
+                    onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
+                    className="h-9 text-sm font-semibold uppercase"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">Scope</Label>
+                  <Select value={formData.scope} onValueChange={(v) => setFormData({ ...formData, scope: v as "PLATFORM" | "KITCHEN_SPECIFIC" })}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PLATFORM">Platform (All Kitchens)</SelectItem>
+                      <SelectItem value="KITCHEN_SPECIFIC">Kitchen Specific</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {formData.scope === "KITCHEN_SPECIFIC" && (
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">Select Kitchen Partner</Label>
+                  <Popover open={openKitchenSelect} onOpenChange={setOpenKitchenSelect}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={openKitchenSelect}
+                        className="h-9 w-full justify-between text-sm font-normal px-3"
+                      >
+                        {formData.kitchenPartnerId
+                          ? kitchens.find((k) => k.id === formData.kitchenPartnerId)?.name ?? "Selected"
+                          : "Select a kitchen..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[var(--radix-popover-trigger-width)] p-0" align="start">
+                      <Command>
+                        <CommandInput placeholder="Search kitchen..." className="h-9" />
+                        <CommandList>
+                          <CommandEmpty>No kitchen found.</CommandEmpty>
+                          <CommandGroup>
+                            {kitchens.map((k) => (
+                              <CommandItem
+                                key={k.id}
+                                value={k.name || k.id}
+                                onSelect={() => {
+                                  setFormData({ ...formData, kitchenPartnerId: k.id })
+                                  setOpenKitchenSelect(false)
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    formData.kitchenPartnerId === k.id ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                {k.name ?? ""}
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              )}
+
               <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Coupon Code</Label>
+                <Label className="text-xs font-semibold">Description</Label>
                 <Input
-                  placeholder="e.g. SUMMER50"
-                  value={formData.code}
-                  onChange={(e) => setFormData({ ...formData, code: e.target.value.toUpperCase() })}
-                  className="h-9 text-sm font-semibold uppercase"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Scope</Label>
-                <Select value={formData.scope} onValueChange={(v) => setFormData({ ...formData, scope: v as "PLATFORM" | "KITCHEN_SPECIFIC" })}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PLATFORM">Platform (All Kitchens)</SelectItem>
-                    <SelectItem value="KITCHEN_SPECIFIC">Kitchen Specific</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            {formData.scope === "KITCHEN_SPECIFIC" && (
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Select Kitchen Partner</Label>
-                <Select value={formData.kitchenPartnerId} onValueChange={(v) => setFormData({ ...formData, kitchenPartnerId: v })}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue placeholder="Select a kitchen..." /></SelectTrigger>
-                  <SelectContent>
-                    {kitchens.map((k) => (
-                      <SelectItem key={k.id} value={k.id}>{k.name ?? ""}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
-
-            <div className="grid gap-2">
-              <Label className="text-xs font-semibold">Description</Label>
-              <Input
-                placeholder="e.g. 50% off on all pizzas"
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                className="h-9 text-sm"
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Discount Type</Label>
-                <Select value={formData.discountType} onValueChange={(v) => setFormData({ ...formData, discountType: v as "FLAT" | "PERCENTAGE" })}>
-                  <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="PERCENTAGE">Percentage (%)</SelectItem>
-                    <SelectItem value="FLAT">Flat Amount (₹)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Discount Value</Label>
-                <Input
-                  type="number"
-                  value={formData.discountValue}
-                  onChange={(e) => setFormData({ ...formData, discountValue: Number(e.target.value) })}
+                  placeholder="e.g. 50% off on all pizzas"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   className="h-9 text-sm"
                 />
               </div>
-            </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Max Discount (₹) <span className="text-muted-foreground font-normal">(Optional)</span></Label>
-                <Input
-                  type="number"
-                  value={formData.maxDiscount || ""}
-                  onChange={(e) => setFormData({ ...formData, maxDiscount: Number(e.target.value) })}
-                  className="h-9 text-sm"
-                  disabled={formData.discountType === "FLAT"}
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">Discount Type</Label>
+                  <Select value={formData.discountType} onValueChange={(v) => setFormData({ ...formData, discountType: v as "FLAT" | "PERCENTAGE" })}>
+                    <SelectTrigger className="h-9 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="PERCENTAGE">Percentage (%)</SelectItem>
+                      <SelectItem value="FLAT">Flat Amount (₹)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">Discount Value</Label>
+                  <Input
+                    type="number"
+                    value={formData.discountValue}
+                    onChange={(e) => setFormData({ ...formData, discountValue: Number(e.target.value) })}
+                    className="h-9 text-sm"
+                  />
+                </div>
               </div>
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Min Order Value (₹) <span className="text-muted-foreground font-normal">(Optional)</span></Label>
-                <Input
-                  type="number"
-                  value={formData.minOrderValue || ""}
-                  onChange={(e) => setFormData({ ...formData, minOrderValue: Number(e.target.value) })}
-                  className="h-9 text-sm"
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">Max Discount (₹) <span className="text-muted-foreground font-normal">(Optional)</span></Label>
+                  <Input
+                    type="number"
+                    value={formData.maxDiscount || ""}
+                    onChange={(e) => setFormData({ ...formData, maxDiscount: Number(e.target.value) })}
+                    className="h-9 text-sm"
+                    disabled={formData.discountType === "FLAT"}
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">Min Order Value (₹) <span className="text-muted-foreground font-normal">(Optional)</span></Label>
+                  <Input
+                    type="number"
+                    value={formData.minOrderValue || ""}
+                    onChange={(e) => setFormData({ ...formData, minOrderValue: Number(e.target.value) })}
+                    className="h-9 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">Valid From</Label>
+                  <Input
+                    type="datetime-local"
+                    value={formData.validFrom}
+                    onChange={(e) => setFormData({ ...formData, validFrom: e.target.value })}
+                    className="h-9 text-sm"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">Valid To</Label>
+                  <Input
+                    type="datetime-local"
+                    value={formData.validTo}
+                    onChange={(e) => setFormData({ ...formData, validTo: e.target.value })}
+                    className="h-9 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">Total Usage Limit <span className="text-muted-foreground font-normal">(Optional)</span></Label>
+                  <Input
+                    type="number"
+                    placeholder="e.g. 1000"
+                    value={formData.usageLimitTotal || ""}
+                    onChange={(e) => setFormData({ ...formData, usageLimitTotal: Number(e.target.value) })}
+                    className="h-9 text-sm"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label className="text-xs font-semibold">Usage Per User <span className="text-muted-foreground font-normal">(Optional)</span></Label>
+                  <Input
+                    type="number"
+                    placeholder="e.g. 1"
+                    value={formData.usageLimitPerUser || ""}
+                    onChange={(e) => setFormData({ ...formData, usageLimitPerUser: Number(e.target.value) })}
+                    className="h-9 text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3 mt-2 p-3 border rounded-[8px] bg-[#FAFBFC]">
+                <Switch
+                  checked={formData.isActive}
+                  onCheckedChange={(v) => setFormData({ ...formData, isActive: v })}
+                  className="data-[state=checked]:bg-[#087A3E]"
                 />
+                <div className="flex flex-col gap-0.5">
+                  <Label className="text-[13px] font-semibold text-[#101828]">Coupon is Active</Label>
+                  <span className="text-[11px] text-[#667085]">Customers can apply this coupon during checkout.</span>
+                </div>
               </div>
             </div>
+          </ScrollArea>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Valid From</Label>
-                <Input
-                  type="datetime-local"
-                  value={formData.validFrom}
-                  onChange={(e) => setFormData({ ...formData, validFrom: e.target.value })}
-                  className="h-9 text-sm"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Valid To</Label>
-                <Input
-                  type="datetime-local"
-                  value={formData.validTo}
-                  onChange={(e) => setFormData({ ...formData, validTo: e.target.value })}
-                  className="h-9 text-sm"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Total Usage Limit <span className="text-muted-foreground font-normal">(Optional)</span></Label>
-                <Input
-                  type="number"
-                  placeholder="e.g. 1000"
-                  value={formData.usageLimitTotal || ""}
-                  onChange={(e) => setFormData({ ...formData, usageLimitTotal: Number(e.target.value) })}
-                  className="h-9 text-sm"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label className="text-xs font-semibold">Usage Per User <span className="text-muted-foreground font-normal">(Optional)</span></Label>
-                <Input
-                  type="number"
-                  placeholder="e.g. 1"
-                  value={formData.usageLimitPerUser || ""}
-                  onChange={(e) => setFormData({ ...formData, usageLimitPerUser: Number(e.target.value) })}
-                  className="h-9 text-sm"
-                />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3 mt-2 p-3 border rounded-[8px] bg-[#FAFBFC]">
-              <Switch
-                checked={formData.isActive}
-                onCheckedChange={(v) => setFormData({ ...formData, isActive: v })}
-                className="data-[state=checked]:bg-[#087A3E]"
-              />
-              <div className="flex flex-col gap-0.5">
-                <Label className="text-[13px] font-semibold text-[#101828]">Coupon is Active</Label>
-                <span className="text-[11px] text-[#667085]">Customers can apply this coupon during checkout.</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center justify-end gap-3 mt-2 pt-4 border-t border-[#EAECF0]">
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="h-10 text-[14px] text-[#344054] border-[#E2E8F0] shadow-none">Cancel</Button>
+          <div className="flex items-center justify-end gap-3 p-4 border-t border-[#EAECF0] bg-gray-50 flex-shrink-0">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="h-10 text-[14px] text-[#344054] border-[#E2E8F0] shadow-none hover:bg-gray-100">Cancel</Button>
             <Button
               onClick={handleSave}
               className="h-10 text-[14px] font-semibold bg-[#087A3E] hover:bg-[#066B36] text-[#FFFFFF] shadow-none"

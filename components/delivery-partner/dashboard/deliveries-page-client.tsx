@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useEffect } from "react"
 import Link from "next/link"
+import { useSearchParams } from "next/navigation"
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query"
 import { useDeliveryData, useDeliveryActions } from "@/stores/deliveryDashboardStore"
 import type { getDeliveryDashboardData } from "@/actions/admin/dashboard"
@@ -55,8 +56,9 @@ function getPaymentDisplay(status: unknown): string {
 export default function DeliveriesPageClient() {
   const data = useDeliveryData()
   const queryClient = useQueryClient()
+  const searchParams = useSearchParams()
   const [activeTab, setActiveTab] = useState<"active" | "completed" | "tiffin">("active")
-  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
+  const [selectedOrderId, setSelectedOrderId] = useState<string | null>(searchParams.get("orderId"))
   const [showMobileDetails, setShowMobileDetails] = useState(false)
   // Network connection monitor
   useEffect(() => {

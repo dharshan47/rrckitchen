@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import type { Coupon } from "@/lib/generated/prisma/client";
+import type { Coupon, PaymentOffer, LoyaltyCoupon } from "@/lib/generated/prisma/client";
 import prisma from "@/lib/prisma";
 import { redis } from "@/lib/redis";
 
@@ -8,11 +8,19 @@ export async function POST(req: NextRequest) {
     const { cartTotal } = await req.json();
 
     const now = new Date();
-    const cacheKey = "coupon:offers:platform";
-    const cached = await redis.get(cacheKey);
-    const coupons: Coupon[] = cached
-      ? (cached as unknown as Coupon[])
-      : await prisma.coupon.findMany({
+    const couponCacheKey = "coupon:offers:platform";
+    const paymentOfferCacheKey = "payment:offers:active";
+    const loyaltyCouponCacheKey = "loyalty:coupons:active";
+    
+    const [cachedCoupons, cachedPaymentOffers, cachedLoyaltyCoupons] = await Promise.all([
+      redis.get(couponCacheKey),
+      redis.get(paymentOfferCacheKey),
+      redis.get(loyaltyCouponCacheKey)
+    ]);
+
+    const fetchCoupons = cachedCoupons
+      ? Promise.resolve(cachedCoupons as unknown as Coupon[])
+      : prisma.coupon.findMany({
           where: {
             isActive: true,
             validFrom: { lte: now },
@@ -23,11 +31,41 @@ export async function POST(req: NextRequest) {
           take: 10,
         });
 
-    if (!cached) {
-      await redis.set(cacheKey, coupons, { ex: 30 });
+    const fetchPaymentOffers = cachedPaymentOffers
+      ? Promise.resolve(cachedPaymentOffers as unknown as PaymentOffer[])
+      : prisma.paymentOffer.findMany({
+          where: {
+            isActive: true,
+            validFrom: { lte: now },
+            validTo: { gte: now },
+          },
+          orderBy: { discountValue: "desc" },
+          take: 10,
+        });
+
+    const fetchLoyaltyCoupons = cachedLoyaltyCoupons
+      ? Promise.resolve(cachedLoyaltyCoupons as unknown as LoyaltyCoupon[])
+      : prisma.loyaltyCoupon.findMany({
+          where: {
+            isActive: true,
+          },
+          orderBy: { discountValue: "desc" },
+          take: 10,
+        });
+
+    const [coupons, paymentOffers, loyaltyCoupons] = await Promise.all([fetchCoupons, fetchPaymentOffers, fetchLoyaltyCoupons]);
+
+    if (!cachedCoupons) {
+      await redis.set(couponCacheKey, coupons, { ex: 2 });
+    }
+    if (!cachedPaymentOffers) {
+      await redis.set(paymentOfferCacheKey, paymentOffers, { ex: 2 });
+    }
+    if (!cachedLoyaltyCoupons) {
+      await redis.set(loyaltyCouponCacheKey, loyaltyCoupons, { ex: 2 });
     }
 
-    const available = coupons
+    const availableCoupons = coupons
       .filter((c) => !c.minOrderValue || cartTotal >= Number(c.minOrderValue))
       .slice(0, 5)
       .map((c) => ({
@@ -38,9 +76,41 @@ export async function POST(req: NextRequest) {
         minOrderValue: c.minOrderValue ? Number(c.minOrderValue) : null,
       }));
 
-    return NextResponse.json({ coupons: available });
+    const availablePaymentOffers = paymentOffers
+      .filter((p) => !p.minOrderValue || cartTotal >= Number(p.minOrderValue))
+      .slice(0, 5)
+      .map((p) => ({
+        id: p.id,
+        name: p.name,
+        description: p.description ?? "",
+        offerType: p.offerType,
+        discountType: p.discountType,
+        discountValue: Number(p.discountValue),
+        maxDiscount: p.maxDiscount ? Number(p.maxDiscount) : null,
+        minOrderValue: p.minOrderValue ? Number(p.minOrderValue) : null,
+      }));
+
+    const availableLoyaltyCoupons = loyaltyCoupons
+      .filter((l) => !l.minOrderValue || cartTotal >= Number(l.minOrderValue))
+      .slice(0, 5)
+      .map((l) => ({
+        id: l.id,
+        name: l.name,
+        description: l.description ?? "",
+        discountType: l.discountType,
+        discountValue: Number(l.discountValue),
+        maxDiscount: l.maxDiscount ? Number(l.maxDiscount) : null,
+        minOrderValue: l.minOrderValue ? Number(l.minOrderValue) : null,
+        pointsCost: l.pointsCost,
+      }));
+
+    return NextResponse.json({ 
+      coupons: availableCoupons, 
+      paymentOffers: availablePaymentOffers,
+      loyaltyCoupons: availableLoyaltyCoupons
+    });
   } catch (error) {
     console.error("[Coupon Offers] Failed:", error);
-    return NextResponse.json({ coupons: [] });
+    return NextResponse.json({ coupons: [], paymentOffers: [], loyaltyCoupons: [] });
   }
 }

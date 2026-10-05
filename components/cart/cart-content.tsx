@@ -23,6 +23,8 @@ import {
   useCartAddresses,
   useCartConfig,
   useCartAvailableCoupons,
+  useCartAvailablePaymentOffers,
+  useCartAvailableLoyaltyCoupons,
 } from "@/stores/cartStore";
 import { DeliveryAddressCard } from "@/components/cart/delivery-address-card";
 import { useEventCallback } from "@/hooks/useStableReference";
@@ -32,7 +34,7 @@ import {
   Trash2, Minus, Plus, ShoppingBag,
   Loader2, Tag, Percent, ChevronRight, ChevronDown,
   MapPin, Clock, Lock, ShieldCheck, Info,
-  Home, Briefcase,
+  Home, Briefcase, Coins,
   Check, Calendar as CalendarIcon, X, Banknote
 } from "lucide-react";
 import { toast } from "sonner";
@@ -257,6 +259,8 @@ export function CartContent() {
   const addresses = useCartAddresses();
   const cartConfig = useCartConfig();
   const availableCoupons = useCartAvailableCoupons();
+  const availablePaymentOffers = useCartAvailablePaymentOffers();
+  const availableLoyaltyCoupons = useCartAvailableLoyaltyCoupons();
 
   const defaultAddress = useMemo(() => {
     if (selectedAddressId) return addresses.find(a => a.id === selectedAddressId) ?? null;
@@ -694,24 +698,58 @@ export function CartContent() {
               <div className="bg-[#FFFFFF] border border-[#E7E7E7] rounded-[8px] p-5 shadow-[0_2px_10px_rgba(0,0,0,0.04)]">
                 <h2 className="text-[16px] font-bold text-[#171717] mb-4">Available Offers</h2>
                 <div className="space-y-4">
-                  {availableCoupons.length === 0 ? (
+                  {availableCoupons.length === 0 && availablePaymentOffers.length === 0 && availableLoyaltyCoupons.length === 0 ? (
                     <p className="text-[13px] text-[#595959] text-center py-4">No offers available right now</p>
                   ) : (
-                    availableCoupons.map((offer) => (
-                      <div key={offer.code} className="flex items-start gap-3">
-                        <div className="h-9 w-9 rounded-full border border-[#CFE7D2] flex items-center justify-center shrink-0 bg-[#F0F8F0]">
-                          <Percent className="h-4 w-4 text-[#16803A]" />
+                    <>
+                      {availableCoupons.map((offer) => (
+                        <div key={offer.code} className="flex items-start gap-3">
+                          <div className="h-9 w-9 rounded-full border border-[#CFE7D2] flex items-center justify-center shrink-0 bg-[#F0F8F0]">
+                            <Percent className="h-4 w-4 text-[#16803A]" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[13px] font-bold text-[#222222] leading-snug">{offer.description}</p>
+                            <p className="text-[12px] font-bold text-[#222222] mt-0.5">{offer.code}</p>
+                          </div>
+                          <span className="text-[12px] font-bold text-[#595959] shrink-0 mt-0.5">T&amp;C</span>
                         </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-[13px] font-bold text-[#222222] leading-snug">{offer.description}</p>
-                          <p className="text-[12px] font-bold text-[#222222] mt-0.5">{offer.code}</p>
+                      ))}
+                      {availableLoyaltyCoupons.map((offer) => (
+                        <div key={offer.id} className="flex items-start gap-3">
+                          <div className="h-9 w-9 rounded-full border border-[#DBEAFE] flex items-center justify-center shrink-0 bg-[#EFF6FF]">
+                            <Coins className="h-4 w-4 text-[#2563EB]" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[13px] font-bold text-[#222222] leading-snug">{offer.name}</p>
+                            <p className="text-[12px] text-[#595959] font-medium leading-tight mt-0.5">{offer.description}</p>
+                            {offer.minOrderValue ? (
+                              <p className="text-[11px] font-bold text-[#2563EB] mt-1">Min. Order: ₹{offer.minOrderValue}</p>
+                            ) : null}
+                          </div>
+                          <div className="flex flex-col items-end shrink-0 mt-0.5">
+                            <span className="text-[12px] font-bold text-[#2563EB]">Use {offer.pointsCost} PTS</span>
+                          </div>
                         </div>
-                        <span className="text-[12px] font-bold text-[#595959] shrink-0 mt-0.5">T&amp;C</span>
-                      </div>
-                    ))
+                      ))}
+                      {availablePaymentOffers.map((offer) => (
+                        <div key={offer.id} className="flex items-start gap-3">
+                          <div className="h-9 w-9 rounded-full border border-[#FED7AA] flex items-center justify-center shrink-0 bg-[#FFF7ED]">
+                            <Banknote className="h-4 w-4 text-[#F97316]" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[13px] font-bold text-[#222222] leading-snug">{offer.name}</p>
+                            <p className="text-[12px] text-[#595959] font-medium leading-tight mt-0.5">{offer.description}</p>
+                            {offer.minOrderValue ? (
+                              <p className="text-[11px] font-bold text-[#F97316] mt-1">Min. Order: ₹{offer.minOrderValue}</p>
+                            ) : null}
+                          </div>
+                          <span className="text-[12px] font-bold text-[#595959] shrink-0 mt-0.5">Auto-applied</span>
+                        </div>
+                      ))}
+                    </>
                   )}
                 </div>
-                {availableCoupons.length > 0 && (
+                {(availableCoupons.length > 0 || availablePaymentOffers.length > 0 || availableLoyaltyCoupons.length > 0) && (
                   <button className="mt-5 text-[#FE4D02] text-[13px] font-bold flex items-center gap-1 w-full">
                     View More Offers <ChevronRight className="h-4 w-4 text-[#FE4D02]" />
                   </button>

@@ -37,7 +37,7 @@ import {
   Plus, Pencil, Trash2, Download, Search, RotateCcw, Coins, ChevronLeft, ChevronRight,
   Lightbulb, Ticket, TicketPercent, CircleCheck, CircleDollarSign,
   ListFilter, Smartphone, CreditCard, WalletCards, Landmark,
-  ChartNoAxesColumnIncreasing, Settings2
+  ChartNoAxesColumnIncreasing, Settings2, X
 } from "lucide-react"
 import { PieChart, Pie, Cell } from "recharts"
 import {
@@ -1050,118 +1050,136 @@ export default function AdminLoyaltyPointsPage() {
           }
         }}
       >
-        <DialogContent className="sm:max-w-lg rounded-[12px] bg-[#FFFFFF] border-[#E5E7EB] shadow-[0_16px_40px_rgba(15,23,42,0.12)]">
-          <DialogHeader>
-            <DialogTitle className="text-[18px] font-bold text-[#111827]">
-              {editingId ? "Edit Loyalty Coupon" : "Create New Loyalty Coupon"}
-            </DialogTitle>
-            <DialogDescription className="text-[14px] text-[#64748B]">
-              {editingId
-                ? "Update the coupon template details"
-                : "Add a new coupon template customers can purchase with loyalty points"}
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleSubmit(onSubmit)} className="grid gap-5 pt-3">
-            <div className="grid gap-2">
-              <Label htmlFor="name" className="text-[13px] font-semibold text-[#1F2937]">
-                Coupon Name *
-              </Label>
-              <Input
-                id="name"
-                placeholder="e.g. UPI Flat ₹50 Off"
-                {...register("name")}
-                className="h-10 rounded-[8px] border-[#E2E8F0] focus-visible:ring-[#8B5CF6] focus-visible:border-[#8B5CF6] text-[#111827]"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="description" className="text-[13px] font-semibold text-[#1F2937]">
-                Description
-              </Label>
-              <Textarea
-                id="description"
-                placeholder="Optional short description"
-                {...register("description")}
-                className="rounded-[8px] border-[#E2E8F0] focus-visible:ring-[#8B5CF6] focus-visible:border-[#8B5CF6] resize-none text-[#111827]"
-                rows={2}
-              />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="discountType" className="text-[13px] font-semibold text-[#1F2937]">
-                  Discount Type
-                </Label>
-                <Select
-                  value={discountType}
-                  onValueChange={(v) => setValue("discountType", v as "FLAT" | "PERCENTAGE")}
+        <DialogContent showCloseButton={false} className="sm:max-w-lg w-[95vw] rounded-[12px] bg-[#FFFFFF] border-[#E5E7EB] shadow-[0_16px_40px_rgba(15,23,42,0.12)] p-0 max-h-[90dvh] md:max-h-[85vh] overflow-hidden flex flex-col">
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col overflow-hidden h-full min-h-0">
+            <DialogHeader className="px-5 pt-5 pb-3 flex-shrink-0 border-b border-[#EEF0F3]">
+              <div className="flex justify-between items-start">
+                <div>
+                  <DialogTitle className="text-[18px] font-bold text-[#111827]">
+                    {editingId ? "Edit Loyalty Coupon" : "Create New Loyalty Coupon"}
+                  </DialogTitle>
+                  <DialogDescription className="text-[14px] text-[#64748B]">
+                    {editingId
+                      ? "Update the coupon template details"
+                      : "Add a new coupon template customers can purchase with loyalty points"}
+                  </DialogDescription>
+                </div>
+                <button 
+                  type="button" 
+                  onClick={() => {
+                    setDialogOpen(false)
+                    setEditingId(null)
+                  }} 
+                  className="h-8 w-8 rounded-full bg-[#F1F5F9] hover:bg-[#E2E8F0] flex items-center justify-center transition-colors shrink-0"
                 >
-                  <SelectTrigger className="h-10 rounded-[8px] border-[#E2E8F0] text-[#111827]">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="FLAT">Flat (₹)</SelectItem>
-                    <SelectItem value="PERCENTAGE">Percentage (%)</SelectItem>
-                  </SelectContent>
-                </Select>
+                  <X className="h-4 w-4 text-[#475569]" />
+                </button>
               </div>
-              <div className="grid gap-2">
-                <Label htmlFor="discountValue" className="text-[13px] font-semibold text-[#1F2937]">
-                  {discountType === "PERCENTAGE" ? "Discount (%) *" : "Discount (₹) *"}
-                </Label>
-                <Input
-                  id="discountValue"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="e.g. 50"
-                  {...register("discountValue")}
-                  className="h-10 rounded-[8px] border-[#E2E8F0] focus-visible:ring-[#8B5CF6] text-[#111827]"
-                />
+            </DialogHeader>
+            <ScrollArea className="flex-1 min-h-0">
+              <div className="grid gap-5 p-5 pb-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="name" className="text-[13px] font-semibold text-[#1F2937]">
+                    Coupon Name *
+                  </Label>
+                  <Input
+                    id="name"
+                    placeholder="e.g. UPI Flat ₹50 Off"
+                    {...register("name")}
+                    className="h-10 rounded-[8px] border-[#E2E8F0] focus-visible:ring-[#8B5CF6] focus-visible:border-[#8B5CF6] text-[#111827]"
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="description" className="text-[13px] font-semibold text-[#1F2937]">
+                    Description
+                  </Label>
+                  <Textarea
+                    id="description"
+                    placeholder="Optional short description"
+                    {...register("description")}
+                    className="rounded-[8px] border-[#E2E8F0] focus-visible:ring-[#8B5CF6] focus-visible:border-[#8B5CF6] resize-none text-[#111827]"
+                    rows={2}
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="discountType" className="text-[13px] font-semibold text-[#1F2937]">
+                      Discount Type
+                    </Label>
+                    <Select
+                      value={discountType}
+                      onValueChange={(v) => setValue("discountType", v as "FLAT" | "PERCENTAGE")}
+                    >
+                      <SelectTrigger className="h-10 rounded-[8px] border-[#E2E8F0] text-[#111827]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="FLAT">Flat (₹)</SelectItem>
+                        <SelectItem value="PERCENTAGE">Percentage (%)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="discountValue" className="text-[13px] font-semibold text-[#1F2937]">
+                      {discountType === "PERCENTAGE" ? "Discount (%) *" : "Discount (₹) *"}
+                    </Label>
+                    <Input
+                      id="discountValue"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="e.g. 50"
+                      {...register("discountValue")}
+                      className="h-10 rounded-[8px] border-[#E2E8F0] focus-visible:ring-[#8B5CF6] text-[#111827]"
+                    />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="maxDiscount" className="text-[13px] font-semibold text-[#1F2937]">
+                      Max Discount (₹)
+                    </Label>
+                    <Input
+                      id="maxDiscount"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="Optional"
+                      {...register("maxDiscount")}
+                      className="h-10 rounded-[8px] border-[#E2E8F0] focus-visible:ring-[#8B5CF6] text-[#111827]"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="minOrderValue" className="text-[13px] font-semibold text-[#1F2937]">
+                      Min Order (₹)
+                    </Label>
+                    <Input
+                      id="minOrderValue"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      placeholder="Optional"
+                      {...register("minOrderValue")}
+                      className="h-10 rounded-[8px] border-[#E2E8F0] focus-visible:ring-[#8B5CF6] text-[#111827]"
+                    />
+                  </div>
+                </div>
+                <div className="grid gap-2">
+                  <Label htmlFor="pointsCost" className="text-[13px] font-semibold text-[#1F2937]">
+                    Points Cost *
+                  </Label>
+                  <Input
+                    id="pointsCost"
+                    type="number"
+                    min="1"
+                    placeholder="e.g. 500"
+                    {...register("pointsCost")}
+                    className="h-10 rounded-[8px] border-[#E2E8F0] focus-visible:ring-[#8B5CF6] text-[#111827]"
+                  />
+                </div>
               </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="maxDiscount" className="text-[13px] font-semibold text-[#1F2937]">
-                  Max Discount (₹)
-                </Label>
-                <Input
-                  id="maxDiscount"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="Optional"
-                  {...register("maxDiscount")}
-                  className="h-10 rounded-[8px] border-[#E2E8F0] focus-visible:ring-[#8B5CF6] text-[#111827]"
-                />
-              </div>
-              <div className="grid gap-2">
-                <Label htmlFor="minOrderValue" className="text-[13px] font-semibold text-[#1F2937]">
-                  Min Order (₹)
-                </Label>
-                <Input
-                  id="minOrderValue"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="Optional"
-                  {...register("minOrderValue")}
-                  className="h-10 rounded-[8px] border-[#E2E8F0] focus-visible:ring-[#8B5CF6] text-[#111827]"
-                />
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="pointsCost" className="text-[13px] font-semibold text-[#1F2937]">
-                Points Cost *
-              </Label>
-              <Input
-                id="pointsCost"
-                type="number"
-                min="1"
-                placeholder="e.g. 500"
-                {...register("pointsCost")}
-                className="h-10 rounded-[8px] border-[#E2E8F0] focus-visible:ring-[#8B5CF6] text-[#111827]"
-              />
-            </div>
-            <div className="flex justify-end gap-3 pt-3">
+            </ScrollArea>
+            <div className="flex justify-end gap-3 p-4 border-t border-[#EEF0F3] bg-gray-50 flex-shrink-0">
               <Button
                 type="button"
                 variant="outline"

@@ -57,6 +57,27 @@ export interface CouponOffer {
   minOrderValue: number | null;
 }
 
+export interface PaymentOfferData {
+  id: string;
+  name: string;
+  description: string;
+  offerType: string;
+  discountType: string;
+  discountValue: number;
+  maxDiscount: number | null;
+  minOrderValue: number | null;
+}
+
+export interface LoyaltyCouponData {
+  id: string;
+  name: string;
+  description: string;
+  discountType: string;
+  discountValue: number;
+  maxDiscount: number | null;
+  minOrderValue: number | null;
+  pointsCost: number;
+}
 interface CartState {
   cart: CartItem[];
   appliedCoupon: AppliedCoupon | null;
@@ -64,6 +85,8 @@ interface CartState {
   addresses: CartAddress[];
   cartConfig: CartConfig | null;
   availableCoupons: CouponOffer[];
+  availablePaymentOffers: PaymentOfferData[];
+  availableLoyaltyCoupons: LoyaltyCouponData[];
   addToCart: (item: CartItem) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, qty: number) => void;
@@ -74,6 +97,8 @@ interface CartState {
   setAddresses: (addresses: CartAddress[]) => void;
   setCartConfig: (config: CartConfig | null) => void;
   setAvailableCoupons: (coupons: CouponOffer[]) => void;
+  setAvailablePaymentOffers: (offers: PaymentOfferData[]) => void;
+  setAvailableLoyaltyCoupons: (coupons: LoyaltyCouponData[]) => void;
   resetCartData: () => void;
 }
 
@@ -98,10 +123,14 @@ export const selectCartOrderType = (s: CartState) => s.orderType;
 export const selectCartAddresses = (s: CartState) => s.addresses;
 export const selectCartConfig = (s: CartState) => s.cartConfig;
 export const selectCartAvailableCoupons = (s: CartState) => s.availableCoupons;
+export const selectCartAvailablePaymentOffers = (s: CartState) => s.availablePaymentOffers;
+export const selectCartAvailableLoyaltyCoupons = (s: CartState) => s.availableLoyaltyCoupons;
 export const selectCartDataActions = (s: CartState) => ({
   setAddresses: s.setAddresses,
   setCartConfig: s.setCartConfig,
   setAvailableCoupons: s.setAvailableCoupons,
+  setAvailablePaymentOffers: s.setAvailablePaymentOffers,
+  setAvailableLoyaltyCoupons: s.setAvailableLoyaltyCoupons,
   resetCartData: s.resetCartData,
 });
 
@@ -115,6 +144,8 @@ export const cartStore = create<CartState>()(
         addresses: [],
         cartConfig: null,
         availableCoupons: [],
+        availablePaymentOffers: [],
+        availableLoyaltyCoupons: [],
         setOrderType: () => {},
         addToCart: (item: CartItem) => {
           set((state) => {
@@ -159,7 +190,9 @@ export const cartStore = create<CartState>()(
         setAddresses: (addresses: CartAddress[]) => set({ addresses }),
         setCartConfig: (cartConfig: CartConfig | null) => set({ cartConfig }),
         setAvailableCoupons: (availableCoupons: CouponOffer[]) => set({ availableCoupons }),
-        resetCartData: () => set({ addresses: [], cartConfig: null, availableCoupons: [] }),
+        setAvailablePaymentOffers: (availablePaymentOffers: PaymentOfferData[]) => set({ availablePaymentOffers }),
+        setAvailableLoyaltyCoupons: (availableLoyaltyCoupons: LoyaltyCouponData[]) => set({ availableLoyaltyCoupons }),
+        resetCartData: () => set({ addresses: [], cartConfig: null, availableCoupons: [], availablePaymentOffers: [], availableLoyaltyCoupons: [] }),
       }),
       {
         name: "rrc-cart",
@@ -202,6 +235,12 @@ export function useCartConfig() {
 }
 export function useCartAvailableCoupons() {
   return cartStore(selectCartAvailableCoupons);
+}
+export function useCartAvailablePaymentOffers() {
+  return cartStore(selectCartAvailablePaymentOffers);
+}
+export function useCartAvailableLoyaltyCoupons() {
+  return cartStore(selectCartAvailableLoyaltyCoupons);
 }
 export function useCartDataActions() {
   return cartStore(useShallow(selectCartDataActions));
@@ -261,16 +300,22 @@ export function useCartCouponsQuery(cartTotal: number) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ cartTotal }),
       });
-      if (!res.ok) return [];
+      if (!res.ok) return { coupons: [], paymentOffers: [], loyaltyCoupons: [] };
       const json = await res.json();
-      return (json.coupons || []) as CouponOffer[];
+      return {
+        coupons: (json.coupons || []) as CouponOffer[],
+        paymentOffers: (json.paymentOffers || []) as PaymentOfferData[],
+        loyaltyCoupons: (json.loyaltyCoupons || []) as LoyaltyCouponData[],
+      };
     },
     staleTime: 60_000,
     gcTime: 300_000,
   });
 
   useEffect(() => {
-    cartStore.getState().setAvailableCoupons(Array.isArray(data) ? data : []);
+    cartStore.getState().setAvailableCoupons(data?.coupons || []);
+    cartStore.getState().setAvailablePaymentOffers(data?.paymentOffers || []);
+    cartStore.getState().setAvailableLoyaltyCoupons(data?.loyaltyCoupons || []);
   }, [data]);
 
   return { data, ...rest };

@@ -53,7 +53,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { format, subDays, startOfDay } from "date-fns";
@@ -1209,8 +1209,9 @@ export default function AdminSupportPage() {
               </div>
 
               {/* Scrollable body */}
-              <ScrollArea className="flex-1 min-h-0 w-full overflow-x-hidden">
-                <div className="px-6 pt-5">
+              <ScrollArea className="flex-1 min-h-0 w-full overflow-hidden">
+                <div className="w-full max-w-[100vw] sm:max-w-[500px] flex flex-col overflow-x-hidden">
+                  <div className="px-6 pt-5">
                   {/* Badges & ID */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-6">
                     <div className="flex items-center gap-2">
@@ -1290,7 +1291,7 @@ export default function AdminSupportPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="text-left sm:text-right w-full sm:w-auto flex flex-row sm:flex-col justify-between sm:block mt-1 sm:mt-0 pt-3 sm:pt-0 border-t border-[#EEF0F2] sm:border-0">
+                    <div className="text-left sm:text-right w-full sm:w-auto flex flex-row flex-wrap sm:flex-col justify-between sm:block mt-1 sm:mt-0 pt-3 sm:pt-0 border-t border-[#EEF0F2] sm:border-0 gap-3">
                       <div>
                         <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">
                           Order ID
@@ -1303,7 +1304,7 @@ export default function AdminSupportPage() {
                               : "—"}
                         </p>
                       </div>
-                      <div className="text-right sm:text-right">
+                      <div className="text-left sm:text-right">
                         <p className="text-[10px] text-[#64748B] font-semibold mb-0.5">
                           Created At
                         </p>
@@ -1346,26 +1347,29 @@ export default function AdminSupportPage() {
 
                 {/* Detail Tabs */}
                 <div className="border-b border-[#E5E7EB] px-6">
-                  <div className="flex gap-6">
-                    {["conversation", "order", "customer", "notes"].map((tab) => (
-                      <button
-                        key={tab}
-                        onClick={() => setDetailTab(tab)}
-                        className={cn(
-                          "py-3 text-[12px] font-bold border-b-[2px] transition-colors capitalize",
-                          detailTab === tab
-                            ? "border-[#16A34A] text-[#15803D]"
-                            : "border-transparent text-[#475569] hover:text-[#1F2937]",
-                        )}
-                      >
-                        {tab === "order"
-                          ? "Order Details"
-                          : tab === "customer"
-                            ? "Customer Info"
-                            : tab}
-                      </button>
-                    ))}
-                  </div>
+                  <ScrollArea className="w-full whitespace-nowrap">
+                    <div className="flex gap-6 w-max pb-0.5">
+                      {["conversation", "order", "customer", "notes"].map((tab) => (
+                        <button
+                          key={tab}
+                          onClick={() => setDetailTab(tab)}
+                          className={cn(
+                            "py-3 text-[12px] font-bold border-b-[2px] transition-colors capitalize",
+                            detailTab === tab
+                              ? "border-[#16A34A] text-[#15803D]"
+                              : "border-transparent text-[#475569] hover:text-[#1F2937]",
+                          )}
+                        >
+                          {tab === "order"
+                            ? "Order Details"
+                            : tab === "customer"
+                              ? "Customer Info"
+                              : tab}
+                        </button>
+                      ))}
+                    </div>
+                    <ScrollBar orientation="horizontal" className="hidden" />
+                  </ScrollArea>
                 </div>
 
               {/* Conversation Thread */}
@@ -1373,8 +1377,8 @@ export default function AdminSupportPage() {
                 <div className="px-6 py-5 space-y-5 overflow-x-hidden">
                   {/* Always show the description as the initial issue message if it's not the live chat default */}
                   {selectedTicket.description !== "Live chat initiated by user" && (
-                    <div className="flex gap-3 flex-row">
-                      <Avatar className="h-[32px] w-[32px]">
+                    <div className="flex gap-3 flex-row w-full">
+                      <Avatar className="h-[32px] w-[32px] flex-shrink-0">
                         {selectedTicket.user?.image ? (
                           <AvatarImage
                             src={selectedTicket.user.image}
@@ -1401,7 +1405,7 @@ export default function AdminSupportPage() {
                         </div>
                         <div className="px-4 py-3 text-[13px] font-medium leading-relaxed max-w-[90%] break-words bg-[#FFFFFF] border border-[#EEF0F2] text-[#334155] rounded-[10px] rounded-tl-none">
                           {selectedTicket.mediaUrls?.map((url, i) => (
-                            <Image key={i} src={url} alt="Attachment" width={500} height={500} className="max-w-full rounded-md mb-2 object-cover max-h-48" />
+                            <Image key={i} src={url} alt="Attachment" width={300} height={300} className="w-full max-w-[280px] sm:max-w-[320px] rounded-md mb-2 object-cover max-h-48" />
                           ))}
                           {selectedTicket.description}
                         </div>
@@ -1426,11 +1430,11 @@ export default function AdminSupportPage() {
                         <div
                           key={msg.id}
                           className={cn(
-                            "flex gap-3",
+                            "flex gap-3 w-full",
                             isAdmin ? "flex-row-reverse" : "flex-row",
                           )}
                         >
-                          <Avatar className="h-[32px] w-[32px]">
+                          <Avatar className="h-[32px] w-[32px] flex-shrink-0">
                             {!isAdmin && selectedTicket.user?.image ? (
                               <AvatarImage
                                 src={selectedTicket.user.image}
@@ -1487,7 +1491,7 @@ export default function AdminSupportPage() {
                                 )}
                               >
                                 {msg.mediaUrls?.map((url, i) => (
-                                  <Image key={i} src={url} alt="Attachment" width={500} height={500} className="max-w-full rounded-md mb-2 object-cover max-h-48" />
+                                  <Image key={i} src={url} alt="Attachment" width={300} height={300} className="w-full max-w-[280px] sm:max-w-[320px] rounded-md mb-2 object-cover max-h-48" />
                                 ))}
                                 {msg.message}
                                 {isAdmin && (
@@ -1755,6 +1759,7 @@ export default function AdminSupportPage() {
                   </div>
                 </div>
               )}
+                </div>
               </ScrollArea>
 
               {/* Action Buttons - fixed at bottom */}

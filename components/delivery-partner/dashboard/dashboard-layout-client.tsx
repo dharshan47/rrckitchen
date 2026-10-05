@@ -28,7 +28,15 @@ import { SwUpdateBanner } from "@/components/patterns/sw-update-banner"
 import { PushSubscriptionInit } from "@/components/patterns/push-subscription-init"
 import { useAblySubscribe } from "@/hooks/useAblySubscribe"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Home, User, Wallet, LogOut, Truck, Ticket, Bell, Star } from "lucide-react"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Home, User, Wallet, LogOut, Truck, Ticket, Bell, Star, CheckCircle2 } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
@@ -127,7 +135,6 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
     setOnline(checked)
     onlineMutation.mutate(checked)
   }, [setOnline, onlineMutation])
-
   const handleLogout = async () => {
     await signOut()
     router.push("/")
@@ -212,7 +219,12 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
   const profileImage = profile.imageUrl ?? "/delivery/profile.webp"
   const rating = profile.avgRating
   const reviewCount = profile.totalReviews
-  const openTicketCount = data.supportTickets.filter((t) => t.status === "OPEN" || t.status === "INPROGRESS" || t.status === "URGENT").length
+  const openTickets = data.supportTickets.filter((t) => t.status === "OPEN" || t.status === "INPROGRESS" || t.status === "URGENT")
+  const pendingAssignments = (data.assignments ?? []).filter((a) => a.status === "Pending")
+  const activeDeliveries = (data.deliveryOrders ?? []).filter(
+    (o) => o.deliveryStatus === "ASSIGNED" || o.deliveryStatus === "ACCEPTED" || o.deliveryStatus === "PICKEDUP" || o.deliveryStatus === "INTRANSIT"
+  )
+  const notificationCount = openTickets.length + pendingAssignments.length + activeDeliveries.length
 
   return (
     <>
@@ -305,14 +317,94 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
                 </div>
                 
                 {/* Notifications */}
-                <button onClick={() => router.push("/delivery-partner/dashboard/support")} className="relative h-[44px] w-[44px] flex items-center justify-center hover:bg-[#FBFBFB] rounded-full transition-colors border border-[#E8EAED] bg-[#FFFFFF]" aria-label="Open support tickets">
-                  <Bell className="h-[22px] w-[22px] text-[#111827]" />
-                  {openTicketCount > 0 && (
-                    <span className="absolute -top-1 -right-1 h-[20px] w-[20px] bg-[#EF1B18] border-[2px] border-white rounded-full text-[10px] font-bold text-white flex items-center justify-center">
-                      {openTicketCount}
-                    </span>
-                  )}
-                </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="relative h-[44px] w-[44px] flex items-center justify-center hover:bg-[#FBFBFB] rounded-full transition-colors border border-[#E8EAED] bg-[#FFFFFF]" aria-label="Notifications">
+                      <Bell className="h-[22px] w-[22px] text-[#111827]" />
+                      {notificationCount > 0 && (
+                        <span className="absolute -top-1 -right-1 h-[20px] w-[20px] bg-[#EF1B18] border-[2px] border-white rounded-full text-[10px] font-bold text-white flex items-center justify-center">
+                          {notificationCount > 9 ? "9+" : notificationCount}
+                        </span>
+                      )}
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-[340px] max-w-[calc(100vw-2rem)] bg-[#FFFFFF] border-[#E8EAED] p-0 flex flex-col max-h-[85vh]">
+                    <DropdownMenuLabel className="font-semibold text-[14px] text-[#111827] px-4 py-3 flex items-center justify-between shrink-0">
+                      <span>Notifications</span>
+                      {notificationCount > 0 && (
+                        <span className="bg-[#F2F7F2] text-[#087B24] h-[20px] px-2 flex items-center justify-center text-[11px] font-bold rounded-full">
+                          {notificationCount} new
+                        </span>
+                      )}
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator className="bg-[#E8EAED] shrink-0 m-0" />
+
+                    <div className="overflow-y-auto flex-1">
+                      {pendingAssignments.length > 0 && (
+                        <div className="px-4 pt-2">
+                          <p className="text-[10px] font-bold uppercase tracking-wide text-[#374151] mb-2">New Assignments</p>
+                          {pendingAssignments.slice(0, 5).map((a) => (
+                            <DropdownMenuItem key={a.id} asChild className="hover:bg-[#FBFBFB] focus:bg-[#FBFBFB] px-0 py-2 cursor-pointer">
+                              <Link href={`/delivery-partner/dashboard/deliveries?orderId=${a.id}`} className="flex items-start justify-between gap-3 w-full">
+                                <div className="min-w-0">
+                                  <p className="text-[13px] font-semibold text-[#111827] truncate">From: {a.kitchen}</p>
+                                  <p className="text-[11px] text-[#374151] truncate">{a.date}</p>
+                                </div>
+                                <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full text-[#B45309] bg-[#FFF7E6]">{a.status}</span>
+                              </Link>
+                            </DropdownMenuItem>
+                          ))}
+                        </div>
+                      )}
+
+                      {activeDeliveries.length > 0 && (
+                        <>
+                          {pendingAssignments.length > 0 && <DropdownMenuSeparator className="bg-[#E8EAED] my-2" />}
+                          <div className="px-4 pt-2">
+                            <p className="text-[10px] font-bold uppercase tracking-wide text-[#374151] mb-1">Active Deliveries</p>
+                            {activeDeliveries.slice(0, 5).map((o) => (
+                              <DropdownMenuItem key={o.id} asChild className="hover:bg-[#FBFBFB] focus:bg-[#FBFBFB] px-0 py-2 cursor-pointer">
+                                <Link href="/delivery-partner/dashboard/deliveries" className="flex items-start justify-between gap-3 w-full">
+                                  <div className="min-w-0">
+                                    <p className="text-[13px] font-semibold text-[#111827] truncate">Order: {o.publicCode || "New"}</p>
+                                    <p className="text-[11px] text-[#374151] truncate">To: {o.customerName || "Customer"}</p>
+                                  </div>
+                                  <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full text-[#1D4ED8] bg-[#EFF6FF]">{o.deliveryStatus}</span>
+                                </Link>
+                              </DropdownMenuItem>
+                            ))}
+                          </div>
+                        </>
+                      )}
+
+                      {openTickets.length > 0 && (
+                        <>
+                          {(pendingAssignments.length > 0 || activeDeliveries.length > 0) && <DropdownMenuSeparator className="bg-[#E8EAED] my-2" />}
+                          <div className="px-4 pt-2 pb-2">
+                            <p className="text-[10px] font-bold uppercase tracking-wide text-[#374151] mb-1">Support Tickets</p>
+                            {openTickets.slice(0, 5).map((t) => (
+                              <div key={t.id} className="flex items-start justify-between gap-3 w-full py-2">
+                                <div className="min-w-0">
+                                  <p className="text-[13px] font-semibold text-[#111827] truncate flex items-center gap-1.5"><Ticket className="w-3.5 h-3.5 text-[#3B82F6]"/> {t.subject}</p>
+                                  <p className="text-[11px] text-[#64748B] mt-0.5 truncate">Ticket update</p>
+                                </div>
+                                <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full text-[#D83A20] bg-[#FFF0ED]">{t.priority}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </>
+                      )}
+
+                      {notificationCount === 0 && (
+                        <div className="px-4 py-8 flex flex-col items-center text-center gap-2">
+                          <CheckCircle2 className="h-6 w-6 text-[#087B24]" />
+                          <p className="text-[14px] font-semibold text-[#111827]">You&apos;re all caught up</p>
+                          <p className="text-[12px] text-[#374151]">No new notifications right now</p>
+                        </div>
+                      )}
+                    </div>
+                  </DropdownMenuContent>
+                </DropdownMenu>
 
                 {/* Profile Indicator */}
                 <div className="flex items-center gap-3 pl-2">

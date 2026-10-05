@@ -262,9 +262,11 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
 
   return (
     <>
-      <div className="flex flex-col flex-1 overflow-hidden min-h-0">
-        {/* Header section */}
-        <div className="p-6 pb-0 shrink-0">
+      <div className="flex flex-col h-full overflow-hidden">
+        <ScrollArea className="flex-1 w-full h-full">
+          <div className="w-full max-w-[100vw] sm:max-w-[700px] flex flex-col">
+            {/* Header section */}
+            <div className="p-6 pb-0 shrink-0">
           <div className="flex items-start justify-between mb-6 mr-8">
             <div>
               <h2 className="text-[20px] font-bold text-[#111827]">Edit Kitchen Details</h2>
@@ -375,7 +377,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
           </div>
         </div>
 
-        <Tabs defaultValue="general" className="w-full flex-1 flex flex-col min-h-0">
+        <Tabs defaultValue="general" className="w-full flex flex-col">
           <div className="px-6 border-b border-[#EEF2F6] shrink-0">
             <ScrollArea className="w-full">
               <TabsList className="w-max justify-start rounded-none h-12 bg-transparent p-0 space-x-6 flex-nowrap">
@@ -390,7 +392,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
             </ScrollArea>
           </div>
 
-          <ScrollArea className="flex-1 px-6 min-h-0">
+          <div className="px-6 pb-6">
             <TabsContent value="general" className="py-6 space-y-8 mt-0 outline-none">
               
               <div className="space-y-4">
@@ -827,10 +829,12 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
                 </div>
               </div>
             </TabsContent>
-            <ScrollBar orientation="vertical" />
-          </ScrollArea>
+          </div>
+          </Tabs>
+        </div>
+        </ScrollArea>
 
-          <div className="p-5 border-t border-[#EEF2F6] bg-[#FFFFFF] flex flex-col-reverse sm:flex-row sm:justify-end gap-3 mt-auto shrink-0 w-full">
+        <div className="p-5 border-t border-[#EEF2F6] bg-[#FFFFFF] flex flex-col-reverse sm:flex-row sm:justify-end gap-3 shrink-0 w-full">
             <Button 
               variant="outline" 
               onClick={onClose}
@@ -847,7 +851,6 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
               Update Kitchen
             </Button>
           </div>
-        </Tabs>
       </div>
     </>
   )

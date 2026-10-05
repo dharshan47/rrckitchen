@@ -335,8 +335,8 @@ function OfferFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[560px] p-0 overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0]">
+      <DialogContent showCloseButton={false} className="sm:max-w-[560px] w-[95vw] p-0 overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85vh]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0] flex-shrink-0">
           <DialogHeader>
             <DialogTitle className="text-[16px] font-bold text-[#0F172A]">
               {editing ? "Edit Payment Offer" : "Create New Offer"}
@@ -350,125 +350,133 @@ function OfferFormDialog({
           </button>
         </div>
 
-        <div className="px-6 py-4 max-h-[65vh] overflow-y-auto space-y-4">
-          <div className="space-y-1.5">
-            <Label className="text-[12px] font-semibold text-[#334155]">Offer Name</Label>
-            <Input
-              value={form.name}
-              onChange={(e) => set("name", e.target.value)}
-              placeholder="e.g. UPI Flat ₹50 Off"
-              className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
-            />
+        <ScrollArea className="flex-1 min-h-0">
+          <div className="px-6 py-4 space-y-4">
+            <div className="space-y-1.5">
+              <Label className="text-[12px] font-semibold text-[#334155]">Offer Name</Label>
+              <Input
+                value={form.name}
+                onChange={(e) => set("name", e.target.value)}
+                placeholder="e.g. UPI Flat ₹50 Off"
+                className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+              />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-[12px] font-semibold text-[#334155]">Description</Label>
+              <Textarea
+                value={form.description}
+                onChange={(e) => set("description", e.target.value)}
+                placeholder="Short description shown to customers"
+                rows={2}
+                className="text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-[12px] font-semibold text-[#334155]">Offer Type</Label>
+                <Select value={form.offerType} onValueChange={(v) => set("offerType", v as AdminPaymentOffer["offerType"])}>
+                  <SelectTrigger className="bg-white border-[#E2E8F0] text-[#334155] text-[13px] h-[38px] rounded-[7px] focus:ring-[#FF6B00] font-medium shadow-none">
+                    <SelectValue placeholder="Method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="UPI">UPI</SelectItem>
+                    <SelectItem value="WALLET">Wallet</SelectItem>
+                    <SelectItem value="CARDS">Cards</SelectItem>
+                    <SelectItem value="NETBANKING">Net Banking</SelectItem>
+                    <SelectItem value="ALL">All Methods</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-[12px] font-semibold text-[#334155]">Discount Type</Label>
+                <Select value={form.discountType} onValueChange={(v) => set("discountType", v as AdminPaymentOffer["discountType"])}>
+                  <SelectTrigger className="bg-white border-[#E2E8F0] text-[#334155] text-[13px] h-[38px] rounded-[7px] focus:ring-[#FF6B00] font-medium shadow-none">
+                    <SelectValue placeholder="Type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="FLAT">Flat Discount</SelectItem>
+                    <SelectItem value="PERCENTAGE">Percentage</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-[12px] font-semibold text-[#334155]">
+                  {form.discountType === "FLAT" ? "Discount Amount (₹)" : "Discount (%)"}
+                </Label>
+                <Input
+                  type="number"
+                  value={form.discountValue}
+                  onChange={(e) => set("discountValue", e.target.value)}
+                  placeholder={form.discountType === "FLAT" ? "e.g. 50" : "e.g. 10"}
+                  className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-[12px] font-semibold text-[#334155]">Max Discount (₹)</Label>
+                <Input
+                  type="number"
+                  value={form.maxDiscount}
+                  onChange={(e) => set("maxDiscount", e.target.value)}
+                  placeholder="Optional"
+                  className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-[12px] font-semibold text-[#334155]">Min Order Value (₹)</Label>
+                <Input
+                  type="number"
+                  value={form.minOrderValue}
+                  onChange={(e) => set("minOrderValue", e.target.value)}
+                  placeholder="Optional"
+                  className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="text-[12px] font-semibold text-[#334155]">Valid From</Label>
+                <Input
+                  type="datetime-local"
+                  value={form.validFrom}
+                  onChange={(e) => set("validFrom", e.target.value)}
+                  className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+                />
+              </div>
+
+              <div className="space-y-1.5">
+                <Label className="text-[12px] font-semibold text-[#334155]">Valid To</Label>
+                <Input
+                  type="datetime-local"
+                  value={form.validTo}
+                  onChange={(e) => set("validTo", e.target.value)}
+                  className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between p-3 rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC]">
+              <div>
+                <p className="text-[13px] font-semibold text-[#0F172A]">Active Offer</p>
+                <p className="text-[11px] text-[#64748B] mt-0.5">Offer is immediately live once created</p>
+              </div>
+              <Switch checked={form.isActive} onCheckedChange={(v) => set("isActive", v)} />
+            </div>
           </div>
+        </ScrollArea>
 
-          <div className="space-y-1.5">
-            <Label className="text-[12px] font-semibold text-[#334155]">Description</Label>
-            <Textarea
-              value={form.description}
-              onChange={(e) => set("description", e.target.value)}
-              placeholder="Short description shown to customers"
-              rows={2}
-              className="text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-[12px] font-semibold text-[#334155]">Offer Type</Label>
-              <Select value={form.offerType} onValueChange={(v) => set("offerType", v as AdminPaymentOffer["offerType"])}>
-                <SelectTrigger className="bg-white border-[#E2E8F0] text-[#334155] text-[13px] h-[38px] rounded-[7px] focus:ring-[#FF6B00] font-medium shadow-none">
-                  <SelectValue placeholder="Method" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="UPI">UPI</SelectItem>
-                  <SelectItem value="WALLET">Wallet</SelectItem>
-                  <SelectItem value="CARDS">Cards</SelectItem>
-                  <SelectItem value="NETBANKING">Net Banking</SelectItem>
-                  <SelectItem value="ALL">All Methods</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-[12px] font-semibold text-[#334155]">Discount Type</Label>
-              <Select value={form.discountType} onValueChange={(v) => set("discountType", v as AdminPaymentOffer["discountType"])}>
-                <SelectTrigger className="bg-white border-[#E2E8F0] text-[#334155] text-[13px] h-[38px] rounded-[7px] focus:ring-[#FF6B00] font-medium shadow-none">
-                  <SelectValue placeholder="Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="FLAT">Flat Discount</SelectItem>
-                  <SelectItem value="PERCENTAGE">Percentage</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-[12px] font-semibold text-[#334155]">
-                {form.discountType === "FLAT" ? "Discount Amount (₹)" : "Discount (%)"}
-              </Label>
-              <Input
-                type="number"
-                value={form.discountValue}
-                onChange={(e) => set("discountValue", e.target.value)}
-                placeholder={form.discountType === "FLAT" ? "e.g. 50" : "e.g. 10"}
-                className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-[12px] font-semibold text-[#334155]">Max Discount (₹)</Label>
-              <Input
-                type="number"
-                value={form.maxDiscount}
-                onChange={(e) => set("maxDiscount", e.target.value)}
-                placeholder="Optional"
-                className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-[12px] font-semibold text-[#334155]">Min Order Value (₹)</Label>
-              <Input
-                type="number"
-                value={form.minOrderValue}
-                onChange={(e) => set("minOrderValue", e.target.value)}
-                placeholder="Optional"
-                className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-[12px] font-semibold text-[#334155]">Valid From</Label>
-              <Input
-                type="datetime-local"
-                value={form.validFrom}
-                onChange={(e) => set("validFrom", e.target.value)}
-                className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label className="text-[12px] font-semibold text-[#334155]">Valid To</Label>
-              <Input
-                type="datetime-local"
-                value={form.validTo}
-                onChange={(e) => set("validTo", e.target.value)}
-                className="h-[38px] text-[13px] rounded-[7px] border-[#E2E8F0] focus-visible:ring-[#FF6B00]"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between p-3 rounded-[8px] border border-[#E2E8F0] bg-[#F8FAFC]">
-            <div>
-              <p className="text-[13px] font-semibold text-[#0F172A]">Active Offer</p>
-              <p className="text-[11px] text-[#64748B] mt-0.5">Offer is immediately live once created</p>
-            </div>
-            <Switch checked={form.isActive} onCheckedChange={(v) => set("isActive", v)} />
-          </div>
-        </div>
-
-        <DialogFooter className="px-6 py-4 border-t border-[#E2E8F0] gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="h-[38px] px-4 rounded-[7px] text-[13px] font-medium border-[#E2E8F0] text-[#475569] hover:bg-gray-50 bg-white shadow-none">
+        <DialogFooter className="px-6 py-4 border-t border-[#E2E8F0] gap-2 bg-gray-50 flex-shrink-0">
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="h-[38px] px-4 rounded-[7px] text-[13px] font-medium border-[#E2E8F0] text-[#475569] hover:bg-gray-100 bg-white shadow-none">
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={submitting} className="h-[38px] px-4 rounded-[7px] text-[13px] font-medium bg-[#FF6B00] hover:bg-[#EA580C] text-white shadow-none">
