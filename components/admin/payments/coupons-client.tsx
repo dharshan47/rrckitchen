@@ -942,7 +942,7 @@ export default function AdminCouponsPage() {
 
       {/* Add / Edit Dialog (Functionality preserved) */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent showCloseButton={false} className="sm:max-w-[600px] w-[95vw] p-0 overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85vh]">
+        <DialogContent showCloseButton={false} className="sm:max-w-[600px] w-[95vw] p-0 gap-0 overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85vh]">
           <DialogHeader className="px-5 pt-5 pb-3 flex-shrink-0 border-b border-[#EEF0F3] relative">
             <div className="flex justify-between items-start">
               <div>
@@ -957,7 +957,7 @@ export default function AdminCouponsPage() {
             </div>
           </DialogHeader>
 
-          <ScrollArea className="flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto min-h-0">
             <div className="grid gap-4 p-5 pb-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
@@ -1140,10 +1140,10 @@ export default function AdminCouponsPage() {
                 </div>
               </div>
             </div>
-          </ScrollArea>
+          </div>
 
-          <div className="flex items-center justify-end gap-3 p-4 border-t border-[#EAECF0] bg-gray-50 flex-shrink-0">
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="h-10 text-[14px] text-[#344054] border-[#E2E8F0] shadow-none hover:bg-gray-100">Cancel</Button>
+          <div className="flex items-center justify-end gap-3 p-4 border-t border-[#EAECF0] bg-[#F9FAFB] flex-shrink-0">
+            <Button variant="outline" onClick={() => setIsDialogOpen(false)} className="h-10 text-[14px] text-[#344054] border-[#E2E8F0] shadow-none hover:bg-[#F3F4F6]">Cancel</Button>
             <Button
               onClick={handleSave}
               className="h-10 text-[14px] font-semibold bg-[#087A3E] hover:bg-[#066B36] text-[#FFFFFF] shadow-none"

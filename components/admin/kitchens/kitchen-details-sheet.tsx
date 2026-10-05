@@ -78,7 +78,7 @@ export function KitchenDetailsSheet({ open, onOpenChange, kitchen }: KitchenDeta
   if (!kitchen) return null
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-[700px] p-0 overflow-hidden flex flex-col bg-[#FFFFFF] border-l border-[#E2E8F0] shadow-[0_8px_30px_rgba(15,23,42,0.06)]">
+      <SheetContent className="w-full !max-w-[100vw] sm:!max-w-[700px] p-0 overflow-hidden flex flex-col bg-[#FFFFFF] border-l border-[#E2E8F0] shadow-[0_8px_30px_rgba(15,23,42,0.06)]">
         <KitchenDetailsBody
           key={kitchen.id}
           kitchen={kitchen}
@@ -263,7 +263,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
   return (
     <>
       <div className="flex flex-col h-full overflow-hidden">
-        <ScrollArea className="flex-1 w-full h-full">
+        <div className="flex-1 w-full overflow-y-auto overflow-x-hidden">
           <div className="w-full max-w-[100vw] sm:max-w-[700px] flex flex-col">
             {/* Header section */}
             <div className="p-6 pb-0 shrink-0">
@@ -379,7 +379,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
 
         <Tabs defaultValue="general" className="w-full flex flex-col">
           <div className="px-6 border-b border-[#EEF2F6] shrink-0">
-            <ScrollArea className="w-full">
+            <div className="w-full overflow-x-auto no-scrollbar">
               <TabsList className="w-max justify-start rounded-none h-12 bg-transparent p-0 space-x-6 flex-nowrap">
                 <TabsTrigger value="general" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">General</TabsTrigger>
                 <TabsTrigger value="menu" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Menu & Cuisines</TabsTrigger>
@@ -388,8 +388,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
                 <TabsTrigger value="documents" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Documents</TabsTrigger>
                 <TabsTrigger value="settings" className="rounded-none border-0 border-b-2 border-transparent data-[state=active]:border-[#07883F] data-[state=active]:bg-transparent px-0 data-[state=active]:shadow-none text-[13px] text-[#64748B] data-[state=active]:text-[#07883F] font-medium whitespace-nowrap">Settings</TabsTrigger>
               </TabsList>
-              <ScrollBar orientation="horizontal" className="h-1.5" />
-            </ScrollArea>
+            </div>
           </div>
 
           <div className="px-6 pb-6">
@@ -832,7 +831,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
           </div>
           </Tabs>
         </div>
-        </ScrollArea>
+        </div>
 
         <div className="p-5 border-t border-[#EEF2F6] bg-[#FFFFFF] flex flex-col-reverse sm:flex-row sm:justify-end gap-3 shrink-0 w-full">
             <Button 

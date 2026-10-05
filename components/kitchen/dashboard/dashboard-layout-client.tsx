@@ -3,7 +3,7 @@
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { signOut } from "@/lib/auth-client"
 import { useQuery } from "@tanstack/react-query"
 import { getKitchenDashboardData } from "@/actions/admin/dashboard"
@@ -38,7 +38,7 @@ import { PushSubscriptionInit } from "@/components/patterns/push-subscription-in
 import { 
   UserCircle, LogOut, Ticket, Bell, 
   ChevronDown, Headset, CheckCircle2, Star,
-  House, Scissors, BriefcaseBusiness, WalletCards, BadgeHelp, UserRound
+  House, Scissors, BriefcaseBusiness, WalletCards, BadgeHelp, UserRound, Package
 } from "lucide-react"
 
 export default function DashboardLayoutClient({
@@ -49,6 +49,7 @@ export default function DashboardLayoutClient({
   const pathname = usePathname()
   const router = useRouter()
   const { setData, reset } = useKitchenDashboardActions()
+  const [hiddenNotifications, setHiddenNotifications] = useState<Set<string>>(new Set())
 
   const { data, isLoading } = useQuery<KitchenDashboardData>({
     queryKey: ["kitchen-dashboard"],
@@ -155,8 +156,47 @@ export default function DashboardLayoutClient({
     (t) => t.status === "OPEN"
   )
   
+  const notifications: Array<{
+    id: string
+    title: string
+    desc: string
+    time?: string
+    icon: any
+    iconColor: string
+    iconBg: string
+    href: string
+  }> = []
+
+  pendingOrders.forEach(o => {
+    const isNew = (o.status || "").toLowerCase().includes("confirm");
+    notifications.push({
+      id: `order-${o.id}`,
+      title: isNew ? "New Order Received" : "Order Preparation",
+      desc: `${o.itemName} (x${o.quantity}) for ${o.customerName || "Customer"}`,
+      time: o.time,
+      icon: Package,
+      iconColor: isNew ? "text-[#B45309]" : "text-[#1D4ED8]",
+      iconBg: isNew ? "bg-[#FFF7E6]" : "bg-[#EFF6FF]",
+      href: `/kitchen/dashboard/orders`,
+    })
+  })
+
+  openTickets.forEach(t => {
+    notifications.push({
+      id: `ticket-${t.id}`,
+      title: "Support Ticket",
+      desc: t.subject,
+      icon: Ticket,
+      iconColor: "text-[#D83A20]",
+      iconBg: "bg-[#FFF0ED]",
+      href: `/kitchen/dashboard/support`,
+    })
+  })
+
+  const visibleNotifications = notifications.filter(n => !hiddenNotifications.has(n.id))
+  
   const ordersBadge = pendingOrders.length
-  const notificationCount = pendingOrders.length + openTickets.length
+  const notificationCount = visibleNotifications.length
 
   const orderStatusColor = (status: string) => {
     const s = (status || "").toLowerCase()
@@ -300,7 +340,7 @@ export default function DashboardLayoutClient({
                       )}
                     </div>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[340px] max-w-[calc(100vw-2rem)] bg-[#FFFDFC] border-[#ECE9E5] p-0 flex flex-col max-h-[85vh]">
+                  <DropdownMenuContent align="end" className="w-[340px] max-w-[calc(100vw-2rem)] bg-[#FFFDFC] border-[#ECE9E5] p-0 flex flex-col">
                     <DropdownMenuLabel className="font-semibold text-[13px] text-[#17191C] px-4 py-3 flex items-center justify-between shrink-0">
                       <span>Notifications</span>
                       {notificationCount > 0 && (
@@ -311,49 +351,33 @@ export default function DashboardLayoutClient({
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-[#F0ECE7] shrink-0 m-0" />
 
-                    <div className="overflow-y-auto flex-1">
-                      {pendingOrders.length > 0 && (
-                        <div className="px-4 pt-2">
-                          <p className="text-[10px] font-semibold uppercase tracking-wide text-[#686A6D] mb-1">New Orders</p>
-                          {pendingOrders.slice(0, 10).map((o) => (
-                            <DropdownMenuItem key={o.id} asChild className="hover:bg-[#F1F6F0] focus:bg-[#F1F6F0] px-0 py-2">
-                              <Link href="/kitchen/dashboard/orders" className="flex items-start justify-between gap-3 w-full">
-                                <div className="min-w-0">
-                                  <p className="text-[12px] font-medium text-[#17191C] truncate">{o.itemName} <span className="text-[#686A6D] font-normal">x{o.quantity}</span></p>
-                                  <p className="text-[11px] text-[#686A6D] truncate">{o.customerName || "Customer"} · {o.time}</p>
+                    <ScrollArea className="max-h-[350px]">
+                      {visibleNotifications.length > 0 && (
+                        <div className="py-2">
+                          {visibleNotifications.map((n) => (
+                            <DropdownMenuItem key={n.id} asChild className="hover:bg-[#F1F6F0] focus:bg-[#F1F6F0] px-4 py-3 cursor-pointer border-b border-[#ECE9E5] last:border-0 rounded-none">
+                              <Link 
+                                href={n.href}
+                                onClick={() => setHiddenNotifications(prev => new Set(prev).add(n.id))}
+                                className="flex items-start gap-3 w-full"
+                              >
+                                <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${n.iconBg}`}>
+                                  <n.icon className={`h-4 w-4 ${n.iconColor}`} />
                                 </div>
-                                <span className={`shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full ${orderStatusColor(o.status)}`}>{o.status}</span>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-[13px] font-bold text-[#17191C] truncate">{n.title}</p>
+                                  <p className="text-[12px] font-medium text-[#686A6D] leading-snug mt-0.5 line-clamp-2">{n.desc}</p>
+                                  {n.time && <p className="text-[10px] font-semibold text-[#8CB89B] mt-1">{n.time}</p>}
+                                </div>
                               </Link>
                             </DropdownMenuItem>
                           ))}
-                          <DropdownMenuItem asChild className="hover:bg-transparent focus:bg-transparent px-0 py-1 mb-1">
-                            <Link href="/kitchen/dashboard/orders" className="text-[11px] font-medium text-[#086B2F] w-full">
-                              View all orders →
+                          <DropdownMenuItem asChild className="hover:bg-transparent focus:bg-transparent px-4 py-2 mt-1">
+                            <Link href="/kitchen/dashboard/orders" className="text-[11px] font-medium text-[#086B2F] w-full text-center block">
+                              View all notifications →
                             </Link>
                           </DropdownMenuItem>
                         </div>
-                      )}
-
-                      {openTickets.length > 0 && (
-                        <>
-                          {pendingOrders.length > 0 && <DropdownMenuSeparator className="bg-[#F0ECE7]" />}
-                          <div className="px-4 pt-2 pb-2">
-                            <p className="text-[10px] font-semibold uppercase tracking-wide text-[#686A6D] mb-1">Support Tickets</p>
-                            {openTickets.slice(0, 5).map((t) => (
-                              <DropdownMenuItem key={t.id} asChild className="hover:bg-[#F1F6F0] focus:bg-[#F1F6F0] px-0 py-2">
-                                <Link href="/kitchen/dashboard/support" className="flex items-start justify-between gap-3 w-full">
-                                  <p className="text-[12px] font-medium text-[#17191C] truncate">{t.subject}</p>
-                                  <span className="shrink-0 text-[10px] font-medium px-2 py-0.5 rounded-full text-[#D83A20] bg-[#FFF0ED]">{t.priority}</span>
-                                </Link>
-                              </DropdownMenuItem>
-                            ))}
-                            <DropdownMenuItem asChild className="hover:bg-transparent focus:bg-transparent px-0 py-1">
-                              <Link href="/kitchen/dashboard/support" className="text-[11px] font-medium text-[#086B2F] w-full">
-                                View all tickets →
-                              </Link>
-                            </DropdownMenuItem>
-                          </div>
-                        </>
                       )}
 
                       {notificationCount === 0 && (
@@ -363,7 +387,7 @@ export default function DashboardLayoutClient({
                           <p className="text-[11px] text-[#686A6D]">No new orders or open tickets right now</p>
                         </div>
                       )}
-                    </div>
+                    </ScrollArea>
                   </DropdownMenuContent>
                 </DropdownMenu>
 

@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useCallback } from "react"
+import { useEffect, useCallback, useState } from "react"
 import { usePathname } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -36,7 +36,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Home, User, Wallet, LogOut, Truck, Ticket, Bell, Star, CheckCircle2 } from "lucide-react"
+import { Home, User, Wallet, LogOut, Truck, Ticket, Bell, Star, CheckCircle2, Package, RotateCcw } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
@@ -88,6 +88,8 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
     queryFn: getDeliveryDashboardData,
     refetchInterval: 20_000,
   })
+
+  const [hiddenNotifications, setHiddenNotifications] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     if (data) {
@@ -221,10 +223,70 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
   const reviewCount = profile.totalReviews
   const openTickets = data.supportTickets.filter((t) => t.status === "OPEN" || t.status === "INPROGRESS" || t.status === "URGENT")
   const pendingAssignments = (data.assignments ?? []).filter((a) => a.status === "Pending")
-  const activeDeliveries = (data.deliveryOrders ?? []).filter(
-    (o) => o.deliveryStatus === "ASSIGNED" || o.deliveryStatus === "ACCEPTED" || o.deliveryStatus === "PICKEDUP" || o.deliveryStatus === "INTRANSIT"
-  )
-  const notificationCount = openTickets.length + pendingAssignments.length + activeDeliveries.length
+  const allDeliveries = data.deliveryOrders ?? []
+  
+  const notifications: Array<{
+    id: string
+    title: string
+    desc: string
+    time?: string
+    icon: any
+    iconColor: string
+    iconBg: string
+    href: string
+  }> = []
+
+  pendingAssignments.forEach(a => {
+    notifications.push({
+      id: `assign-${a.id}`,
+      title: "New Assignment",
+      desc: `New order assigned from ${a.kitchen}`,
+      time: a.date,
+      icon: Bell,
+      iconColor: "text-[#B45309]",
+      iconBg: "bg-[#FFF7E6]",
+      href: `/delivery-partner/dashboard/deliveries?orderId=${a.id}`,
+    })
+  })
+
+  allDeliveries.forEach(o => {
+    if (o.orderStatus === "READYFORPICKUP" && o.assignmentStatus !== "PENDING") {
+      notifications.push({
+        id: `ready-${o.id}`,
+        title: "Ready for Pickup",
+        desc: `Order ${o.publicCode || o.id} is ready at ${o.kitchenName}`,
+        icon: Package,
+        iconColor: "text-[#16A34A]",
+        iconBg: "bg-[#F0FDF4]",
+        href: `/delivery-partner/dashboard/deliveries`,
+      })
+    } else if (o.deliveryStatus === "INTRANSIT") {
+      notifications.push({
+        id: `transit-${o.id}`,
+        title: "Out for Delivery",
+        desc: `Deliver Order ${o.publicCode || o.id} to ${o.customerName}`,
+        icon: Truck,
+        iconColor: "text-[#2563EB]",
+        iconBg: "bg-[#EFF6FF]",
+        href: `/delivery-partner/dashboard/deliveries`,
+      })
+    }
+  })
+
+  openTickets.forEach(t => {
+    notifications.push({
+      id: `ticket-${t.id}`,
+      title: "Support Ticket",
+      desc: t.subject,
+      icon: Ticket,
+      iconColor: "text-[#D83A20]",
+      iconBg: "bg-[#FFF0ED]",
+      href: `/delivery-partner/dashboard/support`,
+    })
+  })
+
+  const visibleNotifications = notifications.filter(n => !hiddenNotifications.has(n.id))
+  const notificationCount = visibleNotifications.length
 
   return (
     <>
@@ -328,7 +390,7 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
                       )}
                     </button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-[340px] max-w-[calc(100vw-2rem)] bg-[#FFFFFF] border-[#E8EAED] p-0 flex flex-col max-h-[85vh]">
+                  <DropdownMenuContent align="end" className="w-[340px] max-w-[calc(100vw-2rem)] bg-[#FFFFFF] border-[#E8EAED] p-0 flex flex-col">
                     <DropdownMenuLabel className="font-semibold text-[14px] text-[#111827] px-4 py-3 flex items-center justify-between shrink-0">
                       <span>Notifications</span>
                       {notificationCount > 0 && (
@@ -339,60 +401,28 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator className="bg-[#E8EAED] shrink-0 m-0" />
 
-                    <div className="overflow-y-auto flex-1">
-                      {pendingAssignments.length > 0 && (
-                        <div className="px-4 pt-2">
-                          <p className="text-[10px] font-bold uppercase tracking-wide text-[#374151] mb-2">New Assignments</p>
-                          {pendingAssignments.slice(0, 5).map((a) => (
-                            <DropdownMenuItem key={a.id} asChild className="hover:bg-[#FBFBFB] focus:bg-[#FBFBFB] px-0 py-2 cursor-pointer">
-                              <Link href={`/delivery-partner/dashboard/deliveries?orderId=${a.id}`} className="flex items-start justify-between gap-3 w-full">
-                                <div className="min-w-0">
-                                  <p className="text-[13px] font-semibold text-[#111827] truncate">From: {a.kitchen}</p>
-                                  <p className="text-[11px] text-[#374151] truncate">{a.date}</p>
+                    <ScrollArea className="max-h-[350px]">
+                      {visibleNotifications.length > 0 && (
+                        <div className="py-2">
+                          {visibleNotifications.map((n) => (
+                            <DropdownMenuItem key={n.id} asChild className="hover:bg-[#FBFBFB] focus:bg-[#FBFBFB] px-4 py-3 cursor-pointer border-b border-[#F1F2F3] last:border-0 rounded-none">
+                              <Link 
+                                href={n.href} 
+                                onClick={() => setHiddenNotifications(prev => new Set(prev).add(n.id))}
+                                className="flex items-start gap-3 w-full"
+                              >
+                                <div className={cn("h-8 w-8 rounded-full flex items-center justify-center shrink-0", n.iconBg)}>
+                                  <n.icon className={cn("h-4 w-4", n.iconColor)} />
                                 </div>
-                                <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full text-[#B45309] bg-[#FFF7E6]">{a.status}</span>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-[13px] font-bold text-[#111827] truncate">{n.title}</p>
+                                  <p className="text-[12px] font-medium text-[#475569] leading-snug mt-0.5 line-clamp-2">{n.desc}</p>
+                                  {n.time && <p className="text-[10px] font-semibold text-[#94A3B8] mt-1">{n.time}</p>}
+                                </div>
                               </Link>
                             </DropdownMenuItem>
                           ))}
                         </div>
-                      )}
-
-                      {activeDeliveries.length > 0 && (
-                        <>
-                          {pendingAssignments.length > 0 && <DropdownMenuSeparator className="bg-[#E8EAED] my-2" />}
-                          <div className="px-4 pt-2">
-                            <p className="text-[10px] font-bold uppercase tracking-wide text-[#374151] mb-1">Active Deliveries</p>
-                            {activeDeliveries.slice(0, 5).map((o) => (
-                              <DropdownMenuItem key={o.id} asChild className="hover:bg-[#FBFBFB] focus:bg-[#FBFBFB] px-0 py-2 cursor-pointer">
-                                <Link href="/delivery-partner/dashboard/deliveries" className="flex items-start justify-between gap-3 w-full">
-                                  <div className="min-w-0">
-                                    <p className="text-[13px] font-semibold text-[#111827] truncate">Order: {o.publicCode || "New"}</p>
-                                    <p className="text-[11px] text-[#374151] truncate">To: {o.customerName || "Customer"}</p>
-                                  </div>
-                                  <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full text-[#1D4ED8] bg-[#EFF6FF]">{o.deliveryStatus}</span>
-                                </Link>
-                              </DropdownMenuItem>
-                            ))}
-                          </div>
-                        </>
-                      )}
-
-                      {openTickets.length > 0 && (
-                        <>
-                          {(pendingAssignments.length > 0 || activeDeliveries.length > 0) && <DropdownMenuSeparator className="bg-[#E8EAED] my-2" />}
-                          <div className="px-4 pt-2 pb-2">
-                            <p className="text-[10px] font-bold uppercase tracking-wide text-[#374151] mb-1">Support Tickets</p>
-                            {openTickets.slice(0, 5).map((t) => (
-                              <div key={t.id} className="flex items-start justify-between gap-3 w-full py-2">
-                                <div className="min-w-0">
-                                  <p className="text-[13px] font-semibold text-[#111827] truncate flex items-center gap-1.5"><Ticket className="w-3.5 h-3.5 text-[#3B82F6]"/> {t.subject}</p>
-                                  <p className="text-[11px] text-[#64748B] mt-0.5 truncate">Ticket update</p>
-                                </div>
-                                <span className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full text-[#D83A20] bg-[#FFF0ED]">{t.priority}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </>
                       )}
 
                       {notificationCount === 0 && (
@@ -402,7 +432,7 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
                           <p className="text-[12px] text-[#374151]">No new notifications right now</p>
                         </div>
                       )}
-                    </div>
+                    </ScrollArea>
                   </DropdownMenuContent>
                 </DropdownMenu>
 

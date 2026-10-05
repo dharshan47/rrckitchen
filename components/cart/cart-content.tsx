@@ -243,6 +243,7 @@ export function CartContent() {
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [slotPickerOpen, setSlotPickerOpen] = useState(false);
   const [couponInput, setCouponInput] = useState("");
+  const [showAllOffers, setShowAllOffers] = useState(false);
 
   useEffect(() => {
     if (paymentResult?.success) {
@@ -336,7 +337,7 @@ export function CartContent() {
     const serviceDateType = isTomorrow(deliveryDate) ? "TOMORROW" : "FUTURE";
     await initiateCheckout(
       cart,
-      total,
+      effectiveTotal,
       phone,
       appliedCoupon?.code,
       serviceDateType,
@@ -702,7 +703,7 @@ export function CartContent() {
                     <p className="text-[13px] text-[#595959] text-center py-4">No offers available right now</p>
                   ) : (
                     <>
-                      {availableCoupons.map((offer) => (
+                      {(showAllOffers ? availableCoupons : availableCoupons.slice(0, 2)).map((offer) => (
                         <div key={offer.code} className="flex items-start gap-3">
                           <div className="h-9 w-9 rounded-full border border-[#CFE7D2] flex items-center justify-center shrink-0 bg-[#F0F8F0]">
                             <Percent className="h-4 w-4 text-[#16803A]" />
@@ -711,10 +712,18 @@ export function CartContent() {
                             <p className="text-[13px] font-bold text-[#222222] leading-snug">{offer.description}</p>
                             <p className="text-[12px] font-bold text-[#222222] mt-0.5">{offer.code}</p>
                           </div>
-                          <span className="text-[12px] font-bold text-[#595959] shrink-0 mt-0.5">T&amp;C</span>
+                          <button
+                            onClick={() => {
+                              setCouponInput(offer.code);
+                              handleApplyCoupon();
+                            }}
+                            className="text-[12px] font-bold text-[#FE4D02] hover:underline shrink-0 mt-0.5"
+                          >
+                            APPLY
+                          </button>
                         </div>
                       ))}
-                      {availableLoyaltyCoupons.map((offer) => (
+                      {(showAllOffers ? availableLoyaltyCoupons : availableLoyaltyCoupons.slice(0, showAllOffers ? undefined : Math.max(0, 2 - availableCoupons.length))).map((offer) => (
                         <div key={offer.id} className="flex items-start gap-3">
                           <div className="h-9 w-9 rounded-full border border-[#DBEAFE] flex items-center justify-center shrink-0 bg-[#EFF6FF]">
                             <Coins className="h-4 w-4 text-[#2563EB]" />
@@ -731,7 +740,7 @@ export function CartContent() {
                           </div>
                         </div>
                       ))}
-                      {availablePaymentOffers.map((offer) => (
+                      {(showAllOffers ? availablePaymentOffers : availablePaymentOffers.slice(0, showAllOffers ? undefined : Math.max(0, 2 - availableCoupons.length - availableLoyaltyCoupons.length))).map((offer) => (
                         <div key={offer.id} className="flex items-start gap-3">
                           <div className="h-9 w-9 rounded-full border border-[#FED7AA] flex items-center justify-center shrink-0 bg-[#FFF7ED]">
                             <Banknote className="h-4 w-4 text-[#F97316]" />
@@ -743,15 +752,15 @@ export function CartContent() {
                               <p className="text-[11px] font-bold text-[#F97316] mt-1">Min. Order: ₹{offer.minOrderValue}</p>
                             ) : null}
                           </div>
-                          <span className="text-[12px] font-bold text-[#595959] shrink-0 mt-0.5">Auto-applied</span>
+                          <span className="text-[12px] font-bold text-[#595959] shrink-0 mt-0.5">At checkout</span>
                         </div>
                       ))}
                     </>
                   )}
                 </div>
-                {(availableCoupons.length > 0 || availablePaymentOffers.length > 0 || availableLoyaltyCoupons.length > 0) && (
-                  <button className="mt-5 text-[#FE4D02] text-[13px] font-bold flex items-center gap-1 w-full">
-                    View More Offers <ChevronRight className="h-4 w-4 text-[#FE4D02]" />
+                {!showAllOffers && (availableCoupons.length + availablePaymentOffers.length + availableLoyaltyCoupons.length > 2) && (
+                  <button onClick={() => setShowAllOffers(true)} className="mt-5 text-[#FE4D02] text-[13px] font-bold flex items-center gap-1 w-full">
+                    View All Offers <ChevronRight className="h-4 w-4 text-[#FE4D02]" />
                   </button>
                 )}
               </div>

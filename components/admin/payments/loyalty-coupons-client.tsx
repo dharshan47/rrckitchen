@@ -1050,7 +1050,7 @@ export default function AdminLoyaltyPointsPage() {
           }
         }}
       >
-        <DialogContent showCloseButton={false} className="sm:max-w-lg w-[95vw] rounded-[12px] bg-[#FFFFFF] border-[#E5E7EB] shadow-[0_16px_40px_rgba(15,23,42,0.12)] p-0 max-h-[90dvh] md:max-h-[85vh] overflow-hidden flex flex-col">
+        <DialogContent showCloseButton={false} className="sm:max-w-lg w-[95vw] rounded-[12px] bg-[#FFFFFF] border-[#E5E7EB] shadow-[0_16px_40px_rgba(15,23,42,0.12)] p-0 gap-0 max-h-[90dvh] md:max-h-[85vh] overflow-hidden flex flex-col">
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col overflow-hidden h-full min-h-0">
             <DialogHeader className="px-5 pt-5 pb-3 flex-shrink-0 border-b border-[#EEF0F3]">
               <div className="flex justify-between items-start">
@@ -1076,7 +1076,7 @@ export default function AdminLoyaltyPointsPage() {
                 </button>
               </div>
             </DialogHeader>
-            <ScrollArea className="flex-1 min-h-0">
+            <div className="flex-1 overflow-y-auto min-h-0">
               <div className="grid gap-5 p-5 pb-6">
                 <div className="grid gap-2">
                   <Label htmlFor="name" className="text-[13px] font-semibold text-[#1F2937]">
@@ -1178,8 +1178,8 @@ export default function AdminLoyaltyPointsPage() {
                   />
                 </div>
               </div>
-            </ScrollArea>
-            <div className="flex justify-end gap-3 p-4 border-t border-[#EEF0F3] bg-gray-50 flex-shrink-0">
+            </div>
+            <div className="flex justify-end gap-3 p-4 border-t border-[#EEF0F3] bg-[#F9FAFB] flex-shrink-0">
               <Button
                 type="button"
                 variant="outline"

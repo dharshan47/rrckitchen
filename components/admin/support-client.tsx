@@ -1189,7 +1189,7 @@ export default function AdminSupportPage() {
         <SheetContent
           side="right"
           showCloseButton={false}
-          className="w-full max-w-[100vw] sm:!max-w-[500px] p-0 flex flex-col bg-[#FFFFFF] border-l border-[#E5E7EB] gap-0"
+          className="w-full max-w-[100vw] sm:!max-w-[500px] p-0 flex flex-col bg-[#FFFFFF] border-l border-[#E5E7EB] gap-0 overflow-x-hidden"
         >
           {selectedTicket && (
             <>
@@ -1210,7 +1210,7 @@ export default function AdminSupportPage() {
 
               {/* Scrollable body */}
               <ScrollArea className="flex-1 min-h-0 w-full overflow-hidden">
-                <div className="w-full max-w-[100vw] sm:max-w-[500px] flex flex-col overflow-x-hidden">
+                <div className="flex flex-col w-full overflow-x-hidden">
                   <div className="px-6 pt-5">
                   {/* Badges & ID */}
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-0 mb-6">
@@ -1259,8 +1259,8 @@ export default function AdminSupportPage() {
 
                   {/* Customer Info Box */}
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 sm:gap-0 mb-6">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-[44px] w-[44px]">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <Avatar className="h-[44px] w-[44px] flex-shrink-0">
                         {selectedTicket.user?.image ? (
                           <AvatarImage
                             src={selectedTicket.user.image}
@@ -1273,8 +1273,8 @@ export default function AdminSupportPage() {
                           </AvatarFallback>
                         )}
                       </Avatar>
-                      <div>
-                        <p className="font-bold text-[#111827] text-[14px]">
+                      <div className="flex-1 min-w-0">
+                        <p className="font-bold text-[#111827] text-[14px] truncate">
                           {selectedTicket.user?.name || ""}
                         </p>
                         <div className="flex items-center gap-1.5 mt-1">
@@ -1332,8 +1332,8 @@ export default function AdminSupportPage() {
                             strokeWidth={1.8}
                           />
                         </div>
-                        <div className="pt-0.5">
-                          <p className="text-[14px] font-bold text-[#1F2937]">
+                        <div className="pt-0.5 flex-1 min-w-0">
+                          <p className="text-[14px] font-bold text-[#1F2937] truncate">
                             {catInfo.label}
                           </p>
                           <p className="text-[12px] font-medium text-[#64748B] mt-0.5 leading-relaxed">
@@ -1347,7 +1347,7 @@ export default function AdminSupportPage() {
 
                 {/* Detail Tabs */}
                 <div className="border-b border-[#E5E7EB] px-6">
-                  <ScrollArea className="w-full whitespace-nowrap">
+                  <div className="w-full overflow-x-auto custom-scrollbar">
                     <div className="flex gap-6 w-max pb-0.5">
                       {["conversation", "order", "customer", "notes"].map((tab) => (
                         <button
@@ -1368,8 +1368,7 @@ export default function AdminSupportPage() {
                         </button>
                       ))}
                     </div>
-                    <ScrollBar orientation="horizontal" className="hidden" />
-                  </ScrollArea>
+                  </div>
                 </div>
 
               {/* Conversation Thread */}

@@ -335,7 +335,7 @@ function OfferFormDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent showCloseButton={false} className="sm:max-w-[560px] w-[95vw] p-0 overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85vh]">
+      <DialogContent showCloseButton={false} className="sm:max-w-[560px] w-[95vw] p-0 gap-0 overflow-hidden flex flex-col max-h-[90dvh] md:max-h-[85vh]">
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#E2E8F0] flex-shrink-0">
           <DialogHeader>
             <DialogTitle className="text-[16px] font-bold text-[#0F172A]">
@@ -350,7 +350,7 @@ function OfferFormDialog({
           </button>
         </div>
 
-        <ScrollArea className="flex-1 min-h-0">
+        <div className="flex-1 overflow-y-auto min-h-0">
           <div className="px-6 py-4 space-y-4">
             <div className="space-y-1.5">
               <Label className="text-[12px] font-semibold text-[#334155]">Offer Name</Label>
@@ -473,10 +473,10 @@ function OfferFormDialog({
               <Switch checked={form.isActive} onCheckedChange={(v) => set("isActive", v)} />
             </div>
           </div>
-        </ScrollArea>
+        </div>
 
-        <DialogFooter className="px-6 py-4 border-t border-[#E2E8F0] gap-2 bg-gray-50 flex-shrink-0">
-          <Button variant="outline" onClick={() => onOpenChange(false)} className="h-[38px] px-4 rounded-[7px] text-[13px] font-medium border-[#E2E8F0] text-[#475569] hover:bg-gray-100 bg-white shadow-none">
+        <DialogFooter className="px-6 py-4 border-t border-[#E2E8F0] gap-2 bg-[#F9FAFB] flex-shrink-0">
+          <Button variant="outline" onClick={() => onOpenChange(false)} className="h-[38px] px-4 rounded-[7px] text-[13px] font-medium border-[#E2E8F0] text-[#475569] hover:bg-[#F3F4F6] bg-white shadow-none">
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={submitting} className="h-[38px] px-4 rounded-[7px] text-[13px] font-medium bg-[#FF6B00] hover:bg-[#EA580C] text-white shadow-none">
