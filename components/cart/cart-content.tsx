@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useEffect, useMemo, useState } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,8 @@ import {
 import { useOptimisticCart } from "@/hooks/useOptimisticCart";
 import { useRazorpay } from "@/hooks/useRazorpay";
 import { useSession } from "@/lib/auth-client";
+import { useUserLoyaltyPointsQuery, useUserLoyaltyPoints } from "@/stores/userProfileStore";
+import { purchaseCouponWithPoints } from "@/actions/loyalty/loyalty-coupons";
 import { useCartCoupon, useCartActions } from "@/stores";
 import type { AppliedCoupon } from "@/stores";
 import {
@@ -32,7 +34,7 @@ import { getTimeSlotLabel, formatTimeSlot } from "@/lib/patterns";
 import type { TimeSlotFilter } from "@/stores/menuStore";
 import {
   Trash2, Minus, Plus, ShoppingBag,
-  Loader2, Tag, Percent, ChevronRight, ChevronDown,
+  Loader2, Tag, Percent, ChevronDown,
   MapPin, Clock, Lock, ShieldCheck, Info,
   Home, Briefcase, Coins,
   Check, Calendar as CalendarIcon, X, Banknote
@@ -243,7 +245,23 @@ export function CartContent() {
   const [datePickerOpen, setDatePickerOpen] = useState(false);
   const [slotPickerOpen, setSlotPickerOpen] = useState(false);
   const [couponInput, setCouponInput] = useState("");
-  const [showAllOffers, setShowAllOffers] = useState(false);
+
+  const queryClient = useQueryClient();
+  useUserLoyaltyPointsQuery(!!session?.user);
+  const userPoints = useUserLoyaltyPoints();
+
+  const redeemMutation = useMutation({
+    mutationFn: purchaseCouponWithPoints,
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ["loyalty-points"] });
+      queryClient.invalidateQueries({ queryKey: ["loyalty-purchased-coupons"] });
+      setCouponInput(res.couponCode);
+      applyCouponMutation.mutate(res.couponCode);
+    },
+    onError: (err) => {
+      toast.error(err instanceof Error ? err.message : "Failed to redeem coupon");
+    },
+  });
 
   useEffect(() => {
     if (paymentResult?.success) {
@@ -323,6 +341,16 @@ export function CartContent() {
     }
     applyCouponMutation.mutate(code);
   });
+
+  const couponSavings = appliedCoupon ? appliedCoupon.discount : 0;
+  const finalTotal = Math.max(0, total - couponSavings);
+  const itemCounts = cart.reduce((acc, item) => acc + item.qty, 0);
+
+  const packagingCharge = cartConfig?.packagingCharge ?? 0;
+  const deliveryCharge = cartConfig?.deliveryCharge ?? 0;
+  const freeDeliveryMin = cartConfig?.freeDeliveryMin ?? 0;
+  const effectiveDeliveryCharge = cartConfig && total >= freeDeliveryMin ? 0 : deliveryCharge;
+  const effectiveTotal = finalTotal + packagingCharge + effectiveDeliveryCharge;
 
   const handleCheckout = useEventCallback(async () => {
     if (!defaultAddress) {
@@ -414,15 +442,6 @@ export function CartContent() {
     );
   }
 
-  const couponSavings = appliedCoupon ? appliedCoupon.discount : 0;
-  const finalTotal = Math.max(0, total - couponSavings);
-  const itemCounts = cart.reduce((acc, item) => acc + item.qty, 0);
-
-  const packagingCharge = cartConfig?.packagingCharge ?? 0;
-  const deliveryCharge = cartConfig?.deliveryCharge ?? 0;
-  const freeDeliveryMin = cartConfig?.freeDeliveryMin ?? 0;
-  const effectiveDeliveryCharge = cartConfig && total >= freeDeliveryMin ? 0 : deliveryCharge;
-  const effectiveTotal = finalTotal + packagingCharge + effectiveDeliveryCharge;
 
   return (
     <main className="min-h-screen bg-[#F8F8F8]">
@@ -703,7 +722,7 @@ export function CartContent() {
                     <p className="text-[13px] text-[#595959] text-center py-4">No offers available right now</p>
                   ) : (
                     <>
-                      {(showAllOffers ? availableCoupons : availableCoupons.slice(0, 2)).map((offer) => (
+                      {availableCoupons.map((offer) => (
                         <div key={offer.code} className="flex items-start gap-3">
                           <div className="h-9 w-9 rounded-full border border-[#CFE7D2] flex items-center justify-center shrink-0 bg-[#F0F8F0]">
                             <Percent className="h-4 w-4 text-[#16803A]" />
@@ -723,7 +742,7 @@ export function CartContent() {
                           </button>
                         </div>
                       ))}
-                      {(showAllOffers ? availableLoyaltyCoupons : availableLoyaltyCoupons.slice(0, showAllOffers ? undefined : Math.max(0, 2 - availableCoupons.length))).map((offer) => (
+                      {availableLoyaltyCoupons.map((offer) => (
                         <div key={offer.id} className="flex items-start gap-3">
                           <div className="h-9 w-9 rounded-full border border-[#DBEAFE] flex items-center justify-center shrink-0 bg-[#EFF6FF]">
                             <Coins className="h-4 w-4 text-[#2563EB]" />
@@ -736,11 +755,18 @@ export function CartContent() {
                             ) : null}
                           </div>
                           <div className="flex flex-col items-end shrink-0 mt-0.5">
-                            <span className="text-[12px] font-bold text-[#2563EB]">Use {offer.pointsCost} PTS</span>
+                            <span className="text-[12px] font-bold text-[#2563EB] mb-1">{offer.pointsCost} PTS</span>
+                            <button
+                              onClick={() => redeemMutation.mutate(offer.id)}
+                              disabled={!userPoints || userPoints.points < offer.pointsCost || redeemMutation.isPending || !!appliedCoupon}
+                              className="text-[12px] font-bold text-[#FE4D02] hover:underline disabled:opacity-50 disabled:no-underline uppercase"
+                            >
+                              {redeemMutation.isPending && redeemMutation.variables === offer.id ? "REDEEMING..." : "REDEEM"}
+                            </button>
                           </div>
                         </div>
                       ))}
-                      {(showAllOffers ? availablePaymentOffers : availablePaymentOffers.slice(0, showAllOffers ? undefined : Math.max(0, 2 - availableCoupons.length - availableLoyaltyCoupons.length))).map((offer) => (
+                      {availablePaymentOffers.map((offer) => (
                         <div key={offer.id} className="flex items-start gap-3">
                           <div className="h-9 w-9 rounded-full border border-[#FED7AA] flex items-center justify-center shrink-0 bg-[#FFF7ED]">
                             <Banknote className="h-4 w-4 text-[#F97316]" />
@@ -758,11 +784,6 @@ export function CartContent() {
                     </>
                   )}
                 </div>
-                {!showAllOffers && (availableCoupons.length + availablePaymentOffers.length + availableLoyaltyCoupons.length > 2) && (
-                  <button onClick={() => setShowAllOffers(true)} className="mt-5 text-[#FE4D02] text-[13px] font-bold flex items-center gap-1 w-full">
-                    View All Offers <ChevronRight className="h-4 w-4 text-[#FE4D02]" />
-                  </button>
-                )}
               </div>
 
               {/* Payment Method card */}

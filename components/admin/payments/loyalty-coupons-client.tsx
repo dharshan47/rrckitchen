@@ -263,7 +263,7 @@ export default function AdminLoyaltyPointsPage() {
     (formData: FormData) => {
       const data = {
         name: formData.name,
-        description: formData.description || undefined,
+        description: formData.description.trim() || null,
         discountType: formData.discountType as DiscountType,
         discountValue: parseFloat(formData.discountValue) || 0,
         maxDiscount: formData.maxDiscount ? parseFloat(formData.maxDiscount) : null,

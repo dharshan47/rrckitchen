@@ -154,11 +154,11 @@ export async function updateCoupon(
     if (data.discountValue !== undefined) updateData.discountValue = data.discountValue
     if (data.maxDiscount !== undefined) updateData.maxDiscount = data.maxDiscount
     if (data.minOrderValue !== undefined) updateData.minOrderValue = data.minOrderValue
+    if (data.kitchenPartnerId !== undefined) updateData.kitchenPartnerId = data.kitchenPartnerId || null
     if (data.scope !== undefined) {
       updateData.scope = data.scope
       if (data.scope === "PLATFORM") updateData.kitchenPartnerId = null
     }
-    if (data.kitchenPartnerId !== undefined) updateData.kitchenPartnerId = data.kitchenPartnerId
     if (data.validFrom !== undefined) updateData.validFrom = new Date(data.validFrom)
     if (data.validTo !== undefined) updateData.validTo = new Date(data.validTo)
     if (data.usageLimitTotal !== undefined) updateData.usageLimitTotal = data.usageLimitTotal

@@ -105,7 +105,7 @@ export async function getLoyaltyCouponById(id: string) {
 
 export async function createLoyaltyCoupon(data: {
   name: string
-  description?: string
+  description?: string | null
   discountType: "FLAT" | "PERCENTAGE"
   discountValue: number
   maxDiscount?: number | null

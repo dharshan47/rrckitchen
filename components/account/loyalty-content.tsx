@@ -358,7 +358,7 @@ export function LoyaltyContent() {
             </div>
             <div className="flex flex-col">
               <span className="text-[11px] text-gray-500 font-medium">Points Value</span>
-              <span className="text-[16px] font-bold text-gray-900 mb-1">1 pt = ₹1</span>
+              <span className="text-[16px] font-bold text-gray-900 mb-1">1 pt = ₹0.05</span>
               <span className="text-[11px] font-medium text-gray-500">Use points to get<br />amazing discounts</span>
             </div>
           </div>

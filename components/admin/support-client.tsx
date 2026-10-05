@@ -1189,7 +1189,7 @@ export default function AdminSupportPage() {
         <SheetContent
           side="right"
           showCloseButton={false}
-          className="w-full max-w-[100vw] sm:!max-w-[500px] p-0 flex flex-col bg-[#FFFFFF] border-l border-[#E5E7EB] gap-0 overflow-x-hidden"
+          className="!w-full max-w-[100vw] sm:!max-w-[500px] p-0 flex flex-col bg-[#FFFFFF] border-l border-[#E5E7EB] gap-0 overflow-x-hidden"
         >
           {selectedTicket && (
             <>
@@ -1209,7 +1209,7 @@ export default function AdminSupportPage() {
               </div>
 
               {/* Scrollable body */}
-              <ScrollArea className="flex-1 min-h-0 w-full overflow-hidden">
+              <ScrollArea className="flex-1 min-h-0 w-full overflow-hidden [&_[data-slot=scroll-area-viewport]>div]:!block">
                 <div className="flex flex-col w-full overflow-x-hidden">
                   <div className="px-6 pt-5">
                   {/* Badges & ID */}
