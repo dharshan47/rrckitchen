@@ -16,6 +16,14 @@ import { Badge } from "@/components/ui/badge"
 import { DataTable } from "@/components/ui/data-table"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import {
   useReactTable,
   getCoreRowModel,
   createColumnHelper,
@@ -89,15 +97,17 @@ function StatsSkeleton() {
     <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-4">
       {Array.from({ length: 6 }).map((_, i) => (
         <Card key={i} className="shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-[#E5E7EB] rounded-[16px] bg-white overflow-hidden">
-          <CardContent className="p-5 flex flex-col gap-4">
-            <div className="flex items-start gap-4">
-              <Skeleton className="h-[48px] w-[48px] rounded-full shrink-0 bg-black/5" />
-              <div className="flex flex-col w-full gap-2 mt-1">
-                <Skeleton className="h-[12px] w-20 bg-black/5" />
-                <Skeleton className="h-[22px] w-12 bg-black/5" />
+          <CardContent className="p-4 sm:p-5 flex flex-col gap-3 sm:gap-4">
+            <div className="flex flex-col sm:flex-row items-center sm:items-start gap-2 sm:gap-4 text-center sm:text-left">
+              <Skeleton className="h-[40px] w-[40px] sm:h-[48px] sm:w-[48px] rounded-full shrink-0" />
+              <div className="flex flex-col min-w-0 w-full sm:mt-1 items-center sm:items-start">
+                <Skeleton className="h-[12px] w-20 rounded-[4px] mb-1 sm:mb-1.5" />
+                <Skeleton className="h-[22px] sm:h-[26px] w-12 rounded-[4px]" />
               </div>
             </div>
-            <Skeleton className="h-[12px] w-28 mx-auto mt-1 bg-black/5" />
+            <div className="flex justify-center sm:justify-start mt-0 sm:mt-1">
+              <Skeleton className="h-[12px] sm:h-[14px] w-28 rounded-[4px]" />
+            </div>
           </CardContent>
         </Card>
       ))}
@@ -107,33 +117,52 @@ function StatsSkeleton() {
 
 function TableSkeleton() {
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4 px-4 border-b border-[#F3F4F6] bg-white gap-4">
-         <Skeleton className="h-[16px] w-[95%] bg-black/5" />
-      </div>
-      {Array.from({ length: 8 }).map((_, i) => (
-        <div key={i} className="flex items-center py-2 px-4 border-b border-[#F3F4F6] gap-4 bg-white">
-          <Skeleton className="h-4 w-4 rounded-[4px] shrink-0 bg-black/5 ml-2" />
-          <div className="flex items-center gap-4 min-w-[280px]">
-            <Skeleton className="h-14 w-14 rounded-[10px] shrink-0 bg-black/5" />
-            <div className="space-y-2 flex-1">
-              <Skeleton className="h-[14px] w-32 bg-black/5" />
-              <Skeleton className="h-[12px] w-48 bg-black/5" />
-            </div>
-          </div>
-          <Skeleton className="h-[13px] w-24 shrink-0 bg-black/5" />
-          <Skeleton className="h-[13px] w-24 shrink-0 bg-black/5" />
-          <Skeleton className="h-[30px] w-16 shrink-0 bg-black/5" />
-          <Skeleton className="h-[20px] w-20 rounded-[999px] shrink-0 bg-black/5" />
-          <Skeleton className="h-[13px] w-12 shrink-0 bg-black/5" />
-          <Skeleton className="h-[13px] w-16 shrink-0 bg-black/5" />
-          <div className="flex gap-2">
-            <Skeleton className="h-8 w-8 rounded-[10px] bg-black/5" />
-            <Skeleton className="h-8 w-8 rounded-[10px] bg-black/5" />
-            <Skeleton className="h-8 w-8 rounded-[10px] bg-black/5" />
-          </div>
-        </div>
-      ))}
+    <div className="w-full bg-white">
+      <Table>
+        <TableHeader>
+          <TableRow className="border-[#F3F4F6] bg-white hover:bg-white">
+            <TableHead className="w-[50px]"><Skeleton className="h-[12px] w-[12px] rounded-[4px]" /></TableHead>
+            <TableHead className="min-w-[280px]"><Skeleton className="h-[12px] w-24 rounded-[4px]" /></TableHead>
+            <TableHead><Skeleton className="h-[12px] w-20 rounded-[4px]" /></TableHead>
+            <TableHead><Skeleton className="h-[12px] w-20 rounded-[4px]" /></TableHead>
+            <TableHead><Skeleton className="h-[12px] w-16 rounded-[4px]" /></TableHead>
+            <TableHead><Skeleton className="h-[12px] w-24 rounded-[4px]" /></TableHead>
+            <TableHead><Skeleton className="h-[12px] w-16 rounded-[4px]" /></TableHead>
+            <TableHead><Skeleton className="h-[12px] w-20 rounded-[4px]" /></TableHead>
+            <TableHead className="text-right"><Skeleton className="h-[12px] w-16 rounded-[4px] ml-auto" /></TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Array.from({ length: 8 }).map((_, i) => (
+            <TableRow key={i} className="border-[#F3F4F6] hover:bg-white bg-white">
+              <TableCell><Skeleton className="h-4 w-4 rounded-[4px]" /></TableCell>
+              <TableCell>
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-[56px] w-[56px] rounded-[10px] shrink-0" />
+                  <div className="flex flex-col gap-1 w-full">
+                    <Skeleton className="h-[14px] w-32 rounded-[4px]" />
+                    <Skeleton className="h-[12px] w-48 rounded-[4px]" />
+                    <Skeleton className="h-[12px] w-24 rounded-[4px]" />
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell><Skeleton className="h-[13px] w-24 rounded-[4px]" /></TableCell>
+              <TableCell><Skeleton className="h-[13px] w-24 rounded-[4px]" /></TableCell>
+              <TableCell><Skeleton className="h-[15px] w-16 rounded-[4px]" /></TableCell>
+              <TableCell><Skeleton className="h-[20px] w-20 rounded-[999px]" /></TableCell>
+              <TableCell><Skeleton className="h-[13px] w-12 rounded-[4px]" /></TableCell>
+              <TableCell><Skeleton className="h-[13px] w-16 rounded-[4px]" /></TableCell>
+              <TableCell className="text-right">
+                <div className="flex gap-2 justify-end">
+                  <Skeleton className="h-8 w-8 rounded-[10px]" />
+                  <Skeleton className="h-8 w-8 rounded-[10px]" />
+                  <Skeleton className="h-8 w-8 rounded-[10px]" />
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   )
 }

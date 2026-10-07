@@ -170,9 +170,202 @@ function SkeletonHistoryRow() {
 // Component
 // -----------------------------------------
 
+function LoyaltySkeleton() {
+  return (
+    <div className="w-full flex flex-col gap-6 md:gap-8 max-w-6xl mx-auto pb-12 px-4 md:px-0">
+
+      {/* Breadcrumb Section */}
+      <div className="pt-6 pb-2">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-4 w-12 rounded" />
+          <Skeleton className="h-3.5 w-3.5 rounded-full" />
+          <Skeleton className="h-4 w-16 rounded" />
+          <Skeleton className="h-3.5 w-3.5 rounded-full" />
+          <Skeleton className="h-4 w-24 rounded" />
+        </div>
+      </div>
+
+      {/* BANNER */}
+      <div className="relative w-full h-[180px] md:h-[220px] rounded-[24px] overflow-hidden bg-white border border-[#FEE2E2] flex items-center px-6 md:px-12 shadow-sm">
+        <div className="relative z-10 w-[60%] flex flex-col gap-3">
+          <Skeleton className="h-[36px] md:h-[44px] w-3/4 rounded-lg" />
+          <Skeleton className="h-[18px] md:h-[20px] w-full max-w-md rounded" />
+        </div>
+        <div className="absolute right-[-20px] md:right-8 top-1/2 -translate-y-1/2 w-[200px] h-[200px] md:w-[280px] md:h-[280px]">
+          <Skeleton className="w-[180px] h-[180px] md:w-[240px] md:h-[240px] rounded-full mx-auto" />
+        </div>
+      </div>
+
+      {/* STATS ROW */}
+      <div className="bg-white rounded-[20px] p-6 border border-[#E5E7EB] shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-0 md:divide-x divide-gray-200">
+          
+          <div className="flex items-center gap-5 md:pr-6">
+            <Skeleton className="w-[70px] h-[70px] rounded-full shrink-0" />
+            <div className="flex flex-col gap-1.5 w-full">
+              <Skeleton className="h-[14px] w-20 rounded" />
+              <Skeleton className="h-[32px] w-24 rounded" />
+              <Skeleton className="h-[14px] w-32 rounded mt-1" />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 md:px-6">
+            <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+            <div className="flex flex-col gap-1.5 w-full">
+              <Skeleton className="h-[12px] w-16 rounded" />
+              <Skeleton className="h-[18px] w-20 rounded" />
+              <Skeleton className="h-[24px] w-28 rounded mt-1" />
+            </div>
+          </div>
+
+          <div className="flex flex-col justify-center gap-2 md:px-6">
+            <div className="flex items-center gap-4">
+              <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+              <div className="flex flex-col gap-1.5 w-full">
+                <Skeleton className="h-[12px] w-16 rounded" />
+                <Skeleton className="h-[18px] w-20 rounded" />
+              </div>
+            </div>
+            <div className="flex flex-col mt-2 gap-1.5">
+              <Skeleton className="h-[12px] w-24 rounded self-end" />
+              <Skeleton className="h-[6px] w-full rounded-full" />
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4 md:pl-6">
+            <Skeleton className="w-12 h-12 rounded-full shrink-0" />
+            <div className="flex flex-col gap-1.5 w-full">
+              <Skeleton className="h-[12px] w-20 rounded" />
+              <Skeleton className="h-[18px] w-16 rounded" />
+              <Skeleton className="h-[24px] w-28 rounded mt-1" />
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      {/* HOW TO EARN POINTS */}
+      <div className="bg-white rounded-[20px] p-6 border border-[#E5E7EB] shadow-sm">
+        <div className="flex items-center gap-2 mb-5">
+          <Skeleton className="w-6 h-6 rounded-full shrink-0" />
+          <Skeleton className="h-[20px] w-40 rounded" />
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className="bg-white rounded-xl p-4 flex items-center gap-4 border border-[#E5E7EB]">
+              <Skeleton className="w-12 h-12 rounded-xl shrink-0" />
+              <div className="flex flex-col gap-1.5 w-full">
+                <Skeleton className="h-[16px] w-24 rounded" />
+                <Skeleton className="h-[14px] w-20 rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* REDEEM POINTS */}
+      <div className="bg-white rounded-[20px] p-6 border border-[#E5E7EB] shadow-sm overflow-hidden">
+        <div className="flex items-center gap-2 mb-5">
+          <Skeleton className="w-6 h-6 rounded-full shrink-0" />
+          <Skeleton className="h-[20px] w-48 rounded" />
+        </div>
+        <div className="flex gap-4 overflow-hidden pb-4">
+          <SkeletonCouponCard />
+          <SkeletonCouponCard />
+          <SkeletonCouponCard />
+          <SkeletonCouponCard />
+        </div>
+      </div>
+
+      {/* BOTTOM ROW */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-8">
+        <div className="bg-white rounded-[20px] p-6 border border-[#E5E7EB] shadow-sm flex flex-col">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <Skeleton className="w-6 h-6 rounded-full shrink-0" />
+              <Skeleton className="h-[20px] w-32 rounded" />
+            </div>
+          </div>
+          <div className="flex flex-col gap-3">
+            <SkeletonPurchasedCoupon />
+            <SkeletonPurchasedCoupon />
+            <SkeletonPurchasedCoupon />
+          </div>
+        </div>
+
+        <div className="bg-white rounded-[20px] p-6 md:p-8 border border-[#E5E7EB] shadow-sm flex flex-col justify-between">
+          <div>
+            <div className="flex items-center gap-2 mb-4">
+              <Skeleton className="w-6 h-6 rounded-full shrink-0" />
+              <Skeleton className="h-[20px] w-32 rounded" />
+            </div>
+            <Skeleton className="h-[14px] w-64 rounded mb-6" />
+            <div className="flex items-center bg-white border border-[#E5E7EB] rounded-xl p-1.5 mb-8 h-[52px]">
+              <Skeleton className="h-[14px] w-48 rounded mx-3" />
+              <Skeleton className="w-10 h-10 rounded-lg ml-auto shrink-0" />
+            </div>
+          </div>
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="flex items-center gap-3">
+              <Skeleton className="w-10 h-10 rounded-full shrink-0" />
+              <div className="flex flex-col gap-1.5">
+                <Skeleton className="h-[20px] w-12 rounded" />
+                <Skeleton className="h-[12px] w-20 rounded" />
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <Skeleton className="w-10 h-10 rounded-full shrink-0" />
+              <div className="flex flex-col gap-1.5">
+                <Skeleton className="h-[20px] w-16 rounded" />
+                <Skeleton className="h-[12px] w-20 rounded" />
+              </div>
+            </div>
+          </div>
+          <Skeleton className="w-full h-[48px] rounded-xl" />
+        </div>
+      </div>
+
+      {/* POINTS HISTORY */}
+      <div className="bg-white rounded-[20px] p-6 border border-[#E5E7EB] shadow-sm flex flex-col md:flex-row gap-6">
+        <div className="flex-1 flex flex-col min-w-0">
+          <div className="flex items-center gap-2 mb-6">
+            <Skeleton className="w-6 h-6 rounded-full shrink-0" />
+            <Skeleton className="h-[20px] w-32 rounded" />
+          </div>
+          <div className="w-full overflow-hidden">
+            <table className="w-full text-left border-collapse min-w-[500px]">
+              <thead>
+                <tr className="border-b border-gray-100">
+                  <th className="pb-4 w-1/4"><Skeleton className="h-[14px] w-16 rounded" /></th>
+                  <th className="pb-4 w-1/3"><Skeleton className="h-[14px] w-24 rounded" /></th>
+                  <th className="pb-4 w-1/4"><Skeleton className="h-[14px] w-12 rounded" /></th>
+                  <th className="pb-4 w-1/6 flex justify-end pr-2"><Skeleton className="h-[14px] w-16 rounded" /></th>
+                </tr>
+              </thead>
+              <tbody>
+                <SkeletonHistoryRow />
+                <SkeletonHistoryRow />
+                <SkeletonHistoryRow />
+                <SkeletonHistoryRow />
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div className="w-full md:w-[280px] bg-white rounded-[20px] p-6 border border-[#E5E7EB] relative overflow-hidden flex flex-col min-h-[220px]">
+          <Skeleton className="h-[24px] w-48 rounded mb-2" />
+          <Skeleton className="h-[24px] w-32 rounded mb-4" />
+          <Skeleton className="h-[14px] w-full rounded mb-1" />
+          <Skeleton className="h-[14px] w-2/3 rounded" />
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
 export function LoyaltyContent() {
   const queryClient = useQueryClient();
-  const { data: session } = useSession();
+  const { data: session, isPending: sessionPending } = useSession();
   const isLoggedIn = !!session?.user;
 
   useUserLoyaltyPointsQuery(isLoggedIn);
@@ -230,6 +423,11 @@ export function LoyaltyContent() {
   const [showAllPurchased, setShowAllPurchased] = useState(false);
   const couponsRef = useRef<HTMLDivElement>(null);
   const scrollCoupons = (dir: number) => couponsRef.current?.scrollBy({ left: dir * 280, behavior: "smooth" });
+
+  if (sessionPending) {
+    return <LoyaltySkeleton />;
+  }
+
 
   const pointsBalance = points?.points ?? 0;
   const lifetime = points?.lifetimePoints ?? 0;
@@ -358,7 +556,7 @@ export function LoyaltyContent() {
             </div>
             <div className="flex flex-col">
               <span className="text-[11px] text-gray-500 font-medium">Points Value</span>
-              <span className="text-[16px] font-bold text-gray-900 mb-1">1 pt = ₹0.05</span>
+              <span className="text-[16px] font-bold text-gray-900 mb-1">1 pt = ₹1</span>
               <span className="text-[11px] font-medium text-gray-500">Use points to get<br />amazing discounts</span>
             </div>
           </div>

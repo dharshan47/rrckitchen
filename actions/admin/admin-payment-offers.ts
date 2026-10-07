@@ -96,9 +96,9 @@ export async function updatePaymentOffer(
     await prisma.paymentOffer.update({ where: { id }, data: updateData })
 
     return { success: true }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("updatePaymentOffer error:", error)
-    return { success: false, error: "Failed to update payment offer" }
+    return { success: false, error: error instanceof Error ? error.message : "Failed to update payment offer" }
   }
 }
 

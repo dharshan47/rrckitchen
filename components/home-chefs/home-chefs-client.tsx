@@ -16,8 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Skeleton } from "@/components/ui/skeleton";
-import { HomeChefsSkeleton } from "@/components/home-chefs/home-chefs-skeleton";
+import { HomeChefsSkeleton, HomeChefCardSkeleton } from "@/components/home-chefs/home-chefs-skeleton";
 import type { KitchenData } from "@/hooks/useExploreKitchens";
 
 const STAR_RATING = [1, 2, 3, 4, 5];
@@ -411,28 +410,7 @@ function ChefCard({ chef }: { chef: KitchenData }) {
   );
 }
 
-function HomeChefCardSkeleton() {
-  return (
-    <div className="rounded-xl border border-[#E5E7EB] shadow-[0_2px_10px_rgba(0,0,0,0.05)] overflow-hidden bg-[#FFFFFF] p-3">
-      <div className="flex gap-3 h-[104px]">
-        <Skeleton className="w-[84px] h-[104px] rounded-lg shrink-0" />
-        <div className="flex flex-col py-0.5 flex-1 min-w-0 justify-center">
-          <Skeleton className="h-3.5 w-24 mb-1.5" />
-          <Skeleton className="h-2.5 w-16 mb-1" />
-          <Skeleton className="h-2.5 w-20 mb-2" />
-          <div className="flex items-center gap-0.5 mb-2">
-            {[1, 2, 3, 4, 5].map((j) => (
-              <Skeleton key={j} className="h-2.5 w-2.5 rounded-sm" />
-            ))}
-          </div>
-          <div className="mt-auto">
-            <Skeleton className="h-[18px] w-14 rounded-[4px]" />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+
 
 function FeatureFooterItem({ icon, title, desc }: { icon: React.ReactNode, title: string, desc: string }) {
   return (

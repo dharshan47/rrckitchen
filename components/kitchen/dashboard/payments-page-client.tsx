@@ -260,27 +260,159 @@ export default function PaymentsPageClient() {
     document.getElementById("bank-details")?.scrollIntoView({ behavior: "smooth", block: "start" })
   }
 
-  if (!data) {
     return (
-      <div className="space-y-6 pb-20 animate-in fade-in duration-500 bg-[#FCFCFC] min-h-screen p-6">
+      <div className="space-y-6 pb-20 animate-in fade-in duration-500 bg-[#FCFCFC] min-h-screen p-2 sm:p-6">
+        
+        {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-[32px] w-[32px] rounded-xl bg-black/5" />
+            <Skeleton className="h-7 w-7 rounded-xl hidden sm:block" />
             <div>
-              <Skeleton className="h-[32px] w-56 rounded bg-black/5" />
-              <Skeleton className="h-[20px] w-72 rounded mt-1 bg-black/5" />
+              <Skeleton className="h-[32px] w-56 rounded" />
+              <Skeleton className="h-[20px] w-72 rounded mt-1" />
             </div>
           </div>
-          <Skeleton className="h-[36px] w-40 rounded-xl bg-black/5" />
+          <Skeleton className="h-9 w-[140px] rounded-[8px]" />
         </div>
-        <div className="grid grid-cols-5 gap-4">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-[128px] w-full rounded-[10px] bg-black/5" />
-          ))}
+
+        {/* Top Summary Cards */}
+        <ScrollArea className="w-full pb-4 lg:pb-0 whitespace-nowrap lg:whitespace-normal">
+          <div className="flex w-max lg:w-auto lg:grid lg:grid-cols-5 gap-4">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] min-w-[240px] lg:min-w-0 snap-start shrink-0 flex flex-col justify-between overflow-hidden h-[130px]">
+                <div className="p-5 pb-0">
+                  <div className="flex items-center gap-4 mb-3">
+                    <Skeleton className="h-12 w-12 rounded-full shrink-0" />
+                    <div className="w-full">
+                      <Skeleton className="h-[16px] w-24 mb-1.5" />
+                      <Skeleton className="h-[24px] w-20" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <ScrollBar orientation="horizontal" className="hidden" />
+        </ScrollArea>
+
+        {/* Middle Section */}
+        <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
+          {/* Left Column: Bank Details */}
+          <div className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] h-fit">
+            <div className="pb-4 pt-6 px-6 border-b border-[#EEF0F2] flex flex-row items-center justify-between">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-6 w-6 rounded-full shrink-0" />
+                <div>
+                  <Skeleton className="h-[20px] w-48 mb-1" />
+                  <Skeleton className="h-[14px] w-72" />
+                </div>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
+                  {Array.from({ length: 7 }).map((_, i) => (
+                    <div key={i} className="space-y-1.5">
+                      <Skeleton className="h-[14px] w-24" />
+                      <Skeleton className="h-[36px] w-full rounded-[7px]" />
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col lg:flex-row items-center justify-between gap-4 pt-6">
+                  <Skeleton className="h-10 w-full lg:w-64 rounded-[8px]" />
+                  <div className="flex items-center gap-3 w-full lg:w-auto">
+                    <Skeleton className="h-[36px] flex-1 lg:w-24 rounded-[7px]" />
+                    <Skeleton className="h-[36px] flex-1 lg:w-36 rounded-[7px]" />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Information Widgets */}
+          <div className="space-y-6">
+            <div className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] h-fit">
+              <div className="pb-4 pt-6 px-6 flex flex-row items-center gap-3">
+                <Skeleton className="h-6 w-6 rounded-full shrink-0" />
+                <Skeleton className="h-[20px] w-32" />
+              </div>
+              <div className="p-6 pt-0 space-y-4">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="flex items-center justify-between">
+                    <Skeleton className="h-[16px] w-24" />
+                    <Skeleton className="h-[16px] w-32" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] h-fit flex flex-col">
+              <div className="pb-4 pt-6 px-6 flex flex-row items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="h-5 w-5 rounded-full shrink-0" />
+                  <Skeleton className="h-[20px] w-32" />
+                </div>
+                <Skeleton className="h-[28px] w-24 rounded-[7px]" />
+              </div>
+              <div className="p-6 pt-0 flex flex-row items-center gap-6">
+                <Skeleton className="h-28 w-28 rounded-full shrink-0" />
+                <div className="flex-1 space-y-3.5 w-full">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="flex items-center justify-between">
+                      <Skeleton className="h-[14px] w-24" />
+                      <Skeleton className="h-[14px] w-20" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section: Settlement History */}
+        <div className="rounded-[10px] border border-[#E5E8EB] bg-[#FFFFFF] shadow-[0_1px_2px_rgba(16,24,40,.025),_0_3px_8px_rgba(16,24,40,.015)] overflow-hidden">
+          <div className="pb-4 pt-6 px-6 border-b border-[#EEF0F2] flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white">
+            <div className="flex items-center gap-3">
+              <Skeleton className="h-6 w-6 rounded-full shrink-0" />
+              <div>
+                <Skeleton className="h-[20px] w-36 mb-1" />
+                <Skeleton className="h-[14px] w-64" />
+              </div>
+            </div>
+            <Skeleton className="h-[36px] w-full sm:w-[160px] rounded-[7px]" />
+          </div>
+          <div className="p-0 bg-white">
+            <div className="w-full overflow-hidden">
+              <div className="w-full min-w-[900px]">
+                <div className="bg-[#FFFFFF] border-b border-[#EEF0F2] h-[44px] flex items-center px-6 gap-8">
+                  {Array.from({ length: 7 }).map((_, i) => (
+                    <Skeleton key={i} className="h-[14px] w-24 flex-1" />
+                  ))}
+                </div>
+                <div>
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="border-b border-[#EEF0F2] h-[52px] flex items-center px-6 gap-8">
+                      {Array.from({ length: 7 }).map((_, j) => (
+                        <Skeleton key={j} className="h-[14px] w-24 flex-1" />
+                      ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Promo Card */}
+        <div className="bg-[#F3FAF5] rounded-[10px] p-6 sm:p-8 border-none shadow-[0_1px_2px_rgba(16,24,40,.025)] relative overflow-hidden flex flex-col items-start justify-center min-h-[160px] sm:min-h-[180px] mt-6">
+          <div className="w-full sm:w-[60%] lg:w-[45%] z-10 relative">
+            <Skeleton className="h-[28px] w-64 mb-2" />
+            <Skeleton className="h-[40px] w-full max-w-md mb-5" />
+            <Skeleton className="h-[36px] w-40 rounded-[7px]" />
+          </div>
         </div>
       </div>
     )
-  }
 
   const handleSave = (data: BankFormData) => {
     saveMutation.mutate(data)

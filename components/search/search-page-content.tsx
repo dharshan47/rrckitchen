@@ -134,22 +134,86 @@ function toKitchenData(kitchen: SearchKitchen): KitchenData {
 
 function SearchSkeleton() {
   return (
-    <div className="space-y-4 animate-pulse px-4 py-6">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <div key={i} className="bg-white rounded-2xl border border-border p-4">
-          <div className="flex gap-4">
-            <Skeleton className="h-28 w-28 rounded-xl shrink-0" />
-            <div className="flex-1 space-y-3 py-2">
-              <Skeleton className="h-5 w-2/3 rounded-lg" />
-              <Skeleton className="h-4 w-1/3 rounded-lg" />
-              <div className="space-y-2">
-                <Skeleton className="h-3 w-1/2 rounded-lg" />
-                <Skeleton className="h-3 w-1/4 rounded-lg" />
-              </div>
+    <div className="flex flex-col min-h-screen bg-[#FDFDFD]">
+      {/* Header Banner */}
+      <div className="w-full bg-[#FCF8F5] border-b border-[#EEE8E4] overflow-hidden">
+        <div className="max-w-[1440px] mx-auto relative flex flex-col lg:flex-row items-stretch lg:min-h-[220px]">
+          {/* Left Content (Text) */}
+          <div className="w-full lg:w-[50%] xl:w-[45%] px-4 sm:px-6 py-8 lg:py-12 flex flex-col justify-center z-20 relative bg-[#FCF8F5] lg:bg-transparent">
+            <Skeleton className="h-4 w-32 mb-1.5" />
+            <Skeleton className="h-12 lg:h-14 w-64 mb-3.5" />
+            <Skeleton className="h-5 w-80 max-w-full" />
+          </div>
+          
+          {/* Right Content (Image) */}
+          <div className="w-full h-[180px] sm:h-[220px] lg:absolute lg:inset-y-0 lg:right-0 lg:left-[40%] lg:h-auto z-10 bg-muted">
+            <Skeleton className="w-full h-full rounded-none" />
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-[1440px] mx-auto w-full px-4 sm:px-6 py-8 flex flex-col lg:flex-row gap-8">
+        {/* Sidebar */}
+        <div className="hidden lg:block w-64 shrink-0 space-y-6">
+          <div className="bg-[#FFFFFF] border border-[#ECE8E5] rounded-[8px] p-5 shadow-[0_2px_8px_rgba(40,30,25,0.035)]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#EEEAE7] mb-5">
+              <Skeleton className="h-5 w-16" />
+              <Skeleton className="h-4 w-16" />
+            </div>
+
+            <div className="space-y-5">
+              {Array.from({ length: 3 }).map((_, fi) => (
+                <div key={fi} className={fi === 0 ? "" : "pt-5 border-t border-[#EEEAE7]"}>
+                  <div className="flex items-center justify-between mb-3">
+                    <Skeleton className="h-5 w-24" />
+                    <Skeleton className="h-4 w-4" />
+                  </div>
+                  <div className="space-y-3">
+                    {Array.from({ length: 4 }).map((_, item) => (
+                      <div key={item} className="flex items-center gap-3">
+                        <Skeleton className="w-4.5 h-4.5 rounded-sm" />
+                        <Skeleton className="h-4 w-20" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+              <Skeleton className="w-full h-[44px] rounded-[5px] mt-6" />
             </div>
           </div>
         </div>
-      ))}
+
+        {/* Grid Results */}
+        <div className="flex-1 min-w-0">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 lg:mb-8 gap-4 border-b border-[#EEEAE7] pb-4">
+            <Skeleton className="h-5 w-48" />
+            <div className="hidden lg:flex items-center gap-3">
+              <Skeleton className="h-5 w-16" />
+              <Skeleton className="h-10 w-40 rounded-lg" />
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-5 pb-6 lg:pb-10">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="flex flex-col bg-[#FFFFFF] border border-[#EAEAEA] rounded-[9px] shadow-[0_2px_8px_rgba(30,25,20,0.045)] overflow-hidden">
+                <div className="relative w-full h-40 bg-muted">
+                  <Skeleton className="h-full w-full rounded-none" />
+                  <div className="absolute -bottom-5 left-4 h-11 w-11 rounded-full border-[2px] border-white overflow-hidden">
+                    <Skeleton className="h-full w-full rounded-full" />
+                  </div>
+                </div>
+                <div className="p-4 pt-7 flex flex-col gap-2.5 relative">
+                  <Skeleton className="h-4 w-3/4 rounded-lg" />
+                  <Skeleton className="h-3 w-1/3 rounded-lg" />
+                  <Skeleton className="h-3 w-2/3 rounded-lg" />
+                  <Skeleton className="h-3 w-1/4 rounded-lg" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }

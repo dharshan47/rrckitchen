@@ -167,30 +167,34 @@ const COLOR_OPTIONS = [
 function DashboardSkeleton() {
   return (
     <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto animate-in fade-in duration-300">
+      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Skeleton className="h-[48px] w-[48px] rounded-lg bg-black/5" />
-          <div className="space-y-2">
-            <Skeleton className="h-[24px] w-60 rounded-md bg-black/5" />
-            <Skeleton className="h-[16px] w-80 rounded-md bg-black/5" />
+          <div className="bg-[#E6F4EA] p-2.5 rounded-lg flex items-center justify-center">
+            <Skeleton className="h-6 w-6 rounded-sm" />
+          </div>
+          <div>
+            <Skeleton className="h-[32px] w-[320px] rounded-md" />
+            <Skeleton className="h-[20px] w-[340px] mt-0.5 rounded-sm" />
           </div>
         </div>
-        <div className="flex gap-3">
-          <Skeleton className="h-[40px] w-40 rounded-md bg-black/5" />
-          <Skeleton className="h-[40px] w-52 rounded-md bg-black/5" />
+        <div className="flex flex-wrap items-center gap-3">
+          <Skeleton className="h-10 w-[160px] rounded-md" />
+          <Skeleton className="h-10 w-[200px] rounded-md" />
         </div>
       </div>
 
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card key={i} className="border-gray-100/80 shadow-sm bg-white">
+          <Card key={i} className="border-[#B9D8C7] shadow-sm bg-white">
             <CardContent className="p-5">
               <div className="flex items-start gap-4">
-                <Skeleton className="h-[48px] w-[48px] rounded-lg bg-black/5" />
-                <div className="flex-1 space-y-2 pt-0.5">
-                  <Skeleton className="h-[12px] w-32 rounded-md bg-black/5" />
-                  <Skeleton className="h-[32px] w-16 rounded-md bg-black/5" />
-                  <Skeleton className="h-[12px] w-36 rounded-md bg-black/5" />
+                <Skeleton className="h-[48px] w-[48px] rounded-lg mt-0.5" />
+                <div className="flex-col">
+                  <Skeleton className="h-[20px] w-[140px] rounded-md" />
+                  <Skeleton className="h-[36px] w-[40px] mt-1 rounded-md" />
+                  <Skeleton className="h-[16px] w-[120px] mt-1 rounded-sm" />
                 </div>
               </div>
             </CardContent>
@@ -198,67 +202,88 @@ function DashboardSkeleton() {
         ))}
       </div>
 
-      <Card className="shadow-sm border-gray-200/60 overflow-hidden bg-white">
-        <div className="p-5 border-b border-gray-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      {/* Main Table Section */}
+      <Card className="shadow-sm border-[#E9E7E2]/60 overflow-hidden bg-white">
+        <div className="p-5 border-b border-[#E9E7E2] bg-white flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-[36px] w-[36px] rounded-md bg-black/5" />
-            <div className="space-y-2">
-              <Skeleton className="h-[20px] w-48 rounded-md bg-black/5" />
-              <Skeleton className="h-[16px] w-72 rounded-md bg-black/5" />
+            <div className="bg-blue-50 p-2 rounded-md">
+              <Skeleton className="h-5 w-5 rounded-sm" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2.5">
+                <Skeleton className="h-[28px] w-[140px] rounded-md" />
+                <Skeleton className="h-[20px] w-[140px] rounded-full" />
+              </div>
+              <Skeleton className="h-[20px] w-[320px] mt-1 rounded-sm" />
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-[40px] w-64 rounded-md bg-black/5" />
-            <Skeleton className="h-[40px] w-24 rounded-md bg-black/5" />
-            <Skeleton className="h-[40px] w-36 rounded-md bg-black/5" />
+
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="relative w-full sm:w-64">
+              <Skeleton className="h-10 w-full rounded-md" />
+            </div>
+            <Skeleton className="h-10 w-[128px] rounded-md" />
+            <Skeleton className="h-10 w-[144px] rounded-md" />
+            <Skeleton className="h-10 w-[64px] rounded-md" />
           </div>
         </div>
+
         <ScrollArea className="bg-white w-full">
           <Table>
             <TableHeader>
-              <TableRow className="border-b-gray-100 bg-gray-50/50">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <TableHead key={i} className="h-12">
-                    <Skeleton className="h-[14px] w-20 rounded-md bg-black/5" />
-                  </TableHead>
-                ))}
+              <TableRow className="border-b-slate-100 bg-[#FAFAF9]/50 hover:bg-[#FAFAF9]/50">
+                <TableHead className="py-4"><Skeleton className="h-[16px] w-[60px]" /></TableHead>
+                <TableHead className="py-4"><Skeleton className="h-[16px] w-[100px]" /></TableHead>
+                <TableHead className="py-4"><Skeleton className="h-[16px] w-[60px]" /></TableHead>
+                <TableHead className="py-4"><Skeleton className="h-[16px] w-[50px]" /></TableHead>
+                <TableHead className="py-4"><Skeleton className="h-[16px] w-[50px]" /></TableHead>
+                <TableHead className="py-4"><Skeleton className="h-[16px] w-[70px]" /></TableHead>
+                <TableHead className="py-4"><Skeleton className="h-[16px] w-[70px]" /></TableHead>
+                <TableHead className="py-4 text-right"><Skeleton className="h-[16px] w-[60px] inline-block" /></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i} className="border-b-gray-100">
-                  <TableCell className="py-4">
-                    <div className="flex items-center gap-3">
-                      <Skeleton className="h-[8px] w-[8px] rounded-full bg-black/5" />
-                      <div className="space-y-1.5">
-                        <Skeleton className="h-[16px] w-20 rounded-md bg-black/5" />
-                        <Skeleton className="h-[12px] w-12 rounded-md bg-black/5" />
+                <TableRow key={i} className="border-b-slate-100">
+                  <TableCell className="py-4 px-4 min-w-[250px]">
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-[8px] w-[8px] rounded-full shrink-0" />
+                      <div className="flex flex-col gap-1">
+                        <Skeleton className="h-[20px] w-[140px]" />
+                        <Skeleton className="h-[16px] w-[200px]" />
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-[52px] w-[170px] rounded-md bg-black/5" />
+                  <TableCell className="py-4 px-4">
+                    <Skeleton className="w-[170px] h-[52px] rounded-md" />
                   </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Skeleton className="h-[20px] w-16 rounded-full bg-black/5" />
-                      <Skeleton className="h-[20px] w-16 rounded-full bg-black/5" />
+                  <TableCell className="py-4 px-4">
+                    <div className="flex flex-wrap gap-1.5">
+                      <Skeleton className="h-[20px] w-[40px] rounded-[5px]" />
+                      <Skeleton className="h-[20px] w-[40px] rounded-[5px]" />
+                      <Skeleton className="h-[20px] w-[40px] rounded-[5px]" />
                     </div>
                   </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-[20px] w-16 rounded-full bg-black/5" />
+                  <TableCell className="py-4 px-4">
+                    <div className="flex items-center gap-2">
+                      <Skeleton className="h-[20px] w-[36px] rounded-full shrink-0" />
+                      <Skeleton className="h-[16px] w-[30px]" />
+                    </div>
                   </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-[16px] w-10 rounded-md bg-black/5" />
+                  <TableCell className="py-4 px-4">
+                     <Skeleton className="h-[20px] w-[30px] rounded-[5px]" />
                   </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-[16px] w-24 rounded-md bg-black/5" />
+                  <TableCell className="py-4 px-4">
+                     <Skeleton className="h-[20px] w-[80px]" />
                   </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Skeleton className="h-[32px] w-[32px] rounded-md bg-black/5" />
-                      <Skeleton className="h-[32px] w-[32px] rounded-md bg-black/5" />
-                      <Skeleton className="h-[32px] w-[32px] rounded-md bg-black/5" />
+                  <TableCell className="py-4 px-4">
+                    <Skeleton className="h-[20px] w-[90px]" />
+                  </TableCell>
+                  <TableCell className="py-4 px-4 text-right">
+                    <div className="flex justify-end gap-1.5">
+                       <Skeleton className="h-8 w-8 rounded-md" />
+                       <Skeleton className="h-8 w-8 rounded-md" />
+                       <Skeleton className="h-8 w-8 rounded-md" />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -267,12 +292,17 @@ function DashboardSkeleton() {
           </Table>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
-        <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <Skeleton className="h-[16px] w-64 rounded-md bg-black/5" />
-          <div className="flex items-center gap-1">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <Skeleton key={i} className="h-[32px] w-[32px] rounded-md bg-black/5" />
-            ))}
+        <div className="p-4 border-t border-[#E9E7E2] flex flex-col sm:flex-row items-center justify-between gap-4 bg-white">
+          <Skeleton className="h-[20px] w-[220px]" />
+          <div className="flex items-center gap-3">
+            <Skeleton className="h-8 w-24 rounded-md" />
+            <div className="flex items-center gap-1.5">
+               <Skeleton className="h-8 w-8 rounded-md" />
+               <Skeleton className="h-8 w-8 rounded-md" />
+               <Skeleton className="h-8 w-8 rounded-md" />
+               <Skeleton className="h-8 w-8 rounded-md" />
+               <Skeleton className="h-8 w-8 rounded-md" />
+            </div>
           </div>
         </div>
       </Card>
@@ -282,52 +312,46 @@ function DashboardSkeleton() {
 
 function EditorSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <div className="space-y-2">
-          <Skeleton className="h-[28px] w-56 rounded-md bg-black/5" />
-          <Skeleton className="h-[16px] w-80 rounded-md bg-black/5" />
+    <div className="min-h-screen bg-[#FEFEFD] p-6 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300">
+      {/* Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div>
+          <Skeleton className="h-[32px] w-[340px]" />
+          <Skeleton className="h-[20px] w-[360px] mt-1" />
         </div>
-        <div className="flex gap-3">
-          <Skeleton className="h-[40px] w-24 rounded-md bg-black/5" />
-          <Skeleton className="h-[40px] w-40 rounded-md bg-black/5" />
-          <Skeleton className="h-[40px] w-40 rounded-md bg-black/5" />
+        <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 w-full md:w-auto mt-2 md:mt-0">
+          <div className="flex flex-row items-center justify-between gap-3 px-3 py-1.5 border border-[#E9E7E2] bg-white rounded-[7px] w-full sm:w-auto">
+             <Skeleton className="h-[20px] w-24" />
+             <Skeleton className="h-[32px] w-[180px] rounded-[7px]" />
+          </div>
+          <div className="flex flex-row gap-3 w-full sm:w-auto">
+             <Skeleton className="h-[40px] w-[140px] rounded-[7px]" />
+             <Skeleton className="h-[40px] w-[100px] rounded-[7px]" />
+             <Skeleton className="h-[40px] w-[40px] rounded-[7px]" />
+          </div>
         </div>
       </div>
 
-      <Skeleton className="h-[44px] w-full rounded-md mb-6 bg-black/5" />
+      <div className="mb-6 border-b border-[#E9E7E2] pb-3 flex gap-8">
+         {Array.from({ length: 6 }).map((_, i) => (
+           <Skeleton key={i} className="h-[24px] w-32 rounded-sm" />
+         ))}
+      </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        <div className="lg:col-span-8 space-y-6">
-          {[0, 1].map((i) => (
-            <Card key={i} className="shadow-sm border-gray-200/60 bg-white">
-              <div className="p-4 border-b border-gray-100">
-                <Skeleton className="h-[20px] w-32 rounded-md bg-black/5" />
-              </div>
-              <div className="p-4 space-y-4">
-                <Skeleton className="h-[140px] w-full rounded-md bg-black/5" />
-                <Skeleton className="h-[36px] w-full rounded-md bg-black/5" />
-                <Skeleton className="h-[36px] w-full rounded-md bg-black/5" />
-                <Skeleton className="h-[36px] w-full rounded-md bg-black/5" />
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        <div className="lg:col-span-4 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden h-[calc(100vh-140px)]">
-          <div className="bg-gray-50/80 border-b border-gray-100 p-4">
-            <Skeleton className="h-[16px] w-32 rounded-md bg-black/5" />
-          </div>
-          <div className="p-6 space-y-4">
-            <Skeleton className="h-[48px] w-full rounded-md bg-black/5" />
-            <Skeleton className="h-[24px] w-40 rounded-md bg-black/5" />
-            <div className="flex gap-4">
-              <Skeleton className="h-[160px] w-[160px] rounded-lg bg-black/5" />
-              <Skeleton className="h-[160px] w-[160px] rounded-lg bg-black/5" />
-              <Skeleton className="h-[160px] w-[160px] rounded-lg bg-black/5" />
-            </div>
-          </div>
-        </div>
+      <div className="flex flex-col gap-6 items-start w-full">
+         {[0, 1].map((i) => (
+           <Card key={i} className="border-[#E9E7E2] rounded-[12px] shadow-sm bg-[#FFFFFF] w-full">
+             <div className="p-5 border-b border-[#E9E7E2]">
+                <Skeleton className="h-[24px] w-48" />
+                <Skeleton className="h-[20px] w-96 mt-1" />
+             </div>
+             <div className="p-5 space-y-6">
+                <Skeleton className="h-[140px] w-full rounded-[7px]" />
+                <Skeleton className="h-[48px] w-full rounded-[7px]" />
+                <Skeleton className="h-[48px] w-full rounded-[7px]" />
+             </div>
+           </Card>
+         ))}
       </div>
     </div>
   );
@@ -389,7 +413,7 @@ function ImageUploadField({
             <button
               type="button"
               onClick={() => onChange("")}
-              className="absolute top-2 right-2 bg-black/50 hover:bg-black text-white rounded-full p-1 h-6 w-6 flex items-center justify-center backdrop-blur-sm transition-colors"
+              className="absolute top-2 right-20 hover:bg-black text-white rounded-full p-1 h-6 w-6 flex items-center justify-center backdrop-blur-sm transition-colors"
               aria-label="Remove image"
             >
               <X className="h-3 w-3" />

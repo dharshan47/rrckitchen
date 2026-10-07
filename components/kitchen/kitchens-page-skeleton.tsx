@@ -2,64 +2,93 @@
 
 import { Skeleton } from "@/components/ui/skeleton";
 
-export function KitchenCardSkeleton() {
+import { cn } from "@/lib/utils";
+
+export function KitchenCardSkeleton({ variant = "page" }: { variant?: "home" | "page" | "search" }) {
   return (
-    <div className="flex flex-col shadow-[0_2px_8px_rgba(0,0,0,0.045)] border border-[#E7E7E7] overflow-visible bg-[#FFFFFF] w-full h-full relative group rounded-[16px]">
+    <div className="flex flex-col shadow-[0_2px_8px_rgba(0,0,0,0.045)] border border-[#E7E7E7] overflow-visible transition-shadow hover:shadow-md bg-[#FFFFFF] w-full h-full relative group rounded-[16px]">
       <div className="flex flex-col flex-1">
         {/* Image Section */}
-        <div className="relative w-full h-[132px] sm:h-[140px] bg-[#F8F8F8] shrink-0 rounded-t-[16px]">
-          {/* Top Left Badge */}
-          <div className="absolute top-2.5 left-2.5 z-10 flex flex-col items-start gap-1">
-            <Skeleton className="h-[23px] w-[70px] rounded-[6px]" />
+        <div className={cn("relative w-full h-[132px] sm:h-[140px] bg-muted shrink-0 rounded-t-[16px]")}>
+          <div className="absolute inset-0 overflow-hidden rounded-t-[16px]">
+             <Skeleton className="w-full h-full rounded-t-[16px] bg-[#F8F8F8]" />
           </div>
 
-          {/* Top Right Diet Badge */}
-          <div className="absolute top-2.5 right-2.5 z-10 flex flex-col gap-1 items-end">
-            <Skeleton className="h-[22px] w-[64px] rounded-[5px]" />
+          {/* Top Left Badge */}
+          <div className="absolute top-2.5 left-2.5 z-10 flex flex-col items-start gap-1">
+            <div className="flex flex-wrap gap-1">
+              <Skeleton className="h-[23px] w-[70px] rounded-[6px]" />
+            </div>
           </div>
+
+          {/* Top Right Diet Badge and Query */}
+          {variant !== "home" && (
+            <div className="absolute top-2.5 right-2.5 z-10 flex flex-col gap-1 items-end">
+              <Skeleton className="h-[22px] w-[64px] rounded-[6px]" />
+            </div>
+          )}
 
           {/* Chef Avatar with Checkmark */}
           <div className="absolute -bottom-[22px] left-4 z-20">
             <div className="relative">
-              <Skeleton className="h-11 w-11 rounded-full border-[2px] border-[#FFFFFF] shadow-[0_1px_4px_rgba(0,0,0,0.18)]" />
-              <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-[2px] z-20 shadow-sm flex items-center justify-center">
-                 <Skeleton className="h-[16px] w-[16px] rounded-full" />
-              </div>
+              <Skeleton className="h-11 w-11 rounded-full border-[2px] border-[#FFFFFF] bg-white shadow-[0_1px_4px_rgba(0,0,0,0.18)]" />
+              {variant !== "home" && variant !== "search" && (
+                <div className="absolute -bottom-1 -right-1 bg-white rounded-full p-[2px] z-20 shadow-sm flex items-center justify-center">
+                   <Skeleton className="h-[16px] w-[16px] rounded-full" />
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Content Section */}
-        <div className="px-3 pb-3 pt-7 sm:px-4 sm:pb-4 sm:pt-8 flex flex-col flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex flex-col flex-1 min-w-0">
-              {/* Kitchen Name & Verified Badge */}
-              <div className="flex items-center gap-1.5">
-                <Skeleton className="h-[16px] sm:h-[18px] w-3/4 rounded-md" />
-                <Skeleton className="h-[16px] w-[16px] sm:h-[18px] sm:w-[18px] rounded-full shrink-0" />
-              </div>
-              
-              {/* Rating & Cuisines */}
-              <div className="flex items-center gap-1.5 mt-2">
-                <Skeleton className="h-[14px] w-[35px] rounded" />
-                <span className="text-[#D1D5DB]">•</span>
-                <Skeleton className="h-[14px] w-[100px] rounded" />
-              </div>
+        {variant === "home" ? (
+          <div className="px-4 pb-4 pt-7 flex flex-col flex-1">
+            <div className="flex items-center gap-1.5">
+               <Skeleton className="h-[20px] w-3/4 rounded" />
+               <Skeleton className="h-[18px] w-[18px] rounded-full shrink-0" />
+            </div>
+
+            <div className="grid grid-cols-2 gap-y-1.5 mt-2.5">
+               <Skeleton className="h-[18px] w-[60px] rounded" />
+               <Skeleton className="h-[18px] w-[50px] rounded" />
+               <Skeleton className="h-[18px] w-[70px] rounded" />
+               <Skeleton className="h-[18px] w-[60px] rounded" />
+            </div>
+
+            <div className="mt-4">
+               <Skeleton className="w-full h-[36px] rounded-[6px]" />
             </div>
           </div>
+        ) : (
+          <>
+            <div className="px-4 pb-3 pt-8 flex flex-col flex-1">
+              <div className="flex items-center gap-1.5">
+                 <Skeleton className="h-[20px] w-3/4 rounded" />
+                 {variant === "search" && (
+                   <Skeleton className="h-[18px] w-[18px] rounded-full shrink-0" />
+                 )}
+              </div>
 
-          {/* Price Info */}
-          <div className="mt-3">
-            <Skeleton className="h-[14px] w-[80px] rounded" />
-          </div>
+              <div className="flex items-center gap-1 mt-1.5">
+                 <Skeleton className="h-[18px] w-[80px] rounded" />
+              </div>
 
-          {/* Time & Distance */}
-          <div className="flex items-center gap-3 sm:gap-4 mt-3 sm:mt-4 pt-3 sm:pt-4 border-t border-[#F0F0F0] mt-auto">
-            <Skeleton className="h-[14px] w-[60px] rounded" />
-            <div className="w-1 sm:w-1.5 h-1 sm:h-1.5 rounded-full bg-[#D1D5DB]" />
-            <Skeleton className="h-[14px] w-[50px] rounded" />
-          </div>
-        </div>
+              <Skeleton className="h-[18px] w-[120px] rounded mt-1.5" />
+
+              <div className={cn("flex items-center mt-1.5", variant === "search" ? "gap-4" : "")}>
+                 <Skeleton className="h-[18px] w-[80px] rounded" />
+                 {variant !== "search" && <span className="text-[#F44A01] mx-2 text-[18px] leading-[0]">•</span>}
+                 <Skeleton className="h-[18px] w-[60px] rounded" />
+              </div>
+            </div>
+
+            <div className="px-2.5 sm:px-4 pb-2.5 sm:pb-4 mt-auto flex items-center justify-between gap-1 flex-nowrap">
+               <Skeleton className="h-[22px] sm:h-[26px] w-[80px] rounded-[6px] shrink min-w-0" />
+               <Skeleton className="h-[22px] sm:h-[28px] w-[80px] rounded-[6px] shrink-0" />
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

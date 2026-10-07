@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma"
 import { getSession } from "@/lib/auth-server"
 
-const POINTS_PER_RUPEE = 1
+const POINTS_PER_RUPEE = 20
 const REDEMPTION_RATE = 20
 
 const BONUS_ABOVE_500 = 50

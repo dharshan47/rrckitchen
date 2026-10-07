@@ -177,68 +177,64 @@ const INFO_ICON_MAP: Record<
 
 function EditorSkeleton() {
   return (
-    <div className="min-h-screen bg-gray-50/50 p-6 md:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300">
+    <div className="min-h-screen bg-[#FFFFFF] p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto animate-in fade-in duration-300 text-[#111827]">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
-        <div className="space-y-2">
-          <Skeleton className="h-[28px] w-56 rounded-md bg-black/5" />
-          <Skeleton className="h-[16px] w-80 rounded-md bg-black/5" />
+        <div>
+          <Skeleton className="h-[32px] w-56 rounded-[6px]" />
+          <Skeleton className="h-[20px] w-80 mt-1 rounded-[4px]" />
         </div>
-        <div className="flex gap-3">
-          <Skeleton className="h-[40px] w-24 rounded-md bg-black/5" />
-          <Skeleton className="h-[40px] w-40 rounded-md bg-black/5" />
-          <Skeleton className="h-[40px] w-40 rounded-md bg-black/5" />
+        <div className="flex flex-wrap items-center gap-3">
+          <Skeleton className="h-10 w-[160px] rounded-[8px]" />
+          <Skeleton className="h-10 w-[140px] rounded-[8px]" />
+          <Skeleton className="h-10 w-10 rounded-[8px]" />
         </div>
       </div>
 
-      <Skeleton className="h-[44px] w-full rounded-md mb-6 bg-black/5" />
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        <div className="lg:col-span-3 space-y-6">
-          {[0, 1, 2].map((i) => (
-            <Card key={i} className="shadow-sm border-gray-200/60 bg-white">
-              <div className="p-4 border-b border-gray-100">
-                <Skeleton className="h-[20px] w-32 rounded-md bg-black/5" />
-              </div>
-              <div className="p-4 space-y-4">
-                <Skeleton className="h-[140px] w-full rounded-md bg-black/5" />
-                <Skeleton className="h-[36px] w-full rounded-md bg-black/5" />
-                <Skeleton className="h-[36px] w-full rounded-md bg-black/5" />
-                <Skeleton className="h-[36px] w-full rounded-md bg-black/5" />
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        <div className="lg:col-span-3 space-y-6">
-          {[0, 1].map((i) => (
-            <Card key={i} className="shadow-sm border-gray-200/60 bg-white">
-              <div className="p-4 border-b border-gray-100">
-                <Skeleton className="h-[20px] w-40 rounded-md bg-black/5" />
-              </div>
-              <div className="p-4 space-y-3">
-                {Array.from({ length: 4 }).map((_, j) => (
-                  <div key={j} className="flex items-center justify-between">
-                    <Skeleton className="h-[16px] w-40 rounded-md bg-black/5" />
-                    <Skeleton className="h-[20px] w-9 rounded-full bg-black/5" />
-                  </div>
-                ))}
-                <Skeleton className="h-[40px] w-full rounded-md bg-black/5" />
-              </div>
-            </Card>
-          ))}
-        </div>
-
-        <div className="lg:col-span-6 bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden h-[calc(100vh-140px)]">
-          <div className="bg-gray-50/80 border-b border-gray-100 p-4">
-            <Skeleton className="h-[16px] w-32 rounded-md bg-black/5" />
+      <div className="flex flex-col gap-8 w-full relative">
+        <div className="w-full flex flex-col">
+          <div className="bg-transparent border-b border-[#E5E7EB] rounded-none w-full flex items-center h-auto p-0 mb-6 space-x-6 md:space-x-8 overflow-x-auto custom-scrollbar flex-nowrap">
+             <Skeleton className="h-[20px] w-[110px] rounded-[4px] mb-3" />
+             <Skeleton className="h-[20px] w-[60px] rounded-[4px] mb-3" />
+             <Skeleton className="h-[20px] w-[60px] rounded-[4px] mb-3" />
+             <Skeleton className="h-[20px] w-[60px] rounded-[4px] mb-3" />
           </div>
-          <div className="p-6 space-y-4">
-            <Skeleton className="h-[48px] w-full rounded-md bg-black/5" />
-            <Skeleton className="h-[24px] w-40 rounded-md bg-black/5" />
-            <div className="flex gap-4">
-              <Skeleton className="h-[160px] w-[160px] rounded-lg bg-black/5" />
-              <Skeleton className="h-[160px] w-[160px] rounded-lg bg-black/5" />
-              <Skeleton className="h-[160px] w-[160px] rounded-lg bg-black/5" />
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            {/* Left Sub-Column */}
+            <div className="flex flex-col gap-6">
+              {[0, 1].map((i) => (
+                <div key={i} className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+                  <div className="p-4 flex flex-col gap-1">
+                    <Skeleton className="h-[20px] w-32 rounded-[4px]" />
+                    <Skeleton className="h-[16px] w-64 rounded-[4px]" />
+                  </div>
+                  <div className="px-4 pb-5 space-y-4">
+                    <Skeleton className="h-[120px] w-full rounded-[10px]" />
+                    <Skeleton className="h-[36px] w-full rounded-[7px]" />
+                    <Skeleton className="h-[36px] w-full rounded-[7px]" />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Right Sub-Column */}
+            <div className="flex flex-col gap-6">
+              {[0, 1].map((i) => (
+                <div key={i} className="bg-[#FFFFFF] border border-[#E8ECEA] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)] overflow-hidden">
+                  <div className="p-4 flex flex-col gap-1">
+                    <Skeleton className="h-[20px] w-40 rounded-[4px]" />
+                    <Skeleton className="h-[16px] w-72 rounded-[4px]" />
+                  </div>
+                  <div className="px-4 pb-5 space-y-4">
+                    {Array.from({ length: 4 }).map((_, j) => (
+                      <div key={j} className="flex items-center justify-between">
+                        <Skeleton className="h-[20px] w-40 rounded-[4px]" />
+                        <Skeleton className="h-[24px] w-12 rounded-full" />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -826,7 +822,7 @@ function Editor({ contentId, onCancel }: EditorProps) {
                             alt="Banner"
                             className="w-full aspect-[21/9] object-cover"
                           />
-                          <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="absolute inset-00 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                             <CloudinaryUpload
                               onUpload={(result) => {
                                 updateDraft({
@@ -2222,34 +2218,35 @@ export default function SearchPageContent() {
 
 function DashboardSkeleton() {
   return (
-    <div className="min-h-screen bg-[#FFFFFF] p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto animate-in fade-in duration-300">
+    <div className="min-h-screen bg-[#FFFFFF] p-6 md:p-8 space-y-6 max-w-[1400px] mx-auto animate-in fade-in duration-300 text-[#111827]">
+      {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <Skeleton className="h-16 w-16 rounded-[16px]" />
-          <div className="space-y-2">
-            <Skeleton className="h-8 w-48 rounded-md" />
-            <Skeleton className="h-4 w-72 rounded-md" />
+          <div className="bg-[#FFF1EA] h-16 w-16 rounded-[16px] flex items-center justify-center">
+             <Skeleton className="h-8 w-8 rounded-full" />
+          </div>
+          <div>
+            <Skeleton className="h-[32px] w-[240px] rounded-[6px]" />
+            <Skeleton className="h-[20px] w-[400px] mt-1.5 rounded-[4px]" />
           </div>
         </div>
-        <div className="flex items-center gap-3">
-          <Skeleton className="h-10 w-40 rounded-[8px]" />
-          <Skeleton className="h-10 w-48 rounded-[8px]" />
+        <div className="flex flex-wrap items-center gap-3">
+          <Skeleton className="h-10 w-[160px] rounded-[8px]" />
+          <Skeleton className="h-10 w-[200px] rounded-[8px]" />
         </div>
       </div>
 
+      {/* Stats Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Card
-            key={i}
-            className="border-[#E5E7EB] shadow-[0_1px_3px_rgba(15,23,42,0.04)] bg-[#FFFFFF] rounded-[12px]"
-          >
+          <Card key={i} className="bg-[#FFFFFF] border-[#E5E7EB] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
             <CardContent className="p-5">
               <div className="flex items-start gap-4">
-                <Skeleton className="h-12 w-12 rounded-[10px]" />
-                <div className="flex-1 space-y-2 pt-0.5">
-                  <Skeleton className="h-3 w-32 rounded-md" />
-                  <Skeleton className="h-8 w-16 rounded-md" />
-                  <Skeleton className="h-3 w-36 rounded-md" />
+                <Skeleton className="h-12 w-12 rounded-[10px] mt-0.5" />
+                <div>
+                  <Skeleton className="h-[14px] w-32 rounded-[4px]" />
+                  <Skeleton className="h-[36px] w-16 mt-1 rounded-[6px]" />
+                  <Skeleton className="h-[12px] w-36 mt-1 rounded-[4px]" />
                 </div>
               </div>
             </CardContent>
@@ -2257,28 +2254,37 @@ function DashboardSkeleton() {
         ))}
       </div>
 
-      <Card className="shadow-[0_1px_3px_rgba(15,23,42,0.035)] border-[#E5E7EB] rounded-[12px] overflow-hidden bg-[#FFFFFF]">
-        <div className="p-5 border-b border-[#E5E7EB] flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      {/* Main Table Section */}
+      <Card className="bg-[#FFFFFF] border-[#E5E7EB] rounded-[12px] shadow-[0_1px_3px_rgba(15,23,42,0.035)] overflow-hidden">
+        {/* Table Header Controls */}
+        <div className="p-5 border-b border-[#E5E7EB] bg-white flex flex-col 2xl:flex-row 2xl:items-center justify-between gap-4">
           <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-10 rounded-[10px]" />
-            <div className="space-y-2">
-              <Skeleton className="h-5 w-48 rounded-md" />
-              <Skeleton className="h-4 w-72 rounded-md" />
+            <div className="bg-[#EFF6FF] p-2.5 rounded-[10px]">
+              <Skeleton className="h-5 w-5 rounded-[4px]" />
+            </div>
+            <div>
+              <Skeleton className="h-[28px] w-48 rounded-[6px]" />
+              <Skeleton className="h-[20px] w-72 mt-0.5 rounded-[4px]" />
             </div>
           </div>
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-64 rounded-[8px]" />
-            <Skeleton className="h-10 w-32 rounded-[8px]" />
-            <Skeleton className="h-10 w-36 rounded-[8px]" />
+          <div className="flex flex-wrap items-center gap-3">
+             <div className="relative w-full sm:w-64">
+                <Skeleton className="h-10 w-full rounded-[8px]" />
+             </div>
+             <Skeleton className="h-10 w-32 rounded-[8px]" />
+             <Skeleton className="h-10 w-36 rounded-[8px]" />
+             <Skeleton className="h-10 w-[72px] rounded-[8px]" />
           </div>
         </div>
+
+        {/* Table */}
         <ScrollArea className="bg-[#FFFFFF] w-full">
           <Table>
             <TableHeader>
               <TableRow className="border-b-[#E5E7EB] bg-[#FCFDFE]">
-                {Array.from({ length: 7 }).map((_, i) => (
-                  <TableHead key={i} className="h-12">
-                    <Skeleton className="h-3.5 w-20 rounded-md" />
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <TableHead key={i} className="h-12 py-4">
+                    <Skeleton className="h-[14px] w-20 rounded-[4px]" />
                   </TableHead>
                 ))}
               </TableRow>
@@ -2286,42 +2292,38 @@ function DashboardSkeleton() {
             <TableBody>
               {Array.from({ length: 5 }).map((_, i) => (
                 <TableRow key={i} className="border-b-[#EEF1F4]">
-                  <TableCell className="py-4">
-                    <div className="flex items-center gap-3">
-                      <Skeleton className="h-2.5 w-2.5 rounded-full" />
-                      <div className="space-y-1.5">
-                        <Skeleton className="h-4 w-20 rounded-md" />
-                        <Skeleton className="h-3 w-12 rounded-md" />
-                      </div>
-                    </div>
+                  <TableCell className="py-4 align-middle">
+                     <div className="flex flex-col gap-1.5">
+                       <Skeleton className="h-[20px] w-48 rounded-[4px]" />
+                       <Skeleton className="h-[12px] w-64 rounded-[4px]" />
+                     </div>
                   </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-[40px] w-[120px] rounded-[10px]" />
+                  <TableCell className="py-4 align-middle">
+                     <Skeleton className="h-[20px] w-24 rounded-full" />
                   </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-5 w-20 rounded-[7px]" />
+                  <TableCell className="py-4 align-middle">
+                     <div className="flex gap-1.5">
+                        <Skeleton className="h-[20px] w-[50px] rounded-[7px]" />
+                        <Skeleton className="h-[20px] w-[50px] rounded-[7px]" />
+                     </div>
                   </TableCell>
-                  <TableCell>
-                    <div className="flex gap-2">
-                      <Skeleton className="h-5 w-12 rounded-[7px]" />
-                      <Skeleton className="h-5 w-12 rounded-[7px]" />
-                    </div>
+                  <TableCell className="py-4 align-middle">
+                     <Skeleton className="h-[20px] w-24 rounded-[4px]" />
                   </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-20 rounded-md" />
+                  <TableCell className="py-4 align-middle">
+                     <Skeleton className="h-[20px] w-[60px] rounded-[7px]" />
                   </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-6 w-24 rounded-[7px]" />
+                  <TableCell className="py-4 align-middle">
+                     <Skeleton className="h-[20px] w-16 rounded-[4px]" />
                   </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-20 rounded-md" />
+                  <TableCell className="py-4 align-middle">
+                     <Skeleton className="h-[20px] w-32 rounded-[4px]" />
                   </TableCell>
-                  <TableCell>
-                    <Skeleton className="h-4 w-32 rounded-md" />
-                  </TableCell>
-                  <TableCell className="text-right flex justify-end gap-2">
-                    <Skeleton className="h-8 w-16 rounded-[8px]" />
-                    <Skeleton className="h-8 w-8 rounded-[8px]" />
+                  <TableCell className="py-4 align-middle">
+                     <div className="flex gap-2 justify-end">
+                       <Skeleton className="h-8 w-[72px] rounded-[8px]" />
+                       <Skeleton className="h-8 w-8 rounded-[8px]" />
+                     </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -2329,6 +2331,27 @@ function DashboardSkeleton() {
           </Table>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
+
+        {/* Pagination & Footer */}
+        <div className="p-4 border-t border-[#E5E7EB] bg-[#FFFFFF] flex flex-col sm:flex-row items-center justify-between gap-4">
+           <div className="flex items-center gap-2">
+              <div className="bg-[#EFF6FF] p-1.5 rounded-[6px]">
+                 <Skeleton className="h-4 w-4 rounded-[4px]" />
+              </div>
+              <Skeleton className="h-[20px] w-48 rounded-[4px]" />
+              <div className="flex items-center gap-2 ml-4">
+                 <Skeleton className="h-[16px] w-8 rounded-[4px]" />
+                 <Skeleton className="h-8 w-16 rounded-[8px]" />
+              </div>
+           </div>
+           <div className="flex items-center gap-1">
+              <Skeleton className="h-8 w-8 rounded-[8px]" />
+              <Skeleton className="h-8 w-8 rounded-[8px]" />
+              <Skeleton className="h-8 w-8 rounded-[8px]" />
+              <Skeleton className="h-8 w-8 rounded-[8px]" />
+              <Skeleton className="h-8 w-8 rounded-[8px]" />
+           </div>
+        </div>
       </Card>
     </div>
   );

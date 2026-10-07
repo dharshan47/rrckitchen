@@ -168,9 +168,9 @@ export async function updateCoupon(
     await prisma.coupon.update({ where: { id }, data: updateData })
 
     return { success: true }
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("updateCoupon error:", error)
-    return { success: false, error: "Failed to update coupon" }
+    return { success: false, error: error instanceof Error ? error.message : "Failed to update coupon" }
   }
 }
 

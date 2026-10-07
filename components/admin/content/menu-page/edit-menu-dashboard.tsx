@@ -991,7 +991,7 @@ export function EditMenuDashboard({ onClose }: EditMenuDashboardProps) {
                                           strokeWidth={1.8}
                                         />
                                       </button>
-                                      <div className="absolute bottom-4 right-4 bg-black/60 text-[#FFFFFF] text-[11px] font-bold px-3 py-1 rounded-[6px] backdrop-blur-sm">
+                                      <div className="absolute bottom-4 right-4  text-[#FFFFFF] text-[11px] font-bold px-3 py-1 rounded-[6px] backdrop-blur-sm">
                                         {previewIndex + 1} /{" "}
                                         {draft.photos.length}
                                       </div>

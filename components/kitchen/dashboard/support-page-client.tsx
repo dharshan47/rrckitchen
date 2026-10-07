@@ -177,31 +177,152 @@ export default function SupportPageClient() {
 
   if (isLoading || isFetching) {
     return (
-      <div className="space-y-6 animate-in fade-in duration-500 bg-[#FCFDFC]">
-        {/* Header Skeleton */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="space-y-2">
-            <Skeleton className="h-[32px] w-64 rounded bg-black/5" />
-            <Skeleton className="h-[16px] w-96 rounded bg-black/5" />
+      <div className="space-y-8 animate-in fade-in duration-500 bg-[#FCFDFC] font-sans pb-10">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 relative">
+          <div className="z-10">
+            <Skeleton className="h-[36px] w-48 mb-2" />
+            <Skeleton className="h-[20px] w-72" />
           </div>
-          <Skeleton className="h-[96px] w-[96px] rounded-full hidden sm:block bg-black/5" />
+          <Skeleton className="h-20 w-20 rounded-full hidden sm:block shrink-0" />
         </div>
         
-        {/* Category Grid Skeleton */}
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-8">
+        {/* Categories Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
-            <Skeleton key={i} className="h-[140px] rounded-[16px] bg-black/5" />
+            <div key={i} className="flex flex-col items-center text-center p-5 rounded-[16px] border border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_2px_10px_rgba(15,23,42,0.04)] h-[140px]">
+              <Skeleton className="h-12 w-12 rounded-full mb-3 sm:mb-4 shrink-0" />
+              <Skeleton className="h-[18px] w-24 mb-1" />
+              <Skeleton className="h-[14px] w-32" />
+            </div>
           ))}
         </div>
 
-        {/* 3-Column Layout Skeleton */}
-        <div className="grid grid-cols-1 xl:grid-cols-[300px_1fr] 2xl:grid-cols-[320px_1fr_300px] gap-6">
-          <Skeleton className="h-[600px] rounded-[16px] bg-black/5" />
-          <Skeleton className="h-[600px] rounded-[16px] bg-black/5" />
-          <div className="space-y-6 hidden 2xl:block">
-            <Skeleton className="h-[300px] rounded-[16px] bg-black/5" />
-            <Skeleton className="h-[200px] rounded-[16px] bg-black/5" />
+        {/* Main 3-Column Layout */}
+        <div className="grid grid-cols-1 xl:grid-cols-[300px_1fr] 2xl:grid-cols-[300px_1fr_300px] gap-6 xl:gap-8">
+          
+          {/* Left Column: Form */}
+          <div className="flex flex-col">
+            <div className="rounded-[16px] border border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_2px_10px_rgba(15,23,42,0.04)] flex-1 overflow-hidden h-[700px]">
+              <div className="p-6">
+                <Skeleton className="h-[24px] w-40 mb-5" />
+                <div className="space-y-5">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i}>
+                      <Skeleton className="h-[16px] w-20 mb-1.5" />
+                      <Skeleton className="h-10 w-full rounded-[8px]" />
+                    </div>
+                  ))}
+                  <div>
+                    <Skeleton className="h-[16px] w-24 mb-1.5" />
+                    <Skeleton className="h-[120px] w-full rounded-[8px]" />
+                  </div>
+                  <div>
+                    <Skeleton className="h-[16px] w-32 mb-1.5" />
+                    <Skeleton className="h-24 w-full rounded-[10px]" />
+                  </div>
+                  <div className="flex gap-3 pt-2">
+                    <Skeleton className="w-[80px] h-11 rounded-[8px]" />
+                    <Skeleton className="flex-1 h-11 rounded-[8px]" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+
+          {/* Middle Column: Tickets */}
+          <div className="flex flex-col">
+            <div className="rounded-[16px] border border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_2px_10px_rgba(15,23,42,0.04)] flex-1 overflow-hidden flex flex-col h-[700px]">
+              <Skeleton className="h-[24px] w-32 mx-6 mt-6 mb-2" />
+              <div className="px-6 border-b border-[#EEF0F2] flex gap-6 pb-0">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <Skeleton key={i} className="h-[20px] w-24 mb-3" />
+                ))}
+              </div>
+              <div className="p-6 space-y-4">
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={i} className="rounded-[12px] border border-[#E5E7EB] p-4 sm:p-5 bg-[#FFFFFF]">
+                    <div className="flex gap-4">
+                      <Skeleton className="h-12 w-12 rounded-full shrink-0" />
+                      <div className="flex-1">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-1.5">
+                          <Skeleton className="h-[20px] w-48" />
+                          <Skeleton className="h-[20px] w-20 rounded-[8px]" />
+                        </div>
+                        <Skeleton className="h-[16px] w-64 mb-2" />
+                        <Skeleton className="h-[40px] w-full mb-2.5" />
+                        <Skeleton className="h-[16px] w-32" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Right Column: Support Info */}
+          <div className="flex flex-col gap-6 xl:col-span-2 2xl:col-span-1">
+            <div className="rounded-[16px] border border-[#DCE8DF] bg-[#FFFFFF] shadow-[0_2px_10px_rgba(15,23,42,0.04)] h-[360px]">
+              <div className="p-6">
+                <Skeleton className="h-[24px] w-48 mb-2" />
+                <div className="h-[2px] w-8 bg-[#087A3D] mb-6 rounded-full" />
+                <div className="space-y-6">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="flex items-start gap-4">
+                      <Skeleton className="h-6 w-6 rounded-full shrink-0" />
+                      <div className="flex-1 flex gap-3">
+                        <Skeleton className="h-10 w-10 rounded-[8px] shrink-0" />
+                        <div className="w-full">
+                          <Skeleton className="h-[16px] w-32 mb-1" />
+                          <Skeleton className="h-[14px] w-full" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[16px] border border-[#DCE8DF] bg-[#FFFFFF] shadow-[0_2px_10px_rgba(15,23,42,0.04)] h-[316px]">
+              <div className="p-6 space-y-6">
+                <div className="flex items-start gap-3">
+                  <Skeleton className="h-5 w-5 rounded-full shrink-0 mt-0.5" />
+                  <div className="w-full">
+                    <Skeleton className="h-[16px] w-32 mb-1.5" />
+                    <Skeleton className="h-[40px] w-full" />
+                  </div>
+                </div>
+                <div className="h-[1px] w-full bg-[#E5E7EB]" />
+                <div>
+                  <Skeleton className="h-[16px] w-48 mb-4" />
+                  <div className="space-y-4">
+                    {Array.from({ length: 2 }).map((_, i) => (
+                      <div key={i} className="flex items-center gap-3">
+                        <Skeleton className="h-10 w-10 rounded-[8px] shrink-0" />
+                        <div className="w-full">
+                          <Skeleton className="h-[16px] w-24 mb-1" />
+                          <Skeleton className="h-[14px] w-40" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Features Strip */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 bg-[#F7FAF8] rounded-[16px] p-5 sm:p-6 border border-[#DCE9E0]">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+              <div className="w-full">
+                <Skeleton className="h-[16px] w-32 mb-1" />
+                <Skeleton className="h-[30px] w-40" />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     )
@@ -287,7 +408,7 @@ export default function SupportPageClient() {
                 <div>
                   <label className="text-[13px] font-bold text-[#111827] mb-1.5 flex items-center">Subject <span className="text-[#FF4D00] ml-1">*</span></label>
                   <Input {...register("subject")} placeholder="Briefly describe your issue" className="rounded-[8px] border-[#DDE2E7] bg-[#FFFFFF] h-10 text-[13px] focus-visible:ring-[#087A3D] placeholder:text-[#9CA3AF]" />
-                  {errors.subject && <p className="text-[11px] text-[#EF2B24] mt-1 font-medium">{errors.subject.message}</p>}
+                  {errors.subject?.message && <p className="text-[11px] text-[#EF2B24] mt-1 font-medium">{errors.subject?.message}</p>}
                 </div>
 
                 {/* Order ID */}
@@ -300,7 +421,7 @@ export default function SupportPageClient() {
                 <div>
                   <label className="text-[13px] font-bold text-[#111827] mb-1.5 flex items-center">Description <span className="text-[#FF4D00] ml-1">*</span></label>
                   <Textarea {...register("description")} placeholder="Please describe your issue in detail..." className="rounded-[8px] border-[#DDE2E7] bg-[#FFFFFF] text-[13px] min-h-[120px] resize-none focus-visible:ring-[#087A3D] placeholder:text-[#9CA3AF]" />
-                  {errors.description && <p className="text-[11px] text-[#EF2B24] mt-1 font-medium">{errors.description.message}</p>}
+                  {errors.description?.message && <p className="text-[11px] text-[#EF2B24] mt-1 font-medium">{errors.description?.message}</p>}
                 </div>
 
                 {/* Upload */}
@@ -327,7 +448,7 @@ export default function SupportPageClient() {
                         <div key={i} className="relative h-12 w-12 rounded-[8px] overflow-hidden border border-[#E5E7EB] group">
                           <Image src={url} alt={`Upload ${i}`} fill className="object-cover" sizes="48px" />
                           <button type="button" onClick={() => setUploadedImages((prev) => prev.filter((_, idx) => idx !== i))}
-                            className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute inset-00 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                           ><X className="h-4 w-4 text-white" /></button>
                         </div>
                       ))}

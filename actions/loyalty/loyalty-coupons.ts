@@ -138,7 +138,13 @@ export async function updateLoyaltyCoupon(
     isActive?: boolean
   },
 ) {
-  return prisma.loyaltyCoupon.update({ where: { id }, data })
+  try {
+    await prisma.loyaltyCoupon.update({ where: { id }, data })
+    return { success: true }
+  } catch (error: unknown) {
+    console.error("updateLoyaltyCoupon error:", error)
+    return { success: false, error: error instanceof Error ? error.message : "Failed to update loyalty coupon" }
+  }
 }
 
 export async function deleteLoyaltyCoupon(id: string) {
@@ -146,5 +152,11 @@ export async function deleteLoyaltyCoupon(id: string) {
 }
 
 export async function toggleLoyaltyCouponActive(id: string, isActive: boolean) {
-  return prisma.loyaltyCoupon.update({ where: { id }, data: { isActive } })
+  try {
+    await prisma.loyaltyCoupon.update({ where: { id }, data: { isActive } })
+    return { success: true }
+  } catch (error: unknown) {
+    console.error("toggleLoyaltyCouponActive error:", error)
+    return { success: false, error: error instanceof Error ? error.message : "Failed to toggle status" }
+  }
 }

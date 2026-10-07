@@ -170,7 +170,7 @@ export function CategoriesClient() {
                           className="object-contain scale-[1.02]"
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center rounded-full bg-black/5">
+                        <div className="flex h-full w-full items-center justify-center rounded-full ">
                           <span className="text-[32px] font-bold text-black/20">
                             {cat.name.charAt(0)}
                           </span>

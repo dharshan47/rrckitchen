@@ -74,56 +74,56 @@ export default function DashboardLayoutClient({
       <div className="h-screen overflow-hidden bg-[#FEFBF9] flex font-sans" role="status" aria-label="Loading dashboard">
         <aside className="hidden lg:flex w-72 flex-col border-r border-[#F0ECE7] bg-[#FEFBF9]">
           {/* Logo */}
-          <div className="px-[20px] pt-[25px] pb-[10px] flex flex-col items-center gap-2">
-            <Skeleton className="h-[32px] w-32 rounded bg-black/5" />
-            <Skeleton className="h-[12px] w-24 rounded bg-black/5" />
+          <div className="px-[20px] pt-[25px] pb-[10px] flex flex-col items-center gap-1 h-auto justify-center">
+            <Skeleton className="h-[32px] w-[140px] rounded" />
+            <Skeleton className="h-[12px] w-[110px] rounded" />
           </div>
           {/* Nav items */}
-          <div className="flex-1 px-[20px] mt-[34px] space-y-[10px]">
+          <div className="flex-1 px-[20px] mt-[10px] pt-[20px] space-y-[10px]">
             {Array.from({ length: 7 }).map((_, i) => (
               <div key={i} className="flex items-center gap-[15px] px-[14px] h-[44px] rounded-[8px]">
-                <Skeleton className="h-[20px] w-[20px] rounded-full bg-black/5" />
-                <Skeleton className="h-[16px] w-24 bg-black/5" />
+                <Skeleton className="h-[20px] w-[20px] rounded-full" />
+                <Skeleton className="h-[20px] w-24" />
               </div>
             ))}
           </div>
           {/* Footer: support card + user row + logout */}
-          <div className="p-4 space-y-4">
-            <Skeleton className="h-[105px] w-full rounded-[10px] bg-black/5" />
-            <Skeleton className="h-[188px] w-full rounded-[11px] bg-black/5" />
+          <div className="px-[20px] pb-3 space-y-3">
+            <Skeleton className="h-[105px] w-full max-w-[207px] mx-auto rounded-[10px]" />
+            <Skeleton className="h-[160px] w-full max-w-[207px] mx-auto rounded-[11px]" />
           </div>
         </aside>
 
-        <div className="flex-1 flex flex-col min-w-0">
-          <header className="sticky top-0 z-30 bg-[#FEFBF9] border-b border-[#F1EEEA]">
+        <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          <header className="sticky top-0 z-30 bg-[#FEFBF9] md:bg-[#FEFBF9]/80 backdrop-blur-md border-b border-[#F1EEEA]">
             <div className="flex items-center justify-between px-6 lg:px-10 h-[82px]">
               <div className="flex items-center gap-3">
-                <Skeleton className="h-[40px] w-[40px] rounded-lg bg-black/5" />
+                <Skeleton className="h-10 w-10 rounded-lg" />
               </div>
-              <div className="flex items-center gap-7 pr-[8px]">
-                <Skeleton className="h-[21px] w-[21px] rounded-full bg-black/5" />
+              <div className="flex items-center gap-7 pr-[8px] ml-auto">
+                <Skeleton className="h-[21px] w-[21px] rounded-full" />
                 <div className="hidden lg:flex items-center gap-3">
-                  <Skeleton className="h-[42px] w-[42px] rounded-full bg-black/5" />
-                  <div className="space-y-1.5 mr-1">
-                    <Skeleton className="h-[12px] w-24 bg-black/5" />
-                    <Skeleton className="h-[8px] w-16 bg-black/5" />
+                  <Skeleton className="h-[42px] w-[42px] rounded-full shadow-[0_1px_3px_rgba(35,35,35,0.03)]" />
+                  <div className="flex flex-col mr-1 gap-[2px]">
+                    <Skeleton className="h-[14px] w-24" />
+                    <Skeleton className="h-[10px] w-16" />
                   </div>
-                  <Skeleton className="h-[16px] w-[16px] rounded-full bg-black/5" />
+                  <Skeleton className="h-[15px] w-[15px] rounded-full" />
                 </div>
               </div>
             </div>
           </header>
-          <main className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8">
+          <main className="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-10 pb-10">
             <div className="space-y-6">
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                 {Array.from({ length: 6 }).map((_, i) => (
                   <div key={i} className="rounded-xl border border-[#ECE9E5] bg-[#FFFDFC] p-5 space-y-3">
                     <div className="flex items-center justify-between">
-                      <Skeleton className="h-[16px] w-20 bg-black/5" />
-                      <Skeleton className="h-[32px] w-[32px] rounded-full bg-black/5" />
+                      <Skeleton className="h-[16px] w-20" />
+                      <Skeleton className="h-[32px] w-[32px] rounded-full" />
                     </div>
-                    <Skeleton className="h-[32px] w-24 bg-black/5" />
-                    <Skeleton className="h-[16px] w-16 bg-black/5" />
+                    <Skeleton className="h-[32px] w-24" />
+                    <Skeleton className="h-[16px] w-16" />
                   </div>
                 ))}
               </div>
@@ -161,7 +161,7 @@ export default function DashboardLayoutClient({
     title: string
     desc: string
     time?: string
-    icon: any
+    icon: React.ElementType
     iconColor: string
     iconBg: string
     href: string
@@ -198,14 +198,7 @@ export default function DashboardLayoutClient({
   const ordersBadge = pendingOrders.length
   const notificationCount = visibleNotifications.length
 
-  const orderStatusColor = (status: string) => {
-    const s = (status || "").toLowerCase()
-    if (s.includes("confirm")) return "text-[#B45309] bg-[#FFF7E6]"
-    if (s.includes("prepar")) return "text-[#1D4ED8] bg-[#EFF6FF]"
-    if (s.includes("ready") || s.includes("complet") || s.includes("deliver")) return "text-[#086B2F] bg-[#EDF5EA]"
-    if (s.includes("cancel") || s.includes("refund")) return "text-[#D83A20] bg-[#FFF0ED]"
-    return "text-[#3F454A] bg-[#F1F0EE]"
-  }
+
 
   const navItems = [
     { href: "/kitchen/dashboard", label: "Dashboard", icon: House },

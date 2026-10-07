@@ -5,7 +5,7 @@ import { redis } from "@/lib/redis";
 
 export async function POST(req: NextRequest) {
   try {
-    const { cartTotal } = await req.json();
+    await req.json().catch(() => {}); // parse body to avoid unconsumed body issues if any
 
     const now = new Date();
     const couponCacheKey = "coupon:offers:platform";
@@ -66,8 +66,7 @@ export async function POST(req: NextRequest) {
     }
 
     const availableCoupons = coupons
-      .filter((c) => !c.minOrderValue || cartTotal >= Number(c.minOrderValue))
-      .slice(0, 5)
+      .slice(0, 10)
       .map((c) => ({
         code: c.code,
         description: c.description ?? "",
@@ -77,8 +76,7 @@ export async function POST(req: NextRequest) {
       }));
 
     const availablePaymentOffers = paymentOffers
-      .filter((p) => !p.minOrderValue || cartTotal >= Number(p.minOrderValue))
-      .slice(0, 5)
+      .slice(0, 10)
       .map((p) => ({
         id: p.id,
         name: p.name,
@@ -91,8 +89,7 @@ export async function POST(req: NextRequest) {
       }));
 
     const availableLoyaltyCoupons = loyaltyCoupons
-      .filter((l) => !l.minOrderValue || cartTotal >= Number(l.minOrderValue))
-      .slice(0, 5)
+      .slice(0, 10)
       .map((l) => ({
         id: l.id,
         name: l.name,

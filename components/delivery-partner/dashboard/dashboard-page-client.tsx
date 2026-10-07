@@ -58,20 +58,28 @@ export default function DashboardPageClient() {
     return (
       <div className="max-w-[1400px] mx-auto space-y-4 sm:space-y-6 animate-in fade-in duration-300 px-4 sm:px-6 lg:px-8" role="status" aria-label="Loading delivery dashboard">
         {/* Welcome Section */}
-        <div className="space-y-3">
-          <Skeleton className="h-[25px] sm:h-[28px] w-[288px] max-w-full bg-black/5" />
-          <Skeleton className="h-[16px] w-[224px] bg-black/5" />
+        <div>
+          <h1 className="text-[22px] sm:text-[25px] font-bold text-[#111827] flex items-center gap-2">
+            <Skeleton className="h-[26px] sm:h-[30px] w-[240px] rounded-md" />
+          </h1>
+          <p className="text-[#374151] text-[13px] sm:text-[14px] mt-1 font-medium">
+            <Skeleton className="h-[18px] sm:h-[20px] w-[280px] rounded-md" />
+          </p>
         </div>
         {/* Top Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 2xl:grid-cols-6 gap-3 sm:gap-4">
           {Array.from({ length: 6 }).map((_, i) => (
             <Card key={i} className="bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)]">
               <CardContent className="p-3 sm:p-4 flex items-center gap-3 sm:gap-4 h-full">
-                <Skeleton className="h-[40px] w-[40px] sm:h-[50px] sm:w-[50px] rounded-full shrink-0 bg-black/5" />
+                <div className="h-[40px] w-[40px] sm:h-[50px] sm:w-[50px] rounded-full flex items-center justify-center shrink-0">
+                  <Skeleton className="h-full w-full rounded-full" />
+                </div>
                 <div className="flex flex-col items-start overflow-hidden w-full">
-                  <Skeleton className="h-[12px] w-[64px] mb-1 bg-black/5" />
-                  <Skeleton className="h-[23px] w-[48px] mb-1 bg-black/5" />
-                  <Skeleton className="h-[12px] w-[56px] bg-black/5" />
+                  <Skeleton className="h-[16px] sm:h-[18px] w-[90px] mb-0.5 rounded-sm" />
+                  <Skeleton className="h-[20px] sm:h-[23px] w-[50px] mb-1 rounded-sm" />
+                  <div className="flex items-center h-[16px] sm:h-[18px] w-[60px]">
+                    <Skeleton className="h-[12px] sm:h-[14px] w-full rounded-sm" />
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -79,56 +87,159 @@ export default function DashboardPageClient() {
         </div>
         {/* Charts Section */}
         <div className="grid xl:grid-cols-5 gap-6">
-          <Card className="xl:col-span-3 bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)] overflow-hidden">
-            <div className="p-4 sm:p-5 flex items-center justify-between border-b border-[#F0F2F3]">
+          <Card className="xl:col-span-3 bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)] flex flex-col overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between pb-2 pt-4 sm:pt-5 px-4 sm:px-6 border-b-0">
               <div className="flex items-center gap-2">
-                <Skeleton className="h-[20px] w-[20px] rounded-full bg-black/5" />
-                <Skeleton className="h-[16px] w-[160px] bg-black/5" />
+                <Skeleton className="h-5 w-5 rounded-full" />
+                <Skeleton className="h-[15px] sm:h-[16px] w-[140px] rounded-md" />
               </div>
-              <Skeleton className="h-[32px] w-[96px] rounded-[7px] bg-black/5" />
-            </div>
-            <div className="flex flex-col md:flex-row gap-6 sm:gap-8 p-4 sm:p-6">
+              <div className="flex items-center gap-1 border border-[#E8EAED] rounded-[7px] px-2 sm:px-3 py-1 sm:py-1.5">
+                <Skeleton className="h-[12px] sm:h-[13px] w-[64px] rounded-sm" />
+              </div>
+            </CardHeader>
+            <CardContent className="flex flex-col md:flex-row gap-6 sm:gap-8 pt-2 sm:pt-4 px-4 sm:px-6 pb-4 sm:pb-6">
               <div className="flex flex-col justify-center min-w-[140px]">
-                <Skeleton className="h-[12px] w-[96px] mb-2 bg-black/5" />
-                <Skeleton className="h-[28px] w-[112px] mb-6 bg-black/5" />
-                <Skeleton className="h-[12px] w-[80px] bg-black/5" />
+                <span className="text-[12px] font-medium text-[#374151] mb-1">
+                  <Skeleton className="h-[18px] w-[80px] rounded-sm" />
+                </span>
+                <span className="text-[24px] sm:text-[28px] font-bold text-[#111827] mb-6 sm:mb-8">
+                  <Skeleton className="h-[28px] sm:h-[32px] w-[120px] rounded-md" />
+                </span>
+                
+                <div className="flex items-center gap-4 sm:gap-6">
+                  <div>
+                    <div className="text-[12px] font-medium text-[#374151] mb-1">
+                      <Skeleton className="h-[18px] w-[40px] rounded-sm" />
+                    </div>
+                    <div className="text-[15px] sm:text-[16px] font-bold text-[#111827]">
+                      <Skeleton className="h-[22px] sm:h-[24px] w-[32px] rounded-sm" />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[12px] font-medium text-[#374151] mb-1">
+                      <Skeleton className="h-[18px] w-[50px] rounded-sm" />
+                    </div>
+                    <div className="text-[15px] sm:text-[16px] font-bold text-[#111827]">
+                      <Skeleton className="h-[22px] sm:h-[24px] w-[40px] rounded-sm" />
+                    </div>
+                  </div>
+                  <div>
+                     <div className="text-[12px] font-medium text-[#374151] mb-1">
+                       <Skeleton className="h-[18px] w-[60px] rounded-sm" />
+                     </div>
+                     <div className="text-[15px] sm:text-[16px] font-bold text-[#111827]">
+                       <Skeleton className="h-[22px] sm:h-[24px] w-[32px] rounded-sm" />
+                     </div>
+                  </div>
+                </div>
               </div>
-              <Skeleton className="flex-1 h-[180px] sm:h-[200px] bg-black/5" />
-            </div>
+              <Skeleton className="flex-1 h-[180px] sm:h-[200px] md:h-auto min-h-[180px] sm:min-h-[200px] -mx-2 sm:mx-0 rounded-[10px]" />
+            </CardContent>
           </Card>
-          <Card className="xl:col-span-2 bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)]">
-            <div className="p-4 sm:p-5 flex items-center gap-2 border-b border-[#F0F2F3]">
-              <Skeleton className="h-[20px] w-[20px] rounded-full bg-black/5" />
-              <Skeleton className="h-[16px] w-[160px] bg-black/5" />
-            </div>
-            <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 p-4 sm:p-6">
-              <Skeleton className="h-[112px] w-[112px] sm:h-[128px] sm:w-[128px] rounded-full shrink-0 bg-black/5" />
-              <div className="flex-1 w-full space-y-2.5">
+
+          {/* Performance Summary */}
+          <Card className="xl:col-span-2 bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)] flex flex-col">
+            <CardHeader className="flex flex-row items-center gap-2 pb-2 pt-4 sm:pt-5 px-4 sm:px-6 border-b-0">
+              <Skeleton className="h-5 w-5 rounded-full" />
+              <Skeleton className="h-[15px] sm:h-[16px] w-[160px] rounded-md" />
+            </CardHeader>
+            <CardContent className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8 flex-1 pt-4 sm:pt-6 px-4 sm:px-6 pb-6">
+              <div className="relative h-28 w-28 sm:h-32 sm:w-32 flex-shrink-0 flex items-center justify-center">
+                <Skeleton className="h-full w-full rounded-full" />
+              </div>
+              <div className="flex-1 w-full space-y-2.5 sm:space-y-3">
                 {Array.from({ length: 5 }).map((_, i) => (
-                  <div key={i} className="flex items-center">
-                    <Skeleton className="h-[12px] w-[50px] bg-black/5" />
-                    <Skeleton className="flex-1 h-[6px] rounded-full mx-3 bg-black/5" />
-                    <Skeleton className="h-[12px] w-[60px] bg-black/5" />
+                  <div key={i} className="flex items-center text-[11px] sm:text-[12px]">
+                    <span className="w-[45px] sm:w-[50px] font-medium text-[#374151] whitespace-nowrap">
+                      <Skeleton className="h-[16px] sm:h-[18px] w-[12px] rounded-sm" />
+                    </span>
+                    <div className="flex-1 h-[5px] sm:h-[6px] bg-transparent mx-2 sm:mx-3">
+                      <Skeleton className="h-full w-full rounded-full" />
+                    </div>
+                    <span className="w-[55px] sm:w-[60px] text-right text-[#374151]">
+                      <Skeleton className="h-[16px] sm:h-[18px] w-[32px] ml-auto rounded-sm" />
+                    </span>
                   </div>
                 ))}
               </div>
-            </div>
+            </CardContent>
           </Card>
         </div>
         {/* Bottom Section */}
         <div className="grid xl:grid-cols-3 gap-6">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <Card key={i} className="bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)] overflow-hidden">
-              <div className="p-4 sm:p-5 border-b border-[#F0F2F3]">
-                <Skeleton className="h-[16px] w-[128px] bg-black/5" />
+          {/* Quick Actions */}
+          <Card className="bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)] flex flex-col">
+            <CardHeader className="pt-4 sm:pt-5 px-4 sm:px-6 pb-3 sm:pb-4 border-b-0">
+               <Skeleton className="h-[15px] sm:h-[16px] w-[120px] rounded-md" />
+            </CardHeader>
+            <CardContent className="grid grid-cols-2 gap-3 sm:gap-4 px-4 sm:px-6 pb-4 sm:pb-6">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="bg-transparent rounded-[9px] p-3 sm:p-4 text-left flex flex-col items-start border-none">
+                  <div className="bg-muted/20 rounded-full p-2 mb-2 sm:mb-3">
+                     <Skeleton className="h-4 w-4 sm:h-5 sm:w-5 rounded-full" />
+                  </div>
+                  <div className="font-semibold text-[13px] sm:text-[14px] mb-1">
+                    <Skeleton className="h-[19px] sm:h-[21px] w-[80px] rounded-sm" />
+                  </div>
+                  <div className="text-[11px] sm:text-[12px] opacity-80 leading-tight w-full">
+                    <Skeleton className="h-[16px] sm:h-[18px] w-[100px] mb-0.5 rounded-sm" />
+                    <Skeleton className="h-[16px] sm:h-[18px] w-[60px] rounded-sm hidden sm:block" />
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+
+          {/* Today's Summary */}
+          <Card className="bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)] flex flex-col">
+            <CardHeader className="pt-4 sm:pt-5 px-4 sm:px-6 pb-3 sm:pb-4 border-b-0">
+               <Skeleton className="h-[15px] sm:h-[16px] w-[140px] rounded-md" />
+            </CardHeader>
+            <CardContent className="space-y-0 flex-1 px-4 sm:px-6 pb-4 sm:pb-6 flex flex-col">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between py-2.5 sm:py-3 border-b border-[#E9ECEF] last:border-0">
+                  <div className="flex items-center gap-3">
+                    <div className="h-7 w-7 sm:h-8 sm:w-8 rounded-full bg-[#F5F6F7] flex items-center justify-center">
+                      <Skeleton className="h-3.5 w-3.5 sm:h-4 sm:w-4 rounded-full" />
+                    </div>
+                    <Skeleton className="h-[13px] sm:h-[14px] w-20 rounded-sm" />
+                  </div>
+                  <Skeleton className="h-[13px] sm:h-[14px] w-16 rounded-sm" />
+                </div>
+              ))}
+              <div className="mt-auto pt-4 sm:pt-5">
+                <Skeleton className="w-full h-9 sm:h-10 rounded-[7px]" />
               </div>
-              <div className="p-4 sm:p-6 space-y-3">
-                {Array.from({ length: 4 }).map((_, j) => (
-                  <Skeleton key={j} className="h-[40px] w-full rounded-[9px] bg-black/5" />
+            </CardContent>
+          </Card>
+
+          {/* Tips & Safety */}
+          <Card className="bg-[#FFFFFF] border border-[#E8EAED] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.03)] flex flex-col relative overflow-hidden">
+            <CardHeader className="flex flex-row items-center gap-2 pb-3 sm:pb-4 pt-4 sm:pt-5 px-4 sm:px-6 border-b-0">
+              <Skeleton className="h-5 w-5 rounded-full" />
+              <Skeleton className="h-[15px] sm:h-[16px] w-[120px] rounded-md" />
+            </CardHeader>
+            <CardContent className="flex flex-col md:flex-row gap-4 sm:gap-6 relative z-10 px-4 sm:px-6 pb-4 sm:pb-6">
+              <div className="space-y-4 sm:space-y-6 flex-1">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="flex gap-3 sm:gap-4">
+                    <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-[#F0F7F1] flex items-center justify-center flex-shrink-0">
+                      <Skeleton className="h-4 w-4 sm:h-5 sm:w-5 rounded-full" />
+                    </div>
+                    <div className="flex-1">
+                      <Skeleton className="h-[13px] sm:h-[14px] w-3/4 mb-1 rounded-sm" />
+                      <Skeleton className="h-[11px] sm:h-[12px] w-1/2 rounded-sm" />
+                    </div>
+                  </div>
                 ))}
               </div>
-            </Card>
-          ))}
+              
+              {/* Illustration */}
+              <div className="hidden md:flex flex-col justify-end w-40 lg:w-48 relative">
+                <Skeleton className="w-full h-[192px] rounded-md" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     )

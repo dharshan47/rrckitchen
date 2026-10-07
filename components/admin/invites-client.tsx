@@ -274,18 +274,15 @@ function StatsSkeleton() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5 gap-4">
       {Array.from({ length: 5 }).map((_, i) => (
-        <div
-          key={i}
-          className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm h-[120px] flex flex-col justify-between"
-        >
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-10 rounded-full bg-black/5" />
-            <div className="space-y-2">
-              <Skeleton className="h-3 w-24 bg-black/5" />
-              <Skeleton className="h-6 w-16 bg-black/5" />
+        <div key={i} className="bg-white rounded-xl p-5 border border-gray-100 shadow-sm relative overflow-hidden flex flex-col h-[140px]">
+          <div className="flex items-center gap-3 mb-2">
+            <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+            <div className="space-y-1">
+              <Skeleton className="h-3 w-24 rounded-[4px]" />
+              <Skeleton className="h-6 w-16 rounded-[4px]" />
             </div>
           </div>
-          <Skeleton className="h-3 w-28 bg-black/5" />
+          <Skeleton className="h-3 w-32 rounded-[4px] mt-1" />
         </div>
       ))}
     </div>
@@ -295,26 +292,27 @@ function StatsSkeleton() {
 function CreateInviteSkeleton() {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col">
-      <div className="p-6 border-b border-gray-100 space-y-2">
-        <Skeleton className="h-5 w-56 bg-black/5" />
-        <Skeleton className="h-3.5 w-72 bg-black/5" />
+      <div className="p-6 border-b border-gray-100">
+        <Skeleton className="h-[20px] w-56 rounded-[4px]" />
+        <Skeleton className="h-[14px] w-72 rounded-[4px] mt-1" />
       </div>
       <div className="p-6 flex-1 flex flex-col">
         <div className="flex items-center justify-between mb-4">
-          <Skeleton className="h-4 w-36 bg-black/5" />
-          <Skeleton className="h-7 w-20 rounded-md bg-black/5" />
+          <Skeleton className="h-[14px] w-36 rounded-[4px]" />
+          <Skeleton className="h-[28px] w-20 rounded-md" />
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 2xl:grid-cols-4 gap-3 mb-8">
-          {Array.from({ length: 8 }).map((_, i) => (
-            <Skeleton key={i} className="h-[86px] rounded-xl bg-black/5" />
+          {Array.from({ length: 10 }).map((_, i) => (
+            <Skeleton key={i} className="h-[74px] rounded-xl" />
           ))}
         </div>
-        <div className="mt-auto space-y-3">
-          <Skeleton className="h-4 w-32 bg-black/5" />
-          <Skeleton className="h-12 w-full rounded-lg bg-black/5" />
-          <div className="flex gap-3">
-            <Skeleton className="h-10 w-24 rounded-lg bg-black/5" />
-            <Skeleton className="h-10 flex-1 rounded-lg bg-black/5" />
+        <div className="mt-auto">
+          <Skeleton className="h-[14px] w-32 rounded-[4px]" />
+          <Skeleton className="h-[12px] w-56 rounded-[4px] mt-1 mb-4" />
+          <Skeleton className="h-[42px] w-full rounded-lg mb-4" />
+          <div className="flex flex-col sm:flex-row gap-3 w-full">
+            <Skeleton className="h-[40px] w-full sm:w-[72px] rounded-lg" />
+            <Skeleton className="h-[40px] flex-1 w-full rounded-lg" />
           </div>
         </div>
       </div>
@@ -326,71 +324,135 @@ function PendingInvitesSkeleton() {
   return (
     <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col">
       <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-        <Skeleton className="h-5 w-36 bg-black/5" />
-        <Skeleton className="h-7 w-20 rounded-md bg-black/5" />
+        <Skeleton className="h-[20px] w-20 rounded-[4px]" />
+        <Skeleton className="h-[12px] w-12 rounded-[4px]" />
       </div>
-      <div className="flex-1 p-0">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-4 p-4 pl-6 border-b border-gray-50"
-          >
-            <Skeleton className="h-10 w-10 rounded-full bg-black/5" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-3.5 w-40 bg-black/5" />
-              <Skeleton className="h-2.5 w-52 bg-black/5" />
-            </div>
-            <Skeleton className="h-7 w-28 rounded bg-black/5" />
-            <Skeleton className="h-6 w-20 rounded-full bg-black/5" />
-            <div className="flex gap-1.5">
-              <Skeleton className="h-8 w-8 rounded-lg bg-black/5" />
-              <Skeleton className="h-8 w-8 rounded-lg bg-black/5" />
-              <Skeleton className="h-8 w-8 rounded-lg bg-black/5" />
-            </div>
-          </div>
-        ))}
-      </div>
+      <ScrollArea className="p-0 flex-1 w-full">
+        <table className="w-full text-left min-w-[640px]">
+          <tbody>
+            {Array.from({ length: 5 }).map((_, i) => (
+              <tr key={i} className="border-b border-gray-50 bg-white">
+                <td className="p-4 pl-6">
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+                    <div className="flex flex-col">
+                      <Skeleton className="h-[14px] w-32 rounded-[4px]" />
+                      <Skeleton className="h-[12px] w-24 rounded-[4px] mt-0.5" />
+                      <Skeleton className="h-[12px] w-48 rounded-[4px] mt-0.5" />
+                    </div>
+                  </div>
+                </td>
+                <td className="p-4">
+                  <div className="flex items-center gap-1.5">
+                    {Array.from({ length: 4 }).map((_, j) => (
+                      <Skeleton key={j} className="h-7 w-7 rounded border border-gray-200" />
+                    ))}
+                  </div>
+                </td>
+                <td className="p-4">
+                  <Skeleton className="h-[26px] w-[80px] rounded-full" />
+                </td>
+                <td className="p-4 pr-6">
+                  <div className="flex items-center justify-end gap-2">
+                    <Skeleton className="h-8 w-8 rounded-lg" />
+                    <Skeleton className="h-8 w-8 rounded-lg" />
+                    <Skeleton className="h-8 w-8 rounded-lg" />
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
     </div>
   );
 }
 
 function AdminsTableSkeleton() {
   return (
-    <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex flex-col">
-      <div className="p-4 md:p-6 border-b border-gray-100 flex items-center justify-between gap-4">
-        <Skeleton className="h-5 w-40 bg-black/5" />
-        <div className="flex items-center gap-3">
-          <Skeleton className="h-9 w-[280px] rounded-lg bg-black/5" />
-          <Skeleton className="h-9 w-36 rounded-lg bg-black/5" />
-          <Skeleton className="h-9 w-24 rounded-lg bg-black/5" />
+    <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex-1 overflow-hidden flex flex-col">
+      <div className="p-4 md:p-6 border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <Skeleton className="h-[20px] w-32 rounded-[4px]" />
+        <div className="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+          <Skeleton className="h-9 w-full sm:w-[280px] rounded-lg" />
+          <Skeleton className="h-9 w-full sm:w-[150px] rounded-lg" />
+          <Skeleton className="h-9 w-full sm:w-[90px] rounded-lg" />
         </div>
       </div>
-      <div className="overflow-x-auto">
-        {Array.from({ length: 5 }).map((_, i) => (
-          <div
-            key={i}
-            className="flex items-center gap-6 px-6 py-4 border-b border-gray-50"
-          >
-            <div className="flex items-center gap-3 w-56">
-              <Skeleton className="h-8 w-8 rounded-full bg-black/5" />
-              <Skeleton className="h-3.5 w-28 bg-black/5" />
-            </div>
-            <Skeleton className="h-3 w-44 bg-black/5" />
-            <Skeleton className="h-6 w-32 bg-black/5" />
-            <Skeleton className="h-3 w-24 bg-black/5" />
-            <Skeleton className="h-3 w-20 bg-black/5" />
-            <Skeleton className="h-3 w-20 bg-black/5" />
-            <Skeleton className="h-6 w-16 rounded-full bg-black/5" />
-            <div className="flex gap-1.5">
-              <Skeleton className="h-8 w-8 rounded-lg bg-black/5" />
-              <Skeleton className="h-8 w-8 rounded-lg bg-black/5" />
-            </div>
+      <ScrollArea className="w-full">
+        <table className="w-full text-left text-sm min-w-[900px]">
+          <thead className="bg-white border-b border-gray-100">
+            <tr>
+              <th className="py-3 px-6"><Skeleton className="h-[14px] w-20 rounded-[4px]" /></th>
+              <th className="py-3 px-4"><Skeleton className="h-[14px] w-24 rounded-[4px]" /></th>
+              <th className="py-3 px-4"><Skeleton className="h-[14px] w-24 rounded-[4px]" /></th>
+              <th className="py-3 px-4"><Skeleton className="h-[14px] w-24 rounded-[4px]" /></th>
+              <th className="py-3 px-4"><Skeleton className="h-[14px] w-20 rounded-[4px]" /></th>
+              <th className="py-3 px-4"><Skeleton className="h-[14px] w-24 rounded-[4px]" /></th>
+              <th className="py-3 px-4"><Skeleton className="h-[14px] w-20 rounded-[4px]" /></th>
+              <th className="py-3 px-6 text-right"><Skeleton className="h-[14px] w-16 rounded-[4px] ml-auto" /></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-50">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <tr key={i} className="hover:bg-gray-50/50 transition-colors bg-white">
+                <td className="py-4 px-6">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-8 w-8 rounded-full border border-gray-200 shrink-0" />
+                    <Skeleton className="h-[14px] w-24 rounded-[4px]" />
+                  </div>
+                </td>
+                <td className="py-4 px-4"><Skeleton className="h-[14px] w-40 rounded-[4px]" /></td>
+                <td className="py-4 px-4">
+                  <div className="flex flex-wrap gap-1.5">
+                    {Array.from({ length: 4 }).map((_, j) => (
+                      <Skeleton key={j} className="h-7 w-7 rounded border border-gray-200" />
+                    ))}
+                  </div>
+                </td>
+                <td className="py-4 px-4">
+                  <div className="flex flex-col gap-0.5">
+                    <Skeleton className="h-[14px] w-24 rounded-[4px]" />
+                    <Skeleton className="h-[12px] w-16 rounded-[4px]" />
+                  </div>
+                </td>
+                <td className="py-4 px-4">
+                  <div className="flex flex-col gap-0.5">
+                    <Skeleton className="h-[14px] w-24 rounded-[4px]" />
+                    <Skeleton className="h-[12px] w-16 rounded-[4px]" />
+                  </div>
+                </td>
+                <td className="py-4 px-4">
+                  <Skeleton className="h-[14px] w-24 rounded-[4px]" />
+                </td>
+                <td className="py-4 px-4">
+                  <Skeleton className="h-[26px] w-[60px] rounded-full" />
+                </td>
+                <td className="py-4 px-6 text-right">
+                  <div className="flex items-center justify-end gap-2">
+                    <Skeleton className="h-8 w-8 rounded-lg" />
+                    <Skeleton className="h-8 w-8 rounded-lg" />
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+      <div className="p-4 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4 text-sm bg-gray-50/30">
+        <Skeleton className="h-[14px] w-56 rounded-[4px]" />
+        <div className="flex items-center gap-4">
+          <div className="flex items-center gap-1">
+            <Skeleton className="h-8 w-8 rounded-lg" />
+            <Skeleton className="h-8 w-8 rounded-lg hidden sm:block" />
+            <Skeleton className="h-8 w-8 rounded-lg hidden sm:block" />
+            <Skeleton className="h-8 w-8 rounded-lg hidden sm:block" />
+            <Skeleton className="h-8 w-8 rounded-lg" />
           </div>
-        ))}
-      </div>
-      <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/30">
-        <Skeleton className="h-3.5 w-40 bg-black/5" />
-        <Skeleton className="h-8 w-48 bg-black/5" />
+          <Skeleton className="h-8 w-24 rounded-lg hidden sm:block" />
+        </div>
       </div>
     </div>
   );

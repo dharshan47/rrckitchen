@@ -230,21 +230,136 @@ export default function ReviewsPageClient() {
 
   if (!data) {
     return (
-      <div className="space-y-6 pb-20 animate-in fade-in duration-500">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
-          <Skeleton className="h-[40px] w-64 rounded-xl bg-black/5" />
-          <Skeleton className="h-[44px] w-56 rounded-xl bg-black/5" />
+      <div className="space-y-6 pb-20 animate-in fade-in duration-500 bg-[#FEFEFE] font-sans min-h-screen p-4 sm:p-6">
+        
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-2">
+          <div className="flex items-start gap-3">
+            <Skeleton className="h-8 w-8 hidden sm:block mt-0.5 rounded-full" />
+            <div>
+              <Skeleton className="h-[36px] w-64 mb-1.5" />
+              <Skeleton className="h-[20px] w-72" />
+            </div>
+          </div>
+          <Skeleton className="h-10 w-full sm:w-[220px] rounded-[8px]" />
         </div>
-        <Skeleton className="h-[56px] w-full bg-black/5" />
-        <div className="grid lg:grid-cols-5 gap-4">
-          {Array.from({ length: 5 }).map((_, i) => <Skeleton key={i} className="h-[128px] rounded-[10px] bg-black/5" />)}
+
+        {/* Tabs */}
+        <div className="w-full mt-6 sm:mt-0">
+          <div className="w-full border-b border-[#EEF0F2] pb-0 h-[40px] flex items-end gap-8">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <Skeleton key={i} className="h-[24px] w-32 pb-3.5 mb-1" />
+            ))}
+          </div>
         </div>
-        <div className="grid xl:grid-cols-3 gap-6">
-          {Array.from({ length: 3 }).map((_, i) => <Skeleton key={i} className="h-[256px] rounded-[10px] bg-black/5" />)}
+
+        <div className="block space-y-6">
+          {/* Top Summary Cards */}
+          <div className="flex overflow-x-auto pb-4 xl:pb-0 xl:grid xl:grid-cols-5 gap-4 hide-scrollbar snap-x">
+            {Array.from({ length: 5 }).map((_, i) => (
+              <div key={i} className="rounded-[10px] border border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] min-w-[200px] xl:min-w-0 snap-start shrink-0 h-[116px]">
+                <div className="p-5 flex flex-col justify-center text-center items-center h-full">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <Skeleton className="h-[16px] w-24" />
+                  </div>
+                  <Skeleton className="h-[28px] w-12 mb-1" />
+                  <Skeleton className="h-[16px] w-32" />
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="grid lg:grid-cols-[1fr_320px] xl:grid-cols-[1fr_360px] gap-6">
-          <Skeleton className="h-[384px] rounded-[10px] bg-black/5" />
-          <Skeleton className="h-[384px] rounded-[10px] bg-black/5" />
+
+        {/* Analytics Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="rounded-[10px] border border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] h-[240px]">
+            <div className="pb-4 pt-6 px-6">
+              <Skeleton className="h-[20px] w-40" />
+            </div>
+            <div className="px-6 pb-6 space-y-4">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-[14px] w-full" />
+              ))}
+            </div>
+          </div>
+          
+          <div className="rounded-[10px] border border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] h-[240px]">
+            <div className="pb-4 pt-6 px-6 flex flex-row items-center justify-between">
+              <Skeleton className="h-[20px] w-40" />
+              <Skeleton className="h-[14px] w-20" />
+            </div>
+            <div className="px-6 pb-6 space-y-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-8 w-8 rounded-[8px]" />
+                    <Skeleton className="h-[16px] w-24" />
+                  </div>
+                  <Skeleton className="h-[14px] w-20" />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-[10px] border border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] h-[240px] flex flex-col">
+            <div className="pb-4 pt-6 px-6 flex flex-row items-center gap-2">
+              <Skeleton className="h-6 w-6 rounded-[6px]" />
+              <Skeleton className="h-[20px] w-40" />
+            </div>
+            <div className="px-6 pb-6 flex-1 flex flex-col justify-between space-y-4">
+              <div className="space-y-5">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="flex gap-4">
+                    <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+                    <div className="w-full">
+                      <Skeleton className="h-[16px] w-full mb-1.5" />
+                      <Skeleton className="h-[12px] w-24" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Section: List & Right Sidebar */}
+        <div className="grid gap-6 grid-cols-1 xl:grid-cols-[1fr_320px] 2xl:grid-cols-[1fr_360px]">
+          <div className="rounded-[10px] border border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] h-[400px]">
+            <div className="pb-4 pt-6 px-6 border-b border-[#EEF0F2] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <Skeleton className="h-[20px] w-32" />
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
+                <Skeleton className="h-10 w-full sm:w-[220px] rounded-[8px]" />
+                <Skeleton className="h-10 w-[80px] rounded-[8px]" />
+                <Skeleton className="h-10 w-[80px] rounded-[8px]" />
+              </div>
+            </div>
+            <div className="p-0">
+               {Array.from({ length: 2 }).map((_, i) => (
+                 <div key={i} className="p-6 border-b border-[#EEF0F2]">
+                   <div className="flex items-start justify-between gap-4 w-full">
+                     <div className="flex gap-3 w-full">
+                       <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+                       <div className="w-full">
+                         <Skeleton className="h-[20px] w-48 mb-2" />
+                         <Skeleton className="h-[16px] w-full mb-2" />
+                         <Skeleton className="h-[14px] w-64" />
+                       </div>
+                     </div>
+                   </div>
+                 </div>
+               ))}
+            </div>
+          </div>
+          
+          <div className="rounded-[10px] border border-[#E5E7EB] bg-[#FFFFFF] shadow-[0_1px_3px_rgba(15,23,42,0.04)] h-[400px]">
+            <div className="pb-4 pt-6 px-6 border-b border-[#EEF0F2]">
+              <Skeleton className="h-[20px] w-40" />
+            </div>
+            <div className="p-6 flex flex-col items-center justify-center">
+              <Skeleton className="h-[180px] w-[180px] rounded-full mt-4" />
+            </div>
+          </div>
         </div>
       </div>
     )
@@ -336,9 +451,7 @@ export default function ReviewsPageClient() {
           <PopoverTrigger asChild>
             <Button variant="outline" className="flex items-center gap-2 border-[#E5E7EB] text-[#374151] bg-[#FFFFFF] hover:bg-[#F9FAFB] rounded-[8px] h-10 px-4 shadow-none font-medium transition-colors w-full sm:w-auto justify-center sm:justify-start">
               <CalendarDays className="h-[18px] w-[18px] text-[#374151]" strokeWidth={1.8} />
-              {selectedDate
-                ? selectedDate.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })
-                : dateRange}
+              {selectedDate?.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) ?? dateRange}
               <ChevronDown className="h-4 w-4 ml-1 text-[#6B7280]" />
             </Button>
           </PopoverTrigger>
@@ -401,7 +514,7 @@ export default function ReviewsPageClient() {
             {!rrcReviewLoading ? (
               <RrcKitchenReviewCard initial={rrcReview ?? null} />
             ) : (
-              <Skeleton className="h-[200px] w-full rounded-[10px] bg-black/5" />
+              <Skeleton className="h-[200px] w-full rounded-[10px]" />
             )}
           </div>
         </div>
@@ -421,7 +534,7 @@ export default function ReviewsPageClient() {
               <span className="text-[12px] font-bold text-[#111827]">Overall Rating</span>
               <div className="flex items-end gap-2 mt-1">
                 <span className="text-[24px] font-bold text-[#111827] leading-none">{avgRating ?? "New"}</span>
-                {avgRating != null && renderStars(avgRating, "h-[14px] w-[14px]")}
+                {avgRating != null && renderStars(Number(avgRating), "h-[14px] w-[14px]")}
               </div>
               <span className="text-[11px] text-[#6B7280] mt-1">Based on {totalReviews} reviews</span>
             </div>

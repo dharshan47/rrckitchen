@@ -29,7 +29,7 @@ export function CategoriesSkeleton() {
 
           {/* Right Support Card */}
           <div 
-            className="w-full xl:w-[460px] shrink-0 relative bg-[#FFFFFF] flex items-center justify-between overflow-hidden sm:overflow-visible"
+            className="w-full xl:w-[460px] shrink-0 relative bg-[#FFFFFF] flex items-center justify-between overflow-visible"
             style={{
               borderRadius: "10px",
               border: "1px solid #F6E5DD",
@@ -62,7 +62,7 @@ export function CategoriesSkeleton() {
                 className="flex items-center justify-center rounded-full mb-[18px] w-full aspect-square"
               >
                 <div 
-                  className="relative w-[100%] h-[100%] rounded-full overflow-hidden"
+                  className="relative w-[100%] h-[100%] rounded-full overflow-visible"
                   style={{
                     filter: "drop-shadow(0 5px 5px rgba(45, 30, 20, 0.12))"
                   }}
@@ -84,11 +84,11 @@ export function CategoriesSkeleton() {
             boxShadow: "0 2px 8px rgba(35, 25, 20, 0.035)"
           }}
         >
-          {Array.from({ length: 5 }).map((_, i) => (
+          {Array.from({ length: 6 }).map((_, i) => (
             <div 
               key={i} 
               className={`flex-1 flex items-center justify-center gap-[14px] py-[28px] px-[16px] ${
-                i !== 4 ? 'border-b md:border-b-0 md:border-r border-dotted border-[#E3DEDA]' : ''
+                i !== 5 ? 'border-b md:border-b-0 md:border-r border-dotted border-[#E3DEDA]' : ''
               }`}
             >
               <Skeleton className="w-[28px] h-[28px] shrink-0 rounded-md" />

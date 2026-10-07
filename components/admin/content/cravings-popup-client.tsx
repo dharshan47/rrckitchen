@@ -128,30 +128,107 @@ function formatUpdatedAt(dateStr: string) {
 
 function RuleDetailSkeleton() {
   return (
-    <div className="flex flex-col gap-5 animate-in fade-in-0 duration-300 bg-white p-6 rounded-[12px] border border-[#EEF1F3]">
+    <div className="flex flex-col gap-6 w-full animate-in fade-in-0 duration-300">
       <div className="flex items-center justify-between pb-4 border-b border-[#EEF1F3]">
-        <Skeleton className="h-[24px] w-56 rounded-md bg-black/5" />
-        <Skeleton className="h-[36px] w-28 rounded-lg bg-black/5" />
-      </div>
-      <Skeleton className="h-[44px] w-full rounded-lg bg-black/5" />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div className="md:col-span-2 space-y-5">
-          <Skeleton className="h-[56px] w-full rounded-xl bg-black/5" />
-          <Skeleton className="h-[96px] w-full rounded-xl bg-black/5" />
-          <Skeleton className="h-[64px] w-full rounded-xl bg-black/5" />
-          <Skeleton className="h-[112px] w-full rounded-xl bg-black/5" />
+        <div className="flex items-center gap-3">
+          <Skeleton className="h-[28px] w-[300px]" />
+          <Skeleton className="h-[24px] w-[60px] rounded-full" />
         </div>
-        <Skeleton className="h-[256px] w-full rounded-xl bg-black/5" />
+        <Skeleton className="h-9 w-[120px] rounded-[8px]" />
       </div>
-      <div className="pt-4 border-t border-[#EEF1F3]">
-        <div className="flex items-end justify-between mb-4">
-          <div className="space-y-2">
-            <Skeleton className="h-[20px] w-44 rounded-md bg-black/5" />
-            <Skeleton className="h-[16px] w-64 rounded-md bg-black/5" />
+
+      <div className="w-full">
+        <div className="border-b border-[#EEF1F3] w-full justify-start h-auto flex gap-2 overflow-x-auto hide-scrollbar">
+           <Skeleton className="h-[44px] w-[110px] rounded-none" />
+           <Skeleton className="h-[44px] w-[160px] rounded-none" />
+           <Skeleton className="h-[44px] w-[130px] rounded-none" />
+           <Skeleton className="h-[44px] w-[120px] rounded-none" />
+           <Skeleton className="h-[44px] w-[80px] rounded-none" />
+        </div>
+      </div>
+
+      <div className="pt-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="md:col-span-2 flex flex-col gap-6">
+            <div className="space-y-2">
+              <Skeleton className="h-[20px] w-[120px]" />
+              <Skeleton className="h-11 w-full rounded-[8px]" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-[20px] w-[100px]" />
+              <Skeleton className="h-[90px] w-full rounded-[8px]" />
+            </div>
+            <div className="space-y-2">
+              <Skeleton className="h-[20px] w-[140px]" />
+              <Skeleton className="h-[44px] w-full rounded-[8px]" />
+              <Skeleton className="h-[16px] w-[200px]" />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
+              <div className="space-y-2">
+                <Skeleton className="h-[20px] w-[80px]" />
+                <Skeleton className="h-11 w-full rounded-[8px]" />
+                <Skeleton className="h-[16px] w-[180px]" />
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="h-[20px] w-[60px]" />
+                <div className="flex items-center gap-3 pt-1.5">
+                  <Skeleton className="h-6 w-11 rounded-full shrink-0" />
+                  <div className="flex-col gap-1">
+                    <Skeleton className="h-[20px] w-[60px] mb-1" />
+                    <Skeleton className="h-[16px] w-[140px]" />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <Skeleton className="h-[36px] w-28 rounded-lg bg-black/5" />
+          <div>
+            <div className="bg-[#F7FAF7] rounded-[12px] p-6">
+              <Skeleton className="h-[24px] w-[120px] mb-5" />
+              <div className="space-y-5">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className={`flex items-start gap-3 ${i === 4 ? 'pt-4 border-t border-[#D9E0E7]' : ''}`}>
+                     <Skeleton className="h-[18px] w-[18px] mt-0.5 rounded-sm shrink-0" />
+                     <div className="flex-col gap-1 w-full">
+                       <Skeleton className="h-[18px] w-[140px] mb-1" />
+                       <Skeleton className="h-[18px] w-[100px]" />
+                     </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-        <Skeleton className="h-[288px] w-full rounded-xl bg-black/5" />
+
+        <div className="mt-10 border-t border-[#EEF1F3] pt-8">
+          <div className="flex items-end justify-between mb-4">
+            <div>
+              <Skeleton className="h-[24px] w-[220px]" />
+              <Skeleton className="h-[20px] w-[340px] mt-1" />
+            </div>
+            <Skeleton className="h-9 w-[110px] rounded-[8px]" />
+          </div>
+          
+          <div className="border border-[#EEF1F3] rounded-[10px] overflow-hidden bg-white">
+            <div className="bg-[#FAFCFA] border-b border-[#EEF1F3] flex p-3">
+              <Skeleton className="h-[20px] w-full" />
+            </div>
+            <div className="divide-y divide-[#EEF1F3]">
+               {Array.from({ length: 3 }).map((_, i) => (
+                 <div key={i} className="p-3 flex items-center gap-4">
+                    <Skeleton className="h-[18px] w-[18px]" />
+                    <Skeleton className="h-10 w-10 rounded-[8px] shrink-0" />
+                    <div className="flex-1">
+                      <Skeleton className="h-[20px] w-[200px]" />
+                    </div>
+                    <Skeleton className="h-[20px] w-[80px]" />
+                    <Skeleton className="h-[20px] w-[80px]" />
+                    <Skeleton className="h-[24px] w-[60px] rounded-full" />
+                    <Skeleton className="h-[20px] w-[60px]" />
+                 </div>
+               ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -237,16 +314,23 @@ function ItemPickerDialog({ open, onOpenChange, selectedIds, onToggle, title, lo
 
         <div className="flex-1 overflow-y-auto border border-[#EEF1F3] rounded-[10px] divide-y divide-[#EEF1F3] bg-white">
           {loading && menuOptions.length === 0 ? (
-            <div className="p-4 space-y-4">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <Skeleton className="h-5 w-5 rounded-sm shrink-0" />
-                  <Skeleton className="h-10 w-10 rounded-md shrink-0" />
-                  <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-2/3" />
-                    <Skeleton className="h-3 w-1/3" />
+            <div className="p-1 space-y-1">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <div key={i} className="w-full flex items-center gap-3 p-3">
+                  <Skeleton className="h-4 w-4 rounded-sm shrink-0" />
+                  <Skeleton className="w-10 h-10 rounded-[8px] shrink-0" />
+                  <div className="min-w-0 flex-1 flex flex-col gap-1.5">
+                    <Skeleton className="h-[20px] w-48" />
+                    <Skeleton className="h-[16px] w-32" />
                   </div>
-                  <Skeleton className="h-4 w-10 shrink-0" />
+                  <div className="flex items-center gap-3 shrink-0">
+                    <div className="flex items-center gap-1.5">
+                      <Skeleton className="h-2 w-2 rounded-full" />
+                      <Skeleton className="h-[20px] w-8" />
+                    </div>
+                    <Skeleton className="h-[24px] w-[50px] rounded-full" />
+                    <Skeleton className="h-[20px] w-12" />
+                  </div>
                 </div>
               ))}
             </div>
@@ -505,14 +589,15 @@ function RuleDialog({ open, onOpenChange, loading }: RuleDialogProps) {
             {triggerOpen && (
               <div className="mt-1 border border-[#EEF1F3] rounded-[10px] bg-white shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1),0_2px_4px_-1px_rgba(0,0,0,0.06)] max-h-56 overflow-y-auto z-10 animate-in fade-in-0 slide-in-from-top-1 duration-200">
                 {loading && menuOptions.length === 0 ? (
-                  <div className="p-3 space-y-3">
-                    {[0, 1, 2].map((i) => (
-                      <div key={i} className="flex items-center gap-3">
-                        <Skeleton className="h-8 w-8 rounded-md shrink-0" />
-                        <div className="flex-1 space-y-1.5">
-                          <Skeleton className="h-3.5 w-3/4" />
-                          <Skeleton className="h-3 w-1/2" />
+                  <div className="p-1 space-y-1">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <div key={i} className="w-full flex items-center gap-3 p-2.5">
+                        <Skeleton className="w-8 h-8 rounded-[6px] shrink-0" />
+                        <div className="min-w-0 flex-1 flex flex-col gap-1">
+                          <Skeleton className="h-[20px] w-[140px]" />
+                          <Skeleton className="h-[16px] w-[100px]" />
                         </div>
+                        <Skeleton className="h-[20px] w-[40px] shrink-0" />
                       </div>
                     ))}
                   </div>
@@ -1009,7 +1094,7 @@ export default function CravingsPopupPage() {
             <div>
               <p className="text-xs font-semibold text-[#64748B]">Active Rules</p>
               <h3 className="text-2xl font-bold text-[#111827] mt-0.5">
-                {loadingRules ? <Skeleton className="h-7 w-10" /> : stats.activeRules}
+                {loadingRules ? <Skeleton className="h-[32px] w-16" /> : stats.activeRules}
               </h3>
               <p className="text-[11px] font-medium text-[#64748B] mt-0.5">Smart rules</p>
             </div>
@@ -1024,7 +1109,7 @@ export default function CravingsPopupPage() {
             <div>
               <p className="text-xs font-semibold text-[#64748B]">Total Mappings</p>
               <h3 className="text-2xl font-bold text-[#111827] mt-0.5">
-                {loadingRules ? <Skeleton className="h-7 w-10" /> : stats.totalMappings}
+                {loadingRules ? <Skeleton className="h-[32px] w-16" /> : stats.totalMappings}
               </h3>
               <p className="text-[11px] font-medium text-[#64748B] mt-0.5">Menu mappings</p>
             </div>
@@ -1039,7 +1124,7 @@ export default function CravingsPopupPage() {
             <div>
               <p className="text-xs font-semibold text-[#64748B]">Total Menu Items</p>
               <h3 className="text-2xl font-bold text-[#111827] mt-0.5">
-                {menuOptions.length || <Skeleton className="h-7 w-10" />}
+                {menuOptions.length || <Skeleton className="h-[32px] w-16" />}
               </h3>
               <p className="text-[11px] font-medium text-[#64748B] mt-0.5">Available items</p>
             </div>
@@ -1054,7 +1139,7 @@ export default function CravingsPopupPage() {
             <div>
               <p className="text-xs font-semibold text-[#64748B]">Impacted Orders</p>
               <h3 className="text-2xl font-bold text-[#111827] mt-0.5">
-                {loadingRules ? <Skeleton className="h-7 w-10" /> : "15.2K"}
+                {loadingRules ? <Skeleton className="h-[32px] w-16" /> : "15.2K"}
               </h3>
               <p className="text-[11px] font-medium text-[#64748B] mt-0.5">Last 30 days</p>
             </div>
@@ -1139,9 +1224,25 @@ export default function CravingsPopupPage() {
           <div className="flex flex-col gap-2 mt-2">
             {loadingRules ? (
               <>
-                <Skeleton className="h-[68px] w-full rounded-xl" />
-                <Skeleton className="h-[68px] w-full rounded-xl" />
-                <Skeleton className="h-[68px] w-full rounded-xl" />
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="p-3 rounded-[9px] border border-[#EEF1F3] bg-white flex items-center justify-between shadow-[0_1px_3px_rgba(15,23,42,0.025)]">
+                    <div className="flex items-center gap-3">
+                      <Skeleton className="w-12 h-12 rounded-[8px] flex-shrink-0" />
+                      <div className="flex flex-col gap-1">
+                        <Skeleton className="h-[20px] w-[140px]" />
+                        <Skeleton className="h-[16px] w-[220px]" />
+                        <div className="flex items-center gap-2 mt-0.5">
+                          <Skeleton className="h-[16px] w-[60px]" />
+                          <Skeleton className="h-[16px] w-[80px]" />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 ml-2">
+                       <Skeleton className="h-[24px] w-[70px] rounded-full" />
+                       <Skeleton className="h-[16px] w-[16px]" />
+                    </div>
+                  </div>
+                ))}
               </>
             ) : filteredRules.length === 0 ? (
               <div className="text-center py-10 bg-[#FAFCFA] border border-dashed border-[#DDE3E8] rounded-[10px]">

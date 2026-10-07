@@ -127,6 +127,21 @@ export async function createPaymentOrder({ userId, items, idempotencyKey, coupon
         }
         appliedDiscount = Math.min(appliedDiscount, itemTotal);
       }
+    } else {
+      const paymentOffer = await prisma.paymentOffer.findUnique({ where: { id: couponCode } });
+      if (paymentOffer && paymentOffer.isActive && paymentOffer.validFrom <= new Date() && paymentOffer.validTo >= new Date()) {
+        if (itemTotal >= Number(paymentOffer.minOrderValue ?? 0)) {
+          if (paymentOffer.discountType === "PERCENTAGE") {
+            appliedDiscount = Math.min(
+              itemTotal * Number(paymentOffer.discountValue) / 100,
+              Number(paymentOffer.maxDiscount ?? Infinity)
+            );
+          } else {
+            appliedDiscount = Number(paymentOffer.discountValue);
+          }
+          appliedDiscount = Math.min(appliedDiscount, itemTotal);
+        }
+      }
     }
   }
 

@@ -195,19 +195,25 @@ export default function DeliveriesPageClient() {
     return (
       <div className="max-w-[1400px] mx-auto space-y-6 pb-12 px-4 sm:px-6 lg:px-8 bg-[#FBFCFB] min-h-screen" role="status" aria-label="Loading deliveries">
         {/* Header */}
-        <div className="pt-2 sm:pt-0 space-y-3">
-          <Skeleton className="h-[30px] w-[192px] bg-black/5" />
-          <Skeleton className="h-[16px] w-[320px] max-w-full bg-black/5" />
+        <div className="pt-2 sm:pt-0">
+          <h1 className="text-[25px] font-bold flex items-center">
+            <Skeleton className="h-[30px] w-[192px] rounded-md" />
+          </h1>
+          <p className="mt-1">
+            <Skeleton className="h-[18px] w-[320px] max-w-full rounded-md" />
+          </p>
         </div>
 
         {/* Top Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
             <Card key={i} className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] p-5 flex items-center gap-4 shadow-[0_1px_3px_rgba(17,24,39,0.025)]">
-              <Skeleton className="h-[50px] w-[50px] rounded-full shrink-0 bg-black/5" />
+              <div className="h-[50px] w-[50px] rounded-full flex items-center justify-center shrink-0">
+                 <Skeleton className="h-full w-full rounded-full" />
+              </div>
               <div className="flex flex-col w-full">
-                <Skeleton className="h-[23px] w-[56px] mb-1.5 bg-black/5" />
-                <Skeleton className="h-[14px] w-[96px] bg-black/5" />
+                <Skeleton className="h-[23px] w-[56px] mb-1.5 rounded-sm" />
+                <Skeleton className="h-[14px] w-[96px] rounded-sm" />
               </div>
             </Card>
           ))}
@@ -215,89 +221,74 @@ export default function DeliveriesPageClient() {
 
         {/* Tabs & Actions */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E9ECEF]">
-          <div className="flex items-center gap-2">
-            <Skeleton className="h-[40px] w-[96px] rounded-t-[7px] rounded-b-none bg-black/5" />
-            <Skeleton className="h-[40px] w-[112px] rounded-t-[7px] rounded-b-none bg-black/5" />
-            <Skeleton className="h-[40px] w-[112px] rounded-t-[7px] rounded-b-none bg-black/5" />
+          <div className="flex items-center gap-2 overflow-x-auto w-full scrollbar-hide pb-1 sm:pb-0">
+            <Skeleton className="h-[46px] w-[150px] rounded-t-[7px] rounded-b-none" />
+            <Skeleton className="h-[46px] w-[170px] rounded-t-[7px] rounded-b-none" />
+            <Skeleton className="h-[46px] w-[140px] rounded-t-[7px] rounded-b-none" />
           </div>
           <div className="flex items-center gap-3 pb-3 sm:pb-0">
-            <Skeleton className="h-[36px] w-[200px] rounded-[6px] bg-black/5" />
-            <Skeleton className="h-[36px] w-[96px] rounded-[6px] bg-black/5" />
+            <Skeleton className="h-[36px] w-[120px] rounded-[6px]" />
           </div>
         </div>
 
         {/* Main Grid */}
-        <div className="grid xl:grid-cols-[1fr_400px] 2xl:grid-cols-[1fr_420px] gap-6 items-start">
-          {/* Orders List */}
+        <div className="grid gap-6 items-start grid-cols-1">
           <div className="space-y-4">
             {Array.from({ length: 3 }).map((_, i) => (
-              <Card key={i} className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] overflow-hidden shadow-[0_1px_3px_rgba(17,24,39,0.025)]">
-                <div className="px-5 py-4 flex items-center justify-between border-b border-[#E9ECEF]">
+              <Card key={i} className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] overflow-hidden shadow-[0_1px_2px_rgba(17,24,39,0.02)]">
+                {/* Order Header */}
+                <div className="px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#E9ECEF] gap-3">
                   <div className="flex items-center gap-3">
-                    <Skeleton className="h-[28px] w-[28px] rounded-[6px] bg-black/5" />
-                    <Skeleton className="h-[20px] w-[128px] bg-black/5" />
+                    <Skeleton className="h-7 w-7 rounded-[6px]" />
+                    <Skeleton className="h-[20px] w-[96px] rounded-sm" />
                   </div>
-                  <div className="flex items-center gap-4">
-                    <Skeleton className="h-[20px] w-[80px] rounded-full bg-black/5" />
+                  <div className="flex items-center justify-between sm:justify-end gap-6 sm:w-auto w-full px-1 sm:px-0">
+                    <Skeleton className="h-[18px] w-[70px] rounded-sm" />
+                    <Skeleton className="h-[22px] w-[90px] rounded-[5px]" />
                   </div>
                 </div>
+
+                {/* Order Body */}
                 <div className="p-5 grid md:grid-cols-[1.5fr_1fr_auto] gap-6 items-center">
+                  
+                  {/* Kitchen Info */}
                   <div className="flex gap-4 items-center">
-                    <Skeleton className="h-[52px] w-[52px] rounded-[10px] bg-black/5 shrink-0" />
-                    <div className="flex flex-col gap-2 w-full">
-                      <Skeleton className="h-[20px] w-[128px] bg-black/5" />
-                      <Skeleton className="h-[16px] w-[176px] bg-black/5" />
+                    <Skeleton className="h-[52px] w-[52px] rounded-full shrink-0" />
+                    <div className="min-w-0 flex flex-col gap-1 w-full">
+                      <Skeleton className="h-[20px] w-[128px] rounded-sm" />
+                      <Skeleton className="h-[18px] w-3/4 max-w-[200px] rounded-sm" />
                     </div>
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <Skeleton className="h-[16px] w-[80px] bg-black/5" />
-                    <Skeleton className="h-[20px] w-[112px] bg-black/5" />
+
+                  {/* Customer Info */}
+                  <div className="flex gap-4 items-center min-w-0">
+                    <div className="flex flex-col min-w-0 w-full gap-0.5">
+                      <Skeleton className="h-[14px] w-[80px] rounded-sm" />
+                      <Skeleton className="h-[20px] w-[140px] rounded-sm" />
+                      <Skeleton className="h-[18px] w-full max-w-[180px] rounded-sm" />
+                    </div>
                   </div>
-                  <div className="flex flex-col items-start md:items-end gap-2">
-                    <Skeleton className="h-[20px] w-[96px] bg-black/5" />
-                    <Skeleton className="h-[16px] w-[80px] bg-black/5" />
+
+                  {/* Price Info */}
+                  <div className="md:text-right flex flex-col justify-center items-start md:items-end mt-2 md:mt-0 gap-0.5">
+                    <Skeleton className="h-[22px] w-[70px] rounded-sm" />
+                    <Skeleton className="h-[22px] w-[100px] rounded-[5px]" />
                   </div>
+
                 </div>
-                <div className="px-5 py-4 border-t border-[#E9ECEF] flex items-center justify-between gap-5">
-                  <Skeleton className="flex-1 h-[20px] max-w-[320px] bg-black/5" />
-                  <Skeleton className="h-[36px] w-[96px] rounded-[6px] bg-black/5" />
+
+                {/* Order Footer & Actions */}
+                <div className="px-5 py-4 border-t border-[#E9ECEF] flex flex-col xl:flex-row xl:items-center justify-between gap-5 bg-[#FFFFFF]">
+                  <div className="flex-1 overflow-x-auto pb-3 xl:pb-0 scrollbar-hide flex items-center w-full min-w-0">
+                    <Skeleton className="h-[16px] w-full max-w-[400px] rounded-sm" />
+                  </div>
+                  <div className="flex flex-wrap items-center justify-end gap-3 w-full xl:w-auto xl:self-auto shrink-0 self-end">
+                    <Skeleton className="h-9 flex-1 xl:flex-none xl:w-[110px] rounded-[6px]" />
+                    <Skeleton className="h-9 flex-1 xl:flex-none xl:w-[130px] rounded-[6px]" />
+                  </div>
                 </div>
               </Card>
             ))}
-          </div>
-
-          {/* Sticky Details Sidebar */}
-          <div className="xl:sticky xl:top-6 space-y-6">
-            <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.025)] overflow-hidden">
-              <div className="bg-[#F8FAFC] py-4 px-5">
-                <Skeleton className="h-[20px] w-[144px] bg-black/5" />
-              </div>
-              <div className="p-5 border-b border-[#E9ECEF] space-y-4">
-                <Skeleton className="h-[16px] w-[96px] mb-4 bg-black/5" />
-                {Array.from({ length: 4 }).map((_, j) => (
-                  <div key={j} className="flex justify-between items-center">
-                    <Skeleton className="h-[16px] w-[80px] bg-black/5" />
-                    <Skeleton className="h-[16px] w-[112px] bg-black/5" />
-                  </div>
-                ))}
-              </div>
-              <div className="p-5 space-y-4">
-                <Skeleton className="h-[16px] w-[96px] mb-4 bg-black/5" />
-                <Skeleton className="h-[20px] w-[160px] bg-black/5" />
-                <Skeleton className="h-[16px] w-[192px] bg-black/5" />
-                <div className="flex flex-col gap-3 pt-2">
-                  <Skeleton className="h-[40px] w-full rounded-[6px] bg-black/5" />
-                  <Skeleton className="h-[40px] w-full rounded-[6px] bg-black/5" />
-                </div>
-              </div>
-            </Card>
-            <Card className="bg-[#FFFFFF] border border-[#E6EAEC] rounded-[10px] shadow-[0_1px_3px_rgba(17,24,39,0.025)] overflow-hidden">
-              <div className="py-4 px-5 flex items-center gap-3 border-b border-[#E9ECEF]">
-                <Skeleton className="h-[32px] w-[32px] rounded-full bg-black/5" />
-                <Skeleton className="h-[20px] w-[160px] bg-black/5" />
-              </div>
-              <Skeleton className="h-[240px] w-full rounded-none bg-black/5" />
-            </Card>
           </div>
         </div>
       </div>
@@ -492,7 +483,7 @@ export default function DeliveriesPageClient() {
       <div className="grid gap-6 items-start grid-cols-1">
         {activeTab === "tiffin" ? (
           <div className="space-y-4">
-            {tiffinLoading && <Skeleton className="h-[200px] w-full bg-black/5" />}
+            {tiffinLoading && <Skeleton className="h-[200px] w-full" />}
             {!tiffinLoading && tiffinPickups?.length === 0 && (
               <Card className="bg-[#FFFFFF] rounded-[10px] p-12 text-center border border-[#E6EAEC] shadow-[0_1px_3px_rgba(17,24,39,0.025)]">
                 <PackageCheck className="h-12 w-12 text-[#6B7280] mx-auto mb-4" strokeWidth={1.5} />

@@ -134,22 +134,38 @@ export function MenuItemDetailSkeleton() {
           
           {/* Left Col - Images */}
           <div className="lg:col-span-1 xl:col-span-5 flex flex-col gap-4">
-            <Skeleton className="w-full aspect-[3/2] rounded-[12px] md:rounded-[16px]" />
-            <div className="flex gap-2.5 overflow-x-auto py-1">
+            <div className="relative w-full aspect-[3/2] rounded-[12px] md:rounded-[16px] overflow-hidden bg-muted group shadow-[0_4px_12px_rgba(0,0,0,0.05)]">
+               <Skeleton className="w-full h-full rounded-[12px] md:rounded-[16px]" />
+               <div className="absolute top-4 left-4 z-10">
+                  <Skeleton className="h-[24px] w-[75px] rounded-[6px]" />
+               </div>
+               <div className="absolute top-2 right-2 z-10">
+                  <Skeleton className="h-[44px] w-[44px] rounded-full" />
+               </div>
+            </div>
+            <div className="flex gap-2.5 overflow-x-auto py-1 scrollbar-hide">
               {Array.from({ length: 6 }).map((_, i) => (
-                <Skeleton key={i} className="w-[calc(16.666%-10px)] aspect-square rounded-[8px] flex-shrink-0" />
+                <div key={i} className="relative w-[calc(16.666%-10px)] aspect-square rounded-[8px] flex-shrink-0 p-[2px] bg-white border-[2px] border-transparent">
+                  <Skeleton className="w-full h-full rounded-[4px]" />
+                </div>
               ))}
             </div>
           </div>
 
           {/* Middle Col - Details */}
           <div className="lg:col-span-1 xl:col-span-4 flex flex-col">
-            <div className="flex items-center mb-4 gap-3">
-              <Skeleton className="h-[20px] w-12 rounded-[4px]" />
-              <Skeleton className="h-[14px] w-48 rounded" />
+            <div className="flex items-center mb-4">
+              <div className="flex items-center gap-3">
+                <Skeleton className="h-[20px] w-12 rounded-[4px]" />
+                <div className="flex items-center gap-2 text-[12px]">
+                  <Skeleton className="h-[14px] w-24 rounded" />
+                  <span className="text-[#DDDDDD]">|</span>
+                  <Skeleton className="h-[14px] w-24 rounded" />
+                </div>
+              </div>
             </div>
             
-            <Skeleton className="h-[42px] w-3/4 rounded mb-3" />
+            <Skeleton className="h-[38px] md:h-[42px] w-3/4 rounded mb-3" />
             
             <div className="flex flex-col gap-1.5 mb-5 pr-4">
               <Skeleton className="h-[14px] w-full rounded" />
@@ -157,14 +173,19 @@ export function MenuItemDetailSkeleton() {
               <Skeleton className="h-[14px] w-4/5 rounded" />
             </div>
 
-            <div className="flex flex-wrap gap-2.5 mb-7">
+            <div className="flex flex-wrap items-center gap-2.5 mb-7">
               <Skeleton className="h-[28px] w-24 rounded-[8px]" />
               <Skeleton className="h-[28px] w-20 rounded-[8px]" />
+              <Skeleton className="h-[28px] w-28 rounded-[8px]" />
               <Skeleton className="h-[28px] w-28 rounded-[8px]" />
             </div>
 
             <div className="flex flex-col gap-1.5 mb-5">
-              <Skeleton className="h-[34px] w-32 rounded" />
+              <div className="flex items-end gap-3">
+                <Skeleton className="h-[34px] w-20 rounded" />
+                <Skeleton className="h-[18px] w-16 rounded mb-1" />
+                <Skeleton className="h-[24px] w-20 rounded-full mb-1.5" />
+              </div>
               <Skeleton className="h-[12px] w-24 rounded" />
             </div>
 
@@ -173,7 +194,29 @@ export function MenuItemDetailSkeleton() {
               <Skeleton className="flex-1 h-[48px] rounded-[8px]" />
             </div>
 
-            <Skeleton className="h-[52px] w-full rounded-[8px] mt-2 mb-6" />
+            <div className="flex items-center bg-[#FDFDFD] border border-[#EEEEEE] rounded-[8px] p-2.5 divide-x divide-[#EEEEEE] mt-2 mb-6">
+              <div className="flex items-center gap-2.5 flex-1 px-3 first:pl-1">
+                 <Skeleton className="w-5 h-5 rounded-full shrink-0" />
+                 <div className="flex flex-col">
+                   <Skeleton className="h-[14px] w-16 mb-1" />
+                   <Skeleton className="h-[12px] w-24" />
+                 </div>
+              </div>
+              <div className="flex items-center gap-2.5 flex-1 px-3">
+                 <Skeleton className="w-5 h-5 rounded-full shrink-0" />
+                 <div className="flex flex-col">
+                   <Skeleton className="h-[14px] w-16 mb-1" />
+                   <Skeleton className="h-[12px] w-24" />
+                 </div>
+              </div>
+              <div className="flex items-center gap-2.5 flex-1 px-3 pr-1">
+                 <Skeleton className="w-5 h-5 rounded-full shrink-0" />
+                 <div className="flex flex-col">
+                   <Skeleton className="h-[14px] w-16 mb-1" />
+                   <Skeleton className="h-[12px] w-24" />
+                 </div>
+              </div>
+            </div>
           </div>
 
           {/* Right Col - Delivery Details */}
@@ -183,22 +226,78 @@ export function MenuItemDetailSkeleton() {
               <Skeleton className="h-[28px] w-[80px] rounded-[5px]" />
             </div>
             <div className="w-full mx-auto max-w-md xl:max-w-none">
-              <Skeleton className="h-[320px] w-full rounded-[12px]" />
+              <Card className="shadow-[0_2px_12px_rgba(0,0,0,0.04)] border-[#EAEAEA] rounded-[12px] bg-white">
+                <CardContent className="p-5">
+                  <Skeleton className="h-[18px] w-32 mb-5" />
+                  <div className="space-y-5">
+                    {/* Delivery Time */}
+                    <div className="flex items-start gap-3">
+                      <Skeleton className="w-[34px] h-[34px] rounded-full shrink-0" />
+                      <div className="flex-1 mt-0.5">
+                        <Skeleton className="h-[14px] w-24 mb-1.5" />
+                        <Skeleton className="h-[16px] w-32 mb-1.5" />
+                        <Skeleton className="h-[12px] w-20" />
+                      </div>
+                      <Skeleton className="w-5 h-5 rounded-full shrink-0 self-center" />
+                    </div>
+                    <Separator className="bg-[#EEEEEE]" />
+                    {/* Delivery To */}
+                    <div className="flex items-start gap-3">
+                      <Skeleton className="w-[34px] h-[34px] rounded-full shrink-0" />
+                      <div className="flex-1 pr-2 mt-0.5">
+                        <Skeleton className="h-[14px] w-20 mb-1.5" />
+                        <Skeleton className="h-[16px] w-32" />
+                      </div>
+                      <Skeleton className="h-[14px] w-12 self-center shrink-0" />
+                    </div>
+                    <Separator className="bg-[#EEEEEE]" />
+                    {/* Delivery Fee */}
+                    <div className="flex items-start gap-3">
+                      <Skeleton className="w-[34px] h-[34px] rounded-full shrink-0" />
+                      <div className="flex-1 mt-0.5">
+                        <Skeleton className="h-[14px] w-24 mb-1.5" />
+                        <Skeleton className="h-[16px] w-20" />
+                      </div>
+                      <Skeleton className="h-[12px] w-16 self-center shrink-0" />
+                    </div>
+                    <Separator className="bg-[#EEEEEE]" />
+                    {/* Available */}
+                    <div className="flex items-start gap-3">
+                      <Skeleton className="w-[34px] h-[34px] rounded-full shrink-0" />
+                      <div className="flex-1 mt-0.5">
+                        <Skeleton className="h-[14px] w-20 mb-1.5" />
+                        <Skeleton className="h-[16px] w-28 mb-1.5" />
+                        <Skeleton className="h-[12px] w-24" />
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           </div>
         </div>
 
-        {/* Feature Banner - Highlights */}
-        <Skeleton className="my-10 h-[88px] w-full rounded-[12px]" />
+        {/* Feature Banner - Highlights (Full Width) */}
+        <div className="my-10 bg-[#FDFDFD] border border-[#EEEEEE] rounded-[12px] py-6 px-6 sm:px-10 flex overflow-x-auto scrollbar-hide snap-x gap-6 sm:gap-8 xl:justify-between divide-x divide-[#EEEEEE]">
+          {Array.from({ length: 4 }).map((_, i) => (
+             <div key={i} className={`flex items-center gap-3.5 min-w-[max-content] snap-start shrink-0 ${i > 0 ? "pl-6 sm:pl-8" : ""}`}>
+               <Skeleton className="h-6 w-6 rounded-full shrink-0" />
+               <div className="flex flex-col">
+                 <Skeleton className="h-[14px] w-24 mb-1" />
+                 <Skeleton className="h-[12px] w-20" />
+               </div>
+             </div>
+          ))}
+        </div>
 
         {/* Bottom Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-12 gap-8">
           <div className="lg:col-span-2 xl:col-span-8 flex flex-col gap-8">
-            <div className="flex gap-8 border-b border-[#EEEEEE] pb-1">
-              <Skeleton className="h-[36px] w-24 rounded-none" />
-              <Skeleton className="h-[36px] w-24 rounded-none" />
-              <Skeleton className="h-[36px] w-24 rounded-none" />
-              <Skeleton className="h-[36px] w-24 rounded-none" />
+            <div className="flex gap-8 border-b border-[#EEEEEE] pb-1 overflow-x-auto scrollbar-hide">
+              <Skeleton className="h-[24px] w-24 rounded-none shrink-0 mb-2" />
+              <Skeleton className="h-[24px] w-24 rounded-none shrink-0 mb-2" />
+              <Skeleton className="h-[24px] w-24 rounded-none shrink-0 mb-2" />
+              <Skeleton className="h-[24px] w-24 rounded-none shrink-0 mb-2" />
             </div>
             <div className="flex flex-col lg:flex-row gap-8">
               <div className="flex-1 lg:max-w-[40%] flex flex-col gap-3">

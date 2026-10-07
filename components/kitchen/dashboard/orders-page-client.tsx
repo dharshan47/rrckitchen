@@ -228,31 +228,31 @@ export default function OrdersPageClient() {
 
   if (!data) {
     return (
-      <div className="pb-20 bg-[#FEFEFE] min-h-screen pt-4">
+      <div className="pb-20 animate-in fade-in duration-500 bg-[#FEFEFE] min-h-screen pt-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 px-6">
           <div className="flex items-center gap-3">
             <div>
-              <Skeleton className="h-[28px] w-32 mb-1.5 bg-black/5" />
-              <Skeleton className="h-[18px] w-64 bg-black/5" />
+              <Skeleton className="h-[28px] w-32 mb-1.5" />
+              <Skeleton className="h-[18px] w-64" />
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Skeleton className="h-[36px] w-32 rounded-[8px] bg-black/5" />
+            <Skeleton className="h-[36px] w-[140px] rounded-[8px]" />
           </div>
         </div>
 
         {/* Tabs & Search */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 px-6 mb-6">
           <div className="flex flex-wrap items-center gap-3">
-            <Skeleton className="h-[44px] w-32 rounded-[8px] bg-black/5" />
-            <Skeleton className="h-[44px] w-40 rounded-[8px] bg-black/5" />
-            <Skeleton className="h-[44px] w-48 rounded-[8px] bg-black/5" />
-            <Skeleton className="h-[44px] w-36 rounded-[8px] bg-black/5" />
+            <Skeleton className="h-[44px] w-[110px] rounded-[8px]" />
+            <Skeleton className="h-[44px] w-[140px] rounded-[8px]" />
+            <Skeleton className="h-[44px] w-[180px] rounded-[8px]" />
+            <Skeleton className="h-[44px] w-[140px] rounded-[8px]" />
           </div>
           <div className="flex w-full lg:w-auto items-center gap-2 sm:gap-3">
-            <Skeleton className="h-[40px] w-full lg:w-80 rounded-[8px] bg-black/5" />
-            <Skeleton className="h-[40px] w-[100px] rounded-[8px] bg-black/5 shrink-0" />
+            <Skeleton className="h-[40px] w-full lg:w-80 rounded-[8px]" />
+            <Skeleton className="h-[40px] w-[80px] rounded-[8px] shrink-0" />
           </div>
         </div>
 
@@ -266,45 +266,57 @@ export default function OrdersPageClient() {
                     
                     {/* Column 1: Meta Info */}
                     <div className="flex-none lg:w-[130px] flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-[#EEF0F2] pb-3 lg:pb-0 lg:pr-3">
-                      <Skeleton className="h-[20px] w-24 mb-2 bg-black/5" />
-                      <Skeleton className="h-[16px] w-20 mb-1 bg-black/5" />
-                      <Skeleton className="h-[16px] w-16 mb-2 bg-black/5" />
-                      <Skeleton className="h-[16px] w-12 rounded-[999px] bg-black/5" />
+                      <Skeleton className="h-[20px] w-24 mb-2" />
+                      <Skeleton className="h-[16px] w-20 mb-1" />
+                      <Skeleton className="h-[16px] w-16 mb-2" />
+                      <Skeleton className="h-[16px] w-12 rounded-[999px]" />
                     </div>
 
                     {/* Column 2: Item Details */}
                     <div className="flex-1 flex gap-3 items-center border-b lg:border-b-0 lg:border-r border-[#EEF0F2] pb-3 lg:pb-0 lg:px-4">
-                      <Skeleton className="h-[84px] w-[84px] rounded-[8px] shrink-0 bg-black/5" />
+                      <Skeleton className="h-[84px] w-[84px] rounded-[8px] shrink-0" />
                       <div className="min-w-0 w-full flex flex-col gap-2">
-                        <Skeleton className="h-[20px] w-48 bg-black/5" />
-                        <Skeleton className="h-[16px] w-32 bg-black/5" />
-                        <Skeleton className="h-[16px] w-64 bg-black/5" />
+                        <Skeleton className="h-[20px] w-48" />
+                        <Skeleton className="h-[16px] w-32" />
+                        <Skeleton className="h-[16px] w-64" />
                       </div>
                     </div>
 
                     {/* Column 3: Price */}
                     <div className="flex-none lg:w-[100px] flex flex-col justify-center border-b lg:border-b-0 lg:border-r border-[#EEF0F2] pb-3 lg:pb-0 lg:px-4">
-                      <Skeleton className="h-[24px] w-20 mb-2 bg-black/5" />
-                      <Skeleton className="h-[16px] w-16 bg-black/5" />
+                      <Skeleton className="h-[24px] w-20 mb-2" />
+                      <Skeleton className="h-[16px] w-16" />
                     </div>
 
                     {/* Column 4: Customer & Delivery */}
                     <div className="flex-none lg:w-[200px] flex flex-col justify-center gap-3 border-b lg:border-b-0 lg:border-r border-[#EEF0F2] pb-3 lg:pb-0 lg:px-4">
                       <div className="flex gap-3 items-center">
-                        <Skeleton className="h-[32px] w-[32px] rounded-full shrink-0 bg-black/5" />
+                        <Skeleton className="h-[32px] w-[32px] rounded-full shrink-0" />
                         <div className="min-w-0 flex flex-col gap-1 w-full">
-                          <Skeleton className="h-[18px] w-24 bg-black/5" />
-                          <Skeleton className="h-[16px] w-32 bg-black/5" />
+                          <Skeleton className="h-[18px] w-24" />
+                          <Skeleton className="h-[16px] w-20" />
+                          <div className="flex items-start gap-1 mt-1">
+                            <Skeleton className="h-[12px] w-[12px] shrink-0" /> 
+                            <Skeleton className="h-[16px] w-32" />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="flex gap-3 items-center border-t border-[#EEF0F2] pt-2">
+                        <Skeleton className="h-[32px] w-[32px] rounded-full shrink-0" />
+                        <div className="min-w-0 flex flex-col gap-1 w-full">
+                          <Skeleton className="h-[16px] w-24" />
+                          <Skeleton className="h-[14px] w-20" />
                         </div>
                       </div>
                     </div>
 
                     {/* Column 5: Status & Actions */}
                     <div className="flex-none lg:w-[140px] flex flex-col justify-center gap-2 pt-2 lg:pt-0 lg:pl-4 items-center">
-                      <Skeleton className="h-[24px] w-24 rounded-[999px] bg-black/5" />
+                      <Skeleton className="h-[24px] w-24 rounded-[999px]" />
                       <div className="flex flex-col gap-2 w-full mt-1">
-                        <Skeleton className="h-[28px] w-full rounded-[7px] bg-black/5" />
-                        <Skeleton className="h-[28px] w-full rounded-[7px] bg-black/5" />
+                        <Skeleton className="h-[28px] w-full rounded-[7px]" />
+                        <Skeleton className="h-[28px] w-full rounded-[7px]" />
                       </div>
                     </div>
 
@@ -320,14 +332,14 @@ export default function OrdersPageClient() {
             {/* Order Summary */}
             <Card className="rounded-[10px] border border-[#E7E9EC] shadow-[0_1px_3px_rgba(16,24,40,0.025)] bg-[#FFFFFF] flex flex-col h-[280px]">
               <div className="pb-4 pt-5 px-5 flex flex-row items-center gap-2 shrink-0">
-                <Skeleton className="h-[32px] w-[32px] rounded-full bg-black/5 shrink-0" />
-                <Skeleton className="h-[20px] w-32 bg-black/5" />
+                <Skeleton className="h-[32px] w-[32px] rounded-full shrink-0" />
+                <Skeleton className="h-[20px] w-32" />
               </div>
               <div className="px-5 pb-5 pt-0 space-y-3.5">
                 {Array.from({ length: 6 }).map((_, j) => (
                   <div key={j} className="flex justify-between items-center">
-                    <Skeleton className="h-[16px] w-32 bg-black/5" />
-                    <Skeleton className="h-[16px] w-8 bg-black/5" />
+                    <Skeleton className="h-[16px] w-32" />
+                    <Skeleton className="h-[16px] w-8" />
                   </div>
                 ))}
               </div>
@@ -336,12 +348,12 @@ export default function OrdersPageClient() {
             {/* Quick Filters */}
             <Card className="rounded-[10px] border border-[#E7E9EC] shadow-[0_1px_3px_rgba(16,24,40,0.025)] bg-[#FFFFFF] flex flex-col h-[280px]">
               <div className="pb-4 pt-5 px-5 flex flex-row items-center gap-2 shrink-0">
-                <Skeleton className="h-[32px] w-[32px] rounded-full bg-black/5 shrink-0" />
-                <Skeleton className="h-[20px] w-24 bg-black/5" />
+                <Skeleton className="h-[32px] w-[32px] rounded-full shrink-0" />
+                <Skeleton className="h-[20px] w-24" />
               </div>
               <div className="px-5 pb-5 pt-0 flex flex-wrap gap-2.5 flex-1 content-start">
                 {Array.from({ length: 6 }).map((_, j) => (
-                  <Skeleton key={j} className="h-[32px] w-24 rounded-[8px] bg-black/5" />
+                  <Skeleton key={j} className="h-[32px] w-24 rounded-[8px]" />
                 ))}
               </div>
             </Card>
@@ -349,10 +361,10 @@ export default function OrdersPageClient() {
             {/* Keep it Up! */}
             <Card className="rounded-[10px] border border-[#EDF2EE] shadow-sm bg-gradient-to-br from-[#F7FBF7] to-[#EFF7F0] flex flex-col h-[280px]">
               <div className="px-5 py-5 text-left flex-1 flex flex-col">
-                <Skeleton className="h-[20px] w-32 mb-2 bg-black/5" />
-                <Skeleton className="h-[16px] w-48 mb-4 bg-black/5" />
+                <Skeleton className="h-[20px] w-32 mb-2" />
+                <Skeleton className="h-[16px] w-48 mb-4" />
                 <div className="flex justify-center mt-auto">
-                  <Skeleton className="h-[100px] w-[140px] bg-black/5" />
+                  <Skeleton className="h-[100px] w-[140px]" />
                 </div>
               </div>
             </Card>
@@ -360,13 +372,13 @@ export default function OrdersPageClient() {
             {/* Need Help? */}
             <div className="bg-[#FFFFFF] rounded-[10px] p-5 shadow-[0_1px_3px_rgba(16,24,40,0.025)] border border-[#E7E9EC] flex flex-col gap-4 justify-between h-[280px]">
               <div className="flex items-start gap-4">
-                <Skeleton className="h-[40px] w-[40px] rounded-full bg-black/5 shrink-0" />
+                <Skeleton className="h-[40px] w-[40px] rounded-full shrink-0" />
                 <div className="w-full">
-                  <Skeleton className="h-[20px] w-24 mb-2 bg-black/5" />
-                  <Skeleton className="h-[16px] w-40 bg-black/5" />
+                  <Skeleton className="h-[20px] w-24 mb-2" />
+                  <Skeleton className="h-[16px] w-40" />
                 </div>
               </div>
-              <Skeleton className="h-[36px] w-full rounded-[7px] mt-auto bg-black/5" />
+              <Skeleton className="h-[36px] w-full rounded-[7px] mt-auto" />
             </div>
           </div>
         </div>
@@ -531,7 +543,7 @@ export default function OrdersPageClient() {
             <div className="space-y-4 pr-3 w-full h-full flex flex-col">
               {activeTab === "tiffin" ? (
                 <>
-                  {tiffinLoading && <Skeleton className="h-[200px] w-full bg-black/5" />}
+                  {tiffinLoading && <Skeleton className="h-[200px] w-full" />}
                   {!tiffinLoading && tiffinPickups?.length === 0 && (
                     <div className="flex-1 min-h-[400px] flex flex-col items-center justify-center text-gray-400 bg-white rounded-xl border border-[#E7E9EC]">
                       <PackageCheck className="h-12 w-12 mb-3 text-gray-300" />

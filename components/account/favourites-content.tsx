@@ -252,8 +252,63 @@ function VirtualGrid<T>({
   );
 }
 
+export function FavouritesSkeleton() {
+  return (
+    <main className="min-h-screen bg-[#FAFAFA] text-foreground pb-20">
+      <div className="mx-auto max-w-5xl px-4 lg:px-8 py-8">
+        
+        {/* Breadcrumb Section */}
+        <div className="pt-1 pb-4">
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-4 w-12 rounded" />
+            <Skeleton className="h-3.5 w-3.5 rounded-full" />
+            <Skeleton className="h-4 w-16 rounded" />
+            <Skeleton className="h-3.5 w-3.5 rounded-full" />
+            <Skeleton className="h-4 w-16 rounded" />
+          </div>
+        </div>
+
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+          <div>
+            <Skeleton className="h-[36px] md:h-[40px] w-64 rounded-lg mb-2" />
+            <Skeleton className="h-[20px] w-48 rounded" />
+          </div>
+        </div>
+
+        <div className="space-y-8 w-full">
+          <div className="w-full overflow-x-auto no-scrollbar">
+            <div className="flex w-max justify-start bg-transparent h-auto p-0 gap-8 min-w-full">
+              <div className="pb-3.5 border-b-[3px] border-[#166534] flex items-center gap-2">
+                <Skeleton className="h-5 w-5 rounded-full shrink-0" /> 
+                <Skeleton className="h-[20px] w-20 rounded" />
+              </div>
+              <div className="pb-3.5 border-b-[3px] border-transparent flex items-center gap-2">
+                <Skeleton className="h-5 w-5 rounded-full shrink-0" /> 
+                <Skeleton className="h-[20px] w-24 rounded" />
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-0">
+             <div className="flex items-center justify-between mb-4">
+              <Skeleton className="h-[24px] md:h-[28px] w-48 rounded" />
+              <Skeleton className="h-[16px] w-16 rounded" />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 md:gap-6">
+               {[1, 2, 3, 4, 5, 6, 7, 8].map(i => <KitchenSkeleton key={i} />)}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </main>
+  );
+}
+
 export function FavouritesContent() {
-  const { data: session } = useSession();
+  const { data: session, isPending: sessionPending } = useSession();
   const isLoggedIn = !!session?.user;
 
   useRecommendedKitchensQuery(isLoggedIn);
@@ -279,6 +334,10 @@ export function FavouritesContent() {
   const recommendedKitchens = useRecommendedKitchens();
   const menuItems = useMenuWishlistItems();
   const kitchenItems = useKitchenWishlistItems();
+
+  if (sessionPending || (menuLoading && menuItems.length === 0) || (kitchenLoading && kitchenItems.length === 0)) {
+    return <FavouritesSkeleton />;
+  }
 
   if (!isLoggedIn) {
     return (

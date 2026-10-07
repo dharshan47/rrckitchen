@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+
 import { Textarea } from "@/components/ui/textarea"
 import {
   Table,
@@ -335,7 +335,7 @@ export function KitchenDetailsBody({ kitchen, onClose }: { kitchen: KitchenPartn
                         <AvatarImage src={kitchen.imageUrl || "/kitchen/profile.webp"} alt={name} className="object-cover" />
                         <AvatarFallback className="rounded-full bg-[#F8FAFC] text-[#475569] text-[14px] font-semibold">K</AvatarFallback>
                       </Avatar>
-                      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                      <div className="absolute inset-0  flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                         {uploading ? <Loader2 className="h-4 w-4 text-white animate-spin" /> : <Camera className="h-4 w-4 text-white" />}
                       </div>
                     </button>

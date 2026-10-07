@@ -36,7 +36,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { Home, User, Wallet, LogOut, Truck, Ticket, Bell, Star, CheckCircle2, Package, RotateCcw } from "lucide-react"
+import { Home, User, Wallet, LogOut, Truck, Ticket, Bell, Star, CheckCircle2, Package } from "lucide-react"
 import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 
@@ -150,66 +150,71 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#FBFBFB] flex" role="status" aria-label="Loading delivery partner dashboard">
-        {/* Sidebar Skeleton */}
-        <aside className="hidden lg:flex w-[18rem] flex-col border-r border-border bg-white">
-          {/* Logo */}
-          <div className="px-6 pt-8 pb-6">
-            <div className="flex items-center gap-3">
-              <Skeleton className="h-[48px] w-[48px] rounded-xl bg-black/5" />
-              <div className="flex flex-col gap-2">
-                <Skeleton className="h-[20px] w-[144px] rounded bg-black/5" />
-                <Skeleton className="h-[12px] w-[96px] rounded bg-black/5" />
-              </div>
-            </div>
-          </div>
-
-          {/* Nav items */}
-          <div className="flex-1 px-4 space-y-2">
-            {navItems.map((_, i) => (
-              <Skeleton key={i} className="h-[48px] w-full rounded-xl bg-black/5" />
-            ))}
-          </div>
-
-          {/* Online status toggle */}
-          <div className="px-4 pb-4">
-            <Skeleton className="h-[72px] w-full rounded-2xl bg-black/5" />
-          </div>
-
-          {/* User profile widget */}
-          <div className="px-4 pb-6">
-            <div className="bg-slate-50 rounded-2xl p-4 border border-slate-100 space-y-3">
+      <SidebarProvider defaultOpen={true} style={{ "--sidebar-width": "18rem" } as React.CSSProperties}>
+        <div className="min-h-screen bg-[#FBFBFB] flex w-full font-sans text-[#111827]" role="status" aria-label="Loading delivery partner dashboard">
+          <Sidebar collapsible="offcanvas" side="left" className="border-r-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)] bg-[#FFFFFF]">
+            <SidebarHeader className="px-6 pt-8 pb-6">
               <div className="flex items-center gap-3">
-                <Skeleton className="h-[40px] w-[40px] rounded-full bg-black/5" />
-                <div className="flex flex-col gap-1.5 flex-1">
-                  <Skeleton className="h-[14px] w-[112px] rounded bg-black/5" />
-                  <Skeleton className="h-[12px] w-[80px] rounded bg-black/5" />
+                <Skeleton className="h-[48px] w-[48px] rounded-xl" />
+                <div className="flex flex-col gap-1.5">
+                  <Skeleton className="h-[20px] w-[144px] rounded" />
+                  <Skeleton className="h-[12px] w-[96px] rounded" />
                 </div>
               </div>
-              <Skeleton className="h-[16px] w-[128px] rounded bg-black/5" />
-              <Skeleton className="h-[40px] w-full rounded-xl bg-black/5" />
-            </div>
+            </SidebarHeader>
+
+            <SidebarContent className="px-4 flex-1 overflow-hidden">
+              <div className="pr-3 space-y-2">
+                {navItems.map((_, i) => (
+                  <Skeleton key={i} className="h-[48px] w-full rounded-[10px]" />
+                ))}
+              </div>
+            </SidebarContent>
+
+            <SidebarFooter className="px-4 pb-4 mt-auto space-y-3">
+              <Skeleton className="h-[76px] w-full rounded-xl" />
+              <div className="bg-[#FFFFFF] rounded-xl border border-[#E8EAED] overflow-hidden">
+                <div className="p-4 pb-3">
+                  <div className="flex items-center gap-3 mb-3">
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <div className="flex flex-col gap-1.5 flex-1">
+                      <Skeleton className="h-[15px] w-[112px] rounded" />
+                      <Skeleton className="h-[12px] w-[80px] rounded" />
+                    </div>
+                  </div>
+                  <Skeleton className="h-[14px] w-[128px] rounded" />
+                </div>
+                <div className="px-4 pb-4 pt-3 border-t border-[#F1F2F3]">
+                  <Skeleton className="h-[38px] w-full rounded-[8px]" />
+                </div>
+              </div>
+            </SidebarFooter>
+          </Sidebar>
+
+          <div className="flex-1 flex flex-col min-w-0">
+            <header className="sticky top-0 z-30 bg-[#FBFBFB] px-4 md:px-8 h-20 flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Skeleton className="flex h-[44px] w-[44px] rounded-xl" />
+              </div>
+              <div className="flex items-center gap-4 md:gap-6">
+                <Skeleton className="hidden sm:flex h-[38px] w-[90px] rounded-xl" />
+                <Skeleton className="h-[44px] w-[44px] rounded-full" />
+                <div className="flex items-center gap-3 pl-2">
+                  <Skeleton className="h-[44px] w-[44px] rounded-full" />
+                  <div className="hidden md:flex flex-col gap-1.5">
+                    <Skeleton className="h-[15px] w-[112px] rounded" />
+                    <Skeleton className="h-[12px] w-[80px] rounded" />
+                  </div>
+                </div>
+              </div>
+            </header>
+
+            <main className="flex-1 overflow-y-auto px-4 pb-12 md:px-8">
+              {children}
+            </main>
           </div>
-        </aside>
-
-        {/* Main Column Skeleton */}
-        <div className="flex-1 flex flex-col min-w-0">
-          {/* Top header */}
-          <header className="sticky top-0 z-30 bg-[#f9fafb] px-4 md:px-8 h-20 flex items-center justify-between">
-            <Skeleton className="h-[44px] w-[44px] rounded-xl bg-black/5" />
-            <div className="flex items-center gap-4 md:gap-6">
-              <Skeleton className="hidden sm:block h-[38px] w-[112px] rounded-xl bg-black/5" />
-              <Skeleton className="h-[44px] w-[44px] rounded-full bg-black/5" />
-              <Skeleton className="h-[44px] w-[44px] rounded-full bg-black/5" />
-            </div>
-          </header>
-
-          {/* Main content (child page renders its own matching skeleton) */}
-          <main className="flex-1 overflow-y-auto px-4 pb-12 md:px-8">
-            {children}
-          </main>
         </div>
-      </div>
+      </SidebarProvider>
     )
   }
 
@@ -230,7 +235,7 @@ export default function DashboardLayoutClient({ children }: { children: React.Re
     title: string
     desc: string
     time?: string
-    icon: any
+    icon: React.ElementType
     iconColor: string
     iconBg: string
     href: string

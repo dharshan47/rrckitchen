@@ -24,6 +24,7 @@ import {
   ChevronUp,
 } from "lucide-react";
 import { KitchenCard } from "@/components/kitchen/kitchen-card";
+import { KitchenCardSkeleton } from "@/components/kitchen/kitchens-page-skeleton";
 import type { KitchenData } from "@/hooks/useExploreKitchens";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -135,66 +136,114 @@ function kitchenDeliveryTime(kitchen: PublicCategoryBundle["kitchens"][number], 
    =================================================================== */
 function CategoryPageSkeleton() {
   return (
-    <main className="min-h-screen bg-[#FDF9F6] pb-16 animate-in fade-in duration-300">
-      <div className="max-w-7xl mx-auto px-4 py-3">
-        <Skeleton className="h-4 w-64 rounded-md" />
-      </div>
-      <div className="max-w-7xl mx-auto px-4 md:px-8">
-        <div className="relative z-10 overflow-hidden md:rounded-[24px] bg-[#FDF9F6]">
-          <div className="flex flex-col md:flex-row items-center">
-            <div className="w-full md:w-3/5 py-6 md:py-12 md:pr-8">
-              <div className="flex items-center gap-4">
-                <Skeleton className="h-16 w-16 md:h-20 md:w-20 rounded-full" />
-                <div className="space-y-2">
-                  <Skeleton className="h-9 w-52 rounded-md" />
-                  <Skeleton className="h-5 w-28 rounded-full" />
-                </div>
-              </div>
-              <Skeleton className="h-4 w-full max-w-xl mt-5 rounded-md" />
-              <Skeleton className="h-4 w-3/4 mt-2 rounded-md" />
+    <main className="min-h-screen bg-[#FDF9F6] text-foreground font-sans">
+      {/* Hero Section */}
+      <div className="w-full bg-[#FDF9F6] border-b border-[#EEE7E2] overflow-hidden">
+        <div className="max-w-[1400px] mx-auto relative flex flex-col lg:flex-row items-stretch">
+          
+          {/* Left Content (Text) */}
+          <div className="w-full lg:w-[45%] xl:w-[40%] px-4 md:px-8 py-6 lg:py-10 flex flex-col justify-center z-20 relative bg-[#FDF9F6] lg:bg-transparent">
+            {/* Breadcrumb */}
+            <div className="flex items-center gap-2 mb-6">
+              <Skeleton className="h-4 w-12 rounded" />
+              <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
+              <Skeleton className="h-4 w-20 rounded" />
+              <ChevronRight className="h-3.5 w-3.5 text-gray-400" />
+              <Skeleton className="h-4 w-24 rounded" />
             </div>
-            <div className="w-full md:w-2/5">
-              <Skeleton className="h-50 md:h-75 w-full rounded-r-[24px]" />
+
+            <div className="flex items-center gap-4 mb-4">
+              <Skeleton className="h-16 w-16 md:h-[76px] md:w-[76px] rounded-full shrink-0" />
+              <div className="flex flex-col md:flex-row md:items-center gap-2 md:gap-4">
+                <Skeleton className="h-10 w-48 rounded" />
+                <Skeleton className="h-7 w-24 rounded-[6px]" />
+              </div>
+            </div>
+
+            <div className="space-y-2 mt-4 max-w-[95%] lg:max-w-full xl:max-w-[90%]">
+              <Skeleton className="h-4 w-full rounded" />
+              <Skeleton className="h-4 w-3/4 rounded" />
             </div>
           </div>
+
+          {/* Middle Content (Image) */}
+          <div className="w-full h-[250px] lg:absolute lg:inset-0 lg:left-[35%] lg:right-[20%] lg:h-auto z-10 overflow-hidden lg:overflow-visible">
+            <Skeleton className="w-full h-full rounded-none" />
+          </div>
+
+          {/* Right Content (Features Box) */}
+          <div className="w-full lg:w-[25%] lg:ml-auto px-4 md:px-8 py-6 lg:py-10 flex flex-col justify-center lg:items-end z-20 relative bg-[#FDF9F6] lg:bg-transparent">
+            <div className="w-full lg:w-fit min-w-[220px] bg-white/95 rounded-xl border border-orange-100 shadow-sm p-4 md:p-5 flex flex-col gap-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="flex items-center gap-3.5">
+                  <Skeleton className="h-5 w-5 rounded-full" />
+                  <Skeleton className="h-4 w-32 rounded" />
+                </div>
+              ))}
+            </div>
+          </div>
+
         </div>
       </div>
+
+      {/* Offers Strip */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 mt-4 md:mt-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 grid grid-cols-2 md:grid-cols-4 gap-4">
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex flex-col items-center gap-2">
-              <Skeleton className="h-6 w-6 rounded-md" />
-              <Skeleton className="h-4 w-28 rounded-md" />
-              <Skeleton className="h-3 w-20 rounded-md" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="rounded-2xl border border-orange-100 bg-white p-4 md:p-5 flex items-center gap-4">
+              <Skeleton className="h-10 w-10 rounded-full shrink-0" />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-4 w-3/4 rounded" />
+                <Skeleton className="h-3 w-1/2 rounded" />
+              </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Main Content Area */}
       <div className="max-w-7xl mx-auto px-4 md:px-8 mt-6 flex gap-8">
+        {/* Desktop Sidebar */}
         <aside className="hidden lg:block w-65 shrink-0">
-          <div className="sticky top-24 bg-[#FFFFFF] rounded-[8px] shadow-[0_2px_8px_rgba(35,25,20,0.04)] border border-[#EEE7E2] p-5 space-y-5">
-            <Skeleton className="h-5 w-20 rounded-md" />
+          <div className="sticky top-24 bg-[#FFFFFF] rounded-[8px] shadow-[0_2px_8px_rgba(35,25,20,0.04)] border border-[#EEE7E2] p-5 space-y-6">
+            <div className="flex justify-between items-center">
+              <Skeleton className="h-6 w-20 rounded" />
+            </div>
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="space-y-2">
-                <Skeleton className="h-4 w-24 rounded-md" />
-                <Skeleton className="h-4 w-full rounded-md" />
-                <Skeleton className="h-4 w-full rounded-md" />
+              <div key={i} className="space-y-3">
+                <Skeleton className="h-5 w-24 rounded" />
+                <Skeleton className="h-4 w-full rounded" />
+                <Skeleton className="h-4 w-full rounded" />
+                <Skeleton className="h-4 w-full rounded" />
               </div>
             ))}
           </div>
         </aside>
+
+        {/* Kitchens Grid */}
         <div className="flex-1 min-w-0">
-          <Skeleton className="h-5 w-64 mb-4 rounded-md" />
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-5">
+          {/* Top Toolbar */}
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-5">
+            <div className="flex lg:hidden items-center justify-between w-full">
+              <Skeleton className="h-10 w-24 rounded-[6px]" />
+              <Skeleton className="h-10 w-24 rounded-[6px]" />
+            </div>
+            <div className="flex items-center gap-3 overflow-x-auto w-full pb-2 lg:pb-0" style={{ scrollbarWidth: 'none' }}>
+              {Array.from({ length: 5 }).map((_, i) => (
+                <Skeleton key={i} className="h-8 w-24 rounded-[6px] shrink-0" />
+              ))}
+            </div>
+            <div className="hidden lg:flex items-center gap-2">
+              <Skeleton className="h-4 w-16 rounded" />
+              <Skeleton className="h-8 w-32 rounded-[6px]" />
+            </div>
+          </div>
+          
+          <Skeleton className="h-4 w-40 mb-4 rounded" />
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-x-5 gap-y-7">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-[#FFFFFF] rounded-[10px] border border-[#EEE7E2] overflow-hidden shadow-[0_2px_8px_rgba(35,25,20,0.05)]">
-                <Skeleton className="aspect-[4/3] w-full" />
-                <div className="p-3 space-y-2">
-                  <Skeleton className="h-4 w-3/4 rounded-md" />
-                  <Skeleton className="h-3 w-1/3 rounded-md" />
-                  <Skeleton className="h-3 w-1/2 rounded-md" />
-                </div>
-              </div>
+              <KitchenCardSkeleton key={i} />
             ))}
           </div>
         </div>

@@ -716,7 +716,14 @@ export function CartContent() {
 
               {/* Available Offers card */}
               <div className="bg-[#FFFFFF] border border-[#E7E7E7] rounded-[8px] p-5 shadow-[0_2px_10px_rgba(0,0,0,0.04)]">
-                <h2 className="text-[16px] font-bold text-[#171717] mb-4">Available Offers</h2>
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-[16px] font-bold text-[#171717]">Available Offers</h2>
+                  {(availableCoupons.length > 0 || availablePaymentOffers.length > 0 || availableLoyaltyCoupons.length > 0) && (
+                    <button onClick={(e) => { e.preventDefault(); toast.info("Scroll down to view all available offers for your cart."); }} className="text-[13px] font-bold text-[#FE4D02] hover:underline">
+                      View all available offers
+                    </button>
+                  )}
+                </div>
                 <div className="space-y-4">
                   {availableCoupons.length === 0 && availablePaymentOffers.length === 0 && availableLoyaltyCoupons.length === 0 ? (
                     <p className="text-[13px] text-[#595959] text-center py-4">No offers available right now</p>
@@ -778,7 +785,15 @@ export function CartContent() {
                               <p className="text-[11px] font-bold text-[#F97316] mt-1">Min. Order: ₹{offer.minOrderValue}</p>
                             ) : null}
                           </div>
-                          <span className="text-[12px] font-bold text-[#595959] shrink-0 mt-0.5">At checkout</span>
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              toast.success("This payment offer will be applied automatically securely at Razorpay checkout.");
+                            }}
+                            className="text-[12px] font-bold text-[#FE4D02] hover:underline shrink-0 mt-0.5 uppercase"
+                          >
+                            APPLY
+                          </button>
                         </div>
                       ))}
                     </>

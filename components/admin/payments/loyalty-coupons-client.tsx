@@ -134,14 +134,14 @@ function downloadCSV(filename: string, content: string) {
 
 function StatsSkeleton() {
   return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 animate-pulse">
-        {Array.from({ length: 4 }).map((_, i) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 animate-pulse">
+      {Array.from({ length: 4 }).map((_, i) => (
         <div key={i} className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[12px] p-4 flex items-start gap-3">
-          <Skeleton className="h-[52px] w-[52px] rounded-[16px] flex-shrink-0" />
-          <div className="flex-1 min-w-0 space-y-2 py-0.5">
-            <Skeleton className="h-2.5 w-16 rounded-md" />
-            <Skeleton className="h-6 w-12 rounded-md" />
-            <Skeleton className="h-2 w-20 rounded-md" />
+          <Skeleton className="h-[48px] w-[48px] md:h-[52px] md:w-[52px] rounded-[16px] flex-shrink-0" />
+          <div className="min-w-0 pt-1">
+            <Skeleton className="h-[14px] w-20 rounded-[4px]" />
+            <Skeleton className="h-[28px] w-12 rounded-[6px] mt-1" />
+            <Skeleton className="h-[12px] w-24 rounded-[4px] mt-1" />
           </div>
         </div>
       ))}
@@ -151,32 +151,91 @@ function StatsSkeleton() {
 
 function TableSkeleton() {
   return (
-    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] overflow-hidden">
-      <div className="flex items-center gap-8 px-4 py-3.5 border-b border-[#EEF0F3]">
-        <Skeleton className="h-[14px] w-28 rounded-md bg-black/5" />
-        <Skeleton className="h-[14px] w-12 rounded-md bg-black/5" />
-      </div>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="flex items-center gap-8 px-4 py-4 border-b border-[#EEF0F3]">
-          <div className="flex items-center gap-3">
-            <Skeleton className="h-10 w-10 rounded-xl flex-shrink-0 bg-black/5" />
-            <div className="space-y-1.5">
-              <Skeleton className="h-[14px] w-32 rounded-md bg-black/5" />
-              <Skeleton className="h-[12px] w-24 rounded-md bg-black/5" />
-            </div>
-          </div>
-        </div>
-      ))}
+    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] shadow-none w-full overflow-hidden">
+      <Table className="w-full text-sm">
+        <TableHeader>
+          <TableRow className="border-b border-[#EEF0F3] bg-[#FFFFFF] hover:bg-[#FFFFFF]">
+            {Array.from({ length: 7 }).map((_, i) => (
+              <TableHead key={i} className="text-left py-4 px-5 text-[11px] font-semibold text-[#475569] uppercase tracking-wider h-auto">
+                <Skeleton className="h-[13px] w-[80px] rounded-[4px]" />
+              </TableHead>
+            ))}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {Array.from({ length: 10 }).map((_, i) => (
+            <TableRow key={i} className="border-b border-[#EEF0F3] hover:bg-[#FAFAFC] transition-colors group">
+              <TableCell className="py-4 px-5 align-middle">
+                <div className="flex items-center gap-4">
+                  <Skeleton className="h-11 w-11 rounded-[12px] flex-shrink-0" />
+                  <div className="flex flex-col gap-1">
+                    <Skeleton className="h-[16px] w-[120px] rounded-[4px]" />
+                    <Skeleton className="h-[14px] w-[160px] rounded-[4px]" />
+                  </div>
+                </div>
+              </TableCell>
+              <TableCell className="py-4 px-5 align-middle">
+                <Skeleton className="h-[22px] w-[60px] rounded-[6px]" />
+              </TableCell>
+              <TableCell className="py-4 px-5 align-middle">
+                <div className="flex flex-col gap-1">
+                  <Skeleton className="h-[15px] w-[70px] rounded-[4px]" />
+                  <Skeleton className="h-[13px] w-[90px] rounded-[4px]" />
+                </div>
+              </TableCell>
+              <TableCell className="py-4 px-5 align-middle">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-[22px] w-[22px] rounded-full flex-shrink-0" />
+                  <Skeleton className="h-[15px] w-[40px] rounded-[4px]" />
+                </div>
+              </TableCell>
+              <TableCell className="py-4 px-5 align-middle">
+                <Skeleton className="h-[15px] w-[60px] rounded-[4px]" />
+              </TableCell>
+              <TableCell className="py-4 px-5 align-middle">
+                <Skeleton className="h-[20px] w-[34px] rounded-full" />
+              </TableCell>
+              <TableCell className="py-4 px-5 align-middle">
+                <div className="flex items-center gap-2">
+                  <Skeleton className="h-8 w-8 rounded-[8px]" />
+                  <Skeleton className="h-8 w-8 rounded-[8px]" />
+                </div>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </div>
   )
 }
 
 function RedemptionOverviewSkeleton() {
   return (
-    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] p-5">
-      <Skeleton className="h-[16px] w-40 rounded-md mb-5 bg-black/5" />
-      <div className="flex items-center gap-5">
-        <Skeleton className="h-[150px] w-[150px] rounded-full flex-shrink-0 bg-black/5" />
+    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] p-6 w-full overflow-hidden">
+      <div className="flex justify-between items-center mb-6">
+        <Skeleton className="h-[18px] w-36 rounded-[4px]" />
+      </div>
+      <div className="flex flex-col lg:flex-row gap-6">
+        <div className="flex flex-col sm:flex-row items-center gap-6 w-full">
+          <div className="relative flex-shrink-0 w-[150px] h-[150px] mx-auto sm:mx-0">
+            <Skeleton className="h-full w-full rounded-full" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <Skeleton className="h-[24px] w-[60px] rounded-[4px]" />
+              <Skeleton className="h-[20px] w-[40px] rounded-[4px] mt-1" />
+            </div>
+          </div>
+          <div className="flex-1 space-y-3.5 w-full">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="flex items-center justify-between gap-3 w-full">
+                <div className="flex items-center gap-2.5">
+                  <Skeleton className="h-[8px] w-[8px] rounded-full flex-shrink-0" />
+                  <Skeleton className="h-[14px] w-24 rounded-[4px]" />
+                </div>
+                <Skeleton className="h-[14px] w-16 rounded-[4px]" />
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -184,12 +243,18 @@ function RedemptionOverviewSkeleton() {
 
 function SideListSkeleton() {
   return (
-    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] p-5">
-      <Skeleton className="h-[16px] w-44 rounded-md mb-4 bg-black/5" />
-      <div className="space-y-3">
+    <div className="bg-[#FFFFFF] border border-[#E5E7EB] rounded-[10px] p-6 w-full">
+      <div className="flex justify-between items-center mb-6">
+        <Skeleton className="h-[18px] w-48 rounded-[4px]" />
+      </div>
+      <div className="flex flex-col">
         {Array.from({ length: 3 }).map((_, i) => (
-          <div key={i} className="flex items-center gap-3">
-            <Skeleton className="h-7 w-7 rounded-full flex-shrink-0 bg-black/5" />
+          <div key={i} className={cn("flex items-center justify-between py-3", i !== 2 ? "border-b border-[#EEF0F3]" : "")}>
+            <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
+              <Skeleton className="h-[32px] w-[32px] rounded-full flex-shrink-0" />
+              <Skeleton className="h-[15px] w-32 rounded-[4px]" />
+            </div>
+            <Skeleton className="h-[14px] w-24 rounded-[4px] flex-shrink-0" />
           </div>
         ))}
       </div>

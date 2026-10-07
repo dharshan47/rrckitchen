@@ -113,10 +113,10 @@ export default function DashboardPageClient() {
         {/* Header Row Skeleton */}
         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-2">
           <div className="flex flex-col gap-1">
-            <Skeleton className="h-8 w-64 rounded bg-black/5" />
-            <Skeleton className="h-4 w-72 rounded mt-1 bg-black/5" />
+            <Skeleton className="h-[28px] w-64 rounded-md" />
+            <Skeleton className="h-[16px] w-72 rounded-sm mt-1" />
           </div>
-          <Skeleton className="h-[36px] w-[140px] rounded-[8px] bg-black/5" />
+          <Skeleton className="h-[36px] w-[140px] rounded-[8px]" />
         </div>
 
         {/* KPI Cards Row Skeleton */}
@@ -124,15 +124,178 @@ export default function DashboardPageClient() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div key={i} className="rounded-[12px] border bg-white p-4 flex flex-col justify-between h-full space-y-3" style={{ borderColor: COLORS.border, boxShadow: '0 1px 4px rgba(15, 25, 18, 0.025)' }}>
               <div className="flex items-center gap-3">
-                <Skeleton className="h-[48px] w-[48px] rounded-full shrink-0 bg-black/5" />
-                <Skeleton className="h-4 w-24 bg-black/5" />
+                <Skeleton className="h-[48px] w-[48px] rounded-full shrink-0" />
+                <Skeleton className="h-[16px] w-24 rounded-sm" />
               </div>
               <div>
-                <Skeleton className="h-7 w-20 mb-1 bg-black/5" />
-                <Skeleton className="h-3 w-32 mt-1 bg-black/5" />
+                <Skeleton className="h-[24px] w-20 mb-1 rounded-md" />
+                <Skeleton className="h-[12px] w-32 mt-1 rounded-sm" />
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Main Grid Row 1 Skeleton */}
+        <div className="grid gap-[18px] xl:grid-cols-3">
+          {/* Order Overview Chart */}
+          <div className="rounded-[12px] border bg-white col-span-1 xl:col-span-2" style={{ borderColor: COLORS.border, boxShadow: '0 1px 4px rgba(15, 25, 18, 0.025)' }}>
+            <div className="flex flex-row items-center justify-between pb-2 pt-5 px-5">
+              <Skeleton className="h-[16px] w-[120px] rounded-sm" />
+              <Skeleton className="h-[28px] w-[80px] rounded-[8px]" />
+            </div>
+            <div className="flex items-center justify-center gap-6 mt-1 mb-4">
+              <Skeleton className="h-[12px] w-[60px] rounded-sm" />
+              <Skeleton className="h-[12px] w-[80px] rounded-sm" />
+            </div>
+            <div className="px-2 pb-5 h-[260px] flex items-end">
+              <Skeleton className="h-[220px] w-full mx-4 rounded-md" />
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-[18px]">
+            {/* Top Selling Items */}
+            <div className="rounded-[12px] border bg-white flex-1" style={{ borderColor: COLORS.border, boxShadow: '0 1px 4px rgba(15, 25, 18, 0.025)' }}>
+              <div className="flex flex-row items-center justify-between pb-3 pt-5 px-5">
+                <Skeleton className="h-[16px] w-[110px] rounded-sm" />
+                <Skeleton className="h-[12px] w-[40px] rounded-sm" />
+              </div>
+              <div className="px-5 pb-5 flex-1">
+                <div className="space-y-[16px]">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <Skeleton className="h-[30px] w-[30px] rounded-full shrink-0" />
+                      <Skeleton className="h-[44px] w-[44px] rounded-[9px] shrink-0" />
+                      <div className="flex-1 min-w-0">
+                        <Skeleton className="h-[14px] w-[100px] mb-1 rounded-sm" />
+                        <Skeleton className="h-[12px] w-[60px] rounded-sm" />
+                      </div>
+                      <Skeleton className="h-[14px] w-[50px] rounded-sm" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Main Grid Row 2 Skeleton */}
+        <div className="grid gap-[18px] xl:grid-cols-3">
+          {/* Left Column */}
+          <div className="col-span-1 grid gap-[18px]">
+            <div className="rounded-[12px] border bg-white" style={{ borderColor: COLORS.border, boxShadow: '0 1px 4px rgba(15, 25, 18, 0.025)' }}>
+              <div className="flex flex-row items-center justify-between pb-3 pt-5 px-5">
+                <Skeleton className="h-[16px] w-[120px] rounded-sm" />
+                <Skeleton className="h-[12px] w-[40px] rounded-sm" />
+              </div>
+              <div className="px-5 pb-5 flex flex-col sm:flex-row items-center justify-start sm:justify-between gap-4 sm:gap-2">
+                <Skeleton className="h-[120px] w-[120px] rounded-full shrink-0" />
+                <div className="w-full sm:flex-1 space-y-2.5 ml-0 sm:ml-4">
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-[12px] w-[70px] rounded-sm" />
+                    <Skeleton className="h-[12px] w-[40px] rounded-sm" />
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <Skeleton className="h-[12px] w-[80px] rounded-sm" />
+                    <Skeleton className="h-[12px] w-[40px] rounded-sm" />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[12px] border bg-white" style={{ borderColor: COLORS.border, boxShadow: '0 1px 4px rgba(15, 25, 18, 0.025)' }}>
+              <div className="flex flex-row items-center justify-between pb-3 pt-5 px-5">
+                <Skeleton className="h-[16px] w-[120px] rounded-sm" />
+                <Skeleton className="h-[12px] w-[40px] rounded-sm" />
+              </div>
+              <div className="px-5 pb-5 space-y-[16px]">
+                {Array.from({ length: 2 }).map((_, i) => (
+                  <div key={i} className="flex gap-3 min-w-0">
+                    <Skeleton className="h-[42px] w-[42px] rounded-full shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <Skeleton className="h-[12px] w-[60px] mb-1.5 rounded-sm" />
+                      <Skeleton className="h-[12px] w-full max-w-[200px] mb-1.5 rounded-sm" />
+                      <Skeleton className="h-[12px] w-full max-w-[160px] mb-1.5 rounded-sm" />
+                      <Skeleton className="h-[10px] w-[100px] rounded-sm" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Center & Right Column */}
+          <div className="col-span-1 xl:col-span-2 grid gap-[18px]">
+            <div className="rounded-[12px] border bg-white" style={{ borderColor: COLORS.border, boxShadow: '0 1px 4px rgba(15, 25, 18, 0.025)' }}>
+              <div className="pb-3 pt-5 px-5 flex flex-row items-center gap-2">
+                <Skeleton className="h-[16px] w-[16px] rounded-sm" />
+                <Skeleton className="h-[16px] w-[120px] rounded-sm" />
+              </div>
+              <div className="px-5 pb-5">
+                <div className="grid grid-cols-2 gap-3 sm:gap-[14px]">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="rounded-[10px] p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 bg-white border" style={{ borderColor: COLORS.border }}>
+                      <Skeleton className="h-[36px] w-[36px] sm:h-[44px] sm:w-[44px] rounded-full shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <Skeleton className="h-[12px] w-[60px] mb-1 rounded-sm" />
+                        <Skeleton className="h-[20px] w-[40px] mb-1 rounded-md" />
+                        <Skeleton className="h-[10px] w-[40px] rounded-sm" />
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[12px] border bg-white" style={{ borderColor: COLORS.border, boxShadow: '0 1px 4px rgba(15, 25, 18, 0.025)' }}>
+              <div className="flex flex-row items-center justify-between pb-3 pt-5 px-5">
+                <Skeleton className="h-[16px] w-[100px] rounded-sm" />
+                <Skeleton className="h-[12px] w-[40px] rounded-sm" />
+              </div>
+              <div className="px-5 pb-3">
+                <div className="space-y-[10px]">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <div key={i} className="flex items-center justify-between gap-2 sm:gap-3 pb-[10px]" style={{ borderBottom: `1px solid ${COLORS.borderSoft}` }}>
+                      <Skeleton className="h-[14px] w-10 sm:w-16 rounded-sm shrink-0" />
+                      <Skeleton className="h-[14px] flex-1 max-w-[100px] rounded-sm" />
+                      <div className="shrink-0 flex justify-center">
+                        <Skeleton className="h-[20px] w-[60px] rounded-[6px]" />
+                      </div>
+                      <Skeleton className="h-[14px] w-16 hidden sm:block shrink-0 rounded-sm" />
+                      <Skeleton className="h-[14px] w-[40px] shrink-0 rounded-sm" />
+                      <Skeleton className="h-[16px] w-[16px] hidden sm:block shrink-0 rounded-sm" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-[12px] border bg-white" style={{ borderColor: COLORS.border, boxShadow: '0 1px 4px rgba(15, 25, 18, 0.025)' }}>
+              <div className="pb-3 pt-5 px-5">
+                <Skeleton className="h-[16px] w-[90px] rounded-sm" />
+              </div>
+              <div className="px-5 pb-5">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-[14px]">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div key={i} className="flex items-center justify-start gap-2 h-[46px] rounded-[10px] bg-white border px-2 sm:px-3" style={{ borderColor: COLORS.border }}>
+                      <Skeleton className="h-[26px] w-[26px] rounded-[6px] shrink-0" />
+                      <Skeleton className="h-[12px] flex-1 rounded-sm" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Success Banner Skeleton */}
+        <div className="rounded-[12px] p-4 sm:p-5 flex flex-col sm:flex-row items-center justify-between gap-4 border" style={{ backgroundColor: COLORS.surfaceSoft, borderColor: '#DCE6E0' }}>
+          <div className="flex items-center gap-4">
+            <Skeleton className="h-[36px] w-[36px] rounded-full shrink-0" />
+            <div>
+              <Skeleton className="h-[14px] w-[120px] mb-1 rounded-sm" />
+              <Skeleton className="h-[12px] w-[250px] max-w-full rounded-sm" />
+            </div>
+          </div>
         </div>
       </div>
     )

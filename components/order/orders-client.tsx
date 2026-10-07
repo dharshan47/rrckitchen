@@ -73,36 +73,63 @@ export function OrdersClient() {
     return (
       <div className="container max-w-6xl mx-auto px-4 py-6 md:py-10">
         <div className="mb-8">
-          <div className="flex items-center gap-2 mb-4">
-            <Skeleton className="h-4 w-12 bg-black/5" />
-            <Skeleton className="h-4 w-4 bg-black/5" />
-            <Skeleton className="h-4 w-16 bg-black/5" />
-            <Skeleton className="h-4 w-4 bg-black/5" />
-            <Skeleton className="h-4 w-14 bg-black/5" />
+          <div className="flex items-center gap-2 mb-4 text-sm">
+            <Skeleton className="h-[20px] w-[40px] rounded-[4px]" />
+            <ChevronRight className="h-4 w-4 text-[#9CA3AF]" />
+            <Skeleton className="h-[20px] w-[54px] rounded-[4px]" />
+            <ChevronRight className="h-4 w-4 text-[#9CA3AF]" />
+            <Skeleton className="h-[20px] w-[48px] rounded-[4px]" />
           </div>
-          <Skeleton className="h-8 w-40 mb-2 bg-black/5" />
-          <Skeleton className="h-4 w-64 mt-1.5 bg-black/5" />
+          <Skeleton className="h-[32px] md:h-[36px] w-[140px] mb-[6px] rounded-[6px]" />
+          <Skeleton className="h-[20px] w-[260px] rounded-[4px]" />
         </div>
         <div className="flex flex-col md:flex-row justify-between md:items-end gap-4 md:gap-0 mb-6 relative">
           <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gray-200 hidden md:block" />
-          <div className="flex gap-4 overflow-x-auto border-b border-gray-200 md:border-none z-10 w-full md:w-auto">
-            <Skeleton className="h-10 w-24 rounded-none bg-black/5 shrink-0" />
+          
+          <div className="flex bg-transparent border-none w-full justify-start rounded-none p-0 h-auto gap-0 overflow-x-auto flex-nowrap z-10 md:w-auto border-b border-gray-200 md:border-none">
+            <div className="px-4 py-3 shrink-0 -mb-[1px]">
+               <Skeleton className="h-[20px] w-[70px] rounded-[4px]" />
+            </div>
             <div className="w-[1px] h-4 bg-gray-200 self-center shrink-0" />
-            <Skeleton className="h-10 w-24 rounded-none bg-black/5 shrink-0" />
+            <div className="px-4 py-3 shrink-0 -mb-[1px]">
+               <Skeleton className="h-[20px] w-[60px] rounded-[4px]" />
+            </div>
             <div className="w-[1px] h-4 bg-gray-200 self-center shrink-0" />
-            <Skeleton className="h-10 w-28 rounded-none bg-black/5 shrink-0" />
+            <div className="px-4 py-3 shrink-0 -mb-[1px]">
+               <Skeleton className="h-[20px] w-[74px] rounded-[4px]" />
+            </div>
             <div className="w-[1px] h-4 bg-gray-200 self-center shrink-0" />
-            <Skeleton className="h-10 w-28 rounded-none bg-black/5 shrink-0" />
+            <div className="px-4 py-3 shrink-0 -mb-[1px]">
+               <Skeleton className="h-[20px] w-[68px] rounded-[4px]" />
+            </div>
+            <div className="w-[1px] h-4 bg-gray-200 self-center shrink-0" />
+            <div className="px-4 py-3 shrink-0 -mb-[1px]">
+               <Skeleton className="h-[20px] w-[56px] rounded-[4px]" />
+            </div>
           </div>
+          
           <div className="flex items-center gap-3 z-10 md:pb-[9px]">
-            <Skeleton className="h-5 w-16 bg-black/5" />
-            <Skeleton className="h-9 w-[140px] rounded-[6px] bg-black/5" />
+            <Skeleton className="h-[20px] w-[50px] rounded-[4px]" />
+            <Skeleton className="h-9 w-[140px] rounded-[6px]" />
           </div>
         </div>
         <div className="flex flex-col gap-6 mb-16">
           <OrderCardSkeleton />
           <OrderCardSkeleton />
           <OrderCardSkeleton />
+        </div>
+        
+        {/* Trust Badges Skeleton */}
+        <div className="hidden md:flex bg-white rounded-2xl py-8 px-4 mb-10 border border-gray-100 shadow-sm mt-8">
+          {[1, 2, 3, 4, 5].map((_, i, arr) => (
+            <div key={i} className={`flex-1 flex items-center justify-center gap-3 px-4 ${i !== arr.length - 1 ? 'border-r border-dotted border-gray-300' : ''}`}>
+              <Skeleton className="w-7 h-7 rounded-full shrink-0" />
+              <div className="flex flex-col gap-1">
+                <Skeleton className="h-[14px] w-[90px] rounded-[4px]" />
+                <Skeleton className="h-[12px] w-[110px] rounded-[4px]" />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     )

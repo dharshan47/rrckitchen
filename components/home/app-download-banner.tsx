@@ -164,7 +164,7 @@ export function AppDownloadBanner() {
               <div className="flex flex-row items-center gap-1.5 sm:gap-3 flex-wrap sm:flex-nowrap">
                 <button
                   type="button"
-                  className="bg-black/90 hover:bg-black text-white px-2 py-1.5 sm:px-3.5 sm:py-2 lg:px-4 lg:py-2.5 rounded-lg flex items-center gap-1.5 sm:gap-2.5 hover:scale-[1.02] active:scale-[0.98] transition-all border border-white/20 shrink-0 shadow-md sm:shadow-lg cursor-pointer"
+                  className=" hover:bg-black text-white px-2 py-1.5 sm:px-3.5 sm:py-2 lg:px-4 lg:py-2.5 rounded-lg flex items-center gap-1.5 sm:gap-2.5 hover:scale-[1.02] active:scale-[0.98] transition-all border border-white/20 shrink-0 shadow-md sm:shadow-lg cursor-pointer"
                 >
                   <svg
                     viewBox="0 0 512 512"
@@ -188,7 +188,7 @@ export function AppDownloadBanner() {
 
                 <button
                   type="button"
-                  className="bg-black/90 hover:bg-black text-white px-2 py-1.5 sm:px-3.5 sm:py-2 lg:px-4 lg:py-2.5 rounded-lg flex items-center gap-1.5 sm:gap-2.5 hover:scale-[1.02] active:scale-[0.98] transition-all border border-white/20 shrink-0 shadow-md sm:shadow-lg cursor-pointer"
+                  className=" hover:bg-black text-white px-2 py-1.5 sm:px-3.5 sm:py-2 lg:px-4 lg:py-2.5 rounded-lg flex items-center gap-1.5 sm:gap-2.5 hover:scale-[1.02] active:scale-[0.98] transition-all border border-white/20 shrink-0 shadow-md sm:shadow-lg cursor-pointer"
                 >
                   <svg
                     viewBox="0 0 384 512"
