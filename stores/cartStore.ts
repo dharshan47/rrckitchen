@@ -100,6 +100,9 @@ interface CartState {
   setAvailablePaymentOffers: (offers: PaymentOfferData[]) => void;
   setAvailableLoyaltyCoupons: (coupons: LoyaltyCouponData[]) => void;
   resetCartData: () => void;
+  appliedPaymentOffer: PaymentOfferData | null;
+  applyPaymentOffer: (offer: PaymentOfferData) => void;
+  removePaymentOffer: () => void;
 }
 
 // Fine-grained selectors for stable references and minimal re-renders
@@ -114,9 +117,12 @@ export const selectCartActions = (s: CartState) => ({
   applyCoupon: s.applyCoupon,
   removeCoupon: s.removeCoupon,
   setOrderType: s.setOrderType,
+  applyPaymentOffer: s.applyPaymentOffer,
+  removePaymentOffer: s.removePaymentOffer,
 });
 
 export const selectCartCoupon = (s: CartState) => s.appliedCoupon;
+export const selectCartPaymentOffer = (s: CartState) => s.appliedPaymentOffer;
 
 export const selectCartOrderType = (s: CartState) => s.orderType;
 
@@ -140,6 +146,7 @@ export const cartStore = create<CartState>()(
       (set) => ({
         cart: [],
         appliedCoupon: null,
+        appliedPaymentOffer: null,
         orderType: "PREBOOK" as OrderType,
         addresses: [],
         cartConfig: null,
@@ -193,6 +200,8 @@ export const cartStore = create<CartState>()(
         setAvailablePaymentOffers: (availablePaymentOffers: PaymentOfferData[]) => set({ availablePaymentOffers }),
         setAvailableLoyaltyCoupons: (availableLoyaltyCoupons: LoyaltyCouponData[]) => set({ availableLoyaltyCoupons }),
         resetCartData: () => set({ addresses: [], cartConfig: null, availableCoupons: [], availablePaymentOffers: [], availableLoyaltyCoupons: [] }),
+        applyPaymentOffer: (offer: PaymentOfferData) => set({ appliedPaymentOffer: offer }),
+        removePaymentOffer: () => set({ appliedPaymentOffer: null }),
       }),
       {
         name: "rrc-cart",
@@ -201,6 +210,7 @@ export const cartStore = create<CartState>()(
         partialize: (state) => ({
           cart: state.cart,
           appliedCoupon: state.appliedCoupon,
+          appliedPaymentOffer: state.appliedPaymentOffer,
           orderType: state.orderType,
         }),
       }
@@ -223,6 +233,9 @@ export function useCartActions() {
 }
 export function useCartCoupon() {
   return cartStore(selectCartCoupon);
+}
+export function useCartPaymentOffer() {
+  return cartStore(selectCartPaymentOffer);
 }
 export function useCartOrderType() {
   return cartStore(selectCartOrderType);

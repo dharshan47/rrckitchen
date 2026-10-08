@@ -16,7 +16,7 @@ import { useRazorpay } from "@/hooks/useRazorpay";
 import { useSession } from "@/lib/auth-client";
 import { useUserLoyaltyPointsQuery, useUserLoyaltyPoints } from "@/stores/userProfileStore";
 import { purchaseCouponWithPoints } from "@/actions/loyalty/loyalty-coupons";
-import { useCartCoupon, useCartActions } from "@/stores";
+import { useCartCoupon, useCartActions, useCartPaymentOffer } from "@/stores";
 import type { AppliedCoupon } from "@/stores";
 import {
   useCartAddressesQuery,
@@ -178,6 +178,7 @@ const PriceBreakdown = memo(function PriceBreakdown({
   packagingCharge,
   deliveryCharge,
   couponSavings,
+  paymentOfferSavings,
   finalTotal,
 }: {
   itemCounts: number;
@@ -185,6 +186,7 @@ const PriceBreakdown = memo(function PriceBreakdown({
   packagingCharge: number;
   deliveryCharge: number;
   couponSavings: number;
+  paymentOfferSavings: number;
   finalTotal: number;
 }) {
   return (
@@ -209,6 +211,12 @@ const PriceBreakdown = memo(function PriceBreakdown({
             <span className="font-semibold">-₹{couponSavings.toFixed(0)}</span>
           </div>
         )}
+        {paymentOfferSavings > 0 && (
+          <div className="flex justify-between items-center text-[#16803A]">
+            <span>Payment Offer Savings</span>
+            <span className="font-semibold">-₹{paymentOfferSavings.toFixed(0)}</span>
+          </div>
+        )}
       </div>
       {/* Divider + Total */}
       <div className="border-t border-[#EEEEEE] mt-4 pt-4 flex justify-between items-center">
@@ -231,7 +239,8 @@ export function CartContent() {
   const { initiateCheckout, isProcessing, paymentResult, resetPayment } = useRazorpay();
   const { data: session, isPending } = useSession();
   const appliedCoupon = useCartCoupon();
-  const { applyCoupon, removeCoupon, clearCart } = useCartActions();
+  const appliedPaymentOffer = useCartPaymentOffer();
+  const { applyCoupon, removeCoupon, clearCart, applyPaymentOffer, removePaymentOffer } = useCartActions();
 
   const [addressSheetOpen, setAddressSheetOpen] = useState(false);
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(null);
@@ -343,7 +352,22 @@ export function CartContent() {
   });
 
   const couponSavings = appliedCoupon ? appliedCoupon.discount : 0;
-  const finalTotal = Math.max(0, total - couponSavings);
+  
+  let paymentOfferSavings = 0;
+  if (appliedPaymentOffer) {
+    if (appliedPaymentOffer.minOrderValue && total < appliedPaymentOffer.minOrderValue) {
+      paymentOfferSavings = 0;
+    } else if (appliedPaymentOffer.discountType === "PERCENTAGE") {
+      paymentOfferSavings = (total * appliedPaymentOffer.discountValue) / 100;
+      if (appliedPaymentOffer.maxDiscount) {
+        paymentOfferSavings = Math.min(paymentOfferSavings, appliedPaymentOffer.maxDiscount);
+      }
+    } else {
+      paymentOfferSavings = appliedPaymentOffer.discountValue;
+    }
+  }
+
+  const finalTotal = Math.max(0, total - couponSavings - paymentOfferSavings);
   const itemCounts = cart.reduce((acc, item) => acc + item.qty, 0);
 
   const packagingCharge = cartConfig?.packagingCharge ?? 0;
@@ -671,6 +695,7 @@ export function CartContent() {
                   packagingCharge={packagingCharge}
                   deliveryCharge={effectiveDeliveryCharge}
                   couponSavings={couponSavings}
+                  paymentOfferSavings={paymentOfferSavings}
                   finalTotal={effectiveTotal}
                 />
               </div>
@@ -788,11 +813,21 @@ export function CartContent() {
                           <button
                             onClick={(e) => {
                               e.preventDefault();
-                              toast.success("This payment offer will be applied automatically securely at Razorpay checkout.");
+                              if (appliedPaymentOffer?.id === offer.id) {
+                                removePaymentOffer();
+                                toast.success("Payment offer removed.");
+                              } else {
+                                if (offer.minOrderValue && total < offer.minOrderValue) {
+                                  toast.error(`Minimum order value of ₹${offer.minOrderValue} required for this offer.`);
+                                  return;
+                                }
+                                applyPaymentOffer(offer);
+                                toast.success(`${offer.name} applied successfully.`);
+                              }
                             }}
-                            className="text-[12px] font-bold text-[#FE4D02] hover:underline shrink-0 mt-0.5 uppercase"
+                            className={`text-[12px] font-bold hover:underline shrink-0 mt-0.5 uppercase ${appliedPaymentOffer?.id === offer.id ? "text-[#16803A]" : "text-[#FE4D02]"}`}
                           >
-                            APPLY
+                            {appliedPaymentOffer?.id === offer.id ? "APPLIED" : "APPLY"}
                           </button>
                         </div>
                       ))}
